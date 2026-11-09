@@ -1759,8 +1759,8 @@
     <style>
       /* ===== CHILD PROFILES (Zane & Riley) + HOOT THE HOST =====
          Each child gets their own version of Hoot's World: their own
-         lesson stars, sticker book and photo album, kept separate in
-         this session's memory like the rest of the hub's state.
+         lesson stars, sticker book and photo album, kept separate
+         from each other's and saved on this device between visits.
          Hoot is the host: a big, always-present band at the top of
          every main screen greets the active child by name and points
          to the very next thing to do. */
@@ -3900,7 +3900,7 @@
 
           <div class="prof-settings" aria-label="Child profiles — Zane and Riley">
             <h3>👦👧 Child profiles</h3>
-            <p>Each child plays in their own version of Hoot's World. Switching profiles swaps in that child's own lesson stars, sticker book and photo album — Riley's profile also switches Little Kids mode on for her, while Zane plays the same world a step ahead, with the words on.</p>
+            <p>Each child plays in their own version of Hoot's World. Switching profiles swaps in that child's own lesson stars, sticker book and photo album — Riley's profile also switches Little Kids mode on for her, while Zane plays the same world a step ahead, with the words on. Their stars, stickers and activity photos save on this device, so everything is still here next time Hoot's World opens.</p>
 <div class="prof-row" data-profile-row="zane"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#dceeff"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#2456a6"/><circle cx="50" cy="46" r="26" fill="#f4c48d"/><path d="M24 44 Q22 18 50 18 Q78 18 76 44 Q76 30 64 28 Q66 36 60 30 Q50 24 38 30 Q26 34 24 44 Z" fill="#4a3220"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M41 58 Q50 65 59 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f0a868" opacity=".65"/><circle cx="67" cy="55" r="4.5" fill="#f0a868" opacity=".65"/></svg><div class="prof-row-main"><b>Zane</b> <span class="prof-now">⭐ Playing now</span><span>Age 3 · Boy · Little Explorers (ages 2–4), a step ahead</span><span class="prof-counts" data-prof-counts="zane"></span></div><button type="button" class="prof-row-btn" data-profile-pick="zane" data-source="parents">▶ Play as Zane</button></div>
 <div class="prof-row" data-profile-row="riley"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#ffe3ee"/><circle cx="20" cy="52" r="11" fill="#6b4423"/><circle cx="80" cy="52" r="11" fill="#6b4423"/><circle cx="20" cy="40" r="5" fill="#ff5d8f"/><circle cx="80" cy="40" r="5" fill="#ff5d8f"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#e83e77"/><circle cx="50" cy="46" r="26" fill="#f7cf9f"/><path d="M24 46 Q22 20 50 20 Q78 20 76 46 Q74 30 60 27 Q50 24 40 27 Q26 30 24 46 Z" fill="#6b4423"/><path d="M50 12 L40 4 Q34 10 42 15 L34 18 Q40 24 50 19 Q60 24 66 18 L58 15 Q66 10 60 4 Z" fill="#ffd93b" stroke="#e0a800" stroke-width="1.4" stroke-linejoin="round"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M42 58 Q50 64 58 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/><circle cx="67" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/></svg><div class="prof-row-main"><b>Riley</b> <span class="prof-now">⭐ Playing now</span><span>Age 2 · Girl · Little Explorers (ages 2–4), biggest &amp; simplest</span><span class="prof-counts" data-prof-counts="riley"></span></div><button type="button" class="prof-row-btn" data-profile-pick="riley" data-source="parents">▶ Play as Riley</button></div>
           </div>
@@ -5780,8 +5780,12 @@
          "Add a photo" (camera or gallery, the phone offers both), the
          photo appears as a thumbnail under that activity, and a copy
          collects in the Parents view's Photo memories album, captioned
-         with the activity and day. Photos live in this session's memory
-         (object URLs) — nothing is uploaded or stored anywhere.
+         with the activity and day. Photos SAVE on this device, in the
+         browser's own photo store (IndexedDB), filed under their
+         activity and tagged with the profile that was playing — so
+         they are still here, under the same activity, when the app
+         opens again. Nothing is uploaded anywhere. Removing a photo
+         (×) deletes it from the device store too.
          Clicks inside a spot are stopped before they reach the daily
          card handler, so adding a photo never fires the card's pill. */
       (function(){
@@ -5794,6 +5798,55 @@
         document.body.appendChild(input);
         var target = null;
         var memList = null, memEmpty = null;
+        var spotsByKey = {};
+
+        /* ---------- on-device photo store (IndexedDB) ---------- */
+        var dbPromise = null;
+        function photoDB(){
+          if(dbPromise) return dbPromise;
+          dbPromise = new Promise(function(resolve){
+            if(!("indexedDB" in window)){ resolve(null); return; }
+            var req;
+            try{ req = indexedDB.open("hootworld-photos", 1); }catch(e){ resolve(null); return; }
+            req.onupgradeneeded = function(){ try{ req.result.createObjectStore("photos", { keyPath:"id" }); }catch(e){} };
+            req.onsuccess = function(){ resolve(req.result); };
+            req.onerror = function(){ resolve(null); };
+          });
+          return dbPromise;
+        }
+        function dbPut(rec){
+          photoDB().then(function(db){
+            if(!db) return;
+            try{ db.transaction("photos", "readwrite").objectStore("photos").put(rec); }catch(e){}
+          });
+        }
+        function dbDelete(id){
+          if(!id) return;
+          photoDB().then(function(db){
+            if(!db) return;
+            try{ db.transaction("photos", "readwrite").objectStore("photos").delete(id); }catch(e){}
+          });
+        }
+        function dbAll(){
+          return photoDB().then(function(db){
+            return new Promise(function(resolve){
+              if(!db){ resolve([]); return; }
+              try{
+                var rq = db.transaction("photos", "readonly").objectStore("photos").getAll();
+                rq.onsuccess = function(){ resolve(rq.result || []); };
+                rq.onerror = function(){ resolve([]); };
+              }catch(e){ resolve([]); }
+            });
+          });
+        }
+        function slug(s){
+          return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+        }
+        function uniqKey(base){
+          var key = base, n = 2;
+          while(spotsByKey[key]){ key = base + "~" + (n++); }
+          return key;
+        }
 
         var parentPanel = document.getElementById("panel-parent");
         if(parentPanel){
@@ -5825,11 +5878,16 @@
             : "📸 Photos of us doing this";
           spot._empty.style.display = spot._count > 0 ? "none" : "";
         }
-        function addPhoto(spot, file){
+        function addPhoto(spot, file, saved){
           if(!file || !file.type || file.type.indexOf("image/") !== 0) return;
           var url = URL.createObjectURL(file);
+          var prof = saved ? (saved.prof || "shared")
+            : (document.body.getAttribute("data-profile") || "shared");
+          var pid = saved ? saved.id
+            : ("p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
           var fig = document.createElement("figure");
           fig.className = "photo-thumb";
+          fig.setAttribute("data-prof", prof);
           var img = document.createElement("img");
           img.src = url;
           img.alt = "Photo of the kids doing: " + spot._title;
@@ -5847,6 +5905,7 @@
           if(memList){
             mfig = document.createElement("figure");
             mfig.className = "photo-thumb";
+            mfig.setAttribute("data-prof", prof);
             var mimg = document.createElement("img");
             mimg.src = url;
             mimg.alt = img.alt;
@@ -5857,11 +5916,16 @@
             memList.appendChild(mfig);
             if(memEmpty) memEmpty.style.display = "none";
           }
+          if(!saved){
+            dbPut({ id: pid, key: spot._key, caption: spot._caption,
+              title: spot._title, prof: prof, blob: file, ts: Date.now() });
+          }
           rm.addEventListener("click", function(e){
             e.stopPropagation();
             fig.remove();
             if(mfig) mfig.remove();
             URL.revokeObjectURL(url);
+            dbDelete(pid);
             spot._count--;
             if(spot._count < 0) spot._count = 0;
             refreshHead(spot);
@@ -5876,7 +5940,7 @@
           for(var i = 0; i < input.files.length; i++) addPhoto(spot, input.files[i]);
         });
 
-        function makeSpot(card, title, caption){
+        function makeSpot(card, title, caption, key){
           var host = card.querySelector(".day-step-main") || card.children[1] || card;
           var spot = document.createElement("div");
           spot.className = "photo-spot";
@@ -5887,7 +5951,7 @@
           strip.className = "photo-strip";
           var empty = document.createElement("p");
           empty.className = "photo-empty";
-          empty.textContent = "No photos yet — do it indoors or out, then tap Add a photo. Photos stay under this activity for this visit.";
+          empty.textContent = "No photos yet — do the activity, then tap Add a photo. It lives right here under this activity, and it's still here next time you open Hoot's World on this device.";
           var add = document.createElement("button");
           add.type = "button";
           add.className = "photo-add";
@@ -5908,7 +5972,9 @@
           spot._head = head;
           spot._title = title;
           spot._caption = caption;
+          spot._key = key;
           spot._count = 0;
+          spotsByKey[key] = spot;
           host.appendChild(spot);
         }
 
@@ -5919,15 +5985,29 @@
           var title = h ? h.textContent : "this activity";
           var plan = card.closest ? (card.closest(".day-plan") || card.closest(".adv-plan")) : null;
           var dh = plan ? plan.querySelector(".day-head h3, .adv-dayname") : null;
-          makeSpot(card, title, title + (dh ? " — " + dh.textContent : ""));
+          var key;
+          if(plan && plan.classList.contains("adv-plan")) key = "adv:" + plan.getAttribute("data-adv-day") + ":" + slug(title);
+          else if(plan) key = "daily:" + (plan.getAttribute("data-age") || "") + ":" + (plan.getAttribute("data-day") || "") + ":" + slug(title);
+          else key = "daily:" + slug(title);
+          makeSpot(card, title, title + (dh ? " — " + dh.textContent : ""), uniqKey(key));
         }
         var ideas = document.querySelectorAll("#fresh-ideas .idea-card");
         for(var j = 0; j < ideas.length; j++){
           var icard = ideas[j];
           var ih = icard.querySelector("h3");
           var ititle = ih ? ih.textContent : "this idea";
-          makeSpot(icard, ititle, ititle + " · Fresh Ideas");
+          makeSpot(icard, ititle, ititle + " · Fresh Ideas", uniqKey("idea:" + slug(ititle)));
         }
+
+        /* Put every saved photo back under its own activity (and in
+           the Photo memories album), oldest first. */
+        dbAll().then(function(recs){
+          recs.sort(function(a, b){ return (a.ts || 0) - (b.ts || 0); });
+          recs.forEach(function(r){
+            var spot = r && spotsByKey[r.key];
+            if(spot && r.blob) addPhoto(spot, r.blob, r);
+          });
+        });
       })();
     </script>
     <script>
@@ -6233,9 +6313,12 @@
          of Hoot's World. Switching profiles swaps that child's own
          lesson stars, tap-to-count progress, sticker book and photo
          album in and out — one child's play never touches the
-         other's. State lives in this session's memory, exactly like
-         the rest of the hub (lessons, stickers and photos already
-         work that way). Riley's profile also switches Little Kids
+         other's. Progress SAVES on this device (the browser's own
+         storage): each child's snapshot is written as they play and
+         read back when the app opens again, and the last profile
+         playing is restored under the "Who's playing?" gate. Photos
+         save on-device too, under their activity (see the photo
+         script). Nothing leaves the device. Riley's profile also switches Little Kids
          mode on (biggest pictures, simplest taps); Zane plays the
          same Little Explorers world a step ahead, with words on.
          Hoot's host band at the top greets the active child by name
@@ -6249,6 +6332,14 @@
         };
         var current = null;
         var snaps = {};
+        /* ---------- on-device saving: load what this device kept ---------- */
+        var SAVE_KEY = "hootworld.profiles.v1";
+        var savedProfile = null;
+        try{
+          var savedAll = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+          if(savedAll && savedAll.snaps) snaps = savedAll.snaps;
+          if(savedAll && savedAll.current && PROFILES[savedAll.current]) savedProfile = savedAll.current;
+        }catch(e){}
         /* The centre-screen "Who's playing?" gate: open on top of
            everything until a profile is picked, then gone completely. */
         var gate = document.getElementById("profile-gate");
@@ -6276,6 +6367,12 @@
             ctap: ctaps.map(function(c){ return c.classList.contains("on"); }),
             stickers: earnedSlots()
           };
+        }
+        function persist(){
+          try{
+            if(current) snaps[current] = snapState();
+            localStorage.setItem(SAVE_KEY, JSON.stringify({ current: current, snaps: snaps }));
+          }catch(e){}
         }
         function refreshProgressPills(){
           slice(document.querySelectorAll(".panel")).forEach(function(panel){
@@ -6497,7 +6594,7 @@
           updateProfileUI();
           hootRefresh();
           hideGate();
-          if(window.__hootGreet) window.__hootGreet(id);
+          if(window.__hootGreet && !opts.silent) window.__hootGreet(id);
           if(opts.enter){
             document.body.classList.remove("welcome-open");
             if(window.__hootShowView) window.__hootShowView("home");
@@ -6510,6 +6607,7 @@
           }
           if(firstPick && window.__hootDailyKid) window.__hootDailyKid(true);
           updateProfileUI();
+          persist();
         }
         window.__hootSelectProfile = selectProfile;
 
@@ -6552,8 +6650,14 @@
           var t = e.target;
           if(!t || !t.closest) return;
           if(t.closest(".lsn-opt") || t.closest('a[href^="../"]') || t.closest(".photo-rm")){
-            setTimeout(function(){ updateProfileUI(); hootRefresh(); }, 420);
+            setTimeout(function(){ updateProfileUI(); hootRefresh(); persist(); }, 420);
           }
+        });
+        /* Save the playing child's progress whenever the app is
+           backgrounded or closed, whatever they were doing. */
+        window.addEventListener("beforeunload", persist);
+        document.addEventListener("visibilitychange", function(){
+          if(document.visibilityState === "hidden") persist();
         });
         /* Hoot speaks his recorded lines as the child heads out to play */
         document.addEventListener("click", function(e){
@@ -6567,6 +6671,15 @@
         applyPhotoFilter();
         updateProfileUI();
         hootRefresh();
+        /* Returning to this device: put the last child's saved world
+           back underneath (their stars, counting, stickers — and the
+           photo filter follows their profile), then present Hoot's
+           "Who's playing?" gate as usual so the child still taps
+           their own picture to start. */
+        if(savedProfile){
+          selectProfile(savedProfile, { silent: true });
+          openGate();
+        }
       })();
     </script>
   </body>
