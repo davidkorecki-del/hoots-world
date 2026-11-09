@@ -1805,6 +1805,67 @@
         #panel-little .ctap.lsn-hit, #panel-little .lsn-trace svg path, #panel-little .lsn-trace svg circle, #panel-little .lsn-trace svg rect{ animation:none; }
         #panel-little .lsn-confetti{ display:none; }
       }
+      /* ===== LITTLE EXPLORERS TRUE REMAKE — Hoot's spoken tutor stage (Ages 2–4) =====
+         Hoot sits BIG at the side of a living teaching scene in every
+         Little Explorers lesson; his speech bubble carries the exact
+         words his recorded voice speaks, the scene objects bounce and
+         glow as he names them, and the answer pictures are extra big.
+         Scoped to #panel-little only — the other paths keep their look. */
+      #panel-little .lt-stage{ display:grid; grid-template-columns:118px 1fr; gap:6px 14px; align-items:start; margin:10px 0 4px; }
+      #panel-little .lt-hoot{ position:relative; text-align:center; }
+      #panel-little .lt-hoot svg{ width:112px; height:112px; display:block; margin:0 auto; filter:drop-shadow(0 6px 10px rgba(23,60,120,.25)); }
+      #panel-little .lt-hoot.is-speaking svg{ animation:ltBob .9s ease-in-out infinite; }
+      @keyframes ltBob{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-6px) rotate(-2deg); } }
+      #panel-little .lt-hoot-name{ display:inline-block; margin-top:2px; background:#ef6461; color:#fff; font-weight:800; font-size:.78rem; letter-spacing:.08em; padding:2px 10px; border-radius:999px; border:2px solid #17263b; }
+      #panel-little .lt-main{ min-width:0; }
+      #panel-little .lt-bubble{ position:relative; background:#fff; border:3px solid #17263b; border-radius:18px; padding:12px 16px; font-weight:800; font-size:1.06rem; line-height:1.45; color:#17263b; margin:0 0 10px; box-shadow:0 4px 0 rgba(0,0,0,.12); }
+      #panel-little .lt-bubble::before{ content:""; position:absolute; left:-12px; top:28px; width:19px; height:19px; background:#fff; border-left:3px solid #17263b; border-bottom:3px solid #17263b; transform:rotate(45deg); border-bottom-left-radius:5px; }
+      @media (prefers-color-scheme: dark){ #panel-little .lt-bubble{ background:#22385c; color:#eef4f8; border-color:#8fa8c8; } #panel-little .lt-bubble::before{ background:#22385c; border-color:#8fa8c8; } }
+      #panel-little .lt-scene{ position:relative; border:3px solid #17263b; border-radius:20px; padding:16px 12px; overflow:hidden; min-height:104px; color:#17263b; }
+      #panel-little .lt-scene .lsn-visual, #panel-little .lt-scene .lsn-eq{ position:relative; z-index:1; }
+      #panel-little .lt-scene[data-scene="garden"]{ background:linear-gradient(180deg,#bfe8ff 0%,#d8f7c0 55%,#a5dd8a 100%); }
+      #panel-little .lt-scene[data-scene="garden2"]{ background:linear-gradient(180deg,#ffe9c9 0%,#ffd9a0 55%,#b5e39b 100%); }
+      #panel-little .lt-scene[data-scene="playground"]{ background:linear-gradient(180deg,#bfe3ff 0%,#e8f6ff 60%,#ffe3a3 100%); }
+      #panel-little .lt-scene[data-scene="meadow"]{ background:linear-gradient(180deg,#cdeffd 0%,#e6f9d2 60%,#b7e39b 100%); }
+      #panel-little .lt-scene[data-scene="letters"]{ background:linear-gradient(180deg,#fff3d6 0%,#ffe9ec 100%); }
+      #panel-little .lt-scene[data-scene="letters2"]{ background:linear-gradient(180deg,#e6f0ff 0%,#ffe9f4 100%); }
+      #panel-little .lt-scene[data-scene="savanna"]{ background:linear-gradient(180deg,#ffe9b8 0%,#f7d774 60%,#eec25e 100%); }
+      #panel-little .lt-scene[data-scene="space"]{ background:linear-gradient(180deg,#1d2f57 0%,#2c4a7c 60%,#3d5a8f 100%); color:#eaf2ff; }
+      #panel-little .lt-scene[data-scene="tidy"]{ background:linear-gradient(180deg,#e0f5f2 0%,#fdf3d8 100%); }
+      #panel-little .lt-scene[data-scene="starmeadow"]{ background:linear-gradient(180deg,#dfe8ff 0%,#f3e9ff 100%); }
+      #panel-little .lt-scene[data-scene="farm"]{ background:linear-gradient(180deg,#bfe8ff 0%,#eaf9d0 55%,#a5dd8a 100%); }
+      #panel-little .lt-scene[data-scene="feelings"]{ background:linear-gradient(180deg,#ffe3ee 0%,#fff6d9 100%); }
+      #panel-little .lt-scene[data-scene="skyground"]{ background:linear-gradient(180deg,#a8d8ff 0 52%,#9edb8a 52% 100%); }
+      #panel-little .lt-scene[data-scene="parade"]{ background:repeating-linear-gradient(45deg,#ffe9f4 0 26px,#e3f2ff 26px 52px); }
+      #panel-little .lt-scene[data-scene="body"]{ background:linear-gradient(180deg,#dff6ff 0%,#e9fbe7 100%); }
+      #panel-little .lt-scene[data-scene="party"]{ background:linear-gradient(180deg,#fff0c2 0%,#ffe3ee 100%); }
+      #panel-little .lt-decor{ position:absolute; z-index:0; font-size:1.45rem; line-height:1; opacity:.85; pointer-events:none; animation:ltFloat 3.8s ease-in-out infinite; }
+      @keyframes ltFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+      #panel-little .lt-q{ cursor:pointer; }
+      #panel-little .lt-q::after{ content:" 🔊"; }
+      #panel-little .lt-q:focus-visible{ outline:4px solid #ffd93b; outline-offset:3px; border-radius:10px; }
+      #panel-little .lsn-opts{ gap:12px; }
+      #panel-little .lsn-opt{ min-height:74px; font-size:1.22rem; border-radius:20px; padding:12px 22px; }
+      #panel-little .lsn-opt .cdot{ width:52px !important; height:52px !important; }
+      #panel-little .lsn-opt svg{ width:52px; height:52px; }
+      #panel-little .lsn-opt > span{ font-size:2.1rem !important; }
+      #panel-little .lsn-opt.lt-gold{ animation:lsnHint .9s ease 2; }
+      body.kid-mode #panel-little .lt-stage{ grid-template-columns:136px 1fr; }
+      body.kid-mode #panel-little .lt-hoot svg{ width:130px; height:130px; }
+      body.kid-mode #panel-little .lt-bubble{ font-size:1.18rem; }
+      body.kid-mode #panel-little .lsn-opt{ min-height:88px; font-size:1.35rem; }
+      @media (max-width:600px){
+        #panel-little .lt-stage{ grid-template-columns:78px 1fr; gap:4px 10px; }
+        #panel-little .lt-hoot svg{ width:76px; height:76px; }
+        #panel-little .lt-hoot-name{ font-size:.66rem; padding:1px 7px; }
+        #panel-little .lt-bubble{ font-size:1rem; padding:10px 12px; }
+        #panel-little .lt-bubble::before{ top:20px; }
+        #panel-little .lt-scene{ padding:12px 8px; min-height:92px; }
+        #panel-little .lt-decor{ font-size:1.15rem; }
+      }
+      @media (prefers-reduced-motion: reduce){
+        #panel-little .lt-hoot.is-speaking svg, #panel-little .lt-decor, #panel-little .lsn-opt.lt-gold{ animation:none; }
+      }
       /* ===== EVERY-TAB FIT PASS =====
          Every tab now opens straight on its main content, in the same
          hub dress: Today shows the day's steps before its pickers,
@@ -11811,27 +11872,47 @@
       })();
     </script>
     <script>
-      /* ===== LESSON UPGRADE: LIVE TEACHING for the 16 Ages 2–4 lessons =====
-         The games' standard, brought to the lessons: every teaching
-         picture is a tappable manipulative — counting dots light up one
-         by one with a rising pop, colour dots splash and name
-         themselves in Hoot's speech line, shapes bounce and trace
-         their outline, letters wiggle and play their recorded teaching
-         clip (assets/voice/fish-teach-a..e, the Letter Fishing
-         pattern), animals make their sounds. "Show me again" re-runs
-         the whole demo as a lit-up sequence with Hoot's giggle, a
-         wrong answer makes the correct teaching object pulse, and a
-         right answer keeps the engine's praise clip + star and adds a
-         confetti burst at the star. Curriculum content, questions,
-         answers, stars, per-profile saving and Roadmap behaviour are
-         untouched — this layer only makes the teaching move. Scoped to
-         #panel-little; the other paths get their own passes later. */
+      /* ===== LITTLE EXPLORERS TRUE REMAKE — Hoot the SPOKEN tutor (Ages 2–4) =====
+         The teaching portions get the games' remake standard. Every one
+         of the 16 Little Explorers lessons is now a little stage: Hoot
+         sits BIG at the side of a living teaching scene (colour garden,
+         counting meadow, shape playground, farm, rocket sky…), and he
+         TEACHES OUT LOUD — Zane (3) and Riley (2) cannot read yet, so
+         the lesson has to talk to them. His speech bubble shows the
+         exact words while the voice plays the closest recorded clips
+         from assets/voice/ through a dedicated clip channel: one clip
+         at a time, chained on each clip's real "ended" event (never a
+         guessed timer, so a line is never cut off mid-word), woven
+         with hoot-* praise between the call-color / call-letter /
+         call-number / call-shape name clips. No device text-to-speech
+         anywhere. The teaching is a show-and-tell: Hoot presents each
+         object one at a time — it lights up, bounces and is named —
+         then he asks the question out loud (bubble + the target's
+         call-* clip) over BIG tappable picture answers. A wrong tap
+         wiggles, Hoot speaks the hint and names the target again while
+         the correct object pulses gold; a right tap celebrates with
+         the star, spoken praise naming what was learned, and a
+         "So remember: …" recap in the bubble. "Show me again, Hoot!"
+         replays the whole spoken teaching. Quiet mode silences the
+         clips while bubbles and the visual show-and-tell carry on.
+         Where no recording exists for a sentence (animal names —
+         every other lesson's key words now have their own recorded
+         teach-* / ask-which-* clips), the words ride in Hoot's
+         bubble and the nearest clip (owl hoots, giggle, praise) or the
+         lesson's own sound effect carries the voice — noted per lesson
+         in the CFG comments below. Lesson content, questions, correct
+         answers, hints, praise text, stars, per-profile saving (the
+         .lsn.done / .lsn-fb / .lsn-opt contract the hub's engines,
+         profile snapshots and Roadmap all read) and Little Kids mode
+         sizing are unchanged in substance — only the presentation is
+         remade. Scoped to #panel-little; every other path is untouched. */
       (function(){
         "use strict";
         var panel = document.getElementById("panel-little");
         if(!panel) return;
         var cards = Array.prototype.slice.call(panel.querySelectorAll(".lsn"));
         if(!cards.length) return;
+        function slice(l){ return Array.prototype.slice.call(l || []); }
 
         /* ---------- tiny sound kit (house pattern) ---------- */
         var actx = null;
@@ -11857,19 +11938,6 @@
           }catch(e){}
         }
         function pop(n){ tone(430 + (n || 0) * 90, 0.16, "sine", 0.2); tone(860 + (n || 0) * 120, 0.1, "triangle", 0.09, 0.02); }
-        function hootClip(key){ if(window.__hootPlayClip) window.__hootPlayClip(key); }
-        var teachClipEl = null;
-        function letterClip(letter){
-          if(quiet() || "abcde".indexOf(letter) < 0) return false;
-          try{
-            if(window.__hootStopClip) window.__hootStopClip();
-            if(!teachClipEl) teachClipEl = new Audio();
-            teachClipEl.src = "assets/voice/fish-teach-" + letter + ".mp3";
-            var p = teachClipEl.play();
-            if(p && p.catch) p.catch(function(){});
-            return true;
-          }catch(e){ return false; }
-        }
         function animalSound(kind){
           if(kind === "moo"){ tone(150, 0.5, "sawtooth", 0.12, 0, 85); tone(75, 0.5, "sine", 0.14, 0.02, 55); }
           else if(kind === "quack"){ tone(320, 0.12, "square", 0.1, 0, 190); tone(320, 0.12, "square", 0.1, 0.16, 190); }
@@ -11912,39 +11980,288 @@
           card.appendChild(wrap);
           setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 1500);
         }
+        function setSpeakingAll(on){
+          document.querySelectorAll("[data-hoot-char]").forEach(function(el){ el.classList.toggle("is-speaking", !!on); });
+        }
+        function profileIs(id){ return document.body.getAttribute("data-profile") === id; }
+        function pauseFor(text){
+          var words = String(text || "").replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length;
+          return Math.min(2600, Math.max(850, 500 + words * 175));
+        }
 
-        /* ---------- per-lesson teaching scripts ----------
-           say[i]: Hoot's line when teaching item i is tapped or lit.
-           answer: index of the teaching item the question asks for
-           ("eq" = the whole pattern line). endSay: line after a
-           replay finishes, handing over to the question. Content
-           mirrors each lesson's own teaching text — nothing new is
-           taught, it is the same lesson, alive. */
+        /* ---------- the spoken-tutor clip channel ----------
+           One Audio element for the whole path. Beats chain on the
+           clip's real "ended" (or "error") event — never on a guessed
+           timer — so a spoken line always finishes. A generation
+           counter makes stopTutor() absolute: a profile switch, a tab
+           change, the profile gate opening, or a new lesson starting
+           silences the tutor at once and no stale beat can fire after
+           it. Quiet mode is checked when a sequence starts AND when
+           each clip starts. The hub's voice governor serialises this
+           channel against every other clip player in the app, so the
+           tutor can never talk over another voice (or be talked over). */
+        var clipEl = null, clipGen = 0, SEQ = null, beatTimer = null;
+        function clipPlayer(){
+          if(!clipEl){ clipEl = new Audio(); clipEl.preload = "auto"; }
+          return clipEl;
+        }
+        function playClips(clips, gen, done){
+          var list = (clips || []).filter(Boolean);
+          if(!list.length){ done(); return; }
+          var a = clipPlayer();
+          var idx = 0;
+          function step(){
+            if(gen !== clipGen) return;
+            if(idx >= list.length){ done(); return; }
+            if(quiet()){ done(); return; }
+            var key = list[idx]; idx++;
+            var settled = false, guard = null;
+            function onEnd(){
+              if(settled) return; settled = true;
+              if(guard) clearTimeout(guard);
+              a.removeEventListener("ended", onEnd);
+              a.removeEventListener("error", onEnd);
+              if(gen !== clipGen) return;
+              step();
+            }
+            a.addEventListener("ended", onEnd);
+            a.addEventListener("error", onEnd);
+            guard = setTimeout(onEnd, 8000);
+            try{
+              a.src = "assets/voice/" + key + ".mp3";
+              setSpeakingAll(true);
+              var p = a.play();
+              if(p && p.catch) p.catch(function(){ onEnd(); });
+            }catch(e){ onEnd(); }
+          }
+          step();
+        }
+        function clearLit(card){
+          if(card._items) card._items.forEach(function(el){ el.classList.remove("lsn-lit"); });
+        }
+        function stopTutor(){
+          clipGen++;
+          if(beatTimer){ clearTimeout(beatTimer); beatTimer = null; }
+          if(clipEl){ try{ clipEl.pause(); }catch(e){} }
+          if(window.__hootStopClip) window.__hootStopClip();
+          SEQ = null;
+          cards.forEach(function(c){
+            clearLit(c);
+            if(c._replaying){
+              c._replaying = false;
+              if(c._replayBtn){ c._replayBtn.disabled = false; c._replayBtn.textContent = "▶ Show me again, Hoot!"; }
+            }
+          });
+          setSpeakingAll(false);
+        }
+        /* A short standalone line (a counted number as the child taps)
+           — only when no teaching sequence is running. */
+        function playSolo(clips){
+          if(SEQ || quiet()) return;
+          if(window.__hootStopClip) window.__hootStopClip();
+          if(clipEl){ try{ clipEl.pause(); }catch(e){} }
+          var gen = ++clipGen;
+          playClips(clips, gen, function(){ setSpeakingAll(false); });
+        }
+
+        /* ---------- run a beat sequence in one lesson ----------
+           A beat: { t: bubble text, clips: [recorded clip keys],
+           item: teaching-item index to light, count: number to show
+           in the counting bubble, sound: animal-sound effect,
+           pause: silent dwell for clip-less beats }. */
+        function runBeats(card, beats, opts){
+          opts = opts || {};
+          stopTutor();
+          var gen = clipGen;
+          var seq = { card:card, beats:beats, i:0, gen:gen };
+          SEQ = seq;
+          if(opts.replayBtn){
+            card._replaying = true;
+            if(card._replayBtn){ card._replayBtn.disabled = true; card._replayBtn.textContent = "🦉 Hoot is teaching…"; }
+          }
+          var box = card.querySelector("[data-ctap-box]");
+          var out = box ? box.querySelector("[data-ctap-count]") : null;
+          var prevCount = out ? out.textContent : null;
+          function finish(){
+            if(gen !== clipGen) return;
+            clearLit(card);
+            if(out) out.textContent = prevCount;
+            if(card._replaying){
+              card._replaying = false;
+              if(card._replayBtn){ card._replayBtn.disabled = false; card._replayBtn.textContent = "▶ Show me again, Hoot!"; }
+            }
+            if(SEQ === seq) SEQ = null;
+            setSpeakingAll(false);
+            if(opts.onDone) opts.onDone();
+          }
+          function next(){
+            if(gen !== clipGen) return;
+            if(seq.i > 0){
+              var prev = beats[seq.i - 1];
+              if(prev && prev.item != null && card._items && card._items[prev.item]) card._items[prev.item].classList.remove("lsn-lit");
+            }
+            if(seq.i >= beats.length){ finish(); return; }
+            var beat = beats[seq.i]; seq.i++;
+            if(beat.t) setLine(card, beat.t);
+            if(beat.item != null && card._items && card._items[beat.item]){
+              card._items[beat.item].classList.add("lsn-lit");
+              reactFx(card, beat.item);
+              if(beat.count != null && out) out.textContent = String(beat.count);
+            }
+            if(beat.sound) animalSound(beat.sound);
+            var clips = beat.clips || [];
+            if(clips.length && !quiet()){
+              playClips(clips, gen, function(){ if(gen === clipGen) next(); });
+            } else {
+              beatTimer = setTimeout(function(){ if(gen === clipGen) next(); }, beat.pause || pauseFor(beat.t));
+            }
+          }
+          beatTimer = setTimeout(next, 250);
+        }
+
+        /* ---------- per-lesson tutor scripts ----------
+           teach[i] pairs with teaching item i: bubble text (the words,
+           mirroring each lesson's own teaching text) + the recorded
+           clips that carry its name. askClips voice the question's
+           target; praiseClips name what was learned on a right answer;
+           recap is the "So remember: …" line. Clip honesty per lesson:
+           1, 10 colours — every name is a real call-color clip.
+           2, 16 shapes — every name is a real call-shape clip.
+           3, 6, 9 counting — every number is a real call-number clip.
+           4, 7 letters — fish-teach clips (a–e exist) carry A–D; F and
+             G ride on call-letter clips.
+           5 big/small, 12 feelings, 13 up/down, 15 body — every name
+             is a real teach-* clip and the question a real ask-which-*
+             clip (5 asks BIG and 13 asks UP for real; the small/down
+             variants play as ask-and-reveal checks in the teaching,
+             and 15 names all six parts aloud — eyes, ears and nose in
+             the scene, mouth, hands and feet in the teach beats).
+           8 sorting — the pile colours are real call-color clips.
+           11 animals — no animal-name clips exist: the bubble names
+             them and the lesson's own animal sound effects (synth
+             moo/quack/woof, as before) carry the moment, woven with
+             Hoot's giggle and praise clips; the question itself is
+             the real ask-which-animal clip.
+           14 patterns — the red/blue beats are real call-color clips;
+             the question's apple/banana pattern is named aloud by
+             teach-apple / teach-banana chained through the ask beat,
+             in the exact order the bubble shows. */
         var CFG = [
-          { fx:"splash", answer:0, say:["🔴 RED! Like a strawberry! 🍓 Say it with me: red!","🟡 YELLOW! Like the sun! ☀️ Say it: yellow!","🔵 BLUE! Like the sky! Say it: blue!"], endSay:"🦉 Now your turn — tap the RED one down below! 👇" },
-          { fx:"trace", answer:2, say:["⭕ CIRCLE! Round and round, like a ball — no corners at all!","🟦 SQUARE! Count the straight sides with me: 1, 2, 3, 4!","🔺 TRIANGLE! Count the pointy corners with me: 1, 2, 3!"], endSay:"🦉 Your turn — tap the TRIANGLE, the one with 3 pointy corners! 👇" },
-          { type:"count", endSay:"🦉 Now YOU count — tap every apple: one tap, one number!" },
-          { fx:"letter", letters:["a","b","c"], answer:1, say:["🍎 A says “ah” — Apple! A, ah, Apple!","🎈 B says “buh” — Balloon! B, buh, Balloon!","🐱 C says “kuh” — Cat! C, kuh, Cat!"], endSay:"🦉 Your turn — which letter says “buh”? 👇" },
-          { fx:"size", answer:0, say:["🐘 BIG elephant! It takes up LOTS and LOTS of room!","🐭 small mouse! It takes up just a tiny, tiny bit of room!"], endSay:"🦉 Your turn — tap the BIG one! 👇" },
-          { type:"eq", eqKind:"countback", answer:1, endSay:"🦉 Your turn — we count back from 5: what number comes next? 👇" },
-          { fx:"letter", letters:["d","f","g"], answer:0, say:["🐶 D says “duh” — Dog! D, duh, Dog!","🐸 F says “fff” — Frog! F, fff, Frog!","🍇 G says “guh” — Grapes! G, guh, Grapes!"], endSay:"🦉 Your turn — which letter says “duh”? 👇" },
-          { fx:"wiggle", answer:0, say:["🔴 The RED pile! Apple 🍎, car 🚗, balloon 🎈 — everything in this pile is RED!","🔵 The BLUE pile! Cap 🧢, whale 🐳, blueberries 🫐 — everything in this pile is BLUE!"], endSay:"🦉 Your turn — the strawberry is red, so which pile does it go in? 👇" },
-          { type:"count", endSay:"🦉 Now YOU count — tap every star, all the way to 10!" },
-          { fx:"splash", answer:2, say:["🟢 GREEN! Like the grass! 🌱 Say it: green!","🟠 ORANGE! Like an orange! 🍊 Say it: orange!","🟣 PURPLE! Like grapes! 🍇 Say it: purple!"], endSay:"🦉 Your turn — tap the GREEN one, the grass colour! 👇" },
-          { fx:"animal", animals:["moo","quack","woof"], answer:0, say:["🐮 MOO! The cow says “moo!” Say it with me: moo!","🦆 QUACK! The duck says “quack!” Say it: quack!","🐶 WOOF! The dog says “woof!” Say it: woof!"], endSay:"🦉 Your turn — who says “moo”? 👇" },
-          { fx:"wiggle", answer:0, say:["😀 HAPPY! Big smile! Make a happy face with me!","😢 Sad — wobbly mouth. Feelings are okay to have, and okay to say out loud.","😴 Sleepy… eyes closing. Yaaawn!"], endSay:"🦉 Your turn — tap the HAPPY face, the one with the big smile! 👇" },
-          { fx:"wiggle", answer:0, say:["⬆️ 🐦 UP! The bird flies UP in the sky! Point up, up, up!","⬇️ 🐜 DOWN! The ant crawls DOWN on the ground. Point down low!"], endSay:"🦉 Your turn — tap the one that is UP! 👇" },
-          { type:"eq", eqKind:"pattern", answer:"eq", endSay:"🦉 Red, blue, red, blue — after blue, RED always comes again! Your turn below! 👇" },
-          { fx:"wiggle", answer:1, say:["👀 EYES are for SEEING! What can you see right now?","👂 EARS are for HEARING! What sounds can you hear?","👃 NOSE is for SMELLING! Flowers and cookies — yum!"], endSay:"🦉 Your turn — Hoot is playing a song 🎵. What do you hear it with? 👇" },
-          { fx:"trace", answer:0, say:["⭐ STAR! Count the pointy points with me: 1, 2, 3, 4, 5!","❤️ HEART! Round on top, and one pointy point at the bottom!"], endSay:"🦉 Your turn — tap the STAR, the one with 5 pointy points! 👇" }
+          { scene:"garden", fx:"splash", answer:0, decor:[["🌸","6%","8%"],["🌼","88%","10%"],["🦋","78%","72%"]],
+            intro:"🦉 Hoo hoo! Colours have names! Watch each one — and say its name out loud with me!", introClips:["owl-hello"],
+            teach:[ { t:"🔴 RED! Like a strawberry! 🍓 Say it with me: red!", clips:["call-color-red"] },
+                    { t:"🟡 YELLOW! Like the sun! ☀️ Say it: yellow!", clips:["call-color-yellow"] },
+                    { t:"🔵 BLUE! Like the sky! Say it: blue!", clips:["call-color-blue"] } ],
+            askClips:["call-color-red"], praiseClips:["call-color-red","hoot-star"],
+            recap:"RED is the strawberry colour, YELLOW is the sun colour, and BLUE is the sky colour — colours have names!", recapClips:["call-color-red"] },
+          { scene:"playground", fx:"trace", answer:2, decor:[["☁️","8%","6%"],["🛝","86%","64%"],["🧱","84%","8%"]],
+            intro:"🦉 Shapes have names too! Watch — I'll show you each one!", introClips:["owl-hello"],
+            teach:[ { t:"⭕ CIRCLE! Round and round, like a ball — no corners at all!", clips:["call-shape-circle"] },
+                    { t:"🟦 SQUARE! Count the straight sides with me: 1, 2, 3, 4!", clips:["call-shape-square"] },
+                    { t:"🔺 TRIANGLE! Count the pointy corners with me: 1, 2, 3!", clips:["call-shape-triangle"] } ],
+            askClips:["call-shape-triangle"], praiseClips:["call-shape-triangle","hoot-great-job"],
+            recap:"a CIRCLE is round like a ball, a SQUARE has 4 straight sides, and a TRIANGLE has 3 pointy corners!", recapClips:["call-shape-triangle"] },
+          { scene:"meadow", type:"count", answer:"visual", decor:[["🌳","4%","6%"],["🌷","90%","70%"],["☀️","88%","6%"]],
+            intro:"🦉 Counting means touching each thing ONE time and saying its number. Count with me!", introClips:["owl-hello"],
+            askClips:["hoot-look-closely"], praiseClips:["call-number-1","call-number-2","call-number-3","hoot-star"],
+            recap:"one tap, one number — that's counting! Touch each thing once and say its number.", recapClips:["hoot-great-job"] },
+          { scene:"letters", fx:"letter", answer:1, decor:[["🔤","6%","8%"],["🎈","88%","12%"],["📚","84%","74%"]],
+            intro:"🦉 Letters make sounds! Listen to each one — and say the sound with me!", introClips:["owl-hello"],
+            teach:[ { t:"🍎 A says “ah” — Apple! A, ah, Apple!", clips:["fish-teach-a"] },
+                    { t:"🎈 B says “buh” — Balloon! B, buh, Balloon!", clips:["fish-teach-b"] },
+                    { t:"🐱 C says “kuh” — Cat! C, kuh, Cat!", clips:["fish-teach-c"] } ],
+            askClips:["call-letter-b"], praiseClips:["fish-teach-b","hoot-star"],
+            recap:"A says “ah” — Apple, B says “buh” — Balloon, and C says “kuh” — Cat!", recapClips:["call-letter-b"] },
+          { scene:"savanna", fx:"size", answer:0, decor:[["🌴","6%","8%"],["☀️","88%","8%"],["🦒","86%","68%"]],
+            intro:"🦉 Some things are BIG and some are small. Look with me!", introClips:["owl-hello"],
+            teach:[ { t:"🐘 BIG elephant! It takes up LOTS and LOTS of room!", clips:["teach-big"] },
+                    { t:"🐭 small mouse! It takes up just a tiny, tiny bit of room!", clips:["teach-small"] } ],
+            checks:[ { t:"Which one is small?", clips:["ask-which-small"], item:1 } ],
+            askClips:["ask-which-big"], praiseClips:["teach-big","hoot-great-job"],
+            recap:"the elephant is BIG — it takes up lots of room. The mouse is small — just a tiny bit of room!", recapClips:["teach-big","teach-small"] },
+          { scene:"space", type:"eq", eqKind:"countback", answer:1, decor:[["⭐","6%","10%"],["🌙","88%","8%"],["✨","80%","76%"]],
+            intro:"🦉 Counting can go BACKWARDS too — like a rocket getting ready to launch! Count back with me, slower and quieter…", introClips:["owl-hello"],
+            teach:[ { t:"5!", clips:["call-number-5"] }, { t:"4!", clips:["call-number-4"] }, { t:"3!", clips:["call-number-3"] },
+                    { t:"2!", clips:["call-number-2"] }, { t:"1!", clips:["call-number-1"] },
+                    { t:"🚀 BLAST OFF! Counting back takes us all the way to space!", clips:["owl-excited"] } ],
+            askClips:["call-number-5"], praiseClips:["call-number-4","hoot-star"],
+            recap:"counting back means one LESS each time — 5, 4, 3, 2, 1… blast off!", recapClips:["call-number-5","call-number-4","call-number-3","call-number-2","call-number-1","owl-excited"] },
+          { scene:"letters2", fx:"letter", answer:0, decor:[["✏️","6%","10%"],["🍇","88%","10%"],["🐶","84%","72%"]],
+            intro:"🦉 Three more letters, three more sounds! Say them with me!", introClips:["owl-hello"],
+            teach:[ { t:"🐶 D says “duh” — Dog! D, duh, Dog!", clips:["fish-teach-d"] },
+                    { t:"🐸 F says “fff” — Frog! F, fff, Frog!", clips:["call-letter-f"] },
+                    { t:"🍇 G says “guh” — Grapes! G, guh, Grapes!", clips:["call-letter-g"] } ],
+            askClips:["call-letter-d"], praiseClips:["fish-teach-d","hoot-star"],
+            recap:"D says “duh” — Dog, F says “fff” — Frog, and G says “guh” — Grapes!", recapClips:["call-letter-d"] },
+          { scene:"tidy", fx:"wiggle", answer:0, decor:[["🧺","6%","8%"],["🧸","88%","12%"],["📦","84%","74%"]],
+            intro:"🦉 Sorting means putting things that are the SAME together. Watch the piles!", introClips:["owl-hello"],
+            teach:[ { t:"🔴 The RED pile! Apple 🍎, car 🚗, balloon 🎈 — everything in this pile is RED!", clips:["call-color-red"] },
+                    { t:"🔵 The BLUE pile! Cap 🧢, whale 🐳, blueberries 🫐 — everything in this pile is BLUE!", clips:["call-color-blue"] } ],
+            askClips:["call-color-red"], praiseClips:["call-color-red","hoot-great-job"],
+            recap:"sorting puts matching things together — red with red, blue with blue!", recapClips:["call-color-red","call-color-blue"] },
+          { scene:"starmeadow", type:"count", answer:"visual", decor:[["⭐","6%","8%"],["🌟","88%","10%"],["🌙","84%","72%"]],
+            intro:"🦉 After 5, the numbers keep going! Count all the way to 10 with me!", introClips:["owl-hello"],
+            askClips:["hoot-look-closely"], praiseClips:["call-number-8","hoot-star"],
+            recap:"after 5 the numbers keep going — 6, 7, 8, 9, 10! One tap, one number, all the way up.", recapClips:["call-number-6","call-number-7","call-number-8","call-number-9","call-number-10"] },
+          { scene:"garden2", fx:"splash", answer:2, decor:[["🍊","6%","10%"],["🍇","88%","8%"],["🌱","84%","74%"]],
+            intro:"🦉 Three MORE colours to name! Say each one with me!", introClips:["owl-hello"],
+            teach:[ { t:"🟢 GREEN! Like the grass! 🌱 Say it: green!", clips:["call-color-green"] },
+                    { t:"🟠 ORANGE! Like an orange! 🍊 Say it: orange!", clips:["call-color-orange"] },
+                    { t:"🟣 PURPLE! Like grapes! 🍇 Say it: purple!", clips:["call-color-purple"] } ],
+            askClips:["call-color-green"], praiseClips:["call-color-green","hoot-star"],
+            recap:"GREEN is grass, ORANGE is an orange, and PURPLE is grapes!", recapClips:["call-color-green"] },
+          { scene:"farm", fx:"animal", animals:["moo","quack","woof"], answer:0, decor:[["🚜","5%","70%"],["🌾","88%","10%"],["🐔","84%","74%"]],
+            intro:"🦉 Every animal has its own sound. Make them with me — as loud as you like!", introClips:["owl-hello"],
+            teach:[ { t:"🐮 MOO! The cow says “moo!” Say it with me: moo!", clips:[] },
+                    { t:"🦆 QUACK! The duck says “quack!” Say it: quack!", clips:[] },
+                    { t:"🐶 WOOF! The dog says “woof!” Say it: woof!", clips:[] } ],
+            askClips:["ask-which-animal"], askSound:"moo", praiseClips:["hoot-great-job"], praiseSound:"moo",
+            recap:"the cow says “moo”, the duck says “quack”, and the dog says “woof”!", recapClips:["hoot-giggle"] },
+          { scene:"feelings", fx:"wiggle", answer:0, decor:[["💛","6%","10%"],["🌈","86%","8%"],["🫧","84%","72%"]],
+            intro:"🦉 Faces show feelings! Look at each face — and make it on YOUR face too!", introClips:["owl-hello"],
+            teach:[ { t:"😀 HAPPY! Big smile! Make a happy face with me!", clips:["teach-happy"] },
+                    { t:"😢 Sad — wobbly mouth. Feelings are okay to have, and okay to say out loud.", clips:["teach-sad"] },
+                    { t:"😴 Sleepy… eyes closing. Yaaawn!", clips:["owl-sleepy"] } ],
+            askClips:["ask-which-feeling"], praiseClips:["teach-happy","hoot-amazing"],
+            recap:"feelings are okay to have — and okay to say out loud: “I feel happy!”", recapClips:["teach-happy","hoot-giggle"] },
+          { scene:"skyground", fx:"wiggle", answer:0, decor:[["☁️","8%","6%"],["🐦","86%","10%"],["🌱","84%","78%"]],
+            intro:"🦉 Some things are UP high, and some are DOWN low. Point with me — up, then down!", introClips:["owl-hello"],
+            teach:[ { t:"⬆️ 🐦 UP! The bird flies UP in the sky! Point up, up, up!", clips:["teach-up"] },
+                    { t:"⬇️ 🐜 DOWN! The ant crawls DOWN on the ground. Point down low!", clips:["teach-down"] } ],
+            checks:[ { t:"Which one is DOWN?", clips:["ask-which-down"], item:1 } ],
+            askClips:["ask-which-up"], praiseClips:["teach-up","hoot-great-job"],
+            recap:"UP is high, high above your head — and DOWN is low on the ground!", recapClips:["teach-up","teach-down"] },
+          { scene:"parade", type:"eq", eqKind:"pattern", answer:"eq", decor:[["🎈","5%","8%"],["🎉","88%","10%"],["🎵","84%","74%"]],
+            intro:"🦉 A pattern repeats the same thing, over and over! Say it with me!", introClips:["owl-hello"],
+            teach:[ { t:"🔴 Red!", clips:["call-color-red"] }, { t:"🔵 Blue!", clips:["call-color-blue"] },
+                    { t:"🔴 Red!", clips:["call-color-red"] }, { t:"🔵 Blue!", clips:["call-color-blue"] },
+                    { t:"🔴 Red!", clips:["call-color-red"] }, { t:"🔵 Blue!", clips:["call-color-blue"] } ],
+            askClips:["teach-apple","teach-banana","teach-apple","teach-banana","teach-apple"], praiseClips:["teach-banana","hoot-star"],
+            recap:"a pattern tells you what comes NEXT — red, blue, red, blue… after blue, RED comes again!", recapClips:["call-color-red","call-color-blue"] },
+          { scene:"body", fx:"wiggle", answer:1, decor:[["🪞","6%","8%"],["🎵","88%","10%"],["🌼","84%","74%"]],
+            intro:"🦉 Your body parts each have a job! Touch each one as I name it!", introClips:["owl-hello"],
+            teach:[ { t:"👀 EYES are for SEEING! What can you see right now?", clips:["teach-eyes"] },
+                    { t:"👂 EARS are for HEARING! What sounds can you hear?", clips:["teach-ears"] },
+                    { t:"👃 NOSE is for SMELLING! Flowers and cookies — yum!", clips:["teach-nose"] },
+                    { t:"👄 MOUTH is for TASTING — yum! — and for talking and singing!", clips:["teach-mouth"] },
+                    { t:"🖐️ HANDS are for CLAPPING, waving and holding hands!", clips:["teach-hands"] },
+                    { t:"🦶 FEET are for WALKING, running and dancing!", clips:["teach-feet"] } ],
+            askClips:["ask-which-part"], praiseClips:["teach-ears","hoot-great-job"],
+            recap:"EYES are for seeing, EARS are for hearing, and your NOSE is for smelling!", recapClips:["teach-eyes","teach-ears","teach-nose"] },
+          { scene:"party", fx:"trace", answer:0, decor:[["⭐","6%","8%"],["❤️","88%","10%"],["🎉","84%","72%"]],
+            intro:"🦉 Two more shapes to know! Watch them shine!", introClips:["owl-hello"],
+            teach:[ { t:"⭐ STAR! Count the pointy points with me: 1, 2, 3, 4, 5!", clips:["call-shape-star"] },
+                    { t:"❤️ HEART! Round on top, and one pointy point at the bottom!", clips:["call-shape-heart"] } ],
+            askClips:["call-shape-star"], praiseClips:["call-shape-star","hoot-star"],
+            recap:"a STAR has 5 pointy points, and a HEART is round on top with one point at the bottom!", recapClips:["call-shape-star"] }
         ];
 
-        /* ---------- one teaching item reacts ---------- */
-        function reactItem(card, idx){
+        /* ---------- one teaching item reacts (animation + sound fx) ---------- */
+        function reactFx(card, idx){
           var cfg = card._cfg, items = card._items;
           if(!cfg || !items || !items[idx]) return;
           var el = items[idx];
-          if(cfg.say && cfg.say[idx]) setLine(card, cfg.say[idx]);
+          if(cfg.type === "count"){ pop(idx); animOnce(el, "lsn-hit", 420); return; }
           if(cfg.type === "eq"){
             if(cfg.eqKind === "countback"){
               if(idx === items.length - 1){
@@ -11969,8 +12286,7 @@
               animOnce(el, "lsn-hit", 480); pop(idx);
               break;
             case "letter":
-              animOnce(el, "lsn-hit", 520);
-              if(!letterClip(cfg.letters[idx])) pop(idx + 1);
+              animOnce(el, "lsn-hit", 520); pop(idx + 1);
               break;
             case "size":
               if(idx === 0){ animOnce(el, "lsn-grow", 640); tone(196, 0.35, "sine", 0.24); tone(98, 0.35, "triangle", 0.18, 0.02); }
@@ -11984,54 +12300,91 @@
           }
         }
 
-        /* ---------- "Show me again": Hoot re-runs the demo ----------
-           A pure demonstration: items light up in order with their
-           sounds and lines. It never touches the child's own counting
-           state or answers — the count bubble is restored afterwards. */
-        function runReplay(card){
+        /* ---------- the spoken teaching: intro, show-and-tell, question ---------- */
+        function askText(card){
+          var q = card.querySelector(".lsn-q");
+          return q ? q.textContent.replace(/\s+/g, " ").trim() : "";
+        }
+        function teachBeats(card){
+          var cfg = card._cfg, beats = [];
+          beats.push({ t: cfg.intro, clips: cfg.introClips || [] });
+          cfg.teach.forEach(function(tb, i){
+            beats.push({ t: tb.t, clips: tb.clips || [], item: i, count: cfg.type === "count" ? i + 1 : null });
+          });
+          (cfg.checks || []).forEach(function(cb){
+            beats.push({ t: cb.t, clips: cb.clips || [], item: cb.item != null ? cb.item : null });
+          });
+          beats.push({ t: askText(card), clips: cfg.askClips || [], sound: cfg.askSound || null, pause: 1500 });
+          return beats;
+        }
+        function tapItem(card, idx){
           var cfg = card._cfg;
-          if(!cfg || card._replaying) return;
-          var items = card._items || [];
-          if(!items.length) return;
-          card._replaying = true;
-          var btn = card._replayBtn;
-          if(btn){ btn.disabled = true; btn.textContent = "🦉 Watch Hoot teach…"; }
-          if(cfg.fx !== "letter") hootClip("giggle");
-          var box = card.querySelector("[data-ctap-box]");
-          var out = box ? box.querySelector("[data-ctap-count]") : null;
-          var prevCount = out ? out.textContent : null;
-          var step = 0;
-          var delay = cfg.type === "count" ? 560 : (cfg.fx === "letter" ? 1050 : 820);
-          function finish(){
-            items.forEach(function(el){ el.classList.remove("lsn-lit"); });
-            if(out) out.textContent = prevCount;
-            setLine(card, cfg.endSay || "🦉 Now you try it down below! 👇");
-            if(btn){ btn.disabled = false; btn.textContent = "▶ Show me again, Hoot!"; }
-            card._replaying = false;
+          if(!cfg || !cfg.teach || !cfg.teach[idx]) return;
+          var tb = cfg.teach[idx];
+          runBeats(card, [{ t: tb.t, clips: tb.clips || [], item: idx }], {});
+        }
+
+        /* ---------- answers: the hub's lesson contract, owned here for
+           this path so the tutor's voice is the only voice. The state
+           changes are exactly the generic engine's: .done on the card,
+           .right on the answer, options disabled, praise/hint text in
+           .lsn-fb, and the path progress pill — which is what the
+           per-profile snapshots and the Roadmap read. ---------- */
+        function panelProgressLittle(){
+          var total = cards.length;
+          var done = panel.querySelectorAll(".lsn.done").length;
+          var el = panel.querySelector("[data-lsn-progress]");
+          if(!el) return;
+          el.textContent = (done === total)
+            ? "🏆 All " + total + " lessons done — path complete!"
+            : "⭐ " + done + " of " + total + " lessons done";
+        }
+        function onRight(card, opt){
+          var cfg = card._cfg;
+          card.classList.add("done");
+          opt.classList.add("right");
+          var opts = card.querySelectorAll(".lsn-opt");
+          for(var i = 0; i < opts.length; i++) opts[i].disabled = true;
+          var praise = opt.getAttribute("data-praise") || "⭐ That's right — lesson done!";
+          var fb = card.querySelector(".lsn-fb");
+          if(fb) fb.textContent = praise;
+          panelProgressLittle();
+          burst(card);
+          var beats = [{ t: praise, clips: cfg.praiseClips || ["hoot-great-job"], sound: cfg.praiseSound || null }];
+          if(profileIs("riley")) beats.push({ t: "🎀 Lily: Yay! You did it, superstar!", clips: ["lily-cheer"], pause: 700 });
+          beats.push({ t: "🦉 So remember: " + cfg.recap, clips: cfg.recapClips || [] });
+          runBeats(card, beats, {});
+        }
+        function onWrong(card, opt){
+          var cfg = card._cfg;
+          opt.classList.add("wrong");
+          setTimeout(function(){ opt.classList.remove("wrong"); }, 650);
+          var hint = opt.getAttribute("data-hint") || "Not quite — look at Hoot's lesson again and try another answer!";
+          var fb = card.querySelector(".lsn-fb");
+          if(fb) fb.textContent = hint;
+          var beats = [
+            { t: "🦉 " + hint, clips: ["hoot-try-again"] },
+            { t: askText(card), clips: cfg.askClips || [], sound: cfg.askSound || null, pause: 1500 }
+          ];
+          runBeats(card, beats, {});
+          var target = card._answerEl;
+          if(target){
+            target.classList.remove("lsn-hint-pulse"); void target.offsetWidth;
+            target.classList.add("lsn-hint-pulse");
+            setTimeout(function(){ target.classList.remove("lsn-hint-pulse"); }, 1900);
           }
-          function next(){
-            if(step > 0) items[step - 1].classList.remove("lsn-lit");
-            if(step >= items.length){ finish(); return; }
-            var el = items[step];
-            el.classList.add("lsn-lit");
-            if(cfg.type === "count"){
-              if(out) out.textContent = String(step + 1);
-              setLine(card, (step + 1) + "! " + el.textContent + (step === items.length - 1 ? " 🎉" : ""));
-              pop(step);
-            } else {
-              reactItem(card, step);
-            }
-            step++;
-            setTimeout(next, delay);
+          var right = card.querySelector(".lsn-opt[data-right]");
+          if(right){
+            right.classList.remove("lt-gold"); void right.offsetWidth;
+            right.classList.add("lt-gold");
+            setTimeout(function(){ right.classList.remove("lt-gold"); }, 1900);
           }
-          setTimeout(next, 300);
         }
 
         /* ---------- split the pattern / count-back lines into tokens ---------- */
         function tokenize(eq, cfg){
           var parts = eq.textContent.split(/\s+/).filter(function(x){ return x && x !== "…" && x !== "..."; });
           eq.innerHTML = "";
-          cfg.say = [];
           parts.forEach(function(tok, i){
             if(i) eq.appendChild(document.createTextNode(cfg.eqKind === "countback" ? " … " : " "));
             var s = document.createElement("span");
@@ -12039,108 +12392,139 @@
             s.setAttribute("tabindex", "0");
             s.setAttribute("role", "button");
             s.textContent = tok;
-            if(cfg.eqKind === "pattern"){
-              var red = tok.indexOf("🔴") >= 0;
-              s.setAttribute("aria-label", red ? "Red circle — tap to hear Hoot" : "Blue circle — tap to hear Hoot");
-              cfg.say.push(red ? "🔴 Red!" : "🔵 Blue!");
-            } else {
-              s.setAttribute("aria-label", tok === "🚀" ? "Rocket — tap for blast off!" : "Number " + tok + " — tap to hear Hoot");
-              cfg.say.push(tok === "🚀" ? "🚀 BLAST OFF! Counting back takes us all the way to space!" : tok + "!");
-            }
+            var label = cfg.teach && cfg.teach[i] ? cfg.teach[i].t : tok;
+            s.setAttribute("aria-label", "Tap to hear Hoot: " + label);
             eq.appendChild(s);
           });
         }
 
-        /* ---------- set up all 16 lessons ---------- */
+        /* ---------- build Hoot's stage in all 16 lessons ---------- */
+        var HOOT_SVG = '<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="36" rx="24" ry="22" fill="#0e9594"/><ellipse cx="32" cy="44" rx="13" ry="11" fill="#a8e6e0"/><circle cx="21" cy="30" r="7.5" fill="#fff"/><circle cx="43" cy="30" r="7.5" fill="#fff"/><circle cx="21" cy="31" r="4" fill="#1e2a3d"/><circle cx="43" cy="31" r="4" fill="#1e2a3d"/><g class="beak"><path d="M27 37h10l-5 6z" fill="#f2b705" stroke="#d99e00" stroke-width="1" stroke-linejoin="round"/></g><circle cx="32" cy="14" r="5" fill="#f2b705"/></svg>';
         cards.forEach(function(card, li){
           var cfg = CFG[li];
           if(!cfg) return;
           var teach = card.querySelector(".lsn-teach");
           if(!teach) return;
           card._cfg = cfg;
-          var line = document.createElement("p");
-          line.className = "lsn-hoot";
-          line.setAttribute("aria-live", "polite");
-          line.textContent = "🦉 Tap everything in my lesson — it all pops, wiggles and talks back! Then press Show me again and watch me teach it!";
-          teach.appendChild(line);
+          if(cfg.type === "count"){
+            cfg.teach = slice(teach.querySelectorAll(".ctap")).map(function(el, i){
+              return { t: (i + 1) + "! " + el.textContent, clips: ["call-number-" + (i + 1)] };
+            });
+          }
+          var stage = document.createElement("div");
+          stage.className = "lt-stage";
+          var hootCol = document.createElement("div");
+          hootCol.className = "lt-hoot";
+          hootCol.setAttribute("data-hoot-char", "");
+          hootCol.innerHTML = HOOT_SVG + '<span class="lt-hoot-name">HOOT</span>';
+          var main = document.createElement("div");
+          main.className = "lt-main";
+          var bubble = document.createElement("p");
+          bubble.className = "lt-bubble";
+          bubble.setAttribute("aria-live", "polite");
+          bubble.textContent = "🦉 Hoo hoo! Tap ▶ Show me again, Hoot! and I'll teach you OUT LOUD — or tap anything in my scene to hear it!";
+          var scene = document.createElement("div");
+          scene.className = "lt-scene";
+          scene.setAttribute("data-scene", cfg.scene);
+          (cfg.decor || []).forEach(function(d, di){
+            var s = document.createElement("span");
+            s.className = "lt-decor";
+            s.setAttribute("aria-hidden", "true");
+            s.textContent = d[0];
+            s.style.left = d[1]; s.style.top = d[2];
+            s.style.animationDelay = (di * 0.7) + "s";
+            scene.appendChild(s);
+          });
+          var vis = teach.querySelector(".lsn-visual") || teach.querySelector(".lsn-eq");
+          if(vis) scene.appendChild(vis);
           var btn = document.createElement("button");
           btn.type = "button";
           btn.className = "lsn-replay";
           btn.textContent = "▶ Show me again, Hoot!";
-          teach.appendChild(btn);
-          card._line = line;
+          main.appendChild(bubble);
+          main.appendChild(scene);
+          main.appendChild(btn);
+          stage.appendChild(hootCol);
+          stage.appendChild(main);
+          teach.insertBefore(stage, teach.firstChild);
+          card._line = bubble;
           card._replayBtn = btn;
-          btn.addEventListener("click", function(){ runReplay(card); });
+          btn.addEventListener("click", function(){ runBeats(card, teachBeats(card), { replayBtn:true }); });
+          var q = card.querySelector(".lsn-q");
+          if(q){
+            q.classList.add("lt-q");
+            q.setAttribute("tabindex", "0");
+            q.setAttribute("role", "button");
+            q.setAttribute("aria-label", "Hear Hoot ask the question: " + q.textContent.replace(/\s+/g, " ").trim());
+          }
           if(cfg.type === "count"){
-            card._items = Array.prototype.slice.call(card.querySelectorAll(".ctap"));
+            card._items = slice(teach.querySelectorAll(".ctap"));
             card._answerEl = card.querySelector(".lsn-visual");
           } else if(cfg.type === "eq"){
             var eq = teach.querySelector(".lsn-eq");
             if(!eq){ card._items = []; return; }
             tokenize(eq, cfg);
-            card._items = Array.prototype.slice.call(eq.querySelectorAll(".lsn-token"));
+            card._items = slice(eq.querySelectorAll(".lsn-token"));
             card._answerEl = cfg.answer === "eq" ? eq : card._items[cfg.answer];
           } else {
-            var items = Array.prototype.slice.call(teach.querySelectorAll(".lsn-visual > .lchip, .lsn-visual > .cdot"));
+            var items = slice(scene.querySelectorAll(".lsn-visual > .lchip, .lsn-visual > .cdot"));
             items.forEach(function(el, i){
               el.classList.add("lsn-manip");
               el.setAttribute("tabindex", "0");
               el.setAttribute("role", "button");
-              el.setAttribute("aria-label", "Tap to learn with Hoot: " + (cfg.say[i] || el.textContent));
+              el.setAttribute("aria-label", "Tap to learn with Hoot: " + (cfg.teach[i] ? cfg.teach[i].t : el.textContent));
             });
             card._items = items;
             card._answerEl = items[cfg.answer];
           }
         });
 
-        /* ---------- taps: manipulatives, counting dots, answers ---------- */
+        /* ---------- taps: answers, counting dots, scene objects, question ---------- */
         panel.addEventListener("click", function(e){
           var t = e.target;
           if(!t || !t.closest) return;
+          var opt = t.closest(".lsn-opt");
+          if(opt){
+            /* The tutor owns answers in this path (see onRight/onWrong);
+               the generic engine keeps every other path. */
+            e.stopPropagation();
+            var c2 = opt.closest(".lsn");
+            if(!c2 || !c2._cfg) return;
+            if(c2.classList.contains("done") || opt.disabled) return;
+            animOnce(opt, "lsn-tap", 380);
+            tone(520, 0.07, "sine", 0.07);
+            if(opt.hasAttribute("data-right")) onRight(c2, opt);
+            else onWrong(c2, opt);
+            return;
+          }
           var ct = t.closest(".ctap");
           if(ct){
             var box = ct.closest("[data-ctap-box]");
             if(box){
-              var dots = Array.prototype.slice.call(box.querySelectorAll(".ctap"));
-              /* The engine lights the dot on this same click (its
-                 listener runs after this one in the bubble), so the
-                 running count is the lit dots plus this one when it is
-                 not lit yet — Hoot's spoken-style count always matches
-                 the big count bubble. */
+              /* The generic engine lights the dot on this same click
+                 (its listener runs after this one), so the running
+                 count is the lit dots plus this one when it is not lit
+                 yet — Hoot's spoken number always matches the bubble. */
               var lit = box.querySelectorAll(".ctap.on").length;
               var n = ct.classList.contains("on") ? lit : lit + 1;
               var c0 = ct.closest(".lsn");
               animOnce(ct, "lsn-hit", 420);
               pop(n - 1);
-              if(c0) setLine(c0, n + "! " + ct.textContent + (n === dots.length ? " 🎉" : ""));
+              if(c0) setLine(c0, n + "! " + ct.textContent + (n === box.querySelectorAll(".ctap").length ? " 🎉" : ""));
+              if(n >= 1 && n <= 10) playSolo(["call-number-" + n]);
             }
             return;
           }
           var man = t.closest(".lsn-manip, .lsn-token");
           if(man){
             var c1 = man.closest(".lsn");
-            if(c1 && c1._items) reactItem(c1, c1._items.indexOf(man));
+            if(c1 && c1._items) tapItem(c1, c1._items.indexOf(man));
             return;
           }
-          var opt = t.closest(".lsn-opt");
-          if(opt){
-            var c2 = opt.closest(".lsn");
-            if(!c2 || !c2._cfg) return;
-            animOnce(opt, "lsn-tap", 380);
-            tone(520, 0.07, "sine", 0.07);
-            if(opt.hasAttribute("data-right")){
-              burst(c2);
-            } else if(!c2.classList.contains("done")){
-              setLine(c2, c2._cfg.type === "count"
-                ? "🦉 Count with me up here — touch each one, say its number out loud, then try again!"
-                : "🦉 Psst — look up here! The glowing one is the one from my lesson. Try again!");
-              var target = c2._answerEl;
-              if(target){
-                target.classList.remove("lsn-hint-pulse"); void target.offsetWidth;
-                target.classList.add("lsn-hint-pulse");
-                setTimeout(function(){ target.classList.remove("lsn-hint-pulse"); }, 1900);
-              }
-            }
+          var q = t.closest(".lt-q");
+          if(q){
+            var c3 = q.closest(".lsn");
+            if(c3 && c3._cfg) runBeats(c3, [{ t: askText(c3), clips: c3._cfg.askClips || [], sound: c3._cfg.askSound || null, pause: 1500 }], {});
           }
         });
         panel.addEventListener("keydown", function(e){
@@ -12148,11 +12532,37 @@
           var t = e.target;
           if(!t || !t.closest) return;
           var man = t.closest(".lsn-manip, .lsn-token");
-          if(!man) return;
-          e.preventDefault();
-          var c = man.closest(".lsn");
-          if(c && c._items) reactItem(c, c._items.indexOf(man));
+          if(man){
+            e.preventDefault();
+            var c = man.closest(".lsn");
+            if(c && c._items) tapItem(c, c._items.indexOf(man));
+            return;
+          }
+          var q = t.closest(".lt-q");
+          if(q){
+            e.preventDefault();
+            var cq = q.closest(".lsn");
+            if(cq && cq._cfg) runBeats(cq, [{ t: askText(cq), clips: cq._cfg.askClips || [], sound: cq._cfg.askSound || null, pause: 1500 }], {});
+          }
         });
+
+        /* ---------- no ghost audio: leaving the lesson context stops
+           the tutor — any tap outside this panel (bottom nav, profile
+           gate, another view's controls), a profile switch
+           (data-profile changes on body), an age-tab switch (this
+           panel loses its place), the profile gate opening over the
+           app, or the tab being hidden. ---------- */
+        document.addEventListener("click", function(e){
+          if(e.target && panel.contains && !panel.contains(e.target)) stopTutor();
+        }, true);
+        if(window.MutationObserver){
+          var mo = new MutationObserver(function(){ stopTutor(); });
+          mo.observe(document.body, { attributes:true, attributeFilter:["data-profile"] });
+          mo.observe(panel, { attributes:true, attributeFilter:["class"] });
+          var gate = document.getElementById("profile-gate");
+          if(gate) mo.observe(gate, { attributes:true, attributeFilter:["hidden"] });
+        }
+        document.addEventListener("visibilitychange", function(){ if(document.hidden) stopTutor(); });
       })();
     </script>
     <script>
