@@ -1888,6 +1888,20 @@
       .prof-row.active{ border-color:#ffb300; box-shadow:0 0 0 3px #ffb300 inset; }
       .prof-row .prof-now{ background:#ffd93b; color:#4a3500; font-family:"Fredoka",sans-serif; font-weight:700; font-size:.85rem; padding:5px 11px; border-radius:999px; }
       .prof-row:not(.active) .prof-now{ display:none; }
+      /* --- Parents: Family Sync card --- */
+      .sync-code-big{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(1.55rem,6vw,2.25rem); letter-spacing:.05em; background:#fff7d6; border:3px dashed #e0a800; color:#4a3500; border-radius:18px; padding:12px 14px; text-align:center; margin-top:14px; overflow-wrap:anywhere; }
+      @media (prefers-color-scheme: dark){ .sync-code-big{ background:#3a2f10; color:#ffe082; border-color:#a97e00; } }
+      .sync-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+      .sync-btn{ border:none; background:#0b7c7b; color:#fff; font-family:"Fredoka",sans-serif; font-weight:600; font-size:1rem; padding:12px 20px; border-radius:999px; cursor:pointer; min-height:48px; }
+      .sync-btn:active{ transform:translateY(2px); }
+      .sync-btn.secondary{ background:#17263b; }
+      .sync-btn.quiet{ background:transparent; color:inherit; opacity:.6; font-family:inherit; font-weight:700; font-size:.88rem; padding:8px 6px; min-height:40px; text-decoration:underline; margin-top:6px; }
+      .sync-join{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+      .sync-join input{ flex:1 1 210px; font-family:"Fredoka",sans-serif; font-size:1.08rem; letter-spacing:.04em; padding:12px 14px; border-radius:14px; border:2.5px solid #cfdce8; background:#f4f8fc; color:#17263b; min-height:48px; }
+      @media (prefers-color-scheme: dark){ .sync-join input{ background:#2a3c58; border-color:#3c5478; color:#eaf4ff; } }
+      .sync-or{ font-weight:800; opacity:.55; margin:18px 0 0; font-size:.85rem; letter-spacing:.05em; }
+      .sync-status{ font-weight:800; font-size:.95rem; margin:12px 0 0; }
+      .sync-msg{ font-weight:700; font-size:.93rem; line-height:1.45; margin:8px 0 0; min-height:1.2em; max-width:75ch; }
       /* Big Hoot on the welcome screen */
       .welcome-hoot{ display:block; width:118px; height:118px; margin:0 auto 6px; filter:drop-shadow(0 8px 14px rgba(20,60,90,.25)); }
       @media (prefers-reduced-motion: no-preference){ .welcome-hoot{ animation:hh-bob 3.2s ease-in-out infinite; } }
@@ -4716,6 +4730,31 @@
 <div class="prof-row" data-profile-row="zane"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#dceeff"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#2456a6"/><circle cx="50" cy="46" r="26" fill="#f4c48d"/><path d="M24 44 Q22 18 50 18 Q78 18 76 44 Q76 30 64 28 Q66 36 60 30 Q50 24 38 30 Q26 34 24 44 Z" fill="#4a3220"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M41 58 Q50 65 59 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f0a868" opacity=".65"/><circle cx="67" cy="55" r="4.5" fill="#f0a868" opacity=".65"/></svg><div class="prof-row-main"><b>Zane</b> <span class="prof-now">⭐ Playing now</span><span>Age 3 · Boy · Little Explorers (ages 2–4), a step ahead</span><span class="prof-counts" data-prof-counts="zane"></span></div><button type="button" class="prof-row-btn" data-profile-pick="zane" data-source="parents">▶ Play as Zane</button></div>
 <div class="prof-row" data-profile-row="riley"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#ffe3ee"/><circle cx="20" cy="52" r="11" fill="#6b4423"/><circle cx="80" cy="52" r="11" fill="#6b4423"/><circle cx="20" cy="40" r="5" fill="#ff5d8f"/><circle cx="80" cy="40" r="5" fill="#ff5d8f"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#e83e77"/><circle cx="50" cy="46" r="26" fill="#f7cf9f"/><path d="M24 46 Q22 20 50 20 Q78 20 76 46 Q74 30 60 27 Q50 24 40 27 Q26 30 24 46 Z" fill="#6b4423"/><path d="M50 12 L40 4 Q34 10 42 15 L34 18 Q40 24 50 19 Q60 24 66 18 L58 15 Q66 10 60 4 Z" fill="#ffd93b" stroke="#e0a800" stroke-width="1.4" stroke-linejoin="round"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M42 58 Q50 64 58 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/><circle cx="67" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/></svg><div class="prof-row-main"><b>Riley</b> <span class="prof-now">⭐ Playing now</span><span>Age 2 · Girl · Little Explorers (ages 2–4), biggest &amp; simplest</span><span class="prof-counts" data-prof-counts="riley"></span></div><button type="button" class="prof-row-btn" data-profile-pick="riley" data-source="parents">▶ Play as Riley</button></div>
 <div class="prof-row" data-profile-row="kaitlyn"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#e9e4ff"/><path d="M23 100 V48 Q23 18 50 18 Q77 18 77 48 V100 H63 V58 Q63 42 50 42 Q37 42 37 58 V100 Z" fill="#5a3a22"/><path d="M14 100 Q16 76 50 76 Q84 76 86 100 Z" fill="#7d5ba6"/><circle cx="50" cy="48" r="25" fill="#f7cf9f"/><path d="M25 46 Q26 22 50 22 Q74 22 75 46 Q73 30 58 27 Q50 25 42 27 Q27 30 25 46 Z" fill="#5a3a22"/><circle cx="41" cy="49" r="3.4" fill="#26343a"/><circle cx="59" cy="49" r="3.4" fill="#26343a"/><path d="M42 60 Q50 66 58 60" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/><circle cx="67" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/></svg><div class="prof-row-main"><b>Kaitlyn</b> <span class="prof-now">⭐ Playing now</span><span>Age 12 · Girl · Ages 11–13 · New York curriculum (Port Chester) · Hoot is her tutor</span><span class="prof-counts" data-prof-counts="kaitlyn"></span><span class="prof-report" data-kaitlyn-report>🎓 Tutor report — Mastered: none yet · Needed re-teaching: none yet. This fills in from Kaitlyn's real NY lesson attempts as she plays.</span></div><button type="button" class="prof-row-btn" data-profile-pick="kaitlyn" data-source="parents">▶ Play as Kaitlyn</button></div>
+          </div>
+
+          <div class="prof-settings" id="family-sync" aria-label="Family sync — the same progress on every phone and the iPad">
+            <h3>👨‍👩‍👧 Family Sync</h3>
+            <p>Put Hoot's World on Mum's phone, Dad's phone and the iPad — and every device shows the SAME stars, stickers, lessons and photos for Zane, Riley and Kaitlyn, so nothing gets lost between them. Start family sync on one device to get your family's secret code, then enter that same code on the others. There are no accounts and no sign-in — the code is the only key, so keep it in the family.</p>
+            <div id="sync-nocode">
+              <div class="sync-actions">
+                <button type="button" class="sync-btn" id="sync-start">🔑 Start family sync</button>
+              </div>
+              <p class="sync-or">ALREADY HAVE A FAMILY CODE?</p>
+              <div class="sync-join">
+                <input id="sync-join-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OWL-______-______" aria-label="Enter your family code">
+                <button type="button" class="sync-btn secondary" id="sync-join-btn">Join with this code</button>
+              </div>
+            </div>
+            <div id="sync-hascode" hidden>
+              <div class="sync-code-big" id="sync-code-big">OWL-······-······</div>
+              <div class="sync-actions">
+                <button type="button" class="sync-btn secondary" id="sync-copy">📋 Copy the code</button>
+                <button type="button" class="sync-btn" id="sync-now">🔄 Sync now</button>
+              </div>
+              <p class="sync-status" id="sync-status"></p>
+              <button type="button" class="sync-btn quiet" id="sync-stop">Stop syncing on this device</button>
+            </div>
+            <p class="sync-msg" id="sync-msg" role="status" aria-live="polite"></p>
           </div>
 
           <div class="pgrid">
@@ -8878,6 +8917,511 @@
           }
         });
         setTimeout(function(){ syncState(); applyAll(); }, 350);
+      })();
+    </script>
+    <script>
+      /* ===== FAMILY SYNC — the same progress on every device =====
+         Parents → Family Sync. One long random family code is the
+         only credential: no accounts, no sign-in. The full saved
+         state of this device — every child's profile snapshot
+         (lesson stars, counting, stickers), Kaitlyn's NY lesson
+         store + her tutor-report flags, the Roadmap store, and the
+         activity photos (bytes in the family-photos bucket, their
+         activity/profile/caption metadata in the state JSON) —
+         lives as one JSON object in Supabase table family_state,
+         keyed by the code. On load, a device with a code pulls
+         first: if the cloud copy is newer than this device's
+         last-sync marker it is adopted (stores written back, photos
+         reconciled into the on-device photo store) and the app
+         reloads once so the normal restore shows the family state.
+         Saves push back, debounced ~2s, hooked by watching the
+         app's own store writes; a slow poll catches anything else,
+         and hiding/closing the app flushes a last push. Every
+         network step is wrapped so a failure is silent: offline,
+         or with no code set, the app behaves exactly as it always
+         has — the on-device save remains the always-working layer. */
+      (function(){
+        "use strict";
+        var SB_URL = "https://smqdfujuqovkaosssfte.supabase.co";
+        var SB_KEYS = [
+          "sb_publishable_QZoJC3_vrEI-IHRLv9ngkA_TLIywh_E",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtcWRmdWp1cW92a2Fvc3NzZnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxOTE1NzgsImV4cCI6MjEwOTc2NzU3OH0.366mwLfE-TJI3b2mvT35WZk4QrXFBFXuZD5JNlCCyH0"
+        ];
+        var goodKey = 0;
+        var CODE_KEY = "hootworld.familycode.v1";
+        var MARK_KEY = "hootworld.familysync.v1";
+        var STORES = [
+          { name:"profiles",  key:"hootworld.profiles.v1" },
+          { name:"nylessons", key:"hootworld.nylessons.v1" },
+          { name:"nyneed",    key:"hootworld.nyneed.v1" },
+          { name:"roadmap",   key:"hootworld.roadmap.v1" }
+        ];
+        var SYNCED = {};
+        STORES.forEach(function(s){ SYNCED[s.key] = true; });
+
+        var store0 = null;
+        try{ store0 = window.localStorage; if(!store0) return; store0.getItem(CODE_KEY); }
+        catch(e){ return; }
+        var origSet = store0.setItem.bind(store0);
+        var origRemove = store0.removeItem.bind(store0);
+        function lsGet(k){ try{ return store0.getItem(k); }catch(e){ return null; } }
+        function lsSet(k, v){ try{ origSet(k, v); }catch(e){} }
+
+        function getCode(){ var c = lsGet(CODE_KEY); return c ? String(c) : ""; }
+        var marker = { lastSync:null, hash:"" };
+        try{ var m = JSON.parse(lsGet(MARK_KEY) || "null"); if(m && typeof m === "object") marker = m; }catch(e){}
+        function saveMarker(){ lsSet(MARK_KEY, JSON.stringify(marker)); }
+
+        /* ---------- tiny hash (change detection only) ---------- */
+        function hashStr(s){
+          var h = 5381;
+          for(var i = 0; i < s.length; i++){ h = ((h << 5) + h + s.charCodeAt(i)) | 0; }
+          return "h" + (h >>> 0).toString(36) + "." + s.length;
+        }
+        function stateHash(st){
+          var ids = ((st && st.photos) || []).map(function(p){ return p.id; }).sort().join(",");
+          return hashStr(JSON.stringify([st && st.profiles, st && st.nylessons, st && st.nyneed, st && st.roadmap]) + "|" + ids);
+        }
+        function readStores(){
+          var o = {};
+          STORES.forEach(function(s){
+            var raw = lsGet(s.key), v = null;
+            if(raw){ try{ v = JSON.parse(raw); }catch(e){ v = null; } }
+            o[s.name] = v;
+          });
+          return o;
+        }
+
+        /* ---------- Supabase REST (publishable key, anon fallback) ---------- */
+        function sbFetch(path, opts){
+          opts = opts || {};
+          var start = goodKey;
+          function attempt(i){
+            var key = SB_KEYS[(start + i) % SB_KEYS.length];
+            var headers = { "apikey": key, "Authorization": "Bearer " + key };
+            if(opts.headers) for(var h in opts.headers) headers[h] = opts.headers[h];
+            return fetch(SB_URL + path, {
+              method: opts.method || "GET",
+              headers: headers,
+              body: opts.body,
+              keepalive: !!opts.keepalive
+            }).then(function(res){
+              if((res.status === 401 || res.status === 403) && i + 1 < SB_KEYS.length) return attempt(i + 1);
+              if(res.ok) goodKey = (start + i) % SB_KEYS.length;
+              return res;
+            });
+          }
+          return attempt(0);
+        }
+        function pullRow(code){
+          return sbFetch("/rest/v1/family_state?family_code=eq." + encodeURIComponent(code) + "&select=family_code,state,updated_at")
+            .then(function(res){
+              if(!res.ok) throw new Error("pull " + res.status);
+              return res.json();
+            })
+            .then(function(rows){ return (rows && rows.length) ? rows[0] : null; });
+        }
+        function upsertRow(code, state, keepalive){
+          return sbFetch("/rest/v1/family_state", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates,return=minimal" },
+            body: JSON.stringify({ family_code: code, state: state, updated_at: state.updated_at }),
+            keepalive: keepalive
+          }).then(function(res){ if(!res.ok) throw new Error("push " + res.status); });
+        }
+        function bucketList(code){
+          return sbFetch("/storage/v1/object/list/family-photos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prefix: code, limit: 1000, sortBy: { column: "name", order: "asc" } })
+          }).then(function(res){
+            if(!res.ok) throw new Error("list " + res.status);
+            return res.json();
+          }).then(function(items){
+            return (items || []).map(function(o){ return o.name; }).filter(function(n){ return /\.jpg$/i.test(n || ""); });
+          });
+        }
+        function bucketUpload(code, rec){
+          return sbFetch("/storage/v1/object/family-photos/" + encodeURIComponent(code) + "/" + encodeURIComponent(rec.id) + ".jpg", {
+            method: "POST",
+            headers: { "Content-Type": (rec.blob && rec.blob.type) || "image/jpeg", "x-upsert": "true" },
+            body: rec.blob
+          }).then(function(res){ if(!res.ok) throw new Error("upload " + res.status); });
+        }
+        function bucketDownload(code, id){
+          return sbFetch("/storage/v1/object/family-photos/" + encodeURIComponent(code) + "/" + encodeURIComponent(id) + ".jpg")
+            .then(function(res){ if(!res.ok) throw new Error("download " + res.status); return res.blob(); });
+        }
+        function bucketDelete(code, names){
+          if(!names.length) return Promise.resolve();
+          return sbFetch("/storage/v1/object/family-photos", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prefixes: names.map(function(n){ return code + "/" + n; }) })
+          }).then(function(res){ if(!res.ok) throw new Error("delete " + res.status); });
+        }
+
+        /* ---------- the on-device photo store (same DB the photo
+           spots use: hootworld-photos / photos) ---------- */
+        var idbPromise = null;
+        function idb(){
+          if(idbPromise) return idbPromise;
+          idbPromise = new Promise(function(resolve){
+            if(!("indexedDB" in window)){ resolve(null); return; }
+            var req;
+            try{ req = indexedDB.open("hootworld-photos", 1); }catch(e){ resolve(null); return; }
+            req.onupgradeneeded = function(){ try{ req.result.createObjectStore("photos", { keyPath: "id" }); }catch(e){} };
+            req.onsuccess = function(){ resolve(req.result); };
+            req.onerror = function(){ resolve(null); };
+          });
+          return idbPromise;
+        }
+        function idbAll(){
+          return idb().then(function(db){
+            return new Promise(function(resolve){
+              if(!db){ resolve([]); return; }
+              try{
+                var rq = db.transaction("photos", "readonly").objectStore("photos").getAll();
+                rq.onsuccess = function(){ resolve(rq.result || []); };
+                rq.onerror = function(){ resolve([]); };
+              }catch(e){ resolve([]); }
+            });
+          });
+        }
+        function idbKeys(){
+          return idb().then(function(db){
+            return new Promise(function(resolve){
+              if(!db){ resolve([]); return; }
+              try{
+                var rq = db.transaction("photos", "readonly").objectStore("photos").getAllKeys();
+                rq.onsuccess = function(){ resolve(rq.result || []); };
+                rq.onerror = function(){ resolve([]); };
+              }catch(e){ resolve([]); }
+            });
+          });
+        }
+        function idbPut(rec){
+          return idb().then(function(db){
+            return new Promise(function(resolve){
+              if(!db){ resolve(); return; }
+              try{
+                var tx = db.transaction("photos", "readwrite");
+                tx.objectStore("photos").put(rec);
+                tx.oncomplete = function(){ resolve(); };
+                tx.onerror = function(){ resolve(); };
+              }catch(e){ resolve(); }
+            });
+          });
+        }
+        function idbDelete(id){
+          return idb().then(function(db){
+            return new Promise(function(resolve){
+              if(!db){ resolve(); return; }
+              try{
+                var tx = db.transaction("photos", "readwrite");
+                tx.objectStore("photos").delete(id);
+                tx.oncomplete = function(){ resolve(); };
+                tx.onerror = function(){ resolve(); };
+              }catch(e){ resolve(); }
+            });
+          });
+        }
+        function photoMeta(rec){
+          return { id: rec.id, key: rec.key, caption: rec.caption, title: rec.title, prof: rec.prof, ts: rec.ts };
+        }
+        function localHash(){
+          return idbKeys().then(function(ids){
+            var st = readStores();
+            st.photos = ids.slice().sort().map(function(id){ return { id: id }; });
+            return stateHash(st);
+          });
+        }
+
+        /* ---------- card UI ---------- */
+        var elNo = document.getElementById("sync-nocode");
+        var elHas = document.getElementById("sync-hascode");
+        var elCodeBig = document.getElementById("sync-code-big");
+        var elStatus = document.getElementById("sync-status");
+        var elMsg = document.getElementById("sync-msg");
+        var elJoin = document.getElementById("sync-join-input");
+        var lastFailed = false;
+        function fmtTime(iso){
+          var d = new Date(iso);
+          if(isNaN(d.getTime())) return "";
+          return d.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+        }
+        function setStatus(t){ if(elStatus) elStatus.textContent = t; }
+        function statusDefault(){
+          if(!getCode()) return;
+          if(lastFailed || (typeof navigator !== "undefined" && navigator.onLine === false)) setStatus("📴 Offline — will sync later. Everything keeps saving on this device.");
+          else if(marker.lastSync) setStatus("☁️ Last synced " + fmtTime(marker.lastSync));
+          else setStatus("☁️ Not synced yet — tap Sync now.");
+        }
+        function msg(t){ if(elMsg) elMsg.textContent = t; }
+        function render(){
+          var code = getCode();
+          if(elNo) elNo.hidden = !!code;
+          if(elHas) elHas.hidden = !code;
+          if(code && elCodeBig) elCodeBig.textContent = code;
+          statusDefault();
+        }
+        try{
+          var flash = sessionStorage.getItem("hw.sync.flash");
+          if(flash){
+            sessionStorage.removeItem("hw.sync.flash");
+            if(flash === "joined") msg("🎉 Joined! This device now shows your family's progress — the same stars, lessons and photos as the other devices.");
+            else if(flash === "updated") msg("☁️ Fresh progress arrived from another device and is loaded.");
+          }
+        }catch(e){}
+
+        /* ---------- push ---------- */
+        var pushing = false, pushQueued = false, pushTimer = null;
+        function schedulePush(){
+          if(!getCode()) return;
+          if(pushTimer) clearTimeout(pushTimer);
+          pushTimer = setTimeout(function(){ pushNow(false); }, 2000);
+        }
+        function pushNow(stateOnly){
+          var code = getCode();
+          if(!code) return Promise.resolve();
+          if(pushing){ pushQueued = true; return Promise.resolve(); }
+          pushing = true;
+          setStatus("🔄 Syncing…");
+          return idbAll().then(function(recs){
+            var stores = readStores();
+            var state = {
+              v: 1,
+              updated_at: new Date().toISOString(),
+              profiles: stores.profiles,
+              nylessons: stores.nylessons,
+              nyneed: stores.nyneed,
+              roadmap: stores.roadmap,
+              photos: recs.map(photoMeta)
+            };
+            var chain = Promise.resolve();
+            if(!stateOnly){
+              chain = bucketList(code).then(function(names){
+                var have = {};
+                names.forEach(function(n){ have[n] = true; });
+                var localIds = {};
+                recs.forEach(function(r){ localIds[r.id] = true; });
+                var ups = recs.filter(function(r){ return r.blob && !have[r.id + ".jpg"]; })
+                              .map(function(r){ return bucketUpload(code, r).catch(function(){}); });
+                var extras = names.filter(function(n){ return !localIds[n.replace(/\.jpg$/i, "")]; });
+                return Promise.all(ups).then(function(){ return bucketDelete(code, extras).catch(function(){}); });
+              }).catch(function(){});
+            }
+            return chain.then(function(){ return upsertRow(code, state, !!stateOnly); })
+              .then(function(){
+                marker.lastSync = state.updated_at;
+                marker.hash = stateHash(state);
+                saveMarker();
+                lastFailed = false;
+                statusDefault();
+              });
+          }).catch(function(){
+            lastFailed = true;
+            statusDefault();
+          }).then(function(){
+            pushing = false;
+            if(pushQueued){ pushQueued = false; schedulePush(); }
+          });
+        }
+
+        /* ---------- adopt a newer cloud state ---------- */
+        function adopt(state){
+          var changed = false;
+          STORES.forEach(function(s){
+            var v = state[s.name];
+            if(v === null || v === undefined) return;
+            var str = JSON.stringify(v);
+            if(lsGet(s.key) !== str){ lsSet(s.key, str); changed = true; }
+          });
+          var meta = (state && state.photos) || [];
+          var cloudIds = {};
+          meta.forEach(function(p){ cloudIds[p.id] = p; });
+          return idbAll().then(function(recs){
+            var localIds = {};
+            recs.forEach(function(r){ localIds[r.id] = true; });
+            var chain = Promise.resolve();
+            recs.forEach(function(r){
+              if(!cloudIds[r.id]){
+                chain = chain.then(function(){ return idbDelete(r.id); }).then(function(){ changed = true; });
+              }
+            });
+            var code = getCode();
+            meta.forEach(function(p){
+              if(!localIds[p.id]){
+                chain = chain.then(function(){
+                  return bucketDownload(code, p.id).then(function(blob){
+                    return idbPut({ id: p.id, key: p.key, caption: p.caption, title: p.title, prof: p.prof, blob: blob, ts: p.ts });
+                  }).then(function(){ changed = true; }).catch(function(){});
+                });
+              }
+            });
+            return chain;
+          }).then(function(){
+            marker.lastSync = (state && state.updated_at) || marker.lastSync;
+            marker.hash = stateHash(state || {});
+            saveMarker();
+            return changed;
+          });
+        }
+        function reloadOnce(cloudAt, flashMsg){
+          var already = null;
+          try{ already = sessionStorage.getItem("hw.sync.adoptedFor"); }catch(e){}
+          if(already === String(cloudAt)) return;
+          try{
+            sessionStorage.setItem("hw.sync.adoptedFor", String(cloudAt));
+            if(flashMsg) sessionStorage.setItem("hw.sync.flash", flashMsg);
+          }catch(e){}
+          try{ location.reload(); }catch(e){}
+        }
+
+        /* ---------- reconcile: pull, adopt if newer, else push ---------- */
+        var reconciling = false;
+        function reconcile(){
+          var code = getCode();
+          if(!code || reconciling) return Promise.resolve();
+          reconciling = true;
+          return pullRow(code).then(function(row){
+            if(!row){ return pushNow(false); }
+            var state = row.state || {};
+            var cloudAt = state.updated_at || row.updated_at;
+            return localHash().then(function(lh){
+              var cloudHash = stateHash(state);
+              if(cloudAt && (!marker.lastSync || cloudAt > marker.lastSync)){
+                if(cloudHash !== lh){
+                  return adopt(state).then(function(changed){
+                    lastFailed = false;
+                    if(changed) reloadOnce(cloudAt, "updated");
+                    else statusDefault();
+                  });
+                }
+                marker.lastSync = cloudAt; marker.hash = cloudHash; saveMarker();
+                statusDefault();
+                return null;
+              }
+              if(lh !== marker.hash) return pushNow(false);
+              statusDefault();
+              return null;
+            });
+          }).catch(function(){
+            lastFailed = true;
+            statusDefault();
+          }).then(function(){ reconciling = false; });
+        }
+
+        /* ---------- card actions ---------- */
+        function genCode(){
+          var alpha = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+          var buf = new Uint8Array(12), out = "";
+          try{ (window.crypto || {}).getRandomValues ? crypto.getRandomValues(buf) : null; }
+          catch(e){ for(var i = 0; i < 12; i++) buf[i] = Math.floor(Math.random() * 256); }
+          if(!buf.some(function(b){ return b > 0; })) for(var j = 0; j < 12; j++) buf[j] = Math.floor(Math.random() * 256);
+          for(var k = 0; k < 12; k++){ out += alpha[buf[k] % alpha.length]; if(k === 5) out += "-"; }
+          return "OWL-" + out;
+        }
+        var btnStart = document.getElementById("sync-start");
+        if(btnStart) btnStart.addEventListener("click", function(){
+          if(getCode()) return;
+          var code = genCode();
+          lsSet(CODE_KEY, code);
+          marker = { lastSync: null, hash: "" }; saveMarker();
+          render();
+          msg("🎉 Family sync is ON! Your family code is the big one above — write it down or copy it, then enter it under “Join with a family code” on the other phones and the iPad. Syncing this device's progress now…");
+          pushNow(false).then(function(){
+            msg(lastFailed
+              ? "Family sync is ON and your code is saved on this device — but this first sync couldn't get through (offline?). Everything keeps saving here and will sync when you're back online."
+              : "🎉 Family sync is ON and this device's progress is synced! Now open Hoot's World on the other devices, go to Parents → Family Sync and join with this code. Keep it in the family — anyone with the code can see the kids' progress.");
+          });
+        });
+        var btnJoin = document.getElementById("sync-join-btn");
+        function doJoin(){
+          var raw = elJoin ? elJoin.value.trim() : "";
+          if(!raw){ msg("Type your family code first — it's the one shown on the device where family sync was started."); return; }
+          var code = /^owl/i.test(raw) ? raw.toUpperCase().replace(/\s+/g, "") : raw.replace(/\s+/g, "");
+          msg("🔎 Looking for your family…");
+          pullRow(code).then(function(row){
+            if(!row){
+              msg("Hmm — no family found under that code yet. Check it matches the code on the other device exactly, and that the other device has synced once while online.");
+              return;
+            }
+            lsSet(CODE_KEY, code);
+            marker = { lastSync: null, hash: "" }; saveMarker();
+            render();
+            msg("☁️ Found your family! Loading everyone's progress onto this device…");
+            adopt(row.state || {}).then(function(){
+              try{ sessionStorage.setItem("hw.sync.flash", "joined"); }catch(e){}
+              try{ location.reload(); }catch(e){}
+            });
+          }).catch(function(){
+            msg("Couldn't reach the sync service just now — check your connection and tap Join again. Nothing on this device was changed.");
+          });
+        }
+        if(btnJoin) btnJoin.addEventListener("click", doJoin);
+        if(elJoin) elJoin.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); doJoin(); } });
+        var btnNow = document.getElementById("sync-now");
+        if(btnNow) btnNow.addEventListener("click", function(){
+          msg("");
+          reconcile().then(function(){ return pushNow(false); }).then(function(){
+            if(!lastFailed) msg("☁️ All synced — this device and the cloud match.");
+          });
+        });
+        var btnCopy = document.getElementById("sync-copy");
+        if(btnCopy) btnCopy.addEventListener("click", function(){
+          var code = getCode();
+          if(!code) return;
+          function done(){ msg("📋 Copied! Paste it into Hoot's World → Parents → Family Sync on the other device."); }
+          function fallback(){
+            try{
+              var ta = document.createElement("textarea");
+              ta.value = code;
+              ta.style.position = "fixed"; ta.style.opacity = "0";
+              document.body.appendChild(ta);
+              ta.select();
+              var ok = document.execCommand && document.execCommand("copy");
+              ta.remove();
+              if(ok) done(); else msg("The code is the big one above — long-press it to copy, or write it down.");
+            }catch(e){ msg("The code is the big one above — long-press it to copy, or write it down."); }
+          }
+          if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, fallback);
+          else fallback();
+        });
+        var btnStop = document.getElementById("sync-stop");
+        if(btnStop) btnStop.addEventListener("click", function(){
+          try{ origRemove(CODE_KEY); origRemove(MARK_KEY); }catch(e){}
+          marker = { lastSync: null, hash: "" };
+          lastFailed = false;
+          render();
+          msg("Syncing is off on this device. The kids' progress stays saved right here, and your family code still works on your other devices — rejoin any time with the same code.");
+        });
+
+        /* ---------- save hooks: the app's own store writes ---------- */
+        try{
+          var patchedSet = store0.setItem;
+          store0.setItem = function(k, v){
+            var r = patchedSet.call(store0, k, v);
+            if(SYNCED[k]) schedulePush();
+            return r;
+          };
+        }catch(e){}
+        /* Backstop poll: catches writes from anywhere else (games
+           included) and photo add/remove, which live in IndexedDB. */
+        setInterval(function(){
+          if(!getCode() || pushing) return;
+          localHash().then(function(lh){
+            if(marker.hash && lh !== marker.hash) schedulePush();
+          }).catch(function(){});
+        }, 10000);
+        document.addEventListener("visibilitychange", function(){
+          if(document.visibilityState === "hidden") pushNow(true);
+        });
+        window.addEventListener("beforeunload", function(){ pushNow(true); });
+        window.addEventListener("online", function(){ lastFailed = false; statusDefault(); reconcile(); });
+
+        render();
+        reconcile();
       })();
     </script>
   </body>
