@@ -2138,6 +2138,19 @@
       .ny-flow .ny-farr{ align-self:center; font-size:1.3rem; font-weight:900; color:#5b4a9e; }
       .ny-recap{ margin-top:14px; background:#17263b; color:#ffd93b; border-radius:16px; padding:12px 16px; font-weight:800; line-height:1.55; }
       .ny-fb{ min-height:1.2em; }
+      /* top-notch teacher pass: spiral warm-up + teach-it-back */
+      .ny-warmup{ margin-top:14px; border:3px solid #ffb300; background:#fff8e1; border-radius:16px; padding:12px 14px; color:#4a3500; }
+      @media (prefers-color-scheme: dark){ .ny-warmup{ background:#3d3410; color:#ffe9a8; border-color:#e0a800; } }
+      .ny-warmup h5, .ny-teachback h5{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.12rem; margin:0 0 8px; color:#5b4a9e; }
+      @media (prefers-color-scheme: dark){ .ny-warmup h5, .ny-teachback h5{ color:#ffd93b; } }
+      .ny-warmup .ny-warm-from{ font-weight:800; font-size:.85rem; letter-spacing:.03em; text-transform:uppercase; opacity:.75; margin:0 0 4px; }
+      .ny-warm-q, .ny-tb-q{ font-weight:800; line-height:1.5; margin:0; }
+      .ny-warm-fb, .ny-tb-fb{ font-weight:800; line-height:1.5; margin:10px 0 0; color:#5b4a9e; min-height:1.2em; }
+      @media (prefers-color-scheme: dark){ .ny-warm-fb, .ny-tb-fb{ color:#ffd93b; } }
+      .ny-teachback{ margin-top:14px; border:3px solid #7d5ba6; background:#f6f1ff; border-radius:16px; padding:12px 14px; }
+      @media (prefers-color-scheme: dark){ .ny-teachback{ background:#2c2350; border-color:#574a8a; } }
+      .prof-report{ display:block; margin-top:5px; font-weight:800; line-height:1.45; color:#5b4a9e; }
+      @media (prefers-color-scheme: dark){ .prof-report{ color:#cdbcf0; } }
     </style>
 
   </head>
@@ -3955,7 +3968,7 @@
             </div>
           </div>
           <div class="lsn-wrap" id="ny-creator-wrap">
-            <p class="lsn-intro">🎓 <b>Kaitlyn's New York Tutor Lessons — Hoot teaches, step by step.</b> Made for grade 7 in Port Chester, NY. Every lesson goes the same gentle way: <b>👀 Watch me</b> (Hoot does one, thinking out loud) → <b>🤝 Try with me</b> (we do one together) → <b>⭐ Your turn</b> (one for the star). Tiny steps. No timers. No penalties — a wrong answer just means Hoot explains it a <b>different way</b>.</p>
+            <p class="lsn-intro">🎓 <b>Kaitlyn's New York Tutor Lessons — Hoot teaches, step by step.</b> Made for grade 7 in Port Chester, NY. Every lesson goes the same gentle way: <b>🔥 Warm-up</b> (Lessons 2–8 start with one quick question from an earlier lesson) → <b>👀 Watch me</b> (Hoot does one, thinking out loud) → <b>🤝 Try with me</b> (we do one together) → <b>⭐ Your turn</b> → <b>🎓 Teach it back</b> (pick the sentence that explains the idea best — that's when the star lands). Tiny steps. No timers. No penalties — a wrong answer just means Hoot names the exact mix-up and explains it a <b>different way</b>.</p>
             <p class="ny-std-main"><b>New York standards:</b> NY Next Generation Learning Standards for Maths &amp; ELA, NYSSLS for science, and the NY Social Studies Framework — grade 7.</p>
             <p class="lsn-progress" data-ny-progress>⭐ 0 of 8 NY lessons done</p>
 
@@ -4702,7 +4715,7 @@
             <p>Each child plays in their own version of Hoot's World. Switching profiles swaps in that child's own lesson stars, sticker book and photo album — Riley's profile also switches Little Kids mode on for her, while Zane plays the same world a step ahead, with the words on. Kaitlyn (12) gets her own profile too: the Ages 11–13 path with the New York curriculum for her Port Chester school, where Hoot tutors her step by step — and no Little Kids mode. Their stars, stickers and activity photos save on this device, so everything is still here next time Hoot's World opens.</p>
 <div class="prof-row" data-profile-row="zane"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#dceeff"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#2456a6"/><circle cx="50" cy="46" r="26" fill="#f4c48d"/><path d="M24 44 Q22 18 50 18 Q78 18 76 44 Q76 30 64 28 Q66 36 60 30 Q50 24 38 30 Q26 34 24 44 Z" fill="#4a3220"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M41 58 Q50 65 59 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f0a868" opacity=".65"/><circle cx="67" cy="55" r="4.5" fill="#f0a868" opacity=".65"/></svg><div class="prof-row-main"><b>Zane</b> <span class="prof-now">⭐ Playing now</span><span>Age 3 · Boy · Little Explorers (ages 2–4), a step ahead</span><span class="prof-counts" data-prof-counts="zane"></span></div><button type="button" class="prof-row-btn" data-profile-pick="zane" data-source="parents">▶ Play as Zane</button></div>
 <div class="prof-row" data-profile-row="riley"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#ffe3ee"/><circle cx="20" cy="52" r="11" fill="#6b4423"/><circle cx="80" cy="52" r="11" fill="#6b4423"/><circle cx="20" cy="40" r="5" fill="#ff5d8f"/><circle cx="80" cy="40" r="5" fill="#ff5d8f"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#e83e77"/><circle cx="50" cy="46" r="26" fill="#f7cf9f"/><path d="M24 46 Q22 20 50 20 Q78 20 76 46 Q74 30 60 27 Q50 24 40 27 Q26 30 24 46 Z" fill="#6b4423"/><path d="M50 12 L40 4 Q34 10 42 15 L34 18 Q40 24 50 19 Q60 24 66 18 L58 15 Q66 10 60 4 Z" fill="#ffd93b" stroke="#e0a800" stroke-width="1.4" stroke-linejoin="round"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M42 58 Q50 64 58 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/><circle cx="67" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/></svg><div class="prof-row-main"><b>Riley</b> <span class="prof-now">⭐ Playing now</span><span>Age 2 · Girl · Little Explorers (ages 2–4), biggest &amp; simplest</span><span class="prof-counts" data-prof-counts="riley"></span></div><button type="button" class="prof-row-btn" data-profile-pick="riley" data-source="parents">▶ Play as Riley</button></div>
-<div class="prof-row" data-profile-row="kaitlyn"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#e9e4ff"/><path d="M23 100 V48 Q23 18 50 18 Q77 18 77 48 V100 H63 V58 Q63 42 50 42 Q37 42 37 58 V100 Z" fill="#5a3a22"/><path d="M14 100 Q16 76 50 76 Q84 76 86 100 Z" fill="#7d5ba6"/><circle cx="50" cy="48" r="25" fill="#f7cf9f"/><path d="M25 46 Q26 22 50 22 Q74 22 75 46 Q73 30 58 27 Q50 25 42 27 Q27 30 25 46 Z" fill="#5a3a22"/><circle cx="41" cy="49" r="3.4" fill="#26343a"/><circle cx="59" cy="49" r="3.4" fill="#26343a"/><path d="M42 60 Q50 66 58 60" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/><circle cx="67" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/></svg><div class="prof-row-main"><b>Kaitlyn</b> <span class="prof-now">⭐ Playing now</span><span>Age 12 · Girl · Ages 11–13 · New York curriculum (Port Chester) · Hoot is her tutor</span><span class="prof-counts" data-prof-counts="kaitlyn"></span></div><button type="button" class="prof-row-btn" data-profile-pick="kaitlyn" data-source="parents">▶ Play as Kaitlyn</button></div>
+<div class="prof-row" data-profile-row="kaitlyn"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#e9e4ff"/><path d="M23 100 V48 Q23 18 50 18 Q77 18 77 48 V100 H63 V58 Q63 42 50 42 Q37 42 37 58 V100 Z" fill="#5a3a22"/><path d="M14 100 Q16 76 50 76 Q84 76 86 100 Z" fill="#7d5ba6"/><circle cx="50" cy="48" r="25" fill="#f7cf9f"/><path d="M25 46 Q26 22 50 22 Q74 22 75 46 Q73 30 58 27 Q50 25 42 27 Q27 30 25 46 Z" fill="#5a3a22"/><circle cx="41" cy="49" r="3.4" fill="#26343a"/><circle cx="59" cy="49" r="3.4" fill="#26343a"/><path d="M42 60 Q50 66 58 60" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/><circle cx="67" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/></svg><div class="prof-row-main"><b>Kaitlyn</b> <span class="prof-now">⭐ Playing now</span><span>Age 12 · Girl · Ages 11–13 · New York curriculum (Port Chester) · Hoot is her tutor</span><span class="prof-counts" data-prof-counts="kaitlyn"></span><span class="prof-report" data-kaitlyn-report>🎓 Tutor report — Mastered: none yet · Needed re-teaching: none yet. This fills in from Kaitlyn's real NY lesson attempts as she plays.</span></div><button type="button" class="prof-row-btn" data-profile-pick="kaitlyn" data-source="parents">▶ Play as Kaitlyn</button></div>
           </div>
 
           <div class="pgrid">
@@ -8381,6 +8394,170 @@
           store[id][idx] = true;
           saveStore();
         }
+
+        /* ===== TOP-NOTCH TEACHER PASS =====
+           1) Spiral warm-ups (Lessons 2–8 open with one review
+           question from an earlier lesson). 2) Misconception-specific
+           feedback: every wrong option in Try-with-me and Your-turn
+           carries its own text naming the actual mistake behind that
+           choice plus its mini-fix (assigned onto the buttons as
+           data-misconception by buildExtras below). 3) Teach-it-back:
+           after a correct Your-turn answer, Kaitlyn picks the
+           sentence that explains the idea best — only that completes
+           the lesson and earns the star. 4) Parent report-back:
+           per-lesson "needed support" flags (a misconception fix or
+           a different-way re-teach) save alongside her stars and
+           render ONLY in Parents, on Kaitlyn's profile row. */
+        var NY_TITLES = ["Unit rates", "Negative numbers", "Two-step equations", "Main idea & citing evidence", "Argument writing", "Photosynthesis", "Hudson River food webs", "Articles of Confederation → Constitution"];
+        var NEED_KEY = "hootworld.nyneed.v1";
+        var needStore = {};
+        try{ needStore = JSON.parse(localStorage.getItem(NEED_KEY) || "{}") || {}; }catch(e){ needStore = {}; }
+        function saveNeed(){ try{ localStorage.setItem(NEED_KEY, JSON.stringify(needStore)); }catch(e){} }
+        function flagNeed(idx){
+          if(idx == null || idx < 0) return;
+          var id = curProf();
+          if(!needStore[id]) needStore[id] = {};
+          if(!needStore[id][idx]){ needStore[id][idx] = true; saveNeed(); }
+          renderReport();
+        }
+        function renderReport(){
+          var els = slice(document.querySelectorAll("[data-kaitlyn-report]"));
+          if(!els.length) return;
+          var kd = store["kaitlyn"] || [];
+          var kn = needStore["kaitlyn"] || {};
+          /* If lessons were played before a profile was picked, the
+             current profile's records are the freshest fallback. */
+          if(curProf() === "kaitlyn"){ kd = store["kaitlyn"] || []; kn = needStore["kaitlyn"] || {}; }
+          var mastered = [], needed = [];
+          NY_TITLES.forEach(function(t, i){
+            if(kd[i]) mastered.push(t);
+            if(kn[i]) needed.push(t);
+          });
+          var txt = "🎓 Tutor report — Mastered: " + (mastered.length ? mastered.join(", ") : "none yet")
+            + " · Needed re-teaching: " + (needed.length ? needed.join(", ") : "none yet")
+            + ". From Kaitlyn's real NY lesson attempts — a topic lands in re-teaching whenever a wrong pick needed its mistake named and fixed, or Hoot re-taught a point a different way.";
+          els.forEach(function(el){ el.textContent = txt; });
+        }
+        /* Warm-ups: index = lesson index (0-based); null for Lesson 1.
+           opts are in display order; wrong opts carry their brief
+           re-teach in fix. from = the earlier lesson being reviewed. */
+        var WARMUPS = [
+          null,
+          { from:0, fromName:"Lesson 1 · Unit rates", q:"Warm-up first! Remember this one? 3 pencils cost $6. What is the price of ONE pencil?",
+            opts:[ {t:"$18", fix:"That's 3 × 6 — multiplying. A unit rate DIVIDES the total by how many: 6 ÷ 3 = $2. Try again!"}, {t:"$2", right:1}, {t:"$3", fix:"$3 is just how many pencils there are. Price of one = total ÷ how many = 6 ÷ 3. Have another go!"} ] },
+          { from:1, fromName:"Lesson 2 · Negative numbers", q:"Warm-up first! Remember the number line? What is −2 + 6?",
+            opts:[ {t:"4", right:1}, {t:"−8", fix:"Careful — adding walks RIGHT, not left. From −2: −1, 0, 1, 2, 3, 4. Try again!"}, {t:"8", fix:"That drops the minus sign — we start at −2, not +2. The first 2 hops only get back to 0, so 4 hops remain. Try again!"} ] },
+          { from:2, fromName:"Lesson 3 · Two-step equations", q:"Warm-up first! Remember unwrapping x? If x + 4 = 9, what is x?",
+            opts:[ {t:"13", fix:"That's 9 + 4 — adding. Undo +4 by SUBTRACTING it: 9 − 4. Try again!"}, {t:"4", fix:"4 is the number that was ADDED to x, not x itself. Undo it: 9 − 4 = ? Try again!"}, {t:"5", right:1} ] },
+          { from:3, fromName:"Lesson 4 · Main idea & evidence", q:"Warm-up first! A passage is ALL about how dogs help people — sniffing out danger, guiding, comforting. Which line is the MAIN IDEA?",
+            opts:[ {t:"One dog once sniffed out a kitchen fire", fix:"That's one DETAIL — a main idea covers the WHOLE passage, not a single moment. Try the umbrella-sized one!"}, {t:"Dogs help people in many different ways", right:1}, {t:"Dogs are the best animals in the world", fix:"That's an OPINION, not a main idea — a main idea says what the whole text is about. Try again!"} ] },
+          { from:4, fromName:"Lesson 5 · Argument writing", q:"Warm-up first! Claim: “Our class should recycle.” Which sentence is EVIDENCE for it?",
+            opts:[ {t:"Recycling is just awesome", fix:"That's a feeling — an opinion. Evidence is checkable: a count or a fact. Try again!"}, {t:"Our class threw away 40 cans last week that could have been recycled", right:1}, {t:"Everyone should recycle, honestly", fix:"That just repeats the claim — a claim can't prove itself. Look for the checkable fact. Try again!"} ] },
+          { from:5, fromName:"Lesson 6 · Photosynthesis", q:"Warm-up first! Remember the leaf factory? What does a plant TAKE IN for photosynthesis?",
+            opts:[ {t:"Oxygen and glucose", fix:"Swap alert — those are the OUTPUTS, what the plant makes and releases. Inputs come first: what goes INTO the leaf? Try again!"}, {t:"Soil and seeds", fix:"Soil holds the plant, but the factory's ingredients are light, water and a gas from the air. Try again!"}, {t:"Sunlight, water and carbon dioxide", right:1} ] },
+          { from:6, fromName:"Lesson 7 · Food webs", q:"Warm-up first! Remember the food web? If the small fish disappeared, what would most likely happen to the bass that eat them?",
+            opts:[ {t:"The bass would increase", fix:"Direction flip — bass LOSE their food here. When food vanishes, the eaters struggle, not grow. Try again!"}, {t:"Nothing would change at all", fix:"In a web, everything leans on everything — removing a whole food source always tips something. Try again!"}, {t:"The bass would struggle — their main food is gone", right:1} ] }
+        ];
+        /* Teach-it-back: the true explanation + two plausible-but-wrong
+           ones, each wrong one carrying its kind correction in fix. */
+        var TEACHBACKS = [
+          { q:"Teach it back: which sentence explains UNIT RATES best?",
+            opts:[ {t:"A unit rate is the total cost of everything added together", fix:"Not quite — that's the TOTAL, not the rate. A unit rate is about just ONE. Try the sentence with “one” and “divide” in it!"}, {t:"A unit rate tells you what ONE costs, and you find it by dividing the total by how many there are", right:1}, {t:"To find a unit rate, add the total and how many there are", fix:"Close try, but ADDING is the one move a unit rate never uses — sharing a total out means dividing. Have another look!"} ] },
+          { q:"Teach it back: which sentence explains NEGATIVE NUMBERS best?",
+            opts:[ {t:"Adding always moves you right on the number line, subtracting moves you left, and minus a negative flips into a plus", right:1}, {t:"If a problem starts with a negative number, the answer always stays negative", fix:"Not quite — remember −3 + 7 landed on +4! A big enough walk right crosses zero. Try the sentence about the number line!"} , {t:"Subtracting a negative makes the number smaller, like 5 − (−2) = 3", fix:"That's the famous trap we disarmed — minus a negative flips to PLUS, so 5 − (−2) = 7. Look for the sentence that says that!"} ] },
+          { q:"Teach it back: which sentence explains TWO-STEP EQUATIONS best?",
+            opts:[ {t:"Undo the multiplying first, because multiplying is the strongest", fix:"Tempting, but backwards — the LAST layer put on comes off FIRST, and the +/− layer was put on last. Try the reverse-order sentence!"}, {t:"You only ever change the side with the x on it", fix:"That would break the balance — whatever you do to one side, you do to the other. Look for the sentence that keeps both sides fair!"}, {t:"Unwrap x in reverse order — undo the adding or subtracting first, then the multiplying or dividing, doing the same to both sides", right:1} ] },
+          { q:"Teach it back: which sentence explains MAIN IDEA & EVIDENCE best?",
+            opts:[ {t:"The main idea is the most interesting detail in the text", fix:"A detail is too small an umbrella — the main idea has to cover the WHOLE text. Try the whole-text sentence!"}, {t:"Evidence means your own opinion about the text, said strongly", fix:"Evidence never comes from us — it comes FROM the text, word for word. Look for the sentence about pointing at the text!"}, {t:"The main idea covers the whole text in one line, and evidence is the exact sentence from the text that proves it", right:1} ] },
+          { q:"Teach it back: which sentence explains ARGUMENT WRITING best?",
+            opts:[ {t:"A claim states what you want the reader to believe, evidence is a checkable fact that backs it up, and reasoning explains why that evidence proves the claim", right:1}, {t:"Evidence can be a strong feeling, as long as you really mean it", fix:"Feelings get thrown out of court — evidence must be CHECKABLE. Try the sentence with “checkable fact” in it!"}, {t:"Reasoning means repeating your claim again, but louder", fix:"Repeating isn't reasoning — reasoning CONNECTS the evidence back to the claim (“that's why…”). Have another look!"} ] },
+          { q:"Teach it back: which sentence explains PHOTOSYNTHESIS best?",
+            opts:[ {t:"A plant takes in oxygen and lets out carbon dioxide and sugar", fix:"That's the swap — carbon dioxide goes IN, oxygen comes OUT. Try the sentence with the arrows the right way round!"}, {t:"A plant takes in sunlight, water and carbon dioxide, rearranges them into glucose that stores the sun's energy, and releases oxygen", right:1}, {t:"Glucose comes ready-made from the soil, and the plant just soaks it up", fix:"The soil doesn't serve sugar — the leaf BUILDS it from air and water, using sunlight. Look for the building sentence!"} ] },
+          { q:"Teach it back: which sentence explains FOOD WEBS best?",
+            opts:[ {t:"Removing a species only affects the animals that eat it", fix:"Only half the seesaw — its FOOD increases too. Try the sentence that mentions both directions!"}, {t:"Nothing in an ecosystem changes as long as most species are still there", fix:"The web says otherwise — tug one thread and the whole web moves. Look for the connected sentence!"}, {t:"Species are interdependent: removing one makes its food increase and its eaters struggle, because the whole web is connected", right:1} ] },
+          { q:"Teach it back: which sentence explains the ARTICLES → CONSTITUTION story best?",
+            opts:[ {t:"The Articles left the national government too weak, so the Constitution made it stronger — while splitting power into three branches that check each other", right:1}, {t:"The Constitution fixed America by removing the state governments", fix:"The states KEPT their governments — the fix was strengthening the NATIONAL side above them. Try the too-weak sentence!"}, {t:"The Constitution worked because it gave one president all the power", fix:"Opposite — unlimited power was the danger they guarded AGAINST, with checks and balances. Have another look!"} ] }
+        ];
+        /* Misconception feedback per wrong option, in DOM order.
+           YOUR: the two wrong .ny-opt buttons of each lesson.
+           TRY: the wrong .ny-try-opt of step 1, then of step 2. */
+        var MISC_YOUR = [
+          [ "🦉 Spot the mix-up, Kaitlyn: $4 is what you'd get from 24 ÷ 6 — but there are 8 juice boxes here, not 6. That's the wrong-divisor mistake. Mini-fix: the number you divide by is always “how many” in THIS problem — so it's 24 ÷ 8.",
+            "🦉 That $32 came from ADDING 24 + 8 — the classic addition swap. A unit rate never adds; it SHARES a total out equally. Mini-fix: swap the + for a ÷ — 24 ÷ 8." ],
+          [ "🦉 Sign slip: −5 means the walk went the wrong way. Adding +9 always walks RIGHT from −4 — count it: −3, −2, −1, 0, 1, 2… Mini-fix: the hops pass zero and keep going right.",
+            "🦉 That 13 drops the minus sign — it's 4 + 9, as if we started at +4. We start at −4. Mini-fix: the first 4 hops only climb back to 0, so only 5 hops of the 9 are left over." ],
+          [ "🦉 Order mistake: 3 jumps ahead before unwrapping. Mini-fix: undo the −4 FIRST — add 4 to both sides (2x = 14) — THEN split: 14 ÷ 2.",
+            "🦉 Half-unwrapped mistake: 6 would solve 2x = 12, but undoing −4 turns 10 into 14, not 12 — only 2 got added back instead of the full 4. Mini-fix: add all 4 back, then 14 ÷ 2." ],
+          [ "🦉 Detail-instead-of-proof mistake: that sentence only says what bees visit flowers FOR — it never shows bees helping plants. Mini-fix: evidence must show the HELPING — hunt for the sentence about pollen helping plants make seeds.",
+            "🦉 Claim-vs-evidence mix-up: that sentence repeats the main idea itself — and a claim can't prove itself. Mini-fix: pick the sentence that explains HOW it happens (the pollen mechanism), not the summary line." ],
+          [ "🦉 Opinion-in-a-costume mistake: “best” is a feeling word — nobody can go and check it. Mini-fix: evidence needs something countable — a survey, a number, a measurement someone actually gathered.",
+            "🦉 Sweeping-opinion mistake: “everyone in the world” sounds huge, but nobody counted a single person. Mini-fix: find the sentence with real numbers from real people — that's the checkable one." ],
+          [ "🦉 Input/output swap — the classic photosynthesis mix-up: carbon dioxide goes INTO the plant as an ingredient; it isn't released. Mini-fix: follow the factory arrows — gases in: carbon dioxide; gases out: oxygen.",
+            "🦉 Right product, wrong place: glucose IS made by the plant — good memory! — but it STAYS inside as the plant's food. Mini-fix: the question asks what is RELEASED into the air, and only one gas leaves the leaf." ],
+          [ "🦉 Predator-direction mistake: that answer flips who eats whom. Ospreys eat the fish, so removing ospreys removes a HUNTER. Mini-fix: fewer hunters means more prey survive — the fish go up, not down.",
+            "🦉 Disconnected-web mistake: in a food web nothing stays exactly the same when a species vanishes — everything leans on everything else. Mini-fix: ask two questions — who loses their food, and who loses a hunter?" ],
+          [ "🦉 Fact-flip mistake: the states DID have their own governments all along — that part was never broken. Mini-fix: the failure sat one level UP, in the weak national government that couldn't tax or enforce laws.",
+            "🦉 Opposite-fact mistake: under the Articles there was NO president at all — zero captains, not too many arguing. Mini-fix: the problem was national power that was MISSING, not power there was too much of." ]
+        ];
+        var MISC_TRY = [
+          [ "🦉 That's the dividing-the-wrong-way mistake: the money total gets shared out, so it must go FIRST — 10 ÷ 4, not 4 ÷ 10. Whenever you set up a unit rate, ask: “what am I sharing?” — that goes first.",
+            "🦉 Check-back mistake: 4 × $6 = $24, not $10. Mini-fix: test every answer by multiplying it by 4 — the right one lands exactly on 10." ],
+          [ "🦉 Sign-rule slip: minus a NEGATIVE flips into a plus. It's the −2 that's negative here, so 5 − (−2) becomes 5 + 2 — not 5 − 2.",
+            "🦉 Direction slip: after the flip we're ADDING (5 + 2), so the walk goes RIGHT from 5 — 6, then 7 — not left down to 3." ],
+          [ "🦉 Unwrapping-order mistake: the ×4 was put on x FIRST, so it comes off LAST. The −3 was done to x last — that's the layer we undo first, by adding 3.",
+            "🦉 Operation swap: 12 is 16 − 4, but undoing ×4 never subtracts — the opposite of multiplying is DIVIDING: 16 ÷ 4." ],
+          [ "🦉 Detail-as-umbrella mistake: one stumbling moment is a single DETAIL — it can't cover the daily practice AND the final song. Mini-fix: the main idea must stretch over the beginning, middle and end.",
+            "🦉 Before-picture mistake: that sentence shows the problem at the START. Evidence that practice WORKED has to show the RESULT — what changed by the end." ],
+          [ "🦉 Feeling-as-evidence mistake: “fun” can't be counted or checked. Mini-fix: evidence is pounds, numbers, facts — things a sceptic could go and verify.",
+            "🦉 Repeat-instead-of-reasoning mistake: that sentence just restates a fact about tomatoes. Reasoning must CONNECT — it says “so…” or “that's why…” and ties the evidence back to the claim." ],
+          [ "🦉 Already-given-input mistake: the story says the plant IS watered, so water is arriving fine. Mini-fix: cross off the inputs it already has — a dark closet is missing exactly one: light.",
+            "🦉 Missing-energy mistake: without sunlight there's no energy to build food at all, so the plant can't grow faster in the dark — with no glucose coming in, it weakens." ],
+          [ "🦉 Missing-link mistake: look at the web — bass EAT small fish; the arrow runs from the fish to the bass. If that food mostly vanishes, the eaters can't stay the same.",
+            "🦉 Seesaw-direction mistake: the zooplankton are losing their PREDATORS here, so their side of the seesaw pops UP — with hardly anything eating them, they increase." ],
+          [ "🦉 Keeping-the-bug mistake: states holding ALL the money power IS the Articles problem itself. The Constitution's fix gave Congress the power to collect taxes too.",
+            "🦉 Opposite-fix mistake: one strong ruler CONCENTRATES power — exactly the danger. The Constitution's safety device does the reverse: it SPLITS power across three branches that check each other." ]
+        ];
+        function esc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+        function buildExtras(card, idx){
+          /* misconception texts onto the existing wrong buttons */
+          var wrongs = slice(card.querySelectorAll('[data-phase="your"] .ny-opt')).filter(function(o){ return !o.hasAttribute("data-right"); });
+          wrongs.forEach(function(o, i){ if(MISC_YOUR[idx] && MISC_YOUR[idx][i]) o.setAttribute("data-misconception", MISC_YOUR[idx][i]); });
+          trySteps(card).forEach(function(st, si){
+            slice(st.querySelectorAll(".ny-try-opt")).filter(function(o){ return !o.hasAttribute("data-right"); }).forEach(function(o){
+              if(MISC_TRY[idx] && MISC_TRY[idx][si]) o.setAttribute("data-misconception", MISC_TRY[idx][si]);
+            });
+          });
+          /* spiral warm-up (Lessons 2–8), placed before Watch me */
+          var wu = WARMUPS[idx];
+          if(wu && !card.querySelector(".ny-warmup")){
+            var wdiv = document.createElement("div");
+            wdiv.className = "ny-warmup";
+            var html = '<h5>🔥 Warm-up first! Remember this one?</h5><p class="ny-warm-from">From ' + esc(wu.fromName) + '</p><p class="ny-warm-q">' + esc(wu.q) + '</p><div class="ny-opts">';
+            wu.opts.forEach(function(o){
+              html += '<button type="button" class="ny-opt ny-warm-opt"' + (o.right ? ' data-right="1"' : ' data-fix="' + esc(o.fix) + '"') + '>' + esc(o.t) + '</button>';
+            });
+            html += '</div><p class="ny-warm-fb" aria-live="polite"></p>';
+            wdiv.innerHTML = html;
+            var watch = card.querySelector('[data-phase="watch"]');
+            if(watch) card.insertBefore(wdiv, watch);
+          }
+          /* teach-it-back, placed just before the recap */
+          var tb = TEACHBACKS[idx];
+          if(tb && !card.querySelector(".ny-teachback")){
+            var tdiv = document.createElement("div");
+            tdiv.className = "ny-teachback";
+            tdiv.hidden = true;
+            var thtml = '<h5>🎓 Teach it back, Kaitlyn</h5><p class="ny-tb-q">' + esc(tb.q) + ' Pick the sentence that explains it best — that\'s how I know it\'s really yours.</p><div class="ny-opts">';
+            tb.opts.forEach(function(o){
+              thtml += '<button type="button" class="ny-opt ny-tb-opt"' + (o.right ? ' data-right="1"' : ' data-fix="' + esc(o.fix) + '"') + '>' + esc(o.t) + '</button>';
+            });
+            thtml += '</div><p class="ny-tb-fb" aria-live="polite"></p>';
+            tdiv.innerHTML = thtml;
+            var recap = card.querySelector(".ny-recap");
+            if(recap) card.insertBefore(tdiv, recap); else card.appendChild(tdiv);
+          }
+        }
+        cards.forEach(buildExtras);
         /* Re-save at the same lifecycle moments the profile system
            uses (page closing / tab hidden), so a reload can never
            strand a star earned since the last click. */
@@ -8411,6 +8588,7 @@
           el.textContent = (n === cards.length)
             ? "🏆 All " + cards.length + " NY lessons done — Kaitlyn's path complete!"
             : "⭐ " + n + " of " + cards.length + " NY lessons done";
+          renderReport();
         }
         function decorateCounts(){
           var n = nyDoneCount();
@@ -8425,7 +8603,23 @@
         /* ---------- card state: fresh / done ---------- */
         function trySteps(card){ return slice(card.querySelectorAll(".ny-try-step")); }
         function resetCard(card){
-          card.classList.remove("done"); card._wrongs = 0;
+          card.classList.remove("done"); card._wrongs = 0; card._yourRight = false;
+          /* warm-up gate: Lessons 2–8 start at the warm-up; Watch me
+             stays hidden until it's answered (no penalty for misses) */
+          var wuEl = card.querySelector(".ny-warmup");
+          if(wuEl){
+            show(wuEl);
+            slice(wuEl.querySelectorAll(".ny-warm-opt")).forEach(function(o){ o.disabled = false; o.classList.remove("right", "wrong"); });
+            var wfb = wuEl.querySelector(".ny-warm-fb"); if(wfb) wfb.textContent = "";
+            var watchEl = card.querySelector('[data-phase="watch"]'); if(watchEl) watchEl.hidden = true;
+            card._warmDone = false;
+          } else card._warmDone = true;
+          var tbEl = card.querySelector(".ny-teachback");
+          if(tbEl){
+            hide(tbEl);
+            slice(tbEl.querySelectorAll(".ny-tb-opt")).forEach(function(o){ o.disabled = false; o.classList.remove("right", "wrong"); });
+            var tfb2 = tbEl.querySelector(".ny-tb-fb"); if(tfb2) tfb2.textContent = "";
+          }
           slice(card.querySelectorAll(".ny-step")).forEach(function(s, i){ s.hidden = i > 0; });
           show(card.querySelector(".ny-nextstep"));
           hide(card.querySelector(".ny-stepdone"));
@@ -8447,6 +8641,28 @@
         }
         function applyDone(card){
           card.classList.add("done");
+          card._warmDone = true; card._yourRight = true;
+          var wuD = card.querySelector(".ny-warmup");
+          if(wuD){
+            show(wuD);
+            slice(wuD.querySelectorAll(".ny-warm-opt")).forEach(function(o){
+              o.disabled = true;
+              o.classList.toggle("right", o.hasAttribute("data-right"));
+              o.classList.remove("wrong");
+            });
+            var wfbD = wuD.querySelector(".ny-warm-fb"); if(wfbD) wfbD.textContent = "✔️ Warmed up — and it's still in there!";
+            var watchD = card.querySelector('[data-phase="watch"]'); if(watchD) watchD.hidden = false;
+          }
+          var tbD = card.querySelector(".ny-teachback");
+          if(tbD){
+            show(tbD);
+            slice(tbD.querySelectorAll(".ny-tb-opt")).forEach(function(o){
+              o.disabled = true;
+              o.classList.toggle("right", o.hasAttribute("data-right"));
+              o.classList.remove("wrong");
+            });
+            var tfbD = tbD.querySelector(".ny-tb-fb"); if(tfbD) tfbD.textContent = "✔️ You taught it back — that's real understanding, not just a right answer.";
+          }
           slice(card.querySelectorAll(".ny-step")).forEach(function(s){ s.hidden = false; });
           hide(card.querySelector(".ny-nextstep"));
           show(card.querySelector(".ny-stepdone"));
@@ -8464,7 +8680,7 @@
           show(card.querySelector(".ny-try-done"));
           show(card.querySelector('[data-phase="your"]'));
           var praise = "";
-          slice(card.querySelectorAll(".ny-opt")).forEach(function(o){
+          slice(card.querySelectorAll('[data-phase="your"] .ny-opt')).forEach(function(o){
             o.disabled = true;
             if(o.hasAttribute("data-right")){ o.classList.add("right"); praise = o.getAttribute("data-praise") || ""; }
             o.classList.remove("wrong");
@@ -8483,6 +8699,24 @@
              this re-apply runs. Refresh it now the true state is on
              the cards, so Kaitlyn's pick names her real next lesson. */
           if(window.__hootRefreshHost) window.__hootRefreshHost();
+        }
+
+        /* Lesson completion — reached ONLY through a correct
+           teach-it-back pick (see the .ny-tb-opt handler below).
+           Everything the old Your-turn-correct path did lives here:
+           star, save, counts, clips, recap, host refresh. */
+        function completeLesson(card){
+          card.classList.add("done");
+          show(card.querySelector(".ny-recap"));
+          var pick = card.querySelector(".hoot-pick-tag"); if(pick) pick.remove();
+          card.classList.remove("hoot-pick");
+          saveDone(cards.indexOf(card));
+          updateProgress();
+          decorateCounts();
+          renderReport();
+          if(window.__hootPlayClip) window.__hootPlayClip("great-job");
+          KAITLYN_VOICE.play("praise"); KAITLYN_VOICE.play("recap");
+          if(window.__hootRefreshHost) setTimeout(window.__hootRefreshHost, 650);
         }
 
         /* ---------- the tutoring flow ---------- */
@@ -8507,6 +8741,7 @@
             show(card2.querySelector(".ny-alt"));
             var fb2 = card2.querySelector(".ny-check-fb");
             if(fb2) fb2.textContent = "No rush at all, Kaitlyn — looking at it a different way is a smart move, not a step back. Read this version, then tap 👍 when you're ready.";
+            flagNeed(cards.indexOf(card2));
             KAITLYN_VOICE.play("reteach");
             return;
           }
@@ -8515,6 +8750,46 @@
             var card3 = okBtn.closest(".ny-lsn"); if(!card3) return;
             hide(card3.querySelector(".ny-check"));
             show(card3.querySelector('[data-phase="try"]'));
+            return;
+          }
+          var warmOpt = t.closest(".ny-warm-opt");
+          if(warmOpt && !warmOpt.disabled){
+            var wCard = warmOpt.closest(".ny-lsn"); if(!wCard) return;
+            var wWrap = warmOpt.closest(".ny-warmup");
+            var wFb = wWrap ? wWrap.querySelector(".ny-warm-fb") : null;
+            if(warmOpt.hasAttribute("data-right")){
+              wCard._warmDone = true;
+              warmOpt.classList.add("right");
+              slice(wWrap.querySelectorAll(".ny-warm-opt")).forEach(function(o){ o.disabled = true; });
+              if(wFb) wFb.textContent = "🔥 Warmed up — that earlier lesson is still in there! Now for today's new idea…";
+              var watchW = wCard.querySelector('[data-phase="watch"]'); if(watchW) watchW.hidden = false;
+            } else {
+              warmOpt.classList.add("wrong");
+              setTimeout(function(){ warmOpt.classList.remove("wrong"); }, 650);
+              if(wFb) wFb.textContent = warmOpt.getAttribute("data-fix") || "Almost — that's just a warm-up, no penalty. Have another go!";
+              var wuData = WARMUPS[cards.indexOf(wCard)];
+              if(wuData) flagNeed(wuData.from);
+            }
+            return;
+          }
+          var tbOpt = t.closest(".ny-tb-opt");
+          if(tbOpt && !tbOpt.disabled){
+            var tbCard = tbOpt.closest(".ny-lsn"); if(!tbCard) return;
+            var tbWrap = tbOpt.closest(".ny-teachback");
+            var tbFb = tbWrap ? tbWrap.querySelector(".ny-tb-fb") : null;
+            if(tbOpt.hasAttribute("data-right")){
+              tbOpt.classList.add("right");
+              slice(tbWrap.querySelectorAll(".ny-tb-opt")).forEach(function(o){ o.disabled = true; });
+              if(tbFb) tbFb.textContent = "🎓 YES — you just taught it back to me! That's not luck, that's understanding. Star earned, Kaitlyn!";
+              var fbT = tbCard.querySelector(".ny-fb");
+              if(fbT) fbT.textContent = tbCard._praise || "⭐ That's right — lesson done!";
+              completeLesson(tbCard);
+            } else {
+              tbOpt.classList.add("wrong");
+              setTimeout(function(){ tbOpt.classList.remove("wrong"); }, 650);
+              if(tbFb) tbFb.textContent = tbOpt.getAttribute("data-fix") || "Good try — that's not the best explanation though. Read the others again; you can retry as many times as you like.";
+              flagNeed(cards.indexOf(tbCard));
+            }
             return;
           }
           var tryOpt = t.closest(".ny-try-opt");
@@ -8537,7 +8812,8 @@
             } else {
               tryOpt.classList.add("wrong");
               setTimeout(function(){ tryOpt.classList.remove("wrong"); }, 650);
-              if(tfb) tfb.textContent = tryOpt.getAttribute("data-hint") || "Almost — look at my thinking again and try the other one. I'm right here.";
+              if(tfb) tfb.textContent = tryOpt.getAttribute("data-misconception") || tryOpt.getAttribute("data-hint") || "Almost — look at my thinking again and try the other one. I'm right here.";
+              flagNeed(cards.indexOf(card4));
             }
             return;
           }
@@ -8547,27 +8823,32 @@
             if(card5.classList.contains("done")) return;
             var fb5 = card5.querySelector(".ny-fb");
             if(opt.hasAttribute("data-right")){
-              card5.classList.add("done");
+              /* Correct — but the star waits for teach-it-back: the
+                 top-notch-teacher mastery check. The lesson only
+                 completes (star + save) when Kaitlyn picks the true
+                 explanation in the .ny-teachback block below. */
               opt.classList.add("right");
-              slice(card5.querySelectorAll(".ny-opt")).forEach(function(o){ o.disabled = true; });
-              if(fb5) fb5.textContent = opt.getAttribute("data-praise") || "⭐ That's right — lesson done!";
-              show(card5.querySelector(".ny-recap"));
-              var pick = card5.querySelector(".hoot-pick-tag"); if(pick) pick.remove();
-              card5.classList.remove("hoot-pick");
-              saveDone(cards.indexOf(card5));
-              updateProgress();
-              decorateCounts();
+              slice(card5.querySelectorAll('[data-phase="your"] .ny-opt')).forEach(function(o){ o.disabled = true; });
+              card5._yourRight = true;
+              card5._praise = opt.getAttribute("data-praise") || "⭐ That's right!";
+              if(fb5) fb5.textContent = card5._praise + " One last tutor move before the star lands: teach it back to me — pick the sentence below that explains the idea best.";
+              var tbShow = card5.querySelector(".ny-teachback"); if(tbShow) show(tbShow);
               if(window.__hootPlayClip) window.__hootPlayClip("great-job");
-              KAITLYN_VOICE.play("praise"); KAITLYN_VOICE.play("recap");
-              if(window.__hootRefreshHost) setTimeout(window.__hootRefreshHost, 650);
             } else {
               card5._wrongs = (card5._wrongs || 0) + 1;
               opt.classList.add("wrong");
               setTimeout(function(){ opt.classList.remove("wrong"); }, 650);
+              flagNeed(cards.indexOf(card5));
               if(fb5){
+                /* First layer: THIS option's own misconception —
+                   the actual mistake behind the choice, named, with
+                   its mini-fix. Fallback layer (unchanged): on the
+                   second miss, the lesson's different-way re-teach
+                   is appended after it. */
+                var misc = opt.getAttribute("data-misconception") || opt.getAttribute("data-hint") || "Not quite — let's re-think that step together and try again. No rush.";
                 var second = card5._wrongs >= 2 && opt.getAttribute("data-reteach");
-                fb5.textContent = second ? opt.getAttribute("data-reteach")
-                  : (opt.getAttribute("data-hint") || "Not quite — let's re-think that step together and try again. No rush.");
+                fb5.textContent = second ? (misc + " — And here's the whole thing a different way: " + opt.getAttribute("data-reteach"))
+                  : misc;
                 if(second) KAITLYN_VOICE.play("reteach");
               }
             }
