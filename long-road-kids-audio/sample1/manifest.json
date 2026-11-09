@@ -1,0 +1,502 @@
+[
+ {
+  "id": 1,
+  "storyId": 1,
+  "title": "God Makes the World",
+  "file": "stories/1.m4a",
+  "path": "long-road-kids-audio/sample1/stories/1.m4a",
+  "durationSec": 70.85,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "5b0b95025e54935afb12a75aebdd180c5c2127e2"
+ },
+ {
+  "id": 2,
+  "storyId": 2,
+  "title": "Adam and Eve in the Garden",
+  "file": "stories/2.m4a",
+  "path": "long-road-kids-audio/sample1/stories/2.m4a",
+  "durationSec": 68.23,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "18663d86702c185589b88586e4ab1a120874a011"
+ },
+ {
+  "id": 3,
+  "storyId": 3,
+  "title": "Noah Builds a Big Boat",
+  "file": "stories/3.m4a",
+  "path": "long-road-kids-audio/sample1/stories/3.m4a",
+  "durationSec": 71.76,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d149e420f330403e3c40a77bf3768939acebd82c"
+ },
+ {
+  "id": 4,
+  "storyId": 4,
+  "title": "The Tower of Babel",
+  "file": "stories/4.m4a",
+  "path": "long-road-kids-audio/sample1/stories/4.m4a",
+  "durationSec": 69.77,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "81de89a7c9d30358cd5cf3ea481dc3b6f916f352"
+ },
+ {
+  "id": 5,
+  "storyId": 5,
+  "title": "Abraham Trusts God",
+  "file": "stories/5.m4a",
+  "path": "long-road-kids-audio/sample1/stories/5.m4a",
+  "durationSec": 68.09,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d2bb54883491561fb63f152e9d3f96ec23c5b0a4"
+ },
+ {
+  "id": 6,
+  "storyId": 6,
+  "title": "Isaac and Rebekah",
+  "file": "stories/6.m4a",
+  "path": "long-road-kids-audio/sample1/stories/6.m4a",
+  "durationSec": 70.8,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "076cffc952dd2d46ada8da94d1c0d210c73e439f"
+ },
+ {
+  "id": 7,
+  "storyId": 7,
+  "title": "Jacob and Esau Make Peace",
+  "file": "stories/7.m4a",
+  "path": "long-road-kids-audio/sample1/stories/7.m4a",
+  "durationSec": 72.79,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b73fd65d2fc117129781c9b784e65249760c9894"
+ },
+ {
+  "id": 8,
+  "storyId": 8,
+  "title": "Joseph's Colorful Coat",
+  "file": "stories/8.m4a",
+  "path": "long-road-kids-audio/sample1/stories/8.m4a",
+  "durationSec": 75.17,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ff0a81f9fa093da7c42edca7cc8bfb4c7701e4e4"
+ },
+ {
+  "id": 9,
+  "storyId": 9,
+  "title": "Joseph Forgives His Brothers",
+  "file": "stories/9.m4a",
+  "path": "long-road-kids-audio/sample1/stories/9.m4a",
+  "durationSec": 72.91,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4c0057df8f12458c0f6dd3b56004d96276b51029"
+ },
+ {
+  "id": 10,
+  "storyId": 10,
+  "title": "Baby Moses in a Basket",
+  "file": "stories/10.m4a",
+  "path": "long-road-kids-audio/sample1/stories/10.m4a",
+  "durationSec": 83.45,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fce95095a0e5637444ee8599ecda916ddb5513ff"
+ },
+ {
+  "id": 11,
+  "storyId": 11,
+  "title": "Moses and the Burning Bush",
+  "file": "stories/11.m4a",
+  "path": "long-road-kids-audio/sample1/stories/11.m4a",
+  "durationSec": 70.01,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1d486ebf10b09d0b3c71c9d6d6a8bd75cb04a0b5"
+ },
+ {
+  "id": 12,
+  "storyId": 12,
+  "title": "Crossing the Red Sea",
+  "file": "stories/12.m4a",
+  "path": "long-road-kids-audio/sample1/stories/12.m4a",
+  "durationSec": 71.4,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6de7882d4ebd375a74dd01fd31a8b7116746aa9b"
+ },
+ {
+  "id": 13,
+  "storyId": 13,
+  "title": "Food from Heaven",
+  "file": "stories/13.m4a",
+  "path": "long-road-kids-audio/sample1/stories/13.m4a",
+  "durationSec": 66.41,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3e6de3360fc0c9c447bcad62d80d9fa4937d6f38"
+ },
+ {
+  "id": 14,
+  "storyId": 14,
+  "title": "The Ten Commandments",
+  "file": "stories/14.m4a",
+  "path": "long-road-kids-audio/sample1/stories/14.m4a",
+  "durationSec": 69.65,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0d1e9f5e587ef8eb9def38dff3935b78f0bc9fa9"
+ },
+ {
+  "id": 15,
+  "storyId": 15,
+  "title": "The Walls of Jericho",
+  "file": "stories/15.m4a",
+  "path": "long-road-kids-audio/sample1/stories/15.m4a",
+  "durationSec": 65.83,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7cd39c4a78b6aa424f7dfca8d32bbdd69af298fe"
+ },
+ {
+  "id": 16,
+  "storyId": 16,
+  "title": "Gideon's Small Army",
+  "file": "stories/16.m4a",
+  "path": "long-road-kids-audio/sample1/stories/16.m4a",
+  "durationSec": 66.84,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a1c58af78e6ac35de0f5a05b5028beb33454900d"
+ },
+ {
+  "id": 17,
+  "storyId": 17,
+  "title": "Samson's Strength",
+  "file": "stories/17.m4a",
+  "path": "long-road-kids-audio/sample1/stories/17.m4a",
+  "durationSec": 74.33,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b13a72b596275dff82836cf244abf63502d8dae1"
+ },
+ {
+  "id": 18,
+  "storyId": 18,
+  "title": "Ruth's Loyal Love",
+  "file": "stories/18.m4a",
+  "path": "long-road-kids-audio/sample1/stories/18.m4a",
+  "durationSec": 67.87,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ddf4614661f036937b90b53362dca868827ed7e5"
+ },
+ {
+  "id": 19,
+  "storyId": 19,
+  "title": "Hannah's Prayer",
+  "file": "stories/19.m4a",
+  "path": "long-road-kids-audio/sample1/stories/19.m4a",
+  "durationSec": 69.91,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a60b10b612704d2ab40dcf70c9724119c1fb8d95"
+ },
+ {
+  "id": 20,
+  "storyId": 20,
+  "title": "God Calls Samuel",
+  "file": "stories/20.m4a",
+  "path": "long-road-kids-audio/sample1/stories/20.m4a",
+  "durationSec": 67.63,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0d81a73acd83013bd746fa1171e2ceb2546d586f"
+ },
+ {
+  "id": 21,
+  "storyId": 21,
+  "title": "God Chooses David",
+  "file": "stories/21.m4a",
+  "path": "long-road-kids-audio/sample1/stories/21.m4a",
+  "durationSec": 66.89,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a4d1d620cfed4c9bc7d49576c349c3b274989396"
+ },
+ {
+  "id": 22,
+  "storyId": 22,
+  "title": "David and Goliath",
+  "file": "stories/22.m4a",
+  "path": "long-road-kids-audio/sample1/stories/22.m4a",
+  "durationSec": 73.01,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "94c68a8b36df59af343562331b71a814b740d888"
+ },
+ {
+  "id": 23,
+  "storyId": 23,
+  "title": "David and Jonathan",
+  "file": "stories/23.m4a",
+  "path": "long-road-kids-audio/sample1/stories/23.m4a",
+  "durationSec": 60.17,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f8710dc45f5fdb261e356501fa8376fd87333056"
+ },
+ {
+  "id": 24,
+  "storyId": 24,
+  "title": "Solomon Asks for Wisdom",
+  "file": "stories/24.m4a",
+  "path": "long-road-kids-audio/sample1/stories/24.m4a",
+  "durationSec": 65.28,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "90260d5a9c60ea80db13071e849dbadbf2823952"
+ },
+ {
+  "id": 25,
+  "storyId": 25,
+  "title": "Elijah and the Ravens",
+  "file": "stories/25.m4a",
+  "path": "long-road-kids-audio/sample1/stories/25.m4a",
+  "durationSec": 63.55,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2790c264f4db57fc485924c3b9ef1f76d933794e"
+ },
+ {
+  "id": 26,
+  "storyId": 26,
+  "title": "Elijah on Mount Carmel",
+  "file": "stories/26.m4a",
+  "path": "long-road-kids-audio/sample1/stories/26.m4a",
+  "durationSec": 65.76,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c7364fbae0bf4d4c4824a43ff275d65bd14e21d2"
+ },
+ {
+  "id": 27,
+  "storyId": 27,
+  "title": "Naaman Is Healed",
+  "file": "stories/27.m4a",
+  "path": "long-road-kids-audio/sample1/stories/27.m4a",
+  "durationSec": 67.61,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8c160b86444599068b5f6a02d10277992cfa3b8b"
+ },
+ {
+  "id": 28,
+  "storyId": 28,
+  "title": "Brave Queen Esther",
+  "file": "stories/28.m4a",
+  "path": "long-road-kids-audio/sample1/stories/28.m4a",
+  "durationSec": 69.41,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e6d927913c783c8a4e88c43d219e346b010f70be"
+ },
+ {
+  "id": 29,
+  "storyId": 29,
+  "title": "Daniel in the Lions' Den",
+  "file": "stories/29.m4a",
+  "path": "long-road-kids-audio/sample1/stories/29.m4a",
+  "durationSec": 66.91,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a30fd1e3dfaea7fb2ae9559983f67dbb2f6f2aa3"
+ },
+ {
+  "id": 30,
+  "storyId": 30,
+  "title": "Three Friends in the Fire",
+  "file": "stories/30.m4a",
+  "path": "long-road-kids-audio/sample1/stories/30.m4a",
+  "durationSec": 69.07,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c20cae4b25eb80cece0a5984eef59750e876a0f3"
+ },
+ {
+  "id": 31,
+  "storyId": 31,
+  "title": "Jonah and the Big Fish",
+  "file": "stories/31.m4a",
+  "path": "long-road-kids-audio/sample1/stories/31.m4a",
+  "durationSec": 66.77,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ddb50fa4bc605bc66bb5c94829221d9dd0b9fdaf"
+ },
+ {
+  "id": 32,
+  "storyId": 32,
+  "title": "An Angel Visits Mary",
+  "file": "stories/32.m4a",
+  "path": "long-road-kids-audio/sample1/stories/32.m4a",
+  "durationSec": 61.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bb0c47ff3542b7e608e2114ec217d68c578d0933"
+ },
+ {
+  "id": 33,
+  "storyId": 33,
+  "title": "Jesus Is Born",
+  "file": "stories/33.m4a",
+  "path": "long-road-kids-audio/sample1/stories/33.m4a",
+  "durationSec": 67.68,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3a415d3f549cb4c4c4fb75704fab522baca52a8d"
+ },
+ {
+  "id": 34,
+  "storyId": 34,
+  "title": "The Wise Men Follow a Star",
+  "file": "stories/34.m4a",
+  "path": "long-road-kids-audio/sample1/stories/34.m4a",
+  "durationSec": 65.09,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2ae6f6e604175f1f66a37a3d4755dc2970bd186c"
+ },
+ {
+  "id": 35,
+  "storyId": 35,
+  "title": "Boy Jesus at the Temple",
+  "file": "stories/35.m4a",
+  "path": "long-road-kids-audio/sample1/stories/35.m4a",
+  "durationSec": 65.11,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bbd44f6f5c2cf8ac84a58da444988ef77fc7dc71"
+ },
+ {
+  "id": 36,
+  "storyId": 36,
+  "title": "Jesus Is Baptized",
+  "file": "stories/36.m4a",
+  "path": "long-road-kids-audio/sample1/stories/36.m4a",
+  "durationSec": 62.59,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e3d8992811cd2d206c5503926564de11ae8667e0"
+ },
+ {
+  "id": 37,
+  "storyId": 37,
+  "title": "Jesus Calls the Fishermen",
+  "file": "stories/37.m4a",
+  "path": "long-road-kids-audio/sample1/stories/37.m4a",
+  "durationSec": 63.72,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0fdd9a05a0a86d45f8e04e62ad91179e98666db9"
+ },
+ {
+  "id": 38,
+  "storyId": 38,
+  "title": "Water into Wine",
+  "file": "stories/38.m4a",
+  "path": "long-road-kids-audio/sample1/stories/38.m4a",
+  "durationSec": 63.31,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "13d54c429389d9884998c330e04a9efc8f2f2187"
+ },
+ {
+  "id": 39,
+  "storyId": 39,
+  "title": "Jesus Calms the Storm",
+  "file": "stories/39.m4a",
+  "path": "long-road-kids-audio/sample1/stories/39.m4a",
+  "durationSec": 67.63,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f50f4c8729cf71ce0a9da0c90904ae76623c3454"
+ },
+ {
+  "id": 40,
+  "storyId": 40,
+  "title": "Jesus Feeds Five Thousand",
+  "file": "stories/40.m4a",
+  "path": "long-road-kids-audio/sample1/stories/40.m4a",
+  "durationSec": 64.15,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "78dce30c55fa334eb979547df2758cf2a0a55497"
+ },
+ {
+  "id": 41,
+  "storyId": 41,
+  "title": "Peter Walks on Water",
+  "file": "stories/41.m4a",
+  "path": "long-road-kids-audio/sample1/stories/41.m4a",
+  "durationSec": 63.96,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b0df4e93ae1763ae0faa55011548c815da7f5458"
+ },
+ {
+  "id": 42,
+  "storyId": 42,
+  "title": "The Good Samaritan",
+  "file": "stories/42.m4a",
+  "path": "long-road-kids-audio/sample1/stories/42.m4a",
+  "durationSec": 63.19,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8fb1d45ec61fac5770a8ee53442f4ef48795a290"
+ },
+ {
+  "id": 43,
+  "storyId": 43,
+  "title": "The Lost Sheep",
+  "file": "stories/43.m4a",
+  "path": "long-road-kids-audio/sample1/stories/43.m4a",
+  "durationSec": 72.12,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f908a697a5544fa999dfea2a1d76969c9dda617e"
+ },
+ {
+  "id": 44,
+  "storyId": 44,
+  "title": "The Prodigal Son",
+  "file": "stories/44.m4a",
+  "path": "long-road-kids-audio/sample1/stories/44.m4a",
+  "durationSec": 66.89,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a8b9f35fa80f6c8f3aa45226fd8c4887297ac9e4"
+ },
+ {
+  "id": 45,
+  "storyId": 45,
+  "title": "Jesus Blesses the Children",
+  "file": "stories/45.m4a",
+  "path": "long-road-kids-audio/sample1/stories/45.m4a",
+  "durationSec": 64.49,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "78ab225026f7591fb3629dec7becf77b9d298057"
+ },
+ {
+  "id": 46,
+  "storyId": 46,
+  "title": "Zacchaeus Climbs a Tree",
+  "file": "stories/46.m4a",
+  "path": "long-road-kids-audio/sample1/stories/46.m4a",
+  "durationSec": 68.81,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "70ef87981162c2e24396a875f74e455223e725ef"
+ },
+ {
+  "id": 47,
+  "storyId": 47,
+  "title": "Jesus Raises Lazarus",
+  "file": "stories/47.m4a",
+  "path": "long-road-kids-audio/sample1/stories/47.m4a",
+  "durationSec": 67.99,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8b2592c8a0db89229de3644b7812e23c0be88172"
+ },
+ {
+  "id": 48,
+  "storyId": 48,
+  "title": "The Last Supper",
+  "file": "stories/48.m4a",
+  "path": "long-road-kids-audio/sample1/stories/48.m4a",
+  "durationSec": 67.39,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1523605d27589289cfc478b9990ca57e86a0a342"
+ },
+ {
+  "id": 49,
+  "storyId": 49,
+  "title": "Jesus Dies and Rises Again",
+  "file": "stories/49.m4a",
+  "path": "long-road-kids-audio/sample1/stories/49.m4a",
+  "durationSec": 69.6,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b157332fcd0d25773a2ff53867794e389452ad5d"
+ },
+ {
+  "id": 50,
+  "storyId": 50,
+  "title": "The Holy Spirit Comes",
+  "file": "stories/50.m4a",
+  "path": "long-road-kids-audio/sample1/stories/50.m4a",
+  "durationSec": 67.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3ba26f8239b0152f1cc4ec116c62f8e883d412a7"
+ }
+]
