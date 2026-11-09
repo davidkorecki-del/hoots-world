@@ -2305,10 +2305,17 @@
          over the steps, the teaching visuals or the answer choices,
          at phone portrait or desktop widths. Scoped to the same four
          wraps as the tutor upgrade above; #panel-little and
-         #ny-creator-wrap keep their own stages. */
-      .ot-stage{ display:grid; grid-template-columns:104px 1fr; gap:6px 12px; align-items:start; margin:2px 0 10px; }
+         #ny-creator-wrap keep their own stages.
+         SIZE PASS: Hoot is the big, visible main character while he
+         guides, so the figure renders at 168px on desktop widths and
+         150px at phone widths (was 100px / 70px). Still plain in-flow
+         grid throughout: side by side with his bubble on wider
+         screens; at phone widths the stage stacks — Hoot centred
+         above a full-width bubble — so the bigger figure never
+         squeezes the step text and can never overlay anything. */
+      .ot-stage{ display:grid; grid-template-columns:176px 1fr; gap:6px 14px; align-items:start; margin:2px 0 10px; }
       .ot-hoot{ position:relative; text-align:center; cursor:pointer; background:none; border:none; padding:0; font:inherit; }
-      .ot-hoot svg{ width:100px; height:100px; display:block; margin:0 auto; filter:drop-shadow(0 6px 10px rgba(23,60,120,.25)); }
+      .ot-hoot svg{ width:168px; height:168px; display:block; margin:0 auto; filter:drop-shadow(0 6px 10px rgba(23,60,120,.25)); }
       .ot-hoot.is-speaking svg{ animation:otBob .9s ease-in-out infinite; }
       @keyframes otBob{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-6px) rotate(-2deg); } }
       .ot-hoot .beak{ transform-origin:32px 38px; }
@@ -2317,18 +2324,19 @@
       .ot-name{ display:inline-block; margin-top:2px; background:#ef6461; color:#fff; font-weight:800; font-size:.74rem; letter-spacing:.08em; padding:2px 10px; border-radius:999px; border:2px solid #17263b; }
       .ot-main{ min-width:0; }
       .tutor-hoot.ot-bubble{ position:relative; background:#fff; border:3px solid #17263b; border-radius:18px; padding:12px 16px; font-size:1.02rem; line-height:1.5; margin:0; box-shadow:0 4px 0 rgba(0,0,0,.12); cursor:pointer; }
-      .tutor-hoot.ot-bubble::before{ content:""; position:absolute; left:-12px; top:26px; width:19px; height:19px; background:#fff; border-left:3px solid #17263b; border-bottom:3px solid #17263b; transform:rotate(45deg); border-bottom-left-radius:5px; }
+      .tutor-hoot.ot-bubble::before{ content:""; position:absolute; left:-12px; top:44px; width:19px; height:19px; background:#fff; border-left:3px solid #17263b; border-bottom:3px solid #17263b; transform:rotate(45deg); border-bottom-left-radius:5px; }
       @media (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble{ background:#22385c; color:#eef4f8; border-color:#8fa8c8; } .tutor-hoot.ot-bubble::before{ background:#22385c; border-color:#8fa8c8; } }
       .ot-q{ cursor:pointer; }
       .ot-q::after{ content:" 🔊"; }
       .ot-q:focus-visible, .ot-hoot:focus-visible, .tutor-hoot.ot-bubble:focus-visible{ outline:4px solid #ffd93b; outline-offset:3px; border-radius:10px; }
       @media (max-width:600px){
-        .ot-stage{ grid-template-columns:72px 1fr; gap:4px 10px; }
-        .ot-hoot svg{ width:70px; height:70px; }
-        .ot-name{ font-size:.62rem; padding:1px 7px; }
+        .ot-stage{ grid-template-columns:1fr; gap:8px; }
+        .ot-hoot svg{ width:150px; height:150px; }
+        .ot-name{ font-size:.68rem; padding:1px 8px; }
         .tutor-hoot.ot-bubble{ font-size:.98rem; padding:10px 12px; }
-        .tutor-hoot.ot-bubble::before{ top:18px; }
+        .tutor-hoot.ot-bubble::before{ left:50%; top:-12px; transform:translateX(-50%) rotate(45deg); border-bottom:none; border-top:3px solid #17263b; }
       }
+      @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
   </head>
@@ -15275,7 +15283,13 @@
          can never shift. Kaitlyn's own tutor voice (chosen by the
          family — see KAITLYN_VOICE below) speaks her greeting, her
          praise, the different-way re-teach and the "So remember…"
-         recap; Hoot's existing clips still chime on success too. */
+         recap. KAITLYN-ONLY PASS: every spoken beat inside her 8 NY
+         lessons is one of her four kaitlyn-* clips — no generic
+         hoot-* clip, call-* clip or owl sound can play in here (the
+         hoot "great-job" that used to chime on a correct Your-turn
+         answer and again at lesson completion was removed; her own
+         praise clip now carries both beats). All 8 lessons share
+         this one engine, so the pass covers every lesson at once. */
       (function(){
         "use strict";
         function slice(l){ return Array.prototype.slice.call(l || []); }
@@ -15724,7 +15738,8 @@
           updateProgress();
           decorateCounts();
           renderReport();
-          if(window.__hootPlayClip) window.__hootPlayClip("great-job");
+          /* Kaitlyn-only voice: her praise + recap carry completion —
+             no generic Hoot clip chimes in here. */
           KAITLYN_VOICE.play("praise"); KAITLYN_VOICE.play("recap");
           if(window.__hootRefreshHost) setTimeout(window.__hootRefreshHost, 650);
         }
@@ -15843,7 +15858,9 @@
               card5._praise = opt.getAttribute("data-praise") || "⭐ That's right!";
               if(fb5) fb5.textContent = card5._praise + " One last tutor move before the star lands: teach it back to me — pick the sentence below that explains the idea best.";
               var tbShow = card5.querySelector(".ny-teachback"); if(tbShow) show(tbShow);
-              if(window.__hootPlayClip) window.__hootPlayClip("great-job");
+              /* Kaitlyn-only voice: her praise clip carries this beat
+                 (a generic Hoot "great-job" used to play here). */
+              KAITLYN_VOICE.play("praise");
             } else {
               card5._wrongs = (card5._wrongs || 0) + 1;
               opt.classList.add("wrong");
