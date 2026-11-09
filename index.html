@@ -2296,6 +2296,40 @@
         .tutor-step, .tutor-hit, .tutor-pulse, .tutor-opt-tap{ animation:none; }
         .tutor-confetti{ display:none; }
       }
+      /* ===== OLDER PATHS TRUE REMAKE — Hoot's spoken tutor stage =====
+         Hoot sits BIG at the side of the teaching area in every lesson
+         of Ages 5–7, 8–10, CT 11–13 and 14–18 — the Ages 2–4 tutor
+         stage, sized for older kids. The stage is plain in-flow grid
+         layout at the top of .lsn-teach: Hoot's figure in its own
+         column, his speech bubble in the other. Nothing is positioned
+         over the steps, the teaching visuals or the answer choices,
+         at phone portrait or desktop widths. Scoped to the same four
+         wraps as the tutor upgrade above; #panel-little and
+         #ny-creator-wrap keep their own stages. */
+      .ot-stage{ display:grid; grid-template-columns:104px 1fr; gap:6px 12px; align-items:start; margin:2px 0 10px; }
+      .ot-hoot{ position:relative; text-align:center; cursor:pointer; background:none; border:none; padding:0; font:inherit; }
+      .ot-hoot svg{ width:100px; height:100px; display:block; margin:0 auto; filter:drop-shadow(0 6px 10px rgba(23,60,120,.25)); }
+      .ot-hoot.is-speaking svg{ animation:otBob .9s ease-in-out infinite; }
+      @keyframes otBob{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-6px) rotate(-2deg); } }
+      .ot-hoot .beak{ transform-origin:32px 38px; }
+      .ot-hoot.is-speaking .beak{ animation:otBeak .28s ease-in-out infinite alternate; }
+      @keyframes otBeak{ from{ transform:scaleY(.65); } to{ transform:scaleY(1.25); } }
+      .ot-name{ display:inline-block; margin-top:2px; background:#ef6461; color:#fff; font-weight:800; font-size:.74rem; letter-spacing:.08em; padding:2px 10px; border-radius:999px; border:2px solid #17263b; }
+      .ot-main{ min-width:0; }
+      .tutor-hoot.ot-bubble{ position:relative; background:#fff; border:3px solid #17263b; border-radius:18px; padding:12px 16px; font-size:1.02rem; line-height:1.5; margin:0; box-shadow:0 4px 0 rgba(0,0,0,.12); cursor:pointer; }
+      .tutor-hoot.ot-bubble::before{ content:""; position:absolute; left:-12px; top:26px; width:19px; height:19px; background:#fff; border-left:3px solid #17263b; border-bottom:3px solid #17263b; transform:rotate(45deg); border-bottom-left-radius:5px; }
+      @media (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble{ background:#22385c; color:#eef4f8; border-color:#8fa8c8; } .tutor-hoot.ot-bubble::before{ background:#22385c; border-color:#8fa8c8; } }
+      .ot-q{ cursor:pointer; }
+      .ot-q::after{ content:" 🔊"; }
+      .ot-q:focus-visible, .ot-hoot:focus-visible, .tutor-hoot.ot-bubble:focus-visible{ outline:4px solid #ffd93b; outline-offset:3px; border-radius:10px; }
+      @media (max-width:600px){
+        .ot-stage{ grid-template-columns:72px 1fr; gap:4px 10px; }
+        .ot-hoot svg{ width:70px; height:70px; }
+        .ot-name{ font-size:.62rem; padding:1px 7px; }
+        .tutor-hoot.ot-bubble{ font-size:.98rem; padding:10px 12px; }
+        .tutor-hoot.ot-bubble::before{ top:18px; }
+      }
+      @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
   </head>
   <body class="welcome-open" data-view="home">
@@ -13032,6 +13066,420 @@
             }
           });
         });
+      })();
+    </script>
+    <script>
+      /* ===== OLDER PATHS TRUE REMAKE — Hoot the SPOKEN tutor (Ages 5–7, 8–10, CT 11–13, 14–18) =====
+         The teaching portions of the four older paths get the Ages 2–4
+         spoken-tutor standard. Every lesson now opens with Hoot's
+         tutor stage at the top of the teaching area: Hoot BIG at the
+         side (young owl for 5–7 / 8–10, cool owl for CT 11–13, mentor
+         owl for 14–18) with a speech bubble that carries his teaching
+         words in full — the exact step text as each step is revealed.
+         His recorded voice speaks the KEY beats out loud through a
+         dedicated clip channel with the same discipline as the 2–4
+         tutor: one clip at a time, chained on each clip's real
+         "ended" event (never a guessed timer, so a line is never cut
+         off), a generation counter that makes leaving the lesson /
+         switching profile / switching tab absolute (no ghost audio),
+         Quiet mode honoured at sequence start and at every clip, and
+         the hub's voice governor serialising this channel against
+         every other voice in the app. No device text-to-speech, and
+         NO new recordings: only clips already in assets/voice/ — the
+         hoot-* tutor lines, call-letter / call-number / call-color /
+         call-shape name clips, fish-teach clips and teach-* /
+         ask-which-* clips. The kaitlyn-* clips are NOT used here:
+         her tutor voice is hers alone and stays inside her NY wrap.
+         Clip honesty, per path — where a beat names something a clip
+         honestly names, that clip speaks; where no recording exists
+         for the sentence, the bubble carries the words in full and
+         the nearest tutor clip (hoot-great-thinking / hoot-look-
+         closely / hoot-keep-going, rotating) carries the voice:
+           · Ages 5–7 — letter sounds are named for real (S/M/T via
+             call-letter, A–E via fish-teach where a step names them),
+             colours and counting numbers via call-color / call-number
+             where a step, question or praise names them, apples via
+             teach-apple; the blending / comprehension steps are
+             bubble-full-text + tutor encouragement clips.
+           · Ages 8–10 — numbers, colours and shapes named in steps,
+             questions and praise speak via call-* clips (×/÷ counts,
+             area counts); fractions, main idea, topic sentences and
+             photosynthesis are bubble-full-text + encouragement clips
+             (no honest clip names a fraction or a topic sentence).
+           · CT Ages 11–13 — ratio and percent quantities named in a
+             step speak via call-number where a step names them; the
+             source-check, debugging, design-loop, persuasion and
+             budget reasoning is bubble-full-text + encouragement.
+           · Ages 14–18 — equation numbers named in a step speak via
+             call-number where named; thesis, sources, Spanish endings
+             and study science are bubble-full-text + encouragement.
+         Recaps speak their named tokens where they have them, else
+         hoot-you-learned. Questions speak an ask-which-* clip where
+         the question honestly matches one, else their named token,
+         else hoot-ask-hoot. The tutor flow per lesson: hook (step 1,
+         owl-hello + its named token) → each step revealed by Next
+         step is narrated as it lands → the worked example's
+         conclusion (last step) → the gold "So remember: …" recap →
+         the "Your turn" question, spoken and shown (tap the question
+         any time to hear it again). A wrong answer puts the lesson's
+         own per-option hint in Hoot's bubble and speaks the hint's
+         named target (or hoot-look-closely) before re-asking; the
+         existing gold pulse on the teaching visual still fires. A
+         right answer speaks the praise (its named token + a hoot-*
+         praise clip) and then the recap. "Show me again, Hoot!"
+         replays the whole spoken sequence — hook, every step, recap,
+         question. Lesson content, questions, answers, hints, praise,
+         stars, the .lsn.done / .lsn-fb / .lsn-opt state contract,
+         per-profile saving and the Roadmap are untouched: this layer
+         only presents and speaks. Scoped to the four target wraps —
+         #panel-little and #ny-creator-wrap are never queried. */
+      (function(){
+        "use strict";
+        var PATHS = [
+          { key:"early",   sel:"#panel-early .lsn",                    panel:"#panel-early",   variant:"young"  },
+          { key:"quest",   sel:"#panel-quest .lsn",                    panel:"#panel-quest",   variant:"young"  },
+          { key:"creator", sel:"#panel-creator #ct-creator-wrap .lsn", panel:"#panel-creator", variant:"cool"   },
+          { key:"teen",    sel:"#panel-teen .lsn",                     panel:"#panel-teen",    variant:"mentor" }
+        ];
+        var allCards = [];
+        PATHS.forEach(function(p){
+          Array.prototype.slice.call(document.querySelectorAll(p.sel)).forEach(function(c){
+            if(c._tcfg && c._tline && !c._otBuilt){ c._otVariant = p.variant; allCards.push(c); }
+          });
+        });
+        if(!allCards.length) return;
+        function slice(l){ return Array.prototype.slice.call(l || []); }
+
+        /* ---------- Quiet + helpers ---------- */
+        function quiet(){
+          var b = document.querySelector('.voice-btn[data-voice="off"]');
+          return !!(b && b.classList.contains("sel"));
+        }
+        function setLine(card, txt){ if(card && card._tline) card._tline.textContent = txt; }
+        function setSpeaking(card, on){ if(card && card._otHoot) card._otHoot.classList.toggle("is-speaking", !!on); }
+        function pauseFor(text){
+          var words = String(text || "").replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length;
+          return Math.min(2200, Math.max(750, 450 + words * 110));
+        }
+        function headline(text){
+          var s = String(text || "");
+          var m = s.match(/^[^.!?]{10,160}[.!?]/);
+          return m ? m[0] : s.slice(0, 160);
+        }
+        function owlSVG(variant){
+          var body = "#159a7a", belly = "#c8ecd7", acc = '<path d="M10 18h44l-4-9H14z" fill="#ef6461"/>';
+          if(variant === "cool"){ body = "#7d5ba6"; belly = "#ddd0f5"; acc = '<circle cx="21" cy="30" r="9" fill="none" stroke="#2b2118" stroke-width="2.5"/><circle cx="43" cy="30" r="9" fill="none" stroke="#2b2118" stroke-width="2.5"/>'; }
+          if(variant === "mentor"){ body = "#2456a6"; belly = "#c9d8ef"; acc = '<circle cx="21" cy="30" r="9" fill="none" stroke="#1e2a3d" stroke-width="2.5"/><circle cx="43" cy="30" r="9" fill="none" stroke="#1e2a3d" stroke-width="2.5"/><path d="M14 52h36" stroke="#f2b705" stroke-width="3" stroke-linecap="round"/>'; }
+          return '<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="36" rx="24" ry="22" fill="' + body + '"/><ellipse cx="32" cy="44" rx="13" ry="11" fill="' + belly + '"/><circle cx="21" cy="30" r="7.5" fill="#fff"/><circle cx="43" cy="30" r="7.5" fill="#fff"/><circle cx="21" cy="31" r="4" fill="#1e2a3d"/><circle cx="43" cy="31" r="4" fill="#1e2a3d"/><g class="beak"><path d="M27 37h10l-5 6z" fill="#f2b705" stroke="#d99e00" stroke-width="1" stroke-linejoin="round"/></g>' + acc + '</svg>';
+        }
+
+        /* ---------- honest clip derivation: a clip speaks only when
+           it honestly names something the beat's headline names ------ */
+        var COLOR_CLIPS = { red:"call-color-red", yellow:"call-color-yellow", blue:"call-color-blue", green:"call-color-green", orange:"call-color-orange", purple:"call-color-purple", pink:"call-color-pink", black:"call-color-black", white:"call-color-white", brown:"call-color-brown" };
+        var SHAPE_CLIPS = { circle:"call-shape-circle", square:"call-shape-square", triangle:"call-shape-triangle", star:"call-shape-star", heart:"call-shape-heart", rectangle:"call-shape-rectangle", oval:"call-shape-oval", diamond:"call-shape-diamond" };
+        var TEACH_CLIPS = { big:"teach-big", small:"teach-small", happy:"teach-happy", sad:"teach-sad", eyes:"teach-eyes", ears:"teach-ears", nose:"teach-nose", mouth:"teach-mouth", hands:"teach-hands", feet:"teach-feet", apple:"teach-apple", banana:"teach-banana" };
+        var NUM_WORDS = { ONE:1, TWO:2, THREE:3, FOUR:4, FIVE:5, SIX:6, SEVEN:7, EIGHT:8, NINE:9, TEN:10 };
+        function tokenClips(text, max){
+          max = max || 1;
+          var raw = String(text || "");
+          var s = " " + raw.toLowerCase().replace(/<[^>]*>/g, " ") + " ";
+          s = s.replace(/here's the idea:/g, " ").replace(/step \d+\s*[—–:\-]/g, " ");
+          var hits = [];
+          function scan(map){
+            Object.keys(map).forEach(function(w){
+              var idx = s.search(new RegExp("\\b" + w + "\\b"));
+              if(idx > -1) hits.push({ i: idx, clip: map[w] });
+            });
+          }
+          scan(COLOR_CLIPS); scan(SHAPE_CLIPS); scan(TEACH_CLIPS);
+          var m, numRe = /\b(10|[1-9])\b/g;
+          while((m = numRe.exec(s))){ hits.push({ i: m.index, clip: "call-number-" + m[1] }); }
+          Object.keys(NUM_WORDS).forEach(function(w){
+            var idx = raw.search(new RegExp("\\b" + w + "\\b"));
+            if(idx > -1) hits.push({ i: 1000 + idx, clip: "call-number-" + NUM_WORDS[w] });
+          });
+          var lm = s.match(/\b([a-z]) says\b/) || s.match(/\b([a-z]) hums\b/) || s.match(/\b([a-z]) is a\b/) || s.match(/\bletter ([a-z])\b/) || s.match(/\bpoint to ([a-z])\b/);
+          if(lm){
+            var L = lm[1];
+            hits.push({ i: s.indexOf(lm[0]), clip: (L >= "a" && L <= "e") ? "fish-teach-" + L : "call-letter-" + L });
+          }
+          hits.sort(function(a, b){ return a.i - b.i; });
+          var out = [];
+          hits.forEach(function(h){ if(out.indexOf(h.clip) === -1 && out.length < max) out.push(h.clip); });
+          return out;
+        }
+        function askClipFor(text){
+          var s = " " + String(text || "").toLowerCase() + " ";
+          if(/\bwhich animal\b/.test(s) || /\bwho says\b/.test(s)) return "ask-which-animal";
+          if(/comes next/.test(s)) return "ask-what-comes-next";
+          if(/\bfeeling/.test(s) || /\bhappy face\b/.test(s)) return "ask-which-feeling";
+          if(/\bwhich part\b/.test(s)) return "ask-which-part";
+          if(/\bbig\b/.test(s)) return "ask-which-big";
+          if(/\bsmall\b/.test(s)) return "ask-which-small";
+          if(/\bup\b/.test(s)) return "ask-which-up";
+          if(/\bdown\b/.test(s)) return "ask-which-down";
+          return null;
+        }
+        var FALLBACKS = ["hoot-great-thinking", "hoot-look-closely", "hoot-keep-going"];
+        function fallbackClip(card){ card._otFb = (card._otFb || 0) + 1; return FALLBACKS[(card._otFb - 1) % FALLBACKS.length]; }
+        function stepClips(card, text){
+          var t = tokenClips(headline(text), 1);
+          return t.length ? t : [fallbackClip(card)];
+        }
+        function hookClips(card, text){ return ["owl-hello"].concat(tokenClips(headline(text), 1)); }
+        function conclusionClips(card, text){
+          var t = tokenClips(headline(text), 1);
+          return t.length ? t.concat(["hoot-great-thinking"]) : ["hoot-great-thinking"];
+        }
+        function recapClips(card, text){
+          var t = tokenClips(text, 2);
+          return t.length ? t : ["hoot-you-learned"];
+        }
+        function questionBeat(card){
+          var q = card.querySelector(".lsn-q");
+          var qt = q ? q.textContent.replace(/\s+/g, " ").trim() : "";
+          var clips = [];
+          var ak = askClipFor(qt);
+          if(ak) clips.push(ak);
+          tokenClips(qt, 1).forEach(function(c){ if(clips.indexOf(c) === -1) clips.push(c); });
+          if(!clips.length) clips = ["hoot-ask-hoot"];
+          return { t: "🦉 " + qt, clips: clips, pause: 1500 };
+        }
+        function stepBeat(card, steps, i){
+          var clips = i === 0 ? hookClips(card, steps[0])
+            : (i === steps.length - 1 ? conclusionClips(card, steps[i]) : stepClips(card, steps[i]));
+          return { t: "🦉 " + steps[i], clips: clips };
+        }
+
+        /* ---------- the spoken-tutor clip channel (2–4 discipline) ---------- */
+        var clipEl = null, clipGen = 0, SEQ = null, beatTimer = null;
+        function clipPlayer(){
+          if(!clipEl){ clipEl = new Audio(); clipEl.preload = "auto"; }
+          return clipEl;
+        }
+        function playClips(clips, gen, card, done){
+          var list = (clips || []).filter(Boolean);
+          if(!list.length){ done(); return; }
+          var a = clipPlayer();
+          var idx = 0;
+          function step(){
+            if(gen !== clipGen) return;
+            if(idx >= list.length){ done(); return; }
+            if(quiet()){ done(); return; }
+            var key = list[idx]; idx++;
+            var settled = false, guard = null;
+            function onEnd(){
+              if(settled) return; settled = true;
+              if(guard) clearTimeout(guard);
+              a.removeEventListener("ended", onEnd);
+              a.removeEventListener("error", onEnd);
+              if(gen !== clipGen) return;
+              step();
+            }
+            a.addEventListener("ended", onEnd);
+            a.addEventListener("error", onEnd);
+            guard = setTimeout(onEnd, 8000);
+            try{
+              a.src = "assets/voice/" + key + ".mp3";
+              setSpeaking(card, true);
+              var p = a.play();
+              if(p && p.catch) p.catch(function(){ onEnd(); });
+            }catch(e){ onEnd(); }
+          }
+          step();
+        }
+        function stopTutor(){
+          clipGen++;
+          if(beatTimer){ clearTimeout(beatTimer); beatTimer = null; }
+          if(clipEl){ try{ clipEl.pause(); }catch(e){} }
+          SEQ = null;
+          allCards.forEach(function(c){ setSpeaking(c, false); });
+        }
+        function runBeats(card, beats, opts){
+          opts = opts || {};
+          stopTutor();
+          if(opts.stopHub !== false && window.__hootStopClip) window.__hootStopClip();
+          var gen = clipGen;
+          var seq = { card: card, beats: beats, i: 0, gen: gen };
+          SEQ = seq;
+          function finish(){
+            if(gen !== clipGen) return;
+            if(SEQ === seq) SEQ = null;
+            setSpeaking(card, false);
+            if(opts.onDone) opts.onDone();
+          }
+          function next(){
+            if(gen !== clipGen) return;
+            if(seq.i >= beats.length){ finish(); return; }
+            var beat = beats[seq.i]; seq.i++;
+            if(beat.t) setLine(card, beat.t);
+            var clips = beat.clips || [];
+            if(clips.length && !quiet()){
+              playClips(clips, gen, card, function(){ if(gen === clipGen) next(); });
+            } else {
+              beatTimer = setTimeout(function(){ if(gen === clipGen) next(); }, beat.pause || pauseFor(beat.t));
+            }
+          }
+          beatTimer = setTimeout(next, 200);
+        }
+        function playSolo(card, clips){
+          if(SEQ || quiet() || !clips.length) return;
+          runBeats(card, [{ t: null, clips: clips }], {});
+        }
+
+        /* ---------- build Hoot's tutor stage in all 32 lessons ---------- */
+        allCards.forEach(function(card){
+          var cfg = card._tcfg;
+          var teach = card.querySelector(".lsn-teach");
+          if(!teach || !card._tline) return;
+          card._otBuilt = true;
+          var stage = document.createElement("div");
+          stage.className = "ot-stage";
+          var hootCol = document.createElement("button");
+          hootCol.type = "button";
+          hootCol.className = "ot-hoot";
+          hootCol.setAttribute("aria-label", "Hear Hoot teach this lesson out loud");
+          hootCol.innerHTML = owlSVG(card._otVariant || "young") + '<span class="ot-name">HOOT</span>';
+          var main = document.createElement("div");
+          main.className = "ot-main";
+          var line = card._tline;
+          line.classList.add("ot-bubble");
+          line.setAttribute("tabindex", "0");
+          line.setAttribute("role", "button");
+          line.setAttribute("aria-label", "Hear Hoot teach this lesson out loud");
+          line.textContent = "🦉 Hoo hoo! I'm Hoot, your tutor for this lesson. Tap Next step and I'll teach it OUT LOUD, one step at a time — tap me any time to hear that step again!";
+          main.appendChild(line);
+          stage.appendChild(hootCol);
+          stage.appendChild(main);
+          teach.insertBefore(stage, teach.firstChild);
+          card._otHoot = hootCol;
+          card._otStage = stage;
+          card._otSpoken = 0;
+          function speakCurrent(){
+            var steps = cfg.steps || [];
+            if(!steps.length) return;
+            var idx = card._otSpoken > 0 ? Math.min(card._otSpoken - 1, steps.length - 1) : 0;
+            runBeats(card, [stepBeat(card, steps, idx)], {});
+          }
+          hootCol.addEventListener("click", speakCurrent);
+          line.addEventListener("click", speakCurrent);
+          line.addEventListener("keydown", function(e){
+            if(e.key === "Enter" || e.key === " "){ e.preventDefault(); speakCurrent(); }
+          });
+          var q = card.querySelector(".lsn-q");
+          if(q){
+            q.classList.add("ot-q");
+            q.setAttribute("tabindex", "0");
+            q.setAttribute("role", "button");
+            q.setAttribute("aria-label", "Hear Hoot ask the question out loud: " + q.textContent.replace(/\s+/g, " ").trim());
+            var askFn = function(){ runBeats(card, [questionBeat(card)], {}); };
+            q.addEventListener("click", askFn);
+            q.addEventListener("keydown", function(e){
+              if(e.key === "Enter" || e.key === " "){ e.preventDefault(); askFn(); }
+            });
+          }
+          /* Next step: the tutor engine's own handler (registered
+             first) reveals the step; this one narrates every step the
+             child has not heard yet, then the recap and the question
+             when the last step lands. */
+          if(card._nextBtn){
+            card._nextBtn.addEventListener("click", function(){
+              var steps = cfg.steps || [];
+              if(!steps.length) return;
+              var visible = slice(card._stepsEls).filter(function(s){ return !s.hidden; }).length;
+              var target = Math.min(visible, steps.length);
+              var beats = [];
+              for(var i = card._otSpoken || 0; i < target; i++) beats.push(stepBeat(card, steps, i));
+              card._otSpoken = target;
+              if(target >= steps.length){
+                beats.push({ t: "🦉 So remember: " + cfg.recap, clips: recapClips(card, cfg.recap) });
+                beats.push(questionBeat(card));
+              }
+              if(beats.length) runBeats(card, beats, {});
+            });
+          }
+          /* Replay: replays the whole spoken sequence — hook, every
+             step, the recap and the question. */
+          if(card._replayBtn){
+            card._replayBtn.addEventListener("click", function(){
+              var steps = cfg.steps || [];
+              var beats = steps.map(function(st, i){ return stepBeat(card, steps, i); });
+              beats.push({ t: "🦉 So remember: " + cfg.recap, clips: recapClips(card, cfg.recap) });
+              beats.push(questionBeat(card));
+              card._otSpoken = steps.length;
+              runBeats(card, beats, {});
+            });
+          }
+          /* Tapping a teaching visual names it aloud when a clip
+             honestly names it — solo only, never over a sequence. */
+          slice(card._vizItems).forEach(function(el, i){
+            el.addEventListener("click", function(){
+              var it = cfg.viz && cfg.viz.items && cfg.viz.items[i];
+              var txt = it ? (it.s || it.t || "") : "";
+              var clips = tokenClips(txt, 1);
+              if(clips.length) playSolo(card, clips);
+            });
+          });
+        });
+
+        /* ---------- answers: Hoot speaks the hint / praise + recap ----------
+           Registered on each panel after the tutor engine's own answer
+           handler, so the state contract (.done, .right, disabled
+           options, .lsn-fb text, the gold pulse, the hub praise clip)
+           is already in motion; this layer only adds the tutor's
+           voice and puts the specific words in his bubble. The hub
+           praise / try-again clip is left to finish (stopHub:false) —
+           the governor queues these beats behind it, one voice at a
+           time. */
+        PATHS.forEach(function(path){
+          var panel = document.querySelector(path.panel);
+          if(!panel) return;
+          panel.addEventListener("click", function(e){
+            var t = e.target;
+            if(!t || !t.closest) return;
+            var opt = t.closest(".lsn-opt");
+            if(!opt) return;
+            var card = opt.closest(".lsn");
+            if(!card || !card._otBuilt || card.classList.contains("done") || opt.disabled) return;
+            var cfg = card._tcfg;
+            if(opt.hasAttribute("data-right")){
+              var praise = opt.getAttribute("data-praise") || "⭐ That's right — lesson done!";
+              var praiseClips = tokenClips(praise, 1);
+              praiseClips.push(["hoot-great-job", "hoot-amazing", "hoot-star"][Math.floor(Math.random() * 3)]);
+              runBeats(card, [
+                { t: praise, clips: praiseClips },
+                { t: "🦉 So remember: " + cfg.recap, clips: recapClips(card, cfg.recap) }
+              ], { stopHub: false });
+            } else {
+              var hint = opt.getAttribute("data-hint") || "Not quite — check Hoot's teaching above and try another answer!";
+              var hintClips = tokenClips(hint, 1);
+              runBeats(card, [
+                { t: "🦉 " + hint, clips: hintClips.length ? hintClips : ["hoot-look-closely"] },
+                questionBeat(card)
+              ], { stopHub: false });
+            }
+          });
+        });
+
+        /* ---------- no ghost audio: leaving the lesson context stops
+           the tutor — any tap outside these four panels, a profile
+           switch (data-profile changes on body), an age-tab switch
+           (a panel loses its place), the profile gate opening, or
+           the tab being hidden. ---------- */
+        var panels = PATHS.map(function(p){ return document.querySelector(p.panel); }).filter(Boolean);
+        document.addEventListener("click", function(e){
+          if(!e.target) return;
+          var inside = panels.some(function(pn){ return pn.contains(e.target); });
+          if(!inside) stopTutor();
+        }, true);
+        if(window.MutationObserver){
+          var mo = new MutationObserver(function(){ stopTutor(); });
+          mo.observe(document.body, { attributes: true, attributeFilter: ["data-profile"] });
+          panels.forEach(function(pn){ mo.observe(pn, { attributes: true, attributeFilter: ["class"] }); });
+          var gate = document.getElementById("profile-gate");
+          if(gate) mo.observe(gate, { attributes: true, attributeFilter: ["hidden"] });
+        }
+        document.addEventListener("visibilitychange", function(){ if(document.hidden) stopTutor(); });
       })();
     </script>
     <script>
