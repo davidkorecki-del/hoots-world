@@ -1746,6 +1746,59 @@
         .panel .curr .lsn-wrap > .lsn .lsn-opt{ transition:none; }
         .panel .curr .lsn-wrap > .lsn .lsn-opt:hover{ transform:none; }
       }
+      /* ===== LESSON UPGRADE: LIVE TEACHING (Ages 2–4) =====
+         The 16 Little Explorers lessons get the rebuilt games'
+         treatment: every teaching picture is a tappable manipulative,
+         Hoot re-runs the demo on "Show me again", a wrong answer makes
+         the right teaching object glow, and answer buttons bounce the
+         instant they are tapped. Scoped to #panel-little only — the
+         other four paths keep their existing look. */
+      #panel-little .lsn{ position:relative; }
+      #panel-little .lsn-manip{ position:relative; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; transition:box-shadow .35s ease; }
+      #panel-little .lsn-manip:focus-visible, #panel-little .lsn-token:focus-visible{ outline:4px solid #ffd93b; outline-offset:3px; }
+      #panel-little .lsn-hit{ animation:lsnPop .45s ease; }
+      #panel-little .lsn-hit .lbig{ animation:lsnWiggle .5s ease; }
+      @keyframes lsnPop{ 0%{ transform:scale(1); } 35%{ transform:scale(1.16) rotate(-2deg); } 70%{ transform:scale(.96); } 100%{ transform:scale(1); } }
+      @keyframes lsnWiggle{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-6deg) scale(1.12); } 75%{ transform:rotate(6deg) scale(1.12); } }
+      #panel-little .lsn-grow{ animation:lsnGrow .6s ease; }
+      @keyframes lsnGrow{ 0%{ transform:scale(1); } 40%{ transform:scale(1.28); } 100%{ transform:scale(1); } }
+      #panel-little .lsn-shrink{ animation:lsnShrink .5s ease; }
+      @keyframes lsnShrink{ 0%{ transform:scale(1); } 40%{ transform:scale(.78); } 100%{ transform:scale(1); } }
+      #panel-little .lsn-lit{ box-shadow:0 0 0 6px #ffd93b, 0 0 0 13px rgba(255,217,59,.4), 0 12px 26px rgba(23,60,120,.3) !important; transform:scale(1.07); z-index:2; }
+      #panel-little .lsn-hint-pulse{ animation:lsnHint .9s ease 2; }
+      @keyframes lsnHint{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,217,59,0); transform:scale(1); } 50%{ box-shadow:0 0 0 12px rgba(255,217,59,.65); transform:scale(1.1); } }
+      #panel-little .lsn-trace svg path, #panel-little .lsn-trace svg circle, #panel-little .lsn-trace svg rect{ stroke:#17263b; stroke-width:2.5; stroke-dasharray:260; stroke-dashoffset:260; animation:lsnTrace .9s ease forwards; }
+      @keyframes lsnTrace{ to{ stroke-dashoffset:0; } }
+      #panel-little .lsn-token{ position:relative; display:inline-grid; place-items:center; min-width:52px; min-height:52px; padding:4px 8px; margin:2px; border-radius:16px; background:#fff; border:3px solid #17263b; cursor:pointer; font-size:1.5rem; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+      #panel-little .lsn-token.lsn-blast{ animation:lsnBlast .6s ease; }
+      @keyframes lsnBlast{ 0%{ transform:scale(1); } 45%{ transform:scale(1.7) rotate(8deg); } 100%{ transform:scale(1); } }
+      #panel-little .ctap.lsn-hit{ animation:lsnPop .4s ease; }
+      #panel-little .lsn-hoot{ background:#eaf6ff; border:2.5px solid #17263b; border-radius:14px; padding:10px 14px; font-weight:800; margin:12px 0 0; }
+      #panel-little .lsn-replay{ display:block; width:100%; margin-top:10px; min-height:58px; border-radius:999px; border:3px solid #17263b; background:#ffd93b; color:#17263b; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.12rem; cursor:pointer; box-shadow:0 4px 0 rgba(0,0,0,.2); touch-action:manipulation; }
+      #panel-little .lsn-replay:active{ transform:scale(.97); }
+      #panel-little .lsn-replay:disabled{ opacity:.65; cursor:default; }
+      #panel-little .lsn-opt{ touch-action:manipulation; }
+      #panel-little .lsn-opt:active{ transform:scale(.95) !important; }
+      #panel-little .lsn-opt.lsn-tap{ animation:lsnOptTap .35s ease; }
+      @keyframes lsnOptTap{ 0%{ transform:scale(1); } 40%{ transform:scale(1.07); } 100%{ transform:scale(1); } }
+      #panel-little .lsn-confetti{ position:absolute; inset:0; overflow:hidden; pointer-events:none; border-radius:22px; z-index:5; }
+      #panel-little .lsn-confetti i{ position:absolute; top:30px; width:10px; height:14px; border-radius:3px; animation:lsnConfFall .95s ease-in forwards; }
+      @keyframes lsnConfFall{ 0%{ transform:translate(0,0) rotate(0); opacity:1; } 100%{ transform:translate(var(--dx,0px),190px) rotate(320deg); opacity:0; } }
+      /* Little Kids mode: extra-large manipulatives, answers and replay */
+      body.kid-mode #panel-little .lsn-teach .cdot{ width:108px; height:108px; font-size:1.3rem; }
+      body.kid-mode #panel-little .lsn-teach .lchip{ padding:18px 22px; font-size:1.2rem; border-radius:20px; }
+      body.kid-mode #panel-little .lsn-teach .lchip .lbig{ font-size:3.1rem; }
+      body.kid-mode #panel-little .lsn-teach .lchip svg{ width:76px; height:76px; }
+      body.kid-mode #panel-little .ctap{ width:92px; height:92px; font-size:2.9rem; }
+      body.kid-mode #panel-little .lsn-token{ min-width:68px; min-height:68px; font-size:2rem; }
+      body.kid-mode #panel-little .lsn-replay{ min-height:68px; font-size:1.3rem; }
+      body.kid-mode #panel-little .lsn-hoot{ font-size:1.12rem; }
+      @media (prefers-reduced-motion: reduce){
+        #panel-little .lsn-hit, #panel-little .lsn-hit .lbig, #panel-little .lsn-grow, #panel-little .lsn-shrink,
+        #panel-little .lsn-hint-pulse, #panel-little .lsn-token.lsn-blast, #panel-little .lsn-opt.lsn-tap,
+        #panel-little .ctap.lsn-hit, #panel-little .lsn-trace svg path, #panel-little .lsn-trace svg circle, #panel-little .lsn-trace svg rect{ animation:none; }
+        #panel-little .lsn-confetti{ display:none; }
+      }
       /* ===== EVERY-TAB FIT PASS =====
          Every tab now opens straight on its main content, in the same
          hub dress: Today shows the day's steps before its pickers,
@@ -2004,6 +2057,88 @@
       }
       .prof-row .rm-line{ font-weight:800; opacity:1; color:#0b7c7b; }
     </style>
+    <style>
+      /* ===== KAITLYN (12) + NEW YORK TUTOR LESSONS =====
+         Kaitlyn is the third profile: Ages 11–13, New York curriculum,
+         Hoot as her tutor. Her lessons live in their own wrap inside the
+         Creators panel and show when New York is the curriculum state.
+         They are deliberately NOT .lsn cards: the per-profile snapshot
+         is index-based over the existing 48 lessons, and adding cards
+         there would shift Zane's and Riley's saved stars. Her stars
+         save per profile under their own on-device key instead. */
+      .prof-card-kaitlyn{ background:linear-gradient(160deg,#8a6bc9,#5b4a9e); }
+      .prof-card-kaitlyn .prof-play{ color:#5b4a9e; }
+      .gate-panel .prof-card-kaitlyn{ grid-column:1 / -1; flex-direction:row; text-align:left; align-items:center; gap:14px; padding:14px 18px; }
+      .gate-panel .prof-card-kaitlyn .prof-face{ width:76px; height:76px; }
+      .gate-panel .prof-card-kaitlyn .prof-card-main{ display:flex; flex-direction:column; gap:2px; align-items:flex-start; }
+      .gate-panel .prof-card-kaitlyn .prof-play{ margin-top:6px; }
+      @media (max-width:560px){
+        .gate-panel .prof-card-kaitlyn{ flex-direction:column; text-align:center; padding:10px 12px 12px; gap:2px; }
+        .gate-panel .prof-card-kaitlyn .prof-face{ width:60px; height:60px; }
+        .gate-panel .prof-card-kaitlyn .prof-card-main{ align-items:center; }
+      }
+      #ny-creator-wrap{ display:none; }
+      body[data-curstate="New York"] #ny-creator-wrap{ display:block; }
+      body[data-curstate="New York"] #ct-creator-wrap{ display:none; }
+      .ny-std-main{ background:#efe9fb; border:2.5px solid #cdbcf0; color:#3d2b66; border-radius:16px; padding:10px 14px; font-weight:700; line-height:1.5; }
+      @media (prefers-color-scheme: dark){ .ny-std-main{ background:#2c2350; border-color:#574a8a; color:#e6defc; } }
+      .ny-lsn{ position:relative; background:#fff; color:#17263b; border:3px solid #d9cdf5; border-radius:22px; padding:18px 18px 16px; margin-top:16px; box-shadow:0 8px 20px rgba(80,50,160,.10); text-align:left; }
+      @media (prefers-color-scheme: dark){ .ny-lsn{ background:#24344f; color:#eef4f8; border-color:#574a8a; } }
+      .ny-lsn.hoot-pick{ outline:5px solid #ffb300; outline-offset:3px; }
+      .ny-lsn [hidden]{ display:none !important; }
+      .ny-lsn .lsn-star{ opacity:.15; font-size:1.5rem; }
+      .ny-lsn.done .lsn-star{ opacity:1; }
+      .ny-lsn.done{ border-color:#2f9e44; }
+      .ny-std-tag{ display:inline-block; margin-top:8px; background:#7d5ba6; color:#fff; font-weight:800; font-size:.82rem; border-radius:999px; padding:5px 12px; line-height:1.35; }
+      .ny-hoot{ display:flex; gap:10px; align-items:flex-start; background:#f6f1ff; border:2.5px solid #e0d4fa; border-radius:16px; padding:12px 14px; margin-top:12px; }
+      @media (prefers-color-scheme: dark){ .ny-hoot{ background:#2c2350; border-color:#574a8a; } }
+      .ny-hoot .ny-owl{ font-size:1.7rem; line-height:1.2; flex:none; }
+      .ny-hoot p{ margin:0; font-weight:700; line-height:1.55; }
+      .ny-vocab{ margin-top:10px; font-weight:700; line-height:1.55; background:#fff8e1; border:2.5px dashed #e0a800; border-radius:14px; padding:10px 14px; color:#4a3500; }
+      @media (prefers-color-scheme: dark){ .ny-vocab{ background:#3d3410; color:#ffe9a8; } }
+      .ny-phase{ margin-top:14px; border-top:2.5px dashed #d9cdf5; padding-top:12px; }
+      .ny-phase h5{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.12rem; margin:0 0 8px; color:#5b4a9e; }
+      @media (prefers-color-scheme: dark){ .ny-phase h5{ color:#cdbcf0; } }
+      .ny-step, .ny-try-result, .ny-alt{ background:#f4f8fc; border:2.5px solid #dfe9f2; border-radius:14px; padding:10px 14px; font-weight:700; line-height:1.55; margin:8px 0 0; }
+      @media (prefers-color-scheme: dark){ .ny-step, .ny-try-result, .ny-alt{ background:#2a3c58; border-color:#3c5478; } }
+      .ny-alt{ background:#e9f9ee; border-color:#9fd8ab; }
+      @media (prefers-color-scheme: dark){ .ny-alt{ background:#1e4030; border-color:#3e7d55; } }
+      .ny-step b, .ny-try-result b{ color:#5b4a9e; }
+      @media (prefers-color-scheme: dark){ .ny-step b, .ny-try-result b{ color:#ffd93b; } }
+      .ny-nextstep, .ny-check-ok, .ny-check-again{ border:3px solid #17263b; border-radius:999px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.02rem; padding:11px 20px; cursor:pointer; min-height:50px; margin-top:10px; }
+      .ny-nextstep{ background:#7d5ba6; border-color:#5b4a9e; color:#fff; box-shadow:0 4px 0 rgba(0,0,0,.18); }
+      .ny-nextstep:active{ transform:translateY(2px); }
+      .ny-check-ok{ background:#2f9e44; border-color:#257a35; color:#fff; }
+      .ny-check-again{ background:#fff; color:#17263b; margin-left:8px; }
+      @media (prefers-color-scheme: dark){ .ny-check-again{ background:#2a3f5c; color:#eef4f8; border-color:#8fa8c8; } }
+      .ny-check-fb, .ny-try-fb{ font-weight:800; line-height:1.5; margin:10px 0 0; color:#5b4a9e; }
+      @media (prefers-color-scheme: dark){ .ny-check-fb, .ny-try-fb{ color:#ffd93b; } }
+      .ny-try-q{ font-weight:800; line-height:1.5; margin:10px 0 0; }
+      .ny-try-opts, .ny-opts{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+      .ny-try-opt, .ny-opt{ min-height:52px; padding:10px 18px; border:3px solid #17263b; border-radius:16px; background:#fff; color:#17263b; font-family:"Fredoka",sans-serif; font-weight:600; font-size:1.05rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 0 rgba(0,0,0,.15); text-align:left; }
+      @media (prefers-color-scheme: dark){ .ny-try-opt, .ny-opt{ background:#2a3f5c; color:#eef4f8; border-color:#8fa8c8; } }
+      .ny-try-opt.right, .ny-opt.right{ background:#2f9e44; border-color:#2f9e44; color:#fff; }
+      .ny-try-opt.wrong, .ny-opt.wrong{ border-color:#ef6461; background:#fdecec; animation:lsn-shake .45s ease; }
+      @media (prefers-color-scheme: dark){ .ny-try-opt.wrong, .ny-opt.wrong{ background:#5c2a2a; } }
+      .ny-try-opt:disabled, .ny-opt:disabled{ cursor:default; opacity:.65; }
+      .ny-try-opt.right:disabled, .ny-opt.right:disabled{ opacity:1; }
+      @media (prefers-reduced-motion: reduce){ .ny-try-opt.wrong, .ny-opt.wrong{ animation:none; } }
+      @media (max-width:560px){ .ny-try-opt, .ny-opt{ flex:1 1 100%; justify-content:center; } }
+      .ny-passage{ background:#fffdf4; border:2.5px solid #e8dcc0; border-radius:14px; padding:12px 16px; font-weight:700; line-height:1.65; margin-top:10px; color:#3a2f22; }
+      @media (prefers-color-scheme: dark){ .ny-passage{ background:#33302a; border-color:#6b5f45; color:#f2ead8; } }
+      .ny-passage u{ text-decoration-color:#7d5ba6; text-decoration-thickness:3px; }
+      .ny-visual{ margin-top:10px; }
+      .ny-numline{ display:flex; justify-content:space-between; gap:2px; background:#17263b; border-radius:14px; padding:10px 8px 8px; }
+      .ny-numline span{ flex:1; text-align:center; color:#fff; font-weight:800; font-size:.82rem; line-height:1.25; }
+      .ny-numline span i{ display:block; font-style:normal; color:#ffd93b; font-size:.95rem; }
+      .ny-numline span.hot{ background:#7d5ba6; border-radius:8px; }
+      .ny-flow{ display:flex; flex-wrap:wrap; align-items:stretch; gap:8px; }
+      .ny-flow .ny-fbox{ flex:1 1 120px; background:#eef7ee; border:2.5px solid #9fd8ab; border-radius:14px; padding:10px 12px; font-weight:800; text-align:center; line-height:1.4; color:#1e4626; }
+      @media (prefers-color-scheme: dark){ .ny-flow .ny-fbox{ background:#1e4030; border-color:#3e7d55; color:#d8f5de; } }
+      .ny-flow .ny-farr{ align-self:center; font-size:1.3rem; font-weight:900; color:#5b4a9e; }
+      .ny-recap{ margin-top:14px; background:#17263b; color:#ffd93b; border-radius:16px; padding:12px 16px; font-weight:800; line-height:1.55; }
+      .ny-fb{ min-height:1.2em; }
+    </style>
 
   </head>
   <body class="welcome-open" data-view="home">
@@ -2025,7 +2160,7 @@
           <p class="hh-greet" id="hh-greet">Hoo hoo! Hi friend! I'm Hoot!</p>
           <p class="hh-sub" id="hh-sub">Tell me who's playing and I'll set up their very own world — their own stars, stickers and photos.</p>
           <div class="hh-actions">
-            <button type="button" class="hh-next" id="hh-next">👇 First — tap here: pick who's playing, Zane or Riley</button>
+            <button type="button" class="hh-next" id="hh-next">👇 First — tap here: pick who's playing, Zane, Riley or Kaitlyn</button>
             <button type="button" class="hh-map" id="hh-map" data-viewbtn="map">🗺️ My Adventure Map</button>
             <button type="button" class="hh-switch" id="hh-switch" hidden>🔀 Switch profile</button>
           </div>
@@ -3020,7 +3155,7 @@
           <div class="curr-head"><h3><span class="curr-age">AGES 2–4</span>Little Explorers Learning Path</h3><p>Sixteen tiny lessons, in order. Hoot teaches each one with big pictures first — then your child taps the answer and earns the star. A few minutes at a time; no test, just stars.</p></div>
           <p class="curr-std" data-grades="Preschool · Ages 2–4" data-ct="<b>Connecticut standards:</b> CT Early Learning &amp; Development Standards (CT ELDS) — the play-based framework Connecticut wrote for this age: language &amp; literacy, mathematics, cognition, and social-emotional growth, learned through play, talk and doing — never worksheets or testing."><b>Connecticut standards:</b> CT Early Learning &amp; Development Standards (CT ELDS) — the play-based framework Connecticut wrote for this age: language &amp; literacy, mathematics, cognition, and social-emotional growth, learned through play, talk and doing — never worksheets or testing.</p>
           <div class="lsn-wrap">
-            <p class="lsn-intro">📖 How this path works: <b>Hoot teaches, then you try.</b> Read the little lesson together, tap the answer, earn the star.</p>
+            <p class="lsn-intro">📖 How this path works: <b>Hoot teaches, then you try.</b> Everything in Hoot's lesson is tappable — colours splash, shapes trace themselves, letters wiggle and sound out, counting lights up one by one. Tap <b>▶ Show me again</b> and Hoot re-teaches it live. Then tap the answer and earn the star.</p>
             <p class="lsn-progress" data-lsn-progress>⭐ 0 of 16 lessons done</p>
             <div class="lsn" data-lsn>
               <div class="lsn-top"><span class="lsn-num">1</span><h4>Colour names</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
@@ -3727,7 +3862,7 @@
         <div class="curr" aria-label="Learning path for Ages 11–13">
           <div class="curr-head"><h3><span class="curr-age">AGES 11–13</span>Creators Learning Path</h3><p>Eight maker lessons behind every project above. Each teaches a real skill with a worked example — ratios, trustworthy research, debugging, presenting, percentages, the design loop, evidence and budgets — then hands you a decision to make. Learn the skill here; use it in the projects.</p></div>
           <p class="curr-std" data-grades="Grades 6–8" data-ct="<b>Connecticut standards:</b> Connecticut Core Standards for middle school — ratios and expressions in maths, research and argument writing in ELA — with NGSS middle-school science &amp; engineering design and the CT Social Studies Frameworks, all practised inside real, finished projects."><b>Connecticut standards:</b> Connecticut Core Standards for middle school — ratios and expressions in maths, research and argument writing in ELA — with NGSS middle-school science &amp; engineering design and the CT Social Studies Frameworks, all practised inside real, finished projects.</p>
-          <div class="lsn-wrap">
+          <div class="lsn-wrap" id="ct-creator-wrap">
             <p class="lsn-intro">📖 How this path works: <b>learn the skill, then make the call.</b> Each lesson teaches with a worked example — then a real maker decision is yours.</p>
             <p class="lsn-progress" data-lsn-progress>⭐ 0 of 8 lessons done</p>
             <div class="lsn" data-lsn>
@@ -3817,6 +3952,495 @@
                 <button type="button" class="lsn-opt" data-hint="$15 left before the kit is right — but the kit costs $12, which comes OUT of that $15. How much would actually remain?">Yes — and you'll still have $15 left</button>
               </div>
               <p class="lsn-fb" aria-live="polite"></p>
+            </div>
+          </div>
+          <div class="lsn-wrap" id="ny-creator-wrap">
+            <p class="lsn-intro">🎓 <b>Kaitlyn's New York Tutor Lessons — Hoot teaches, step by step.</b> Made for grade 7 in Port Chester, NY. Every lesson goes the same gentle way: <b>👀 Watch me</b> (Hoot does one, thinking out loud) → <b>🤝 Try with me</b> (we do one together) → <b>⭐ Your turn</b> (one for the star). Tiny steps. No timers. No penalties — a wrong answer just means Hoot explains it a <b>different way</b>.</p>
+            <p class="ny-std-main"><b>New York standards:</b> NY Next Generation Learning Standards for Maths &amp; ELA, NYSSLS for science, and the NY Social Studies Framework — grade 7.</p>
+            <p class="lsn-progress" data-ny-progress>⭐ 0 of 8 NY lessons done</p>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">1</span><h4>Unit rates: the price of ONE</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NY Next Generation · Maths 7.RP — Ratios &amp; Proportional Relationships</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>Hoo hoo, Kaitlyn! Today I'm your tutor for <b>unit rates</b>. Stores in Port Chester use these every day — they tell you what ONE of something costs, so you can spot the best deal. We'll go tiny-step by tiny-step.</p></div>
+              <p class="ny-vocab">📖 Words to know: a <b>unit rate</b> means the cost (or amount) for <b>exactly 1</b> — like $7 for 1 ticket. <b>Divide</b> means share a total into equal parts.</p>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — I'll do one first</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1.</b> Here's my problem: <b>6 concert tickets cost $42</b>. I want the price of ONE ticket.</p>
+                  <p class="ny-step" hidden><b>Step 2.</b> To find the price of one, I share the total equally. I <b>divide</b>: 42 ÷ 6. Think: 6 × ? = 42.</p>
+                  <p class="ny-step" hidden><b>Step 3.</b> 6 × 7 = 42 — so 42 ÷ 6 = <b>7</b>.</p>
+                  <p class="ny-step" hidden><b>Step 4.</b> So the <b>unit rate is $7 per ticket</b>. That word “per” is my clue — it always means “for 1”.</p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ That's the whole trick: <b>total ÷ how many = price of one</b>. Nice watching — noticing the steps is real learning.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — picture it:</b> Imagine 6 friends splitting a $42 pizza bill fairly. Nobody pays $42 — each person pays their one fair share. $42 shared by 6 people is $7 each. A unit rate is just a fair share — the price of one share.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — we do this one together</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">New problem, same trick: <b>4 notebooks cost $10</b>. You tap each step — I'm right here.</p>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: To find the price of ONE notebook, what do we divide?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="Almost! We share the MONEY between the notebooks, so the money total goes first: 10 ÷ 4.">4 ÷ 10</button>
+                    <button type="button" class="ny-try-opt" data-right="1">10 ÷ 4 — the total money ÷ how many notebooks</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Exactly — total ÷ how many.</b> You picked the right setup. That's the hardest part, and you did it.</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: What is 10 ÷ 4?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">$2.50 — because 4 × $2.50 = $10</button>
+                    <button type="button" class="ny-try-opt" data-hint="Check it by multiplying back: 4 × $6 = $24, not $10. Try the one where 4 × the answer makes exactly 10.">$6</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Unit rate: $2.50 per notebook.</b> We did that one together — the next one is yours, and I know you can.</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Together: done! Now show me your solo flight…</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">8 juice boxes cost $24. What is the unit rate — the price of ONE juice box?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="Let's slow down together: share the total money between the boxes — 24 ÷ 8. Count by 8s: 8, 16, 24 — that's three 8s!" data-reteach="A different way, with real life: 8 friends split a $24 snack bill fairly. Each friend pays one share. 24 shared by 8 is 3 — so one share (one juice box) is $3. Tap $3!">$4</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! You divided 24 ÷ 8 = 3 all by yourself — that's the unit-rate move, and you own it now!">$3</button>
+                  <button type="button" class="ny-opt" data-hint="That number came from adding (24 + 8). Unit rates always DIVIDE: total ÷ how many. Try 24 ÷ 8." data-reteach="A different way, with real life: 8 friends split a $24 snack bill fairly. Each friend pays one share. 24 shared by 8 is 3 — so one share (one juice box) is $3. Tap $3!">$32</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: <b>unit rate = total ÷ how many</b>. “Per” means “for 1” — and dividing finds it every time.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">2</span><h4>Negative numbers on the number line</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NY Next Generation · Maths 7.NS — The Number System</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>Hi Kaitlyn! Today: <b>adding and subtracting negative numbers</b>. Your school tests love these — and they get easy once you can <i>see</i> them on a number line. Watch my feet hop along the line.</p></div>
+              <p class="ny-vocab">📖 Words to know: a <b>negative number</b> is less than zero — like −3, three steps LEFT of zero. The <b>number line</b> is a path: adding walks right, subtracting walks left.</p>
+              <div class="ny-visual"><div class="ny-numline" aria-hidden="true"><span><i>−6</i>·</span><span><i>−5</i>·</span><span><i>−4</i>·</span><span class="hot"><i>−3</i>start</span><span><i>−2</i>·</span><span><i>−1</i>·</span><span><i>0</i>·</span><span><i>1</i>·</span><span><i>2</i>·</span><span><i>3</i>·</span><span class="hot"><i>4</i>land!</span><span><i>5</i>·</span><span><i>6</i>·</span><span><i>7</i>·</span><span><i>8</i>·</span></div></div>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — I'll do one first</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1.</b> My problem: <b>−3 + 7</b>. I stand on <b>−3</b> on the number line (find it above — it's lit up).</p>
+                  <p class="ny-step" hidden><b>Step 2.</b> I'm <b>adding</b> 7, so I walk RIGHT 7 hops: −2, −1, 0, 1, 2, 3, 4.</p>
+                  <p class="ny-step" hidden><b>Step 3.</b> I landed on <b>4</b>. So <b>−3 + 7 = 4</b>.</p>
+                  <p class="ny-step" hidden><b>Step 4.</b> Notice: I passed zero on the way. Starting negative doesn't mean ending negative — a big enough walk right crosses zero!</p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ The line does the thinking: <b>start at the first number, walk, land</b>.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — think temperature:</b> It's −3° outside in Port Chester, and the day warms up by 7 degrees. −3, then warmer: −2, −1, 0, 1, 2, 3, 4. The thermometer ends at 4°. Same walk, same answer: <b>−3 + 7 = 4</b>.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — we do this one together</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">This one has a famous trap, and we'll disarm it together: <b>5 − (−2)</b>.</p>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: Subtracting a negative flips it into adding. So 5 − (−2) becomes…?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">5 + 2 — the two minuses team up and make a plus</button>
+                    <button type="button" class="ny-try-opt" data-hint="Good thinking, but watch the signs: minus a NEGATIVE flips to plus. It's the second number that's negative here.">5 − 2</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>You got the sign rule right that time</b> — minus a negative becomes plus. That rule is the whole lesson!</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: So what is 5 + 2?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="Stand on 5 and walk RIGHT 2 (we're adding now): 6, then…?">3</button>
+                    <button type="button" class="ny-try-opt" data-right="1">7</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>5 − (−2) = 7.</b> Together: done. The trap didn't stand a chance.</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Now one on your own — use the number line above any time. It's not cheating; it's the strategy!</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">Use the number line: what is −4 + 9?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="Walk it with me: stand on −4, hop RIGHT 9 times: −3, −2, −1, 0, 1, 2, 3, 4, and one more hop lands on…?" data-reteach="A different way — temperature again: sunrise in Port Chester is −4°, then it warms up 9 degrees. Count up from −4 nine times: −3, −2, −1, 0, 1, 2, 3, 4, 5. It lands on 5°. Tap 5!">−5</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES! You walked from −4, crossed zero, and landed on 5 — you handled a negative start like a pro!">5</button>
+                  <button type="button" class="ny-opt" data-hint="13 would be 4 + 9 — but we START at −4, not 4. Stand on −4 on the line and walk right 9 hops." data-reteach="A different way — temperature again: sunrise in Port Chester is −4°, then it warms up 9 degrees. Count up from −4 nine times: −3, −2, −1, 0, 1, 2, 3, 4, 5. It lands on 5°. Tap 5!">13</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: on the number line, <b>adding walks right, subtracting walks left</b> — and <b>minus a negative flips to plus</b>.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">3</span><h4>Two-step equations: unwrap x</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NY Next Generation · Maths 7.EE — Expressions &amp; Equations</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>Tutor time, Kaitlyn! <b>Two-step equations</b> look scary, but they're just presents: x is wrapped in two layers, and we unwrap them <b>backwards</b>. I'll unwrap one slowly, then we unwrap one together.</p></div>
+              <p class="ny-vocab">📖 Words to know: an <b>equation</b> is a balance — both sides weigh the same. <b>Undo</b> means do the opposite: the opposite of +5 is −5, and the opposite of ×3 is ÷3. Whatever you do to one side, do to the other — the balance stays fair.</p>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — I'll do one first</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1.</b> My equation: <b>3x + 5 = 20</b>. x was multiplied by 3, then 5 was added. I unwrap in REVERSE: last layer on, first layer off.</p>
+                  <p class="ny-step" hidden><b>Step 2.</b> Undo the +5 first: subtract 5 from BOTH sides. 3x + 5 − 5 = 20 − 5, so <b>3x = 15</b>.</p>
+                  <p class="ny-step" hidden><b>Step 3.</b> Now undo the ×3: divide both sides by 3. 15 ÷ 3 = 5, so <b>x = 5</b>.</p>
+                  <p class="ny-step" hidden><b>Step 4.</b> Always check! 3 × 5 + 5 = 15 + 5 = 20 ✔️. The balance balances — I'm sure.</p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ Unwrap backwards: <b>undo the adding first, then undo the multiplying</b> — and check at the end.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — think of a gift:</b> x is a surprise inside a box (+5 of wrapping paper), inside a bag (×3 of ribbon). To open it you remove the LAST thing put on, first. Undo +5, then undo ×3. Same unwrapping — that's all an equation is.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — we do this one together</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">Our equation: <b>4x − 3 = 13</b>. You lead, I steady the balance.</p>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: x was multiplied by 4, then 3 was SUBTRACTED. Unwrapping backwards, what's the first move?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">Add 3 to both sides — undo the −3 first</button>
+                    <button type="button" class="ny-try-opt" data-hint="That's the SECOND layer. Backwards means the last thing done to x comes off first — the −3 was done last.">Divide both sides by 4 first</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>4x = 16.</b> You unwrapped in the right order — that's the skill!</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: Now undo the ×4. What is x?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="Divide 16 by 4: 4 × ? = 16. Count: 4, 8, 12, 16 — four 4s!">12</button>
+                    <button type="button" class="ny-try-opt" data-right="1">x = 4 — because 16 ÷ 4 = 4</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ Check it: 4 × 4 − 3 = 13 ✔️. <b>We solved it together.</b> Solo flight next!</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 You've got the unwrapping order down. Your turn!</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">Solve it your way: 2x − 4 = 10. What is x?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="Unwrap backwards with me: first undo the −4 by ADDING 4 to both sides: 2x = 14. Now undo the ×2: 14 ÷ 2 = …?" data-reteach="A different way — a shopping story: two identical mystery boxes cost 2x together, and a $4 coupon drops the price to $10. Undo it in order: first add the $4 back — the boxes really cost $14. Then split $14 between the 2 boxes: $7 each. So x = 7. Check: 2 × 7 − 4 = 10 ✔️. Tap 7!">3</button>
+                  <button type="button" class="ny-opt" data-hint="Close! That answers 2x = 12. But first undo the −4: add 4 to both sides and 10 becomes 14, not 12. Then 14 ÷ 2 = …?" data-reteach="A different way — a shopping story: two identical mystery boxes cost 2x together, and a $4 coupon drops the price to $10. Undo it in order: first add the $4 back — the boxes really cost $14. Then split $14 between the 2 boxes: $7 each. So x = 7. Check: 2 × 7 − 4 = 10 ✔️. Tap 7!">6</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! You added 4 back (2x = 14), then split it in two — x = 7, solved and checkable. That's real algebra!">7</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: <b>unwrap x backwards</b> — undo the +/− first, then the ×/÷, keep both sides balanced, and <b>always check</b>.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">4</span><h4>Main idea &amp; citing evidence</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NY Next Generation · ELA 7R1 — Read closely &amp; cite text evidence</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>Reading time, Kaitlyn — and this is the skill your teachers ask for most: find the <b>main idea</b>, then <b>prove it</b> with a sentence from the text. Detectives do exactly this. Let's be detectives.</p></div>
+              <p class="ny-vocab">📖 Words to know: the <b>main idea</b> is what the WHOLE text is mostly about, in one line. <b>Evidence</b> is a sentence from the text that proves your idea. To <b>cite</b> means to point at that exact sentence.</p>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — I'll do one first</h5>
+                <div class="ny-passage">“For many years, factories dumped waste into the Hudson River, and fish nearly disappeared. Then people got to work: towns cleaned the water, scientists tested it, and volunteers planted grasses along the banks. Today, striped bass and even eagles have returned to the river.”</div>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1.</b> I ask: what does EVERY sentence talk about? The Hudson River — first dirty, then cleaned, then alive again.</p>
+                  <p class="ny-step" hidden><b>Step 2.</b> So the main idea covers the whole trip: <b>“People helped the Hudson River recover.”</b> Not just “fish” (one detail) — the whole change.</p>
+                  <p class="ny-step" hidden><b>Step 3.</b> Now I cite evidence — the sentence that proves people helped: <u>“towns cleaned the water, scientists tested it, and volunteers planted grasses along the banks.”</u></p>
+                  <p class="ny-step" hidden><b>Step 4.</b> See the pattern? <b>Main idea = the whole story in one line. Evidence = the sentence that proves it.</b></p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ Detective rule: never just say the idea — <b>point at the sentence</b>.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — the umbrella:</b> The main idea is an umbrella. Every sentence in the text should fit UNDER it. “Fish” is too small an umbrella — the cleaning sentences poke out. “People helped the river recover” covers everything. If a sentence pokes out, your umbrella (main idea) is too small.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — we do this one together</h5>
+                <div class="ny-passage">“Maya practised piano a little every day. At first her fingers stumbled over the keys. After two months of short daily practice, she played her first full song without stopping.”</div>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: Which umbrella covers the WHOLE passage?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="That's one small detail from the middle — the umbrella must cover the practice AND the song at the end.">Maya's fingers stumbled</button>
+                    <button type="button" class="ny-try-opt" data-right="1">Daily practice helped Maya learn to play a full song</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Right-sized umbrella!</b> It covers the beginning, middle and end.</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: Which sentence from the passage is EVIDENCE that practice worked?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">“After two months of short daily practice, she played her first full song without stopping.”</button>
+                    <button type="button" class="ny-try-opt" data-hint="That sentence shows the problem at the START, not the result. Evidence for “practice worked” should show what changed.">“At first her fingers stumbled over the keys.”</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>You cited real evidence</b> — the sentence that proves the change. Detective work, done together.</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Now a fresh case, all yours…</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <div class="ny-passage">“Bees do much more than make honey. As bees visit flowers to drink nectar, pollen sticks to their bodies and travels with them. This helps plants make seeds, so new plants can grow. Many of the fruits and vegetables people eat exist because bees carry pollen from flower to flower.”</div>
+                <p class="lsn-q">The main idea is: <b>Bees help plants — and our food — grow.</b> Which sentence from the passage is the best EVIDENCE for it?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="That sentence is interesting, but it only says what bees eat. Evidence must prove bees HELP plants grow. Look for the sentence about pollen helping plants make seeds." data-reteach="A different way: ask of each sentence, “Does this PROVE bees help plants grow?” The honey sentence — no, that's about food for bees. The seeds sentence — yes! Pollen travelling is HOW bees help. Tap the sentence about pollen helping plants make seeds.">“Bees do much more than make honey.”</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! You didn't just find the idea — you pointed at the sentence that proves it. That's exactly what 7R1 asks for!">“As bees visit flowers to drink nectar, pollen sticks to their bodies and travels with them. This helps plants make seeds.”</button>
+                  <button type="button" class="ny-opt" data-hint="That sentence repeats the main idea — it's the claim, not the proof. The proof is the sentence explaining HOW: pollen travelling to help plants make seeds." data-reteach="A different way: ask of each sentence, “Does this PROVE bees help plants grow?” The honey sentence — no, that's about food for bees. The seeds sentence — yes! Pollen travelling is HOW bees help. Tap the sentence about pollen helping plants make seeds.">“Many of the fruits and vegetables people eat exist because bees carry pollen from flower to flower.”</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: <b>main idea = the whole text in one line; evidence = the exact sentence that proves it.</b> Always point at the sentence.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">5</span><h4>Argument writing: claim, evidence, reasoning</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NY Next Generation · ELA Writing — Write arguments with reasons &amp; evidence</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>Writing time, Kaitlyn! An <b>argument</b> isn't a fight — it's building a case so a reader says “okay, I'm convinced.” It has three parts, and I'll build one with you, brick by brick.</p></div>
+              <p class="ny-vocab">📖 Words to know: a <b>claim</b> is what you want the reader to believe. <b>Evidence</b> is a fact, number or example that backs it up. <b>Reasoning</b> is the sentence that explains WHY the evidence proves the claim. An <b>opinion</b> (“it's the best!”) is a feeling — it is NOT evidence.</p>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — I'll build one first</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1 — CLAIM:</b> “Our school day should start later.” Short, clear, arguable. That's my case.</p>
+                  <p class="ny-step" hidden><b>Step 2 — EVIDENCE:</b> “Doctors say most teenagers need about 8 to 10 hours of sleep a night, and teenage brains naturally fall asleep late.” A fact — not a feeling.</p>
+                  <p class="ny-step" hidden><b>Step 3 — REASONING:</b> “If school starts before tired brains have slept enough, students learn less in first period — so a later start matches how teenage brains actually work.” See how it connects the fact back to the claim?</p>
+                  <p class="ny-step" hidden><b>Step 4.</b> Claim says it. Evidence backs it. Reasoning ties the knot. <b>C–E–R.</b></p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ Three bricks: <b>claim, evidence, reasoning</b> — in that order.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — a courtroom:</b> The claim is the verdict you want. Evidence is what the detective brings in — real things people can check. Reasoning is the lawyer's closing line: “and THAT is why the evidence proves it.” Feelings (“I just think so”) get thrown out of court.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — we build one together</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">Our topic: <b>school gardens</b>. Claim (I'll give you this one): “Our school should have a garden.”</p>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: Which of these is real EVIDENCE for the claim?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="“Fun” is a feeling — an opinion. Evidence is something checkable: a count, a measurement, a fact.">“Gardens are just really fun.”</button>
+                    <button type="button" class="ny-try-opt" data-right="1">“Last spring, one class grew 12 pounds of tomatoes in a single garden bed.”</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>You spotted evidence over opinion</b> — 12 pounds is checkable. That's the writer's eye!</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: Which sentence is the REASONING — the one that ties the evidence to the claim?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">“So a garden can really feed people — that's why our school should have one.”</button>
+                    <button type="button" class="ny-try-opt" data-hint="That just repeats the tomato fact. Reasoning must CONNECT: it says “so…” or “that's why…” and links back to the claim.">“Tomatoes are red.”</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Claim + evidence + reasoning — a complete argument, built by you and me.</b></p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Now judge one on your own…</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">Claim: “Students should get a longer recess.” Which sentence is EVIDENCE — not opinion?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="“Best” is a feeling word — that's an opinion wearing a costume. Evidence needs something you can check: a count, a survey, a measurement." data-reteach="A different way — the check-it test: could someone go and CHECK this sentence? “Recess is the best” — nobody can check a feeling. “18 of 24 students said…” — yes! You could recount that survey. Checkable = evidence. Tap the survey sentence.">“Recess is the best part of the whole day.”</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! You picked the checkable fact over two feelings — you can tell evidence from opinion now, and that's the heart of argument writing!">“In a class survey, 18 of 24 students said longer recess helped them focus after lunch.”</button>
+                  <button type="button" class="ny-opt" data-hint="“Everyone” + a feeling = opinion. Nobody counted anything here. Look for the sentence with numbers someone actually gathered." data-reteach="A different way — the check-it test: could someone go and CHECK this sentence? “Recess is the best” — nobody can check a feeling. “18 of 24 students said…” — yes! You could recount that survey. Checkable = evidence. Tap the survey sentence.">“Everyone in the world loves recess more than class.”</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: <b>claim</b> says it, <b>evidence</b> (checkable facts — never feelings) backs it, <b>reasoning</b> ties the knot.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">6</span><h4>Photosynthesis: matter &amp; energy in plants</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NYSSLS · Science MS-LS1-6 — Matter &amp; energy in organisms</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>Science, Kaitlyn! Plants look quiet, but inside every leaf a tiny factory is running: <b>photosynthesis</b>. It takes simple things in, and builds food. Let's walk the factory floor together.</p></div>
+              <p class="ny-vocab">📖 Words to know: <b>photosynthesis</b> means “building with light.” <b>Carbon dioxide</b> is a gas in the air (the one you breathe OUT). <b>Glucose</b> is a sugar — the plant's food, where the sunlight's energy gets stored.</p>
+              <div class="ny-visual"><div class="ny-flow" aria-hidden="true"><span class="ny-fbox">☀️ Sunlight<br />+ 💧 Water<br />+ 🌬️ Carbon dioxide</span><span class="ny-farr">→</span><span class="ny-fbox">🌿 The leaf factory<br />(photosynthesis)</span><span class="ny-farr">→</span><span class="ny-fbox">🍬 Glucose (food)<br />+ 🌬️ Oxygen<br />released into the air</span></div></div>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — let's trace it through</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1 — INPUTS in:</b> The plant takes in three things: <b>sunlight</b>, <b>water</b> (from roots), and <b>carbon dioxide</b> (from the air).</p>
+                  <p class="ny-step" hidden><b>Step 2 — THE BUILD:</b> In the leaf, those pieces get rearranged — taken apart and rebuilt into something new. The sunlight provides the <b>energy</b> for the building.</p>
+                  <p class="ny-step" hidden><b>Step 3 — OUTPUTS out:</b> The factory makes <b>glucose</b> (sugar — the plant's food, storing the energy) and <b>oxygen</b>, which floats out into the air — the oxygen we breathe!</p>
+                  <p class="ny-step" hidden><b>Step 4.</b> Nothing appears from nowhere: the sugar's matter came from the air and water, and its energy came from the sun.</p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ In: <b>light + water + carbon dioxide</b>. Out: <b>sugar + oxygen</b>.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — a bakery:</b> A leaf is a bakery. Flour and water (the matter) go in; the oven's heat (the energy — sunlight) bakes them into bread (glucose). The lovely smell drifting out is like the oxygen released. Ingredients in, energy to build, new product out.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — a plant problem</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">A plant sits in a <b>dark closet</b>. It gets watered, and air reaches it. Something is missing…</p>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: Which INPUT is the closet plant missing?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="It IS watered, remember — water is arriving. Think about what a dark closet has none of.">Water</button>
+                    <button type="button" class="ny-try-opt" data-right="1">Sunlight — there's no light in a dark closet</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>No light, no energy for building.</b> You traced the missing input!</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: So what happens to that plant over time?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">It can't make its food (glucose), so it weakens and may die</button>
+                    <button type="button" class="ny-try-opt" data-hint="The factory needs its energy source. Without sunlight it can't BUILD sugar at all — it has nothing to live on.">It grows extra fast in the dark</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Exactly — inputs decide outputs.</b> Science reasoning, together.</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Your turn — one quick product question…</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">A healthy plant in sunlight is busy photosynthesising. What does it RELEASE into the air?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="Careful — carbon dioxide goes the other way: it's an INPUT the plant takes IN from the air. What's the gas that comes OUT?" data-reteach="A different way — follow the factory arrows at the top of this lesson: IN on the left (light, water, carbon dioxide), OUT on the right. The right side lists two products: glucose, which stays inside as food… and the gas released is oxygen. Tap oxygen!">Carbon dioxide</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! Oxygen out, sugar stored — you traced matter and energy through the whole factory. That's MS-LS1-6 thinking!">Oxygen</button>
+                  <button type="button" class="ny-opt" data-hint="Glucose IS made — good memory! But it stays inside the plant as its food. The question asks what's released INTO THE AIR." data-reteach="A different way — follow the factory arrows at the top of this lesson: IN on the left (light, water, carbon dioxide), OUT on the right. The right side lists two products: glucose, which stays inside as food… and the gas released is oxygen. Tap oxygen!">Glucose</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: <b>sunlight + water + carbon dioxide → glucose + oxygen</b>. Matter gets rearranged; energy from sunlight gets stored in the sugar.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">7</span><h4>Ecosystems: the Hudson River food web</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NYSSLS · Science MS-LS2 — Ecosystems: interactions, energy &amp; dynamics</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>More science, Kaitlyn — close to home this time! The <b>Hudson River</b> and <b>Long Island Sound</b>, right by Port Chester, are full of living things that depend on each other. Tug one thread of the web, and the whole web moves.</p></div>
+              <p class="ny-vocab">📖 Words to know: an <b>ecosystem</b> is a community of living things plus their home. A <b>food web</b> shows who eats whom — arrows point from the food to the eater (following the energy). <b>Interdependent</b> means they all lean on each other.</p>
+              <div class="ny-visual"><div class="ny-flow" aria-hidden="true"><span class="ny-fbox">🌿 Phytoplankton<br />(tiny floating plants)</span><span class="ny-farr">→</span><span class="ny-fbox">🦐 Zooplankton<br />(tiny animals)</span><span class="ny-farr">→</span><span class="ny-fbox">🐟 Small fish<br />(silversides, killifish)</span><span class="ny-farr">→</span><span class="ny-fbox">🐠 Striped bass<br />+ 🦅 osprey &amp; heron</span></div></div>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — trace the web with me</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1.</b> Sunlight grows <b>phytoplankton</b> — tiny floating plants. (Hello again, photosynthesis!)</p>
+                  <p class="ny-step" hidden><b>Step 2.</b> Tiny animals, <b>zooplankton</b>, eat the phytoplankton. Then <b>small fish</b> eat the zooplankton.</p>
+                  <p class="ny-step" hidden><b>Step 3.</b> <b>Striped bass</b> — and birds like <b>osprey</b> and <b>herons</b> — eat the small fish. Energy flows up the chain, meal by meal.</p>
+                  <p class="ny-step" hidden><b>Step 4.</b> So every creature holds threads for others: the bass needs the small fish; the small fish need the zooplankton; everything needs the phytoplankton.</p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ One web, many threads: <b>remove one species, and its eaters AND its food both feel it</b>.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — a seesaw:</b> Picture predators and their food on a seesaw, balanced. Remove lots of the food, and the predator side sinks — hungry predators decline. Remove the predators, and the food side pops UP — nothing is eating them. Every change tips the seesaw two ways.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — tug a thread together</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">A disease wipes out <b>most of the small fish</b> in the Sound one summer. Predict with me…</p>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: What most likely happens to the striped bass?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">They struggle — their main food is mostly gone</button>
+                    <button type="button" class="ny-try-opt" data-hint="Look at the web: what do bass EAT? If that food mostly disappears, the eaters can't stay the same.">Nothing changes for the bass</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Predators feel it when food vanishes.</b> One direction of the seesaw — nailed.</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: And what happens to the zooplankton, now that few fish are eating them?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="Flip the seesaw: their PREDATORS are mostly gone. With nobody eating them, their numbers…?">They decrease</button>
+                    <button type="button" class="ny-try-opt" data-right="1">They increase — hardly anything is eating them now</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Both directions!</b> Food up, eaters down — that's real ecosystem prediction.</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Now predict one solo…</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">Suppose the ospreys disappeared from Long Island Sound. What would most likely happen to the small fish that ospreys eat?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-hint="Use the seesaw: the fish lose a PREDATOR. When fewer hunters are eating them, what happens to their numbers?" data-reteach="A different way — the seesaw again: ospreys sit on the fish. Osprey gone = weight lifted. The fish side pops UP: more fish survive, so fish numbers increase. (Striped bass would get a bigger buffet, too!) Tap “The fish would increase.”">The fish would decrease</button>
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! You tugged one thread and predicted the whole web's move — fewer hunters, more fish. That's exactly the thinking MS-LS2 wants!">The fish would increase</button>
+                  <button type="button" class="ny-opt" data-hint="In a web, nothing stays the same when a hunter vanishes — everything is connected. The fish lose something that eats them, so…" data-reteach="A different way — the seesaw again: ospreys sit on the fish. Osprey gone = weight lifted. The fish side pops UP: more fish survive, so fish numbers increase. (Striped bass would get a bigger buffet, too!) Tap “The fish would increase.”">Nothing would change at all</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: in a food web, <b>removing a species tips things twice</b> — its food increases, and its eaters struggle. Everything is connected.</p>
+            </div>
+
+            <div class="ny-lsn" data-nylsn>
+              <div class="lsn-top"><span class="lsn-num">8</span><h4>From the Articles to the Constitution</h4><span class="lsn-star" aria-hidden="true">⭐</span></div>
+              <span class="ny-std-tag">NY Social Studies Framework · Grade 7 — History of the United States</span>
+              <div class="ny-hoot"><span class="ny-owl" aria-hidden="true">🦉</span><p>History, Kaitlyn! America's first plan for a government <b>didn't work</b> — and the fix became the Constitution, the plan still used today. This is a story of a problem and a repair. Let's walk it slowly.</p></div>
+              <p class="ny-vocab">📖 Words to know: a <b>confederation</b> is a loose team of independent states. The <b>Constitution</b> is the written plan for the U.S. government. <b>Checks and balances</b> means each branch of government can limit the others, so nobody gets too powerful.</p>
+              <div class="ny-phase" data-phase="watch">
+                <h5>👀 Watch me — the story in steps</h5>
+                <div class="ny-steps">
+                  <p class="ny-step"><b>Step 1 — Plan A:</b> After independence, the states teamed up under the <b>Articles of Confederation</b> (1781). Each state stayed almost like its own country.</p>
+                  <p class="ny-step" hidden><b>Step 2 — The weakness:</b> The national government could <b>not collect taxes</b> and had <b>no president and no national courts</b>. It couldn't pay soldiers or settle fights between states.</p>
+                  <p class="ny-step" hidden><b>Step 3 — The warning:</b> When farmers in Massachusetts protested (Shays' Rebellion), the national government was too weak to help. Leaders realised Plan A was failing.</p>
+                  <p class="ny-step" hidden><b>Step 4 — Plan B:</b> In 1787, delegates met in Philadelphia and wrote the <b>Constitution</b>: a stronger national government with <b>three branches</b> — Congress makes laws, the President carries them out, courts judge them — each checking the others. The <b>Bill of Rights</b> was added in 1791 to protect people's freedoms.</p>
+                </div>
+                <button type="button" class="ny-nextstep">Next step ▶</button>
+                <p class="ny-stepdone" hidden>✅ Story shape: <b>weak plan → real problems → stronger plan with safety checks</b>.</p>
+              </div>
+              <div class="ny-check" hidden>
+                <h5>🦉 Quick check, Kaitlyn</h5>
+                <p style="font-weight:700;line-height:1.5;margin:0">How is that sitting? No wrong answer here — I just want to know how to help.</p>
+                <button type="button" class="ny-check-ok">👍 Makes sense</button>
+                <button type="button" class="ny-check-again">🔁 Show me again</button>
+                <div class="ny-alt" hidden><b>A different way — a team with no captain:</b> Imagine a soccer team where nobody can collect money for uniforms, there's no captain and no referee, and every player makes their own rules. Chaos — right? That's the Articles. The Constitution gave the team a captain (President), a rulebook committee (Congress) and referees (courts) — but each one can be overruled by the others, so nobody becomes a boss of everything.</div>
+                <p class="ny-check-fb" aria-live="polite"></p>
+              </div>
+              <div class="ny-phase" data-phase="try" hidden>
+                <h5>🤝 Try with me — match the problem to the fix</h5>
+                <div class="ny-try-step">
+                  <p class="ny-try-q">Step 1: Problem — “Congress couldn't collect taxes, so the country couldn't pay its soldiers.” Which fix does the Constitution give?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-right="1">Congress CAN collect taxes under the Constitution</button>
+                    <button type="button" class="ny-try-opt" data-hint="That's the Articles problem all over again — states keeping all the money power IS what failed. The fix gave taxing power to Congress.">Only the states may ever collect money</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Problem matched to its fix.</b> That's how historians read this story!</p>
+                </div>
+                <div class="ny-try-step" hidden>
+                  <p class="ny-try-q">Step 2: Problem — “One person with all the power could become a tyrant.” What's the Constitution's safety device?</p>
+                  <div class="ny-try-opts">
+                    <button type="button" class="ny-try-opt" data-hint="Making one ruler stronger is the opposite of safety here. The device SPLITS power up.">A single strong king</button>
+                    <button type="button" class="ny-try-opt" data-right="1">Three separate branches with checks and balances</button>
+                  </div>
+                  <p class="ny-try-fb" aria-live="polite"></p>
+                  <p class="ny-try-result" hidden>✔️ <b>Power split three ways, each branch checking the others.</b> You've got the whole story now.</p>
+                </div>
+                <p class="ny-try-done" hidden>🎉 Last question of the set — it's yours…</p>
+              </div>
+              <div class="ny-phase" data-phase="your" hidden>
+                <h5>⭐ Your turn, Kaitlyn</h5>
+                <p class="lsn-q">Which problem did the Constitution fix?</p>
+                <div class="ny-opts">
+                  <button type="button" class="ny-opt" data-right="1" data-praise="⭐ YES, Kaitlyn! You named the Articles' big weakness and the Constitution's repair — problem and fix, matched. That's the whole unit in one answer!">The national government was too weak — it couldn't collect taxes or enforce laws</button>
+                  <button type="button" class="ny-opt" data-hint="Check the story: under the Constitution the states KEPT their own governments — that part never changed. The broken part was the weak national government." data-reteach="A different way — the team story: was the problem “no teams existed”? No — the states (players) existed fine. The problem was no captain, no referee, no money for uniforms: the NATIONAL side was too weak. That's what the Constitution fixed. Tap the “too weak” answer.">The states had no governments of their own</button>
+                  <button type="button" class="ny-opt" data-hint="Flip it: under the Articles there was NO president at all — zero, not too many. Remember the missing captain?" data-reteach="A different way — the team story: was the problem “no teams existed”? No — the states (players) existed fine. The problem was no captain, no referee, no money for uniforms: the NATIONAL side was too weak. That's what the Constitution fixed. Tap the “too weak” answer.">There were too many presidents arguing</button>
+                </div>
+                <p class="lsn-fb ny-fb" aria-live="polite"></p>
+              </div>
+              <p class="ny-recap" hidden>🦉 So remember: the <b>Articles made the national government too weak</b>; the <b>Constitution made it stronger — and split it into three branches that check each other</b>.</p>
             </div>
           </div>
           <div class="curr-cols"><div><h4>🏅 Milestones to celebrate</h4><ul class="curr-miles"><li>Completes a full project from plan to finished piece</li><li>Explains what went wrong and what they changed</li><li>Designs a Toy Lab buddy and downloads its print blueprint</li><li>Presents their work with a beginning, middle and end</li></ul></div><div><h4>🧩 Skills being built</h4><div class="curr-skills"><span>Research</span><span>Project planning</span><span>Debugging</span><span>Design &amp; 3D thinking</span><span>Storytelling</span><span>Data journaling</span><span>Presenting</span><span>Percentages</span><span>Design loop</span><span>Claims &amp; evidence</span><span>Budgeting</span></div></div></div>
@@ -4070,13 +4694,15 @@
           <div class="kidchips" role="group" aria-label="Choose a child" style="margin-top:14px">
             <button class="kidchip sel" data-kid="zane">Zane · age 3</button>
             <button class="kidchip" data-kid="riley">Riley · age 2</button>
+            <button class="kidchip" data-kid="kaitlyn">Kaitlyn · age 12</button>
           </div>
 
-          <div class="prof-settings" aria-label="Child profiles — Zane and Riley">
-            <h3>👦👧 Child profiles</h3>
-            <p>Each child plays in their own version of Hoot's World. Switching profiles swaps in that child's own lesson stars, sticker book and photo album — Riley's profile also switches Little Kids mode on for her, while Zane plays the same world a step ahead, with the words on. Their stars, stickers and activity photos save on this device, so everything is still here next time Hoot's World opens.</p>
+          <div class="prof-settings" aria-label="Child profiles — Zane, Riley and Kaitlyn">
+            <h3>👦👧👧 Child profiles</h3>
+            <p>Each child plays in their own version of Hoot's World. Switching profiles swaps in that child's own lesson stars, sticker book and photo album — Riley's profile also switches Little Kids mode on for her, while Zane plays the same world a step ahead, with the words on. Kaitlyn (12) gets her own profile too: the Ages 11–13 path with the New York curriculum for her Port Chester school, where Hoot tutors her step by step — and no Little Kids mode. Their stars, stickers and activity photos save on this device, so everything is still here next time Hoot's World opens.</p>
 <div class="prof-row" data-profile-row="zane"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#dceeff"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#2456a6"/><circle cx="50" cy="46" r="26" fill="#f4c48d"/><path d="M24 44 Q22 18 50 18 Q78 18 76 44 Q76 30 64 28 Q66 36 60 30 Q50 24 38 30 Q26 34 24 44 Z" fill="#4a3220"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M41 58 Q50 65 59 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f0a868" opacity=".65"/><circle cx="67" cy="55" r="4.5" fill="#f0a868" opacity=".65"/></svg><div class="prof-row-main"><b>Zane</b> <span class="prof-now">⭐ Playing now</span><span>Age 3 · Boy · Little Explorers (ages 2–4), a step ahead</span><span class="prof-counts" data-prof-counts="zane"></span></div><button type="button" class="prof-row-btn" data-profile-pick="zane" data-source="parents">▶ Play as Zane</button></div>
 <div class="prof-row" data-profile-row="riley"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#ffe3ee"/><circle cx="20" cy="52" r="11" fill="#6b4423"/><circle cx="80" cy="52" r="11" fill="#6b4423"/><circle cx="20" cy="40" r="5" fill="#ff5d8f"/><circle cx="80" cy="40" r="5" fill="#ff5d8f"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#e83e77"/><circle cx="50" cy="46" r="26" fill="#f7cf9f"/><path d="M24 46 Q22 20 50 20 Q78 20 76 46 Q74 30 60 27 Q50 24 40 27 Q26 30 24 46 Z" fill="#6b4423"/><path d="M50 12 L40 4 Q34 10 42 15 L34 18 Q40 24 50 19 Q60 24 66 18 L58 15 Q66 10 60 4 Z" fill="#ffd93b" stroke="#e0a800" stroke-width="1.4" stroke-linejoin="round"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M42 58 Q50 64 58 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/><circle cx="67" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/></svg><div class="prof-row-main"><b>Riley</b> <span class="prof-now">⭐ Playing now</span><span>Age 2 · Girl · Little Explorers (ages 2–4), biggest &amp; simplest</span><span class="prof-counts" data-prof-counts="riley"></span></div><button type="button" class="prof-row-btn" data-profile-pick="riley" data-source="parents">▶ Play as Riley</button></div>
+<div class="prof-row" data-profile-row="kaitlyn"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#e9e4ff"/><path d="M23 100 V48 Q23 18 50 18 Q77 18 77 48 V100 H63 V58 Q63 42 50 42 Q37 42 37 58 V100 Z" fill="#5a3a22"/><path d="M14 100 Q16 76 50 76 Q84 76 86 100 Z" fill="#7d5ba6"/><circle cx="50" cy="48" r="25" fill="#f7cf9f"/><path d="M25 46 Q26 22 50 22 Q74 22 75 46 Q73 30 58 27 Q50 25 42 27 Q27 30 25 46 Z" fill="#5a3a22"/><circle cx="41" cy="49" r="3.4" fill="#26343a"/><circle cx="59" cy="49" r="3.4" fill="#26343a"/><path d="M42 60 Q50 66 58 60" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/><circle cx="67" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/></svg><div class="prof-row-main"><b>Kaitlyn</b> <span class="prof-now">⭐ Playing now</span><span>Age 12 · Girl · Ages 11–13 · New York curriculum (Port Chester) · Hoot is her tutor</span><span class="prof-counts" data-prof-counts="kaitlyn"></span></div><button type="button" class="prof-row-btn" data-profile-pick="kaitlyn" data-source="parents">▶ Play as Kaitlyn</button></div>
           </div>
 
           <div class="pgrid">
@@ -4149,7 +4775,7 @@
       <iframe id="game-frame" title="Game" allow="autoplay; fullscreen"></iframe>
     </div>
     <!-- Who's playing? — Hoot presents Zane & Riley in the centre of the screen -->
-    <div id="profile-gate" role="dialog" aria-modal="true" aria-label="Who's playing? Pick Zane or Riley">
+    <div id="profile-gate" role="dialog" aria-modal="true" aria-label="Who's playing? Pick Zane, Riley or Kaitlyn">
       <div class="gate-panel">
         <div class="gate-hoot" id="gate-hoot" role="button" tabindex="0" aria-label="Tap Hoot to hear him hoot"><svg width="100%" height="100%" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><path d="M22 26 L14 6 L38 16 Z" fill="#0b7a79"/><path d="M98 26 L106 6 L82 16 Z" fill="#0b7a79"/><ellipse cx="60" cy="66" rx="42" ry="46" fill="#0e9594"/><ellipse cx="60" cy="82" rx="24" ry="26" fill="#d9f5f1"/><path class="hh-wing" d="M96 58 Q118 50 122 34 Q106 34 94 44 Q90 52 96 58 Z" fill="#0b7a79"/><path d="M24 58 Q10 66 12 82 Q24 80 28 68 Q28 60 24 58 Z" fill="#0b7a79"/><circle cx="44" cy="46" r="13" fill="#fff"/><circle cx="76" cy="46" r="13" fill="#fff"/><circle cx="48" cy="47" r="6.5" fill="#1e2a3d"/><circle cx="80" cy="47" r="6.5" fill="#1e2a3d"/><circle cx="50.5" cy="44.5" r="2.2" fill="#fff"/><circle cx="82.5" cy="44.5" r="2.2" fill="#fff"/><path d="M52 58 h16 l-8 9 z" fill="#f2b705" stroke="#d99e00" stroke-width="1.5" stroke-linejoin="round"/><path d="M48 108 q4 5 8 0 M64 108 q4 5 8 0" stroke="#d99e00" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
         <h2>🦉 Hoo hoo! Who's playing?</h2>
@@ -4157,6 +4783,7 @@
         <div class="prof-cards">
           <button type="button" class="prof-card prof-card-zane" data-profile-pick="zane" data-profile-card="zane" data-enter="1" data-source="gate"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#dceeff"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#2456a6"/><circle cx="50" cy="46" r="26" fill="#f4c48d"/><path d="M24 44 Q22 18 50 18 Q78 18 76 44 Q76 30 64 28 Q66 36 60 30 Q50 24 38 30 Q26 34 24 44 Z" fill="#4a3220"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M41 58 Q50 65 59 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f0a868" opacity=".65"/><circle cx="67" cy="55" r="4.5" fill="#f0a868" opacity=".65"/></svg><span class="prof-now" aria-hidden="true">⭐ Playing now</span><b>Zane</b><small>Age 3 · Boy · a step ahead — the same world, with the words on</small><span class="prof-counts" data-prof-counts="zane"></span><span class="prof-play">▶ Play as Zane</span></button>
           <button type="button" class="prof-card prof-card-riley" data-profile-pick="riley" data-profile-card="riley" data-enter="1" data-source="gate"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#ffe3ee"/><circle cx="20" cy="52" r="11" fill="#6b4423"/><circle cx="80" cy="52" r="11" fill="#6b4423"/><circle cx="20" cy="40" r="5" fill="#ff5d8f"/><circle cx="80" cy="40" r="5" fill="#ff5d8f"/><path d="M14 100 Q16 74 50 74 Q84 74 86 100 Z" fill="#e83e77"/><circle cx="50" cy="46" r="26" fill="#f7cf9f"/><path d="M24 46 Q22 20 50 20 Q78 20 76 46 Q74 30 60 27 Q50 24 40 27 Q26 30 24 46 Z" fill="#6b4423"/><path d="M50 12 L40 4 Q34 10 42 15 L34 18 Q40 24 50 19 Q60 24 66 18 L58 15 Q66 10 60 4 Z" fill="#ffd93b" stroke="#e0a800" stroke-width="1.4" stroke-linejoin="round"/><circle cx="41" cy="47" r="3.4" fill="#26343a"/><circle cx="59" cy="47" r="3.4" fill="#26343a"/><path d="M42 58 Q50 64 58 58" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/><circle cx="67" cy="55" r="4.5" fill="#f49ac1" opacity=".8"/></svg><span class="prof-now" aria-hidden="true">⭐ Playing now</span><b>Riley</b><small>Age 2 · Girl · biggest pictures, simplest taps</small><span class="prof-counts" data-prof-counts="riley"></span><span class="prof-play">▶ Play as Riley</span></button>
+          <button type="button" class="prof-card prof-card-kaitlyn" data-profile-pick="kaitlyn" data-profile-card="kaitlyn" data-enter="1" data-source="gate"><svg class="prof-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="48" fill="#e9e4ff"/><path d="M23 100 V48 Q23 18 50 18 Q77 18 77 48 V100 H63 V58 Q63 42 50 42 Q37 42 37 58 V100 Z" fill="#5a3a22"/><path d="M14 100 Q16 76 50 76 Q84 76 86 100 Z" fill="#7d5ba6"/><circle cx="50" cy="48" r="25" fill="#f7cf9f"/><path d="M25 46 Q26 22 50 22 Q74 22 75 46 Q73 30 58 27 Q50 25 42 27 Q27 30 25 46 Z" fill="#5a3a22"/><circle cx="41" cy="49" r="3.4" fill="#26343a"/><circle cx="59" cy="49" r="3.4" fill="#26343a"/><path d="M42 60 Q50 66 58 60" stroke="#b3642e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="33" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/><circle cx="67" cy="57" r="4.5" fill="#f0a8c0" opacity=".8"/></svg><span class="prof-now" aria-hidden="true">⭐ Playing now</span><span class="prof-card-main"><b>Kaitlyn</b><small>Age 12 · Girl · New York lessons, Hoot is my tutor 🎓</small><span class="prof-counts" data-prof-counts="kaitlyn"></span><span class="prof-play">▶ Play as Kaitlyn</span></span></button>
         </div>
         <button type="button" class="gate-skip" id="profile-gate-skip">Just looking? Not now →</button>
       </div>
@@ -4660,7 +5287,9 @@
         zane:  { title:"Zane's learning minutes", sub:"Example week · Little Explorers (ages 2–4) keeps sessions short on purpose",
                  data:[10,12,9,14,11,16,7], note:"Zane is 3 — he plays a step ahead in the Little Explorers world. His stars, stickers and photos live in his own profile, separate from Riley's.", limit:"20 minutes for Zane" },
         riley: { title:"Riley's learning minutes", sub:"Example week · Shortest, biggest-picture sessions for age 2",
-                 data:[6,8,5,9,7,10,4], note:"Riley is 2 — she gets the biggest, simplest toddler setup, with Little Kids mode switched on for her. Her stars, stickers and photos live in her own profile, separate from Zane's.", limit:"15 minutes for Riley" }
+                 data:[6,8,5,9,7,10,4], note:"Riley is 2 — she gets the biggest, simplest toddler setup, with Little Kids mode switched on for her. Her stars, stickers and photos live in her own profile, separate from Zane's.", limit:"15 minutes for Riley" },
+        kaitlyn: { title:"Kaitlyn's learning minutes", sub:"Example week · Ages 11–13 · New York curriculum · Hoot tutors her step by step",
+                 data:[25,30,20,35,28,40,15], note:"Kaitlyn is 12 — she follows the New York curriculum for her Port Chester school (grade 7) on the Ages 11–13 path, with Hoot as her tutor: tiny steps, worked examples, and re-teaching a different way whenever she's stuck. Her stars, stickers and photos live in her own profile, separate from Zane's and Riley's.", limit:"45 minutes for Kaitlyn" }
       };
       var days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
       function renderKid(key){
@@ -4983,6 +5612,9 @@
           if(name === "Connecticut"){
             if(note) note.textContent = "The Learning Paths for ages 2–13 are mapped to Connecticut's own frameworks — the CT Early Learning & Development Standards for little ones, then the Connecticut Core Standards, NGSS science and CT Social Studies Frameworks as they grow. Change the state here and the same paths re-map when that state's edition is added.";
             if(parentLabel) parentLabel.textContent = "Connecticut — Learning Paths use CT standards";
+          } else if(name === "New York"){
+            if(note) note.textContent = "New York is selected — and New York's own edition is in: the Ages 11–13 path now shows the New York tutor lessons, mapped to the NY Next Generation Learning Standards, NYSSLS science and the NY Social Studies Framework (grade 7 — Kaitlyn's Port Chester curriculum), with Hoot tutoring step by step. The other paths keep the same steps, skills and milestones.";
+            if(parentLabel) parentLabel.textContent = "New York — Ages 11–13 path uses NY standards";
           } else {
             if(note) note.textContent = name + " is selected. The Learning Paths keep the same steps, skills and milestones — the starter edition is mapped to Connecticut standards, and " + name + "'s own standards plug into this same setting when its edition is added.";
             if(parentLabel) parentLabel.textContent = name + " — paths shown with the Connecticut starter mapping";
@@ -4994,6 +5626,7 @@
           tone(560, 0.1, "triangle", 0.1);
         }
         sels.forEach(function(s){ s.addEventListener("change", function(){ apply(s.value); }); });
+        window.__hootSetState = apply;
       })();
     })();
     </script>
@@ -5577,6 +6210,351 @@
               if(doneEl && n === total){ doneEl.textContent = "🎉 You counted to " + total + " — one tap, one number!"; if(window.__hootPlayClip) window.__hootPlayClip("star"); }
             }
           }
+        });
+      })();
+    </script>
+    <script>
+      /* ===== LESSON UPGRADE: LIVE TEACHING for the 16 Ages 2–4 lessons =====
+         The games' standard, brought to the lessons: every teaching
+         picture is a tappable manipulative — counting dots light up one
+         by one with a rising pop, colour dots splash and name
+         themselves in Hoot's speech line, shapes bounce and trace
+         their outline, letters wiggle and play their recorded teaching
+         clip (assets/voice/fish-teach-a..e, the Letter Fishing
+         pattern), animals make their sounds. "Show me again" re-runs
+         the whole demo as a lit-up sequence with Hoot's giggle, a
+         wrong answer makes the correct teaching object pulse, and a
+         right answer keeps the engine's praise clip + star and adds a
+         confetti burst at the star. Curriculum content, questions,
+         answers, stars, per-profile saving and Roadmap behaviour are
+         untouched — this layer only makes the teaching move. Scoped to
+         #panel-little; the other paths get their own passes later. */
+      (function(){
+        "use strict";
+        var panel = document.getElementById("panel-little");
+        if(!panel) return;
+        var cards = Array.prototype.slice.call(panel.querySelectorAll(".lsn"));
+        if(!cards.length) return;
+
+        /* ---------- tiny sound kit (house pattern) ---------- */
+        var actx = null;
+        function quiet(){
+          var b = document.querySelector('.voice-btn[data-voice="off"]');
+          return !!(b && b.classList.contains("sel"));
+        }
+        function tone(freq, dur, type, vol, delay, slideTo){
+          if(quiet()) return;
+          try{
+            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            if(actx.state === "suspended") actx.resume();
+            var t0 = actx.currentTime + (delay || 0);
+            var o = actx.createOscillator(), g = actx.createGain();
+            o.type = type || "sine";
+            o.frequency.setValueAtTime(freq, t0);
+            if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + (dur || 0.2));
+            g.gain.setValueAtTime(0.0001, t0);
+            g.gain.exponentialRampToValueAtTime(vol || 0.16, t0 + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + (dur || 0.2));
+            o.connect(g); g.connect(actx.destination);
+            o.start(t0); o.stop(t0 + (dur || 0.2) + 0.05);
+          }catch(e){}
+        }
+        function pop(n){ tone(430 + (n || 0) * 90, 0.16, "sine", 0.2); tone(860 + (n || 0) * 120, 0.1, "triangle", 0.09, 0.02); }
+        function hootClip(key){ if(window.__hootPlayClip) window.__hootPlayClip(key); }
+        var teachClipEl = null;
+        function letterClip(letter){
+          if(quiet() || "abcde".indexOf(letter) < 0) return false;
+          try{
+            if(window.__hootStopClip) window.__hootStopClip();
+            if(!teachClipEl) teachClipEl = new Audio();
+            teachClipEl.src = "assets/voice/fish-teach-" + letter + ".mp3";
+            var p = teachClipEl.play();
+            if(p && p.catch) p.catch(function(){});
+            return true;
+          }catch(e){ return false; }
+        }
+        function animalSound(kind){
+          if(kind === "moo"){ tone(150, 0.5, "sawtooth", 0.12, 0, 85); tone(75, 0.5, "sine", 0.14, 0.02, 55); }
+          else if(kind === "quack"){ tone(320, 0.12, "square", 0.1, 0, 190); tone(320, 0.12, "square", 0.1, 0.16, 190); }
+          else if(kind === "woof"){ tone(210, 0.1, "square", 0.13, 0, 140); tone(210, 0.1, "square", 0.13, 0.15, 140); }
+        }
+        var reduced = false;
+        try{ reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+
+        /* ---------- helpers ---------- */
+        function setLine(card, txt){ if(card._line) card._line.textContent = txt; }
+        function animOnce(el, cls, ms){
+          el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+          setTimeout(function(){ el.classList.remove(cls); }, ms || 500);
+        }
+        function hexA(c, a){
+          if(!c) return c;
+          if(c.charAt(0) === "#"){
+            var h = c.replace("#", "");
+            if(h.length === 3) h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
+            var n = parseInt(h, 16);
+            if(!isNaN(n)) return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+            return c;
+          }
+          var m = c.match(/(\d+)\D+(\d+)\D+(\d+)/);
+          return m ? "rgba(" + m[1] + "," + m[2] + "," + m[3] + "," + a + ")" : c;
+        }
+        function burst(card){
+          if(reduced) return;
+          var wrap = document.createElement("div");
+          wrap.className = "lsn-confetti"; wrap.setAttribute("aria-hidden", "true");
+          var colors = ["#ffd93b", "#ff4d2e", "#2b7cd3", "#3e8e35", "#ff5d8f", "#7d5ba6"];
+          for(var i = 0; i < 14; i++){
+            var p = document.createElement("i");
+            p.style.left = (52 + Math.random() * 44) + "%";
+            p.style.background = colors[i % colors.length];
+            p.style.setProperty("--dx", Math.round(Math.random() * 170 - 85) + "px");
+            p.style.animationDelay = (Math.random() * 0.15) + "s";
+            wrap.appendChild(p);
+          }
+          card.appendChild(wrap);
+          setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 1500);
+        }
+
+        /* ---------- per-lesson teaching scripts ----------
+           say[i]: Hoot's line when teaching item i is tapped or lit.
+           answer: index of the teaching item the question asks for
+           ("eq" = the whole pattern line). endSay: line after a
+           replay finishes, handing over to the question. Content
+           mirrors each lesson's own teaching text — nothing new is
+           taught, it is the same lesson, alive. */
+        var CFG = [
+          { fx:"splash", answer:0, say:["🔴 RED! Like a strawberry! 🍓 Say it with me: red!","🟡 YELLOW! Like the sun! ☀️ Say it: yellow!","🔵 BLUE! Like the sky! Say it: blue!"], endSay:"🦉 Now your turn — tap the RED one down below! 👇" },
+          { fx:"trace", answer:2, say:["⭕ CIRCLE! Round and round, like a ball — no corners at all!","🟦 SQUARE! Count the straight sides with me: 1, 2, 3, 4!","🔺 TRIANGLE! Count the pointy corners with me: 1, 2, 3!"], endSay:"🦉 Your turn — tap the TRIANGLE, the one with 3 pointy corners! 👇" },
+          { type:"count", endSay:"🦉 Now YOU count — tap every apple: one tap, one number!" },
+          { fx:"letter", letters:["a","b","c"], answer:1, say:["🍎 A says “ah” — Apple! A, ah, Apple!","🎈 B says “buh” — Balloon! B, buh, Balloon!","🐱 C says “kuh” — Cat! C, kuh, Cat!"], endSay:"🦉 Your turn — which letter says “buh”? 👇" },
+          { fx:"size", answer:0, say:["🐘 BIG elephant! It takes up LOTS and LOTS of room!","🐭 small mouse! It takes up just a tiny, tiny bit of room!"], endSay:"🦉 Your turn — tap the BIG one! 👇" },
+          { type:"eq", eqKind:"countback", answer:1, endSay:"🦉 Your turn — we count back from 5: what number comes next? 👇" },
+          { fx:"letter", letters:["d","f","g"], answer:0, say:["🐶 D says “duh” — Dog! D, duh, Dog!","🐸 F says “fff” — Frog! F, fff, Frog!","🍇 G says “guh” — Grapes! G, guh, Grapes!"], endSay:"🦉 Your turn — which letter says “duh”? 👇" },
+          { fx:"wiggle", answer:0, say:["🔴 The RED pile! Apple 🍎, car 🚗, balloon 🎈 — everything in this pile is RED!","🔵 The BLUE pile! Cap 🧢, whale 🐳, blueberries 🫐 — everything in this pile is BLUE!"], endSay:"🦉 Your turn — the strawberry is red, so which pile does it go in? 👇" },
+          { type:"count", endSay:"🦉 Now YOU count — tap every star, all the way to 10!" },
+          { fx:"splash", answer:2, say:["🟢 GREEN! Like the grass! 🌱 Say it: green!","🟠 ORANGE! Like an orange! 🍊 Say it: orange!","🟣 PURPLE! Like grapes! 🍇 Say it: purple!"], endSay:"🦉 Your turn — tap the GREEN one, the grass colour! 👇" },
+          { fx:"animal", animals:["moo","quack","woof"], answer:0, say:["🐮 MOO! The cow says “moo!” Say it with me: moo!","🦆 QUACK! The duck says “quack!” Say it: quack!","🐶 WOOF! The dog says “woof!” Say it: woof!"], endSay:"🦉 Your turn — who says “moo”? 👇" },
+          { fx:"wiggle", answer:0, say:["😀 HAPPY! Big smile! Make a happy face with me!","😢 Sad — wobbly mouth. Feelings are okay to have, and okay to say out loud.","😴 Sleepy… eyes closing. Yaaawn!"], endSay:"🦉 Your turn — tap the HAPPY face, the one with the big smile! 👇" },
+          { fx:"wiggle", answer:0, say:["⬆️ 🐦 UP! The bird flies UP in the sky! Point up, up, up!","⬇️ 🐜 DOWN! The ant crawls DOWN on the ground. Point down low!"], endSay:"🦉 Your turn — tap the one that is UP! 👇" },
+          { type:"eq", eqKind:"pattern", answer:"eq", endSay:"🦉 Red, blue, red, blue — after blue, RED always comes again! Your turn below! 👇" },
+          { fx:"wiggle", answer:1, say:["👀 EYES are for SEEING! What can you see right now?","👂 EARS are for HEARING! What sounds can you hear?","👃 NOSE is for SMELLING! Flowers and cookies — yum!"], endSay:"🦉 Your turn — Hoot is playing a song 🎵. What do you hear it with? 👇" },
+          { fx:"trace", answer:0, say:["⭐ STAR! Count the pointy points with me: 1, 2, 3, 4, 5!","❤️ HEART! Round on top, and one pointy point at the bottom!"], endSay:"🦉 Your turn — tap the STAR, the one with 5 pointy points! 👇" }
+        ];
+
+        /* ---------- one teaching item reacts ---------- */
+        function reactItem(card, idx){
+          var cfg = card._cfg, items = card._items;
+          if(!cfg || !items || !items[idx]) return;
+          var el = items[idx];
+          if(cfg.say && cfg.say[idx]) setLine(card, cfg.say[idx]);
+          if(cfg.type === "eq"){
+            if(cfg.eqKind === "countback"){
+              if(idx === items.length - 1){
+                tone(280, 0.55, "sawtooth", 0.08, 0, 980); tone(560, 0.4, "sine", 0.12, 0.05, 1240);
+                animOnce(el, "lsn-blast", 650);
+              } else { tone(680 - idx * 60, 0.2, "sine", 0.2); animOnce(el, "lsn-hit", 480); }
+            } else { pop(idx % 2); animOnce(el, "lsn-hit", 480); }
+            return;
+          }
+          switch(cfg.fx){
+            case "splash":
+              animOnce(el, "lsn-hit", 480); pop(idx);
+              var bg = el.style.background || "";
+              if(bg){
+                el.style.boxShadow = "0 0 0 10px " + hexA(bg, 0.45) + ", 0 0 0 24px " + hexA(bg, 0.16);
+                setTimeout(function(){ el.style.boxShadow = ""; }, 430);
+              }
+              break;
+            case "trace":
+              el.classList.remove("lsn-trace"); void el.offsetWidth; el.classList.add("lsn-trace");
+              setTimeout(function(){ el.classList.remove("lsn-trace"); }, 980);
+              animOnce(el, "lsn-hit", 480); pop(idx);
+              break;
+            case "letter":
+              animOnce(el, "lsn-hit", 520);
+              if(!letterClip(cfg.letters[idx])) pop(idx + 1);
+              break;
+            case "size":
+              if(idx === 0){ animOnce(el, "lsn-grow", 640); tone(196, 0.35, "sine", 0.24); tone(98, 0.35, "triangle", 0.18, 0.02); }
+              else { animOnce(el, "lsn-shrink", 540); tone(1250, 0.07, "sine", 0.16); tone(1500, 0.08, "sine", 0.16, 0.09); }
+              break;
+            case "animal":
+              animOnce(el, "lsn-hit", 480); animalSound(cfg.animals[idx]);
+              break;
+            default:
+              animOnce(el, "lsn-hit", 480); pop(idx);
+          }
+        }
+
+        /* ---------- "Show me again": Hoot re-runs the demo ----------
+           A pure demonstration: items light up in order with their
+           sounds and lines. It never touches the child's own counting
+           state or answers — the count bubble is restored afterwards. */
+        function runReplay(card){
+          var cfg = card._cfg;
+          if(!cfg || card._replaying) return;
+          var items = card._items || [];
+          if(!items.length) return;
+          card._replaying = true;
+          var btn = card._replayBtn;
+          if(btn){ btn.disabled = true; btn.textContent = "🦉 Watch Hoot teach…"; }
+          if(cfg.fx !== "letter") hootClip("giggle");
+          var box = card.querySelector("[data-ctap-box]");
+          var out = box ? box.querySelector("[data-ctap-count]") : null;
+          var prevCount = out ? out.textContent : null;
+          var step = 0;
+          var delay = cfg.type === "count" ? 560 : (cfg.fx === "letter" ? 1050 : 820);
+          function finish(){
+            items.forEach(function(el){ el.classList.remove("lsn-lit"); });
+            if(out) out.textContent = prevCount;
+            setLine(card, cfg.endSay || "🦉 Now you try it down below! 👇");
+            if(btn){ btn.disabled = false; btn.textContent = "▶ Show me again, Hoot!"; }
+            card._replaying = false;
+          }
+          function next(){
+            if(step > 0) items[step - 1].classList.remove("lsn-lit");
+            if(step >= items.length){ finish(); return; }
+            var el = items[step];
+            el.classList.add("lsn-lit");
+            if(cfg.type === "count"){
+              if(out) out.textContent = String(step + 1);
+              setLine(card, (step + 1) + "! " + el.textContent + (step === items.length - 1 ? " 🎉" : ""));
+              pop(step);
+            } else {
+              reactItem(card, step);
+            }
+            step++;
+            setTimeout(next, delay);
+          }
+          setTimeout(next, 300);
+        }
+
+        /* ---------- split the pattern / count-back lines into tokens ---------- */
+        function tokenize(eq, cfg){
+          var parts = eq.textContent.split(/\s+/).filter(function(x){ return x && x !== "…" && x !== "..."; });
+          eq.innerHTML = "";
+          cfg.say = [];
+          parts.forEach(function(tok, i){
+            if(i) eq.appendChild(document.createTextNode(cfg.eqKind === "countback" ? " … " : " "));
+            var s = document.createElement("span");
+            s.className = "lsn-token";
+            s.setAttribute("tabindex", "0");
+            s.setAttribute("role", "button");
+            s.textContent = tok;
+            if(cfg.eqKind === "pattern"){
+              var red = tok.indexOf("🔴") >= 0;
+              s.setAttribute("aria-label", red ? "Red circle — tap to hear Hoot" : "Blue circle — tap to hear Hoot");
+              cfg.say.push(red ? "🔴 Red!" : "🔵 Blue!");
+            } else {
+              s.setAttribute("aria-label", tok === "🚀" ? "Rocket — tap for blast off!" : "Number " + tok + " — tap to hear Hoot");
+              cfg.say.push(tok === "🚀" ? "🚀 BLAST OFF! Counting back takes us all the way to space!" : tok + "!");
+            }
+            eq.appendChild(s);
+          });
+        }
+
+        /* ---------- set up all 16 lessons ---------- */
+        cards.forEach(function(card, li){
+          var cfg = CFG[li];
+          if(!cfg) return;
+          var teach = card.querySelector(".lsn-teach");
+          if(!teach) return;
+          card._cfg = cfg;
+          var line = document.createElement("p");
+          line.className = "lsn-hoot";
+          line.setAttribute("aria-live", "polite");
+          line.textContent = "🦉 Tap everything in my lesson — it all pops, wiggles and talks back! Then press Show me again and watch me teach it!";
+          teach.appendChild(line);
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "lsn-replay";
+          btn.textContent = "▶ Show me again, Hoot!";
+          teach.appendChild(btn);
+          card._line = line;
+          card._replayBtn = btn;
+          btn.addEventListener("click", function(){ runReplay(card); });
+          if(cfg.type === "count"){
+            card._items = Array.prototype.slice.call(card.querySelectorAll(".ctap"));
+            card._answerEl = card.querySelector(".lsn-visual");
+          } else if(cfg.type === "eq"){
+            var eq = teach.querySelector(".lsn-eq");
+            if(!eq){ card._items = []; return; }
+            tokenize(eq, cfg);
+            card._items = Array.prototype.slice.call(eq.querySelectorAll(".lsn-token"));
+            card._answerEl = cfg.answer === "eq" ? eq : card._items[cfg.answer];
+          } else {
+            var items = Array.prototype.slice.call(teach.querySelectorAll(".lsn-visual > .lchip, .lsn-visual > .cdot"));
+            items.forEach(function(el, i){
+              el.classList.add("lsn-manip");
+              el.setAttribute("tabindex", "0");
+              el.setAttribute("role", "button");
+              el.setAttribute("aria-label", "Tap to learn with Hoot: " + (cfg.say[i] || el.textContent));
+            });
+            card._items = items;
+            card._answerEl = items[cfg.answer];
+          }
+        });
+
+        /* ---------- taps: manipulatives, counting dots, answers ---------- */
+        panel.addEventListener("click", function(e){
+          var t = e.target;
+          if(!t || !t.closest) return;
+          var ct = t.closest(".ctap");
+          if(ct){
+            var box = ct.closest("[data-ctap-box]");
+            if(box){
+              var dots = Array.prototype.slice.call(box.querySelectorAll(".ctap"));
+              /* The engine lights the dot on this same click (its
+                 listener runs after this one in the bubble), so the
+                 running count is the lit dots plus this one when it is
+                 not lit yet — Hoot's spoken-style count always matches
+                 the big count bubble. */
+              var lit = box.querySelectorAll(".ctap.on").length;
+              var n = ct.classList.contains("on") ? lit : lit + 1;
+              var c0 = ct.closest(".lsn");
+              animOnce(ct, "lsn-hit", 420);
+              pop(n - 1);
+              if(c0) setLine(c0, n + "! " + ct.textContent + (n === dots.length ? " 🎉" : ""));
+            }
+            return;
+          }
+          var man = t.closest(".lsn-manip, .lsn-token");
+          if(man){
+            var c1 = man.closest(".lsn");
+            if(c1 && c1._items) reactItem(c1, c1._items.indexOf(man));
+            return;
+          }
+          var opt = t.closest(".lsn-opt");
+          if(opt){
+            var c2 = opt.closest(".lsn");
+            if(!c2 || !c2._cfg) return;
+            animOnce(opt, "lsn-tap", 380);
+            tone(520, 0.07, "sine", 0.07);
+            if(opt.hasAttribute("data-right")){
+              burst(c2);
+            } else if(!c2.classList.contains("done")){
+              setLine(c2, c2._cfg.type === "count"
+                ? "🦉 Count with me up here — touch each one, say its number out loud, then try again!"
+                : "🦉 Psst — look up here! The glowing one is the one from my lesson. Try again!");
+              var target = c2._answerEl;
+              if(target){
+                target.classList.remove("lsn-hint-pulse"); void target.offsetWidth;
+                target.classList.add("lsn-hint-pulse");
+                setTimeout(function(){ target.classList.remove("lsn-hint-pulse"); }, 1900);
+              }
+            }
+          }
+        });
+        panel.addEventListener("keydown", function(e){
+          if(e.key !== "Enter" && e.key !== " ") return;
+          var t = e.target;
+          if(!t || !t.closest) return;
+          var man = t.closest(".lsn-manip, .lsn-token");
+          if(!man) return;
+          e.preventDefault();
+          var c = man.closest(".lsn");
+          if(c && c._items) reactItem(c, c._items.indexOf(man));
         });
       })();
     </script>
@@ -6501,8 +7479,9 @@
       (function(){
         "use strict";
         var PROFILES = {
-          zane:  { name:"Zane",  age:3 },
-          riley: { name:"Riley", age:2 }
+          zane:    { name:"Zane",    age:3 },
+          riley:   { name:"Riley",   age:2 },
+          kaitlyn: { name:"Kaitlyn", age:12 }
         };
         var current = null;
         var snaps = {};
@@ -6708,6 +7687,12 @@
           if(lt && lt.getAttribute("aria-selected") !== "true") lt.click();
           setTimeout(function(){ card.scrollIntoView({ behavior:"smooth", block:"center" }); }, 160);
         }
+        function gotoNyLesson(card){
+          if(window.__hootShowView) window.__hootShowView("learn");
+          var ct = document.querySelector('.tab[data-age="creator"]');
+          if(ct && ct.getAttribute("aria-selected") !== "true") ct.click();
+          setTimeout(function(){ card.scrollIntoView({ behavior:"smooth", block:"center" }); }, 160);
+        }
         function hootRefresh(){
           var P = current ? PROFILES[current] : null;
           var greet = document.getElementById("hh-greet");
@@ -6718,6 +7703,8 @@
             setText(greet, "Hoo hoo! Hi " + P.name + "! I'm Hoot — this is YOUR world!");
             setText(sub, current === "riley"
               ? "Riley's world is set up just for her: the biggest pictures, the simplest taps — and her very own stars, stickers and photos."
+              : current === "kaitlyn"
+              ? "Kaitlyn's world is set up just for her: New York lessons for grade 7 — and Hoot is her tutor, one tiny step at a time."
               : "Zane's world is set up just for him: a step ahead for age 3 — and his very own stars, stickers and photos.");
             if(sw) sw.hidden = false;
             var dt = document.getElementById("dock-text");
@@ -6734,10 +7721,26 @@
           clearPick();
           if(!current){
             nextFn = function(){ openGate(); };
-            setText(next, "👇 First — tap here: pick who's playing, Zane or Riley");
+            setText(next, "👇 First — tap here: pick who's playing, Zane, Riley or Kaitlyn");
             return;
           }
           var name = P.name;
+          if(current === "kaitlyn"){
+            var nyc = slice(document.querySelectorAll("#panel-creator .ny-lsn"));
+            for(var ni = 0; ni < nyc.length; ni++){
+              if(!nyc[ni].classList.contains("done")){
+                (function(card, idx){
+                  nextFn = function(){ gotoNyLesson(card); };
+                  setText(next, "🦉 Hoot's tutoring pick for Kaitlyn: NY Lesson " + (idx + 1) + " — " + lessonTitle(card) + " · tap to go!");
+                  markPick(card);
+                })(nyc[ni], ni);
+                return;
+              }
+            }
+            nextFn = function(){ if(window.__hootShowView) window.__hootShowView("today"); };
+            setText(next, "🎉 Kaitlyn finished all 8 NY tutor lessons! See today's plan →");
+            return;
+          }
           var cards = slice(document.querySelectorAll("#panel-little .lsn"));
           for(var i = 0; i < cards.length; i++){
             if(!cards[i].classList.contains("done")){
@@ -6763,6 +7766,10 @@
           if(snaps[id]) restoreState(snaps[id]);
           else { restoreState(null); snaps[id] = snapState(); }
           document.body.setAttribute("data-profile", id);
+          if(id === "kaitlyn"){
+            if(window.__hootSetState) window.__hootSetState("New York");
+            if(window.__hootSyncNyState) window.__hootSyncNyState();
+          }
           tagNewPhotos();
           applyPhotoFilter();
           updateProfileUI();
@@ -6771,10 +7778,19 @@
           if(window.__hootGreet && !opts.silent) window.__hootGreet(id);
           if(opts.enter){
             document.body.classList.remove("welcome-open");
-            if(window.__hootShowView) window.__hootShowView("home");
-            applyKid(id, true);
-            var lt = document.querySelector('.tab[data-age="little"]');
-            if(lt && lt.getAttribute("aria-selected") !== "true") lt.click();
+            if(id === "kaitlyn"){
+              /* Kaitlyn lands on her own path: Learning, Ages 11–13,
+                 New York set — and never in Little Kids mode. */
+              applyKid(id, true);
+              if(window.__hootShowView) window.__hootShowView("learn");
+              var ctab = document.querySelector('.tab[data-age="creator"]');
+              if(ctab && ctab.getAttribute("aria-selected") !== "true") ctab.click();
+            } else {
+              if(window.__hootShowView) window.__hootShowView("home");
+              applyKid(id, true);
+              var lt = document.querySelector('.tab[data-age="little"]');
+              if(lt && lt.getAttribute("aria-selected") !== "true") lt.click();
+            }
             try{ window.scrollTo(0, 0); }catch(e){}
           } else {
             applyKid(id, !!opts.jumpKid);
@@ -6784,6 +7800,7 @@
           persist();
         }
         window.__hootSelectProfile = selectProfile;
+        window.__hootRefreshHost = hootRefresh;
 
         document.addEventListener("click", function(e){
           var t = e.target;
@@ -7214,6 +8231,360 @@
           }).observe(overlay, { attributes:true, attributeFilter:["hidden"] });
         }
         setTimeout(render, 900);
+      })();
+    </script>
+    <script>
+      /* ===== KAITLYN'S NY TUTOR LESSONS — great-tutor engine =====
+         The 8 New York lessons in the Creators panel (shown when New
+         York is the curriculum state; Kaitlyn's profile selects New
+         York automatically). Every lesson runs Watch me (tap-through
+         worked example) → a "Makes sense / Show me again" check (the
+         again-route explains it a DIFFERENT way) → Try with me
+         (guided steps she taps, can't fail) → Your turn (one question
+         for the star; a wrong answer re-teaches the missed point a
+         different way — simpler words first, then a visual or a
+         real-life example — with unlimited retries and no penalty).
+         Her stars save per profile on this device under their own
+         key, deliberately separate from the index-based snapshot the
+         little kids' profiles use, so Zane's and Riley's saved stars
+         can never shift. Kaitlyn's own tutor voice (chosen by the
+         family — see KAITLYN_VOICE below) speaks her greeting, her
+         praise, the different-way re-teach and the "So remember…"
+         recap; Hoot's existing clips still chime on success too. */
+      (function(){
+        "use strict";
+        function slice(l){ return Array.prototype.slice.call(l || []); }
+        var wrap = document.getElementById("ny-creator-wrap");
+        if(!wrap) return;
+        var cards = slice(wrap.querySelectorAll(".ny-lsn"));
+        /* ---------- Kaitlyn's tutor voice (chosen by the family) ----------
+           Voice: avocado_v2:Lily (smooth, steady) — Sample 6, picked by
+           Dawid. Her four recorded lines live in assets/voice/ with the
+           kaitlyn- prefix named in clips below, and play() below speaks
+           them: greet when her profile is picked, praise when she earns
+           a star, reteach when a lesson re-teaches a point a different
+           way, and recap at the "So remember…" moment. Playback mirrors
+           Hoot's clip engine (playHootClip): one clip at a time with a
+           short queue — so praise can finish before the recap starts —
+           the speaking animation follows the clip, a failed load fails
+           silently, and Quiet mode (the voice picker's "off" style,
+           which silences Hoot's clips) silences hers too, checked both
+           when a line is requested and when a queued line starts.
+           Hoot's speech lines in her lessons are tagged data-voice=
+           "kaitlyn" plus a data-kaitlyn-line kind (greet / praise /
+           recap) so each clip knows exactly which line it voices. */
+        var kaitlynClipEl = null, kaitlynClipQueue = [], kaitlynClipBusy = false;
+        var kaitlynClipGen = 0, kaitlynClipCur = 0;
+        function kaitlynQuiet(){
+          try{ if(typeof currentVoice !== "undefined" && currentVoice === "off") return true; }catch(e){}
+          return !!document.querySelector('.voice-btn[data-voice="off"].sel');
+        }
+        function kaitlynSpeaking(on){
+          try{ if(typeof setSpeaking === "function") setSpeaking(on); }catch(e){}
+        }
+        function kaitlynSettle(gen){
+          if(gen !== kaitlynClipCur) return;
+          kaitlynClipCur = ++kaitlynClipGen;
+          kaitlynClipBusy = false;
+          kaitlynSpeaking(false);
+          var kind = kaitlynClipQueue.shift();
+          if(kind) KAITLYN_VOICE.play(kind);
+        }
+        function kaitlynPlayer(){
+          if(!kaitlynClipEl){
+            kaitlynClipEl = new Audio();
+            kaitlynClipEl.preload = "auto";
+            kaitlynClipEl.addEventListener("ended", function(){ kaitlynSettle(kaitlynClipCur); });
+            kaitlynClipEl.addEventListener("error", function(){ kaitlynSettle(kaitlynClipCur); });
+          }
+          return kaitlynClipEl;
+        }
+        var KAITLYN_VOICE = {
+          id: "avocado_v2:Lily",
+          prefix: "kaitlyn-",
+          clips: {
+            greet:   "kaitlyn-greet.mp3",
+            praise:  "kaitlyn-praise.mp3",
+            reteach: "kaitlyn-reteach.mp3",
+            recap:   "kaitlyn-recap.mp3"
+          },
+          play: function(kind){
+            var file = this.clips[kind];
+            if(!file) return false;
+            if(kaitlynQuiet()) return false;
+            if(kaitlynClipBusy){ kaitlynClipQueue.push(kind); return true; }
+            kaitlynClipBusy = true;
+            var gen = ++kaitlynClipGen; kaitlynClipCur = gen;
+            var a = kaitlynPlayer();
+            try{
+              a.src = "assets/voice/" + file;
+              kaitlynSpeaking(true);
+              var p = a.play();
+              if(p && p.catch) p.catch(function(){ kaitlynSettle(gen); });
+              return true;
+            }catch(e){ kaitlynSettle(gen); return false; }
+          },
+          stop: function(){
+            kaitlynClipQueue.length = 0;
+            kaitlynClipCur = ++kaitlynClipGen;
+            kaitlynClipBusy = false;
+            if(kaitlynClipEl){ try{ kaitlynClipEl.pause(); }catch(e){} }
+            kaitlynSpeaking(false);
+          }
+        };
+        window.__hootKaitlynVoice = KAITLYN_VOICE;
+        /* Her greeting follows the same pattern as Zane's and Riley's
+           recorded name greetings: it plays when her profile is picked
+           (a real tap on her card or chip), never on the silent restore
+           that puts her saved world back underneath the gate at load.
+           The pick can reach play() twice — once from the click itself
+           and once from the data-profile change the pick causes — so
+           repeats inside one greeting's span are folded into one. */
+        var kaitlynGreetAt = 0;
+        function kaitlynGreet(){
+          var now = Date.now();
+          if(now - kaitlynGreetAt < 2500) return;
+          kaitlynGreetAt = now;
+          KAITLYN_VOICE.play("greet");
+        }
+        cards.forEach(function(card){
+          var greet = card.querySelector(".ny-hoot p");
+          if(greet){ greet.setAttribute("data-voice", "kaitlyn"); greet.setAttribute("data-kaitlyn-line", "greet"); }
+          var fb = card.querySelector(".ny-fb");
+          if(fb){ fb.setAttribute("data-voice", "kaitlyn"); fb.setAttribute("data-kaitlyn-line", "praise"); }
+          var recap = card.querySelector(".ny-recap");
+          if(recap){ recap.setAttribute("data-voice", "kaitlyn"); recap.setAttribute("data-kaitlyn-line", "recap"); }
+        });
+        var NY_KEY = "hootworld.nylessons.v1";
+        var store = {};
+        try{ store = JSON.parse(localStorage.getItem(NY_KEY) || "{}") || {}; }catch(e){ store = {}; }
+        function curProf(){ return document.body.getAttribute("data-profile") || "none"; }
+        function dones(){ return store[curProf()] || []; }
+        function saveStore(){
+          try{ localStorage.setItem(NY_KEY, JSON.stringify(store)); }catch(e){}
+        }
+        function saveDone(idx){
+          var id = curProf();
+          if(!store[id]) store[id] = [];
+          store[id][idx] = true;
+          saveStore();
+        }
+        /* Re-save at the same lifecycle moments the profile system
+           uses (page closing / tab hidden), so a reload can never
+           strand a star earned since the last click. */
+        window.addEventListener("beforeunload", saveStore);
+        document.addEventListener("visibilitychange", function(){
+          if(document.visibilityState === "hidden") saveStore();
+        });
+        function show(el){ if(el) el.hidden = false; }
+        function hide(el){ if(el) el.hidden = true; }
+
+        /* ---------- New York state visibility ---------- */
+        function syncState(){
+          var sel = document.querySelector(".state-select");
+          var ny = !!(sel && sel.value === "New York");
+          document.body.setAttribute("data-curstate", ny ? "New York" : "");
+        }
+        window.__hootSyncNyState = syncState;
+        slice(document.querySelectorAll(".state-select")).forEach(function(s){
+          s.addEventListener("change", function(){ setTimeout(syncState, 30); });
+        });
+
+        /* ---------- progress + Kaitlyn's counts ---------- */
+        function nyDoneCount(){ return dones().filter(Boolean).length; }
+        function updateProgress(){
+          var el = wrap.querySelector("[data-ny-progress]");
+          if(!el) return;
+          var n = nyDoneCount();
+          el.textContent = (n === cards.length)
+            ? "🏆 All " + cards.length + " NY lessons done — Kaitlyn's path complete!"
+            : "⭐ " + n + " of " + cards.length + " NY lessons done";
+        }
+        function decorateCounts(){
+          var n = nyDoneCount();
+          slice(document.querySelectorAll('[data-prof-counts="kaitlyn"]')).forEach(function(el){
+            var t = el.textContent || "";
+            var cut = t.indexOf(" · 🎓");
+            if(cut > -1) t = t.slice(0, cut);
+            if(t) el.textContent = t + " · 🎓 NY tutor lessons: ⭐ " + n + " of " + cards.length + " done";
+          });
+        }
+
+        /* ---------- card state: fresh / done ---------- */
+        function trySteps(card){ return slice(card.querySelectorAll(".ny-try-step")); }
+        function resetCard(card){
+          card.classList.remove("done"); card._wrongs = 0;
+          slice(card.querySelectorAll(".ny-step")).forEach(function(s, i){ s.hidden = i > 0; });
+          show(card.querySelector(".ny-nextstep"));
+          hide(card.querySelector(".ny-stepdone"));
+          hide(card.querySelector(".ny-check"));
+          hide(card.querySelector(".ny-alt"));
+          var cfb = card.querySelector(".ny-check-fb"); if(cfb) cfb.textContent = "";
+          hide(card.querySelector('[data-phase="try"]'));
+          trySteps(card).forEach(function(st, i){
+            st.hidden = i > 0;
+            hide(st.querySelector(".ny-try-result"));
+            var fb = st.querySelector(".ny-try-fb"); if(fb) fb.textContent = "";
+            slice(st.querySelectorAll(".ny-try-opt")).forEach(function(o){ o.disabled = false; o.classList.remove("right", "wrong"); });
+          });
+          hide(card.querySelector(".ny-try-done"));
+          hide(card.querySelector('[data-phase="your"]'));
+          slice(card.querySelectorAll(".ny-opt")).forEach(function(o){ o.disabled = false; o.classList.remove("right", "wrong"); });
+          var fb = card.querySelector(".ny-fb"); if(fb) fb.textContent = "";
+          hide(card.querySelector(".ny-recap"));
+        }
+        function applyDone(card){
+          card.classList.add("done");
+          slice(card.querySelectorAll(".ny-step")).forEach(function(s){ s.hidden = false; });
+          hide(card.querySelector(".ny-nextstep"));
+          show(card.querySelector(".ny-stepdone"));
+          hide(card.querySelector(".ny-check"));
+          show(card.querySelector('[data-phase="try"]'));
+          trySteps(card).forEach(function(st){
+            st.hidden = false;
+            show(st.querySelector(".ny-try-result"));
+            slice(st.querySelectorAll(".ny-try-opt")).forEach(function(o){
+              o.disabled = true;
+              o.classList.toggle("right", o.hasAttribute("data-right"));
+              o.classList.remove("wrong");
+            });
+          });
+          show(card.querySelector(".ny-try-done"));
+          show(card.querySelector('[data-phase="your"]'));
+          var praise = "";
+          slice(card.querySelectorAll(".ny-opt")).forEach(function(o){
+            o.disabled = true;
+            if(o.hasAttribute("data-right")){ o.classList.add("right"); praise = o.getAttribute("data-praise") || ""; }
+            o.classList.remove("wrong");
+          });
+          var fb = card.querySelector(".ny-fb");
+          if(fb) fb.textContent = praise || "⭐ That's right — lesson done!";
+          show(card.querySelector(".ny-recap"));
+        }
+        function applyAll(){
+          var d = dones();
+          cards.forEach(function(card, i){ if(d[i]) applyDone(card); else resetCard(card); });
+          updateProgress();
+          decorateCounts();
+          /* Hoot's host pick reads the cards' done classes, and the
+             profile script computes it during selectProfile — before
+             this re-apply runs. Refresh it now the true state is on
+             the cards, so Kaitlyn's pick names her real next lesson. */
+          if(window.__hootRefreshHost) window.__hootRefreshHost();
+        }
+
+        /* ---------- the tutoring flow ---------- */
+        document.addEventListener("click", function(e){
+          var t = e.target;
+          if(!t || !t.closest) return;
+          var nextBtn = t.closest(".ny-nextstep");
+          if(nextBtn){
+            var card = nextBtn.closest(".ny-lsn"); if(!card) return;
+            var steps = slice(card.querySelectorAll(".ny-step"));
+            var hiddenStep = null;
+            for(var i = 0; i < steps.length; i++){ if(steps[i].hidden){ hiddenStep = steps[i]; break; } }
+            if(hiddenStep){ hiddenStep.hidden = false; return; }
+            hide(nextBtn);
+            show(card.querySelector(".ny-stepdone"));
+            show(card.querySelector(".ny-check"));
+            return;
+          }
+          var againBtn = t.closest(".ny-check-again");
+          if(againBtn){
+            var card2 = againBtn.closest(".ny-lsn"); if(!card2) return;
+            show(card2.querySelector(".ny-alt"));
+            var fb2 = card2.querySelector(".ny-check-fb");
+            if(fb2) fb2.textContent = "No rush at all, Kaitlyn — looking at it a different way is a smart move, not a step back. Read this version, then tap 👍 when you're ready.";
+            KAITLYN_VOICE.play("reteach");
+            return;
+          }
+          var okBtn = t.closest(".ny-check-ok");
+          if(okBtn){
+            var card3 = okBtn.closest(".ny-lsn"); if(!card3) return;
+            hide(card3.querySelector(".ny-check"));
+            show(card3.querySelector('[data-phase="try"]'));
+            return;
+          }
+          var tryOpt = t.closest(".ny-try-opt");
+          if(tryOpt && !tryOpt.disabled){
+            var step = tryOpt.closest(".ny-try-step");
+            var card4 = tryOpt.closest(".ny-lsn"); if(!step || !card4) return;
+            var tfb = step.querySelector(".ny-try-fb");
+            if(tryOpt.hasAttribute("data-right")){
+              tryOpt.classList.add("right");
+              slice(step.querySelectorAll(".ny-try-opt")).forEach(function(o){ o.disabled = true; });
+              show(step.querySelector(".ny-try-result"));
+              if(tfb) tfb.textContent = "";
+              var stepsAll = trySteps(card4);
+              var idx = stepsAll.indexOf(step);
+              if(idx > -1 && idx + 1 < stepsAll.length){ show(stepsAll[idx + 1]); }
+              else {
+                show(card4.querySelector(".ny-try-done"));
+                show(card4.querySelector('[data-phase="your"]'));
+              }
+            } else {
+              tryOpt.classList.add("wrong");
+              setTimeout(function(){ tryOpt.classList.remove("wrong"); }, 650);
+              if(tfb) tfb.textContent = tryOpt.getAttribute("data-hint") || "Almost — look at my thinking again and try the other one. I'm right here.";
+            }
+            return;
+          }
+          var opt = t.closest(".ny-opt");
+          if(opt && !opt.disabled){
+            var card5 = opt.closest(".ny-lsn"); if(!card5) return;
+            if(card5.classList.contains("done")) return;
+            var fb5 = card5.querySelector(".ny-fb");
+            if(opt.hasAttribute("data-right")){
+              card5.classList.add("done");
+              opt.classList.add("right");
+              slice(card5.querySelectorAll(".ny-opt")).forEach(function(o){ o.disabled = true; });
+              if(fb5) fb5.textContent = opt.getAttribute("data-praise") || "⭐ That's right — lesson done!";
+              show(card5.querySelector(".ny-recap"));
+              var pick = card5.querySelector(".hoot-pick-tag"); if(pick) pick.remove();
+              card5.classList.remove("hoot-pick");
+              saveDone(cards.indexOf(card5));
+              updateProgress();
+              decorateCounts();
+              if(window.__hootPlayClip) window.__hootPlayClip("great-job");
+              KAITLYN_VOICE.play("praise"); KAITLYN_VOICE.play("recap");
+              if(window.__hootRefreshHost) setTimeout(window.__hootRefreshHost, 650);
+            } else {
+              card5._wrongs = (card5._wrongs || 0) + 1;
+              opt.classList.add("wrong");
+              setTimeout(function(){ opt.classList.remove("wrong"); }, 650);
+              if(fb5){
+                var second = card5._wrongs >= 2 && opt.getAttribute("data-reteach");
+                fb5.textContent = second ? opt.getAttribute("data-reteach")
+                  : (opt.getAttribute("data-hint") || "Not quite — let's re-think that step together and try again. No rush.");
+                if(second) KAITLYN_VOICE.play("reteach");
+              }
+            }
+            return;
+          }
+        });
+
+        /* ---------- profile changes re-read that child's NY stars ---------- */
+        if("MutationObserver" in window){
+          new MutationObserver(function(){
+            applyAll(); syncState();
+            if(document.body.getAttribute("data-profile") === "kaitlyn") kaitlynGreet();
+          }).observe(document.body, { attributes:true, attributeFilter:["data-profile"] });
+        }
+        document.addEventListener("click", function(e){
+          var t = e.target; if(!t || !t.closest) return;
+          /* Quiet silences her clips exactly like Hoot's: choosing it
+             stops anything of hers that is playing or queued. */
+          if(t.closest('.voice-btn[data-voice="off"]')) KAITLYN_VOICE.stop();
+          var pick = t.closest("[data-profile-pick]");
+          var chip = t.closest(".kidchip");
+          if(pick || chip){
+            var pickedId = pick ? pick.getAttribute("data-profile-pick") : chip.getAttribute("data-kid");
+            if(pickedId === "kaitlyn") kaitlynGreet();
+            setTimeout(function(){ syncState(); applyAll(); }, 500);
+            setTimeout(decorateCounts, 950);
+          }
+        });
+        setTimeout(function(){ syncState(); applyAll(); }, 350);
       })();
     </script>
   </body>
