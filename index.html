@@ -1878,6 +1878,132 @@
       /* once a profile is playing, switching stays a small quiet pill */
       .hh-switch{ border:2px solid rgba(255,255,255,.9); background:#17263b; font-size:.85rem; font-weight:700; padding:8px 14px; box-shadow:none; }
     </style>
+    <style>
+      /* ===== ADVENTURE ROADMAP — the path that connects it all =====
+         One winding trail per child: their Little Explorers lessons and
+         milestone games interleaved as themed stops. Done stops wear
+         gold, the next stop glows, the child's own Hoot token stands
+         where they have reached, and big Hoot waits at the next stop. */
+      .hh-map{ border:3px solid #fff; background:#0e9594; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(.95rem,2.6vw,1.1rem); line-height:1.2; padding:12px 18px; border-radius:999px; cursor:pointer; box-shadow:0 8px 18px rgba(14,149,148,.35); }
+      .hh-map:active{ transform:translateY(2px); }
+      .ht-map{ background:#0e9594; }
+      #roadmap{ display:none; }
+      body[data-view="map"] #roadmap{ display:block; }
+      body[data-view="map"] #daily, body[data-view="map"] #fresh-ideas,
+      body[data-view="map"] #montessori-shelf, body[data-view="map"] #game-library,
+      body[data-view="map"] .learn-head, body[data-view="map"] #ages,
+      body[data-view="map"] .panel, body[data-view="map"] .growth,
+      body[data-view="map"] #home-start{ display:none !important; }
+      .rm-scene{
+        position:relative; width:100%; aspect-ratio:10/15; margin-top:14px;
+        border:4px solid #fff; border-radius:30px; overflow:hidden;
+        box-shadow:0 16px 34px rgba(20,60,90,.22);
+        background:linear-gradient(180deg,#aee3ff 0%,#cdeffd 16%,#bfe8b8 34%,#9ed98f 62%,#7cc46a 100%);
+      }
+      @media (prefers-color-scheme: dark){
+        .rm-scene{ background:linear-gradient(180deg,#14406b 0%,#1d4e63 16%,#2c6e4e 34%,#2a7a45 62%,#1f6136 100%); }
+      }
+      .rm-decor{ position:absolute; inset:0; pointer-events:none; }
+      .rm-trail{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+      .rm-sun{ position:absolute; top:2.5%; right:5%; width:64px; height:64px; border-radius:50%; background:#ffd93b; box-shadow:0 0 0 12px rgba(255,217,59,.30), 0 0 44px rgba(255,217,59,.55); }
+      .rm-cloud{ position:absolute; background:#fff; border-radius:999px; opacity:.92; }
+      .rm-pond{ position:absolute; left:19%; top:70.5%; width:37%; height:8.5%; border-radius:50%; background:radial-gradient(ellipse at 50% 42%,#8fd8ff 0%,#4aa8dd 70%,#2b7cd3 100%); box-shadow:inset 0 -8px 18px rgba(16,60,110,.35); }
+      .rm-mtn{ position:absolute; left:47%; top:51.5%; width:30%; height:11%; background:linear-gradient(160deg,#9aa7b8 0%,#6d7c90 60%,#57687c 100%); clip-path:polygon(50% 0,100% 100%,0 100%); }
+      .rm-mtn::after{ content:""; position:absolute; left:38%; top:0; width:24%; height:34%; background:#fff; clip-path:polygon(50% 0,100% 100%,0 100%); }
+      .rm-tree{ position:absolute; font-size:clamp(1.3rem,4.5vw,2.2rem); line-height:1; filter:drop-shadow(0 3px 3px rgba(20,60,30,.3)); }
+      .rm-zone{
+        position:absolute; transform:translate(-50%,-50%); pointer-events:none; z-index:2;
+        background:#17263b; color:#ffd93b; border:2.5px solid #fff; border-radius:999px;
+        font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(.68rem,2.4vw,.92rem);
+        padding:5px 13px; white-space:nowrap; box-shadow:0 5px 12px rgba(10,40,90,.30);
+      }
+      .rm-stop{
+        position:absolute; z-index:3; width:62px; height:62px; margin:-31px 0 0 -31px;
+        border-radius:50%; border:3.5px solid #fff; background:#fff; cursor:pointer;
+        display:flex; align-items:center; justify-content:center; padding:0;
+        box-shadow:0 7px 16px rgba(16,50,80,.30); transition:transform .12s ease;
+      }
+      .rm-stop:active{ transform:scale(.93); }
+      .rm-stop .rm-ic{ font-size:1.85rem; line-height:1; }
+      .rm-stop .rm-tag{
+        position:absolute; top:64px; left:50%; transform:translateX(-50%);
+        background:rgba(23,38,59,.88); color:#fff; font-family:"Nunito",sans-serif; font-weight:800;
+        font-size:.66rem; line-height:1.25; padding:2px 8px; border-radius:999px; white-space:nowrap;
+        pointer-events:none;
+      }
+      .rm-stop .rm-badge{
+        position:absolute; top:-9px; right:-9px; width:26px; height:26px; border-radius:50%;
+        background:#ffd93b; border:2.5px solid #fff; font-size:.85rem; line-height:1;
+        display:none; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,.25);
+      }
+      .rm-stop.done{ background:linear-gradient(160deg,#ffe066,#ffb300); }
+      .rm-stop.done .rm-badge{ display:flex; }
+      .rm-stop.next{ background:#fff; border-color:#ff4d2e; z-index:4; }
+      @media (prefers-reduced-motion: no-preference){
+        .rm-stop.next{ animation:rm-pulse 1.5s ease-in-out infinite; }
+        @keyframes rm-pulse{
+          0%,100%{ box-shadow:0 7px 16px rgba(16,50,80,.30), 0 0 0 0 rgba(255,77,46,.55); }
+          50%{ box-shadow:0 7px 16px rgba(16,50,80,.30), 0 0 0 15px rgba(255,77,46,0); }
+        }
+        #rm-marker .rm-token{ animation:rm-bob 2.6s ease-in-out infinite; }
+        #rm-marker.hop .rm-token{ animation:rm-hop .95s ease-in-out 2; }
+        @keyframes rm-bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+        @keyframes rm-hop{ 0%,100%{ transform:translateY(0); } 30%{ transform:translateY(-26px) rotate(-6deg); } 60%{ transform:translateY(2px); } }
+        #rm-hootfig{ animation:rm-bob 3s ease-in-out infinite; }
+      }
+      .rm-stop.castle{ width:84px; height:84px; margin:-42px 0 0 -42px; background:linear-gradient(160deg,#fff3c4,#ffd93b); }
+      .rm-stop.castle .rm-ic{ font-size:2.7rem; }
+      .rm-stop.castle .rm-tag{ top:86px; }
+      #rm-marker{ position:absolute; z-index:6; width:56px; height:62px; margin:-64px 0 0 -28px; pointer-events:none; transition:left .9s ease, top .9s ease; }
+      #rm-marker .rm-token{ position:relative; width:56px; height:56px; filter:drop-shadow(0 6px 8px rgba(16,50,80,.35)); }
+      #rm-marker .rm-initial{
+        position:absolute; left:50%; bottom:-7px; transform:translateX(-50%);
+        min-width:26px; height:26px; padding:0 5px; border-radius:999px; border:2.5px solid #fff;
+        color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:.95rem; line-height:22px;
+        text-align:center; box-shadow:0 3px 8px rgba(0,0,0,.3);
+      }
+      #rm-marker[data-prof="zane"] .rm-initial{ background:#2456a6; }
+      #rm-marker[data-prof="riley"] .rm-initial{ background:#e83e77; }
+      #rm-hootfig{ position:absolute; z-index:5; width:92px; height:92px; margin:-64px 0 0 10px; pointer-events:none; transition:left .9s ease, top .9s ease; filter:drop-shadow(0 8px 12px rgba(20,60,90,.3)); }
+      @media (max-width:560px){ #rm-hootfig{ width:70px; height:70px; margin:-50px 0 0 6px; } }
+      .rm-guide{
+        display:flex; gap:14px; align-items:center; margin-top:16px;
+        background:linear-gradient(135deg,#bfe8ff 0%,#e6fbff 55%,#fff3c4 100%);
+        border:4px solid #fff; border-radius:26px; box-shadow:0 14px 30px rgba(20,60,90,.18);
+        padding:14px 18px 14px 10px;
+      }
+      @media (prefers-color-scheme: dark){ .rm-guide{ background:linear-gradient(135deg,#14406b 0%,#173f57 55%,#4a3d12 100%); } }
+      .rm-guide .rm-g-owl{ flex:none; width:104px; height:104px; }
+      .rm-g-main{ flex:1 1 auto; min-width:0; }
+      .rm-g-say{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(1.15rem,3.4vw,1.5rem); line-height:1.25; color:#173f2c; margin:0; }
+      @media (prefers-color-scheme: dark){ .rm-g-say{ color:#eafbe7; } }
+      .rm-g-sub{ font-weight:800; font-size:.95rem; line-height:1.4; color:#33526b; margin:4px 0 0; }
+      @media (prefers-color-scheme: dark){ .rm-g-sub{ color:#cfe3f5; } }
+      .rm-play{
+        margin-top:11px; border:3px solid #fff; background:#ff4d2e; color:#fff; cursor:pointer;
+        font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(1.05rem,3vw,1.3rem); line-height:1.2;
+        padding:14px 24px; border-radius:999px; box-shadow:0 8px 18px rgba(255,77,46,.35); min-height:56px;
+      }
+      .rm-play:active{ transform:translateY(2px); }
+      .rm-legend{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; font-weight:800; font-size:.88rem; color:var(--muted); }
+      .rm-legend span{ background:var(--card); border:2px solid #fff; border-radius:999px; padding:5px 12px; box-shadow:0 3px 8px rgba(23,60,120,.12); }
+      /* Little Kids 2–4: extra-large stops, picture-first, no reading needed */
+      body.kid-mode .rm-stop{ width:84px; height:84px; margin:-42px 0 0 -42px; }
+      body.kid-mode .rm-stop .rm-ic{ font-size:2.6rem; }
+      body.kid-mode .rm-stop .rm-tag{ display:none; }
+      body.kid-mode .rm-stop.castle{ width:104px; height:104px; margin:-52px 0 0 -52px; }
+      body.kid-mode .rm-guide .rm-g-owl{ width:88px; height:88px; }
+      body.kid-mode .rm-play{ font-size:1.3rem; padding:16px 26px; }
+      body.kid-mode .rm-legend{ display:none; }
+      #rm-confetti{ position:fixed; inset:0; pointer-events:none; z-index:900; overflow:hidden; }
+      #rm-confetti i{ position:absolute; top:-14px; width:11px; height:16px; border-radius:3px; opacity:.95; animation:rm-fall linear forwards; }
+      @keyframes rm-fall{ to{ transform:translateY(106vh) rotate(560deg); } }
+      @media (prefers-reduced-motion: reduce){
+        #rm-marker, #rm-hootfig{ transition:none; }
+        #rm-confetti i{ animation:none; display:none; }
+      }
+      .prof-row .rm-line{ font-weight:800; opacity:1; color:#0b7c7b; }
+    </style>
 
   </head>
   <body class="welcome-open" data-view="home">
@@ -1900,6 +2026,7 @@
           <p class="hh-sub" id="hh-sub">Tell me who's playing and I'll set up their very own world — their own stars, stickers and photos.</p>
           <div class="hh-actions">
             <button type="button" class="hh-next" id="hh-next">👇 First — tap here: pick who's playing, Zane or Riley</button>
+            <button type="button" class="hh-map" id="hh-map" data-viewbtn="map">🗺️ My Adventure Map</button>
             <button type="button" class="hh-switch" id="hh-switch" hidden>🔀 Switch profile</button>
           </div>
         </div>
@@ -1918,6 +2045,7 @@
         <p>No hunting — tap a big picture and you're there. Games, today's plan, lessons, the shelf, parents and your photos are all one tap from here.</p>
         <div class="home-grid">
           <button type="button" class="home-tile ht-games" data-viewbtn="games"><span class="ht-ic" aria-hidden="true">🎮</span><b>Play Games</b><small>20 big games</small></button>
+          <button type="button" class="home-tile ht-map wide" data-viewbtn="map"><span class="ht-ic" aria-hidden="true">🗺️</span><b>My Adventure Map</b><small>One path through everything — see how far you've travelled!</small></button>
           <button type="button" class="home-tile ht-today" data-viewbtn="today"><span class="ht-ic" aria-hidden="true">📅</span><b>Today</b><small>Today's 4 steps</small></button>
           <button type="button" class="home-tile ht-adv wide" data-goto="adv"><span class="ht-ic" aria-hidden="true">🌳🏠</span><b>Indoor &amp; Outdoor Adventures</b><small>One outside + one inside, every day · add a photo under each one</small></button>
           <button type="button" class="home-tile ht-learn" data-viewbtn="learn"><span class="ht-ic" aria-hidden="true">🌱</span><b>Learn</b><small>48 lessons · 16 for ages 2–4</small></button>
@@ -1989,6 +2117,7 @@
         </div>
         <div class="home-grid">
           <button type="button" class="home-tile ht-games" data-viewbtn="games"><span class="ht-ic" aria-hidden="true">🎮</span><b>Play Games</b><small>20 big games</small></button>
+          <button type="button" class="home-tile ht-map wide" data-viewbtn="map"><span class="ht-ic" aria-hidden="true">🗺️</span><b>My Adventure Map</b><small>One path through everything — see how far you've travelled!</small></button>
           <button type="button" class="home-tile ht-today" data-viewbtn="today"><span class="ht-ic" aria-hidden="true">📅</span><b>Today</b><small>Today's 4 steps</small></button>
           <button type="button" class="home-tile ht-adv wide" data-goto="adv"><span class="ht-ic" aria-hidden="true">🌳🏠</span><b>Indoor &amp; Outdoor Adventures</b><small>One outside + one inside, every day · add a photo under each one</small></button>
           <button type="button" class="home-tile ht-learn" data-viewbtn="learn"><span class="ht-ic" aria-hidden="true">🌱</span><b>Learn</b><small>48 lessons · 16 for ages 2–4</small></button>
@@ -2002,6 +2131,51 @@
 
       <!-- ================= CLEAN HOME — GAMES + LEARNING ONLY ================= -->
       
+
+      <!-- ================= ADVENTURE ROADMAP — ONE PATH THROUGH IT ALL ================= -->
+      <section class="roadmap" id="roadmap" aria-label="My Adventure Map — one path through all of Hoot's World">
+        <div class="hub-head">
+          <h2>🗺️ My Adventure Map</h2>
+          <p id="rm-head-sub">One winding path through everything — every lesson you finish and every game you play moves you along it.</p>
+          <span class="hub-count" id="rm-count">⭐ 0 OF 31 STOPS DONE</span>
+        </div>
+        <div class="rm-scene" id="rm-scene">
+          <div class="rm-decor" aria-hidden="true">
+            <span class="rm-sun"></span>
+            <span class="rm-cloud" style="left:6%;top:3.5%;width:110px;height:30px"></span>
+            <span class="rm-cloud" style="left:56%;top:1.8%;width:84px;height:24px"></span>
+            <span class="rm-cloud" style="left:70%;top:30%;width:70px;height:20px;opacity:.7"></span>
+            <span class="rm-pond"></span>
+            <span class="rm-mtn"></span>
+            <span class="rm-tree" style="left:3%;top:88%">🌲</span>
+            <span class="rm-tree" style="left:90%;top:95%">🌳</span>
+            <span class="rm-tree" style="left:5%;top:55%">🌲</span>
+            <span class="rm-tree" style="left:91%;top:60%">🌲</span>
+            <span class="rm-tree" style="left:8%;top:34%">🌳</span>
+            <span class="rm-tree" style="left:89%;top:27%">🌲</span>
+            <span class="rm-tree" style="left:47%;top:96%">🌷</span>
+            <span class="rm-tree" style="left:24%;top:46%">🌻</span>
+            <span class="rm-tree" style="left:80%;top:8%">🌲</span>
+          </div>
+          <svg class="rm-trail" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path id="rm-path" fill="none" stroke="#f0d48c" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity=".95"></path>
+            <path id="rm-path-dash" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9" vector-effect="non-scaling-stroke" opacity=".85"></path>
+          </svg>
+          <div id="rm-zones" aria-hidden="true"></div>
+          <div id="rm-stops"></div>
+          <div id="rm-hootfig" aria-hidden="true"></div>
+          <div id="rm-marker" aria-hidden="true"></div>
+        </div>
+        <div class="rm-guide">
+          <div class="rm-g-owl" id="rm-g-owl" aria-hidden="true"></div>
+          <div class="rm-g-main">
+            <p class="rm-g-say" id="rm-say">Hoo hoo! This is your adventure path!</p>
+            <p class="rm-g-sub" id="rm-sub">Finished stops turn gold. The glowing stop is next — tap any stop to play it again, or jump straight in:</p>
+            <button type="button" class="rm-play" id="rm-play">▶ Play the next stop!</button>
+          </div>
+        </div>
+        <div class="rm-legend" aria-hidden="true"><span>⭐ Gold stop = done!</span><span>🔴 Glowing stop = next!</span><span>🦉 Your Hoot token = where you are</span><span>🏰 The Star Castle = the finish!</span></div>
+      </section>
 
       <!-- ================= TODAY IN HOOT'S WORLD — DAILY PLAN ================= -->
       <section class="hub-library daily-today" id="daily" aria-label="Today's daily plan">
@@ -6680,6 +6854,366 @@
           selectProfile(savedProfile, { silent: true });
           openGate();
         }
+      })();
+    </script>
+    <script>
+      /* ===== ADVENTURE ROADMAP — one path through it all =====
+         The map reads the SAME saved per-profile state as the rest of
+         the app: Little Explorers lesson stars (the profile snapshot
+         in localStorage) and the Sticker Book slots that opening a big
+         game earns. Games without a sticker are remembered here, per
+         profile, in their own on-device key the first time they are
+         opened — so a stop is only ever gold because the child really
+         played it. Switching profiles re-reads that child's journey;
+         finishing something new hops their Hoot token forward with
+         confetti and one of Hoot's recorded praise clips. */
+      (function(){
+        "use strict";
+        function slice(l){ return Array.prototype.slice.call(l || []); }
+        var RM_KEY = "hootworld.roadmap.v1";
+        var SAVE_KEY = "hootworld.profiles.v1";
+        var PROFILES = { zane:{ name:"Zane", initial:"Z" }, riley:{ name:"Riley", initial:"R" } };
+        var SLOT_FOR = { paint:"slot-paint", animals:"slot-homes", dance:"slot-dance", rocket:"slot-bubble", shapes:"slot-shape", piano:"slot-piano", feed:"slot-feed", magic:"slot-hat", twinkle:"slot-star" };
+        var SLUG_TO_KEY = { "balloon-abc-pop":"balloon", "dress-up-hoot":"dress", "real-world-adventure-quests":"real", "rocket-count-up":"rocket", "catch-the-twinkle-stars":"twinkle", "magic-hat-surprises":"magic", "dance-party":"dance", "animal-homes":"animals", "rainbow-piano":"piano", "finger-paint-studio":"paint", "color-splash":"splash", "shape-hunt":"shapes", "feed-hoot":"feed", "peekaboo-forest":"peek", "find-it":"find", "animal-friends":"friends", "memory-match":"memory", "bubble-number-pop":"bubblepop", "letter-fishing":"fishing", "copy-the-beat":"band" };
+        /* The journey, in order: lessons (i = Little Explorers lesson
+           number) and games interleaved through themed lands. */
+        var STOPS = [
+          { t:"lesson", i:0,  icon:"🌈", x:14, y:96, zone:"Sunny Start Meadow" },
+          { t:"game", k:"splash",    name:"Color Splash",       icon:"🎨", x:40, y:93 },
+          { t:"lesson", i:1,  icon:"🔷", x:66, y:95 },
+          { t:"game", k:"shapes",    name:"Shape Hunt",         icon:"🔺", x:88, y:89 },
+          { t:"lesson", i:2,  icon:"✋", x:63, y:85 },
+          { t:"game", k:"balloon",   name:"Balloon ABC Pop",    icon:"🎈", x:38, y:87 },
+          { t:"lesson", i:3,  icon:"🔤", x:14, y:81 },
+          { t:"game", k:"fishing",   name:"Letter Fishing",     icon:"🎣", x:37, y:76, zone:"Letter Pond" },
+          { t:"lesson", i:4,  icon:"🐘", x:63, y:78 },
+          { t:"game", k:"peek",      name:"Peekaboo Forest",    icon:"👀", x:87, y:72 },
+          { t:"lesson", i:5,  icon:"🔢", x:62, y:67 },
+          { t:"game", k:"animals",   name:"Animal Homes",       icon:"🏠", x:37, y:69 },
+          { t:"lesson", i:6,  icon:"🅰️", x:13, y:62 },
+          { t:"game", k:"bubblepop", name:"Bubble Number Pop",  icon:"🫧", x:36, y:57, zone:"Counting Mountain" },
+          { t:"game", k:"rocket",    name:"Rocket Count-Up",    icon:"🚀", x:62, y:59 },
+          { t:"lesson", i:7,  icon:"🧺", x:87, y:53 },
+          { t:"game", k:"memory",    name:"Memory Match Meadow", icon:"🃏", x:63, y:48 },
+          { t:"lesson", i:8,  icon:"🔟", x:38, y:50 },
+          { t:"game", k:"dance",     name:"Dance Party",        icon:"💃", x:14, y:44, zone:"Music Grove" },
+          { t:"lesson", i:9,  icon:"🟢", x:38, y:39 },
+          { t:"game", k:"piano",     name:"Rainbow Piano",      icon:"🎹", x:63, y:41 },
+          { t:"lesson", i:10, icon:"🦁", x:87, y:35 },
+          { t:"game", k:"feed",      name:"Feed Hoot",          icon:"🍓", x:63, y:30, zone:"Sticker Meadow" },
+          { t:"lesson", i:11, icon:"😊", x:38, y:32 },
+          { t:"game", k:"twinkle",   name:"Twinkle Stars",      icon:"⭐", x:14, y:26 },
+          { t:"lesson", i:12, icon:"↕️", x:38, y:21 },
+          { t:"game", k:"magic",     name:"Magic Hat Surprises", icon:"🎩", x:63, y:23 },
+          { t:"lesson", i:13, icon:"🔁", x:87, y:17 },
+          { t:"lesson", i:14, icon:"👂", x:62, y:12 },
+          { t:"lesson", i:15, icon:"🌟", x:37, y:14 },
+          { t:"castle", name:"Star Castle", icon:"🏰", x:16, y:7, zone:"Star Castle" }
+        ];
+        var TOTAL = STOPS.length;
+        var HOOT_SVG = '<svg width="100%" height="100%" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><path d="M22 26 L14 6 L38 16 Z" fill="#0b7a79"/><path d="M98 26 L106 6 L82 16 Z" fill="#0b7a79"/><ellipse cx="60" cy="66" rx="42" ry="46" fill="#0e9594"/><ellipse cx="60" cy="82" rx="24" ry="26" fill="#d9f5f1"/><path class="hh-wing" d="M96 58 Q118 50 122 34 Q106 34 94 44 Q90 52 96 58 Z" fill="#0b7a79"/><path d="M24 58 Q10 66 12 82 Q24 80 28 68 Q28 60 24 58 Z" fill="#0b7a79"/><circle cx="44" cy="46" r="13" fill="#fff"/><circle cx="76" cy="46" r="13" fill="#fff"/><circle cx="48" cy="47" r="6.5" fill="#1e2a3d"/><circle cx="80" cy="47" r="6.5" fill="#1e2a3d"/><circle cx="50.5" cy="44.5" r="2.2" fill="#fff"/><circle cx="82.5" cy="44.5" r="2.2" fill="#fff"/><path d="M52 58 h16 l-8 9 z" fill="#f2b705" stroke="#d99e00" stroke-width="1.5" stroke-linejoin="round"/><path d="M48 108 q4 5 8 0 M64 108 q4 5 8 0" stroke="#d99e00" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
+
+        /* ---------- played-games memory (per profile, on-device) ---------- */
+        var played = {};
+        try{ played = JSON.parse(localStorage.getItem(RM_KEY) || "{}") || {}; }catch(e){ played = {}; }
+        function curProf(){ return document.body.getAttribute("data-profile") || null; }
+        function playedFor(id){ return (id && played[id] && played[id].games) || {}; }
+        function recordGame(key){
+          var id = curProf(); if(!id || !key) return;
+          if(!played[id]) played[id] = { games:{} };
+          if(!played[id].games) played[id].games = {};
+          if(played[id].games[key]) return;
+          played[id].games[key] = 1;
+          try{ localStorage.setItem(RM_KEY, JSON.stringify(played)); }catch(e){}
+          setTimeout(render, 420);
+        }
+        /* Remember a game however it was opened: through the hub's
+           public opener, a game card link, or game-to-game navigation. */
+        if(window.__hootOpenGame){
+          var origOpen = window.__hootOpenGame;
+          window.__hootOpenGame = function(k){ var r = origOpen(k); if(r) recordGame(k); return r; };
+        }
+        document.addEventListener("click", function(e){
+          var t = e.target; if(!t || !t.closest) return;
+          var a = t.closest('a[href^="../"]');
+          if(a){
+            var m = (a.getAttribute("href") || "").match(/^\.\.\/([a-z0-9-]+)\/?$/);
+            if(m && SLUG_TO_KEY[m[1]]) setTimeout(function(){ recordGame(SLUG_TO_KEY[m[1]]); }, 60);
+          }
+        }, true);
+        window.addEventListener("message", function(e){
+          var d = e && e.data;
+          if(d && d.hootGameNav && SLUG_TO_KEY[d.hootGameNav]) recordGame(SLUG_TO_KEY[d.hootGameNav]);
+        });
+
+        /* ---------- progress, from the app's own saved state ---------- */
+        function liveProgress(){
+          var lessons = slice(document.querySelectorAll("#panel-little .lsn")).map(function(c){ return c.classList.contains("done"); });
+          var stickers = {};
+          slice(document.querySelectorAll(".stickers .slot[id].earned")).forEach(function(s){ stickers[s.id] = 1; });
+          return { lessons:lessons, stickers:stickers };
+        }
+        function savedProgress(id){
+          try{
+            var all = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+            var s = all && all.snaps && all.snaps[id];
+            if(!s) return { lessons:[], stickers:{} };
+            var stickers = {};
+            (s.stickers || []).forEach(function(x){ stickers[x] = 1; });
+            return { lessons: slice(s.lessons || []).slice(0, 16).map(function(l){ return !!(l && l.done); }), stickers:stickers };
+          }catch(e){ return { lessons:[], stickers:{} }; }
+        }
+        function progressFor(id){
+          if(!id) return { lessons:[], stickers:{} };
+          return id === curProf() ? liveProgress() : savedProgress(id);
+        }
+        function stopDone(stop, prog, games){
+          if(stop.t === "lesson") return !!prog.lessons[stop.i];
+          if(stop.t === "game"){
+            var slot = SLOT_FOR[stop.k];
+            return !!((slot && prog.stickers[slot]) || games[stop.k]);
+          }
+          return false;
+        }
+        function journey(id){
+          var prog = progressFor(id), games = playedFor(id);
+          var dones = STOPS.map(function(s){ return stopDone(s, prog, games); });
+          var allButCastle = dones.slice(0, TOTAL - 1).every(function(d){ return d; });
+          dones[TOTAL - 1] = allButCastle;
+          var next = -1;
+          for(var i = 0; i < TOTAL; i++){ if(!dones[i]){ next = i; break; } }
+          var doneCount = dones.filter(function(d){ return d; }).length;
+          /* The token stands on the last stop reached — or on the
+             first stop when the journey has not begun. */
+          var at = 0;
+          for(var j = TOTAL - 1; j >= 0; j--){ if(dones[j]){ at = j; break; } }
+          if(next === at + 1 || next === -1) at = Math.max(at, 0);
+          return { dones:dones, next:next, doneCount:doneCount, at:at };
+        }
+        function lessonTitle(i){
+          var cards = document.querySelectorAll("#panel-little .lsn");
+          var c = cards && cards[i];
+          var h = c && c.querySelector(".lsn-top h4");
+          return h ? h.textContent : ("Lesson " + (i + 1));
+        }
+        function stopLabel(stop){
+          if(stop.t === "lesson") return "Lesson " + (stop.i + 1);
+          return stop.name || "Game";
+        }
+        function stopFullName(stop){
+          if(stop.t === "lesson") return "Lesson " + (stop.i + 1) + " — " + lessonTitle(stop.i);
+          if(stop.t === "castle") return "the Star Castle";
+          return stop.name;
+        }
+
+        /* ---------- build the scene once ---------- */
+        var scene = document.getElementById("rm-scene");
+        var stopsBox = document.getElementById("rm-stops");
+        var zonesBox = document.getElementById("rm-zones");
+        var marker = document.getElementById("rm-marker");
+        var hootFig = document.getElementById("rm-hootfig");
+        var stopEls = [];
+        var d = STOPS.map(function(s, i){ return (i ? "L" : "M") + s.x + " " + s.y; }).join(" ");
+        var p1 = document.getElementById("rm-path"); if(p1) p1.setAttribute("d", d);
+        var p2 = document.getElementById("rm-path-dash"); if(p2) p2.setAttribute("d", d);
+        STOPS.forEach(function(stop, idx){
+          if(stop.zone && zonesBox){
+            var z = document.createElement("span");
+            z.className = "rm-zone";
+            z.textContent = stop.zone;
+            z.style.left = Math.min(86, Math.max(14, stop.x + 4)) + "%";
+            z.style.top = (stop.y - 5.2) + "%";
+            zonesBox.appendChild(z);
+          }
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "rm-stop" + (stop.t === "castle" ? " castle" : "");
+          b.style.left = stop.x + "%";
+          b.style.top = stop.y + "%";
+          b.innerHTML = '<span class="rm-ic" aria-hidden="true">' + stop.icon + '</span>' +
+                        '<span class="rm-tag"></span>' +
+                        '<span class="rm-badge" aria-hidden="true">⭐</span>';
+          b.addEventListener("click", function(){ pop(); openStop(idx); });
+          stopsBox.appendChild(b);
+          stopEls.push(b);
+        });
+        if(hootFig) hootFig.innerHTML = HOOT_SVG;
+        var gOwl = document.getElementById("rm-g-owl");
+        if(gOwl) gOwl.innerHTML = HOOT_SVG;
+        if(marker) marker.innerHTML = '<div class="rm-token">' + HOOT_SVG + '</div><span class="rm-initial">?</span>';
+
+        /* ---------- tiny tap pop (own AudioContext, resumed on tap) ---------- */
+        var AC = null;
+        function pop(){
+          try{
+            if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+            if(AC.state === "suspended") AC.resume();
+            var o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
+            o.type = "sine"; o.frequency.setValueAtTime(620, t); o.frequency.exponentialRampToValueAtTime(940, t + .09);
+            g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.14, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .14);
+            o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + .16);
+          }catch(e){}
+        }
+        function confetti(){
+          if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          var box = document.getElementById("rm-confetti");
+          if(!box){ box = document.createElement("div"); box.id = "rm-confetti"; document.body.appendChild(box); }
+          box.innerHTML = "";
+          var colors = ["#ef6461","#f2b705","#0e9594","#4aa8dd","#5da85f","#9b6dd6","#ff5d8f"];
+          for(var i = 0; i < 42; i++){
+            var c = document.createElement("i");
+            c.style.left = (Math.random() * 100) + "vw";
+            c.style.background = colors[i % colors.length];
+            c.style.animationDuration = (1.7 + Math.random() * 1.5) + "s";
+            c.style.animationDelay = (Math.random() * .45) + "s";
+            box.appendChild(c);
+          }
+          setTimeout(function(){ box.innerHTML = ""; }, 4200);
+        }
+
+        /* ---------- opening a stop ---------- */
+        function openStop(idx){
+          var stop = STOPS[idx];
+          if(!stop) return;
+          if(stop.t === "lesson"){
+            if(window.__hootShowView) window.__hootShowView("learn");
+            var lt = document.querySelector('.tab[data-age="little"]');
+            if(lt && lt.getAttribute("aria-selected") !== "true") lt.click();
+            var cards = document.querySelectorAll("#panel-little .lsn");
+            var card = cards && cards[stop.i];
+            if(card) setTimeout(function(){ card.scrollIntoView({ behavior:"smooth", block:"center" }); }, 180);
+          } else if(stop.t === "game"){
+            var ok = window.__hootOpenGame && window.__hootOpenGame(stop.k);
+            if(!ok && window.__hootShowView) window.__hootShowView("games");
+          } else if(stop.t === "castle"){
+            var j = journey(curProf());
+            if(j.next === -1){
+              confetti();
+              if(window.__hootPlayClip) window.__hootPlayClip("amazing");
+              var say = document.getElementById("rm-say");
+              if(say) say.textContent = "🏰 You reached the Star Castle — you did the WHOLE path!";
+            } else {
+              var say2 = document.getElementById("rm-say");
+              if(say2) say2.textContent = "The Star Castle opens when every stop on the path is gold. Keep going — you're doing great!";
+              if(window.__hootPlayClip) window.__hootPlayClip("try-again");
+            }
+          }
+        }
+        var playBtn = document.getElementById("rm-play");
+        if(playBtn) playBtn.addEventListener("click", function(){
+          pop();
+          var id = curProf();
+          if(!id){ if(window.__hootOpenGate) window.__hootOpenGate(); return; }
+          var j = journey(id);
+          if(j.next === -1){ openStop(TOTAL - 1); return; }
+          if(STOPS[j.next].t === "game" && window.__hootPlayClip) window.__hootPlayClip("adventures");
+          openStop(j.next);
+        });
+
+        /* ---------- render ---------- */
+        var lastAt = {}, pendingParty = {};
+        function render(){
+          if(!scene) return;
+          var id = curProf();
+          var P = id ? PROFILES[id] : null;
+          var j = journey(id);
+          /* stops */
+          STOPS.forEach(function(stop, idx){
+            var el = stopEls[idx]; if(!el) return;
+            el.classList.toggle("done", !!j.dones[idx]);
+            el.classList.toggle("next", j.next === idx);
+            var tag = el.querySelector(".rm-tag");
+            if(tag) tag.textContent = stopLabel(stop) + (j.dones[idx] ? " ✓" : "");
+            el.setAttribute("aria-label", stopFullName(stop) + (j.dones[idx] ? " — done! Tap to play again" : (j.next === idx ? " — next stop! Tap to play" : " — tap to play")));
+          });
+          /* token + big Hoot */
+          var atStop = STOPS[j.at] || STOPS[0];
+          if(marker){
+            marker.setAttribute("data-prof", id || "");
+            marker.style.left = atStop.x + "%";
+            marker.style.top = atStop.y + "%";
+            var ini = marker.querySelector(".rm-initial");
+            if(ini) ini.textContent = P ? P.initial : "?";
+            marker.style.display = id ? "" : "none";
+          }
+          var focus = j.next >= 0 ? STOPS[j.next] : STOPS[TOTAL - 1];
+          if(hootFig){
+            hootFig.style.left = Math.min(88, focus.x + 5) + "%";
+            hootFig.style.top = focus.y + "%";
+          }
+          /* banner + guide */
+          var count = document.getElementById("rm-count");
+          if(count) count.textContent = "⭐ " + j.doneCount + " OF " + TOTAL + " STOPS DONE";
+          var sub = document.getElementById("rm-head-sub");
+          if(sub) sub.textContent = P
+            ? P.name + "'s journey — every star and every game moves " + (id === "riley" ? "her" : "his") + " Hoot token along the path to the Star Castle."
+            : "One winding path through everything — pick who's playing and this becomes their very own journey.";
+          var say = document.getElementById("rm-say");
+          var gsub = document.getElementById("rm-sub");
+          if(!P){
+            if(say) say.textContent = "Hoo hoo! Pick who's playing first — then I'll show you YOUR map!";
+            if(gsub) gsub.textContent = "Zane and Riley each have their own path, their own token and their own stars.";
+            if(playBtn) playBtn.textContent = "👇 First — pick who's playing!";
+          } else if(j.next === -1){
+            if(say) say.textContent = "🎉 " + P.name + ", you did it — EVERY stop is gold and the Star Castle is yours!";
+            if(gsub) gsub.textContent = "The whole adventure, finished! Tap any gold stop to play it again, any time.";
+            if(playBtn) playBtn.textContent = "🏰 Visit the Star Castle!";
+          } else {
+            var ns = STOPS[j.next];
+            if(say) say.textContent = "Next stop, " + P.name + ": " + stopFullName(ns) + "!";
+            if(gsub) gsub.textContent = ns.zone
+              ? "Hoot is waiting for you at " + ns.zone + " — the glowing stop on the path. Tap it, or press Play!"
+              : "It's the glowing stop on the path — tap it, or press Play and Hoot will take you straight there!";
+            if(playBtn) playBtn.textContent = "▶ Play: " + stopLabel(ns) + (ns.t === "game" ? " — " + ns.name : "");
+          }
+          /* celebration when the token has hopped forward */
+          if(id){
+            var prev = lastAt[id];
+            var ov = document.getElementById("game-overlay");
+            var mapShowing = document.body.getAttribute("data-view") === "map" && (!ov || ov.hidden);
+            if(prev != null && j.at > prev && mapShowing){
+              if(marker){ marker.classList.add("hop"); setTimeout(function(){ marker.classList.remove("hop"); }, 2100); }
+              confetti();
+              if(window.__hootPlayClip) window.__hootPlayClip(pendingParty[id] ? "amazing" : "star");
+              pendingParty[id] = false;
+            } else if(prev != null && j.at > prev){
+              pendingParty[id] = true;
+            }
+            lastAt[id] = j.at;
+          }
+          /* Parents dashboard: one glanceable line per child */
+          ["zane", "riley"].forEach(function(pid){
+            var row = document.querySelector('.prof-row[data-profile-row="' + pid + '"] .prof-row-main');
+            if(!row) return;
+            var line = row.querySelector(".rm-line");
+            if(!line){ line = document.createElement("span"); line.className = "rm-line"; row.appendChild(line); }
+            var jj = journey(pid);
+            var txt = "🗺️ Adventure Map — " + jj.doneCount + " of " + TOTAL + " stops done";
+            txt += jj.next === -1 ? " · 🏰 Star Castle reached!" : " · next: " + stopFullName(STOPS[jj.next]);
+            if(line.textContent !== txt) line.textContent = txt;
+          });
+        }
+        window.__hootRoadmapRender = render;
+
+        /* Keep the map fresh: profile picks, lesson answers, game
+           opens/closes and entering the map all re-read progress. */
+        document.addEventListener("click", function(e){
+          var t = e.target; if(!t || !t.closest) return;
+          if(t.closest('[data-viewbtn="map"]')){
+            if(window.__hootPlayClip) window.__hootPlayClip("adventures");
+            setTimeout(render, 60);
+          }
+          if(t.closest("[data-profile-pick]") || t.closest(".lsn-opt") || t.closest("#game-close") || t.closest(".kidchip")){
+            setTimeout(render, 500);
+          }
+        }, true);
+        var overlay = document.getElementById("game-overlay");
+        if(overlay && "MutationObserver" in window){
+          new MutationObserver(function(){
+            if(overlay.hidden) setTimeout(render, 350);
+          }).observe(overlay, { attributes:true, attributeFilter:["hidden"] });
+        }
+        setTimeout(render, 900);
       })();
     </script>
   </body>
