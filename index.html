@@ -838,17 +838,23 @@
       .curr-game{ text-decoration:none; font-family:"Fredoka",sans-serif; font-weight:600; font-size:.98rem; padding:10px 16px; border-radius:999px; color:#fff; box-shadow:0 4px 0 rgba(0,0,0,.18); }
       .curr-game:active{ transform:translateY(3px); box-shadow:none; }
       /* ===== Full-game player overlay (games open inside the hub) ===== */
-      #game-overlay{ position:fixed; inset:0; z-index:700; background:#17263b; display:flex; flex-direction:column; }
+      /* The back bar is FIXED to the top of the player (not in the flex flow),
+         so no game layout, orientation or viewport size can push it off-screen:
+         a child in portrait is never trapped in a game. The player reserves
+         exactly the bar's height at the top, so the game sits below the bar
+         and no game content is ever hidden under it. */
+      #game-overlay{ --go-bar-h:calc(76px + env(safe-area-inset-top, 0px)); position:fixed; inset:0; height:100dvh; z-index:700; background:#17263b; display:flex; flex-direction:column; padding-top:var(--go-bar-h); }
       #game-overlay[hidden]{ display:none !important; }
-      .go-bar{ flex:none; display:flex; align-items:center; gap:12px; padding:10px 14px; background:#17263b; color:#fff; border-bottom:3px solid #ffd93b; }
-      .go-back{ flex:none; border:3px solid #fff; background:#ff4d2e; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.02rem; padding:10px 18px; border-radius:999px; box-shadow:0 4px 0 rgba(0,0,0,.3); cursor:pointer; }
+      .go-bar{ position:fixed; top:0; left:0; right:0; z-index:750; height:var(--go-bar-h); box-sizing:border-box; display:flex; align-items:center; gap:12px; padding:calc(10px + env(safe-area-inset-top, 0px)) 14px 10px; background:#17263b; color:#fff; border-bottom:3px solid #ffd93b; box-shadow:0 4px 16px rgba(0,0,0,.35); }
+      .go-back{ flex:0 0 auto; min-height:52px; display:inline-flex; align-items:center; white-space:nowrap; border:3px solid #fff; background:#ff4d2e; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.02rem; padding:12px 18px; border-radius:999px; box-shadow:0 4px 0 rgba(0,0,0,.3); cursor:pointer; }
       .go-back:active{ transform:translateY(3px); box-shadow:none; }
       .go-back:focus-visible{ outline:3px solid #ffd93b; outline-offset:2px; }
-      .go-title{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.15rem; color:#ffd93b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .go-note{ margin-left:auto; font-weight:800; font-size:.85rem; opacity:.85; text-align:right; }
+      .go-title{ flex:1 1 auto; min-width:0; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.15rem; color:#ffd93b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .go-note{ flex:0 1 auto; min-width:0; font-weight:800; font-size:.85rem; opacity:.85; text-align:right; }
       @media (max-width:640px){ .go-note{ display:none; } .go-title{ font-size:1rem; } }
-      #game-frame{ flex:1 1 auto; width:100%; border:0; background:#fff; display:block; }
-      .go-loading{ position:absolute; inset:64px 0 0; display:grid; place-items:center; background:#17263b; color:#ffd93b; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.4rem; text-align:center; padding:20px; }
+      @media (max-width:560px){ .go-title{ display:none; } .go-back{ font-size:1rem; padding:12px 16px; } }
+      #game-frame{ flex:1 1 auto; min-height:0; width:100%; border:0; background:#fff; display:block; }
+      .go-loading{ position:absolute; inset:var(--go-bar-h) 0 0; z-index:710; display:grid; place-items:center; background:#17263b; color:#ffd93b; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.4rem; text-align:center; padding:20px; }
       .go-loading[hidden]{ display:none !important; }
       body.game-open{ overflow:hidden; }
       /* ===== Montessori layer (method woven through the CT paths) ===== */
@@ -4905,6 +4911,97 @@
     </div>
 
     <script>
+    /* ===== ONE VOICE AT A TIME — the hub's single shared voice channel =====
+       The hub grew three independent clip players that knew nothing about
+       each other: Hoot's clip player (hootClipEl), Kaitlyn's tutor player
+       (kaitlynClipEl) and the lesson teach-clip player (teachClipEl). On
+       Kaitlyn's profile pick, the pick handler fired Hoot's "welcome" clip
+       AND her tutor greeting at the same moment — two voices at once; in
+       her NY lessons, Hoot star/try-again clips from speak() could start
+       over her praise/re-teach/recap lines the same way. This channel is
+       installed before every hub script and arbitrates ALL voice clips
+       (anything under assets/voice/, owl noises included) at the media
+       prototype level: a clip may only start when the channel is free; a
+       .src swap asked for while a clip is playing is held — one pending
+       line, latest wins — and applied on "ended"; a play() from another
+       player while the channel is busy waits its turn. Nothing is ever
+       layered, and nothing already speaking is cut off. In Kaitlyn's
+       context her tutor clips therefore always play alone: Hoot clips
+       requested during them are deferred until she finishes. (Inside the
+       game player, the same governor is injected into each game.) */
+    (function(){
+      if(window.__voiceGov) return; window.__voiceGov = 1;
+      try{
+        var proto = window.HTMLMediaElement && HTMLMediaElement.prototype;
+        if(!proto) return;
+        var desc = Object.getOwnPropertyDescriptor(proto, "src");
+        if(!desc || !desc.set || !desc.get) return;
+        var origSet = desc.set, origGet = desc.get, origPlay = proto.play;
+        var cur = null, waiters = [];
+        function isV(s){ return !!s && (s.indexOf("voice/") > -1 || s.indexOf(".mp3") > -1); }
+        function hook(el){
+          if(el.__govHook) return; el.__govHook = 1;
+          el.addEventListener("ended", function(){ onEnd(el); });
+          el.addEventListener("error", function(){ onEnd(el); });
+        }
+        function onEnd(el){
+          var nxt = el.__govNext;
+          if(nxt){
+            if(el.__govFor === el.currentSrc){
+              el.__govNext = null;
+              origSet.call(el, nxt); cur = el;
+              var p = origPlay.call(el); if(p && p.catch) p.catch(function(){});
+              return;
+            }
+            el.__govFor = el.currentSrc;
+            if(!el.paused && !el.ended){ cur = el; return; }
+          }
+          if(cur === el && (el.paused || el.ended)){ cur = null; flush(); }
+        }
+        function flush(){
+          if(cur && !cur.paused && !cur.ended) return;
+          cur = null;
+          while(waiters.length){
+            var w = waiters.shift();
+            if(w.__govWait){
+              w.__govWait = false; cur = w;
+              var p = origPlay.call(w);
+              if(p && p.catch) p.catch(function(){ if(cur === w && (w.paused || w.ended)){ cur = null; flush(); } });
+              return;
+            }
+          }
+        }
+        Object.defineProperty(proto, "src", {
+          configurable: true, enumerable: desc.enumerable,
+          get: function(){ return origGet.call(this); },
+          set: function(v){
+            var el = this;
+            if(isV(v) && !el.paused && !el.ended && isV(el.currentSrc)){
+              el.__govVoice = 1; el.__govNext = v; el.__govFor = el.currentSrc; hook(el);
+              if(!cur) cur = el;
+              return;
+            }
+            origSet.call(el, v);
+          }
+        });
+        proto.play = function(){
+          var el = this;
+          var s = el.currentSrc || el.getAttribute("src") || "";
+          if(!(el.__govVoice || isV(s))) return origPlay.apply(el, arguments);
+          el.__govVoice = 1; hook(el);
+          if(cur && cur !== el && !cur.paused && !cur.ended){
+            if(!el.__govWait){ el.__govWait = true; waiters.push(el); setTimeout(flush, 1100); }
+            return Promise.resolve();
+          }
+          cur = el;
+          var r = origPlay.apply(el, arguments);
+          if(r && r.catch) r.catch(function(){ if(cur === el && (el.paused || el.ended)){ cur = null; flush(); } });
+          return r;
+        };
+      }catch(e){}
+    })();
+    </script>
+    <script>
     (function(){
       "use strict";
       var $ = function(s, c){ return (c||document).querySelector(s); };
@@ -5043,13 +5140,18 @@
       function greetKeyFor(id){ return id === "zane" ? "greet-zane" : id === "riley" ? "greet-riley" : "welcome"; }
       function hootGreetFor(id){
         stopHootClip();
+        /* Kaitlyn's greeting is her tutor voice, and hers alone — Hoot's
+           welcome clip does not fire on her pick (one voice at a time). */
+        if(id === "kaitlyn") return;
         playHootClip(greetKeyFor(id));
         if(id === "riley") queueHootClip("lily-greet");
       }
       function hootHootTap(id){
         stopHootClip();
         playHootClip("hoot-hello");
-        queueHootClip(greetKeyFor(id));
+        /* For Kaitlyn the tap earns the owl hoot only — no Hoot spoken
+           greeting queues behind it in her tutor context. */
+        if(id !== "kaitlyn") queueHootClip(greetKeyFor(id));
         if(id === "riley") queueHootClip("lily-play");
       }
       window.__hootPlayClip = playHootClip;
@@ -6004,13 +6106,41 @@
          in a quoted string a lost escape once corrupted this script's pattern
          and it failed to parse in every single game. */
       var NAV_INJECT = '<scr' + 'ipt>document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest("a[href]"):null;if(!a)return;var h=a.getAttribute("href")||"";if(h.indexOf("../")!==0)return;var slug=h.slice(3);if(slug.charAt(slug.length-1)==="/")slug=slug.slice(0,-1);if(!/^[a-z0-9-]+$/.test(slug))return;e.preventDefault();try{parent.postMessage({hootGameNav:slug},"*");}catch(_){}});</scr' + 'ipt>';
+      /* Fit-to-player, injected with the nav script into every opened game:
+         a page-style game (one .wrap column) taller than the player viewport
+         is scaled down — aspect kept, never up — until the whole game,
+         stage and controls, fits the visible player area with no scrolling.
+         Games that already fit, and full-screen scene games with no .wrap,
+         are left exactly as they are. Re-checked on resize, orientation
+         change and a short interval, so mode switches and win states that
+         change the page height re-fit themselves. Same no-backslash rule. */
+      var FIT_INJECT = '<style>html.hf,html.hf body{height:100%!important;overflow:hidden!important}.hfT{transform-origin:top center!important}</style>' + '<scr' + 'ipt>(function(){var el=document.querySelector(".wrap");if(!el)return;function fit(){try{var h=el.offsetHeight+el.offsetTop;var w=el.offsetWidth;var s=Math.min(1,window.innerHeight/Math.max(h,1),window.innerWidth/Math.max(w,1));if(s<0.999){el.classList.add("hfT");el.style.transform="scale("+s+")";document.documentElement.classList.add("hf");}else{el.style.transform="";document.documentElement.classList.remove("hf");}}catch(e){}}window.addEventListener("resize",fit);window.addEventListener("orientationchange",fit);window.addEventListener("load",fit);fit();setInterval(fit,700);})();</scr' + 'ipt>';
+      /* Voice governor, injected into the HEAD of every opened game so it is
+         installed before any game script runs. Proven cause of Hoot's lines
+         being cut off mid-sentence (Letter Fishing): the game's voice engine
+         plays every line by replacing .src on one shared Audio element, and
+         the next round is started by a fixed 1.6s timer — so the new line
+         stomps the teach line long before it ends; the Hoot Host layer also
+         cannot see the game's non-DOM Audio element, so its clips talk over
+         game lines. The governor patches the media prototype for voice clips
+         only: a .src swap requested while a voice clip is playing is held
+         (one pending line, latest wins) and applied on the "ended" event;
+         a play() requested while ANOTHER voice element holds the floor
+         waits its turn (host yields to game and vice versa). No clip is
+         ever stopped, paused or overlapped; fixed timers become
+         ended-chaining. Same no-backslash rule. */
+      var VOICE_INJECT = '<scr' + 'ipt>(function(){if(window.__voiceGov)return;window.__voiceGov=1;try{var proto=window.HTMLMediaElement&&HTMLMediaElement.prototype;if(!proto)return;var desc=Object.getOwnPropertyDescriptor(proto,"src");if(!desc||!desc.set||!desc.get)return;var origSet=desc.set,origGet=desc.get,origPlay=proto.play;var cur=null,waiters=[];function isV(s){return !!s&&(s.indexOf("voice/")>-1||s.indexOf(".mp3")>-1);}function hook(el){if(el.__govHook)return;el.__govHook=1;el.addEventListener("ended",function(){onEnd(el);});el.addEventListener("error",function(){onEnd(el);});}function onEnd(el){var nxt=el.__govNext;if(nxt){if(el.__govFor===el.currentSrc){el.__govNext=null;origSet.call(el,nxt);cur=el;var p=origPlay.call(el);if(p&&p.catch)p.catch(function(){});return;}el.__govFor=el.currentSrc;if(!el.paused&&!el.ended){cur=el;return;}}if(cur===el&&(el.paused||el.ended)){cur=null;flush();}}function flush(){if(cur&&!cur.paused&&!cur.ended)return;cur=null;while(waiters.length){var w=waiters.shift();if(w.__govWait){w.__govWait=false;cur=w;var p=origPlay.call(w);if(p&&p.catch)p.catch(function(){if(cur===w&&(w.paused||w.ended)){cur=null;flush();}});return;}}}Object.defineProperty(proto,"src",{configurable:true,enumerable:desc.enumerable,get:function(){return origGet.call(this);},set:function(v){var el=this;if(isV(v)&&!el.paused&&!el.ended&&isV(el.currentSrc)){el.__govVoice=1;el.__govNext=v;el.__govFor=el.currentSrc;hook(el);if(!cur)cur=el;return;}origSet.call(el,v);}});proto.play=function(){var el=this;var s=el.currentSrc||el.getAttribute("src")||"";if(!(el.__govVoice||isV(s)))return origPlay.apply(el,arguments);el.__govVoice=1;hook(el);if(cur&&cur!==el&&!cur.paused&&!cur.ended){if(!el.__govWait){el.__govWait=true;waiters.push(el);setTimeout(flush,1100);}return Promise.resolve();}cur=el;var r=origPlay.apply(el,arguments);if(r&&r.catch)r.catch(function(){if(cur===el&&(el.paused||el.ended)){cur=null;flush();}});return r;};}catch(e){}})();</scr' + 'ipt>';
       function decode(key){
         var bin = atob(DATA[key]);
         var bytes = new Uint8Array(bin.length);
         for(var i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
         var html = new TextDecoder("utf-8").decode(bytes);
-        if(html.indexOf("</body>") > -1) html = html.replace("</body>", function(){ return NAV_INJECT + "</body>"; });
-        else html += NAV_INJECT;
+        if(html.indexOf("</body>") > -1) html = html.replace("</body>", function(){ return NAV_INJECT + FIT_INJECT + "</body>"; });
+        else html += NAV_INJECT + FIT_INJECT;
+        /* The voice governor must land before the game's own scripts run. */
+        var hi = html.indexOf("<head>");
+        if(hi > -1) html = html.slice(0, hi + 6) + VOICE_INJECT + html.slice(hi + 6);
+        else html = VOICE_INJECT + html;
         return html;
       }
       function openGame(key){
