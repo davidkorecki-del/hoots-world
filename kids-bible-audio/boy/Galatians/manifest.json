@@ -1,0 +1,56 @@
+[
+ {
+  "book": "Galatians",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Galatians/1.m4a",
+  "durationSec": 185.88,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "40a83c0f162470f9fce6fc51bc4a7ad3127882a8"
+ },
+ {
+  "book": "Galatians",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Galatians/2.m4a",
+  "durationSec": 286.7,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "f5fc51ffa2554d3b6cce5d3aac501df2700a3bc0"
+ },
+ {
+  "book": "Galatians",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Galatians/3.m4a",
+  "durationSec": 242.02,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "7fb9162ec6f1b01edf1095b57652bdd60416b8a7"
+ },
+ {
+  "book": "Galatians",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Galatians/4.m4a",
+  "durationSec": 244.92,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "6edcdc0f9b95bc9be539b3f869f312a87dccc3f9"
+ },
+ {
+  "book": "Galatians",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Galatians/5.m4a",
+  "durationSec": 206.71,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "a96f8ebe72c2b6201ef1bc66f03ed0adffb9082b"
+ },
+ {
+  "book": "Galatians",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Galatians/6.m4a",
+  "durationSec": 134.5,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "5d7603a3d4f0f6c9b35e6509b52f11ca2cff6975"
+ }
+]
