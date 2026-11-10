@@ -1,0 +1,254 @@
+[
+ {
+  "book": "Acts",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Acts/1.m4a",
+  "durationSec": 207.0,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d93ee074a44ccc435da355ec7bcd3445f00989ef"
+ },
+ {
+  "book": "Acts",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Acts/2.m4a",
+  "durationSec": 408.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7213771189f04f0f93e3995d5cd4c7ded1372a51"
+ },
+ {
+  "book": "Acts",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Acts/3.m4a",
+  "durationSec": 200.81,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "11bd35769f61809f8a97d18c6ef89644251869e5"
+ },
+ {
+  "book": "Acts",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Acts/4.m4a",
+  "durationSec": 283.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0f24c6ab972898f863fad6da563a22c6760dec0a"
+ },
+ {
+  "book": "Acts",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Acts/5.m4a",
+  "durationSec": 331.99,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "59e828ffb2d419708732e43445ed74dfd84117f5"
+ },
+ {
+  "book": "Acts",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Acts/6.m4a",
+  "durationSec": 120.48,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "33e5204ee7d2fa2d5a3881939e431becff4fad0a"
+ },
+ {
+  "book": "Acts",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Acts/7.m4a",
+  "durationSec": 488.88,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "dfa76e813b481e07752e6d4ae65292b93f27bb65"
+ },
+ {
+  "book": "Acts",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Acts/8.m4a",
+  "durationSec": 291.89,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "82d27409637862eeb54f952aef34d5fa7027ecae"
+ },
+ {
+  "book": "Acts",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Acts/9.m4a",
+  "durationSec": 340.8,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0a6273ba5658e77b8f57c2af0727ad9b56322a53"
+ },
+ {
+  "book": "Acts",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Acts/10.m4a",
+  "durationSec": 354.07,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c7700879f50df0fa4d1069520297853acf5d2bc4"
+ },
+ {
+  "book": "Acts",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/Acts/11.m4a",
+  "durationSec": 226.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8b2ca5e1afeb3101f496a2187499e896659ec422"
+ },
+ {
+  "book": "Acts",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/Acts/12.m4a",
+  "durationSec": 221.88,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b98aaa10ab258feedd03a44fdc1a546b2b060c0c"
+ },
+ {
+  "book": "Acts",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/sample1/Acts/13.m4a",
+  "durationSec": 424.27,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1f65d2c9404bd0b63957fadeefe8273cc8668dd9"
+ },
+ {
+  "book": "Acts",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/sample1/Acts/14.m4a",
+  "durationSec": 205.8,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fcd42be08e0b607839cd6dd6038d0c993b6edf7e"
+ },
+ {
+  "book": "Acts",
+  "chapter": 15,
+  "file": "15.m4a",
+  "path": "kids-bible-audio/sample1/Acts/15.m4a",
+  "durationSec": 314.5,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fb72990dc96c8390fd030968e8fec6844727d402"
+ },
+ {
+  "book": "Acts",
+  "chapter": 16,
+  "file": "16.m4a",
+  "path": "kids-bible-audio/sample1/Acts/16.m4a",
+  "durationSec": 315.41,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fa2d8888fdd07d1d6faf1755c0e58748c88f7151"
+ },
+ {
+  "book": "Acts",
+  "chapter": 17,
+  "file": "17.m4a",
+  "path": "kids-bible-audio/sample1/Acts/17.m4a",
+  "durationSec": 296.88,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c61736e302c7ee96fe4a95862314ab785a890ff9"
+ },
+ {
+  "book": "Acts",
+  "chapter": 18,
+  "file": "18.m4a",
+  "path": "kids-bible-audio/sample1/Acts/18.m4a",
+  "durationSec": 236.95,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3f902563da9e495e4bff5985306007481515bf1d"
+ },
+ {
+  "book": "Acts",
+  "chapter": 19,
+  "file": "19.m4a",
+  "path": "kids-bible-audio/sample1/Acts/19.m4a",
+  "durationSec": 337.61,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "5ac0bc0fe2f22b1b311fbef4114e241072fa7443"
+ },
+ {
+  "book": "Acts",
+  "chapter": 20,
+  "file": "20.m4a",
+  "path": "kids-bible-audio/sample1/Acts/20.m4a",
+  "durationSec": 282.24,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b7216e0f1a7809a1d358c8a02263d3fb3b31bd12"
+ },
+ {
+  "book": "Acts",
+  "chapter": 21,
+  "file": "21.m4a",
+  "path": "kids-bible-audio/sample1/Acts/21.m4a",
+  "durationSec": 334.61,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "75b2799ff4ef759c1f0a1aa3713a15e8280eb4ea"
+ },
+ {
+  "book": "Acts",
+  "chapter": 22,
+  "file": "22.m4a",
+  "path": "kids-bible-audio/sample1/Acts/22.m4a",
+  "durationSec": 239.42,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e8bf99146a23a534b34a26986576e2033e79296d"
+ },
+ {
+  "book": "Acts",
+  "chapter": 23,
+  "file": "23.m4a",
+  "path": "kids-bible-audio/sample1/Acts/23.m4a",
+  "durationSec": 293.23,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "915faee402f850ff397451bd57a35eb14aa830bb"
+ },
+ {
+  "book": "Acts",
+  "chapter": 24,
+  "file": "24.m4a",
+  "path": "kids-bible-audio/sample1/Acts/24.m4a",
+  "durationSec": 205.94,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d76427cd13ad7dbf49d73af1661ef97fe02a51cd"
+ },
+ {
+  "book": "Acts",
+  "chapter": 25,
+  "file": "25.m4a",
+  "path": "kids-bible-audio/sample1/Acts/25.m4a",
+  "durationSec": 240.94,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "870436b1925582ee5fd83cdfc676cbb0650bb181"
+ },
+ {
+  "book": "Acts",
+  "chapter": 26,
+  "file": "26.m4a",
+  "path": "kids-bible-audio/sample1/Acts/26.m4a",
+  "durationSec": 274.85,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4fa1f30258b5bc5bcc61aa28708bb457da5a4e32"
+ },
+ {
+  "book": "Acts",
+  "chapter": 27,
+  "file": "27.m4a",
+  "path": "kids-bible-audio/sample1/Acts/27.m4a",
+  "durationSec": 449.57,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0e011115056bbd321e3f7ef1041d13ad4147f3f1"
+ },
+ {
+  "book": "Acts",
+  "chapter": 28,
+  "file": "28.m4a",
+  "path": "kids-bible-audio/sample1/Acts/28.m4a",
+  "durationSec": 261.96,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "cd5c56465a8aaf323964d7aab431c2fdb75495a9"
+ }
+]
