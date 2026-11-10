@@ -1,0 +1,29 @@
+[
+ {
+  "book": "2 Peter",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/2 Peter/1.m4a",
+  "durationSec": 192.55,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "d956bd3aefa1704a4014d8ef469f4f6b8fff2c20"
+ },
+ {
+  "book": "2 Peter",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/2 Peter/2.m4a",
+  "durationSec": 235.82,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "cebf3f09aad92aacbac5cea1af6deb35b0869358"
+ },
+ {
+  "book": "2 Peter",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/2 Peter/3.m4a",
+  "durationSec": 189.24,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4907070501e9c083109d2d51174fda678205357f"
+ }
+]
