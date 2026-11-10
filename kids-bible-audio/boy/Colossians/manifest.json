@@ -1,0 +1,38 @@
+[
+ {
+  "book": "Colossians",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Colossians/1.m4a",
+  "durationSec": 271.99,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "97aef1ece82d37214a927dcefc9cbb75a1b1b225"
+ },
+ {
+  "book": "Colossians",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Colossians/2.m4a",
+  "durationSec": 199.82,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ff284514f4ca6c3ef2cc9081e9c0f824cbef9341"
+ },
+ {
+  "book": "Colossians",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Colossians/3.m4a",
+  "durationSec": 197.11,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "235000a011208e45ab80671091e5f441adeaa949"
+ },
+ {
+  "book": "Colossians",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Colossians/4.m4a",
+  "durationSec": 151.06,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "eb6bbc1210eb3002b40c0ba1cb59be36e13d2e07"
+ }
+]
