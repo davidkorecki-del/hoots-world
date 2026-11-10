@@ -1,0 +1,38 @@
+[
+ {
+  "book": "Philippians",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Philippians/1.m4a",
+  "durationSec": 220.63,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "742e290174888ce4c8d142179bef992c5c2ed8ae"
+ },
+ {
+  "book": "Philippians",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Philippians/2.m4a",
+  "durationSec": 199.68,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7fbf25f5fb3cbd96961f57b48119d64b6e89d10e"
+ },
+ {
+  "book": "Philippians",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Philippians/3.m4a",
+  "durationSec": 173.02,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ab668f26ea8c32882b4c0bcf9c8364299176a323"
+ },
+ {
+  "book": "Philippians",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Philippians/4.m4a",
+  "durationSec": 166.94,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9d7dda03a196206159dcdb4eeecc326216cfbe09"
+ }
+]
