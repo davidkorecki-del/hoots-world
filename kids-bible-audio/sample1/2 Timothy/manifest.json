@@ -1,0 +1,38 @@
+[
+ {
+  "book": "2 Timothy",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/2 Timothy/1.m4a",
+  "durationSec": 152.86,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "38898c4ebec017ff8dbb95f76994022fd593fe1c"
+ },
+ {
+  "book": "2 Timothy",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/2 Timothy/2.m4a",
+  "durationSec": 205.75,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3fed37922e4f049459500353871cefffe7ffa925"
+ },
+ {
+  "book": "2 Timothy",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/2 Timothy/3.m4a",
+  "durationSec": 142.54,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "10302a02886dbc9a5527aeab0eec0deb24e75c0f"
+ },
+ {
+  "book": "2 Timothy",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/2 Timothy/4.m4a",
+  "durationSec": 176.18,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3ef4e519359b551376890f35d422363648192b52"
+ }
+]
