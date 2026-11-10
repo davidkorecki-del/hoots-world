@@ -1,0 +1,47 @@
+[
+ {
+  "book": "James",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/James/1.m4a",
+  "durationSec": 204.43,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "96db2b6d4a2d97ae5171889063bcfc5eebb93795"
+ },
+ {
+  "book": "James",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/James/2.m4a",
+  "durationSec": 196.01,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "2ee6ed833f8d5b57453e643f0d694fde541c2b06"
+ },
+ {
+  "book": "James",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/James/3.m4a",
+  "durationSec": 142.32,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "6d86cb18f7756b4347518a9e8ca0869b5c7676c4"
+ },
+ {
+  "book": "James",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/James/4.m4a",
+  "durationSec": 141.12,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "8251d8fadb0747db87db74afb9b5171f81fed595"
+ },
+ {
+  "book": "James",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/James/5.m4a",
+  "durationSec": 184.56,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "86a9d473babc2a3082b576dc137bd760953ee166"
+ }
+]
