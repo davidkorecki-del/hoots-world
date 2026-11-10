@@ -1,0 +1,191 @@
+[
+ {
+  "book": "John",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/John/1.m4a",
+  "durationSec": 338.88,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "858f4232c1c3355e26dcfc1084c9ca388b4175b4"
+ },
+ {
+  "book": "John",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/John/2.m4a",
+  "durationSec": 172.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4e2c3d48ed8706a8a67850d5788e12816e26d6e8"
+ },
+ {
+  "book": "John",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/John/3.m4a",
+  "durationSec": 265.49,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "56414bcb8ee9c1efd0f706150216b5c7de0b7fd5"
+ },
+ {
+  "book": "John",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/John/4.m4a",
+  "durationSec": 367.06,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0c54481fa081bd3a8b667a9a66d869e1483f65e6"
+ },
+ {
+  "book": "John",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/John/5.m4a",
+  "durationSec": 332.21,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "82ce98620642da6ccfe548065caef63a8d16733c"
+ },
+ {
+  "book": "John",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/John/6.m4a",
+  "durationSec": 492.14,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c3e9e16be73d45af197c95cc044e272c96c83ae5"
+ },
+ {
+  "book": "John",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/John/7.m4a",
+  "durationSec": 328.13,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f00eafae59ca865992f1cc5efa684f98c0348522"
+ },
+ {
+  "book": "John",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/John/8.m4a",
+  "durationSec": 437.59,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9dda4eaa45f49d6971a1387ce3a8710f9501ebde"
+ },
+ {
+  "book": "John",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/John/9.m4a",
+  "durationSec": 291.1,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8151e92c0cd09db71770bbab4bc7cd40a3e55a02"
+ },
+ {
+  "book": "John",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/John/10.m4a",
+  "durationSec": 263.78,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "beabafbb004f333f349906d9e98686bba41e026b"
+ },
+ {
+  "book": "John",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/John/11.m4a",
+  "durationSec": 399.55,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "611b5240ba3443c77494600dada6d081f8ed22dd"
+ },
+ {
+  "book": "John",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/John/12.m4a",
+  "durationSec": 366.46,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1acae6f266359a58fdef776ed236598a707cd871"
+ },
+ {
+  "book": "John",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/sample1/John/13.m4a",
+  "durationSec": 355.18,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f6d17ec177ef64eb2f33bc078f77e7883db197ec"
+ },
+ {
+  "book": "John",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/sample1/John/14.m4a",
+  "durationSec": 249.38,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "727040c1db410677bcd41354b326be3f398b5719"
+ },
+ {
+  "book": "John",
+  "chapter": 15,
+  "file": "15.m4a",
+  "path": "kids-bible-audio/sample1/John/15.m4a",
+  "durationSec": 195.1,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "beafc03da738efef2ffaf8510936b8a0e942bfe7"
+ },
+ {
+  "book": "John",
+  "chapter": 16,
+  "file": "16.m4a",
+  "path": "kids-bible-audio/sample1/John/16.m4a",
+  "durationSec": 251.64,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "597ff800509b8b1dfce0191b780af308e19b237d"
+ },
+ {
+  "book": "John",
+  "chapter": 17,
+  "file": "17.m4a",
+  "path": "kids-bible-audio/sample1/John/17.m4a",
+  "durationSec": 199.7,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e8c7c4dc7dd7a22565b2d9ebde3bfe8d9f755053"
+ },
+ {
+  "book": "John",
+  "chapter": 18,
+  "file": "18.m4a",
+  "path": "kids-bible-audio/sample1/John/18.m4a",
+  "durationSec": 312.19,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6284420c0e8ba5dc61dd7bc5464908e6ed7926f0"
+ },
+ {
+  "book": "John",
+  "chapter": 19,
+  "file": "19.m4a",
+  "path": "kids-bible-audio/sample1/John/19.m4a",
+  "durationSec": 345.0,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2869a1e6af64a7f56eab861036c05e0a1226626f"
+ },
+ {
+  "book": "John",
+  "chapter": 20,
+  "file": "20.m4a",
+  "path": "kids-bible-audio/sample1/John/20.m4a",
+  "durationSec": 241.1,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "90456de4d2995eb2e5786fc7bee0f10b17dd9c1f"
+ },
+ {
+  "book": "John",
+  "chapter": 21,
+  "file": "21.m4a",
+  "path": "kids-bible-audio/sample1/John/21.m4a",
+  "durationSec": 221.88,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3b01a95aa02906876510e8e6f96f5545034133b9"
+ }
+]
