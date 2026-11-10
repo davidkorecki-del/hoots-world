@@ -1,0 +1,56 @@
+[
+ {
+  "book": "Ephesians",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Ephesians/1.m4a",
+  "durationSec": 183.53,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ee088769b5b2be7ff622f1883a27d77df9474861"
+ },
+ {
+  "book": "Ephesians",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Ephesians/2.m4a",
+  "durationSec": 188.33,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "19da87a11528e2f6cbfc487bd5a8aaebb2f55feb"
+ },
+ {
+  "book": "Ephesians",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Ephesians/3.m4a",
+  "durationSec": 158.62,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "1eda68b6a78ed5b21364847425fed9e7fd90ca89"
+ },
+ {
+  "book": "Ephesians",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Ephesians/4.m4a",
+  "durationSec": 229.42,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "0efa268e7452bb153063d126aa7dffa4408e87c4"
+ },
+ {
+  "book": "Ephesians",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Ephesians/5.m4a",
+  "durationSec": 236.28,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "a4434da2a3d62b905fdc2b19a5a3ccdf53333f85"
+ },
+ {
+  "book": "Ephesians",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Ephesians/6.m4a",
+  "durationSec": 183.1,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "eb0a7bff0e497214d46e135c40253d52b09192ce"
+ }
+]
