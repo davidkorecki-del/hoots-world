@@ -1,0 +1,47 @@
+[
+ {
+  "book": "1 Thessalonians",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/1 Thessalonians/1.m4a",
+  "durationSec": 86.28,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3ffa5919c3d8188ddf19d3b0bc3bdabc4f5fcbde"
+ },
+ {
+  "book": "1 Thessalonians",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/1 Thessalonians/2.m4a",
+  "durationSec": 177.1,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "8ba938a1d55ff083fb589caf40a77b2786ea9e91"
+ },
+ {
+  "book": "1 Thessalonians",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/1 Thessalonians/3.m4a",
+  "durationSec": 96.17,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "78e92e0a081f93f11e3093dc23328320cb85a13c"
+ },
+ {
+  "book": "1 Thessalonians",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/1 Thessalonians/4.m4a",
+  "durationSec": 137.57,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "1cefb12b59360cad7903875084d90c22b06314ba"
+ },
+ {
+  "book": "1 Thessalonians",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/1 Thessalonians/5.m4a",
+  "durationSec": 156.26,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ef182a4e71c590c3bc977730a7ed3934bded50ff"
+ }
+]
