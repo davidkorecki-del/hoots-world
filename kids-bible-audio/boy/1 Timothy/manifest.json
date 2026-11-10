@@ -1,0 +1,56 @@
+[
+ {
+  "book": "1 Timothy",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/1 Timothy/1.m4a",
+  "durationSec": 205.37,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "e5b56f4e6e41aeab333067a92a26600c5e74d8d9"
+ },
+ {
+  "book": "1 Timothy",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/1 Timothy/2.m4a",
+  "durationSec": 175.37,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "e7b4d336e8891e937770cf6967de948b0c5c92e0"
+ },
+ {
+  "book": "1 Timothy",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/1 Timothy/3.m4a",
+  "durationSec": 137.38,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "00965d15c64ac253d6ae7651d60c66f9cb9c2b5e"
+ },
+ {
+  "book": "1 Timothy",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/1 Timothy/4.m4a",
+  "durationSec": 133.08,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c305d2c1e9a7e6c615ac4132125a3339572eb937"
+ },
+ {
+  "book": "1 Timothy",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/1 Timothy/5.m4a",
+  "durationSec": 203.4,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "e74f2814f0d422f0ba639e57c144583390884790"
+ },
+ {
+  "book": "1 Timothy",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/1 Timothy/6.m4a",
+  "durationSec": 201.89,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "f221cbf633e2f855496fad6d3c094fed07e53352"
+ }
+]
