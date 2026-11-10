@@ -1,0 +1,29 @@
+[
+ {
+  "book": "Titus",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Titus/1.m4a",
+  "durationSec": 171.48,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "34ca982548f2a67dc1f9b8bf78ff60fe9c6c27d2"
+ },
+ {
+  "book": "Titus",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Titus/2.m4a",
+  "durationSec": 122.14,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "80b02bcfcacf86758a2bdf4e7eb4f8c3b071ba9e"
+ },
+ {
+  "book": "Titus",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Titus/3.m4a",
+  "durationSec": 120.19,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "44bd076b9cadee1234d759e0624c6f64f68cd3b2"
+ }
+]
