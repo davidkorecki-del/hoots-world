@@ -1,0 +1,47 @@
+[
+ {
+  "book": "1 Peter",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/1 Peter/1.m4a",
+  "durationSec": 251.02,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "b7245b2af3b86a6714afee0aca6cd4bac32d6beb"
+ },
+ {
+  "book": "1 Peter",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/1 Peter/2.m4a",
+  "durationSec": 210.84,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "14b43a30d933ceeea7432a86937bc84451ebac4b"
+ },
+ {
+  "book": "1 Peter",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/1 Peter/3.m4a",
+  "durationSec": 205.51,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "6400a56b14ce25b8030058bf0953bc30cd6ea92f"
+ },
+ {
+  "book": "1 Peter",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/1 Peter/4.m4a",
+  "durationSec": 169.37,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "b8af7ebfec5dcd886972ef585adbc271723ff178"
+ },
+ {
+  "book": "1 Peter",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/1 Peter/5.m4a",
+  "durationSec": 117.89,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "998677d6b99b6657abcaefb52243e7c90913e916"
+ }
+]
