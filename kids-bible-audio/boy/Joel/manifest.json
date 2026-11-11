@@ -1,0 +1,29 @@
+[
+ {
+  "book": "Joel",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Joel/1.m4a",
+  "durationSec": 195.1,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "11f9f690e15369cd80b242398f46974300111e33"
+ },
+ {
+  "book": "Joel",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Joel/2.m4a",
+  "durationSec": 417.12,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "36b9516d0d6d49060ab7f519b6aac6735e64d92e"
+ },
+ {
+  "book": "Joel",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Joel/3.m4a",
+  "durationSec": 263.57,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "eea4c16119c857919b0feb95c13dac4fd8df2842"
+ }
+]
