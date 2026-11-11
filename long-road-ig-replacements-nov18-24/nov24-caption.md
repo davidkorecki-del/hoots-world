@@ -23,7 +23,7 @@ Save this for a dark night.
 ## Gate checks
 
 - **Verse wording:** John 1:5, word-for-word WEB, identical on-image and in caption (verified against Bible Gateway / StudyLight / eBible WEB text: "The light shines in the darkness, and the darkness hasn't overcome it."). No divine name in this verse — no substitution involved. ✓
-- **Grid crop:** all three verse lines AND the gold reference line ("JOHN 1:5 — WEB") fully inside the 1:1 centre crop, legible (verified on nov24-light-that-stays-grid-square.png). The mirrored text reflection that previously ran under the verse has been removed entirely, and the footer now sits on clean dark pavement below the verse, fully legible in BOTH the 4:5 final and the grid square (ink y1182–1201; square bottom edge y1215) — see qa-report.md, "Gate fix — 2026-11-11". ✓
+- **Grid crop:** all three verse lines AND the gold reference line ("JOHN 1:5 — WEB") fully inside the 1:1 centre crop, legible (verified on nov24-light-that-stays-grid-square.png). The mirrored text reflection that previously ran under the verse has been removed entirely. Footer placement updated in the Skeptic round 1 fix (2026-11-11): it no longer sits 15 px under "overcome it." inside the square — it now sits on clean dark pavement in the 4:5-only band (ink y1225–1244; square bottom edge y1215), a 58 px gap below the verse, fully legible in the 4:5 final — see qa-report.md, "Skeptic round 1 fix — 2026-11-11". ✓
 - **"Coming soon":** exact wording, in the image footer ("Long Road · Coming soon") and the caption house line. No dates, no availability claims. ✓
 - **No Bella** ✓ · **@iwishhewood not tagged or mentioned** ✓ · **No family details** ✓
 - **Save/send ask:** present ("Save this for a dark night."). ✓
