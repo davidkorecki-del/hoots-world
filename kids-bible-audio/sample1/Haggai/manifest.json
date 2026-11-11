@@ -1,0 +1,20 @@
+[
+ {
+  "book": "Haggai",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Haggai/1.m4a",
+  "durationSec": 139.56,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "55798c2b6ba19f135d61be2757bf6e1be6442124"
+ },
+ {
+  "book": "Haggai",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Haggai/2.m4a",
+  "durationSec": 227.64,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2891ba9fe1da0a6e0dc55b9436c7f881f8eecfb4"
+ }
+]
