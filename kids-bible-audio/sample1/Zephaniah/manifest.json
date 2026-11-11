@@ -1,0 +1,29 @@
+[
+ {
+  "book": "Zephaniah",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Zephaniah/1.m4a",
+  "durationSec": 261.36,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8ebff5265dfc8e8e4c586bc81089f896d58b1a53"
+ },
+ {
+  "book": "Zephaniah",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Zephaniah/2.m4a",
+  "durationSec": 277.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "61d4acdb83dbdf0274e34970464775ca920c9a2e"
+ },
+ {
+  "book": "Zephaniah",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Zephaniah/3.m4a",
+  "durationSec": 236.93,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9daf3960f1cb510c68353cabd4fc0915cad996ca"
+ }
+]
