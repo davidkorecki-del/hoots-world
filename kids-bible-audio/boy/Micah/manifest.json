@@ -1,0 +1,65 @@
+[
+ {
+  "book": "Micah",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Micah/1.m4a",
+  "durationSec": 174.84,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3bc2b8f0109a8f768aadddc544cf005ceb24e39a"
+ },
+ {
+  "book": "Micah",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Micah/2.m4a",
+  "durationSec": 127.85,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "d1938e479e0b97a1c661e6e00ea932b91792a82e"
+ },
+ {
+  "book": "Micah",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Micah/3.m4a",
+  "durationSec": 198.36,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "5df1cd23befb6e85f4c8560a7a04756dccc908bc"
+ },
+ {
+  "book": "Micah",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Micah/4.m4a",
+  "durationSec": 172.75,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "5167c94bd6b3e8c501231149e4f78cb2968f1c45"
+ },
+ {
+  "book": "Micah",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Micah/5.m4a",
+  "durationSec": 141.26,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3704648b578e820e7562f70d27c2dd664c8d7a47"
+ },
+ {
+  "book": "Micah",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Micah/6.m4a",
+  "durationSec": 168.48,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "e31cd73dad7f05780020be68966069e2c595fc01"
+ },
+ {
+  "book": "Micah",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/boy/Micah/7.m4a",
+  "durationSec": 226.49,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "7d0fb16ea9e2b5238879be1393b5d8e376f1e70e"
+ }
+]
