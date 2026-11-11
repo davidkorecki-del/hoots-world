@@ -1,0 +1,92 @@
+[
+ {
+  "book": "Esther",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Esther/1.m4a",
+  "durationSec": 251.47,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "08a3ffd0c9f0240118907b4e42a74d240ea3a036"
+ },
+ {
+  "book": "Esther",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Esther/2.m4a",
+  "durationSec": 262.94,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4aa551f6f14c2687a980e3a4f44c966392373a3d"
+ },
+ {
+  "book": "Esther",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Esther/3.m4a",
+  "durationSec": 188.47,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "8623cedd5d1a84caf765d02f0c66e15d8cc706c4"
+ },
+ {
+  "book": "Esther",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Esther/4.m4a",
+  "durationSec": 163.37,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "42a6023eb572a07446ad7cdd07a940e1ba484162"
+ },
+ {
+  "book": "Esther",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Esther/5.m4a",
+  "durationSec": 153.12,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "125d0bd73c53cd75e06f47ab83a9b07149a9247f"
+ },
+ {
+  "book": "Esther",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Esther/6.m4a",
+  "durationSec": 160.2,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "cddd4f89340f4c07226a43f589fb8edbf5181f45"
+ },
+ {
+  "book": "Esther",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/boy/Esther/7.m4a",
+  "durationSec": 117.79,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "733765e27ee762048fd029f69663c350fbc2ee4c"
+ },
+ {
+  "book": "Esther",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/boy/Esther/8.m4a",
+  "durationSec": 211.49,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "67a1adc4206c274cbf2ecfdaa4a78a098c75ce4d"
+ },
+ {
+  "book": "Esther",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/boy/Esther/9.m4a",
+  "durationSec": 316.08,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c88ec409828075a872479487ea98583d7af5e856"
+ },
+ {
+  "book": "Esther",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/boy/Esther/10.m4a",
+  "durationSec": 32.04,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ed80b720aa962821ef3daa4e67586331d6408725"
+ }
+]
