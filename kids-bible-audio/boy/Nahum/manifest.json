@@ -1,0 +1,29 @@
+[
+ {
+  "book": "Nahum",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Nahum/1.m4a",
+  "durationSec": 180.55,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "a4d8c2ece6432cfe06f855bcdb0d0b90a386ff1e"
+ },
+ {
+  "book": "Nahum",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Nahum/2.m4a",
+  "durationSec": 127.97,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "1c3dddb03b5205b7378c86100d3807b3fdbe8115"
+ },
+ {
+  "book": "Nahum",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Nahum/3.m4a",
+  "durationSec": 190.3,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "247e90b8c8ac3331d77351301ee641927886f2b5"
+ }
+]
