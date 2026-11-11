@@ -1,0 +1,74 @@
+[
+ {
+  "book": "Song of Solomon",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/1.m4a",
+  "durationSec": 129.34,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "52780db729a162db969cb1f3be73314356d9cba7"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/2.m4a",
+  "durationSec": 127.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0a8e81c3aeec1e594c9dd1a720883e908564164e"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/3.m4a",
+  "durationSec": 106.03,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ad6c25c12d12621c13736f3a8b04926c4883c0a4"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/4.m4a",
+  "durationSec": 145.44,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "43c8106cbfebe10adec92016954017ec649fca18"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/5.m4a",
+  "durationSec": 145.92,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "730e356800242d4c714c9d4d1cb031cc1635ad67"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/6.m4a",
+  "durationSec": 119.06,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "08b00b7fe8ce137eae16a3bfd82c08f9f6672b85"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/7.m4a",
+  "durationSec": 97.97,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e0aace6dd910f5ee6431b38bfe63b389eaf0f246"
+ },
+ {
+  "book": "Song of Solomon",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Song of Solomon/8.m4a",
+  "durationSec": 133.51,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "68d11a5dece440949b23e987d230a3923a55bab4"
+ }
+]
