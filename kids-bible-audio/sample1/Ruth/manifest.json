@@ -1,0 +1,38 @@
+[
+ {
+  "book": "Ruth",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Ruth/1.m4a",
+  "durationSec": 239.69,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bc51b2a3341781dd606f0ecdc8e9af823d031597"
+ },
+ {
+  "book": "Ruth",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Ruth/2.m4a",
+  "durationSec": 237.7,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fa23402a3eb0f6c944f13a70d8de258daa393e07"
+ },
+ {
+  "book": "Ruth",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Ruth/3.m4a",
+  "durationSec": 159.29,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1788c703c9b9b7044a536bb24a5be3d56695adb7"
+ },
+ {
+  "book": "Ruth",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Ruth/4.m4a",
+  "durationSec": 203.11,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a285915200687583dd8d2c06a2e3e1a55c114e6c"
+ }
+]
