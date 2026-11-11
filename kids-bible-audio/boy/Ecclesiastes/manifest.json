@@ -1,0 +1,110 @@
+[
+ {
+  "book": "Ecclesiastes",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/1.m4a",
+  "durationSec": 128.59,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "e871d007980bfbe2c15c72b470239a11042a880e"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/2.m4a",
+  "durationSec": 243.84,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "7f3ee9ecaded4280e0f7e11fd31b0aa84a597396"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/3.m4a",
+  "durationSec": 173.98,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "800ca3e4ecb75024ed9b05f02e10c4bf444ad7b6"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/4.m4a",
+  "durationSec": 136.9,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "db2cd6c214c903eef485256a73920d799e2fd810"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/5.m4a",
+  "durationSec": 165.0,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "605ff24ff9adb26a875bac27769de74055ddd945"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/6.m4a",
+  "durationSec": 104.83,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "6d573ec0e36fe6fcaa3184d678f981f23e8bef8f"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/7.m4a",
+  "durationSec": 211.27,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "03b9a34a0599c65ec5f44fc2fcb9092cf1eb9e2c"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/8.m4a",
+  "durationSec": 157.87,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "922d6f09ba7ee95b75053c6840afff87aab19ce0"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/9.m4a",
+  "durationSec": 186.94,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ce651abb2e53dbd00dfb76ca23e4001354d6356a"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/10.m4a",
+  "durationSec": 142.37,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "f746492925cd40876e1ef43a51164e607c6acf0a"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/11.m4a",
+  "durationSec": 92.16,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c1f4a63046cc662254397459d77a7fbd06b5b88c"
+ },
+ {
+  "book": "Ecclesiastes",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/boy/Ecclesiastes/12.m4a",
+  "durationSec": 138.84,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "a11f1a70ae16e1651bf07b923540dea54efaaa6c"
+ }
+]
