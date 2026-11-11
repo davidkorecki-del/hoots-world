@@ -57,3 +57,49 @@ WEB cross-checks: v.6 reads "He lifted his voice, and the earth melted." (eBible
 ## Gate items for CoS (also in the Slack post + Notion section)
 - **P1 (proposal):** fill Nov 14 with W4 Night-Stand Card (Psalm 4:8, women-led, dark-warm, ~9 PM) — keeps 4 women-led posts in-window and completes the grid row (grid plan §5).
 - **Gate decision:** Nov 17 Laundry Room verse is sub-legible at grid size — Muse recommends keeping it as the slate's one mood cell; alternative is swapping in Library Window.
+
+---
+
+## Gate fix round — Nov 10 CoS (Grok) QA FAIL fixes, rebuilt Nov 11
+
+Delivered v4 files backed up first at `work/backup-gate-v4/` (reel, cover, both captions, Nov 12 image, this report, audio, timings/dt plan, build scripts — md5-verified copy of the reel). Voice unchanged: adult storytelling avocado_v2:qvd_03858, speed 100. Only the two affected voice lines were re-synthesized (first attempt each, no retries needed); **no time-stretching anywhere**.
+
+### Grok item 1 — Nov 12 Mirror Note caption
+- Image NOT changed (md5 identical to delivered v4: 8c0306451bb1dd1a46b6550b31648297).
+- `nov12-mirror-note-caption.md`: the caption **body** now contains the exact line **"One verse a day, read aloud. Long Road is coming soon."** as its own paragraph (before the Save/send line). Previously that line appeared only in the gate-checks appendix / on the image.
+
+### Grok item 2a — Psalm 46 wording (WEB, vv.1–7, 10–11)
+- **v.10: "I will be exalted on the earth."** — fixed in all three places: re-synthesized voice line (unit u09-3, chunk 9), on-screen card dt_r1_21 (window 54.72–56.76s; frame qa/r1-v10card.png at its 55.74s midpoint shows "I will be exalted on the earth.”" fully legible), and the posting caption.
+- **v.6 comma dropped:** "He lifted his voice and the earth melted." — re-synthesized voice line (unit u07-3, chunk 7), on-screen card dt_r1_16, narration text.
+- **WEB quotation marks on v.10 restored:** opening quote on the first v.10 card (“Be still, and know that I am God. — qa/r1-v10open.png, qa/r1-p75.png), closing quote on the last v.10 card (…on the earth.” — qa/r1-v10card.png), and in narration text + caption.
+- Full narration re-verified word-for-word against the corrected spec (155 words, work/narration-text.txt): selection vv.1–7, 10–11, "the LORD of Armies" in both refrains, Selah after vv.3, 7, 11. Stale-wording grep for "exalted in the earth" / "voice, and" across narration text, all card files and the caption: zero hits.
+- Per CoS instruction the v.10 line follows the gate note's wording ("on the earth").
+
+### Grok item 2b — Footer position
+- Footer PNG redrawn with its top at y=1480 (was 1815). **Measured from actual rendered frames** (gold-ink row scan of qa/r1-hook.png, r1-dawncard.png, r1-v10card.png, r1-p75.png, r1-finalphrase.png): footer ink spans **y 1489–1509, bottom edge y=1509 ≤ 1516** — clear of the IG bottom UI band, persistent over the whole main runtime; end card unchanged.
+
+### Grok item 2c — Nov 13 caption shortened
+- `nov13-reel1-caption.md` rewritten: hook "When everything shakes." + two short lines (incl. the corrected quoted v.10 line) + "One verse a day, read aloud. Long Road is coming soon." + hashtags. The pasted full reading is gone entirely (caption block is now 42 words including hashtags; the delivered v4 caption block was 223 words).
+
+### Grok item 2d (should-fix) — Dawn card mid-fade
+- Root cause found: v4 card windows were word-proportional across whole chunks, so the "God will help her at dawn." card started ~0.49s before its sentence and was fading across the sampled moments. Fix: card windows are now timed from the actual per-sentence TTS unit durations, boundaries shifted 0.35s early so each card finishes fading in as its sentence is spoken, and phrase fades shortened (0.25s in / 0.30s out). The dawn card's window is 32.90–34.75s and it is **fully opaque 33.15–34.45s**; midpoint frame qa/r1-dawncard.png (33.82s) shows it fully held over the dawn river scene.
+- Honest note: the literal 50.0% frame (32.82s, qa/r1-p50.png) falls in the 0.28s inter-sentence pause 0.08s before the dawn card enters — no card is mid-fade there; the pause is the real gap between "She shall not be moved." and "God will help her at dawn." in the voice track.
+
+### Rebuilt Reel — measured QA (final encoded file, agency gate)
+| Check | Result | Gate |
+|---|---|---|
+| File duration | **65.63s** (narration 63.17s + 2.5s end card) | — |
+| Audio stream duration | **65.63s** (gap vs total **0.001s**) | <0.1s ✅ |
+| Voice coverage | **99.5%** of pre-end-card runtime (voice span 0.30s→63.17s); per-1s RMS: zero seconds below −50 dB pre-end-card, min −49.9 dB, median −20.1 dB | ≥85% ✅ |
+| Silence scan −60 dB | **Zero gaps ≥0.1s anywhere in the file** | no gap >0.3s ✅ |
+| Loudness | **−16.05 LUFS** integrated | −16 ±0.5 ✅ |
+| True peak | **−1.99 dBTP** | ≤ −1.5 dBTP ✅ |
+| Video spec | 1080×1920 H.264 yuv420p, AAC, **faststart** (moov before mdat, probed) | ✅ |
+| File size | 18.62 MB | <20 MB ✅ |
+| STT transcript diff (faster-whisper base.en) | **155/155 words, 98.1% similarity.** Only diffs: "Selah" heard as "Salah" ×3 (known STT proper-noun artifact, same as v4). **"I will be exalted on the earth" heard verbatim** (segment 51.46–58.96s) and "He lifted his voice and the earth melted" heard verbatim (39.40s segment). Heard span 0.0–62.9s. | ✅ |
+
+**Frame inspection (all viewed):** hook (1.0s, footer at new height) · 25% (16.41s, rapids card) · dawn card midpoint (33.82s, fully held) · 75% (49.22s, “Be still…” with opening quote) · v.10 opening card (50.12s) · v.10 "on the earth" card (55.74s, closing quote, footer ink bottom y=1509) · final phrase (61.97s, credit line legible) · end card (64.43s) — all PASS, no garbled text.
+**Cover:** `cover-R1-nov13.png` regenerated from the rebuilt file at the same moment (rapids, 15.79s, 4:5 centre-band crop, 1080×1350) — unchanged in moment/tone from v4.
+
+### CoS decisions recorded (not built this round)
+See `gate-decisions-nov10.md`: (a) P1 approved — W4 Night-Stand Card (Psalm 4:8, women-led) fills Nov 14, nothing else moves, same gate; (b) Nov 17 swaps from Laundry Room to Library Window.

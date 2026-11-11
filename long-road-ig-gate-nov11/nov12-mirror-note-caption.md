@@ -14,6 +14,8 @@ gate checks below. Image: nov12-mirror-note.png (= 01-mirror-note.png final).
 
 **In plain words:** You were not mass-produced. You were made — carefully, on purpose — and the One who made you calls the work wonderful.
 
+One verse a day, read aloud. Long Road is coming soon.
+
 **Save/send:** Save this for the morning you don't believe it. Send it to a daughter, a sister, a friend who needs to hear she's made on purpose.
 
 #Psalm139 #WonderfullyMade #MorningMercy #VerseOfTheDay #ReadTheBibleAloud
