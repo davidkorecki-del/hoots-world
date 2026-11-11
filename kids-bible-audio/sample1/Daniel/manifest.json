@@ -1,0 +1,110 @@
+[
+ {
+  "book": "Daniel",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/1.m4a",
+  "durationSec": 336.34,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "65d11083c89f09ae1b7f3e5503f6469cd44dca1f"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/2.m4a",
+  "durationSec": 460.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c6f84719419c3570999fc3c8a1e255e1b09c3ecc"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/3.m4a",
+  "durationSec": 333.98,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fb225fa1a15ad99c84ed0e1f9d653b193475b849"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/4.m4a",
+  "durationSec": 401.47,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d52abb9c1246ee37b03f4fcc8c1bf6f1656e675d"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/5.m4a",
+  "durationSec": 326.11,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e8bf864d4abd2cc102c21c9f438084b4c25daad4"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/6.m4a",
+  "durationSec": 278.86,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7f16536e8f5bcd0c7b8ddc2f95d31beba85f8615"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/7.m4a",
+  "durationSec": 315.55,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9ae53c7313c20d34d73aaa885fb09127d15247d0"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/8.m4a",
+  "durationSec": 267.77,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d4675381523b2b727ae7e0e6d8169e6919d2598e"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/9.m4a",
+  "durationSec": 337.7,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "978ac6bc2a0215d4dd69b4d7ea23f33d47fff354"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/10.m4a",
+  "durationSec": 200.02,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "32ccec89c34f440e35b651e2aca4c29011023580"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/11.m4a",
+  "durationSec": 469.99,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "994f73ee465177981800fe0d99d232d4ff76fba0"
+ },
+ {
+  "book": "Daniel",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/Daniel/12.m4a",
+  "durationSec": 137.26,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "eac1318d11502de4e05714b204121f4590244554"
+ }
+]
