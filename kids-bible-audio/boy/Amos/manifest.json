@@ -1,0 +1,83 @@
+[
+ {
+  "book": "Amos",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Amos/1.m4a",
+  "durationSec": 171.38,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4f8be94bc8c34b72b873b7462d8838f87702b523"
+ },
+ {
+  "book": "Amos",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Amos/2.m4a",
+  "durationSec": 174.79,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "748efb4f1574a2475c095e10766f4b1580d1536e"
+ },
+ {
+  "book": "Amos",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Amos/3.m4a",
+  "durationSec": 138.84,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "bc56ff69e57e51e6526fb68e3244cf13a73dae1b"
+ },
+ {
+  "book": "Amos",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Amos/4.m4a",
+  "durationSec": 147.31,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "e8f23c470c9e9996c5461ec26f8f5bde4641ebf9"
+ },
+ {
+  "book": "Amos",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Amos/5.m4a",
+  "durationSec": 231.26,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "987ea6913a0893d258f5612ee5e76d7212cb995b"
+ },
+ {
+  "book": "Amos",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Amos/6.m4a",
+  "durationSec": 210.48,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c9c59b3d70846e686e26988a685a6b0f5e76ad36"
+ },
+ {
+  "book": "Amos",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/boy/Amos/7.m4a",
+  "durationSec": 243.46,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "a7205847f093722dce963b32a4fa4156d19dab0b"
+ },
+ {
+  "book": "Amos",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/boy/Amos/8.m4a",
+  "durationSec": 149.33,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "68d3c1f5aec2cbe91cabc0d679d6eff2880377e3"
+ },
+ {
+  "book": "Amos",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/boy/Amos/9.m4a",
+  "durationSec": 190.08,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3fe7a0b65dab033bc07785758616cc9dd4c8c115"
+ }
+]
