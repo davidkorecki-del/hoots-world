@@ -1,0 +1,38 @@
+[
+ {
+  "book": "Jonah",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Jonah/1.m4a",
+  "durationSec": 237.05,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3b6539f5dd9aa07624e1cd7272e98b57debeb1bf"
+ },
+ {
+  "book": "Jonah",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Jonah/2.m4a",
+  "durationSec": 75.55,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3dfe94edb4db7b2984b9d4f615c857ecf592f562"
+ },
+ {
+  "book": "Jonah",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Jonah/3.m4a",
+  "durationSec": 98.09,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "222caa2841dc947e5484489e0a8828eb496ec9b4"
+ },
+ {
+  "book": "Jonah",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Jonah/4.m4a",
+  "durationSec": 111.48,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "9de993f2f49a7d306346384639736ac1e283a5c3"
+ }
+]
