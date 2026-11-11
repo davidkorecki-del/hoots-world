@@ -50,3 +50,37 @@ Evidence:
 - `nov24-light-that-stays-grid-square.png` — 1:1 grid crop of the final
 - `nov24-caption.md` — paste-ready caption + gate checks
 - `qa-report.md` — this report
+
+---
+
+## Gate fix — 2026-11-11
+
+Rework after the CoS QA gate FAIL on the first delivery. Gate-failed versions are preserved in `work/gate-failed-v1/` (finals, squares, captions, and the pre-fix qa-report). All work was local to this folder — no Slack, GitHub, or Instagram activity. Finals keep the same filenames; both grid squares were regenerated from the fixed finals and verified pixel-exact as centre crops (y 135–1215).
+
+### Nov 18 · Threshold — gate items 1–3
+
+**1. Ghost text on the lintel (dark remnants of the removed "Yahweh" lettering) — FIXED.**
+Root cause of the first fix's failure: the old lettering was removed with a per-pixel *minimum* composite across shifted copies, which preferentially selects dark pixels — i.e. it preserved the letters' dark drop-shadow/halo — and the verification only counted *bright* remnants, so the dark letterforms passed undetected.
+Rebuild method (from the untouched source render, script `work/fix_threshold_gate10.py`): the panel face (x 96–974, y 100–296) was reconstructed as a diffusion low-frequency surface plus detail composited from geometric transforms (flips/rolls) of the panel itself, under a strict halo-free donor rule — no texture was sampled within 9 px of any old letter pixel, so neither the bright letterforms nor their dark shadow halo can be copied in; the panel's edge bevels and bottom ledge were additionally excluded as donors after they were caught importing vertical wear strips. The cream verse was then re-set in the same house style (Cormorant Garamond SemiBold, 64 px, cream 246/240/226 with dark offset shadow): "The LORD will keep your going out and your coming in." — letter-for-letter, house rendering of Psalm 121:8 WEB.
+Evidence (inspected, not just measured):
+- 100% crops of the rebuilt panel before text (`work/gatefix10-lintel-cleaned.png`) and of the final (`work/gatefix-final-lintel-100pct.png`), plus inverted views (`gatefix10-lintel-cleaned-inverted.png`, `gatefix-final-lintel-inverted.png`) and a high-pass view (`gatefix-final-lintel-highpass.png`): no glyph shapes, bright or dark, anywhere on the panel — only wood grain, knots and the board's natural horizontal streaks.
+- Bright-neutral remnant pixels in the panel after rebuild: **0**. Mean luminance deviation sampled on the old letterforms' exact pixel positions: **−0.15** (panel mean ≈ 0) — i.e. zero correlation with the old letter template, where the failed version showed readable dark text. High-pass (texture) energy in the rebuilt area is the same order as genuine clean wood (3.4–5.8 vs 5.3 mean |HP|, varying by sub-band).
+
+**2. Reference below the grid crop — FIXED.**
+"PSALM 121:8 — WEB" sat at y1243–1261 on the doormat, below the square (bottom y1215). The old line was erased and the reference re-set higher on the doormat: drawn-ink bbox **x 347–735, y 1165–1187** — fully inside the square with a **28 px margin** to the square's bottom edge, in the original gold tracked style (Montserrat SemiBold, gold 224/178/94, width matched to the original 390 px). Erase method: organic (glyph-shaped) mask composite erase, a vertical clone-stamp for the small floorboard sliver, and a wide organic low-frequency blend so no rectangular patch boundary remains (scripts `work/fix_threshold_gate11.py` + gate14/gate17 passes in-line). The "Long Road · Coming soon" footer is unchanged and stays in the 4:5-only band (y1299–1317), as permitted. Evidence: `work/gatefix17-nov18-bottom-final.png` (100% bottom crop — old line gone, no patch edges, mat fibre and floor sheen continuous) and the delivered square, where the reference is fully visible on the mat.
+
+**3. Caption credit line — FIXED.**
+`nov18-caption.md` now credits "— Psalm 121:8 (WEB)", matching Nov 24's format. The divine-name word was removed from the caption file entirely (verified: 0 occurrences in either caption file); the gate-check notes were rewritten accordingly, including the grid-crop note, which now records the reference inside the square.
+
+### Nov 24 · Light That Stays — gate item
+
+**Mirrored puddle reflection of the verse — REMOVED; footer relocated onto clean pavement inside the square.**
+The whole reflection zone below the verse (y1176–1350, x120–960) was rebuilt as clean dark pavement: diffusion low-frequency surface + fine grain matched to nearby genuine pavement (σ ≈ 3 luminance units) + sparse wet-stone glints + the lamp's warm streak re-added at the strength measured from glyph-free rows above the verse (median deviation 9.3, decayed with depth). Two earlier attempts were rejected on inspection: a per-pixel glyph mask missed the reflections' soft low-contrast strokes, and transplanted detail from the bright lamp pool produced visible speckle (bright-pixel counts and crops in the run log). The verse itself and the gold "JOHN 1:5 — WEB" line are **pixel-identical** to the gate-failed version (max abs diff 0 across y700–1172) — the verse still reads exactly "The light shines in the darkness, and the darkness hasn't overcome it." (John 1:5 WEB).
+The footer "Long Road · Coming soon" was redrawn on the clean pavement at ink **y1182–1201** (Montserrat Regular, width 271 px, matching the Nov 18 footer's measure), so it is fully legible in **both** the 4:5 final and the grid square (14 px margin to the square's bottom edge), with no reflection text behind or below it. Evidence: `work/gatefix5-nov24-bottom-final.png` and `work/gatefix5-nov24-square-bottom.png` (100% crops — no letterforms under the verse in either; footer crisp on plain dark pavement), plus inverted crop `gatefix3-nov24-bottom-inverted.png` from the same rebuild. Residual bright pixels >45 luminance in the zone (excluding the footer) are 1,899 sparse single glints vs ~12–14k glyph pixels before.
+
+### Tone / format re-verification (both items)
+
+- Finals 1080×1350 PNG; squares 1080×1080 PNG, pixel-verified exact centre crops of the fixed finals.
+- Nov 18 square mean luminance **87.5** (pre-fix 89.4) — **LIGHT-WARM** unchanged. Nov 24 square mean luminance **33.0** (pre-fix 32.5) — **DARK-WARM** unchanged.
+- Nov 18 doorway scene below the lintel is pixel-identical to the source render (max abs diff 0, y400–1000); Nov 24 verse band pixel-identical as noted above. "Coming soon" wording exact in both images and captions; no dates or availability claims.
+- Both finals and both squares were viewed full-frame after the fix, in addition to the 100% crops listed above.
