@@ -1,0 +1,38 @@
+[
+ {
+  "book": "Malachi",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Malachi/1.m4a",
+  "durationSec": 167.76,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "65b333fc38811008a68f3667f1cd2a95211e62af"
+ },
+ {
+  "book": "Malachi",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Malachi/2.m4a",
+  "durationSec": 181.18,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fcd84c213f88bbae300da425a61eabc05c3e62a2"
+ },
+ {
+  "book": "Malachi",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Malachi/3.m4a",
+  "durationSec": 179.76,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "57941c43a775b5afaf87754ffcefb59e28c7af5c"
+ },
+ {
+  "book": "Malachi",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Malachi/4.m4a",
+  "durationSec": 54.12,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ef969f4c688b28e1e875eba13220658704e239fc"
+ }
+]
