@@ -1,0 +1,29 @@
+[
+ {
+  "book": "Habakkuk",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Habakkuk/1.m4a",
+  "durationSec": 149.5,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ffa05f94db46c30963b614a9a3914aaa82587e76"
+ },
+ {
+  "book": "Habakkuk",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Habakkuk/2.m4a",
+  "durationSec": 198.38,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "d931b85798de5d09cd25aaf24e6c97de3e3573a1"
+ },
+ {
+  "book": "Habakkuk",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Habakkuk/3.m4a",
+  "durationSec": 166.56,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4be796438bf069e7b3602d383703dd54b33ead1d"
+ }
+]
