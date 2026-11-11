@@ -1,0 +1,128 @@
+[
+ {
+  "book": "Zechariah",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/1.m4a",
+  "durationSec": 277.08,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "178d3adff9d7279d09bd7f2d79e28162cf065e90"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/2.m4a",
+  "durationSec": 92.06,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a9aa1085c4ae9728693658c53a0e2c905de089d6"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/3.m4a",
+  "durationSec": 107.21,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e2960ae694ac053d862a976f41a06da4a6055a79"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/4.m4a",
+  "durationSec": 104.33,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ebfd0b6b174c9ec0f162af1a3e1168d988a38b0f"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/5.m4a",
+  "durationSec": 93.1,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "aa720d3c957ca2c6d2bf831ee2bf97f01193e93c"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/6.m4a",
+  "durationSec": 207.43,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bd176cb69582ac4270b449bb9dfd2bd28601026c"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/7.m4a",
+  "durationSec": 118.87,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2fcf1ace09a4756f25e2f2fef97f37616b5cd649"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/8.m4a",
+  "durationSec": 208.32,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d04e7fb5ac5cc3a1b6ca431e71b7306d011b1208"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/9.m4a",
+  "durationSec": 172.34,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7bf18306ea97d465a5c0049d0d925cf423653a1b"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/10.m4a",
+  "durationSec": 143.62,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "88cd3acd38d8731555274764b87e6917492a945a"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/11.m4a",
+  "durationSec": 154.8,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "af8ddb5cb94c25f2dbe14b2fc4341cbbaf84a7d7"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/12.m4a",
+  "durationSec": 143.88,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9e95edd18760fb84357dcd3e6e419878008b1512"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/13.m4a",
+  "durationSec": 106.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "63660a83fc8f12e0a4399c3fa19233f6323fc873"
+ },
+ {
+  "book": "Zechariah",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/sample1/Zechariah/14.m4a",
+  "durationSec": 222.62,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f6e37dafcce5970b03a88a9e7da9a2117de3c345"
+ }
+]
