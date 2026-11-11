@@ -1,0 +1,92 @@
+[
+ {
+  "book": "Ezra",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/1.m4a",
+  "durationSec": 124.44,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f1d928a1b0a30925e86b1fcbfefcbe0648f24fc4"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/2.m4a",
+  "durationSec": 429.36,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6fbe21d6befff4bc1d609f2b0a2851d2bf427b5d"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/3.m4a",
+  "durationSec": 173.04,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c5c2f9dd84fd388a96befc19238599c4e4a7b037"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/4.m4a",
+  "durationSec": 295.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "808ffb8edad381dc339fe11f5484b60bbc978eca"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/5.m4a",
+  "durationSec": 164.71,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d550bcfae373562ea75c72fe99f26c12196e6fee"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/6.m4a",
+  "durationSec": 242.45,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b2daab14bf2fae535146de1ce369f46c53a57dd5"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/7.m4a",
+  "durationSec": 258.43,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "8e16424acb002f94a6ba189fd98ad1e5db03f7fa"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/8.m4a",
+  "durationSec": 337.15,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4c083b8cf45d3bf48d62b17f3cc1341c6b039f4d"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/9.m4a",
+  "durationSec": 193.39,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7976f431148f82a809d734243d8b19893278e34b"
+ },
+ {
+  "book": "Ezra",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Ezra/10.m4a",
+  "durationSec": 479.04,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b6479e3fb333ab1a9514b4c498b5c67b76dfed8a"
+ }
+]
