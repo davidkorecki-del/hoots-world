@@ -1,0 +1,128 @@
+[
+ {
+  "book": "Hosea",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/1.m4a",
+  "durationSec": 122.54,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0d802d6a00ccc6cc65a7ae64ebe9322019a8005a"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/2.m4a",
+  "durationSec": 228.6,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "901aa7a8d15ccea2a115d62f9baf47a783de1476"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/3.m4a",
+  "durationSec": 65.81,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6b12edfe6f90550de41473e1c3db842113676157"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/4.m4a",
+  "durationSec": 173.52,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "282731aa6af93aeaf6a51f1a52df89a0057d3072"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/5.m4a",
+  "durationSec": 128.83,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1887476c6584d9350552b4357521e3cdef9798f5"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/6.m4a",
+  "durationSec": 86.4,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7406d1e34b30cb7d1f2db37d1545254e5d993ee0"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/7.m4a",
+  "durationSec": 141.74,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "61e01117f841ebe4c20701576ccba2428575ccd4"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/8.m4a",
+  "durationSec": 124.32,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6152a58d20fdc8c1855a4a66c2db0f073eef680e"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/9.m4a",
+  "durationSec": 164.81,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "749555568a536ab9b51c2462c8ac306b739a3bba"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/10.m4a",
+  "durationSec": 156.55,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "be013dd9f3f056fa4d3dc810aaf08ea7ef74a12d"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/11.m4a",
+  "durationSec": 112.75,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9bc3ccb30d6cca6f00a746c63b3f153935887d29"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/12.m4a",
+  "durationSec": 101.74,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "addea10d2aba50e10dddd818c6b8ba78b798615c"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/13.m4a",
+  "durationSec": 229.2,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "17ef8c5f4aba4ee2dc3c1c19e237491df13b1ebe"
+ },
+ {
+  "book": "Hosea",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/sample1/Hosea/14.m4a",
+  "durationSec": 86.54,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d1ad5d1f7587d8269e2cbc8356b7b2d9f6da2a67"
+ }
+]
