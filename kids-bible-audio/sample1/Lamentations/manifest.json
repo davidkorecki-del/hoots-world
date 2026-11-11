@@ -1,0 +1,47 @@
+[
+ {
+  "book": "Lamentations",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Lamentations/1.m4a",
+  "durationSec": 262.25,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fac7868a7b6a533ff4d9b60e603742513526fe89"
+ },
+ {
+  "book": "Lamentations",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Lamentations/2.m4a",
+  "durationSec": 368.45,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "62ebf388dfe379e895afb7b80bb01eab2049aadf"
+ },
+ {
+  "book": "Lamentations",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Lamentations/3.m4a",
+  "durationSec": 274.46,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d0356532eb61e21041ba75bc83008134cba2b26a"
+ },
+ {
+  "book": "Lamentations",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Lamentations/4.m4a",
+  "durationSec": 210.05,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6993448648be0a34239462dfbdfada268cc8d859"
+ },
+ {
+  "book": "Lamentations",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Lamentations/5.m4a",
+  "durationSec": 125.81,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "26223751e81ca76fef50fdb9f8bde26c8b81848e"
+ }
+]
