@@ -1,0 +1,326 @@
+[
+ {
+  "book": "Numbers",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/1.m4a",
+  "durationSec": 371.59,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2270b5fa8994e47001354ec42823dfcc296c0bde"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/2.m4a",
+  "durationSec": 224.11,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "dbd09fa0a25b18819ab2b236197e2728e89dddad"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/3.m4a",
+  "durationSec": 376.06,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "668318e4b5c78d9a27525a306def9850604e86e7"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/4.m4a",
+  "durationSec": 378.67,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1dba5545490bba31c167e06141f995d5caa399c0"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/5.m4a",
+  "durationSec": 397.87,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4ad15a0100f06be1b0e2aa89ac28a42350f01aeb"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/6.m4a",
+  "durationSec": 243.38,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a619d39b0aa9828f82d0af89e37f91be92c66ac1"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/7.m4a",
+  "durationSec": 695.33,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bdebdd29184d57dd5b192e21dc935779b47d8820"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/8.m4a",
+  "durationSec": 332.38,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "25c2e6de6e81d7c156536809ebced389b3aed6b7"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/9.m4a",
+  "durationSec": 211.49,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9f0deb61792972bb0737a2b7c52975437838c517"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/10.m4a",
+  "durationSec": 269.3,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "048484c05b7352ca443acb57f9b5dfbde315de36"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/11.m4a",
+  "durationSec": 336.46,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "74de8515df8b5723f5ac7fcc04fc322999133e05"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/12.m4a",
+  "durationSec": 122.45,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b6daff1e05ef3cbdf2c5d5a415ab637331a8b243"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/13.m4a",
+  "durationSec": 275.5,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b8f0647c8d24c9c49989d9119d24c4a6a7b88a75"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/14.m4a",
+  "durationSec": 385.85,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "40f9998e50d7abf50e235c7bca64efc3f9cc4bfb"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 15,
+  "file": "15.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/15.m4a",
+  "durationSec": 305.14,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6aec23972037693708ff2cd2aa943151224353a8"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 16,
+  "file": "16.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/16.m4a",
+  "durationSec": 481.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "aed7767a2e114ac1a20b70a50b20851f1fe4e4ff"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 17,
+  "file": "17.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/17.m4a",
+  "durationSec": 87.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "572587cc3e29b3b73cb463a1b7863edc2c57c688"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 18,
+  "file": "18.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/18.m4a",
+  "durationSec": 313.78,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "45546ccd4f00fb2dab6850b03297ce66fc9c20bf"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 19,
+  "file": "19.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/19.m4a",
+  "durationSec": 213.26,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "dcfc7f07984310a29c73a16efff1a9f41496a811"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 20,
+  "file": "20.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/20.m4a",
+  "durationSec": 239.62,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ef5394c01916701e1ad291ea598478b13e44a078"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 21,
+  "file": "21.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/21.m4a",
+  "durationSec": 284.86,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0db8c1dfa7dcc6ee73c2b2b70d4d1be0700709db"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 22,
+  "file": "22.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/22.m4a",
+  "durationSec": 347.78,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "99ab6618be1f9a208a951ddfaa21f150edfb0395"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 23,
+  "file": "23.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/23.m4a",
+  "durationSec": 238.13,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1197460d538519ea67bdd3c9421b78e66db4d1ce"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 24,
+  "file": "24.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/24.m4a",
+  "durationSec": 202.7,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7561db7460b8c9a784eeade9ec18f1cb89aaf9a1"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 25,
+  "file": "25.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/25.m4a",
+  "durationSec": 282.89,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7fa7c06e63c3dc9e68d29f3cb0f81ff601e2db01"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 26,
+  "file": "26.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/26.m4a",
+  "durationSec": 436.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3228dc3a48019c9446215f0a9ea0996a9bb317aa"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 27,
+  "file": "27.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/27.m4a",
+  "durationSec": 182.59,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ff5e68e1877e4ce60f2dd57e70c64dc90b50e238"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 28,
+  "file": "28.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/28.m4a",
+  "durationSec": 250.61,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "83766b1f37197d526ed33842c932700284ac6db3"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 29,
+  "file": "29.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/29.m4a",
+  "durationSec": 343.58,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7ff162ebb4a534f7cca0085f515813e9e5ce6f5b"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 30,
+  "file": "30.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/30.m4a",
+  "durationSec": 194.21,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "419c19d4ed015f324420bbd6e6704b7ec1a845b5"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 31,
+  "file": "31.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/31.m4a",
+  "durationSec": 396.86,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "dd098815d7fb1531cef10e66e1ff33ed310c5287"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 32,
+  "file": "32.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/32.m4a",
+  "durationSec": 449.9,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "04deaf3528bffb310682fa4ac8c406f8dab74483"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 33,
+  "file": "33.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/33.m4a",
+  "durationSec": 294.84,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2aef83f9f839ba9925fb8a06166e2339f87b27ce"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 34,
+  "file": "34.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/34.m4a",
+  "durationSec": 180.55,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "70eb5e824631d7b2630e33d059c40cf1bd231d8e"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 35,
+  "file": "35.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/35.m4a",
+  "durationSec": 289.37,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c5af3b1941df52aa469a6e5e90c5d6bbeddee968"
+ },
+ {
+  "book": "Numbers",
+  "chapter": 36,
+  "file": "36.m4a",
+  "path": "kids-bible-audio/sample1/Numbers/36.m4a",
+  "durationSec": 118.15,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "1d933af04ea4827caa033d18f02f0bea6eff5a29"
+ }
+]
