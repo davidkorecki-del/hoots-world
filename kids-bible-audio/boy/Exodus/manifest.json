@@ -1,0 +1,362 @@
+[
+ {
+  "book": "Exodus",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/boy/Exodus/1.m4a",
+  "durationSec": 170.93,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "24f52a884ff420a9f9df97e280f256a54da1e090"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/boy/Exodus/2.m4a",
+  "durationSec": 212.78,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ad4c73585eedeb680d5ddb72cb2c747b792718d3"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/boy/Exodus/3.m4a",
+  "durationSec": 309.94,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "6382c10ab2b748e99c2882a51517f7b6eaa61bd7"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/boy/Exodus/4.m4a",
+  "durationSec": 276.53,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "6989e9a226ca543c72547ebf721ba3bed9d3d0af"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/boy/Exodus/5.m4a",
+  "durationSec": 273.48,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "3d2b66ebf414893acfa8fe6d60d8728ba6b0944c"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/boy/Exodus/6.m4a",
+  "durationSec": 339.98,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "0282a4d4e65ccc6e4c9067dcce8d9aeecad6db12"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/boy/Exodus/7.m4a",
+  "durationSec": 222.31,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c1f62bcf57d96f194a85c37c3aeb8a328675a030"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/boy/Exodus/8.m4a",
+  "durationSec": 292.25,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "37fc0d2080ce2f349567a7946e65c8b4e640dec6"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/boy/Exodus/9.m4a",
+  "durationSec": 761.86,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "bd26789bae8a526c508fdf087144879e1f40b70b"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/boy/Exodus/10.m4a",
+  "durationSec": 359.11,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "5d62341fd096c0c54742beee129b2a111984a983"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/boy/Exodus/11.m4a",
+  "durationSec": 99.48,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "9358175f71228731980c6f85a3f44675900b7b75"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/boy/Exodus/12.m4a",
+  "durationSec": 455.64,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c48674171d26b1756db4673382b28705b6966c29"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/boy/Exodus/13.m4a",
+  "durationSec": 229.01,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "7bfbd31e104ae2dcf33a28fdac129f516d12a39e"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/boy/Exodus/14.m4a",
+  "durationSec": 373.51,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c293ce3fbe3b18e2486fd936e037b9bf4e38eb1f"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 15,
+  "file": "15.m4a",
+  "path": "kids-bible-audio/boy/Exodus/15.m4a",
+  "durationSec": 237.07,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "08a637df08991b758bfc1783ca0618b3706982eb"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 16,
+  "file": "16.m4a",
+  "path": "kids-bible-audio/boy/Exodus/16.m4a",
+  "durationSec": 382.63,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "65a7d6629f17423f9579c17eceac3d6ff1a941a3"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 17,
+  "file": "17.m4a",
+  "path": "kids-bible-audio/boy/Exodus/17.m4a",
+  "durationSec": 162.67,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ecd34c2343c9ded8cfc6ee6638d0d58ab72d0709"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 18,
+  "file": "18.m4a",
+  "path": "kids-bible-audio/boy/Exodus/18.m4a",
+  "durationSec": 250.68,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "7709548af247e9ea74e6b16e46c7f4cb45f23a8d"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 19,
+  "file": "19.m4a",
+  "path": "kids-bible-audio/boy/Exodus/19.m4a",
+  "durationSec": 223.68,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "dae1749f80dd7776b3a372e001a87b6b8aa28011"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 20,
+  "file": "20.m4a",
+  "path": "kids-bible-audio/boy/Exodus/20.m4a",
+  "durationSec": 210.02,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "2ea583e6e51d428f53c5700d1c5575e28b9b7f05"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 21,
+  "file": "21.m4a",
+  "path": "kids-bible-audio/boy/Exodus/21.m4a",
+  "durationSec": 294.31,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "98f374bd74aeacc89f3737a0cf170079aaedc435"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 22,
+  "file": "22.m4a",
+  "path": "kids-bible-audio/boy/Exodus/22.m4a",
+  "durationSec": 268.75,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "aea906e920937cd7b7e8cf3f41fff16905730139"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 23,
+  "file": "23.m4a",
+  "path": "kids-bible-audio/boy/Exodus/23.m4a",
+  "durationSec": 280.15,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "9fb47f88777803e8a73260152c97c7f30d99f0bc"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 24,
+  "file": "24.m4a",
+  "path": "kids-bible-audio/boy/Exodus/24.m4a",
+  "durationSec": 299.64,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4e84f24f41a1020c93661dacdef65b3a1f5d9382"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 25,
+  "file": "25.m4a",
+  "path": "kids-bible-audio/boy/Exodus/25.m4a",
+  "durationSec": 243.17,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "a0a29e5b39cb0b7fe9594dc0d1a0514c3af7a935"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 26,
+  "file": "26.m4a",
+  "path": "kids-bible-audio/boy/Exodus/26.m4a",
+  "durationSec": 248.54,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "92ffefe4987e2fc42243e280ba7795fb01a0cb4b"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 27,
+  "file": "27.m4a",
+  "path": "kids-bible-audio/boy/Exodus/27.m4a",
+  "durationSec": 179.09,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "dbbe3b9160e380840c19d5f8c029a1e657d4e8c0"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 28,
+  "file": "28.m4a",
+  "path": "kids-bible-audio/boy/Exodus/28.m4a",
+  "durationSec": 470.62,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ffa5ef7a3092391160ca6ddaa84782cb3018c561"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 29,
+  "file": "29.m4a",
+  "path": "kids-bible-audio/boy/Exodus/29.m4a",
+  "durationSec": 313.54,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "f05cf621508557c386d4b8b17bcf47f95cb49569"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 30,
+  "file": "30.m4a",
+  "path": "kids-bible-audio/boy/Exodus/30.m4a",
+  "durationSec": 412.82,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "36e3c334abcaa0d70cb3e21c44cc6eb185ac48ec"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 31,
+  "file": "31.m4a",
+  "path": "kids-bible-audio/boy/Exodus/31.m4a",
+  "durationSec": 147.72,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "710d65a2bba7e74c368afb4fbee73b82d4310b64"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 32,
+  "file": "32.m4a",
+  "path": "kids-bible-audio/boy/Exodus/32.m4a",
+  "durationSec": 387.46,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "5eb20cf2c0e6e9a2fd641e4d353912baef22d3e1"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 33,
+  "file": "33.m4a",
+  "path": "kids-bible-audio/boy/Exodus/33.m4a",
+  "durationSec": 209.35,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "c3198ee565c27b420ad381aba771d109975bb371"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 34,
+  "file": "34.m4a",
+  "path": "kids-bible-audio/boy/Exodus/34.m4a",
+  "durationSec": 329.42,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "5f35faeb0b4941413f5ff779196191d0af15854a"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 35,
+  "file": "35.m4a",
+  "path": "kids-bible-audio/boy/Exodus/35.m4a",
+  "durationSec": 481.97,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "33698747e5ce986ba552fa3b75a271c338bdb3c5"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 36,
+  "file": "36.m4a",
+  "path": "kids-bible-audio/boy/Exodus/36.m4a",
+  "durationSec": 332.54,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "ab3f01ad1a548ce3cd6e892c5d1e38b448f912c4"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 37,
+  "file": "37.m4a",
+  "path": "kids-bible-audio/boy/Exodus/37.m4a",
+  "durationSec": 193.58,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4041f024dbfa4f8075baed457899a55c47b2a19b"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 38,
+  "file": "38.m4a",
+  "path": "kids-bible-audio/boy/Exodus/38.m4a",
+  "durationSec": 250.42,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "d5d5aa2034f2c4f60e38de81987a84f62df08e39"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 39,
+  "file": "39.m4a",
+  "path": "kids-bible-audio/boy/Exodus/39.m4a",
+  "durationSec": 319.85,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "4e673683ac32aee6a50b3b58c171de798a4d984c"
+ },
+ {
+  "book": "Exodus",
+  "chapter": 40,
+  "file": "40.m4a",
+  "path": "kids-bible-audio/boy/Exodus/40.m4a",
+  "durationSec": 256.27,
+  "voice": "avocado_v2:qvd_03988",
+  "textSha1": "227a267f2f84ba8a35735f3ebaed380d425e21c1"
+ }
+]
