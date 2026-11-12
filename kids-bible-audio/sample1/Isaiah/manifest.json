@@ -1,0 +1,596 @@
+[
+ {
+  "book": "Isaiah",
+  "chapter": 1,
+  "file": "1.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/1.m4a",
+  "durationSec": 278.76,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0be024c0d193d86f34de22fd6727c25c2fb8dae4"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 2,
+  "file": "2.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/2.m4a",
+  "durationSec": 175.27,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ae1169155b469673935401c56f75a32c29989c46"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 3,
+  "file": "3.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/3.m4a",
+  "durationSec": 268.8,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "77f8849de5b5b34178ba5eed728f18571aa5917d"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 4,
+  "file": "4.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/4.m4a",
+  "durationSec": 63.48,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e173cf2333844c5d4eddae5c4ad8002bd247ba5f"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 5,
+  "file": "5.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/5.m4a",
+  "durationSec": 409.68,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "5ad318fe0e36e6dc4c086bf9c03d313806b5a86a"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 6,
+  "file": "6.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/6.m4a",
+  "durationSec": 121.49,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "2d16c11ef47698f2bedca15895b866ea3a0aa3f7"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 7,
+  "file": "7.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/7.m4a",
+  "durationSec": 220.13,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c2c313aace9dd2103cb6dd26a42b9b0190c768e9"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 8,
+  "file": "8.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/8.m4a",
+  "durationSec": 191.98,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "7cbfcff01e97c96ea3ad99400c36343e7aa22c4c"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 9,
+  "file": "9.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/9.m4a",
+  "durationSec": 220.27,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bdfc144a26fa2b37ebfef7e5a18300b5e9503ed1"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 10,
+  "file": "10.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/10.m4a",
+  "durationSec": 305.21,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9f27cae14cd108be1db3bccbe6e54bc4df9060fc"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 11,
+  "file": "11.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/11.m4a",
+  "durationSec": 316.73,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d6d3b5cd54b7a04c84c66d7e7de98aabcc93de13"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 12,
+  "file": "12.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/12.m4a",
+  "durationSec": 121.68,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f43276df93be4fd0597fd746f1ae0d383d8b761e"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 13,
+  "file": "13.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/13.m4a",
+  "durationSec": 196.39,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b2137e6673e8c10e517bbb3c4c6a9d1bb2db8bb5"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 14,
+  "file": "14.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/14.m4a",
+  "durationSec": 574.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f7981479537fd45dd01a7661f6145b6d4f929678"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 15,
+  "file": "15.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/15.m4a",
+  "durationSec": 89.21,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b53a03ea86b468a08708141b60a9ab2ced9440f1"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 16,
+  "file": "16.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/16.m4a",
+  "durationSec": 170.21,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bbd17c72ae3240c1be60b034bf196f11ec9e8baa"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 17,
+  "file": "17.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/17.m4a",
+  "durationSec": 136.68,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "337ede90c345dda503669e4087a7b9487386f00d"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 18,
+  "file": "18.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/18.m4a",
+  "durationSec": 171.89,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bed47225c363ab9b04f54031ca86206fa8460ccc"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 19,
+  "file": "19.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/19.m4a",
+  "durationSec": 253.54,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b672e077a9ce2e93a3eb51432c87a6e5e0d97590"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 20,
+  "file": "20.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/20.m4a",
+  "durationSec": 68.28,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "113becd4da96d5e330cc061bde180ec4f64f558a"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 21,
+  "file": "21.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/21.m4a",
+  "durationSec": 151.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "0a97dda72bfd931a251b853729aa16c0cd8c49d1"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 22,
+  "file": "22.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/22.m4a",
+  "durationSec": 208.87,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fc2a89c36595dc766d9d7f2c05d33a6c65b4fe90"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 23,
+  "file": "23.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/23.m4a",
+  "durationSec": 177.98,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d21f59047ae096f253adad2b0913979671da44a9"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 24,
+  "file": "24.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/24.m4a",
+  "durationSec": 206.59,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f4ed66e735675065558be3b84bc5a54b095d896c"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 25,
+  "file": "25.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/25.m4a",
+  "durationSec": 199.85,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4c78b10590f4df4076673019eb7ade950080351a"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 26,
+  "file": "26.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/26.m4a",
+  "durationSec": 176.76,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d5db6916d0079e4255cc3321bbf3ebcbd6376f90"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 27,
+  "file": "27.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/27.m4a",
+  "durationSec": 118.44,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "72bb4ae20437e209880d7ac4ae7fa0fdff84c3e9"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 28,
+  "file": "28.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/28.m4a",
+  "durationSec": 265.06,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "08dfa03b099f5676ebc458d5e23ee7b339ef7656"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 29,
+  "file": "29.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/29.m4a",
+  "durationSec": 241.2,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "c7009be6a406b96ab4292c1c08a404a39cba831b"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 30,
+  "file": "30.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/30.m4a",
+  "durationSec": 352.94,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "56e3b019a730fb74f5e52e24dda89135cf353e8e"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 31,
+  "file": "31.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/31.m4a",
+  "durationSec": 107.5,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ecfb1edbcfe3373f1a19458ea3685492429eca4b"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 32,
+  "file": "32.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/32.m4a",
+  "durationSec": 143.35,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3c92a20804c41dcce71fd0ee1e3d0ca3910e5c38"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 33,
+  "file": "33.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/33.m4a",
+  "durationSec": 224.86,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f0bc0c8083ca4acfb6556f806ca83cde04dcbcce"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 34,
+  "file": "34.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/34.m4a",
+  "durationSec": 158.33,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "5f513eed4878149bd43e2af449654aa56a3e5dbd"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 35,
+  "file": "35.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/35.m4a",
+  "durationSec": 106.92,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "948621310a8edaf9f117505862dc890798390313"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 36,
+  "file": "36.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/36.m4a",
+  "durationSec": 223.78,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "3d4929ba681ada084a7c9aebe4e51b6517531242"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 37,
+  "file": "37.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/37.m4a",
+  "durationSec": 377.02,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b04e8cd61e3c84faaa23f6b569e837e51276201c"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 38,
+  "file": "38.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/38.m4a",
+  "durationSec": 268.92,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "43e49845063553e6ad688a65f2bd4f2927eac999"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 39,
+  "file": "39.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/39.m4a",
+  "durationSec": 150.84,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "21ad072ba6f317cd00eeca28575310e18b40b9c4"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 40,
+  "file": "40.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/40.m4a",
+  "durationSec": 267.22,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bdea1755398d53a406745b8e4277b22b971103ee"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 41,
+  "file": "41.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/41.m4a",
+  "durationSec": 270.91,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e519e05ab847e2ca57b64fd2ef8cc9c5820b37ff"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 42,
+  "file": "42.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/42.m4a",
+  "durationSec": 234.48,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b02278006be2929d9d09c975408bc578809ca190"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 43,
+  "file": "43.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/43.m4a",
+  "durationSec": 258.05,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "87dc151468c567ccc3a82d3c96f834402bceb302"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 44,
+  "file": "44.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/44.m4a",
+  "durationSec": 309.65,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ca0c5003eb0dd732309b0977012cd20410dda81c"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 45,
+  "file": "45.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/45.m4a",
+  "durationSec": 280.97,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "67290d32c3c7ad20de63c65d7720e2e0a9019312"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 46,
+  "file": "46.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/46.m4a",
+  "durationSec": 120.36,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "ea9b559041d6f448b198cba0cad941c49db5d891"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 47,
+  "file": "47.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/47.m4a",
+  "durationSec": 160.85,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "d9cfa9a26eb167f4beb64541665a8e967ace82bb"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 48,
+  "file": "48.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/48.m4a",
+  "durationSec": 275.18,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e32d2f68be20947e2d7235a25d70885d35d1cfd6"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 49,
+  "file": "49.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/49.m4a",
+  "durationSec": 296.06,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9d2850a8e45155973a47d7cfab351eaea3628bbc"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 50,
+  "file": "50.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/50.m4a",
+  "durationSec": 118.37,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f3325f91856b3c4a4a2fbf5bfec7468f08e308f3"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 51,
+  "file": "51.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/51.m4a",
+  "durationSec": 322.94,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "f00290a9d640e4425d55071ea4d588bfa7d32a3b"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 52,
+  "file": "52.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/52.m4a",
+  "durationSec": 138.36,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "83924f62b61a2a7655a2458b1007710e77841d58"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 53,
+  "file": "53.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/53.m4a",
+  "durationSec": 150.43,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "93a7f6699a6fd8c679235d988e0de70650300365"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 54,
+  "file": "54.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/54.m4a",
+  "durationSec": 230.33,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "4a9f76003ad1773b431c94e72d48bb10c9b57d7c"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 55,
+  "file": "55.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/55.m4a",
+  "durationSec": 141.82,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "9ae11afd792f88f44fdcde5afcaf0cf7d020d732"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 56,
+  "file": "56.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/56.m4a",
+  "durationSec": 127.49,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "5861bc3760afd94f65f2f47345ff5f590188759b"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 57,
+  "file": "57.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/57.m4a",
+  "durationSec": 191.11,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fc710782eb429b8b129d32803052bbd2c50f9af7"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 58,
+  "file": "58.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/58.m4a",
+  "durationSec": 187.56,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "bb101278e0cdd6c4e6c7b003175fc489ea3b9763"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 59,
+  "file": "59.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/59.m4a",
+  "durationSec": 226.13,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "47cc72fe930a0c6582216e2c9b5c54f1970101e8"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 60,
+  "file": "60.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/60.m4a",
+  "durationSec": 234.55,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "31c06c6661b16a690b4bf5fa28ada544610e47f1"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 61,
+  "file": "61.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/61.m4a",
+  "durationSec": 142.87,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "a412a82c1df732cc05dc558ec551e9afa7b18f5c"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 62,
+  "file": "62.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/62.m4a",
+  "durationSec": 129.02,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "700c69bc4a48adc24021e69d72fa567428dbafb6"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 63,
+  "file": "63.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/63.m4a",
+  "durationSec": 193.8,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "fcf5978cc752632dd63d6d93736905981159211f"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 64,
+  "file": "64.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/64.m4a",
+  "durationSec": 96.48,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "e1893d4174ee537c59539496eaddd783e672ecf9"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 65,
+  "file": "65.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/65.m4a",
+  "durationSec": 256.18,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "b4fd801af890e779a3c7a03fc7d463f39f63dc0e"
+ },
+ {
+  "book": "Isaiah",
+  "chapter": 66,
+  "file": "66.m4a",
+  "path": "kids-bible-audio/sample1/Isaiah/66.m4a",
+  "durationSec": 442.82,
+  "voice": "avocado_v2:qvd_03627",
+  "textSha1": "6f46dcf4f19f628db7295e6f2654850d6233d154"
+ }
+]
