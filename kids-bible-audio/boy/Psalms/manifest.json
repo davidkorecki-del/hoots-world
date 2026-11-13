@@ -22,7 +22,7 @@
   "chapter": 3,
   "file": "3.m4a",
   "path": "kids-bible-audio/boy/Psalms/3.m4a",
-  "durationSec": 50.59,
+  "durationSec": 51.0,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "9d8b203d093b234189b3adb7495cb29c2c038a46"
  },
@@ -175,7 +175,7 @@
   "chapter": 20,
   "file": "20.m4a",
   "path": "kids-bible-audio/boy/Psalms/20.m4a",
-  "durationSec": 137.71,
+  "durationSec": 63.86,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "f159ffcc9145b9eafa4614dd5550f6ee7b0c0721"
  },
@@ -184,7 +184,7 @@
   "chapter": 21,
   "file": "21.m4a",
   "path": "kids-bible-audio/boy/Psalms/21.m4a",
-  "durationSec": 236.33,
+  "durationSec": 77.45,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "d7b8dd2994051d6eda6c75ec4b41e81c387a9b6b"
  },
@@ -265,7 +265,7 @@
   "chapter": 30,
   "file": "30.m4a",
   "path": "kids-bible-audio/boy/Psalms/30.m4a",
-  "durationSec": 223.73,
+  "durationSec": 84.94,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "2caf2ff69613a75ac0d7fa18f89af2679625ef00"
  },
@@ -283,7 +283,7 @@
   "chapter": 32,
   "file": "32.m4a",
   "path": "kids-bible-audio/boy/Psalms/32.m4a",
-  "durationSec": 161.64,
+  "durationSec": 84.0,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "5cec5e21ae690b491486b554813856110f301f5c"
  },
@@ -1057,7 +1057,7 @@
   "chapter": 118,
   "file": "118.m4a",
   "path": "kids-bible-audio/boy/Psalms/118.m4a",
-  "durationSec": 533.45,
+  "durationSec": 165.36,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "9ef11d8e106ee3a80a541974ee5204c618eaa04b"
  },
@@ -1120,7 +1120,7 @@
   "chapter": 125,
   "file": "125.m4a",
   "path": "kids-bible-audio/boy/Psalms/125.m4a",
-  "durationSec": 256.68,
+  "durationSec": 39.29,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "afe53d414cae5e01135a53cddb3be78c561b26ce"
  },
@@ -1201,7 +1201,7 @@
   "chapter": 134,
   "file": "134.m4a",
   "path": "kids-bible-audio/boy/Psalms/134.m4a",
-  "durationSec": 90.12,
+  "durationSec": 17.71,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "5bb970eff09cec48066261726630eee71173b9f7"
  },
@@ -1210,7 +1210,7 @@
   "chapter": 135,
   "file": "135.m4a",
   "path": "kids-bible-audio/boy/Psalms/135.m4a",
-  "durationSec": 274.92,
+  "durationSec": 136.44,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "2b1e387e1e7908f49bc31459d002e737ef019235"
  },
@@ -1318,7 +1318,7 @@
   "chapter": 147,
   "file": "147.m4a",
   "path": "kids-bible-audio/boy/Psalms/147.m4a",
-  "durationSec": 342.36,
+  "durationSec": 116.04,
   "voice": "avocado_v2:qvd_03988",
   "textSha1": "c167393fbb4052a57b3554a0dc25264686a43f12"
  },
