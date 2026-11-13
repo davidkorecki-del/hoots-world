@@ -22,7 +22,7 @@
   "chapter": 3,
   "file": "3.m4a",
   "path": "kids-bible-audio/sample1/Psalms/3.m4a",
-  "durationSec": 346.92,
+  "durationSec": 46.32,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "9d8b203d093b234189b3adb7495cb29c2c038a46"
  },
@@ -220,7 +220,7 @@
   "chapter": 25,
   "file": "25.m4a",
   "path": "kids-bible-audio/sample1/Psalms/25.m4a",
-  "durationSec": 283.46,
+  "durationSec": 126.74,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "81b5746fc40fa948525ab1705b435940ae3d00fe"
  },
@@ -283,7 +283,7 @@
   "chapter": 32,
   "file": "32.m4a",
   "path": "kids-bible-audio/sample1/Psalms/32.m4a",
-  "durationSec": 75.41,
+  "durationSec": 90.65,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "5cec5e21ae690b491486b554813856110f301f5c"
  },
@@ -841,7 +841,7 @@
   "chapter": 94,
   "file": "94.m4a",
   "path": "kids-bible-audio/sample1/Psalms/94.m4a",
-  "durationSec": 449.04,
+  "durationSec": 134.45,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "a0e32ac59616dc4ec2e35fb3298db953b21285d7"
  },
@@ -868,7 +868,7 @@
   "chapter": 97,
   "file": "97.m4a",
   "path": "kids-bible-audio/sample1/Psalms/97.m4a",
-  "durationSec": 161.88,
+  "durationSec": 77.74,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "3536d63afeede8ff4ba7008c9726a76ce899ad7e"
  },
@@ -985,7 +985,7 @@
   "chapter": 110,
   "file": "110.m4a",
   "path": "kids-bible-audio/sample1/Psalms/110.m4a",
-  "durationSec": 120.6,
+  "durationSec": 50.5,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "e144685672cf5fc2faf9663a97aa58d5bb08dc44"
  },
@@ -1318,7 +1318,7 @@
   "chapter": 147,
   "file": "147.m4a",
   "path": "kids-bible-audio/sample1/Psalms/147.m4a",
-  "durationSec": 113.52,
+  "durationSec": 122.61,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "c167393fbb4052a57b3554a0dc25264686a43f12"
  },
@@ -1345,7 +1345,7 @@
   "chapter": 150,
   "file": "150.m4a",
   "path": "kids-bible-audio/sample1/Psalms/150.m4a",
-  "durationSec": 180.53,
+  "durationSec": 34.95,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "4dad4588fad37a5e2e65e2c4e98d8670c14f92cf"
  }
