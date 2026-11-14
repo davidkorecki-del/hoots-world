@@ -49,7 +49,7 @@
   "chapter": 6,
   "file": "6.m4a",
   "path": "kids-bible-audio/sample1/Acts/6.m4a",
-  "durationSec": 117.72,
+  "durationSec": 116.91,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "33e5204ee7d2fa2d5a3881939e431becff4fad0a"
  },
@@ -139,7 +139,7 @@
   "chapter": 16,
   "file": "16.m4a",
   "path": "kids-bible-audio/sample1/Acts/16.m4a",
-  "durationSec": 292.29,
+  "durationSec": 292.16,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "fa2d8888fdd07d1d6faf1755c0e58748c88f7151"
  },
@@ -238,7 +238,7 @@
   "chapter": 27,
   "file": "27.m4a",
   "path": "kids-bible-audio/sample1/Acts/27.m4a",
-  "durationSec": 334.73,
+  "durationSec": 334.96,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "0e011115056bbd321e3f7ef1041d13ad4147f3f1"
  },
@@ -247,7 +247,7 @@
   "chapter": 28,
   "file": "28.m4a",
   "path": "kids-bible-audio/sample1/Acts/28.m4a",
-  "durationSec": 244.51,
+  "durationSec": 244.7,
   "voice": "avocado_v2:qvd_03627",
   "textSha1": "cd5c56465a8aaf323964d7aab431c2fdb75495a9"
  }
