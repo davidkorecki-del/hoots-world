@@ -19,7 +19,7 @@
   /* ---------- optional clips from Muse ----------
      Names listed here are used; anything not listed falls back to Hoot's
      existing clips. When Muse's files arrive, add their names to HAVE. */
-  var HAVE = ["game-bubbles-intro", "game-garden-intro", "game-train-intro", "game-dance-intro", "game-helpers-intro",
+  var HAVE = ["game-bubbles-intro", "game-garden-intro", "game-train-intro", "game-dance-intro", "game-helpers-intro", "game-sayit-intro",
     "say-pop-sound", "say-plant", "say-load", "say-show-me", "say-where-work", "hoot-party-done",
     "song-hoot-party", "song-hoot-party-inst", "song-abc", "song-counting", "song-dance-party", "song-goodbye"];
   var have = {}; HAVE.forEach(function (k) { have[k] = true; });
@@ -175,13 +175,40 @@
     dance: { title: "Hoot's Dance Party", emo: "💃", bg: "linear-gradient(180deg,#FFE3F1,#FFF0C2)", rounds: 6,
       intro: "It's a dance party! When I call a body part, or up, or down, tap the matching picture!" },
     helpers: { title: "Helper Town", emo: "🚒", bg: "linear-gradient(180deg,#D3F9D8,#D0EBFF)", rounds: 6,
-      intro: "Welcome to Helper Town! I'll call a helper. Tap the place where they work!" }
+      intro: "Welcome to Helper Town! I'll call a helper. Tap the place where they work!" },
+    sayit: { title: "Say It with Hoot", emo: "🎙️", bg: "linear-gradient(180deg,#FFE3F1,#BDE7FF)", rounds: 6,
+      intro: "Say it with Hoot! I say a word, then you say it into the microphone — and you hear your own voice!" }
   };
-  var ORDER = ["bubbles", "garden", "train", "dance", "helpers"];
+  var ORDER = ["bubbles", "garden", "train", "dance", "helpers", "sayit"];
+  var SAYIT_ITEMS = [
+    { clip: "sayit-apple", emo: "🍎", word: "APPLE" }, { clip: "sayit-banana", emo: "🍌", word: "BANANA" },
+    { clip: "sayit-bubbles", emo: "🫧", word: "BUBBLES" }, { clip: "sayit-rainbow", emo: "🌈", word: "RAINBOW" },
+    { clip: "sayit-dinosaur", emo: "🦕", word: "DINOSAUR" }, { clip: "sayit-butterfly", emo: "🦋", word: "BUTTERFLY" },
+    { clip: "sayit-cookie", emo: "🍪", word: "COOKIE" }, { clip: "sayit-moon", emo: "🌙", word: "MOON" },
+    { clip: "sayit-woof", emo: "🐶", word: "WOOF WOOF" }, { clip: "sayit-moo", emo: "🐮", word: "MOO" },
+    { clip: "sayit-roar", emo: "🦁", word: "ROAR" }, { clip: "sayit-beep", emo: "🚗", word: "BEEP BEEP" },
+    { clip: "sayit-wiggle", emo: "🪱", word: "WIGGLY WORM" }, { clip: "sayit-super", emo: "⭐", word: "SUPER DUPER" },
+    { clip: "sayit-abra", emo: "🪄", word: "ABRACADABRA" }, { clip: "sayit-hooray", emo: "🎉", word: "HOORAY" }
+  ];
+
+  /* ---------- Say It with Hoot: mic state (module level so stop() can kill it) ----------
+     The child's recording lives in memory only; it is never saved or sent
+     anywhere, and stop() — called on game exit — destroys it. */
+  var micRec = null, micUrl = null, micAudio = null, micTimer = null;
+  function sayitCleanup() {
+    if (micTimer) { clearTimeout(micTimer); micTimer = null; }
+    if (micRec) {
+      var r = micRec; micRec = null; r.dead = true;
+      try { r.mr.stop(); } catch (e) {}
+      try { r.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+    }
+    if (micAudio) { try { micAudio.pause(); } catch (e) {} }
+    if (micUrl) { try { URL.revokeObjectURL(micUrl); } catch (e) {} micUrl = null; }
+  }
 
   /* ---------- runner ---------- */
   var R = null;
-  function stop() { stopVoice(); stopMusic(); stopSing(); if (R) { R.dead = true; clearInterval(R.iv); R = null; } }
+  function stop() { stopVoice(); stopMusic(); stopSing(); sayitCleanup(); if (R) { R.dead = true; clearInterval(R.iv); R = null; } }
   function play(key, body) {
     var G = GAMES[key]; if (!G || !body) return false;
     stop();
@@ -237,7 +264,7 @@
       say([opt("hoot-party-done") || "hoot-you-learned", fresh(PRAISE)]);
       try { document.dispatchEvent(new CustomEvent("hoot-party-done", { detail: { key: key, title: G.title, wrong: S.wrong, ms: Date.now() - S.t0 } })); } catch (e) {}
     }
-    var next = { bubbles: bubblesRound, garden: gardenRound, train: trainRound, dance: danceRound, helpers: helpersRound }[key];
+    var next = { bubbles: bubblesRound, garden: gardenRound, train: trainRound, dance: danceRound, helpers: helpersRound, sayit: sayitRound }[key];
 
     /* ----- 1. Letter Bubble Parade ----- */
     function bubblesRound() {
@@ -372,6 +399,76 @@
     }
     paint();
     return true;
+
+    /* ----- 6. Say It with Hoot -----
+       Repeat-after-me for the littles (Dawid approved 2026-11-17): Hoot says
+       a word, the child taps the big mic and says it back, hears their own
+       voice played back, and Hoot cheers. There are NO wrong answers and no
+       speech grading — kid speech recognition is unreliable, and the fun is
+       hearing yourself. The recording lives in memory only and is destroyed
+       by stop() on exit. If the mic is unavailable, tapping it still cheers
+       the out-loud try — never a dead end. */
+    function sayitCheer(heardIt) {
+      if (!alive() || S.won) return;
+      win(stage.querySelector(".pg-saycard"));
+      setB(heardIt ? "🎉 Woo hoo! That was YOUR voice!" : "🎉 Great talking! Hoot loves your voice!");
+      S.pn = ((S.pn || 0) % 5) + 1;
+      say(["sayit-praise-" + S.pn], wonRound(), true);
+    }
+    function sayitRound() {
+      paint();
+      if (!S.pool) S.pool = shuffle(SAYIT_ITEMS.slice());
+      var item = S.pool[S.round % S.pool.length];
+      stage.innerHTML = '<div class="pg-saycard"><span class="pg-sayemo" aria-hidden="true">' + item.emo + '</span><b class="pg-sayword">' + item.word + "</b></div>" +
+        '<div class="pg-saybtns"><button type="button" class="pg-mic" aria-label="Tap, say it, then tap again">🎙️</button>' +
+        '<button type="button" class="pg-sayagain">🔊 Hear Hoot again</button></div>' +
+        '<p class="pg-sayhint">Tap the microphone, say it out loud, then tap again!</p>';
+      setB("Say it with me… " + item.word + "!");
+      say([item.clip, "sayit-yourturn"], null, true);
+      var micBtn = stage.querySelector(".pg-mic");
+      stage.querySelector(".pg-sayagain").addEventListener("click", function () {
+        if (alive() && !micRec) say([item.clip], null, true);
+      });
+      micBtn.addEventListener("click", function () {
+        if (!alive()) return;
+        if (micRec) { try { micRec.mr.stop(); } catch (e) {} return; }
+        if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) { sayitCheer(false); return; }
+        stopVoice();
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+          if (!alive()) { stream.getTracks().forEach(function (t) { t.stop(); }); return; }
+          var mr;
+          try { mr = new MediaRecorder(stream); } catch (e) { stream.getTracks().forEach(function (t) { t.stop(); }); sayitCheer(false); return; }
+          var chunks = [];
+          var rec = { mr: mr, stream: stream, dead: false };
+          mr.ondataavailable = function (ev) { if (ev.data && ev.data.size) chunks.push(ev.data); };
+          mr.onstop = function () {
+            stream.getTracks().forEach(function (t) { t.stop(); });
+            if (rec.dead || !alive()) return;
+            if (micTimer) { clearTimeout(micTimer); micTimer = null; }
+            micRec = null;
+            micBtn.classList.remove("on"); micBtn.textContent = "🎙️";
+            var blob = new Blob(chunks, { type: mr.mimeType || "audio/webm" });
+            if (!blob.size) { sayitCheer(false); return; }
+            if (micUrl) { try { URL.revokeObjectURL(micUrl); } catch (e) {} }
+            micUrl = URL.createObjectURL(blob);
+            setB("Listen… that's YOU! 👂");
+            say(["sayit-thatsyou"], function () {
+              if (!alive()) return;
+              if (!micAudio) micAudio = new Audio();
+              micAudio.src = micUrl;
+              micAudio.onended = function () { sayitCheer(true); };
+              var p = micAudio.play();
+              if (p && p.catch) p.catch(function () { sayitCheer(true); });
+            }, true);
+          };
+          micRec = rec;
+          mr.start();
+          micBtn.classList.add("on"); micBtn.textContent = "⏺️";
+          setB("I'm listening… say it now!");
+          micTimer = setTimeout(function () { if (micRec) { try { micRec.mr.stop(); } catch (e) {} } }, 6000);
+        }).catch(function () { if (alive()) sayitCheer(false); });
+      });
+    }
   }
 
   window.HootGames = {
