@@ -803,6 +803,79 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     h.innerHTML = "<i>💗</i><i>💛</i><i>💙</i>"; btn.appendChild(h); setTimeout(function () { h.remove(); }, 1300);
   }
 
+  /* --- Morning Show (2026-11-17, Dawid approved): Hoot's Morning Show
+     lives in the app. Today's show big on the kid home, past shows under
+     it. The morning-show-daily job prepends each new show to MORNING_SHOWS
+     and drops its mp3 at assets/voice/show-<date>.mp3. Little profiles
+     only (this renders inside renderKidHome). --- */
+  var MORNING_SHOWS = [
+    { d: "2026-11-17", letter: "S", note: "S is for Sun" },
+    { d: "2026-11-16", letter: "F", note: "F is for Frost" }
+  ];
+  var msEl = null, msKey = null;
+  function msStop() {
+    if (msEl) { try { msEl.pause(); } catch (e) {} }
+    msKey = null;
+    msUi();
+  }
+  window.__msStop = msStop;
+  function msUi() {
+    var btns = document.querySelectorAll("[data-ms-play]");
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i], on = msKey === b.getAttribute("data-ms-play") && msEl && !msEl.paused && !msEl.ended;
+      b.classList.toggle("playing", !!on);
+      var ic = b.querySelector(".ms-ic"); if (ic) ic.textContent = on ? "\u23F8" : "\u25B6";
+    }
+    var card = document.getElementById("ms-card");
+    if (card) card.classList.toggle("playing", !!(msKey && msEl && !msEl.paused && !msEl.ended));
+  }
+  function msToggle(d) {
+    if (!msEl) {
+      msEl = new Audio(); msEl.__govVoice = 1; msEl.preload = "auto";
+      msEl.onended = function () { msKey = null; msUi(); };
+      msEl.onplaying = function () { msUi(); };
+      msEl.onpause = function () { msUi(); };
+      window.__msEl = msEl;
+      msEl.onerror = function () { msKey = null; msUi(); };
+    }
+    if (msKey === d && !msEl.paused && !msEl.ended) { msEl.pause(); msUi(); return; }
+    if (msKey !== d) {
+      try { stopAllVoices(); } catch (e) {}
+      try { if (window.__hootStopClip) window.__hootStopClip(); } catch (e) {}
+      msEl.src = "assets/voice/show-" + d + ".mp3";
+      msKey = d;
+    }
+    var pr = msEl.play(); if (pr && pr.catch) pr.catch(function () { msUi(); });
+    msUi();
+  }
+  function msDayLabel(d) {
+    var dt = new Date(d + "T12:00:00");
+    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var mons = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return days[dt.getDay()] + ", " + mons[dt.getMonth()] + " " + dt.getDate();
+  }
+  function msShowHtml() {
+    if (!MORNING_SHOWS.length) return "";
+    var today = dayKeyOf(new Date());
+    var feat = MORNING_SHOWS[0];
+    var featLabel = feat.d === today ? "Today's show" : "Latest show";
+    var h = '<section class="ll-card ms-card" id="ms-card" aria-label="Hoot\'s Morning Show">' +
+      '<div class="ms-top"><span class="ms-sun" aria-hidden="true">\u2600\uFE0F</span>' +
+      '<div class="ms-tx"><b>Hoot\'s Morning Show</b><small>' + featLabel + " \u00B7 Letter " + esc(feat.letter) + " \u2014 " + esc(feat.note) + "</small></div>" +
+      '<button type="button" class="ms-bigplay" data-ms-play="' + feat.d + '" aria-label="Play ' + featLabel + ': Hoot\'s Morning Show"><span class="ms-ic" aria-hidden="true">\u25B6</span></button></div>';
+    if (MORNING_SHOWS.length > 1) {
+      h += '<div class="ms-past"><span class="ms-pastlabel">Past shows</span>' + MORNING_SHOWS.slice(1).map(function (s) {
+        return '<button type="button" class="ms-row" data-ms-play="' + s.d + '"><span class="ms-ic" aria-hidden="true">\u25B6</span><span class="ms-rowtx"><b>Letter ' + esc(s.letter) + "</b><small>" + msDayLabel(s.d) + " \u00B7 " + esc(s.note) + "</small></span></button>";
+      }).join("") + "</div>";
+    }
+    return h + "</section>";
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target && e.target.closest ? e.target.closest("[data-ms-play]") : null;
+    if (!t) return;
+    msToggle(t.getAttribute("data-ms-play"));
+  });
+
   function renderKidHome() {
     var p = state.profile, plan = currentPlan();
     rememberDay(plan);
@@ -849,6 +922,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
         (open ? '<button type="button" class="kh-big" data-kh-go="games" style="--b:#1D4ED8"><span aria-hidden="true">🎮</span><b>Play</b></button>' : lockBtn("🎮", "Play", "#1D4ED8")) +
         '<button type="button" class="kh-big" data-kh-go="stickers" style="--b:#BE185D"><span aria-hidden="true">📒</span><b>Stickers</b></button>' +
       "</div>";
+    html += msShowHtml(); /* Morning Show (2026-11-17): today's show + past shows */
     html += waveTodayHtml(); /* Wave C1: daily pick, Right Now chips, world map entry */
     html += wc2TodayHtml(); /* Wave C2: missions entry */
     html += we1TodayHtml(); /* Wave E1: Morning Hello + photo quest */
@@ -2811,6 +2885,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     try { if (window.__hootKidcVoice) window.__hootKidcVoice.stop(); } catch (e) {}
     try { if (window.HootStudy) window.HootStudy.stop(); } catch (e) {}
     try { if (window.__we1StopHello) window.__we1StopHello(); } catch (e) {}
+    try { if (window.__msStop) window.__msStop(); } catch (e) {}
   }
   function closeOverlay() {
     /* Wave B: a full exit clears the back stack (a restore in flight keeps it). */
