@@ -2436,3 +2436,17 @@ body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] b,body:not(.ll-teen) .wc2-en
 body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] .wc2-esub,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] .wc2-esub,body:not(.ll-teen) .wc2-entrybtn[data-we2-car] .wc2-esub{color:rgba(255,255,255,.9)}
 body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] .wc2-echev,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] .wc2-echev,body:not(.ll-teen) .wc2-entrybtn[data-we2-car] .wc2-echev{color:#fff}
 body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions]:active,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden]:active,body:not(.ll-teen) .wc2-entrybtn[data-we2-car]:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(23,38,59,.35)}
+/* Opened views BOLD pass (2026-11-17, Dawid: buttons approved — "now lets
+   work on how it looks once you click it"). The missions and garden views
+   now carry the same colour identity as their buttons: magenta for
+   missions, green for the garden, with chunkier accents throughout. */
+body:not(.ll-teen) .wc2-missions .wc-rnlead,body:not(.ll-teen) .wc2-missionview .wc-rnlead{background:#FDF0F5;border:3px solid #D6336C;color:#6E1239}
+body:not(.ll-teen) .wc2-missions .wc-rnitem .wc-rnemo{background:color-mix(in srgb,var(--dc,#E0457B) 14%,#fff);border:2.5px solid color-mix(in srgb,var(--dc,#E0457B) 38%,#fff);border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:28px}
+body:not(.ll-teen) .wc2-missions .wc2-prog{background:color-mix(in srgb,var(--dc,#E0457B) 16%,#fff);color:#333}
+body:not(.ll-teen) .wc-badge:not(.locked){background:#FFE9A8;border-color:#E9A13B;color:#6B4A00;box-shadow:0 3px 0 rgba(185,138,30,.35)}
+body:not(.ll-teen) .wc2-role{background:#FDF0F5;color:#BE185D;border:2px solid #F3B8D0;border-radius:999px;padding:3px 10px;align-self:flex-start;letter-spacing:.04em}
+body:not(.ll-teen) .we2-lead{border-color:#2E9E4F}
+body:not(.ll-teen) .we2-counts{background:#1B7A34;border-color:#1B7A34;color:#fff}
+body:not(.ll-teen) .we2-empty{border-color:#2E9E4F}
+body:not(.ll-teen) .we2-plot.seed{border-color:#2E9E4F}
+body:not(.ll-teen) .we2-plot.flower{border-color:#E0457B}
