@@ -4283,7 +4283,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   function wc2TodayHtml() {
     if (!state.profile) return "";
     return '<section class="ll-card wc2-today"><h2 class="todoh">🎖️ Together time</h2>' +
-      '<button type="button" class="wc2-entrybtn" data-wc2-missions="1">🎖️ <b>Co-op missions</b><span>Family missions with roles for everyone</span></button>' +
+      '<button type="button" class="wc2-entrybtn" data-wc2-missions="1"><span class="wc2-eemo" aria-hidden="true">🎖️</span><span class="wc2-etxt"><b>Co-op missions</b><span class="wc2-esub">Family missions with roles for everyone</span></span><span class="wc2-echev" aria-hidden="true">›</span></button>' +
       "</section>";
   }
 
@@ -5072,12 +5072,12 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (!state.profile) return "";
     var c = we2GardenCounts(state.profile.id);
     return '<section class="ll-card we2-today"><h2 class="todoh">🌸 Garden &amp; car</h2>' +
-      '<button type="button" class="wc2-entrybtn" data-we2-garden="1">🌸 <b>Oops Garden</b><span>' + (c.total ? (c.flowers + (c.flowers === 1 ? " flower" : " flowers") + " bloomed · " + c.seeds + (c.seeds === 1 ? " seed" : " seeds") + " waiting") : "See your seeds and flowers") + '</span></button>' +
-      '<button type="button" class="wc2-entrybtn" data-we2-car="1">🚗 <b>Car mode</b><span>Big-button listening for drives — set it up before you go</span></button></section>';
+      '<button type="button" class="wc2-entrybtn" data-we2-garden="1"><span class="wc2-eemo" aria-hidden="true">🌸</span><span class="wc2-etxt"><b>Oops Garden</b><span class="wc2-esub">' + (c.total ? (c.flowers + (c.flowers === 1 ? " flower" : " flowers") + " bloomed · " + c.seeds + (c.seeds === 1 ? " seed" : " seeds") + " waiting") : "See your seeds and flowers") + '</span></span><span class="wc2-echev" aria-hidden="true">›</span></button>' +
+      '<button type="button" class="wc2-entrybtn" data-we2-car="1"><span class="wc2-eemo" aria-hidden="true">🚗</span><span class="wc2-etxt"><b>Car mode</b><span class="wc2-esub">Big-button listening for drives — set it up before you go</span></span><span class="wc2-echev" aria-hidden="true">›</span></button></section>';
   }
   function we2CarEntryHtml() {
     if (isTeenBand(curBand())) return ""; /* Fix pass 5: car-mode mixes are little-kid clips — not on the teen side */
-    return '<section class="ll-card we2-games"><button type="button" class="wc2-entrybtn" data-we2-car="1">🚗 <b>Car mode</b><span>Listening mixes for drives — set it up before you go</span></button></section>';
+    return '<section class="ll-card we2-games"><button type="button" class="wc2-entrybtn" data-we2-car="1"><span class="wc2-eemo" aria-hidden="true">🚗</span><span class="wc2-etxt"><b>Car mode</b><span class="wc2-esub">Listening mixes for drives — set it up before you go</span></span><span class="wc2-echev" aria-hidden="true">›</span></button></section>';
   }
 
   /* ---------- 25 · Car mode ---------- */
