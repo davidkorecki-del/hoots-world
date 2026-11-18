@@ -860,9 +860,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var feat = MORNING_SHOWS[0];
     var featLabel = feat.d === today ? "Today's show" : "Latest show";
     var h = '<section class="ll-card ms-card" id="ms-card" aria-label="Hoot\'s Morning Show">' +
-      '<div class="ms-top"><span class="ms-sun" aria-hidden="true">\u2600\uFE0F</span>' +
-      '<div class="ms-tx"><b>Hoot\'s Morning Show</b><small>' + featLabel + " \u00B7 Letter " + esc(feat.letter) + " \u2014 " + esc(feat.note) + "</small></div>" +
-      '<button type="button" class="ms-bigplay" data-ms-play="' + feat.d + '" aria-label="Play ' + featLabel + ': Hoot\'s Morning Show"><span class="ms-ic" aria-hidden="true">\u25B6</span></button></div>';
+      '<button type="button" class="ms-go" data-ms-play="' + feat.d + '" aria-label="Play ' + featLabel + ': Hoot\'s Morning Show">' +
+      '<span class="ms-goemo" aria-hidden="true">\u2600\uFE0F</span>' +
+      '<span class="ms-gotx"><b>Morning Show</b><small>' + featLabel + " \u00B7 Letter " + esc(feat.letter) + " \u2014 " + esc(feat.note) + "</small></span>" +
+      '<i class="ms-ic" aria-hidden="true">\u25B6</i></button>';
     if (MORNING_SHOWS.length > 1) {
       h += '<div class="ms-past"><span class="ms-pastlabel">Past shows</span>' + MORNING_SHOWS.slice(1).map(function (s) {
         return '<button type="button" class="ms-row" data-ms-play="' + s.d + '"><span class="ms-ic" aria-hidden="true">\u25B6</span><span class="ms-rowtx"><b>Letter ' + esc(s.letter) + "</b><small>" + msDayLabel(s.d) + " \u00B7 " + esc(s.note) + "</small></span></button>";
@@ -875,6 +876,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (!t) return;
     msToggle(t.getAttribute("data-ms-play"));
   });
+  /* Dawid (2026-11-17): the show must not keep playing after the app is
+     closed or switched away from. */
+  document.addEventListener("visibilitychange", function () { if (document.hidden) msStop(); });
+  window.addEventListener("pagehide", function () { msStop(); });
 
   function renderKidHome() {
     var p = state.profile, plan = currentPlan();
