@@ -2355,20 +2355,24 @@ body.lib-book-open #ll-obody { padding: 0; background: radial-gradient(110% 70% 
 .lib-tutnotetext { margin: 0 0 10px; line-height: 1.55; font-size: 1rem; color: #44403a; }
 .lib-reader.lib-teen .lib-tutnote { width: 100%; box-sizing: border-box; }
 
-/* Morning Show card (2026-11-17) */
-.ms-card { background: linear-gradient(180deg, #FFF7D6, #FFE9A8); border: 3px solid #F5B301; border-radius: 24px; padding: 14px 16px; margin: 12px 0; box-shadow: 0 4px 0 #E09F00; }
-.ms-top { display: flex; align-items: center; gap: 12px; }
-.ms-sun { font-size: 2.2rem; }
-.ms-tx { flex: 1; display: flex; flex-direction: column; }
-.ms-tx b { font-size: 1.25rem; color: #7A4A00; }
-.ms-tx small { color: #9A6A12; font-size: .85rem; }
-.ms-bigplay { flex: 0 0 auto; width: 64px; height: 64px; border-radius: 50%; border: none; background: #F5B301; color: #fff; font-size: 1.6rem; box-shadow: 0 4px 0 #C77F00; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.ms-bigplay.playing { background: #E07B00; }
-.ms-past { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-.ms-pastlabel { font-size: .8rem; font-weight: 700; color: #9A6A12; text-transform: uppercase; letter-spacing: .04em; }
-.ms-row { display: flex; align-items: center; gap: 10px; text-align: left; background: #FFFDF4; border: 2px solid #F0C75E; border-radius: 16px; padding: 8px 12px; cursor: pointer; width: 100%; }
-.ms-row .ms-ic { width: 34px; height: 34px; border-radius: 50%; background: #F5B301; color: #fff; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex: 0 0 auto; }
-.ms-row.playing .ms-ic { background: #E07B00; }
+/* Morning Show card (2026-11-17; Go-button restyle same evening) */
+.ms-card { background: transparent; border: none; box-shadow: none; padding: 0; margin: 14px 0; }
+.ms-go { display: flex; align-items: center; justify-content: center; gap: 14px; width: min(100%, 560px); margin: 0 auto; min-height: 104px; padding: 10px 22px; border: 5px solid #17263b; border-radius: 999px; background: #FFD93B; color: #17263b; font: inherit; cursor: pointer; box-shadow: 0 8px 0 #17263b; animation: khGoPulse 1.8s ease-in-out infinite; }
+.ms-go:active { transform: translateY(6px); box-shadow: 0 2px 0 #17263b; }
+.ms-go.playing { animation: none; }
+.ms-goemo { font-size: 3rem; line-height: 1; }
+.ms-gotx { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+.ms-gotx b { font-size: 2rem; font-weight: 900; letter-spacing: .02em; line-height: 1.05; }
+.ms-gotx small { font-size: .95rem; font-weight: 700; color: #5b4a00; }
+.ms-go .ms-ic { font-style: normal; font-size: 1.9rem; width: 60px; height: 60px; border-radius: 50%; background: #17263b; color: #FFD93B; display: grid; place-items: center; flex: 0 0 auto; }
+.ms-go.playing .ms-ic { background: #E07B00; color: #fff; }
+@media (max-width: 480px) { .ms-go { min-height: 88px; gap: 10px; padding: 8px 16px; } .ms-gotx b { font-size: 1.55rem; } .ms-goemo { font-size: 2.3rem; } .ms-go .ms-ic { width: 48px; height: 48px; font-size: 1.4rem; } }
+@media (prefers-reduced-motion: reduce) { .ms-go { animation: none; } }
+.ms-past { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ms-pastlabel { font-size: .8rem; font-weight: 800; color: #17263b; text-transform: uppercase; letter-spacing: .04em; }
+.ms-row { display: flex; align-items: center; gap: 10px; text-align: left; background: #fff; border: 3px solid #17263b; border-radius: 16px; padding: 8px 12px; cursor: pointer; width: 100%; }
+.ms-row .ms-ic { width: 34px; height: 34px; border-radius: 50%; background: #FFD93B; color: #17263b; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex: 0 0 auto; }
+.ms-row.playing .ms-ic { background: #E07B00; color: #fff; }
 .ms-rowtx { display: flex; flex-direction: column; }
-.ms-rowtx b { color: #7A4A00; }
-.ms-rowtx small { color: #9A6A12; }
+.ms-rowtx b { color: #17263b; }
+.ms-rowtx small { color: #6b7280; }
