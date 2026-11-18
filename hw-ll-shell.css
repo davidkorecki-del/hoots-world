@@ -2376,3 +2376,12 @@ body.lib-book-open #ll-obody { padding: 0; background: radial-gradient(110% 70% 
 .ms-rowtx { display: flex; flex-direction: column; }
 .ms-rowtx b { color: #17263b; }
 .ms-rowtx small { color: #6b7280; }
+
+/* Books I've read — collapsible shelf (2026-11-17) */
+.lib-readtoggle { display: flex; align-items: center; gap: 10px; width: 100%; margin: 12px 0 8px; padding: 12px 14px; border: 3px solid #0B8A5F; border-radius: 16px; background: #effaf1; font: inherit; cursor: pointer; text-align: left; }
+.lib-readtoggle:active { transform: translateY(1px); }
+.lib-readtitle { font-weight: 800; font-size: 1.05rem; color: #14532D; flex: 1; }
+.lib-readcount { background: #0B8A5F; color: #fff; border-radius: 999px; padding: 2px 10px; font-size: .85rem; font-weight: 700; white-space: nowrap; }
+.lib-readchev { font-size: 1.1rem; color: #0B8A5F; }
+.lib-readshelf { margin: 0 0 6px; }
+.lib-readshelf[hidden] { display: none; }
