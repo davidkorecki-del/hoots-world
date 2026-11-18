@@ -2424,3 +2424,15 @@ body:not(.ll-teen) .we2-plot.seed{background:#F4FBF1;border-color:#9ED09E;box-sh
    the blanket ink rule, same pattern as the 3e19 recap fix. */
 #ll-obody .we2-car-note{color:#E8EEFB !important}
 #ll-obody .we2-prepstat{color:#C9D4EA !important}
+/* Together time + Garden & car BOLD pass (2026-11-17, Dawid: the disc
+   restyle still read "very similar" — same pale palette). The entry buttons
+   now use the app's hero language: saturated colour blocks like the big
+   Learn/Play/Stickers buttons, white text, chunky navy outline. */
+body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions]{background:linear-gradient(135deg,#D6336C,#BE185D);border-color:#17263B;box-shadow:0 6px 0 rgba(23,38,59,.35)}
+body:not(.ll-teen) .wc2-entrybtn[data-we2-garden]{background:linear-gradient(135deg,#2E9E4F,#1B7A34);border-color:#17263B;box-shadow:0 6px 0 rgba(23,38,59,.35)}
+body:not(.ll-teen) .wc2-entrybtn[data-we2-car]{background:linear-gradient(135deg,#2B6CEA,#1D4ED8);border-color:#17263B;box-shadow:0 6px 0 rgba(23,38,59,.35)}
+body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] .wc2-eemo,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] .wc2-eemo,body:not(.ll-teen) .wc2-entrybtn[data-we2-car] .wc2-eemo{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.55)}
+body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] b,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] b,body:not(.ll-teen) .wc2-entrybtn[data-we2-car] b{color:#fff}
+body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] .wc2-esub,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] .wc2-esub,body:not(.ll-teen) .wc2-entrybtn[data-we2-car] .wc2-esub{color:rgba(255,255,255,.9)}
+body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions] .wc2-echev,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] .wc2-echev,body:not(.ll-teen) .wc2-entrybtn[data-we2-car] .wc2-echev{color:#fff}
+body:not(.ll-teen) .wc2-entrybtn[data-wc2-missions]:active,body:not(.ll-teen) .wc2-entrybtn[data-we2-garden]:active,body:not(.ll-teen) .wc2-entrybtn[data-we2-car]:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(23,38,59,.35)}
