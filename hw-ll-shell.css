@@ -2385,3 +2385,42 @@ body.lib-book-open #ll-obody { padding: 0; background: radial-gradient(110% 70% 
 .lib-readchev { font-size: 1.1rem; color: #0B8A5F; }
 .lib-readshelf { margin: 0 0 6px; }
 .lib-readshelf[hidden] { display: none; }
+
+/* Together time + Garden & car bubbly pass (2026-11-17) */
+.wc2-entrybtn .wc2-eemo{flex:none;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:27px;line-height:1;margin:0;text-align:center;background:#EDF0F4;border:2px solid #D8E0F0}
+.wc2-entrybtn .wc2-etxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;margin:0;text-align:left}
+.wc2-entrybtn .wc2-esub{margin:0;text-align:left;font-size:.92rem;font-weight:600;line-height:1.3}
+.wc2-entrybtn .wc2-echev{flex:none;margin:0;font-size:1.7rem;font-weight:800;line-height:1;color:#B9C4D4}
+body:not(.ll-teen) .wc2-entrybtn .wc2-eemo{background:#FFE9A8;border:2.5px solid rgba(23,38,59,.16)}
+body:not(.ll-teen) .wc2-entrybtn[data-we2-garden] .wc2-eemo{background:#FFD9E8}
+body:not(.ll-teen) .wc2-entrybtn[data-we2-car] .wc2-eemo{background:#CFE8FF}
+body:not(.ll-teen) .wc2-entrybtn .wc2-esub{color:#6B5636}
+body:not(.ll-teen) .wc2-entrybtn .wc2-echev{color:#8A97A8}
+body.ll-teen .wc2-entrybtn .wc2-eemo{width:44px;height:44px;font-size:22px;border-radius:12px}
+body.ll-teen .wc2-entrybtn .wc2-echev{display:none}
+body:not(.ll-teen) .wc2-missions .wc-rnlead,body:not(.ll-teen) .wc2-missionview .wc-rnlead{background:#FFF6DE;border:3px solid #F0D48A;border-radius:20px;padding:12px 14px;color:#5B4A12}
+body:not(.ll-teen) .wc2-sech{font-size:1.28rem;font-weight:800;margin:20px 0 10px}
+body:not(.ll-teen) .wc-badge{padding:10px 14px;font-size:.95rem;box-shadow:0 3px 0 rgba(185,138,30,.22)}
+body:not(.ll-teen) .wc-badge.locked{box-shadow:0 3px 0 rgba(31,33,51,.08);color:#5B6B82}
+body:not(.ll-teen) .wc2-step{border:3px solid #D8E2F0;border-radius:22px;padding:14px;box-shadow:0 4px 0 rgba(23,38,59,.08)}
+body:not(.ll-teen) .wc2-stepn{width:44px;height:44px;background:#FFD93B;color:#17263B;font-size:1.12rem}
+body:not(.ll-teen) .wc2-step.done{border-color:#9ED09E;background:#F4FBF1}
+body:not(.ll-teen) .wc2-step.done .wc2-stepn{background:#0B8A5F;color:#fff}
+body:not(.ll-teen) .wc2-stepmain b{font-size:1.12rem}
+body:not(.ll-teen) .wc2-qcard{border:3px solid #D8E2F0;border-left:8px solid var(--dc,#3A56D4);border-radius:22px;padding:14px;box-shadow:0 4px 0 rgba(23,38,59,.08)}
+body:not(.ll-teen) .wc2-tib{border:2.5px solid #F0D48A;border-radius:14px}
+body:not(.ll-teen) .we2-lead{background:#EFFAF1;border:3px solid #BEE3B0;border-radius:20px;padding:12px 14px;color:#14532D;font-size:1.04rem}
+body:not(.ll-teen) .we2-empty{background:#fff;border:3px dashed #9ED09E;border-radius:22px;padding:20px 16px;text-align:center;font-size:1.05rem;color:#14532D}
+body:not(.ll-teen) .we2-counts{display:inline-block;background:#EFFAF1;border:2.5px solid #BEE3B0;border-radius:999px;padding:6px 14px}
+body:not(.ll-teen) .we2-h{font-size:1.28rem;font-weight:800}
+body:not(.ll-teen) .we2-plot{border:3px solid #E9C46A;border-radius:20px;padding:12px 14px;box-shadow:0 4px 0 rgba(120,90,20,.10)}
+body:not(.ll-teen) .we2-plot.flower{background:#FDF0F5;border-color:#E88BB4;box-shadow:0 4px 0 rgba(190,80,130,.14)}
+body:not(.ll-teen) .we2-plot.seed{background:#F4FBF1;border-color:#9ED09E;box-shadow:0 4px 0 rgba(46,110,40,.12)}
+.we2-car{border-radius:24px}
+.we2-car-note{color:#E8EEFB;font-weight:600}
+.we2-player{border-radius:22px;border-width:2px}
+.we2-mix{border:2px solid #2A3A5F;border-radius:20px}
+/* Car mode is a dark component inside #ll-obody: keep its light text against
+   the blanket ink rule, same pattern as the 3e19 recap fix. */
+#ll-obody .we2-car-note{color:#E8EEFB !important}
+#ll-obody .we2-prepstat{color:#C9D4EA !important}
