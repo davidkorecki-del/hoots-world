@@ -5420,6 +5420,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
     return '<div class="lib-case"><h4 class="lib-caseh">' + title + '</h4>' + rows.join("") + "</div>";
   }
+  var libReadOpen = false;
   function libSectionHtml() {
     var p = state.profile; if (!p) return "";
     var read = libReadMap(p.id);
@@ -5427,6 +5428,16 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var shelf = readBooks.length
       ? '<div class="lib-shelf">' + readBooks.map(function (b) { return '<button type="button" class="lib-chip" data-lib-open="' + b.id + '"><span aria-hidden="true">' + b.emo + '</span> ' + esc(b.title) + ' <span class="lib-done">✓</span></button>'; }).join("") + "</div>"
       : '<p class="lib-none">No books finished yet — pick one from a bookcase and read it to the end!</p>';
+    /* Dawid (2026-11-17): the read shelf sat open at the top and pushed the
+       whole library down as it grew. Now it starts tucked away behind a
+       button with the count; tap to open it. */
+    var readSection = !readBooks.length
+      ? '<h4 class="lib-sh">Books I\'ve read</h4>' + shelf
+      : '<button type="button" class="lib-readtoggle" data-lib-read-toggle aria-expanded="' + (libReadOpen ? "true" : "false") + '">' +
+          '<span class="lib-readtitle">\uD83D\uDCDA Books I\'ve read</span>' +
+          '<span class="lib-readcount">' + readBooks.length + (readBooks.length === 1 ? " book" : " books") + '</span>' +
+          '<span class="lib-readchev" aria-hidden="true">' + (libReadOpen ? "\u25BE" : "\u25B8") + '</span></button>' +
+        '<div class="lib-readshelf"' + (libReadOpen ? "" : " hidden") + '>' + shelf + '</div>';
     var home = libHomeList(p.id);
     var homeCards = home.map(function (h) {
       return '<div class="lib-homebook" data-lib-search="' + esc((h.title + " " + (h.author || "")).toLowerCase()) + '">' +
@@ -5478,7 +5489,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       '<p class="lib-sub">' + (libBand() === "teen" ? "Tap a book — it comes off the shelf and opens. Finish it and it joins your read shelf." : "Tap a book — it comes off the shelf, opens up, and Hoot reads it with you!") + '</p>' +
       tonightHtml +
       '<label class="lib-searchwrap"><span aria-hidden="true">🔎</span><input type="search" class="lib-search" data-lib-search-input placeholder="Search by book name or author…" aria-label="Search books by name or author"></label>' +
-      '<h4 class="lib-sh">Books I\'ve read</h4>' + shelf +
+      readSection +
       libCaseHtml("📖 Our Storybooks", libCatalog("ours"), read) +
       libCaseHtml("🏛️ Classic Books", libCatalog("classic"), read) +
       kaitlynCase +
@@ -5725,6 +5736,15 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   document.addEventListener("click", function (e) {
     var t = e.target; if (!t || !t.closest) return;
     if (Date.now() < libSwipeSwallowUntil && t.closest("[data-lib-page]")) return;
+    var rt = t.closest("[data-lib-read-toggle]");
+    if (rt) {
+      libReadOpen = !libReadOpen;
+      var rsh = rt.parentElement ? rt.parentElement.querySelector(".lib-readshelf") : null;
+      if (rsh) rsh.hidden = !libReadOpen;
+      rt.setAttribute("aria-expanded", libReadOpen ? "true" : "false");
+      var rcv = rt.querySelector(".lib-readchev"); if (rcv) rcv.textContent = libReadOpen ? "\u25BE" : "\u25B8";
+      return;
+    }
     var open = t.closest("[data-lib-open]");
     if (open) { openBook(open.getAttribute("data-lib-open")); return; }
     var ob = t.closest("[data-lib-openbook]");
