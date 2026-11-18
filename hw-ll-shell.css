@@ -2354,3 +2354,21 @@ body.lib-book-open #ll-obody { padding: 0; background: radial-gradient(110% 70% 
 .lib-tutnoteh { margin: 0 0 4px; font-weight: 800; color: #5b4a9e; }
 .lib-tutnotetext { margin: 0 0 10px; line-height: 1.55; font-size: 1rem; color: #44403a; }
 .lib-reader.lib-teen .lib-tutnote { width: 100%; box-sizing: border-box; }
+
+/* Morning Show card (2026-11-17) */
+.ms-card { background: linear-gradient(180deg, #FFF7D6, #FFE9A8); border: 3px solid #F5B301; border-radius: 24px; padding: 14px 16px; margin: 12px 0; box-shadow: 0 4px 0 #E09F00; }
+.ms-top { display: flex; align-items: center; gap: 12px; }
+.ms-sun { font-size: 2.2rem; }
+.ms-tx { flex: 1; display: flex; flex-direction: column; }
+.ms-tx b { font-size: 1.25rem; color: #7A4A00; }
+.ms-tx small { color: #9A6A12; font-size: .85rem; }
+.ms-bigplay { flex: 0 0 auto; width: 64px; height: 64px; border-radius: 50%; border: none; background: #F5B301; color: #fff; font-size: 1.6rem; box-shadow: 0 4px 0 #C77F00; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.ms-bigplay.playing { background: #E07B00; }
+.ms-past { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.ms-pastlabel { font-size: .8rem; font-weight: 700; color: #9A6A12; text-transform: uppercase; letter-spacing: .04em; }
+.ms-row { display: flex; align-items: center; gap: 10px; text-align: left; background: #FFFDF4; border: 2px solid #F0C75E; border-radius: 16px; padding: 8px 12px; cursor: pointer; width: 100%; }
+.ms-row .ms-ic { width: 34px; height: 34px; border-radius: 50%; background: #F5B301; color: #fff; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex: 0 0 auto; }
+.ms-row.playing .ms-ic { background: #E07B00; }
+.ms-rowtx { display: flex; flex-direction: column; }
+.ms-rowtx b { color: #7A4A00; }
+.ms-rowtx small { color: #9A6A12; }
