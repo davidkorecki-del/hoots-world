@@ -2520,3 +2520,42 @@ body:not(.ll-teen) .we2-plot.flower{border-color:#E0457B}
   #profile-gate .gate-title-ll{font-size:36px}
   #profile-gate .gate-panel h2{font-size:23px !important}
 }
+
+/* Guided Story Path (author shelf pass 2) */
+.ws2-trail { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
+.ws2-step { font: inherit; font-size: .88rem; font-weight: 700; border-radius: 999px; padding: 5px 12px; background: #faf7ef; border: 2px solid #d9d2c4; color: #8a8172; }
+button.ws2-step { cursor: pointer; }
+.ws2-step.done { background: #e7f7ec; border-color: #2e9e5b; color: #1e6b3c; }
+.ws2-step.on { background: #5b4a9e; border-color: #5b4a9e; color: #fff; }
+.ws2-arrow { color: #b6ad99; font-weight: 700; }
+.ws2-card { background: #fff; border: 2px solid #e3ddcf; border-radius: 14px; padding: 12px 14px; margin: 10px 0; }
+.ws2-card p { margin: 8px 0 10px; line-height: 1.55; color: #44403a; }
+.ws2-cardtop { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ws2-cardtop b { font-size: 1.02rem; flex: 1; min-width: 140px; }
+.ws2-emo { font-size: 1.5rem; }
+.ws2-hear { font-size: .85rem; padding: 4px 10px; }
+.ws2-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.ws2-in { width: 100%; box-sizing: border-box; font: inherit; padding: 9px 12px; border: 2px solid #d9d2c4; border-radius: 12px; background: #fff; margin: 0 0 10px; }
+.ws2-map { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 14px; }
+.ws2-mapcard { font: inherit; text-align: left; background: #fff; border: 2px solid #e3ddcf; border-radius: 14px; padding: 12px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+.ws2-mapcard b { font-size: 1rem; color: #5b4a9e; }
+.ws2-mapcard span { line-height: 1.5; color: #44403a; }
+.ws2-mapcard small { color: #5a5348; font-weight: 700; }
+.ws2-map.mini { margin: 0 0 12px; }
+.ws2-change { margin: 0 0 12px; }
+.ws2-byline { color: #5a5348; font-weight: 400; font-size: .95rem; }
+.ws2-expage { background: #fffdf7; border: 2px solid #e3ddcf; border-radius: 14px; padding: 16px; }
+.ws2-extext { font-size: 1.15rem; line-height: 1.65; margin: 0 0 6px; color: #33302a; }
+.ws2-secret { background: #f4f0ff; border: 2px solid #cfc4ee; border-radius: 12px; padding: 10px 14px; margin: 12px 0; line-height: 1.55; }
+.ws2-secret p { margin: 0; }
+.ws2-job { background: #fff8e1; border: 2px solid #f0d48a; border-radius: 14px; padding: 12px 14px; margin: 0 0 12px; }
+.ws2-jobhead { margin: 0 0 4px; font-weight: 800; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ws2-jobgoal { margin: 0 0 10px; line-height: 1.55; color: #44403a; }
+.ws2-starters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.ws2-slab { font-weight: 700; color: #5a5348; font-size: .92rem; }
+.ws2-starter { font: inherit; font-size: .95rem; text-align: left; background: #fff; border: 2px dashed #b6ad99; border-radius: 10px; padding: 7px 11px; cursor: pointer; line-height: 1.4; }
+.ws2-starter:active { background: #f4f0ff; }
+.ws2-stuckbtn { margin-top: 4px; }
+.ws2-stuckpanel { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ws2-titlebtn { margin: 0 0 10px; }
+.ws2-titleidea { font-size: 1.2rem; font-weight: 700; color: #33302a; }
