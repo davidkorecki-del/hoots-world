@@ -809,6 +809,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
      and drops its mp3 at assets/voice/show-<date>.mp3. Little profiles
      only (this renders inside renderKidHome). --- */
   var MORNING_SHOWS = [
+    { d: "2026-11-19", letter: "K", note: "K is for Kite" },
     { d: "2026-11-18", letter: "M", note: "M is for Mama" },
     { d: "2026-11-17", letter: "S", note: "S is for Sun" },
     { d: "2026-11-16", letter: "F", note: "F is for Frost" }
