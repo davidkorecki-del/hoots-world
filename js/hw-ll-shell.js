@@ -6189,6 +6189,36 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       { t: "Red leather, yellow leather.", c: ["Red leather,", "yellow leather."] },
       { t: "She sells seashells by the seashore.", c: ["She sells seashells", "by the seashore."] },
       { t: "Peter Piper picked a pepper.", c: ["Peter Piper", "picked a pepper."] }
+    ] },
+    { id: "hard-words-1", kind: "words", title: "Hard words: everyday", sub: "One word at a time — hear it in pieces, then whole", lines: [
+      { t: "Paparazzi.", c: ["Papa", "Paparazzi"] },
+      { t: "Definitely.", c: [] },
+      { t: "Library.", c: ["Li", "Library"] },
+      { t: "February.", c: ["Feb", "February"] },
+      { t: "Wednesday.", c: ["Wednes", "day"] },
+      { t: "Comfortable.", c: ["Comfort", "able"] },
+      { t: "Chocolate.", c: ["Choco", "late"] },
+      { t: "Vegetable.", c: [] }
+    ] },
+    { id: "hard-words-2", kind: "words", title: "Hard words: school", sub: "School words, one piece at a time", lines: [
+      { t: "Photosynthesis.", c: ["Photo", "synthesis"] },
+      { t: "Ecosystem.", c: [] },
+      { t: "Constitution.", c: ["Consti", "Constitution"] },
+      { t: "Multiplication.", c: ["Multi", "Multiplication"] },
+      { t: "Denominator.", c: [] },
+      { t: "Equivalent.", c: ["Equiv", "Equivalent"] },
+      { t: "Temperature.", c: ["Temper", "ature"] },
+      { t: "Experiment.", c: [] }
+    ] },
+    { id: "hard-words-3", kind: "words", title: "Hard words: long ones", sub: "Long words that tangle everyone's tongue", lines: [
+      { t: "Unfortunately.", c: ["Un", "fortunately"] },
+      { t: "Particularly.", c: ["Partic", "Particularly"] },
+      { t: "Embarrassed.", c: [] },
+      { t: "Necessary.", c: [] },
+      { t: "Occasionally.", c: ["Occasion", "ally"] },
+      { t: "Specific.", c: [] },
+      { t: "Statistics.", c: [] },
+      { t: "Rhinoceros.", c: ["Rhino", "Rhinoceros"] }
     ] }
   ];
   var ecState = null, ecRec = null, ecRecUrl = null, ecAudio = null, ecRecTimer = null;
@@ -6230,7 +6260,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   function ecHomeHtml() {
     var cards = EC_SETS.map(function (s, i) {
       return '<div class="ws-seed"><b>' + esc(s.title) + "</b><p>" + esc(s.sub) + "</p>" +
-        '<p class="ws-seedfirst">' + s.lines.length + " lines</p>" +
+        '<p class="ws-seedfirst">' + s.lines.length + (s.kind === "words" ? " words" : " lines") + "</p>" +
         '<button type="button" class="ll-btn pri" data-ec-act="set" data-set="' + i + '">Start</button></div>';
     }).join("");
     return '<section class="ws-wrap ec-wrap">' +
@@ -6243,15 +6273,15 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var set = EC_SETS[ecState.set], L = ecLine();
     var inChunk = ecState.mode === "chunk";
     var h = '<section class="ws-wrap ec-wrap">' +
-      '<p class="ec-crumb">' + esc(set.title) + " · Line " + (ecState.line + 1) + " of " + set.lines.length +
+      '<p class="ec-crumb">' + esc(set.title) + (set.kind === "words" ? " · Word " : " · Line ") + (ecState.line + 1) + " of " + set.lines.length +
       (inChunk ? " · Piece " + (ecState.chunk + 1) + " of " + L.c.length : "") + "</p>" +
       '<div class="ec-linebox"><p class="ec-line">' + esc(ecTargetText()) + "</p>" +
-      (inChunk ? '<p class="ec-fullline">The whole line: “' + esc(L.t) + "”</p>" : "") + "</div>";
+      (inChunk ? '<p class="ec-fullline">' + (set.kind === "words" ? "The whole word: " : "The whole line: ") + "“" + esc(L.t) + "”</p>" : "") + "</div>";
     if (ecState.note) h += '<p class="ws-banner">' + esc(ecState.note) + "</p>";
     h += '<div class="ec-btnrow">' +
       '<button type="button" class="ll-btn pri" data-ec-act="hear">🔊 Hear your tutor</button>' +
       (!inChunk && L.c.length ? '<button type="button" class="ll-btn" data-ec-act="chunks">🐌 Piece by piece</button>' : "") +
-      (inChunk ? '<button type="button" class="ll-btn" data-ec-act="whole">Whole line</button>' : "") +
+      (inChunk ? '<button type="button" class="ll-btn" data-ec-act="whole">' + (set.kind === "words" ? "Whole word" : "Whole line") + "</button>" : "") +
       "</div>" +
       '<div class="ec-btnrow">' +
       (ecRec
@@ -6262,8 +6292,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (ecState.hasRec) h += '<p class="ec-compare">Listen to yourself, then hear your tutor once more — notice how close you are. Try again as many times as you like.</p>';
     var nav = "";
     if (inChunk && ecState.chunk < L.c.length - 1) nav = '<button type="button" class="ll-btn pri" data-ec-act="nextchunk">Next piece →</button>';
-    else if (inChunk) nav = '<button type="button" class="ll-btn pri" data-ec-act="whole">Now the whole line →</button>';
-    else if (ecState.line < set.lines.length - 1) nav = '<button type="button" class="ll-btn pri" data-ec-act="next">Next line →</button>';
+    else if (inChunk) nav = '<button type="button" class="ll-btn pri" data-ec-act="whole">Now the whole ' + (set.kind === "words" ? "word" : "line") + ' →</button>';
+    else if (ecState.line < set.lines.length - 1) nav = '<button type="button" class="ll-btn pri" data-ec-act="next">Next ' + (set.kind === "words" ? "word" : "line") + ' →</button>';
     else nav = '<button type="button" class="ll-btn pri" data-ec-act="finish">✓ Finish</button>';
     h += '<div class="ec-btnrow ec-nav">' + nav +
       '<button type="button" class="ll-btn" data-ec-act="sets">↩ All practice sets</button>' +
