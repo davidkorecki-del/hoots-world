@@ -2029,6 +2029,8 @@
       .sync-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
       .sync-btn{ border:none; background:#0b7c7b; color:#fff; font-family:"Fredoka",sans-serif; font-weight:600; font-size:1rem; padding:12px 20px; border-radius:999px; cursor:pointer; min-height:48px; }
       .sync-btn:active{ transform:translateY(2px); }
+      .ht-parents{ position:relative; }
+      .ht-parents.sync-dot::after{ content:""; position:absolute; top:10px; right:10px; width:13px; height:13px; border-radius:50%; background:#ff5d8f; border:2px solid #ffffff; box-shadow:0 1px 4px rgba(0,0,0,.25); }
       .sync-btn.secondary{ background:#17263b; }
       .sync-btn.quiet{ background:transparent; color:inherit; opacity:.6; font-family:inherit; font-weight:700; font-size:.88rem; padding:8px 6px; min-height:40px; text-decoration:underline; margin-top:6px; }
       .sync-join{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
@@ -13687,6 +13689,45 @@
         readStores();
         render();
         reconcile();
+      })();
+    </script>
+    <script>
+      /* Family Sync discoverability: until this device has a family code
+         (or a signed-in family account), the Family Sync section sits at
+         the very top of the Parents page and every Parents tile carries
+         a dot — a brand-new device (Mum's phone, the iPad) should not
+         have to hunt for where the code goes. Once a code is set, the
+         dot clears; the section stays where it was lifted to. */
+      (function(){
+        "use strict";
+        function hasSync(){
+          try{
+            if(window.HootAccount && window.HootAccount.active && window.HootAccount.active()) return true;
+            return !!window.localStorage.getItem("hootworld.familycode.v1");
+          }catch(e){ return false; }
+        }
+        function clearDots(){
+          var tiles = document.querySelectorAll(".ht-parents.sync-dot");
+          for(var i = 0; i < tiles.length; i++) tiles[i].classList.remove("sync-dot");
+        }
+        function apply(){
+          if(hasSync()){ clearDots(); return; }
+          var sec = document.getElementById("family-sync");
+          if(sec && sec.parentNode){
+            var first = sec.parentNode.querySelector(".prof-settings:not(#family-sync)");
+            if(first && first !== sec) sec.parentNode.insertBefore(sec, first);
+          }
+          var tiles = document.querySelectorAll(".ht-parents");
+          for(var i = 0; i < tiles.length; i++) tiles[i].classList.add("sync-dot");
+          var has = document.getElementById("sync-hascode");
+          if(has && window.MutationObserver && !has.__dotWatch){
+            has.__dotWatch = true;
+            new MutationObserver(function(){ if(!has.hidden) clearDots(); }).observe(has, { attributes:true, attributeFilter:["hidden"] });
+          }
+        }
+        if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", apply);
+        else apply();
+        setTimeout(apply, 1600);
       })();
     </script>
 <script>
