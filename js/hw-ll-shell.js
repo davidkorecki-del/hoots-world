@@ -5908,6 +5908,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     else if (wsState.stage === "seeds") html = wsSeedsHtml();
     else if (wsState.stage === "editor") html = wsEditorHtml();
     else if (wsState.stage === "help") html = wsHelpHtml();
+    else if (wsState.stage === "path") html = wsPathHtml();
+    else if (wsState.stage === "example") html = wsExampleHtml();
+    else if (wsState.stage === "ending") html = wsEndingHtml();
+    else if (wsState.stage === "titlehelp") html = wsTitleHelpHtml();
     else if (wsState.stage === "submit") html = wsSubmitHtml();
     else if (wsState.stage === "confirmdel") html = wsConfirmDelHtml();
     body.innerHTML = html;
@@ -5926,7 +5930,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
   }
   function wsOpenStudio() {
-    wsState = { stage: "home", draftId: null, page: 0, tipIdx: -1, encIdx: 0, helpId: null, banner: null, showTip: false };
+    wsState = { stage: "home", draftId: null, page: 0, tipIdx: -1, encIdx: 0, helpId: null, banner: null, showTip: false, step: 0, expage: 0, stuck: false, exFrom: "home" };
     nextView = { kind: "studio", title: "My Writing Studio" };
     openShellOverlay("✒️ My Writing Studio", "");
     wsRender();
@@ -5951,7 +5955,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     return '<section class="ws-wrap">' +
       (wsState.banner ? '<p class="ws-banner">' + esc(wsState.banner) + "</p>" : "") +
       '<p class="ws-intro">This is your studio, Kaitlyn. Write your own stories, one page at a time — your tutor is here with sparks, tips and help whenever you want them.</p>' +
-      '<div class="ws-topbtns"><button type="button" class="ll-btn pri" data-ws-act="new">✨ Start a new story</button>' +
+      '<div class="ws-topbtns"><button type="button" class="ll-btn pri" data-ws-act="new">✨ Start a new story — guided</button>' +
+      '<button type="button" class="ll-btn" data-ws-act="example">📖 Tutor\'s example book</button>' +
       '<button type="button" class="ll-btn" data-ws-act="seeds">🌱 Story sparks</button></div>' +
       (rows ? '<div class="ws-list">' + rows + "</div>" : '<p class="ws-none">No stories yet. Tap “Start a new story”, or pick a spark and let it pull you in.</p>') +
       '<div class="ws-foot"><button type="button" class="ll-btn" data-ws-act="done">✓ Done for now</button></div></section>';
@@ -5997,10 +6002,13 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     else if (st === "submitted") head = '<p class="ws-banner">📮 This story is with your tutor. She is reading every page, writing your notes, painting your cover and recording it aloud. It is resting now — tap Unsend if you want to change it.</p>';
     return '<section class="ws-wrap ws-editor">' +
       (wsState.banner ? '<p class="ws-banner">' + esc(wsState.banner) + "</p>" : "") + head + tip +
+      wsGuideHtml(d) +
       '<label class="ws-lab">Story title</label>' +
       '<input type="text" class="ws-title" data-ws-title maxlength="80" placeholder="Give your story a title…" value="' + esc(d.title || "") + '"' + (locked ? " disabled" : "") + ">" +
+      (locked ? "" : '<button type="button" class="ll-btn ws2-titlebtn" data-ws-act="titlehelp">💡 Help me title it</button>') +
       '<div class="ws-pagestrip"><span>Page ' + (page + 1) + " of " + d.pages.length + '</span>' + (dots ? '<span class="lib-dots">' + dots + "</span>" : "") +
       '<span data-ws-count>' + String(d.pages[page] || "").length + " / " + WS_MAX_CHARS + " letters</span></div>" +
+      wsJobHtml(d, page, locked) +
       '<textarea class="ws-page" data-ws-page rows="10" maxlength="' + WS_MAX_CHARS + '" placeholder="Write this page of your story…"' + (locked ? " disabled" : "") + ">" + esc(d.pages[page] || "") + "</textarea>" +
       '<div class="ws-nav">' +
       (page > 0 ? '<button type="button" class="ll-btn" data-ws-act="prev">← Prev page</button>' : "<span></span>") +
@@ -6069,8 +6077,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var draftId = el && el.getAttribute ? el.getAttribute("data-draft") : null;
     if (act === "open") { wsOpenStudio(); return; }
     if (act === "done") { goBack(); return; }
+    if (ws2Act(act, el)) return;
     if (act === "home") { wsState.stage = "home"; wsState.banner = null; wsRender(); return; }
-    if (act === "new") { wsNewDraft(null); return; }
+    if (act === "new") { wsStartGuided(); return; }
     if (act === "seeds") { wsState.stage = "seeds"; wsRender(); wsSay("tut-ws-seeds"); return; }
     if (act === "seedcat") { wsSay("tut-ws-seed-" + el.getAttribute("data-cat")); return; }
     if (act === "useseed") {
@@ -6078,7 +6087,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       if (seed) wsNewDraft(seed);
       return;
     }
-    if (act === "edit") { wsState.draftId = draftId; wsState.page = 0; wsState.stage = "editor"; wsState.banner = null; wsState.showTip = false; wsRender(); var ed = wsDraft(draftId); if (ed && wsStatus(ed) === "submitted") wsSay("tut-ws-locked"); return; }
+    if (act === "edit") { wsState.draftId = draftId; wsState.page = 0; wsState.banner = null; wsState.showTip = false; var ed0 = wsDraft(draftId); if (ed0 && ed0.guided && wsStatus(ed0) === "draft" && !(ws2Plan(ed0).hero && ws2Plan(ed0).place && ws2Plan(ed0).trouble)) { var pl0 = ws2Plan(ed0); wsState.step = !pl0.hero ? 1 : !pl0.place ? 2 : 3; wsState.stage = "path"; wsRender(); wsSay(wsState.step === 1 ? "tut-ws2-step-hero" : wsState.step === 2 ? "tut-ws2-step-place" : "tut-ws2-step-trouble"); return; } wsState.stage = "editor"; wsRender(); var ed = wsDraft(draftId); if (ed && wsStatus(ed) === "submitted") wsSay("tut-ws-locked"); return; }
     if (act === "read") { var rd = wsDraft(draftId); if (rd && rd.bookId) openBook(rd.bookId); return; }
     if (act === "del") { wsState.draftId = draftId; wsState.stage = "confirmdel"; wsRender(); wsSay("tut-ws-delete"); return; }
     if (act === "delyes") {
@@ -6128,8 +6137,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   }
   document.addEventListener("input", function (e) {
     var inp = e.target; if (!inp || !inp.matches || !wsState) return;
-    var isTitle = inp.matches("[data-ws-title]"), isPage = inp.matches("[data-ws-page]");
-    if (!isTitle && !isPage) return;
+    var isTitle = inp.matches("[data-ws-title]"), isPage = inp.matches("[data-ws-page]"), isPlan = inp.matches("[data-ws-plan]");
+    if (!isTitle && !isPage && !isPlan) return;
+    if (isPlan) return;
     var d = wsDraft(wsState.draftId); if (!d || wsStatus(d) !== "draft") return;
     var m = wsMineRaw(), md = m.drafts[d.id]; if (!md) return;
     if (isTitle) md.title = inp.value.slice(0, 80);
@@ -6337,6 +6347,382 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var book = libBook(libState.id); if (!book || book.shelf !== "kaitlyn") return;
     var slug = book.id.replace(/^kait-/, "");
     wsSay("tut-ws-fb-" + slug + (kind === "overall" ? "-overall" : "-p" + kind));
+  }
+  /* ================= Guided Story Path (author shelf, pass 2) ==========
+     Dawid 2026-11-18: Kaitlyn has never written a book, so the tutor must
+     guide and explain all along — not just sparks and tips. New stories
+     now start on a Story Path: (0) the tutor's own tiny example book,
+     shown page by page with the secret of how each page was made;
+     (1) pick a hero, (2) pick a place, (3) pick the trouble — choosing,
+     not inventing from nothing, with a "my own idea" card at each step;
+     (4) a story map (Beginning / Middle / End) filled with her picks.
+     In the editor, every page carries a JOB (meet / trouble / try / big /
+     end) explained by the tutor before she writes, tappable sentence
+     starters, and an "I'm stuck" panel with three insertable rescue
+     lines for that job. The last page offers an ending helper (two ways
+     to finish) and the title field a title helper (three patterns built
+     from her picks). All guidance is spoken in the tutor voice
+     (tut-ws2-* clips, avocado_v2:Lily). Her words are never edited. */
+  var WS2_EXAMPLE = {
+    title: "Pip and the Moon Kite",
+    pages: [
+      "Pip was a small fox who loved the moon. Every night, she climbed the little hill behind her den to say goodnight to it.",
+      "One night, a big cloud covered the moon, and Pip's goodnight had nowhere to go. “I have to bring the moon back,” she said.",
+      "Pip found an old kite with a long silver string. She flew it up, up, up, until it tickled the cloud, and the cloud sneezed, and drifted away.",
+      "“Goodnight, Moon,” said Pip, and the moon shone down on her like a smile. The end."
+    ],
+    notes: [
+      "Page one secret: I only did two things. I said who my hero is, and what she loves. That is all a first page has to do.",
+      "Page two secret: I started the trouble. Something my hero loved went wrong. Trouble is what makes a story move.",
+      "Middle page secret: my hero tried something. Middle pages are for trying. Your hero can try, and fail, and try again. Failing is allowed. It makes the story better.",
+      "Last page secret: I fixed the trouble, and ended with one warm, quiet moment. That is a whole book: beginning, trouble, trying, ending."
+    ]
+  };
+  var WS2_HEROES = [
+    { id: "dragon", emo: "🐉", name: "The Shy Dragon", short: "The Dragon", clip: "tut-ws2-hero-dragon", line: "He wants a friend more than anything, but his fire keeps scaring everyone away." },
+    { id: "bakercat", emo: "🐱", name: "The Bakery Cat", short: "The Bakery Cat", clip: "tut-ws2-hero-bakercat", line: "She wants to bake a cake that nobody will ever forget." },
+    { id: "inventor", emo: "🔧", name: "The Kid Inventor", short: "The Inventor", clip: "tut-ws2-hero-inventor", line: "He builds wild machines, and he wants to win the school science fair." },
+    { id: "twins", emo: "🧭", name: "The Twin Explorers", short: "The Twins", clip: "tut-ws2-hero-twins", line: "They want to be the first to map the woods behind their house." },
+    { id: "robotdog", emo: "🤖", name: "Mia and Her Robot Dog", short: "Mia", clip: "tut-ws2-hero-robotdog", line: "She built her best friend out of spare parts, and now she wants to teach him to play fetch like a real dog." }
+  ];
+  var WS2_PLACES = [
+    { id: "lighthouse", emo: "🌊", name: "A Lighthouse by the Sea", noun: "Lighthouse", clip: "tut-ws2-place-lighthouse", line: "Storms, secrets, and something always knocking at the door." },
+    { id: "treehouse", emo: "🌳", name: "A Treehouse Village", noun: "Treehouse", clip: "tut-ws2-place-treehouse", line: "High in the branches, where the kids make all the rules." },
+    { id: "library", emo: "📚", name: "A Magical Library", noun: "Library", clip: "tut-ws2-place-library", line: "Some of the books whisper, and one shelf is always locked." },
+    { id: "snowtown", emo: "🏔️", name: "A Snowy Mountain Town", noun: "Snow Town", clip: "tut-ws2-place-snowtown", line: "Winter lasts half the year, and everyone knows everyone." }
+  ];
+  var WS2_TROUBLES = [
+    { id: "lost", emo: "🔍", name: "Something Precious Gets Lost", titleWord: "Great Search", dayWord: "Search", clip: "tut-ws2-trouble-lost", line: "Your hero has to find it before it's too late." },
+    { id: "storm", emo: "⛈️", name: "A Big Storm Is Coming", titleWord: "Big Storm", dayWord: "Storm", clip: "tut-ws2-trouble-storm", line: "Your hero has to get ready, or get everyone safe." },
+    { id: "newkid", emo: "🧒", name: "A New Kid Arrives", titleWord: "New Kid", dayWord: "Day", clip: "tut-ws2-trouble-newkid", line: "The new kid seems unfriendly. But things are not always what they seem." },
+    { id: "bigday", emo: "🎪", name: "The Big Day Goes Wrong", titleWord: "Worst Day Ever", dayWord: "Day", clip: "tut-ws2-trouble-bigday", line: "The day your hero waited for all year suddenly falls apart." },
+    { id: "door", emo: "🚪", name: "A Door That Was Never There", titleWord: "Door That Wasn't There", dayWord: "Night", clip: "tut-ws2-trouble-door", line: "A door appears that was never there before. Doors like that are never just doors." }
+  ];
+  var WS2_JOBS = {
+    meet: { title: "Meet your hero", clip: "tut-ws2-job-meet",
+      goal: "Tell us your hero's name, and show us one thing they love, or something they do every day. That's all this page has to do. Small and warm.",
+      starters: ["___ loved ___ more than anything in the world.", "Every morning, ___ would ___ before the sun was even up.", "This is ___. ___ lived in ___, and today felt like no ordinary day."],
+      stuck: ["Her favourite thing in the whole world was ___.", "___ woke up in ___ and smiled. Today was a ___ kind of day.", "In her pocket, ___ always carried a ___, just in case."] },
+    trouble: { title: "The trouble starts", clip: "tut-ws2-job-trouble",
+      goal: "Something goes wrong, or something strange happens. Use the trouble you picked, and let it walk right onto the page.",
+      starters: ["But one day, something went wrong: ___.", "Suddenly, ___!", "When ___ saw ___, their heart went thump, thump, thump."],
+      stuck: ["Then the weather turned, and ___ began to ___.", "Something was missing: the ___ was gone!", "There was a knock at the door. Nobody was supposed to knock today."] },
+    try: { title: "Trying", clip: "tut-ws2-job-try",
+      goal: "Your hero tries something to fix the trouble. It can work a little, or fail completely. Failing is fine here. It makes the story better.",
+      starters: ["First, ___ tried ___.", "That did not work, so ___ decided to ___.", "Then ___ met ___, who said, “___!”"],
+      stuck: ["First, ___ tried ___, but it only made things worse.", "Just then, ___ arrived, carrying exactly one useful thing: ___.", "___ decided to use the thing she loved most: ___. Maybe it could help."] },
+    big: { title: "The biggest moment", clip: "tut-ws2-job-big",
+      goal: "This is the hardest or most exciting part of your story. Everything has been leading here. Slow down, and give it your best details.",
+      starters: ["Just then, the worst part happened: ___.", "___ took a deep breath. This was it. ___ had to ___.", "Everything depended on ___. ___ stepped forward and ___."],
+      stuck: ["If ___ failed now, ___ would lose ___ forever.", "The ___ was right there, and it was in danger.", "Everything went quiet. ___ could hear her own heart: thump, thump, thump."] },
+    end: { title: "The ending", clip: "tut-ws2-job-end",
+      goal: "This is your last page, for now. Every story needs an ending. Use the ending helper below, and I'll show you the two ways writers finish a story. You can always add more pages later.",
+      starters: ["At last, it was over, and ___ was safe and home.", "___ looked back once, smiled, and ___. The end.", "And that is how ___ learned that ___."],
+      stuck: ["And so, back in ___, things felt right again.", "___ looked at ___ and smiled. Some things had changed forever.", "“We did it,” ___ whispered. The end."] }
+  };
+  var WS2_ENDINGS = [
+    { id: "fix", emo: "🧩", name: "Fix the trouble", clip: "tut-ws2-ending-fix",
+      text: "Your hero solves the problem, and things are set right again. Like Pip: the cloud drifted away, and she said goodnight to the moon." },
+    { id: "changed", emo: "🌱", name: "Come home changed", clip: "tut-ws2-ending-changed",
+      text: "The problem isn't perfectly fixed, but your hero has grown: braver, or kinder, or understanding something she didn't before." }
+  ];
+  function ws2Plan(d) { return (d && d.plan && typeof d.plan === "object") ? d.plan : {}; }
+  function ws2SavePlanField(draftId, key, val) {
+    var m = wsMineRaw(), md = m.drafts[draftId]; if (!md) return;
+    if (!md.plan || typeof md.plan !== "object") md.plan = {};
+    md.plan[key] = val; md.updatedAt = Date.now(); wsSave(m);
+  }
+  function ws2ById(list, id) { return list.filter(function (x) { return x.id === id; })[0] || null; }
+  function ws2JobFor(d, idx) {
+    var total = d.pages.length;
+    if (idx === 0) return "meet";
+    if (idx === total - 1 && total >= 2) return "end";
+    if (idx === total - 2 && total >= 4) return "big";
+    if (idx === 1) return "trouble";
+    return "try";
+  }
+  function ws2JobClip(d, job) {
+    if (job === "end") {
+      var e = ws2Plan(d).ending;
+      if (e === "fix") return "tut-ws2-job-end-fix";
+      if (e === "changed") return "tut-ws2-job-end-changed";
+    }
+    return WS2_JOBS[job].clip;
+  }
+  function ws2JobGoal(d, job) {
+    if (job === "end") {
+      var e = ws2Plan(d).ending;
+      if (e === "fix") return "Your ending fixes the trouble. Show us things set right, and finish with one warm, quiet line, like a door closing softly.";
+      if (e === "changed") return "Your ending brings your hero home changed. The trouble may not be perfectly fixed, but your hero has learned something, or feels something new. Show us that change in one small moment.";
+    }
+    return WS2_JOBS[job].goal;
+  }
+  function wsStartGuided() {
+    var m = wsMineRaw();
+    if (Object.keys(m.drafts).length >= WS_MAX_DRAFTS) {
+      wsState.stage = "home"; wsState.banner = "Your studio shelf is full — finish or delete a draft to make room for a new story.";
+      wsRender(); return;
+    }
+    var id = "ws-" + Date.now();
+    m.drafts[id] = { id: id, title: "", pages: [""], seedId: null, guided: 1, plan: {},
+      status: "draft", bookId: null, createdAt: Date.now(), updatedAt: Date.now(), submittedAt: null, celebrated: 0 };
+    m.order.unshift(id); wsSave(m);
+    wsState.draftId = id; wsState.page = 0; wsState.step = 0; wsState.stage = "path"; wsState.banner = null; wsState.showTip = false; wsState.stuck = false;
+    wsRender(); wsSay("tut-ws2-path-start");
+  }
+  var WS2_STEPS = ["Example", "Hero", "Place", "Trouble", "Story map"];
+  function ws2TrailHtml(active, plan) {
+    var doneTo = active;
+    if (plan) { if (plan.hero) doneTo = Math.max(doneTo, 1); if (plan.place) doneTo = Math.max(doneTo, 2); if (plan.trouble) doneTo = Math.max(doneTo, 3); }
+    var chips = WS2_STEPS.map(function (s, i) {
+      var cls = i === active ? " on" : (i < doneTo || (plan && ((i === 1 && plan.hero) || (i === 2 && plan.place) || (i === 3 && plan.trouble))) ? " done" : "");
+      var mark = cls.indexOf("done") >= 0 ? "✓ " : "";
+      if (i <= doneTo || cls.indexOf("done") >= 0) return '<button type="button" class="ws2-step' + cls + '" data-ws-act="pathstep" data-step="' + i + '">' + mark + esc(s) + "</button>";
+      return '<span class="ws2-step' + cls + '">' + esc(s) + "</span>";
+    }).join('<span class="ws2-arrow">→</span>');
+    return '<div class="ws2-trail">' + chips + "</div>";
+  }
+  function ws2CardHtml(kind, c) {
+    return '<div class="ws2-card"><div class="ws2-cardtop"><span class="ws2-emo">' + c.emo + '</span><b>' + esc(c.name) + '</b>' +
+      '<button type="button" class="ll-btn ws2-hear" data-ws-act="cardclip" data-clip="' + c.clip + '">🔊 Hear it</button></div>' +
+      '<p>' + esc(c.line) + '</p>' +
+      '<button type="button" class="ll-btn pri" data-ws-act="pick" data-kind="' + kind + '" data-id="' + c.id + '">Pick this one</button></div>';
+  }
+  function ws2OwnHtml(kind, clip, labelA, phA, labelB, phB) {
+    return '<div class="ws2-card own"><div class="ws2-cardtop"><span class="ws2-emo">✏️</span><b>My own idea</b>' +
+      '<button type="button" class="ll-btn ws2-hear" data-ws-act="cardclip" data-clip="' + clip + '">🔊 Hear it</button></div>' +
+      '<label class="ws-lab">' + esc(labelA) + '</label>' +
+      '<input type="text" class="ws2-in" data-ws-plan="' + kind + 'Name" maxlength="60" placeholder="' + esc(phA) + '">' +
+      '<label class="ws-lab">' + esc(labelB) + '</label>' +
+      '<input type="text" class="ws2-in" data-ws-plan="' + kind + 'Line" maxlength="120" placeholder="' + esc(phB) + '">' +
+      '<button type="button" class="ll-btn pri" data-ws-act="planown" data-kind="' + kind + '">Use my idea</button></div>';
+  }
+  function wsPathHtml() {
+    var d = wsDraft(wsState.draftId);
+    if (!d) { wsState.stage = "home"; return wsHomeHtml(); }
+    var plan = ws2Plan(d), step = wsState.step || 0, body = "";
+    if (step === 0) {
+      body = '<p class="ws-intro">We will build your story together, one small step at a time: pick a hero, pick a place, pick the trouble, and I will turn your picks into a story map. Then you write, page by page, and I will be right there with a job for every page.</p>' +
+        '<div class="ws2-card"><div class="ws2-cardtop"><span class="ws2-emo">📖</span><b>First, watch me</b></div>' +
+        '<p>I made a tiny book, only four pages, called “Pip and the Moon Kite”. Under every page I tell you the secret of how I made it. It takes about a minute, and it makes everything else easier.</p>' +
+        '<div class="ws2-row"><button type="button" class="ll-btn pri" data-ws-act="example">📖 See my example book</button>' +
+        '<button type="button" class="ll-btn" data-ws-act="pathstep" data-step="1">Skip it — start building →</button></div></div>';
+    } else if (step === 1) {
+      body = '<p class="ws-intro">Step one: your hero, the character we follow through the whole story. A good hero wants something. Tap 🔊 to hear about a hero, then pick the one that pulls you.</p>' +
+        WS2_HEROES.map(function (c) { return ws2CardHtml("hero", c); }).join("") +
+        ws2OwnHtml("hero", "tut-ws2-hero-own", "Your hero's name", "e.g. Kira the lighthouse keeper", "What do they love, or want most?", "e.g. She wants to sail past the reef");
+    } else if (step === 2) {
+      body = '<p class="ws-intro">Step two: the place. Where a story happens changes everything that can happen in it. Pick a place you would love to visit. You will spend your whole story there.</p>' +
+        WS2_PLACES.map(function (c) { return ws2CardHtml("place", c); }).join("") +
+        ws2OwnHtml("place", "tut-ws2-place-own", "Your place", "e.g. A floating market", "One thing about it", "e.g. The shops are all boats");
+    } else if (step === 3) {
+      body = '<p class="ws-intro">Step three: the trouble, the most important choice of all. Trouble is the engine of a story: it is what goes wrong, and makes your hero act. No trouble, no story, just a nice day.</p>' +
+        WS2_TROUBLES.map(function (c) { return ws2CardHtml("trouble", c); }).join("") +
+        ws2OwnHtml("trouble", "tut-ws2-trouble-own", "Your trouble", "e.g. The bridge washes away", "What goes wrong?", "e.g. Now nobody can cross the river");
+    } else {
+      var h = plan.hero || {}, p = plan.place || {}, t = plan.trouble || {};
+      body = '<p class="ws-intro">Look at that, Kaitlyn. You have a story map. This is your whole book in three pieces:</p>' +
+        '<div class="ws2-map">' +
+        '<button type="button" class="ws2-mapcard" data-ws-act="mapchip" data-part="beginning"><b>🌅 Beginning</b><span>We meet <b>' + esc(h.name || "your hero") + '</b> in <b>' + esc(p.name || "your place") + '</b>, doing something they love.</span><small>🔊 Hear your tutor explain</small></button>' +
+        '<button type="button" class="ws2-mapcard" data-ws-act="mapchip" data-part="middle"><b>⛈️ Middle</b><span>The trouble: <b>' + esc(t.name || "something goes wrong") + '</b>. Your hero tries to fix it, maybe more than once.</span><small>🔊 Hear your tutor explain</small></button>' +
+        '<button type="button" class="ws2-mapcard" data-ws-act="mapchip" data-part="end"><b>🌙 Ending</b><span>The trouble is fixed, or your hero comes home changed. I will show you both ways when you reach your last page.</span><small>🔊 Hear your tutor explain</small></button>' +
+        "</div>" +
+        '<div class="ws2-row"><button type="button" class="ll-btn pri" data-ws-act="writestart">✏️ Start writing — page one</button>' +
+        '<button type="button" class="ll-btn" data-ws-act="pathstep" data-step="1">✏️ Change my picks</button></div>';
+    }
+    return '<section class="ws-wrap">' + ws2TrailHtml(step, plan) +
+      (wsState.banner ? '<p class="ws-banner">' + esc(wsState.banner) + "</p>" : "") + body +
+      '<div class="ws-foot"><button type="button" class="ll-btn" data-ws-act="home">← My studio</button>' +
+      '<button type="button" class="ll-btn" data-ws-act="done">✓ Done for now</button></div></section>';
+  }
+  function wsExampleHtml() {
+    var pg = Math.max(0, Math.min(wsState.expage || 0, WS2_EXAMPLE.pages.length - 1));
+    wsState.expage = pg;
+    var last = pg === WS2_EXAMPLE.pages.length - 1;
+    return '<section class="ws-wrap"><h4 class="ws-h">📖 ' + esc(WS2_EXAMPLE.title) + ' <small class="ws2-byline">— a tiny book by your tutor</small></h4>' +
+      '<div class="ws2-expage"><p class="ws2-extext">' + esc(WS2_EXAMPLE.pages[pg]) + "</p>" +
+      '<div class="ws2-row"><button type="button" class="ll-btn" data-ws-act="expage">🔊 Hear this page</button>' +
+      '<button type="button" class="ll-btn" data-ws-act="exnote">🎓 Hear the secret</button></div></div>' +
+      '<div class="ws2-secret"><p class="ws-tiphead">🎓 The secret of this page</p><p>' + esc(WS2_EXAMPLE.notes[pg]) + "</p></div>" +
+      '<div class="ws-nav">' + (pg > 0 ? '<button type="button" class="ll-btn" data-ws-act="exprev">← Prev page</button>' : "<span></span>") +
+      '<span class="ws-words">Page ' + (pg + 1) + " of " + WS2_EXAMPLE.pages.length + "</span>" +
+      (last ? '<button type="button" class="ll-btn pri" data-ws-act="exdone">Now let\'s build yours →</button>' : '<button type="button" class="ll-btn pri" data-ws-act="exnext">Next page →</button>') + "</div>" +
+      '<div class="ws-foot"><button type="button" class="ll-btn" data-ws-act="exback">← Back</button></div></section>';
+  }
+  function wsEndingHtml() {
+    var cards = WS2_ENDINGS.map(function (e) {
+      return '<div class="ws2-card"><div class="ws2-cardtop"><span class="ws2-emo">' + e.emo + '</span><b>' + esc(e.name) + '</b>' +
+        '<button type="button" class="ll-btn ws2-hear" data-ws-act="cardclip" data-clip="' + e.clip + '">🔊 Hear it</button></div>' +
+        '<p>' + esc(e.text) + '</p>' +
+        '<button type="button" class="ll-btn pri" data-ws-act="endpick" data-style="' + e.id + '">End it this way</button></div>';
+    }).join("");
+    return '<section class="ws-wrap"><h4 class="ws-h">🌅 The ending helper</h4>' +
+      '<p class="ws-intro">There are two ways writers finish a story. Neither is better. Hear both, then pick the one that feels right for yours.</p>' +
+      cards +
+      '<div class="ws-foot"><button type="button" class="ll-btn" data-ws-act="backedit">✏️ Back to my page</button></div></section>';
+  }
+  function ws2TitleIdeas(d) {
+    var plan = ws2Plan(d), h = plan.hero || {}, p = plan.place || {}, t = plan.trouble || {};
+    var heroName = h.name || "My Hero", heroShort = h.short || h.name || "My Hero";
+    var tw = t.titleWord || "Big Adventure", dw = t.dayWord || "Day", noun = p.noun || "Secret Place";
+    var sparkles = ["Silver", "Midnight", "Whispering", "Golden"];
+    var sp = sparkles[(heroName.length + noun.length) % sparkles.length];
+    return [heroName + " and the " + tw, "The " + sp + " " + noun, heroShort + "'s Big " + dw];
+  }
+  function wsTitleHelpHtml() {
+    var d = wsDraft(wsState.draftId);
+    if (!d) { wsState.stage = "home"; return wsHomeHtml(); }
+    var ideas = ws2TitleIdeas(d);
+    var clips = ["tut-ws2-title-p1", "tut-ws2-title-p2", "tut-ws2-title-p3"];
+    var styles = ["Your hero, and the big thing", "The mysterious thing", "Your hero's big day"];
+    var cards = ideas.map(function (idea, i) {
+      return '<div class="ws2-card"><div class="ws2-cardtop"><span class="ws2-emo">🏷️</span><b>' + esc(styles[i]) + '</b>' +
+        '<button type="button" class="ll-btn ws2-hear" data-ws-act="cardclip" data-clip="' + clips[i] + '">🔊 Hear it</button></div>' +
+        '<p class="ws2-titleidea">“' + esc(idea) + '”</p>' +
+        '<button type="button" class="ll-btn pri" data-ws-act="titlepick" data-i="' + i + '">Use this title</button></div>';
+    }).join("");
+    return '<section class="ws-wrap"><h4 class="ws-h">🏷️ Title helper</h4>' +
+      '<p class="ws-intro">A title is a promise to your reader. Here are three ways writers build one, made from your hero and your story. Pick one, and you can still change the words after.</p>' +
+      cards +
+      '<div class="ws-foot"><button type="button" class="ll-btn" data-ws-act="backedit">✏️ Back to my page</button></div></section>';
+  }
+  function wsGuideHtml(d) {
+    if (!d.guided) return "";
+    var plan = ws2Plan(d), h = plan.hero || {}, p = plan.place || {}, t = plan.trouble || {};
+    var endTxt = plan.ending === "fix" ? "Fix the trouble" : plan.ending === "changed" ? "Come home changed" : "Not picked yet — the ending helper will show you";
+    return '<div class="ws2-map mini">' +
+      '<button type="button" class="ws2-mapcard" data-ws-act="mapchip" data-part="beginning"><b>🌅 Beginning</b><span>' + esc(h.name || "Your hero") + " · " + esc(p.name || "your place") + '</span></button>' +
+      '<button type="button" class="ws2-mapcard" data-ws-act="mapchip" data-part="middle"><b>⛈️ Middle</b><span>' + esc(t.name || "The trouble") + '</span></button>' +
+      '<button type="button" class="ws2-mapcard" data-ws-act="mapchip" data-part="end"><b>🌙 Ending</b><span>' + esc(endTxt) + '</span></button></div>' +
+      (wsStatus(d) === "draft" ? '<p class="ws2-change"><button type="button" class="ll-btn" data-ws-act="pathstep" data-step="1">✏️ Change my picks</button></p>' : "");
+  }
+  function wsJobHtml(d, page, locked) {
+    if (locked) return "";
+    var job = ws2JobFor(d, page), J = WS2_JOBS[job];
+    var html = '<div class="ws2-job"><p class="ws2-jobhead">🎯 This page\'s job: ' + esc(J.title) +
+      ' <button type="button" class="ll-btn ws2-hear" data-ws-act="jobclip">🔊 Hear it</button></p>' +
+      '<p class="ws2-jobgoal">' + esc(ws2JobGoal(d, job)) + "</p>";
+    if (job === "end" && !ws2Plan(d).ending) html += '<button type="button" class="ll-btn pri" data-ws-act="ending">🌅 Open the ending helper</button>';
+    if (job === "end" && ws2Plan(d).ending) html += '<button type="button" class="ll-btn" data-ws-act="ending">🌅 Change my ending</button>';
+    html += '<div class="ws2-starters"><span class="ws2-slab">Start a sentence:</span>' +
+      J.starters.map(function (s, i) { return '<button type="button" class="ws2-starter" data-ws-act="insert" data-kind="starter" data-i="' + i + '">' + esc(s) + "</button>"; }).join("") + "</div>" +
+      '<button type="button" class="ll-btn ws2-stuckbtn" data-ws-act="stuck">🆘 I\'m stuck</button>';
+    if (wsState.stuck) {
+      html += '<div class="ws2-stuckpanel"><p class="ws2-slab">Three rescue lines for this page. Tap one to drop it in, then make it yours:</p>' +
+        J.stuck.map(function (s, i) { return '<button type="button" class="ws2-starter" data-ws-act="insert" data-kind="stuck" data-i="' + i + '">' + esc(s) + "</button>"; }).join("") + "</div>";
+    }
+    return html + "</div>";
+  }
+  function ws2Insert(d, text) {
+    var m = wsMineRaw(), md = m.drafts[d.id]; if (!md) return;
+    var cur = md.pages[wsState.page] || "";
+    var add = (cur && !/\s$/.test(cur) ? " " : "") + text;
+    if ((cur + add).length > WS_MAX_CHARS) { wsState.banner = "This page is full — that starter needs more room than is left. Try a new page for it."; wsRender(); return; }
+    md.pages[wsState.page] = (cur + add).slice(0, WS_MAX_CHARS);
+    md.updatedAt = Date.now(); wsSave(m);
+    wsState.stuck = false; wsRender(); wsSay("tut-ws2-starter");
+  }
+  function ws2Act(act, el) {
+    var d = wsState && wsState.draftId ? wsDraft(wsState.draftId) : null;
+    if (act === "example") {
+      wsState.exFrom = wsState.stage === "path" ? "path" : "home";
+      wsState.stage = "example"; wsState.expage = 0; wsRender(); wsSay("tut-ws2-ex-intro"); return true;
+    }
+    if (act === "expage") { wsSay("tut-ws2-ex-p" + ((wsState.expage || 0) + 1)); return true; }
+    if (act === "exnote") { wsSay("tut-ws2-ex-p" + ((wsState.expage || 0) + 1) + "-note"); return true; }
+    if (act === "exprev") { wsState.expage = Math.max(0, (wsState.expage || 0) - 1); wsRender(); wsSay("tut-ws2-ex-p" + (wsState.expage + 1)); return true; }
+    if (act === "exnext") { wsState.expage = Math.min(WS2_EXAMPLE.pages.length - 1, (wsState.expage || 0) + 1); wsRender(); wsSay("tut-ws2-ex-p" + (wsState.expage + 1)); return true; }
+    if (act === "exback") {
+      if (wsState.exFrom === "path" && d) { wsState.stage = "path"; wsState.step = 0; }
+      else wsState.stage = "home";
+      wsRender(); return true;
+    }
+    if (act === "exdone") {
+      if (d) { wsState.stage = "path"; wsState.step = 1; wsRender(); wsSay("tut-ws2-step-hero"); }
+      else { wsState.stage = "home"; wsRender(); }
+      return true;
+    }
+    if (act === "pathstep") {
+      if (!d) return false;
+      wsState.step = parseInt(el.getAttribute("data-step"), 10) || 0;
+      wsState.stage = "path"; wsState.banner = null; wsRender();
+      wsSay(wsState.step === 1 ? "tut-ws2-step-hero" : wsState.step === 2 ? "tut-ws2-step-place" : wsState.step === 3 ? "tut-ws2-step-trouble" : wsState.step === 4 ? "tut-ws2-step-map" : "tut-ws2-path-start");
+      return true;
+    }
+    if (act === "cardclip") { wsSay(el.getAttribute("data-clip")); return true; }
+    if (act === "mapchip") { wsSay("tut-ws2-map-" + el.getAttribute("data-part")); return true; }
+    if (act === "pick") {
+      if (!d) return false;
+      var kind = el.getAttribute("data-kind"), id = el.getAttribute("data-id");
+      var src = kind === "hero" ? WS2_HEROES : kind === "place" ? WS2_PLACES : WS2_TROUBLES;
+      var c = ws2ById(src, id); if (!c) return true;
+      var val = { id: c.id, name: c.name, line: c.line };
+      if (kind === "hero") val.short = c.short;
+      if (kind === "place") val.noun = c.noun;
+      if (kind === "trouble") { val.titleWord = c.titleWord; val.dayWord = c.dayWord; }
+      ws2SavePlanField(d.id, kind, val);
+      wsState.step = kind === "hero" ? 2 : kind === "place" ? 3 : 4;
+      wsState.stage = "path"; wsRender();
+      wsSay(wsState.step === 2 ? "tut-ws2-step-place" : wsState.step === 3 ? "tut-ws2-step-trouble" : "tut-ws2-step-map");
+      return true;
+    }
+    if (act === "planown") {
+      if (!d) return false;
+      var kind2 = el.getAttribute("data-kind");
+      var nameInp = document.querySelector('[data-ws-plan="' + kind2 + 'Name"]');
+      var lineInp = document.querySelector('[data-ws-plan="' + kind2 + 'Line"]');
+      var nm = nameInp ? nameInp.value.trim() : "", ln = lineInp ? lineInp.value.trim() : "";
+      if (!nm || !ln) { wsState.banner = "Give your idea a name and one line about it, and then tap “Use my idea”. That's all the tutor needs."; wsRender(); return true; }
+      var v = { id: "own", name: nm, line: ln };
+      if (kind2 === "hero") v.short = nm;
+      if (kind2 === "place") v.noun = nm;
+      if (kind2 === "trouble") { v.titleWord = "Big Adventure"; v.dayWord = "Day"; }
+      ws2SavePlanField(d.id, kind2, v);
+      wsState.step = kind2 === "hero" ? 2 : kind2 === "place" ? 3 : 4;
+      wsState.stage = "path"; wsState.banner = null; wsRender(); wsSay("tut-ws2-own-saved");
+      return true;
+    }
+    if (act === "writestart") {
+      if (!d) return false;
+      wsState.stage = "editor"; wsState.page = 0; wsState.stuck = false; wsRender(); wsSay("tut-ws2-write-start");
+      return true;
+    }
+    if (act === "jobclip") { if (d) wsSay(ws2JobClip(d, ws2JobFor(d, wsState.page || 0))); return true; }
+    if (act === "stuck") {
+      wsState.stuck = !wsState.stuck; wsRender();
+      if (wsState.stuck) wsSay("tut-ws2-stuck");
+      return true;
+    }
+    if (act === "insert") {
+      if (!d || wsStatus(d) !== "draft") return true;
+      var job = ws2JobFor(d, wsState.page || 0), J = WS2_JOBS[job];
+      var arr = el.getAttribute("data-kind") === "stuck" ? J.stuck : J.starters;
+      var txt = arr[parseInt(el.getAttribute("data-i"), 10) || 0];
+      if (txt) ws2Insert(d, txt);
+      return true;
+    }
+    if (act === "ending") {
+      wsState.stage = "ending"; wsRender(); wsSay("tut-ws2-ending-intro"); return true;
+    }
+    if (act === "endpick") {
+      if (!d) return false;
+      ws2SavePlanField(d.id, "ending", el.getAttribute("data-style"));
+      wsState.stage = "editor"; wsRender();
+      wsSay(el.getAttribute("data-style") === "fix" ? "tut-ws2-job-end-fix" : "tut-ws2-job-end-changed");
+      return true;
+    }
+    if (act === "titlehelp") {
+      wsState.stage = "titlehelp"; wsRender(); wsSay("tut-ws2-title-intro"); return true;
+    }
+    if (act === "titlepick") {
+      if (!d) return false;
+      var ideas = ws2TitleIdeas(d);
+      var pick = ideas[parseInt(el.getAttribute("data-i"), 10) || 0];
+      if (pick) { var m = wsMineRaw(); if (m.drafts[d.id]) { m.drafts[d.id].title = pick.slice(0, 80); m.drafts[d.id].updatedAt = Date.now(); wsSave(m); } }
+      wsState.stage = "editor"; wsRender();
+      return true;
+    }
+    return false;
   }
 
   window.__llShell = { setTab: setTab, setProfile: setProfile, state: state, openGame: openGame, openLesson: openLesson, openPath: openPath, closeOverlay: closeOverlay, render: render, openMuseCard: openMuseCard, findShelfNode: findShelfNode, findHubIdeaNode: findHubIdeaNode, playNow: playNow, openLessonById: openLessonById, findLessonNodeById: findLessonNodeById, LESSON_BY_ID: LESSON_BY_ID, checkParentGate: checkParentGate, newGateQuestion: newGateQuestion, goBack: goBack, goHome: goHome, viewStack: viewStack, curView: function () { return curView; },
