@@ -203,8 +203,17 @@ var HW_THUMBS = {"animals": "data:image/webp;base64,UklGRnAWAABXRUJQVlA4IGQWAADw
       if (!p.baseLabel) p.baseLabel = p.label;
       var n = ((kidStore[p.id] && kidStore[p.id].name) || DEFAULT_NAMES[p.id] || p.baseLabel).trim() || p.baseLabel;
       p.label = n;
-      Array.prototype.forEach.call(document.querySelectorAll(".prof-card-" + p.id + " > b"), function (b) { b.textContent = n; });
+      /* The name <b> is a direct child on the A/B gate cards but sits inside
+         .prof-card-main on the C card, so the old "> b" selector silently
+         skipped C (Dawid 2026-11-19: welcome screen said "Profile C" while
+         the in-app pills said Kaitlyn). Paint the first <b> in each card. */
+      Array.prototype.forEach.call(document.querySelectorAll(".prof-card-" + p.id), function (card) { var b = card.querySelector("b"); if (b) b.textContent = n; });
       Array.prototype.forEach.call(document.querySelectorAll(".prof-card-" + p.id + " .prof-play"), function (b) { b.textContent = "▶ Play as " + n; });
+      /* Same name on the Grown-ups profile rows. */
+      Array.prototype.forEach.call(document.querySelectorAll("[data-profile-row=\"" + p.id + "\"]"), function (row) {
+        var rb = row.querySelector(".prof-row-main > b"); if (rb) rb.textContent = n;
+        var btn = row.querySelector("[data-profile-pick]"); if (btn) btn.textContent = "▶ Play as " + n;
+      });
     });
   }
   applyNames();
