@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="feed";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Feed Hoot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
+    --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#d84a3d; --teal:#17bebb; --leaf:#57cc62; --leaf-dark:#3da147;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#aee7ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
+    background:linear-gradient(180deg,#6ec9f7 0%,#a5e3ff 30%,#d9f6e3 60%,#eafce8 100%); }
+
+  /* ---------- orchard decor ---------- */
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
+  #sun{ top:6px; right:6px; width:74px; height:74px; z-index:1; }
+  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
+  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
+  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
+  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
+  #sun:active{ transform:scale(.93); }
+  .cloud{ z-index:1; width:104px; height:46px; opacity:.95; animation:drift linear infinite; }
+  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.22,1.35); }
+  @keyframes drift{ from{ transform:translateX(-130px); } to{ transform:translateX(112vw); } }
+  #tree{ position:absolute; z-index:1; left:-14px; top:2%; width:clamp(110px,30vw,170px); pointer-events:none; }
+  #tree svg{ width:100%; display:block; }
+  #tree .tap-apple{ pointer-events:auto; cursor:pointer; }
+  .bfly{ z-index:2; width:38px; height:30px; animation:flutter 7s ease-in-out infinite alternate; }
+  .bfly svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .bfly .bw{ transform-box:fill-box; animation:flapB .22s ease-in-out infinite alternate; }
+  .bfly .bw-l{ transform-origin:100% 50%; } .bfly .bw-r{ transform-origin:0% 50%; }
+  @keyframes flapB{ from{ transform:scaleX(1);} to{ transform:scaleX(.45);} }
+  @keyframes flutter{ 0%{ transform:translate(0,0) rotate(-4deg);} 50%{ transform:translate(24px,-18px) rotate(5deg);} 100%{ transform:translate(-12px,-6px) rotate(-3deg);} }
+
+  /* ---------- HUD ---------- */
+  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
+  .round-btn:active{ transform:scale(.9); }
+  .round-btn svg{ width:25px; height:25px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
+  #starBank .star-ic{ width:25px; height:25px; }
+  #starBank.bump{ animation:bankBump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bankBump{ 0%{ transform:scale(1);} 40%{ transform:scale(1.16) rotate(-3deg);} 100%{ transform:scale(1);} }
+
+  /* ---------- request card + tummy meter ---------- */
+  #targetCard{ position:relative; z-index:6; margin:8px auto 0; display:flex; align-items:center; gap:12px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(23,50,79,.12),0 12px 22px rgba(23,50,79,.12); padding:7px 10px 7px 16px; max-width:min(94vw,500px); }
+  #targetCard.new-target{ animation:tcIn .45s cubic-bezier(.34,1.7,.5,1); }
+  @keyframes tcIn{ 0%{ transform:scale(.8); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
+  #targetMain{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(21px,5.8vw,29px); line-height:1.05; color:var(--coral-dark); white-space:nowrap; }
+  .tc-label{ font-weight:900; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
+  #tummy{ margin-top:3px; }
+  #tummyLabel{ font-weight:900; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:#d84a3d; }
+  #hearts{ display:flex; gap:3px; margin-top:1px; flex-wrap:wrap; max-width:170px; }
+  #hearts svg{ width:19px; height:19px; display:block; }
+  #hearts .h-on path{ fill:#ff6b5e; stroke:#d84a3d; }
+  #hearts .h-off path{ fill:#f3e3e1; stroke:#dcb8b4; }
+  #hearts .h-pop{ animation:heartPop .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes heartPop{ 0%{ transform:scale(.4);} 100%{ transform:scale(1);} }
+  #hearBtn{ width:44px; height:44px; flex:0 0 auto; border-radius:50%; border:3px solid #ffe1a8; background:#fff6dd; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(232,169,12,.35); }
+  #hearBtn:active{ transform:scale(.9); }
+  #hearBtn svg{ width:23px; height:23px; }
+
+  /* ---------- scene ---------- */
+  #scene{ position:relative; flex:1 1 auto; min-height:0; z-index:1; display:flex; flex-direction:column; }
+  #meadow{ position:absolute; left:0; right:0; bottom:0; height:40%; z-index:0; pointer-events:none; }
+  #hootStage{ position:relative; z-index:3; flex:1 1 auto; display:flex; align-items:flex-end; justify-content:center; min-height:0; }
+  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(150px,44vw,232px); max-height:100%; filter:drop-shadow(0 10px 12px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
+  #hootFig svg{ width:100%; display:block; overflow:visible; }
+  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-4px) rotate(-1deg);} }
+  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
+  @keyframes hootJump{ 0%{ transform:translateY(0);} 35%{ transform:translateY(-24px) rotate(-3deg);} 70%{ transform:translateY(2px);} 100%{ transform:translateY(0);} }
+  #hootFig.shake{ animation:hootShake .45s ease-in-out 2; }
+  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-6deg);} 75%{ transform:rotate(6deg);} }
+  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ from{ transform:translateY(0) scale(1);} to{ transform:translateY(-2px) scale(1.018);} }
+  #hootFig.munching{ animation:hootMunch .18s ease-in-out 5 alternate; }
+  @keyframes hootMunch{ from{ transform:translateY(0) scale(1,1);} to{ transform:translateY(3px) scale(1.04,.96);} }
+  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
+  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
+  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
+  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
+  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
+  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
+  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
+  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
+  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
+  @keyframes blink{ 0%,92%,100%{ transform:scaleY(1);} 95%{ transform:scaleY(.08);} }
+  #hootFig .beak-low{ transform-box:fill-box; transform-origin:50% 0%; }
+  #hootFig.munching .beak-low{ animation:beakChomp .18s ease-in-out 5 alternate; }
+  @keyframes beakChomp{ from{ transform:rotate(0);} to{ transform:rotate(16deg);} }
+  #hootFig .belly{ transform-box:fill-box; transform-origin:center; transition:transform .5s cubic-bezier(.34,1.6,.5,1); }
+  #hootFig.full .belly{ }
+  /* picnic blanket */
+  #blanket{ position:relative; z-index:4; margin:2px auto max(6px,env(safe-area-inset-bottom)); width:min(96vw,560px);
+    background:repeating-conic-gradient(#ff8fa3 0% 25%, #fff3f5 0% 50%) 0 0/44px 44px;
+    border:3px solid #fff; border-radius:22px; box-shadow:0 8px 0 rgba(23,50,79,.12),0 16px 28px rgba(23,50,79,.15);
+    padding:10px 8px; display:flex; flex-wrap:wrap; justify-content:center; gap:7px; min-height:96px; align-content:center; }
+  .food{ width:clamp(62px,17.5vw,80px); height:clamp(62px,17.5vw,80px); border:3px solid #fff; border-radius:50%; background:rgba(255,253,246,.95); padding:7px; cursor:pointer; box-shadow:0 4px 0 rgba(23,50,79,.15); transition:transform .12s ease; position:relative; }
+  .food svg{ width:100%; height:100%; display:block; }
+  .food:active{ transform:scale(.9); }
+  .food.eaten{ visibility:hidden; }
+  .food.hint-glow{ animation:foodGlow .5s ease-in-out 3 alternate; border-color:var(--sun); }
+  @keyframes foodGlow{ from{ transform:scale(1);} to{ transform:scale(1.1);} }
+
+  /* bubble row */
+  #bubbleRow{ position:relative; z-index:6; padding:0 10px max(8px,env(safe-area-inset-bottom)); }
+  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(23,50,79,.14),0 12px 24px rgba(23,50,79,.14); padding:10px 14px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(15px,4.1vw,19px); line-height:1.3; color:var(--ink); max-width:640px; margin:0 auto; }
+  #bubble .b-big{ color:#d84a3d; font-size:1.22em; font-weight:700; }
+  #hootName{ display:inline-block; margin-top:5px; margin-left:8px; background:#17324f; color:#ffe9a8; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.22em; padding:2px 10px 2px 12px; border-radius:99px; }
+
+  .fly-clone{ position:absolute; z-index:9; pointer-events:none; }
+  .fly-clone svg{ width:100%; display:block; }
+  .particle{ position:absolute; z-index:9; width:10px; height:10px; border-radius:3px; pointer-events:none; }
+  .confetti{ position:absolute; z-index:9; width:11px; height:11px; border-radius:3px; pointer-events:none; }
+  .nom{ position:absolute; z-index:9; font-family:"Fredoka",sans-serif; font-weight:700; color:#d84a3d; font-size:17px; pointer-events:none; animation:nomUp .8s ease-out forwards; }
+  @keyframes nomUp{ 0%{ transform:translateY(0) scale(.7); opacity:0;} 20%{ opacity:1;} 100%{ transform:translateY(-34px) scale(1.1); opacity:0;} }
+
+  /* ---------- start panel / win ---------- */
+  #startPanel{ position:absolute; z-index:8; left:50%; top:45%; transform:translate(-50%,-50%); width:min(94vw,452px); background:rgba(255,253,246,.98); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:16px 18px 14px; text-align:center; max-height:92dvh; overflow:auto; }
+  #startPanel[hidden]{ display:none; }
+  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,36px); margin:0; color:var(--ink); }
+  #startPanel h1 .t-a{ color:var(--coral-dark); } #startPanel h1 .t-b{ color:#e07f00; }
+  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15px; line-height:1.4; margin:7px 0 0; }
+  .mode-row{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin:13px 0 4px; }
+  .mode-chip{ flex:1 1 46%; border:3px solid #dcebf5; background:#f2f9ff; border-radius:16px; padding:8px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15.5px; color:var(--ink); cursor:pointer; line-height:1.15; }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .mode-chip.selected{ border-color:var(--sun); background:#fff6dd; box-shadow:0 4px 0 rgba(232,169,12,.4); }
+  #playBtn{ margin-top:12px; border:none; cursor:pointer; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:23px; padding:12px 44px; border-radius:999px; box-shadow:0 6px 0 var(--coral-dark),0 14px 24px rgba(216,74,61,.35); transition:transform .12s ease; }
+  #playBtn:active{ transform:scale(.95); }
+  #winOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
+  #winOverlay[hidden]{ display:none; }
+  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 12px 0 rgba(23,50,79,.15),0 30px 60px rgba(23,50,79,.3); padding:20px 22px 18px; text-align:center; width:min(94vw,470px); max-height:92dvh; overflow:auto; }
+  #winStars{ font-size:30px; letter-spacing:6px; color:#e3edf5; line-height:1; }
+  #winStars span{ display:inline-block; }
+  #winStars span.lit{ color:var(--sun); text-shadow:0 0 14px rgba(255,201,60,.8); animation:starLit .4s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starLit{ 0%{ transform:scale(.3) rotate(-30deg);} 100%{ transform:scale(1) rotate(0);} }
+  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:8px 0 0; }
+  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.45; margin:8px 0 0; }
+  #winChips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
+  .chip{ background:#fdf0ec; border:2px solid #f6cfc7; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; padding:4px 12px; border-radius:999px; }
+  .win-btns{ display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .win-btn{ border:none; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; padding:11px 24px; border-radius:999px; }
+  #againBtn{ background:var(--coral); color:#fff; box-shadow:0 5px 0 var(--coral-dark); }
+  #winHomeBtn{ background:#eef5fb; color:var(--ink); box-shadow:0 5px 0 #cfdfec; }
+  .win-btn:active{ transform:scale(.95); }
+
+  @media (max-height:500px) and (min-width:560px){
+    #hootFig{ width:clamp(110px,30vh,150px); }
+    #targetCard{ margin-top:4px; padding:4px 8px 4px 12px; }
+    #startPanel{ top:50%; padding:10px 16px; }
+    .food{ width:56px; height:56px; }
+    #blanket{ min-height:72px; padding:6px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cloud,.bfly{ animation:none !important; }
+  }
+#hearts.food-row{max-width:250px;gap:4px}#hearts.food-row .fd{display:inline-block;width:34px;height:34px}#hearts.food-row svg{width:34px;height:34px}#hearts.food-row .fd-off{filter:saturate(.55);opacity:.45}#hearts.food-row .fd-pop{animation:heartPop .45s cubic-bezier(.34,1.8,.5,1)}@media (max-width:420px){#hearts.food-row .fd,#hearts.food-row svg{width:28px;height:28px}}</style>
+</head>
+<body>
+<div id="stage">
+  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.4" fill="#17324f"/><circle cx="59" cy="46" r="3.4" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+  </button>
+  <button class="decor cloud" type="button" style="top:9%;animation-duration:88s;animation-delay:-40s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="88" cy="38" rx="24" ry="13" fill="#fff"/></svg></button>
+
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <div id="targetCard" style="display:none">
+    <div>
+      <div id="targetMain">3 Apples</div>
+      <div class="tc-label" id="tcLabel">Hoot is hungry for…</div>
+      <div id="tummy"><span id="tummyLabel">Hoot&rsquo;s Tummy</span><div id="hearts"></div></div>
+    </div>
+    <button id="hearBtn" type="button" aria-label="Hear Hoot's order again">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <div id="scene">
+    <svg id="meadow" viewBox="0 0 400 110" preserveAspectRatio="none" aria-hidden="true"><path d="M0 55 Q90 15 200 48 Q310 78 400 40 L400 110 L0 110Z" fill="#8edd7e"/><path d="M0 78 Q110 45 230 72 Q330 92 400 66 L400 110 L0 110Z" fill="#57cc62"/></svg>
+    <div id="tree" aria-hidden="true">
+      <svg viewBox="0 0 160 190"><path d="M74 190 L80 108 L86 190 Z" fill="#8a5a2b"/><path d="M80 130 L52 100 M80 118 L110 92" stroke="#8a5a2b" stroke-width="9" stroke-linecap="round"/><circle cx="52" cy="66" r="42" fill="#57cc62"/><circle cx="104" cy="52" r="38" fill="#3da147"/><circle cx="80" cy="34" r="34" fill="#57cc62"/><g class="tap-apple"><circle cx="46" cy="58" r="9" fill="#e23b3b"/><circle cx="86" cy="26" r="9" fill="#e23b3b"/><circle cx="112" cy="62" r="9" fill="#e23b3b"/><circle cx="66" cy="86" r="9" fill="#e23b3b"/></g></svg>
+    </div>
+    <button class="decor bfly" type="button" style="right:12%;top:16%" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><ellipse cx="20" cy="16" rx="3" ry="9" fill="#17324f"/></svg></button>
+    <div id="hootStage">
+      <button id="hootFig" type="button" aria-label="Hoot — tap to hear his order again">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse class="belly" cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 86 Q100 82 110 86 Q107 96 100 97 Q93 96 90 86 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+          <path class="beak-low" d="M93 97 Q100 96 107 97 Q104 106 100 107 Q96 106 93 97 Z" fill="#f28c13"/>
+          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div id="blanket" aria-label="Picnic blanket of foods"></div>
+  </div>
+
+  <div id="bubbleRow">
+    <div id="bubble">Hi! I&rsquo;m Hoot, and my tummy is rumbly! Tap <span class="b-big">Play</span> and feed me just what I ask for!</div>
+    <span id="hootName">HOOT</span>
+  </div>
+
+  <div id="startPanel">
+    <h1><span class="t-a">Feed</span> <span class="t-b">Hoot</span></h1>
+    <p>Hoot is hungry! He&rsquo;ll tell you exactly what he wants — tap the right foods and watch them fly to his beak!</p>
+    <div class="mode-row" role="group" aria-label="Choose how to play">
+      <button class="mode-chip selected" type="button" data-mode="number">Feed the Number<small>Hoot asks for a food and a number</small></button>
+      <button class="mode-chip" type="button" data-mode="snack">Snack Time<small>Feed Hoot anything — he names it!</small></button>
+      <button class="mode-chip" type="button" data-mode="sort">Sort the Snacks<small>Only the colour Hoot asks for</small></button>
+    </div>
+    <button id="playBtn" type="button">▶ Play</button>
+  </div>
+
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <h2 id="winTitle">Hoot Is Full!</h2>
+      <p id="winRecap"></p>
+      <div id="winChips"></div>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+  /* ================= DATA (the same picnic foods as always) ================= */
+  var FOODS = [
+ {id:"apple", name:"Apple", color:"red", fact:"Crunch crunch! Apples help keep teeth strong.",
+  svg:'<path d="M50 32 C38 19 14 27 14 51 C14 75 34 91 50 91 C66 91 86 75 86 51 C86 27 62 19 50 32Z" fill="#E23B3B"/><path d="M50 29 C51 19 57 10 68 8 C68 19 61 27 50 29Z" fill="#3E9B4F"/><path d="M50 31 C49 23 50 16 55 10" stroke="#7A4E24" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="33" cy="49" rx="7" ry="12" fill="#FF9A86" opacity=".75"/>'},
+ {id:"banana", name:"Banana", color:"yellow", fact:"Slippy and sweet! Bananas give you energy to play.",
+  svg:'<path d="M14 18 C16 54 42 84 82 90 C89 91 90 82 83 79 C50 71 29 48 24 16 C23 9 13 10 14 18Z" fill="#F6C93C"/><path d="M22 24 C28 50 46 68 72 78" stroke="#D99613" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="17" y="6" width="9" height="10" rx="3" fill="#7A4E24"/>'},
+ {id:"carrot", name:"Carrot", color:"orange", fact:"Crunchy carrots are a bunny favourite, and they help keep your eyes healthy!",
+  svg:'<path d="M38 36 C34 34 28 38 30 46 C34 62 44 80 52 92 C54 95 58 94 58 90 C58 72 52 46 46 37 C44 34 41 37 38 36Z" fill="#F07F13"/><path d="M42 30 C36 20 26 16 18 18 C22 27 30 33 40 34 M46 28 C44 16 48 8 54 4 C58 12 56 22 50 29 M50 32 C58 24 68 22 76 26 C70 33 60 36 52 34" stroke="#3E9B4F" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M38 56 h10 M42 70 h9" stroke="#C75E08" stroke-width="3.4" stroke-linecap="round"/>'},
+ {id:"cheese", name:"Cheese", color:"yellow", fact:"Say cheese! Cheese is made from milk, and Hoot loves it.",
+  svg:'<path d="M8 66 L84 30 C89 28 92 33 90 38 L84 66 C83 71 79 74 74 74 L14 74 C9 74 6 69 8 66Z" fill="#F6C93C"/><circle cx="34" cy="62" r="6" fill="#D99613"/><circle cx="58" cy="54" r="4.5" fill="#D99613"/><circle cx="70" cy="66" r="5" fill="#D99613"/><circle cx="48" cy="44" r="3.6" fill="#D99613"/>'},
+ {id:"strawberry", name:"Strawberry", color:"red", fact:"Sweet and heart-shaped — a berry hug!",
+  svg:'<path d="M50 92 C36 78 16 60 16 42 C16 28 30 22 50 22 C70 22 84 28 84 42 C84 60 64 78 50 92Z" fill="#E23B3B"/><path d="M50 24 C44 14 34 10 26 12 C30 20 38 25 46 26 C44 18 46 10 50 6 C54 10 56 18 54 26 C62 25 70 20 74 12 C66 10 56 14 50 24Z" fill="#3E9B4F"/><g fill="#FFE9A8"><ellipse cx="36" cy="44" rx="2.6" ry="4"/><ellipse cx="52" cy="40" rx="2.6" ry="4"/><ellipse cx="66" cy="46" rx="2.6" ry="4"/><ellipse cx="44" cy="60" rx="2.6" ry="4"/><ellipse cx="60" cy="62" rx="2.6" ry="4"/><ellipse cx="50" cy="76" rx="2.6" ry="4"/></g><ellipse cx="32" cy="38" rx="6" ry="9" fill="#FF9A86" opacity=".7"/>'},
+ {id:"grapes", name:"Grapes", color:"purple", fact:"Grapes grow in bunches, like a family holding hands.",
+  svg:'<path d="M52 22 C52 14 56 8 64 6" stroke="#7A4E24" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M56 16 C64 6 78 4 86 8 C84 18 74 24 62 22Z" fill="#3E9B4F"/><g fill="#7C4DBE"><circle cx="34" cy="36" r="12"/><circle cx="56" cy="33" r="12"/><circle cx="72" cy="40" r="11"/><circle cx="44" cy="54" r="12"/><circle cx="65" cy="57" r="11"/><circle cx="53" cy="74" r="12"/></g><g fill="#A983E0"><circle cx="30" cy="32" r="3.6"/><circle cx="52" cy="29" r="3.6"/><circle cx="41" cy="50" r="3.6"/><circle cx="50" cy="70" r="3.6"/></g>'},
+ {id:"orange", name:"Orange", color:"orange", fact:"Peel, share, yum! Oranges are full of sunshine juice.",
+  svg:'<circle cx="50" cy="56" r="36" fill="#F07F13"/><path d="M50 22 C49 14 52 8 58 5" stroke="#7A4E24" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M56 14 C64 6 76 5 82 9 C79 18 69 22 59 20Z" fill="#3E9B4F"/><ellipse cx="35" cy="44" rx="8" ry="12" fill="#FFB066" opacity=".8"/><g fill="#D96A08"><circle cx="62" cy="66" r="2.2"/><circle cx="70" cy="56" r="2.2"/><circle cx="58" cy="78" r="2.2"/></g>'},
+ {id:"pear", name:"Pear", color:"green", fact:"Pears are sweet bells that grow on trees. Ding dong, snack time!",
+  svg:'<path d="M50 26 C44 26 40 33 39 41 C28 50 24 60 24 69 C24 84 36 93 50 93 C64 93 76 84 76 69 C76 60 72 50 61 41 C60 33 56 26 50 26Z" fill="#8CC152"/><path d="M50 26 C50 18 53 11 59 7" stroke="#7A4E24" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M57 13 C65 5 77 4 83 8 C80 17 70 21 60 19Z" fill="#3E9B4F"/><ellipse cx="38" cy="60" rx="6" ry="11" fill="#C4E39A" opacity=".85"/>'},
+ {id:"corn", name:"Corn", color:"yellow", fact:"Nibble nibble, row by row — corn is a counting snack!",
+  svg:'<path d="M34 12 C34 8 38 5 50 5 C62 5 66 8 66 12 L66 62 C66 72 59 78 50 78 C41 78 34 72 34 62Z" fill="#F6C93C"/><g stroke="#D99613" stroke-width="2.6"><path d="M34 24 h32 M34 38 h32 M34 52 h32 M42 12 v62 M50 10 v66 M58 12 v62"/></g><path d="M34 58 C22 68 16 82 18 95 C30 92 38 82 40 68 M66 58 C78 68 84 82 82 95 C70 92 62 82 60 68" fill="#3E9B4F"/>'},
+ {id:"egg", name:"Egg", color:null, fact:"A runny-sunny egg — Hoot licks his beak!",
+  svg:'<path d="M50 14 C72 10 90 28 88 50 C86 74 70 90 48 89 C26 88 10 74 12 50 C14 28 28 18 50 14Z" fill="#FFFDF6" stroke="#E4D5BE" stroke-width="3"/><circle cx="52" cy="52" r="17" fill="#F6B73C"/><circle cx="46" cy="46" r="5" fill="#FFD98A"/>'},
+ {id:"broccoli", name:"Broccoli", color:"green", fact:"Broccoli is a tiny tree you can eat. Roar, little dinosaur!",
+  svg:'<path d="M44 58 L56 58 L59 90 C59 94 41 94 41 90Z" fill="#A9C97A"/><circle cx="34" cy="44" r="15" fill="#2C7A3B"/><circle cx="52" cy="34" r="18" fill="#358A44"/><circle cx="68" cy="46" r="14" fill="#2C7A3B"/><circle cx="44" cy="50" r="13" fill="#3E9B4F"/><circle cx="60" cy="52" r="12" fill="#3E9B4F"/><g fill="#57B877"><circle cx="47" cy="28" r="3"/><circle cx="60" cy="38" r="3"/><circle cx="36" cy="40" r="3"/></g>'},
+ {id:"watermelon", name:"Watermelon", color:"red", fact:"Juicy, drippy, summery — mind the pips!",
+  svg:'<path d="M10 30 A42 42 0 0 0 90 30 Z" fill="#2C7A3B"/><path d="M15 30 A37 37 0 0 0 85 30 Z" fill="#FFF6EA"/><path d="M20 30 A32 32 0 0 0 80 30 Z" fill="#E94F4F"/><g fill="#33241A"><ellipse cx="38" cy="40" rx="2.4" ry="3.6"/><ellipse cx="52" cy="46" rx="2.4" ry="3.6"/><ellipse cx="64" cy="39" rx="2.4" ry="3.6"/><ellipse cx="45" cy="33" rx="2.2" ry="3.2"/><ellipse cx="59" cy="32" rx="2.2" ry="3.2"/></g>'}
+];
+  function foodSVG(f){ return '<svg viewBox="0 0 100 100" aria-hidden="true">'+f.svg+'</svg>'; }
+  function foodById(id){ for(var i=0;i<FOODS.length;i++){ if(FOODS[i].id===id) return FOODS[i]; } return null; }
+  /* 3e43: words that match the pictures, singular for one */
+  var PLURALS={ apple:"Apples", banana:"Bananas", carrot:"Carrots", cheese:"Cheese Wedges", strawberry:"Strawberries", grapes:"Grape Bunches", orange:"Oranges", pear:"Pears", corn:"Corn Cobs", egg:"Eggs", broccoli:"Broccoli Trees", watermelon:"Watermelon Slices" };
+  var SINGLE={ apple:"Apple", banana:"Banana", carrot:"Carrot", cheese:"Cheese Wedge", strawberry:"Strawberry", grapes:"Grape Bunch", orange:"Orange", pear:"Pear", corn:"Corn Cob", egg:"Egg", broccoli:"Broccoli Tree", watermelon:"Watermelon Slice" };
+  function qty(n,id){ return n+" "+(n===1?SINGLE[id]:PLURALS[id]); }
+  var COLOR_NAMES={ red:"red", yellow:"yellow", orange:"orange", green:"green", purple:"purple" };
+  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var REQUESTS_GOAL=3, SNACK_GOAL=8, SORT_GOAL=6, SORT_PER_COLOR=3;
+
+  /* ================= STATE ================= */
+  var state="start";            /* start | playing | won */
+  var mode="number";            /* number | snack | sort */
+  var stars=0, praiseIdx=0, soundOn=true, dead=false;
+  var inputLock=false, roundToken=0, wonFlag=false;
+  var reqFood=null, reqNeed=0, reqGot=0, requestsDone=0;
+  var sortColor=null, sortGot=0, sortTotal=0;
+  var snackEaten=0, totalBites=0;
+  var totals={};
+
+  /* ================= ELMS ================= */
+  function $(id){ return document.getElementById(id); }
+  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
+      targetCard=$("targetCard"), targetMain=$("targetMain"), tcLabel=$("tcLabel"), heartsBox=$("hearts"),
+      starCount=$("starCount"), starBank=$("starBank"), blanket=$("blanket"),
+      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"), winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars");
+  var bellyEl=hootFig.querySelector(".belly");
+
+  /* ================= SOUND FX (WebAudio tones) ================= */
+  var AC=null;
+  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+  function tone(f0,f1,dur,type,vol,delay){
+    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
+    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  }
+  function nomSound(){ tone(300,140,0.09,"square",0.13); tone(340,150,0.09,"square",0.12,0.13); tone(300,140,0.11,"square",0.13,0.26); }
+  function poofSound(){ tone(220,110,0.18,"triangle",0.11); }
+  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.09); tone(1560,1560,0.12,"sine",0.09,0.07); }
+  function starSound(){ tone(990,990,0.08,"triangle",0.09); tone(1320,1320,0.1,"triangle",0.09,0.06); tone(1760,1760,0.14,"triangle",0.08,0.12); }
+  function flySound(){ tone(500,980,0.22,"sine",0.06); }
+
+  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+     Every clip goes through this single queue on a single Audio element.
+     A line that has started always finishes: the next clip is only loaded
+     from the 'ended' event, never from a timer, and pending (not yet
+     started) lines can be replaced when the game moves on. The hub's
+     injected voice governor arbitrates this element against every other
+     voice in the app the same way. No device text-to-speech anywhere.
+     Hoot's orders use the recorded number and colour clips; food names
+     themselves have no recorded clip, so they live in his bubble and on
+     the request card while his voice carries the numbers and colours. */
+  var VBASE="assets/voice/";
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl=new Audio(); voiceEl.preload="auto";
+      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("error",vNext);
+    }
+    return voiceEl;
+  }
+  function hubQuiet(){
+    try{
+      var d=window.parent&&window.parent.document;
+      if(!d||d===document) return false;
+      var b=d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+    }catch(e){ return false; }
+  }
+  function silenced(){ return !soundOn||hubQuiet(); }
+  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying||dead) return;
+    var item=vQueue.shift(); if(!item) return;
+    if(item.onStart){ try{ item.onStart(); }catch(e){} }
+    if(silenced()){ pumpVoice(); return; }
+    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
+    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    var p=el.play();
+    if(p&&p.catch) p.catch(function(){ vNext(); });
+  }
+  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
+    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    pumpVoice();
+  }
+  function clearPending(){ vQueue.length=0; }
+  function enqueuePraise(){
+    praiseIdx++;
+    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise","",null);
+  }
+
+  /* ================= HOOT'S FACE / WORDS ================= */
+  function say(html){ bubble.innerHTML=html; }
+  function hootReact(cls,ms){
+    hootFig.classList.remove("celebrate","shake");
+    void hootFig.offsetWidth;
+    hootFig.classList.add(cls);
+    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  }
+  function munch(){
+    hootFig.classList.remove("munching"); void hootFig.offsetWidth; hootFig.classList.add("munching");
+    nomSound();
+    setTimeout(function(){ hootFig.classList.remove("munching"); },950);
+    var hr=hootFig.getBoundingClientRect(), sr=scene.getBoundingClientRect();
+    for(var i=0;i<2;i++){
+      (function(d){
+        setTimeout(function(){
+          if(dead) return;
+          var n=document.createElement("span"); n.className="nom"; n.textContent="nom!";
+          n.style.left=(hr.left-sr.left+hr.width*0.44+Math.random()*30)+"px";
+          n.style.top=(hr.top-sr.top+hr.height*0.36)+"px";
+          scene.appendChild(n); setTimeout(function(){ n.remove(); },850);
+        },d);
+      })(i*260);
+    }
+  }
+
+  /* ================= HELPERS ================= */
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function updateHUD(){ starCount.textContent=stars; }
+  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
+  function __hwFood(f,n){var P={};try{P=window.parent||{};}catch(e){}var H=P.HOOT_HAVE||{},FOOD={apple:"teach-apple",banana:"teach-banana",orange:"name-color-orange",egg:"food-egg"};var c=(n===1&&H["food-"+f.id+"-one"])?"food-"+f.id+"-one":H["food-"+f.id]?"food-"+f.id:FOOD[f.id];if(c)enqueue(c+".mp3","name","",null);}
+  function renderHearts(goal,filled){
+    heartsBox.innerHTML="";
+    /* 3e43: in Feed the Number the tummy shows the FOOD to count, not hearts: grey until eaten, then in colour */
+    if(mode==="number"&&reqFood&&reqFood.svg){ heartsBox.className="food-row"; heartsBox.setAttribute("aria-label",filled+" of "+goal+" "+PLURALS[reqFood.id].toLowerCase()+" eaten"); for(var j=0;j<goal;j++){ var e=document.createElement("span"); e.className="fd "+(j<filled?"fd-on":"fd-off")+(j===filled-1?" fd-pop":""); e.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+reqFood.svg+'</svg>'; heartsBox.appendChild(e); } return; }
+    heartsBox.className=""; heartsBox.removeAttribute("aria-label");
+    for(var i=0;i<goal;i++){
+      var s=document.createElement("span"); s.className=(i<filled?"h-on":"h-off");
+      s.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.3 5 5.7 5c2 0 3.4 1.1 4.3 2.4h4C15 6.1 16.4 5 18.4 5c3.4 0 5.3 3.6 3.6 6.7C19.5 16.3 12 21 12 21z" fill="#f3e3e1" stroke="#dcb8b4" stroke-width="1.6"/></svg>';
+      if(i===filled-1) s.firstChild.classList.add("h-pop");
+      heartsBox.appendChild(s);
+    }
+  }
+  function growBelly(){
+    if(bellyEl) bellyEl.style.transform="scale("+(1+0.035*Math.min(totalBites,10)).toFixed(3)+")";
+  }
+  function confetti(){
+    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#57cc62","#ff8fa3","#4ea8e0","#ff6b5e"];
+    for(var i=0;i<26;i++){
+      var c=document.createElement("div"); c.className="confetti";
+      c.style.background=cols[i%cols.length];
+      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
+      scene.appendChild(c);
+      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      if(c.animate) c.animate([
+        {transform:"translate(0,0) rotate(0deg)",opacity:1},
+        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
+      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+    }
+  }
+  function flyFood(food,fromBtn,toBeak,done){
+    var clone=document.createElement("div"); clone.className="fly-clone";
+    clone.innerHTML=foodSVG(food);
+    var sr=scene.getBoundingClientRect(), fr=fromBtn.getBoundingClientRect(), hr=hootFig.getBoundingClientRect();
+    var w=fr.width*0.85;
+    var x0=fr.left+fr.width/2-sr.left-w/2, y0=fr.top+fr.height/2-sr.top-w/2;
+    var x1=hr.left+hr.width/2-sr.left-w/2, y1=hr.top+hr.height*0.36-sr.top-w/2;
+    clone.style.width=w+"px"; clone.style.left=x0+"px"; clone.style.top=y0+"px";
+    scene.appendChild(clone);
+    flySound();
+    var finished=false;
+    function finish(){ if(finished) return; finished=true; clone.remove(); if(done) done(); }
+    if(clone.animate){
+      var anim=clone.animate([
+        {transform:"translate(0,0) scale(1) rotate(0deg)",opacity:1},
+        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.5-52)+"px) scale(.9) rotate(8deg)",opacity:1,offset:0.55},
+        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.45) rotate(-6deg)",opacity:.95}
+      ],{duration:560,easing:"cubic-bezier(.3,.6,.4,1)"});
+      anim.onfinish=finish;
+      setTimeout(finish,740);
+    } else setTimeout(finish,120);
+    return clone;
+  }
+  function spitFood(food,fromBtn){
+    /* the rejected bite pops back out of Hoot's beak and drops away */
+    var clone=document.createElement("div"); clone.className="fly-clone";
+    clone.innerHTML=foodSVG(food);
+    var sr=scene.getBoundingClientRect(), hr=hootFig.getBoundingClientRect();
+    var w=44;
+    var x0=hr.left+hr.width/2-sr.left-w/2, y0=hr.top+hr.height*0.36-sr.top-w/2;
+    clone.style.width=w+"px"; clone.style.left=x0+"px"; clone.style.top=y0+"px";
+    scene.appendChild(clone);
+    poofSound();
+    if(clone.animate){
+      clone.animate([
+        {transform:"translate(0,0) rotate(0deg)",opacity:1},
+        {transform:"translate(-30px,90px) rotate(-160deg)",opacity:.9,offset:0.7},
+        {transform:"translate(-44px,190px) rotate(-260deg)",opacity:0}
+      ],{duration:640,easing:"cubic-bezier(.3,.6,.4,1)"});
+    }
+    setTimeout(function(){ clone.remove(); },680);
+  }
+
+  /* ================= BLANKET ================= */
+  function layBlanket(list){
+    blanket.innerHTML="";
+    list.forEach(function(f){
+      var b=document.createElement("button"); b.type="button"; b.className="food";
+      b.dataset.id=f.id; b.setAttribute("aria-label",f.name);
+      b.innerHTML=foodSVG(f);
+      b.addEventListener("click",function(){ onFoodTap(b,f); });
+      blanket.appendChild(b);
+    });
+  }
+  function blanketFoodsForRequest(){
+    var list=[];
+    for(var i=0;i<reqNeed;i++) list.push(reqFood);
+    var others=shuffle(FOODS.filter(function(f){ return f.id!==reqFood.id; }));
+    var fill=Math.min(9-list.length,5);
+    for(var j=0;j<fill;j++) list.push(others[j]);
+    return shuffle(list);
+  }
+
+  /* ================= REQUESTS ================= */
+  function newRequest(){
+    if(dead||state!=="playing") return;
+    reqFood=(function(){var P={};try{P=window.parent||{};}catch(e){}var H=P.HOOT_HAVE||{},SAY={apple:1,banana:1,orange:1};var ok=FOODS.filter(function(f){return SAY[f.id]||H["food-"+f.id];});if(!ok.length)ok=FOODS;var last=window.__hwLastFood;var pick=ok.filter(function(f){return f.id!==last;});if(!pick.length)pick=ok;var f=pick[Math.floor(Math.random()*pick.length)];window.__hwLastFood=f.id;return f;})(); /* 3e44: only ask for foods Hoot can say, so a child who cannot read hears what to find */
+    reqNeed=1+Math.floor(Math.random()*6); /* 1..6 */
+    if(reqNeed<2&&Math.random()<0.6) reqNeed=2;
+    reqGot=0;
+    var plural=PLURALS[reqFood.id];
+    targetMain.textContent=qty(reqNeed,reqFood.id);
+    tcLabel.textContent="Hoot is hungry for…";
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    renderHearts(reqNeed,0);
+    layBlanket(blanketFoodsForRequest());
+    clearPending();
+    var f=reqFood, n=reqNeed;
+    (function(){var P={};try{P=window.parent||{};}catch(e){}if((P.HOOT_HAVE||{})["feed-hungry-for"]) enqueue("feed-hungry-for.mp3","line","",null);})(); /* 3e44: "I'm hungry for…" then the number, then the food */
+    enqueue("call-number-"+n+".mp3","name","",function(){
+      say("I&rsquo;m hungry for <span class='b-big'>"+qty(n,f.id)+"</span>! Tap the "+PLURALS[f.id].toLowerCase()+" on the blanket — count them into my beak!");
+    });__hwFood(f,n);
+    inputLock=false;
+  }
+  function newSortColor(){
+    if(dead||state!=="playing") return;
+    var colors=["red","yellow","orange","green","purple"].filter(function(c){ return c!==sortColor; });
+    sortColor=colors[Math.floor(Math.random()*colors.length)];
+    sortGot=0;
+    targetMain.textContent=sortColor.toUpperCase()+" foods";
+    tcLabel.textContent="Hoot wants only…";
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    renderHearts(SORT_GOAL,sortTotal);
+    var ofColor=shuffle(FOODS.filter(function(f){ return f.color===sortColor; }));
+    var others=shuffle(FOODS.filter(function(f){ return f.color!==sortColor; }));
+    /* Some colours have fewer than SORT_PER_COLOR distinct foods (only
+       one purple food exists!), so the blanket repeats that colour's
+       foods — there are always enough correct bites to fill the call. */
+    var list=[];
+    for(var i=0;i<SORT_PER_COLOR;i++) list.push(ofColor[i%ofColor.length]);
+    list=list.concat(others.slice(0,5));
+    while(list.length<8) list.push(others[list.length%others.length]);
+    layBlanket(shuffle(list));
+    clearPending();
+    var c=sortColor;
+    enqueue("call-color-"+c+".mp3","name","",function(){
+      say("Today I only want <span class='b-big'>"+c.toUpperCase()+"</span> foods! Feed me something "+c+"!");
+    });
+    inputLock=false;
+  }
+  function startSnack(){
+    targetMain.textContent="Snack Time!";
+    tcLabel.textContent="Feed Hoot anything he likes";
+    targetCard.style.display="flex";
+    renderHearts(SNACK_GOAL,0);
+    layBlanket(shuffle(FOODS.slice()).slice(0,9));
+    say("Snack time! Tap ANY food and I&rsquo;ll munch it and tell you what it is!");
+    if(window.__hootSpeak) window.__hootSpeak("idle");
+    inputLock=false;
+  }
+
+  /* ================= FEEDING ================= */
+  function onFoodTap(btn,food){
+    if(state!=="playing"||inputLock||dead) return;
+    if(btn.dataset.done) return;
+    audio();
+    if(mode==="snack"){ btn.dataset.done="1"; eatFood(btn,food,true); return; }
+    if(mode==="number"){
+      if(food.id===reqFood.id){ btn.dataset.done="1"; eatFood(btn,food,true); }
+      else rejectFood(btn,food,"That&rsquo;s a <span class='b-big'>"+food.name+"</span>, not a "+reqFood.name+"! I&rsquo;m hungry for "+PLURALS[reqFood.id]+" — tap a "+reqFood.name+"!");
+      return;
+    }
+    /* sort */
+    if(food.color===sortColor){ btn.dataset.done="1"; eatFood(btn,food,true); }
+    else rejectFood(btn,food,"Yuck! That&rsquo;s <span class='b-big'>"+food.color+"</span> — today I only want "+sortColor.toUpperCase()+" foods!");
+  }
+  function eatFood(btn,food,correct){
+    inputLock=true;
+    btn.classList.add("eaten");
+    flyFood(food,btn,true,function(){
+      if(dead) return;
+      munch();
+      totalBites++; growBelly();
+      totals[food.id]=(totals[food.id]||0)+1;
+      if(mode==="number"){
+        reqGot++;
+        renderHearts(reqNeed,reqGot);
+        var got=reqGot, f=reqFood, need=reqNeed;
+        if(got<need){
+          enqueue("call-number-"+got+".mp3","count","",function(){
+            say("That&rsquo;s <span class='b-big'>"+got+"</span>! "+(need-got===1?"One more "+f.name+"!":"Feed me "+(need-got)+" more!"));
+          });
+          inputLock=false;
+        } else {
+          requestComplete();
+        }
+      } else if(mode==="sort"){
+        sortGot++; sortTotal++;
+        renderHearts(SORT_GOAL,sortTotal);
+        __hwFood(food,1); /* 3e51 */
+        say("Mmm, <span class='b-big'>"+food.color+" "+food.name+"</span>! "+food.fact);
+        if(sortTotal>=SORT_GOAL){ sortComplete(); }
+        else if(sortGot>=SORT_PER_COLOR){
+          stars++; bumpStars(); updateHUD(); enqueuePraise();
+          var tk=++roundToken;
+          setTimeout(function(){ if(!dead&&tk===roundToken&&state==="playing") newSortColor(); },1500);
+        } else inputLock=false;
+      } else { /* snack */
+        snackEaten++;
+        renderHearts(SNACK_GOAL,snackEaten);
+        __hwFood(food,1); /* 3e51: Snack Time says the food's name, not only writes it */
+        say("<span class='b-big'>"+food.name+"!</span> "+food.fact);
+        if(snackEaten%3===0) if(window.__hootSpeak) window.__hootSpeak("idle");
+        if(snackEaten>=SNACK_GOAL){ snackComplete(); }
+        else {
+          /* keep the blanket stocked */
+          if(blanket.querySelectorAll(".food:not(.eaten)").length<3){
+            var extra=shuffle(FOODS.slice()).slice(0,5);
+            extra.forEach(function(f){
+              var b=document.createElement("button"); b.type="button"; b.className="food";
+              b.dataset.id=f.id; b.setAttribute("aria-label",f.name); b.innerHTML=foodSVG(f);
+              b.addEventListener("click",function(){ onFoodTap(b,f); });
+              blanket.appendChild(b);
+            });
+          }
+          inputLock=false;
+        }
+      }
+    });
+  }
+  function rejectFood(btn,food,msg){
+    inputLock=true;
+    /* flies in, Hoot shakes his head and spits it out with a giggle */
+    flyFood(food,btn,true,function(){
+      if(dead) return;
+      hootReact("shake",800);
+      spitFood(food,btn);
+      say("<span class='b-big'>Yuck!</span> "+msg);
+      clearPending();
+      __hwFood(food,1); enqueue("hoot-try-again.mp3","hint","",null); /* 3e51: says what was tapped, then try again */
+      setTimeout(function(){ if(!dead&&state==="playing") inputLock=false; },650);
+    });
+  }
+  function requestComplete(){
+    stars++; bumpStars(); updateHUD(); starSound();
+    requestsDone++;
+    hootReact("celebrate",1600);
+    var f=reqFood, n=reqNeed;
+    say("You fed me <span class='b-big'>"+qty(n,f.id)+"</span>! "+f.fact+" My tummy is happy!");
+    clearPending(); enqueuePraise();
+    var tk=++roundToken;
+    setTimeout(function(){
+      if(dead||tk!==roundToken||state!=="playing") return;
+      if(requestsDone>=REQUESTS_GOAL) winRound();
+      else newRequest();
+    },1750);
+  }
+  function sortComplete(){
+    starSound(); hootReact("celebrate",1600);
+    say("My tummy is FULL of colours! What a rainbow snack!");
+    var tk=++roundToken;
+    setTimeout(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },1400);
+  }
+  function snackComplete(){
+    starSound(); hootReact("celebrate",1600);
+    say("BURP! Excuse me! My tummy is completely full!");
+    var tk=++roundToken;
+    setTimeout(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },1400);
+  }
+
+  /* ================= START / WIN ================= */
+  function startRound(){
+    clearPending(); roundToken++;
+    stars=0; requestsDone=0; reqGot=0; snackEaten=0; sortTotal=0; sortGot=0; sortColor=null; totalBites=0; totals={};
+    inputLock=false; wonFlag=false;
+    growBelly();
+    winOverlay.hidden=true; startPanel.hidden=true;
+    state="playing"; updateHUD();
+    enqueue("hoot-game-hello.mp3","hello","",function(){ say("Hello! My tummy is rumbly — let&rsquo;s eat!"); });
+    if(mode==="number") newRequest();
+    else if(mode==="sort") newSortColor();
+    else startSnack();
+  }
+  function winRound(){
+    if(wonFlag) return; wonFlag=true; state="won";
+    targetCard.style.display="none";
+    stars=Math.max(stars,1); updateHUD();
+    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
+    enqueue("hoot-you-learned.mp3","recap","",function(){
+      say("I&rsquo;m full and happy! Thank you for feeding me!");
+    });
+    var parts=[];
+    Object.keys(totals).forEach(function(id){ parts.push(qty(totals[id],id)); });
+    winChips.innerHTML="";
+    Object.keys(totals).forEach(function(id){
+      var c=document.createElement("span"); c.className="chip"; c.textContent=qty(totals[id],id); winChips.appendChild(c);
+    });
+    if(mode==="number"){
+      winTitle.textContent="Hoot Is Full!";
+      winRecap.innerHTML="You counted out every snack Hoot asked for — <b>"+parts.join(", ")+"</b>! Counting with a hungry friend is counting that sticks.";
+    } else if(mode==="sort"){
+      winTitle.textContent="Rainbow Tummy!";
+      winRecap.innerHTML="You sorted Hoot&rsquo;s snacks by colour — he ate <b>"+parts.join(", ")+"</b>, and only the colours he called for!";
+    } else {
+      winTitle.textContent="Snack Star!";
+      winRecap.innerHTML="Hoot tasted <b>"+parts.join(", ")+"</b> — "+totalBites+" happy bites in all! His tummy is full and round.";
+    }
+    var starEls=winStars.children;
+    for(var i=0;i<starEls.length;i++){
+      starEls[i].classList.remove("lit");
+      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
+    }
+    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+  }
+  function resetToStart(){
+    clearPending(); roundToken++;
+    state="start"; inputLock=false; wonFlag=false;
+    winOverlay.hidden=true; startPanel.hidden=false;
+    targetCard.style.display="none";
+    blanket.innerHTML="";
+    say("Hi! I&rsquo;m Hoot, and my tummy is rumbly! Tap <span class='b-big'>Play</span> and feed me just what I ask for!");
+    hootFig.classList.add("wave");
+    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  }
+
+  /* ================= CONTROLS ================= */
+  function hearAgain(){
+    audio();
+    if(state!=="playing"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact("celebrate",1000); return; }
+    clearPending();
+    if(mode==="number"&&reqFood){
+      var f=reqFood, n=reqNeed;
+      enqueue("call-number-"+n+".mp3","name","",function(){
+        say("I&rsquo;m hungry for <span class='b-big'>"+qty(n,f.id)+"</span>! I&rsquo;ve eaten "+reqGot+" so far!");
+      });__hwFood(f,n);
+    } else if(mode==="sort"&&sortColor){
+      var c=sortColor;
+      enqueue("call-color-"+c+".mp3","name","",function(){
+        say("Today I only want <span class='b-big'>"+c.toUpperCase()+"</span> foods!");
+      });
+    } else if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+  }
+  hootFig.addEventListener("click",hearAgain);
+  $("hearBtn").addEventListener("click",hearAgain);
+  $("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    $("soundOnIc").style.display=soundOn?"block":"none";
+    $("soundOffIc").style.display=soundOn?"none":"block";
+    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+    if(!soundOn){ clearPending(); }
+    else { audio(); tone(660,660,0.1,"triangle",0.12); }
+  });
+  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
+  document.querySelectorAll(".mode-chip").forEach(function(ch){
+    ch.addEventListener("click",function(){
+      mode=ch.getAttribute("data-mode");
+      document.querySelectorAll(".mode-chip").forEach(function(c){ c.classList.toggle("selected",c===ch); });
+      tone(660,660,0.1,"triangle",0.1);
+    });
+  });
+  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+
+  /* ================= LIVING SCENE TAPS ================= */
+  $("sun").addEventListener("click",function(){
+    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
+    sparkleSound();
+    if(state==="start") say("Mr. Sun grows all my picnic food in the orchard!");
+  });
+  document.querySelectorAll(".cloud").forEach(function(c){
+    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); poofSound(); setTimeout(function(){ c.classList.remove("puff"); },300); });
+  });
+  document.querySelectorAll(".bfly").forEach(function(bf){
+    bf.addEventListener("click",function(){
+      audio(); sparkleSound();
+      if(bf.animate) bf.animate([{transform:"rotate(0deg) scale(1)"},{transform:"rotate(360deg) scale(1.25)"}],{duration:560,easing:"ease-in-out"});
+    });
+  });
+  document.querySelectorAll("#tree .tap-apple").forEach(function(a){
+    a.addEventListener("click",function(){
+      audio(); sparkleSound();
+      say("Crunch! Fresh apples grow right here in my orchard!");
+      if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+    });
+  });
+
+  /* ================= LEAVING THE GAME ================= */
+  function teardown(){ dead=true; clearPending(); hootTalking(false); }
+  window.addEventListener("pagehide",teardown);
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+  /* ================= INIT ================= */
+  updateHUD();
+  hootFig.classList.add("wave");
+  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+
+  /* Probe/debug handle: read-only snapshot of the round state. */
+  window.__feedGame={
+    snapshot:function(){
+      return { state:state, mode:mode, stars:stars,
+        reqFood:reqFood?reqFood.id:null, reqNeed:reqNeed, reqGot:reqGot, requestsDone:requestsDone,
+        sortColor:sortColor, sortTotal:sortTotal, snackEaten:snackEaten, totals:totals,
+        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
+        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

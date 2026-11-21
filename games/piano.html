@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="piano";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Rainbow Piano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
+    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#aee7ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
+    background:linear-gradient(180deg,#6ec9f7 0%,#a5e3ff 34%,#e6f9e8 62%,#b9ec9d 100%); }
+
+  /* ---------- living music meadow ---------- */
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
+  .cloud{ z-index:1; width:104px; height:46px; opacity:.95; animation:drift linear infinite; }
+  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.22,1.35); }
+  @keyframes drift{ from{ transform:translateX(-130px); } to{ transform:translateX(112vw); } }
+  #rainbow{ position:absolute; z-index:1; left:50%; top:-6px; transform:translateX(-50%); width:min(96vw,520px); pointer-events:none; }
+  #rainbow path{ transition:opacity .6s, filter .6s; opacity:.16; }
+  #rainbow path.lit{ opacity:1; filter:drop-shadow(0 0 6px rgba(255,255,255,.7)); }
+  #rainbow.fullglow path{ filter:drop-shadow(0 0 10px rgba(255,220,90,.9)); }
+  .flower{ z-index:2; width:42px; height:56px; transform-origin:50% 100%; animation:sway 3.4s ease-in-out infinite alternate; }
+  .flower svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .flower.dance svg{ animation:flowerDance .45s ease-in-out 3; }
+  @keyframes sway{ from{ transform:rotate(-4deg); } to{ transform:rotate(4deg); } }
+  @keyframes flowerDance{ 0%,100%{ transform:scale(1) rotate(0);} 30%{ transform:scale(1.3) rotate(-10deg);} 70%{ transform:scale(1.2) rotate(9deg);} }
+  .note-float{ position:absolute; z-index:9; pointer-events:none; font-size:26px; font-weight:700; }
+
+  /* ---------- HUD ---------- */
+  #hud{ position:relative; z-index:8; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
+  .round-btn:active{ transform:scale(.9); }
+  .round-btn svg{ width:25px; height:25px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
+  #starBank .star-ic{ width:25px; height:25px; display:block; }
+  #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+
+  /* ---------- song card bar ---------- */
+  #targetCard{ position:relative; z-index:8; margin:8px auto 0; width:fit-content; max-width:calc(100vw - 20px); display:none; align-items:center; gap:11px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; padding:7px 14px 7px 10px; box-shadow:0 5px 0 rgba(23,50,79,.15),0 12px 24px rgba(23,50,79,.14); }
+  #songBadge{ font-size:30px; width:56px; height:56px; display:grid; place-items:center; background:#f3e8ff; border-radius:15px; border:3px dashed #c39bff; flex:0 0 auto; }
+  .tc-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:13px; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; line-height:1.15; }
+  #songName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; color:var(--ink); line-height:1.1; }
+  #songDots{ display:flex; gap:5px; margin-top:5px; flex-wrap:wrap; max-width:230px; }
+  #songDots i{ width:17px; height:17px; border-radius:50%; border:2.5px solid #fff; box-shadow:0 2px 5px rgba(23,50,79,.25); display:block; opacity:.38; transition:opacity .2s,transform .2s; }
+  #songDots i.calling{ opacity:1; transform:scale(1.45); outline:3px solid var(--sun); }
+  #songDots i.done{ opacity:1; transform:scale(1.12); }
+  #songDots i.next{ opacity:.85; outline:3px dashed var(--ink-soft); outline-offset:1px; }
+  #hearBtn{ flex:0 0 auto; width:46px; height:46px; border-radius:50%; border:3px solid #c39bff; background:#f3e8ff; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(23,50,79,.15); transition:transform .12s; }
+  #hearBtn:active{ transform:scale(.88); }
+  #hearBtn svg{ width:23px; height:23px; }
+
+  /* ---------- scene / stage floor ---------- */
+  #scene{ position:relative; z-index:3; flex:1 1 auto; min-height:0; }
+  #stageFloor{ position:absolute; left:4%; right:4%; bottom:2px; height:26px; border-radius:50%; background:radial-gradient(ellipse at center,#8a5a33 0%,#a9713c 55%,rgba(169,113,60,0) 78%); opacity:.5; pointer-events:none; }
+  #instrumentRow{ position:absolute; z-index:5; left:50%; bottom:8px; transform:translateX(-50%); display:flex; gap:7px; }
+  .inst-chip{ border:3px solid #fff; background:rgba(255,253,246,.94); color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; padding:7px 13px; border-radius:999px; cursor:pointer; box-shadow:0 3px 0 rgba(23,50,79,.15); transition:transform .12s; white-space:nowrap; }
+  .inst-chip:active{ transform:scale(.94); }
+  .inst-chip.selected{ background:var(--sun); }
+
+  /* ---------- keys ---------- */
+  #keys{ position:relative; z-index:4; display:flex; gap:5px; padding:6px 8px 2px; height:clamp(128px,24vh,196px); }
+  .key{ position:relative; flex:1 1 0; border:3px solid rgba(255,255,255,.9); border-radius:10px 10px 16px 16px; cursor:pointer; padding:0; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; box-shadow:0 6px 0 rgba(23,50,79,.22),0 12px 20px rgba(23,50,79,.18); transition:transform .07s,filter .07s; font-family:"Fredoka",sans-serif; }
+  .key .k-note{ font-weight:700; font-size:clamp(13px,3.4vw,18px); color:#fff; text-shadow:0 1.5px 0 rgba(0,0,0,.28); line-height:1; }
+  .key .k-letter{ font-weight:700; font-size:clamp(17px,4.6vw,25px); color:#fff; text-shadow:0 1.5px 0 rgba(0,0,0,.28); margin:1px 0 7px; line-height:1; }
+  .key.light .k-note, .key.light .k-letter{ color:var(--ink); text-shadow:none; }
+  .key.pressed{ transform:translateY(5px) scale(.985); filter:brightness(1.28) saturate(1.15); box-shadow:0 1px 0 rgba(23,50,79,.22),0 4px 10px rgba(23,50,79,.2); }
+  .key.glow{ filter:brightness(1.35) saturate(1.2); outline:4px solid #fff; outline-offset:-2px; animation:keyGlow .5s ease-in-out infinite alternate; }
+  @keyframes keyGlow{ from{ transform:scale(1);} to{ transform:scale(1.045);} }
+  .key.wiggle{ animation:keyWiggle .4s ease-in-out 2; }
+  @keyframes keyWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-2.4deg);} 75%{ transform:rotate(2.4deg);} }
+
+  /* ---------- ground row: Hoot ---------- */
+  #groundRow{ position:relative; z-index:5; display:flex; align-items:flex-end; justify-content:flex-start; gap:6px; padding:0 8px max(6px,env(safe-area-inset-bottom)); }
+  #hootZone{ display:flex; align-items:flex-end; gap:7px; min-width:0; }
+  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,27vw,164px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
+  #hootFig svg{ width:100%; display:block; overflow:visible; }
+  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(-1.1deg);} 50%{ transform:translateY(-6px) rotate(1.1deg);} }
+  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
+  @keyframes hootJump{ 0%{transform:translateY(0) scale(1,1)} 35%{transform:translateY(-26px) scale(.96,1.05) rotate(-4deg)} 70%{transform:translateY(0) scale(1.06,.92)} 100%{transform:translateY(0) scale(1,1)} }
+  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
+  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
+  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ 0%{ transform:translateY(0) scale(1,1);} 100%{ transform:translateY(-4px) scale(1.03,.97);} }
+  #hootFig.dance{ animation:hootDance .42s ease-in-out infinite alternate; }
+  @keyframes hootDance{ 0%{ transform:rotate(-5deg) translateY(0);} 100%{ transform:rotate(5deg) translateY(-9px);} }
+  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
+  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
+  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
+  #hootFig.celebrate .wing-l, #hootFig.dance .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
+  #hootFig.celebrate .wing-r, #hootFig.dance .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
+  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
+  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
+  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
+  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
+  @keyframes blink{ 0%,91%,100%{ transform:scaleY(1);} 94%,96%{ transform:scaleY(.08);} }
+  #bubbleCol{ display:flex; flex-direction:column; align-items:flex-start; gap:5px; margin-bottom:22px; min-width:0; }
+  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:18px; box-shadow:0 5px 0 rgba(23,50,79,.13),0 12px 24px rgba(23,50,79,.16); padding:9px 13px; font-weight:800; font-size:clamp(14.5px,4vw,18.5px); line-height:1.3; max-width:min(52vw,330px); }
+  #bubble:after{ content:""; position:absolute; left:-8px; bottom:16px; width:15px; height:15px; background:var(--paper); transform:rotate(45deg); }
+  #bubble .b-big{ color:#9b6fe0; font-family:"Fredoka",sans-serif; }
+  #hootName{ background:#9b6fe0; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.06em; padding:3px 11px; border-radius:999px; border:2px solid #fff; box-shadow:0 3px 8px rgba(23,50,79,.2); }
+
+  /* ---------- start panel ---------- */
+  #startPanel{ position:absolute; z-index:10; left:50%; top:44%; transform:translate(-50%,-50%); width:min(92vw,430px); background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:18px 20px 16px; text-align:center; }
+  #startPanel[hidden]{ display:none; }
+  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0; color:var(--ink); }
+  #startPanel h1 .t-r{ color:#e0342b; } #startPanel h1 .t-p{ color:#9b6fe0; }
+  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.4; margin:8px 0 0; }
+  .mode-row{ display:flex; gap:9px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  .mode-chip{ border:3px solid #e6dcf7; background:#fff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:16px; padding:10px 16px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .mode-chip:active{ transform:scale(.94); }
+  .mode-chip.selected{ background:var(--sun); border-color:#fff; box-shadow:0 4px 0 rgba(23,50,79,.16); }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
+  #playBtn{ margin-top:16px; border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; padding:14px 44px; border-radius:999px; cursor:pointer; box-shadow:0 7px 0 #d84a3f,0 16px 30px rgba(255,107,94,.4); transition:transform .12s; animation:playPulse 1.6s ease-in-out infinite; }
+  #playBtn:active{ transform:translateY(4px); box-shadow:0 3px 0 #d84a3f; }
+  @keyframes playPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.05);} }
+
+  /* ---------- win overlay ---------- */
+  #winOverlay{ position:absolute; inset:0; z-index:11; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
+  #winOverlay[hidden]{ display:none; }
+  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 14px 40px rgba(23,50,79,.35); padding:18px 20px 16px; text-align:center; width:min(92vw,440px); max-height:100%; overflow:hidden; animation:winIn .5s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes winIn{ from{ transform:scale(.7) translateY(30px); opacity:0;} to{ transform:scale(1) translateY(0); opacity:1;} }
+  #winRainbow{ font-size:30px; }
+  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:6px 0 0; }
+  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:16px; line-height:1.45; margin:8px 0 0; }
+  #winSongs{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:11px; }
+  #winSongs .song-chip{ background:#f3e8ff; border:2.5px solid #fff; border-radius:999px; padding:4px 13px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; box-shadow:0 3px 8px rgba(23,50,79,.15); }
+  .win-btns{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .win-btn{ border:3px solid #fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:12px 26px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .win-btn:active{ transform:translateY(3px); }
+  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 6px 0 #3da347,0 12px 24px rgba(87,204,98,.35); }
+  #winHomeBtn{ background:#fff; color:var(--ink); border-color:#e6dcf7; box-shadow:0 5px 0 rgba(23,50,79,.14); }
+  .confetti{ position:absolute; z-index:12; width:11px; height:15px; border-radius:3px; pointer-events:none; }
+
+  @media (max-width:430px){
+    #bubble{ font-size:13.5px; padding:8px 10px; }
+  }
+  @media (max-height:560px){
+    #hootFig{ width:clamp(74px,22vh,96px); }
+    #keys{ height:clamp(88px,20vh,120px); padding-top:3px; }
+    .key .k-letter{ font-size:15px; margin-bottom:4px; } .key .k-note{ font-size:11px; }
+    #songBadge{ width:42px; height:42px; font-size:23px; }
+    #songName{ font-size:15px; } #songDots i{ width:13px; height:13px; }
+    #targetCard{ margin-top:4px; padding:5px 10px 5px 7px; }
+    #hearBtn{ width:38px; height:38px; }
+    #hud{ padding-top:6px; } .round-btn{ width:42px; height:42px; }
+    #starBank{ font-size:18px; padding:4px 12px 4px 8px; }
+    #bubble{ margin-bottom:0; font-size:12.5px; max-width:38vw; padding:7px 10px; }
+    #bubbleCol{ margin-bottom:6px; }
+    #rainbow{ width:min(80vw,380px); }
+    .inst-chip{ font-size:12.5px; padding:5px 10px; }
+    #startPanel{ top:50%; padding:12px 16px 10px; }
+    #playBtn{ font-size:20px; padding:10px 34px; margin-top:10px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cloud,#hootFig,.flower{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- living music meadow -->
+  <svg id="rainbow" viewBox="0 0 520 250" aria-hidden="true">
+    <path id="band0" d="M20 245 A240 240 0 0 1 500 245" fill="none" stroke="#ff6b5e" stroke-width="17"/>
+    <path id="band1" d="M44 245 A216 216 0 0 1 476 245" fill="none" stroke="#ff9f43" stroke-width="17"/>
+    <path id="band2" d="M68 245 A192 192 0 0 1 452 245" fill="none" stroke="#ffc93c" stroke-width="17"/>
+    <path id="band3" d="M92 245 A168 168 0 0 1 428 245" fill="none" stroke="#57cc62" stroke-width="17"/>
+    <path id="band4" d="M116 245 A144 144 0 0 1 404 245" fill="none" stroke="#4aa8e0" stroke-width="17"/>
+    <path id="band5" d="M140 245 A120 120 0 0 1 380 245" fill="none" stroke="#9b6fe0" stroke-width="17"/>
+    <path id="band6" d="M164 245 A96 96 0 0 1 356 245" fill="none" stroke="#ff8fab" stroke-width="17"/>
+  </svg>
+  <button class="decor cloud" type="button" style="top:12%;animation-duration:84s;animation-delay:-30s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <button class="decor cloud" type="button" style="top:26%;animation-duration:108s;animation-delay:-70s;width:80px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <!-- song card bar -->
+  <div id="targetCard">
+    <div id="songBadge">🎵</div>
+    <div>
+      <div class="tc-label" id="songPhase">Hoot&rsquo;s Song Card</div>
+      <div id="songName">Twinkle Twinkle</div>
+      <div id="songDots"></div>
+    </div>
+    <button id="hearBtn" type="button" aria-label="Hear Hoot call the song again">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <!-- stage -->
+  <div id="scene">
+    <div id="stageFloor" aria-hidden="true"></div>
+    <button class="decor flower" type="button" style="left:5%;bottom:34px" aria-label="Flower — tap to dance"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q20 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 44 Q12 42 10 34 Q19 34 22 40Z" fill="#57cc62"/><g fill="#ff8fab"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ffc93c"/></svg></button>
+    <button class="decor flower" type="button" style="left:16%;bottom:30px;animation-delay:-1.3s" aria-label="Flower — tap to dance"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q24 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 46 Q32 44 34 36 Q25 36 22 42Z" fill="#57cc62"/><g fill="#c39bff"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#fff"/></svg></button>
+    <button class="decor flower" type="button" style="right:6%;bottom:34px;animation-delay:-2.1s" aria-label="Flower — tap to dance"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q20 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 44 Q12 42 10 34 Q19 34 22 40Z" fill="#57cc62"/><g fill="#ffd93b"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ff9f1c"/></svg></button>
+    <button class="decor flower" type="button" style="right:17%;bottom:30px;animation-delay:-.7s" aria-label="Flower — tap to dance"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q24 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 46 Q32 44 34 36 Q25 36 22 42Z" fill="#57cc62"/><g fill="#7fd4ff"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ff8fab"/></svg></button>
+    <div id="instrumentRow" role="group" aria-label="Choose an instrument sound">
+      <button class="inst-chip selected" type="button" data-inst="piano">🎹 Piano</button>
+      <button class="inst-chip" type="button" data-inst="bells">🔔 Rainbow Bells</button>
+      <button class="inst-chip" type="button" data-inst="harp">✨ Sparkle Harp</button>
+    </div>
+  </div>
+
+  <!-- keys -->
+  <div id="keys" role="group" aria-label="Rainbow piano keys"></div>
+
+  <!-- Hoot -->
+  <div id="groundRow">
+    <div id="hootZone">
+      <button id="hootFig" type="button" aria-label="Hoot — tap to hear the song call again">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div id="bubbleCol">
+        <div id="bubble">Hi! I&rsquo;m Hoot, your music teacher! Tap <span class="b-big">Play</span> — every colour sings a note!</div>
+        <span id="hootName">HOOT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- start panel -->
+  <div id="startPanel">
+    <h1><span class="t-r">Rainbow</span> <span class="t-p">Piano</span></h1>
+    <p>Hoot is your music teacher! Jam freely on the rainbow keys — or take a Song Card: Hoot calls the colours, you play them back, and the rainbow fills with music!</p>
+    <div class="mode-row" role="group" aria-label="Choose how to play">
+      <button class="mode-chip selected" id="modeFree" type="button">Free Play<small>Every key sings — your tunes!</small></button>
+      <button class="mode-chip" id="modeSong" type="button">Hoot&rsquo;s Song Cards<small>Hoot calls — you play it back!</small></button>
+    </div>
+    <button id="playBtn" type="button">▶ Play</button>
+  </div>
+
+  <!-- win overlay -->
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div id="winRainbow" aria-hidden="true">🌈 🎵 🌈</div>
+      <h2 id="winTitle">The rainbow is FULL of music!</h2>
+      <p id="winRecap"></p>
+      <div id="winSongs"></div>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ================= DATA ================= */
+  var KEYS = [
+    { letter:"C", sol:"Do", color:"red",    hex:"#ff6b5e", freq:261.63 },
+    { letter:"D", sol:"Re", color:"orange", hex:"#ff9f43", freq:293.66 },
+    { letter:"E", sol:"Mi", color:"yellow", hex:"#ffc93c", freq:329.63 },
+    { letter:"F", sol:"Fa", color:"green",  hex:"#57cc62", freq:349.23 },
+    { letter:"G", sol:"Sol", color:"blue",  hex:"#4aa8e0", freq:392.00 },
+    { letter:"A", sol:"La", color:"purple", hex:"#9b6fe0", freq:440.00 },
+    { letter:"B", sol:"Ti", color:"pink",   hex:"#ff8fab", freq:493.88 },
+    { letter:"C", sol:"Do", color:"white",  hex:"#fffdf6", freq:523.25, light:true }
+  ];
+  var SONGS = [
+    { name:"Twinkle Twinkle", icon:"⭐", notes:[0,0,4,4,5,5,4] },
+    { name:"Mary&rsquo;s Little Lamb", icon:"🐑", notes:[2,1,0,1,2,2,2] },
+    { name:"Hot Cross Buns", icon:"🥐", notes:[2,1,0,2,1,0] }
+  ];
+  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var GOAL = SONGS.length;
+
+  /* ================= STATE ================= */
+  var state = "start";           /* start | free | song-call | song-play | song-playback | won */
+  var mode = "free";             /* free | song */
+  var instrument = "piano";      /* piano | bells | harp */
+  var songIdx = 0, noteIdx = 0, wrongs = 0;
+  var stars = 0, songsDone = [];
+  var wonRound = false, dead = false;
+  var soundOn = true, praiseIdx = 0;
+
+  /* ================= ELMS ================= */
+  function $(id){ return document.getElementById(id); }
+  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
+      starCount=$("starCount"), starBank=$("starBank"),
+      targetCard=$("targetCard"), songName=$("songName"), songPhase=$("songPhase"), songDots=$("songDots"), songBadge=$("songBadge"),
+      keysEl=$("keys"), rainbow=$("rainbow"),
+      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"), winSongs=$("winSongs"), winTitle=$("winTitle");
+  var bands=[0,1,2,3,4,5,6].map(function(i){ return $("band"+i); });
+  var keyEls = [];
+  KEYS.forEach(function(k,i){
+    var b=document.createElement("button"); b.type="button";
+    b.className="key"+(k.light?" light":"");
+    b.style.background="linear-gradient(180deg,"+k.hex+" 0%,"+k.hex+" 78%,rgba(0,0,0,.13) 100%)";
+    if(k.light) b.style.background="linear-gradient(180deg,#ffffff 0%,#fffdf6 78%,rgba(23,50,79,.12) 100%)";
+    b.dataset.idx=i;
+    b.setAttribute("aria-label",k.sol+" — the "+k.color+" key, note "+k.letter+(i===7?" high":""));
+    b.innerHTML="<span class='k-note'>"+k.sol+"</span><span class='k-letter'>"+k.letter+"</span>";
+    b.addEventListener("pointerdown",function(e){ e.preventDefault(); onKey(i,b); });
+    keysEl.appendChild(b); keyEls.push(b);
+  });
+
+  /* ================= MUSIC ENGINE — gesture-unlocked, always resumes =================
+     The sound fix: the AudioContext is created/resumed on the very first
+     pointer gesture anywhere, re-resumed on every key press and whenever
+     the page becomes visible again, so notes never go silent. */
+  var AC=null;
+  function audio(){
+    if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } }
+    if(AC&&AC.state==="suspended") AC.resume();
+    return AC;
+  }
+  document.addEventListener("pointerdown",function(){ audio(); },true);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) audio(); });
+  function voice(freq,mult,vol,decay,delay,type){
+    var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0);
+    var o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||"sine"; o.frequency.setValueAtTime(freq*mult,t);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+decay);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+decay+0.05);
+  }
+  function playNote(i){
+    if(!soundOn) return;
+    var f=KEYS[i].freq;
+    if(instrument==="piano"){
+      voice(f,1,0.34,1.15,0,"triangle"); voice(f,2,0.13,0.7,0,"sine"); voice(f,3,0.05,0.35,0,"sine");
+    } else if(instrument==="bells"){
+      voice(f,1,0.3,1.9,0,"sine"); voice(f,2,0.16,1.3,0,"sine"); voice(f,3,0.07,0.8,0,"sine"); voice(f,4,0.03,0.5,0,"sine");
+    } else {
+      voice(f,1,0.3,0.55,0,"triangle"); voice(f,2,0.1,0.3,0,"sine"); voice(f*0.5,1,0.06,0.4,0,"sine");
+    }
+  }
+  function sparkleSound(){ voice(1180,1,0.08,0.12,0); voice(1560,1,0.08,0.16,0.07); }
+
+  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+     Every clip goes through this single queue on a single Audio element.
+     A line that has started always finishes: the next clip is only loaded
+     from the 'ended' event, never from a timer, and pending (not yet
+     started) lines can be replaced when the game moves on. The hub's
+     injected voice governor arbitrates this element against every other
+     voice in the app the same way. No device text-to-speech anywhere.
+     Song colours are called with the recorded call-color clips. */
+  var VBASE="assets/voice/";
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl=new Audio(); voiceEl.preload="auto";
+      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("error",vNext);
+    }
+    return voiceEl;
+  }
+  function hubQuiet(){
+    try{
+      var d=window.parent&&window.parent.document;
+      if(!d||d===document) return false;
+      var b=d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+    }catch(e){ return false; }
+  }
+  function silenced(){ return !soundOn||hubQuiet(); }
+  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying||dead) return;
+    var item=vQueue.shift(); if(!item) return;
+    if(item.onStart){ try{ item.onStart(); }catch(e){} }
+    if(silenced()){ pumpVoice(); return; }
+    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
+    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    var p=el.play();
+    if(p&&p.catch) p.catch(function(){ vNext(); });
+  }
+  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
+    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    pumpVoice();
+  }
+  function clearPending(){ vQueue.length=0; }
+
+  /* ================= HOOT'S FACE / WORDS ================= */
+  function say(html){ bubble.innerHTML=html; }
+  function hootReact(cls,ms){
+    hootFig.classList.remove("celebrate","shake");
+    void hootFig.offsetWidth;
+    hootFig.classList.add(cls);
+    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  }
+
+  /* ================= HELPERS / FX ================= */
+  function listWords(arr){
+    if(arr.length<=1) return arr.join("");
+    return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1];
+  }
+  function noteFloat(keyEl,colorHex){
+    var sr=stage.getBoundingClientRect(), r=keyEl.getBoundingClientRect();
+    var n=document.createElement("span"); n.className="note-float"; n.textContent=Math.random()<0.5?"♪":"♫";
+    n.style.color=colorHex==="#fffdf6"?"#9b6fe0":colorHex;
+    n.style.left=(r.left-sr.left+r.width/2-10)+"px";
+    n.style.top=(r.top-sr.top-16)+"px";
+    stage.appendChild(n);
+    if(n.animate) n.animate([
+      {transform:"translateY(0) rotate(-6deg)",opacity:1},
+      {transform:"translateY(-74px) rotate(10deg)",opacity:0}
+    ],{duration:950,easing:"ease-out"});
+    setTimeout(function(){ n.remove(); },1000);
+  }
+  function danceFlowers(){
+    var fl=document.querySelectorAll(".flower");
+    var f=fl[Math.floor(Math.random()*fl.length)];
+    if(f){ f.classList.remove("dance"); void f.offsetWidth; f.classList.add("dance"); setTimeout(function(){ f.classList.remove("dance"); },1400); }
+  }
+  function confetti(n2){
+    var sr=stage.getBoundingClientRect();
+    var colors=["#ff6b5e","#ffc93c","#57cc62","#ff8fab","#4aa8e0","#c39bff"];
+    for(var i=0;i<(n2||26);i++){
+      var c=document.createElement("div"); c.className="confetti";
+      c.style.background=colors[i%colors.length];
+      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
+      stage.appendChild(c);
+      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      if(c.animate) c.animate([
+        {transform:"translate(0,0) rotate(0deg)",opacity:1},
+        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
+      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+    }
+  }
+  function updateHUD(){ starCount.textContent=stars; }
+  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
+  function setBands(n){
+    bands.forEach(function(b,i){ b.classList.toggle("lit", i<n); });
+    rainbow.classList.toggle("fullglow", n>=7);
+  }
+  function glowKey(i,on){ keyEls[i].classList.toggle("glow",!!on); }
+  function clearGlows(){ keyEls.forEach(function(k){ k.classList.remove("glow"); }); }
+
+  /* ================= KEY PRESSES ================= */
+  function pressVisual(i){
+    var b=keyEls[i];
+    b.classList.add("pressed");
+    setTimeout(function(){ b.classList.remove("pressed"); },160);
+    noteFloat(b,KEYS[i].hex);
+    danceFlowers();
+  }
+  function onKey(i,b){
+    if(dead) return;
+    audio();
+    playNote(i);
+    pressVisual(i);
+    var k=KEYS[i];
+    if(state==="free"||state==="start"||state==="won"){
+      say("That&rsquo;s <span class='b-big'>"+k.sol+"</span> — the "+k.color.toUpperCase()+" key! 🎵 "+(state==="free"?"Play anything you like — it&rsquo;s YOUR music!":""));
+      if(state==="free"){
+        clearPending();
+        enqueue("call-color-"+k.color+".mp3","name",k.color,null);
+      }
+      return;
+    }
+    if(state==="song-call"||state==="song-playback"){
+      say("Listen to Hoot first — the rainbow is showing you the song! 🎧");
+      return;
+    }
+    if(state==="song-play"){
+      var song=SONGS[songIdx];
+      var expected=song.notes[noteIdx];
+      if(i===expected){
+        songDots.children[noteIdx].classList.remove("next");
+        songDots.children[noteIdx].classList.add("done");
+        noteIdx++; wrongs=0;
+        hootReact("celebrate",700);
+        if(noteIdx>=song.notes.length){ songComplete(); return; }
+        markNextDot();
+        var nk=KEYS[song.notes[noteIdx]];
+        say("Yes! 🎵 Next comes the <span class='b-big'>"+nk.color.toUpperCase()+"</span> key — "+nk.sol+"!");
+      } else {
+        wrongs++;
+        b.classList.remove("wiggle"); void b.offsetWidth; b.classList.add("wiggle");
+        hootReact("shake",900);
+        var ek=KEYS[expected];
+        say("That was the "+k.color.toUpperCase()+" key ("+k.sol+"). We need the <span class='b-big'>"+ek.color.toUpperCase()+"</span> key — "+ek.sol+"! "+(wrongs>=2?"Watch — Hoot glows it for you!":"Listen and look at the Song Card!"));
+        if(wrongs>=2){
+          glowKey(expected,true);
+          setTimeout(function(){ glowKey(expected,false); },1400);
+          var key2="hint:"+songIdx+":"+noteIdx;
+          if(!vQueue.some(function(q){ return q.kind==="hint"&&q.target===key2; })&&!(vCurrent&&vCurrent.kind==="hint"&&vCurrent.target===key2)){
+            enqueue("call-color-"+ek.color+".mp3","hint",key2,null);
+          }
+        }
+      }
+    }
+  }
+
+  /* ================= SONG CARDS ================= */
+  function buildDots(song){
+    songDots.innerHTML="";
+    song.notes.forEach(function(ni){
+      var d=document.createElement("i");
+      d.style.background=KEYS[ni].hex;
+      if(KEYS[ni].light) d.style.background="#fff"; 
+      songDots.appendChild(d);
+    });
+  }
+  function markNextDot(){
+    Array.prototype.forEach.call(songDots.children,function(d,i){
+      d.classList.toggle("next", i===noteIdx && state==="song-play");
+    });
+  }
+  function callSequence(){
+    var song=SONGS[songIdx];
+    state="song-call";
+    songPhase.textContent="Listen — Hoot calls the colours!";
+    clearGlows();
+    Array.prototype.forEach.call(songDots.children,function(d){ d.classList.remove("done","next","calling"); });
+    song.notes.forEach(function(ni,idx){
+      enqueue("call-color-"+KEYS[ni].color+".mp3","songcall",songIdx+":"+idx,function(){
+        if(dead||state!=="song-call") return;
+        clearGlows(); glowKey(ni,true);
+        Array.prototype.forEach.call(songDots.children,function(d,j){ d.classList.toggle("calling",j===idx); });
+        say("Hoot calls: <span class='b-big'>"+KEYS[ni].color.toUpperCase()+"!</span> 🎵 Watch the keys glow… ("+(idx+1)+" of "+song.notes.length+")");
+      });
+    });
+    enqueue("hoot-keep-going.mp3","turn","",function(){
+      if(dead||state!=="song-call") return;
+      clearGlows();
+      Array.prototype.forEach.call(songDots.children,function(d){ d.classList.remove("calling"); });
+      state="song-play"; noteIdx=0; wrongs=0;
+      songPhase.textContent="Your turn — play it back!";
+      markNextDot();
+      say("Your turn! Play the colours back on the keys — start with <span class='b-big'>"+KEYS[song.notes[0]].color.toUpperCase()+"</span>!");
+    });
+  }
+  function presentSong(i){
+    songIdx=i; noteIdx=0; wrongs=0;
+    var song=SONGS[i];
+    songBadge.textContent=song.icon;
+    songName.innerHTML=song.name;
+    buildDots(song);
+    targetCard.style.display="flex";
+    say("Song Card "+(i+1)+" of "+GOAL+": <span class='b-big'>"+song.name+"</span>! Listen to Hoot call the colours, then play them back!");
+    callSequence();
+  }
+  function songComplete(){
+    var song=SONGS[songIdx];
+    state="song-playback";
+    stars++; bumpStars(); updateHUD();
+    songsDone.push(song.name);
+    setBands(songIdx===0?2:(songIdx===1?5:7));
+    clearPending();
+    praiseIdx++;
+    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise","",function(){
+      say("You played <span class='b-big'>"+song.name+"</span>! 🎉 Now listen — the whole rainbow plays it back!");
+    });
+    songPhase.textContent="The rainbow plays it back!";
+    Array.prototype.forEach.call(songDots.children,function(d){ d.classList.remove("next"); });
+    setTimeout(function(){ tunePlayback(song); },1000);
+  }
+  function tunePlayback(song){
+    if(dead||state!=="song-playback") return;
+    hootFig.classList.add("dance");
+    song.notes.forEach(function(ni,idx){
+      setTimeout(function(){
+        if(dead||state!=="song-playback") return;
+        playNote(ni); pressVisual(ni);
+        clearGlows(); glowKey(ni,true);
+      },idx*400);
+    });
+    setTimeout(function(){
+      hootFig.classList.remove("dance");
+      clearGlows();
+      if(dead||state!=="song-playback") return;
+      if(songIdx>=GOAL-1){ winGame(); return; }
+      say("Beautiful! 🌈 Here comes the next Song Card…");
+      setTimeout(function(){ if(!dead&&state==="song-playback") presentSong(songIdx+1); },1300);
+    },song.notes.length*400+500);
+  }
+
+  /* ================= WIN ================= */
+  function winGame(){
+    if(wonRound) return; wonRound=true; state="won";
+    targetCard.style.display="none";
+    setBands(7);
+    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
+    enqueue("hoot-you-learned.mp3","recap","",function(){
+      say("You filled the whole rainbow with music! 🌈 Hoot is SO proud — dance with Hoot!");
+    });
+    hootFig.classList.add("dance");
+    setTimeout(function(){ hootFig.classList.remove("dance"); },3200);
+    winTitle.textContent="The rainbow is FULL of music!";
+    winRecap.innerHTML="You learned <b>"+GOAL+" whole songs</b> with Hoot — every colour, every note! The rainbow sang them all back to you!";
+    winSongs.innerHTML="";
+    songsDone.forEach(function(n){
+      var s=document.createElement("span"); s.className="song-chip"; s.innerHTML="🎵 "+n; winSongs.appendChild(s);
+    });
+    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(34); sparkleSound(); } },800);
+  }
+
+  /* ================= FLOW ================= */
+  function startRound(){
+    clearPending();
+    stars=0; songsDone=[]; wonRound=false; songIdx=0; noteIdx=0;
+    winOverlay.hidden=true; startPanel.hidden=true;
+    updateHUD();
+    hootFig.classList.remove("dance");
+    if(mode==="free"){
+      state="free";
+      targetCard.style.display="none";
+      setBands(7);
+      say("Free Play! 🎹 Every key sings — tap them all and invent YOUR tune! Hoot names each colour you play!");
+      enqueue("hoot-game-hello.mp3","hello","",null);
+    } else {
+      state="song-call";
+      setBands(0);
+      enqueue("hoot-game-hello.mp3","hello","",null);
+      presentSong(0);
+    }
+  }
+  function resetToStart(){
+    clearPending();
+    state="start"; stars=0; songsDone=[]; wonRound=false;
+    winOverlay.hidden=true; startPanel.hidden=false;
+    targetCard.style.display="none";
+    clearGlows();
+    setBands(7);
+    hootFig.classList.remove("dance");
+    updateHUD();
+    say("Hi! I&rsquo;m Hoot, your music teacher! Tap <span class='b-big'>Play</span> — every colour sings a note!");
+    hootFig.classList.add("wave");
+    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  }
+
+  /* ================= HOOT TAP / HEAR AGAIN ================= */
+  function hearAgain(){
+    audio();
+    if(mode==="song"&&(state==="song-play"||state==="song-call")){ callSequence(); }
+    else if(state==="free"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); }
+    else if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+  }
+  hootFig.addEventListener("click",hearAgain);
+  $("hearBtn").addEventListener("click",hearAgain);
+
+  /* ================= LIVING MEADOW TAPS ================= */
+  document.querySelectorAll(".cloud").forEach(function(c){
+    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); voice(300,1,0.06,0.16,0,"sine"); setTimeout(function(){ c.classList.remove("puff"); },300); });
+  });
+  document.querySelectorAll(".flower").forEach(function(f){
+    f.addEventListener("click",function(){
+      audio(); f.classList.remove("dance"); void f.offsetWidth; f.classList.add("dance");
+      voice(720,1,0.09,0.14,0,"sine");
+      setTimeout(function(){ f.classList.remove("dance"); },1400);
+    });
+  });
+  document.querySelectorAll(".inst-chip").forEach(function(ch){
+    ch.addEventListener("click",function(){
+      document.querySelectorAll(".inst-chip").forEach(function(x){ x.classList.toggle("selected",x===ch); });
+      instrument=ch.getAttribute("data-inst");
+      audio(); playNote(0); pressVisual(0);
+      say(instrument==="piano"?"🎹 Piano! Warm and round — lovely for tunes!":instrument==="bells"?"🔔 Rainbow Bells! Ting-a-ling — every note rings like a bell!":"✨ Sparkle Harp! Pling! Notes that twinkle and fade!");
+    });
+  });
+
+  /* ================= CONTROLS ================= */
+  $("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    $("soundOnIc").style.display=soundOn?"block":"none";
+    $("soundOffIc").style.display=soundOn?"none":"block";
+    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+    if(!soundOn){ clearPending(); hootTalking(false); }
+    else { audio(); playNote(4); pressVisual(4); }
+  });
+  $("homeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+  $("modeFree").addEventListener("click",function(){ mode="free"; $("modeFree").classList.add("selected"); $("modeSong").classList.remove("selected"); voice(660,1,0.1,0.12,0,"triangle"); });
+  $("modeSong").addEventListener("click",function(){ mode="song"; $("modeSong").classList.add("selected"); $("modeFree").classList.remove("selected"); voice(660,1,0.1,0.12,0,"triangle"); });
+  $("playBtn").addEventListener("click",function(){ audio(); startRound(); });
+  $("againBtn").addEventListener("click",function(){ audio(); startRound(); });
+  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+
+  /* ================= LEAVING THE GAME ================= */
+  function teardown(){ dead=true; clearPending(); hootTalking(false); hootFig.classList.remove("dance"); }
+  window.addEventListener("pagehide",teardown);
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+  /* ================= INIT ================= */
+  setBands(7);
+  updateHUD();
+  hootFig.classList.add("wave");
+  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+
+  /* Probe/debug handle: read-only snapshot of the round state. */
+  window.__pianoGame={
+    snapshot:function(){
+      return { state:state, mode:mode, instrument:instrument,
+        songIdx:songIdx, noteIdx:noteIdx, stars:stars, songsDone:songsDone.slice(),
+        bandsLit:bands.filter(function(b){ return b.classList.contains("lit"); }).length,
+        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
+        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

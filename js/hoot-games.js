@@ -349,11 +349,31 @@
         });
       });
     }
-    /* ----- 2. Counting Garden ----- */
+    /* ----- 2. Counting Garden (Wave 3 physical soil mounds + SVG blooming flowers) ----- */
+    function soilMoundSvg() {
+      return '<svg viewBox="0 0 100 90" aria-hidden="true">' +
+        '<path d="M10 72 Q50 38 90 72 Q90 82 78 82 L22 82 Q10 82 10 72 Z" fill="#9c6638" stroke="#17263b" stroke-width="4" stroke-linejoin="round"/>' +
+        '<circle cx="34" cy="68" r="4" fill="#6b4423"/><circle cx="64" cy="70" r="3.5" fill="#6b4423"/><circle cx="50" cy="60" r="3" fill="#6b4423"/>' +
+        '<path d="M22 58 Q18 44 26 48 Q26 40 32 54 M76 58 Q80 44 72 48 Q72 40 66 54" fill="none" stroke="#40c057" stroke-width="4.5" stroke-linecap="round"/>' +
+        '</svg>';
+    }
+    function gardenFlowerSvg(col) {
+      return '<svg class="pg-flower-svg" viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M50 88 Q48 64 50 44" stroke="#2f9e44" stroke-width="7" stroke-linecap="round" fill="none"/>' +
+        '<ellipse cx="34" cy="68" rx="14" ry="8" fill="#51cf66" stroke="#17263b" stroke-width="3.5" transform="rotate(-26 34 68)"/>' +
+        '<ellipse cx="66" cy="66" rx="14" ry="8" fill="#51cf66" stroke="#17263b" stroke-width="3.5" transform="rotate(26 66 66)"/>' +
+        '<g fill="' + col + '" stroke="#17263b" stroke-width="3.5">' +
+          '<circle cx="50" cy="18" r="13"/><circle cx="70" cy="28" r="13"/><circle cx="64" cy="48" r="13"/>' +
+          '<circle cx="36" cy="48" r="13"/><circle cx="30" cy="28" r="13"/>' +
+        '</g>' +
+        '<circle cx="50" cy="34" r="13" fill="#FFD43B" stroke="#17263b" stroke-width="3.5"/>' +
+        '<circle cx="46" cy="30" r="3.5" fill="#fff" opacity=".8"/>' +
+        '</svg>';
+    }
     function gardenRound() {
       paint();
-      var max = S.round < 3 ? 5 : 8, n = ri(2, max), planted = 0, FL = ["🌷", "🌻", "🌼", "🌸", "🌺"];
-      stage.innerHTML = '<div class="pg-garden">' + Array.apply(null, Array(10)).map(function (_, i) { return '<button type="button" class="pg-soil" data-i="' + i + '" aria-label="Plant a flower"><span>🟫</span></button>'; }).join("") + '</div><p class="pg-count" aria-live="polite">0</p>';
+      var max = S.round < 3 ? 5 : 8, n = ri(2, max), planted = 0, FCOLS = ["#FF6B6B", "#FFD43B", "#F06595", "#B197FC", "#FF922B", "#4DABF7"];
+      stage.innerHTML = '<div class="pg-garden">' + Array.apply(null, Array(10)).map(function (_, i) { return '<button type="button" class="pg-soil" data-i="' + i + '" aria-label="Plant a flower">' + soilMoundSvg() + "</button>"; }).join("") + '</div><p class="pg-count" aria-live="polite">0</p>';
       var counter = stage.querySelector(".pg-count");
       setB("Plant this many flowers… " + n + "!");
       /* 3e37: call-number clips are questions ("Find the number…"), so they are
@@ -366,7 +386,7 @@
         b.addEventListener("click", function () {
           if (b.disabled || !alive() || planted >= n) return;
           clearIdle();
-          b.disabled = true; planted++; b.innerHTML = '<span class="pg-flower">' + pick(FL) + "</span>"; counter.textContent = planted;
+          b.disabled = true; planted++; b.classList.add("pg-bloomed"); b.innerHTML = '<span class="pg-flower">' + gardenFlowerSvg(pick(FCOLS)) + "</span>"; counter.textContent = planted;
           sfx("pop");
           if (planted < n) { var nc = numName(planted); if (nc) { stopVoice(); say([nc], function () { armIdle(askGarden, ".pg-soil", hintGarden); }, true); } else armIdle(askGarden, ".pg-soil", hintGarden); }
           else {
@@ -384,8 +404,8 @@
       var keys = colorMode ? shuffle(["red", "yellow", "blue", "green", "orange", "purple", "pink"]).slice(0, 3) : shuffle(["circle", "square", "triangle", "star", "heart", "diamond"]).slice(0, 3);
       var target = pick(keys), fills = shuffle(["#E03131", "#1C7ED6", "#2F9E44", "#FD7E14", "#7048E8", "#F06595"]);
       stage.innerHTML = '<div class="pg-track"><div class="pg-train">' + keys.map(function (k, i) {
-        var face = colorMode ? '<span class="pg-car-paint" style="background:' + COLORS[k] + '"></span>' : shapeSvg(k, fills[i], 58);
-        return '<button type="button" class="pg-car" data-k="' + k + '" aria-label="' + k + ' car">' + face + "</button>";
+        var face = colorMode ? '<span class="pg-car-paint" style="background:' + COLORS[k] + '"></span>' : shapeSvg(k, fills[i], 64);
+        return '<button type="button" class="pg-car" data-k="' + k + '" aria-label="' + k + ' car">' + face + '<span class="pg-wheels" aria-hidden="true"><i></i><i></i></span></button>';
       }).join("") + '<span class="pg-engine" aria-hidden="true">🚂</span></div></div>';
       sfx("toot");
       setB("Load the " + target.toUpperCase() + " car!");
