@@ -2414,6 +2414,7 @@
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
   <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e66">
+  <link rel="stylesheet" href="js/hw-monti-works.css?v=llprev3e66">
 <script src="js/hoot-config.js?v=llprev3e66"></script>
 <script src="js/safe-preview.js?v=llprev3e66"></script>
 <script src="js/hoot-account.js?v=llprev3e66"></script>
@@ -9993,8 +9994,8 @@
             beep(500);
           });
           renderThread();
-          /* 3e51: when the work is opened, Hoot says the pattern and asks what comes next */
-          document.addEventListener("hw-work-open", function(e){ if(e.detail === "monti-thread") window.__hwSay&&window.__hwSay(seq.slice(0, idx).map(function(c){ return "name-color-" + c; }).concat(["ask-what-comes-next"])); });
+          /* 3e51: hw-monti-works.js handles hw-work-open for monti-thread */
+          document.addEventListener("hw-work-open", function(e){ if(e.detail === "monti-thread" && !document.getElementById("monti-thread").classList.contains("mw-upgraded")) window.__hwSay&&window.__hwSay(seq.slice(0, idx).map(function(c){ return "name-color-" + c; }).concat(["ask-what-comes-next"])); });
         }
       })();
     </script>
@@ -13424,6 +13425,7 @@
   <script src="js/hoot-games.js?v=llprev3e66"></script>
   <script src="js/hw-activities.js?v=3e66"></script>
 <script src="js/hw-ll-shell.js?v=llprev3e66"></script>
+  <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e66');}</script>
 </body>
 </html>

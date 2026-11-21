@@ -1,0 +1,814 @@
+/* Hoot's World — Bubbly Physical Montessori Shelf Works (Wave 3 Redesign)
+   Exemplar standard: big physical illustrated objects (well over 64px),
+   never tiny icons pretending to be objects, physical flying motion,
+   one obvious glowing next action, soft fail, unmissable win + replay. */
+
+.work-card.mw-upgraded {
+  background: linear-gradient(180deg, #fffdf7 0%, #fff7e4 100%);
+  border: 3.5px solid #fff;
+  border-radius: 28px;
+  box-shadow: 0 10px 26px rgba(23, 38, 59, 0.14);
+  padding: 18px 16px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Inside the Little Kid overlay, remove walls of grown-up text so the physical game fills the screen */
+#ll-obody .work-card.ll-muse-host.mw-upgraded .work-how,
+#ll-obody .work-card.ll-muse-host.mw-upgraded .work-home,
+#ll-obody .work-card.ll-muse-host.mw-upgraded h3 {
+  display: none !important;
+}
+#ll-obody .work-card.ll-muse-host.mw-upgraded {
+  border-radius: 26px;
+  padding: 14px 12px 18px;
+  box-shadow: none;
+  border: 3px solid #ffe49c;
+}
+
+/* Shared Hoot speech & cheer bar at top of every shelf work */
+.mw-hootbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 3px solid #17263b;
+  border-radius: 22px;
+  padding: 8px 14px 8px 10px;
+  margin-bottom: 14px;
+  box-shadow: 0 5px 0 rgba(23, 38, 59, 0.12);
+}
+.mw-hoot-btn {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  flex: none;
+  border: none;
+  background: #fff4cc;
+  border-radius: 50%;
+  border: 3px solid #17263b;
+  padding: 4px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  touch-action: manipulation;
+  transition: transform 0.14s ease;
+}
+.mw-hoot-btn:active { transform: scale(0.92); }
+.mw-hoot-btn.mw-cheer { animation: mwCheer 0.55s ease-in-out 2; }
+.mw-hoot-btn svg { width: 52px; height: 52px; display: block; }
+.mw-msg {
+  margin: 0;
+  font-family: "Fredoka", "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1rem, 2.8vw, 1.2rem);
+  line-height: 1.28;
+  color: #17263b;
+}
+
+/* Shared animations */
+@keyframes mwCheer {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-10px) scale(1.12) rotate(-5deg); }
+  70% { transform: translateY(-4px) scale(1.06) rotate(5deg); }
+}
+@keyframes mwGlow {
+  0%, 100% { box-shadow: 0 0 0 4px #ffd93b, 0 8px 20px rgba(255, 200, 30, 0.45); transform: scale(1); }
+  50% { box-shadow: 0 0 0 8px #ffd93b, 0 12px 28px rgba(255, 200, 30, 0.72); transform: scale(1.045); }
+}
+@keyframes mwWobble {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-8px) rotate(-5deg); }
+  45% { transform: translateX(8px) rotate(5deg); }
+  70% { transform: translateX(-5px) rotate(-3deg); }
+}
+@keyframes mwPopIn {
+  0% { transform: scale(0.4); opacity: 0; }
+  65% { transform: scale(1.16); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes mwNudge {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-7px) scale(1.06); }
+}
+@keyframes mwSway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3.5deg); }
+}
+@keyframes mwShakeCyl {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-14deg) translateY(-4px); }
+  45% { transform: rotate(14deg) translateY(-6px); }
+  70% { transform: rotate(-10deg) translateY(-3px); }
+  88% { transform: rotate(8deg); }
+}
+@keyframes mwSpark {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.1); opacity: 0; }
+}
+
+.mw-glow { animation: mwGlow 1.3s ease-in-out infinite !important; }
+.mw-wobble { animation: mwWobble 0.45s ease-in-out; }
+.mw-nudge { animation: mwNudge 0.48s ease-in-out 2; }
+.mw-pop { animation: mwPopIn 0.36s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Flying physical object layer */
+.mw-flyer {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: none;
+  margin: 0;
+  will-change: transform, left, top;
+  filter: drop-shadow(0 12px 18px rgba(23, 38, 59, 0.32));
+}
+.mw-spark {
+  position: fixed;
+  z-index: 99998;
+  pointer-events: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 6px solid #ffd93b;
+  animation: mwSpark 0.45s ease-out forwards;
+}
+
+/* Shared Win / Replay bar */
+.mw-winbar {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 14px 0 6px;
+}
+.mw-winbar[hidden] { display: none !important; }
+.mw-cta {
+  min-height: 70px !important;
+  min-width: 176px !important;
+  padding: 12px 26px !important;
+  border-radius: 999px !important;
+  border: 4px solid #17263b !important;
+  font-family: "Fredoka", sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 6px 0 #17263b;
+  transition: transform 0.1s ease;
+}
+.mw-cta:active { transform: translateY(3px) scale(0.96); box-shadow: 0 2px 0 #17263b; }
+.mw-cta-again { background: linear-gradient(180deg, #ffe259 0%, #ffc400 100%); color: #17263b; }
+.mw-cta-done { background: linear-gradient(180deg, #40c057 0%, #2b8a3e 100%); color: #fff; }
+.mw-cta-soft {
+  min-height: 58px !important;
+  min-width: 136px !important;
+  padding: 10px 20px !important;
+  border-radius: 999px !important;
+  border: 3px solid #17263b !important;
+  background: #fff;
+  color: #17263b;
+  font-family: "Fredoka", sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 0 rgba(23, 38, 59, 0.18);
+}
+.mw-cta-soft:active { transform: translateY(2px) scale(0.96); }
+
+/* ==================== 1. COLOUR BEAD SORTING (EXEMPLAR) ==================== */
+.mw-bead-tray {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 14px;
+  min-height: 108px;
+  background: linear-gradient(180deg, #f3d7a3 0%, #e5be7e 100%);
+  border: 4px solid #a97434;
+  border-radius: 26px;
+  box-shadow: inset 0 6px 12px rgba(120, 74, 20, 0.22), 0 6px 0 rgba(120, 74, 20, 0.25);
+  transition: box-shadow 0.2s ease;
+}
+.mw-bead-tray.mw-tray-invite {
+  box-shadow: inset 0 6px 12px rgba(120, 74, 20, 0.18), 0 0 0 5px #ffd93b;
+}
+.mw-bead {
+  width: 76px !important;
+  height: 76px !important;
+  min-width: 76px !important;
+  min-height: 76px !important;
+  border-radius: 50% !important;
+  border: 4px solid #17263b !important;
+  padding: 0 !important;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  position: relative;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.22s ease, box-shadow 0.18s ease;
+  box-shadow: 0 7px 0 rgba(23, 38, 59, 0.26);
+}
+.mw-bead svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+.mw-bead:active { transform: scale(0.92); }
+.mw-bead.picked {
+  transform: translateY(-10px) scale(1.16) !important;
+  box-shadow: 0 0 0 6px #ffd93b, 0 14px 22px rgba(23, 38, 59, 0.3) !important;
+  z-index: 3;
+}
+.mw-bead.done {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.2);
+}
+
+.mw-jar-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.mw-jar {
+  min-width: 96px !important;
+  min-height: 176px !important;
+  padding: 10px 6px 12px !important;
+  border-radius: 26px !important;
+  border: 4px solid #17263b !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f9ff 100%) !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 7px 0 rgba(23, 38, 59, 0.18);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.mw-jar:active { transform: scale(0.95); }
+.mw-jar.mw-jar-ready {
+  box-shadow: 0 0 0 5px #ffd93b, 0 8px 18px rgba(255, 200, 30, 0.35);
+}
+.mw-jar.mw-jar-bounce { animation: mwPopIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.mw-jar.mw-jar-full {
+  background: linear-gradient(180deg, #fffdf0 0%, #fff1b8 100%) !important;
+}
+.mw-jar svg {
+  width: min(100%, 118px);
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+.mw-jar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #17263b;
+  color: #ffd93b;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* ==================== 2. THE PINK TOWER ==================== */
+.mw-tower-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 680px) {
+  .mw-tower-stage { grid-template-columns: 1.15fr 0.85fr; align-items: end; }
+}
+.mw-cube-tray {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 16px 12px;
+  min-height: 124px;
+  background: linear-gradient(180deg, #fff0f5 0%, #fde2ec 100%);
+  border: 4px solid #e79ab5;
+  border-radius: 26px;
+}
+.mw-cube-btn {
+  min-width: 72px !important;
+  min-height: 72px !important;
+  padding: 4px !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: transform 0.16s ease, opacity 0.2s ease;
+}
+.mw-cube-btn:active { transform: scale(0.92); }
+.mw-cube-btn.placed { opacity: 0; pointer-events: none; transform: scale(0.3); }
+.mw-tower-mat {
+  min-height: 210px;
+  padding: 14px 12px 12px;
+  background: linear-gradient(180deg, #f5e2ba 0%, #e7c589 100%);
+  border: 4px solid #a97434;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  position: relative;
+}
+.mw-tower-empty {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  color: #7b5322;
+  opacity: 0.72;
+  margin: auto;
+  font-size: 1rem;
+}
+.mw-tower-tier {
+  display: block;
+  margin-top: -6px;
+  animation: mwPopIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==================== 3. POURING PRACTICE ==================== */
+.mw-pour-scene {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+  padding: 18px 14px;
+  background: linear-gradient(180deg, #e5f6ff 0%, #f5fbff 100%);
+  border: 4px solid #86c7eb;
+  border-radius: 26px;
+  position: relative;
+}
+.mw-pitcher-btn {
+  width: 124px !important;
+  height: 124px !important;
+  min-width: 124px !important;
+  min-height: 124px !important;
+  border-radius: 26px !important;
+  border: 4px solid #17263b !important;
+  background: #ffffff !important;
+  padding: 6px !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 7px 0 rgba(23, 38, 59, 0.16);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.mw-pitcher-btn.pouring { transform: rotate(28deg) translate(14px, -12px) !important; }
+.mw-pitcher-btn svg { width: 100%; height: 100%; display: block; }
+.mw-glass-wrap {
+  position: relative;
+  width: 132px;
+  height: 174px;
+  flex: none;
+}
+.mw-water-stream {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 16px;
+  height: 0;
+  margin-left: -8px;
+  background: linear-gradient(180deg, #74d0ff, #1c88e5);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+  transition: height 0.22s ease, opacity 0.18s ease;
+}
+.mw-water-stream.on { height: 112px; opacity: 0.95; }
+.mw-pour-glass {
+  width: 132px;
+  height: 174px;
+  border: 5px solid #17263b;
+  border-top: 3px solid rgba(23, 38, 59, 0.35);
+  border-radius: 10px 10px 28px 28px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(255,255,255,0.85) 0%, rgba(210,240,255,0.45) 35%, rgba(255,255,255,0.65) 100%);
+  box-shadow: inset 8px 0 12px rgba(255,255,255,0.7), 0 8px 0 rgba(23, 38, 59, 0.14);
+}
+.mw-pour-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background: linear-gradient(180deg, #6bd0ff 0%, #228be6 100%);
+  transition: height 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mw-pour-fill::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+}
+.mw-pour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 70%;
+  border-top: 4px dashed #e03131;
+  z-index: 3;
+}
+.mw-pour-line-tag {
+  position: absolute;
+  right: 6px;
+  bottom: calc(70% + 5px);
+  background: #e03131;
+  color: #fff;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  z-index: 3;
+}
+.mw-pour-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+/* ==================== 4. SPOON TRANSFER — POM-POMS ==================== */
+.mw-pom-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+.mw-pom-tray {
+  width: 100%;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 16px 12px;
+  min-height: 104px;
+  background: linear-gradient(180deg, #f3d7a3 0%, #e5be7e 100%);
+  border: 4px solid #a97434;
+  border-radius: 26px;
+}
+.mw-pom {
+  width: 76px !important;
+  height: 76px !important;
+  min-width: 76px !important;
+  min-height: 76px !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  position: relative;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.mw-pom svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+.mw-pom.picked {
+  transform: translateY(-12px) scale(1.18) !important;
+  filter: drop-shadow(0 0 10px #ffd93b) drop-shadow(0 10px 14px rgba(23, 38, 59, 0.3));
+}
+.mw-pom.picked::after {
+  content: "🥄";
+  position: absolute;
+  right: -10px;
+  bottom: -6px;
+  font-size: 30px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+.mw-pom.done { opacity: 0; pointer-events: none; transform: scale(0.2); }
+.mw-bowl-btn {
+  min-width: 210px !important;
+  min-height: 148px !important;
+  padding: 10px 18px 12px !important;
+  border-radius: 28px !important;
+  border: 4px solid #17263b !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fff5df 100%) !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 7px 0 rgba(23, 38, 59, 0.18);
+}
+.mw-bowl-btn:active { transform: scale(0.96); }
+.mw-bowl-btn svg { width: 190px; height: 112px; display: block; pointer-events: none; }
+
+/* ==================== 5. WATER THE FLOWERS ==================== */
+.mw-flower-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 16px 10px;
+  background: linear-gradient(180deg, #d3f3ff 0%, #e7f9d9 62%, #bfe89e 100%);
+  border: 4px solid #7ec568;
+  border-radius: 26px;
+}
+.mw-pot-btn {
+  width: 102px !important;
+  min-width: 96px !important;
+  min-height: 142px !important;
+  padding: 6px !important;
+  border-radius: 22px !important;
+  border: 4px solid #17263b !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: 0 6px 0 rgba(23, 38, 59, 0.16);
+  transition: transform 0.16s ease;
+}
+.mw-pot-btn:active { transform: scale(0.94); }
+.mw-pot-btn.bloomed {
+  background: linear-gradient(180deg, #fffef0 0%, #fff3bf 100%) !important;
+}
+.mw-pot-btn svg { width: 86px; height: 124px; display: block; pointer-events: none; }
+.mw-splash-drops {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  pointer-events: none;
+  animation: mwPopIn 0.45s ease-out forwards;
+}
+
+/* ==================== 6. SHAPE SORTER ==================== */
+.mw-shape-tray {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 16px 12px;
+  min-height: 108px;
+  background: linear-gradient(180deg, #fff6db 0%, #ffe8a3 100%);
+  border: 4px solid #d9a738;
+  border-radius: 26px;
+}
+.mw-shape-piece {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.mw-shape-piece svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+.mw-shape-piece.picked {
+  transform: translateY(-10px) scale(1.18) !important;
+  filter: drop-shadow(0 0 10px #ffd93b) drop-shadow(0 10px 14px rgba(23, 38, 59, 0.3));
+}
+.mw-shape-piece.done { opacity: 0; pointer-events: none; transform: scale(0.2); }
+.mw-shape-box {
+  margin-top: 14px;
+  padding: 16px 12px;
+  background: linear-gradient(180deg, #e7bc7e 0%, #cf9a53 100%);
+  border: 4px solid #7d5119;
+  border-radius: 26px;
+  box-shadow: inset 0 6px 12px rgba(255, 245, 220, 0.45), 0 8px 0 rgba(100, 62, 16, 0.28);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mw-shape-hole {
+  width: 96px !important;
+  height: 96px !important;
+  min-width: 94px !important;
+  min-height: 94px !important;
+  padding: 6px !important;
+  border-radius: 22px !important;
+  border: 4px solid #7d5119 !important;
+  background: #b9823c !important;
+  box-shadow: inset 0 7px 14px rgba(60, 34, 6, 0.45);
+  cursor: pointer;
+  touch-action: manipulation;
+  display: grid;
+  place-items: center;
+}
+.mw-shape-hole.filled {
+  background: #fff8df !important;
+  box-shadow: 0 0 0 4px #40c057;
+}
+.mw-shape-hole svg { width: 78px; height: 78px; display: block; pointer-events: none; }
+
+/* ==================== 7. HANG THE WASHING ==================== */
+.mw-wash-sky {
+  position: relative;
+  padding: 20px 10px 16px;
+  background: linear-gradient(180deg, #bfeaff 0%, #e7f8ff 72%, #c9f0b2 100%);
+  border: 4px solid #6dbde6;
+  border-radius: 26px;
+}
+.mw-wash-rope {
+  position: absolute;
+  top: 28px;
+  left: 12px;
+  right: 12px;
+  height: 6px;
+  background: #8c5a2b;
+  border-radius: 999px;
+  box-shadow: 0 3px 0 rgba(23, 38, 59, 0.2);
+}
+.mw-wash-line {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mw-wash-slot {
+  width: 90px !important;
+  min-width: 84px !important;
+  min-height: 112px !important;
+  padding: 2px 4px 6px !important;
+  border-radius: 20px !important;
+  border: 3.5px dashed rgba(23, 38, 59, 0.35) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+.mw-wash-slot.filled {
+  border-style: solid !important;
+  border-color: #17263b !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+.mw-wash-slot.filled .mw-garment-hang {
+  transform-origin: top center;
+  animation: mwSway 2.8s ease-in-out infinite;
+}
+.mw-wash-basket {
+  margin-top: 14px;
+  padding: 16px 12px;
+  background: linear-gradient(180deg, #ecc585 0%, #d49e52 100%);
+  border: 4px solid #8c5a2b;
+  border-radius: 26px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mw-wash-item {
+  width: 82px !important;
+  height: 82px !important;
+  min-width: 82px !important;
+  min-height: 82px !important;
+  border-radius: 22px !important;
+  border: 4px solid #17263b !important;
+  background: #ffffff !important;
+  padding: 6px !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 6px 0 rgba(23, 38, 59, 0.18);
+  transition: transform 0.16s ease, opacity 0.2s ease;
+}
+.mw-wash-item svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+.mw-wash-item.picked {
+  transform: translateY(-10px) scale(1.14) !important;
+  box-shadow: 0 0 0 6px #ffd93b, 0 12px 20px rgba(23, 38, 59, 0.28) !important;
+}
+.mw-wash-item.done { opacity: 0; pointer-events: none; transform: scale(0.2); }
+
+/* ==================== 8. SOUND CYLINDERS ==================== */
+.mw-sound-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px 12px;
+  background: linear-gradient(180deg, #f3ebff 0%, #e7f4ff 100%);
+  border: 4px solid #a88be0;
+  border-radius: 26px;
+}
+.mw-cyl-btn {
+  min-width: 88px !important;
+  min-height: 124px !important;
+  padding: 10px 6px !important;
+  border-radius: 24px !important;
+  border: 4px solid #17263b !important;
+  background: #ffffff !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 6px 0 rgba(23, 38, 59, 0.18);
+}
+.mw-cyl-btn svg { width: 74px; height: 92px; display: block; pointer-events: none; }
+.mw-cyl-btn.shaking { animation: mwShakeCyl 0.45s ease-in-out; }
+.mw-cyl-btn.picked {
+  box-shadow: 0 0 0 6px #ffd93b, 0 10px 20px rgba(255, 200, 30, 0.45) !important;
+  background: #fffbeb !important;
+}
+.mw-cyl-btn.matched {
+  background: linear-gradient(180deg, #fff9d6 0%, #ffe066 100%) !important;
+  border-color: #2b8a3e !important;
+}
+
+/* ==================== 9. THREAD THE PATTERN ==================== */
+.mw-lace-board {
+  position: relative;
+  padding: 20px 14px;
+  background: linear-gradient(180deg, #f6e0b8 0%, #e8c78d 100%);
+  border: 4px solid #a97434;
+  border-radius: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mw-lace-cord {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 50%;
+  height: 10px;
+  margin-top: -5px;
+  background: repeating-linear-gradient(45deg, #fff8e6, #fff8e6 8px, #d9b98b 8px, #d9b98b 16px);
+  border: 2.5px solid #7d5119;
+  border-radius: 999px;
+  z-index: 1;
+}
+.mw-lace-slot {
+  position: relative;
+  z-index: 2;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.mw-lace-slot.empty {
+  border: 4px dashed rgba(125, 81, 25, 0.45);
+  background: rgba(255, 253, 245, 0.65);
+}
+.mw-lace-slot.next-slot {
+  border: 4px dashed #17263b;
+  background: #fff9db;
+  animation: mwGlow 1.3s ease-in-out infinite;
+}
+.mw-lace-slot svg { width: 62px; height: 62px; display: block; }
+.mw-thread-choices {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.mw-thread-choice {
+  width: 86px !important;
+  height: 86px !important;
+  min-width: 86px !important;
+  min-height: 86px !important;
+  border-radius: 50% !important;
+  border: 4px solid #17263b !important;
+  background: transparent !important;
+  padding: 0 !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 7px 0 rgba(23, 38, 59, 0.24);
+}
+.mw-thread-choice svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+.mw-thread-choice:active { transform: scale(0.92); }
+
+/* Mobile narrow screen tuning */
+@media (max-width: 440px) {
+  .mw-jar-row { gap: 8px; }
+  .mw-jar { min-width: 0 !important; min-height: 152px !important; padding: 8px 4px 10px !important; }
+  .mw-bead { width: 68px !important; height: 68px !important; min-width: 68px !important; min-height: 68px !important; }
+  .mw-lace-slot { width: 52px; height: 52px; }
+  .mw-lace-slot svg { width: 50px; height: 50px; }
+  .mw-thread-choice { width: 78px !important; height: 78px !important; min-width: 78px !important; min-height: 78px !important; }
+}
