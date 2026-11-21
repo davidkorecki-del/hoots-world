@@ -532,7 +532,13 @@
       if(Math.random()<0.3) say("Yes! The <span class='b-big'>"+p.name+"</span>! Play it any way you like — this is YOUR jam!");
       return;
     }
-    if(phase!=="copy") return;
+    if(phase!=="copy"){
+      if(phase==="idle"&&!playTuneBtn.disabled){
+        playTuneBtn.classList.remove("hoot-nudge"); void playTuneBtn.offsetWidth; playTuneBtn.classList.add("hoot-nudge");
+        say("Tap <span class='b-big'>Play Hoot&rsquo;s Tune</span> first &mdash; watch me, then copy!");
+      }
+      return;
+    }
     if(p.id===pattern[step].id){
       fillSlot(echoRow,step,p);
       step++;

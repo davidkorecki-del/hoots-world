@@ -1,3 +1,83 @@
-/* Hoot's World — Shared Game Tail Styles (Wave 3 extraction) */
-#bubble{font-size:15.5px!important;line-height:1.3!important}.mode-chip{font-size:16.5px!important}.mode-chip small{font-size:13.5px!important;line-height:1.25!important}.how-lab,.mode-lab,.tool-lab{font-size:12.5px!important}.strip-lab,.plab,.tcap,.row-label{font-size:13px!important}.pempty,.strip-empty{font-size:14px!important}.cat-btn,.tab-btn,.inst-chip{font-size:15px!important}.k-note{font-size:14px!important}html:not(.hw-paint-v2) .round-btn,html:not(.hw-paint-v2) #hearBtn,html:not(.hw-paint-v2) #targetSound,html:not(.hw-paint-v2) #frogBtn,html:not(.hw-paint-v2) #duckBtn,html:not(.hw-paint-v2) .food,html:not(.hw-paint-v2) .bub,html:not(.hw-paint-v2) .fall,html:not(.hw-paint-v2) .fall-star,html:not(.hw-paint-v2) #nextBtn,html:not(.hw-paint-v2) #againBtn,html:not(.hw-paint-v2) .play-btn,html:not(.hw-paint-v2) #playBtn{min-width:64px!important;min-height:64px!important;touch-action:manipulation}
-html.hf,html.hf body{height:100%!important;overflow:hidden!important}.hfT{transform-origin:top center!important}@media (orientation:landscape) and (max-height:540px){html:not(.hw-paint-v2),html:not(.hw-paint-v2) body{height:auto!important;min-height:100%!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch}html:not(.hw-paint-v2) #stage,html:not(.hw-paint-v2) #scene,html:not(.hw-paint-v2) #app{position:relative!important;height:auto!important;min-height:100vh!important;overflow-y:visible!important}}
+/* Hoot's World — Shared Game Tail Styles (Wave 3 extraction + Riley age-2 floor) */
+#bubble{font-size:15.5px!important;line-height:1.3!important}
+.mode-chip{font-size:16.5px!important}
+.mode-chip small{font-size:13.5px!important;line-height:1.25!important}
+.how-lab,.mode-lab,.tool-lab{font-size:12.5px!important}
+.strip-lab,.plab,.tcap,.row-label{font-size:13px!important}
+.pempty,.strip-empty{font-size:14px!important}
+.cat-btn,.tab-btn,.inst-chip{font-size:15px!important}
+.k-note{font-size:14px!important}
+
+/* Universal instant tactile press + zero double-tap zoom across all 20 games */
+button,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:not(:disabled):not(.decor):not(.hoot-belly-hit):active{transform:scale(.93)!important;transition:transform .08s ease!important}
+.hw-tap-pop{outline:4px solid rgba(255,217,59,.9)!important;outline-offset:2px!important}
+
+/* Primary CTAs & Win-screen hierarchy: #againBtn is the ONE obvious glowing replay tap; #winHomeBtn is secondary */
+html:not(.hw-paint-v2) #playBtn,html:not(.hw-paint-v2) .big-play,html:not(.hw-paint-v2) .play-btn,html:not(.hw-paint-v2) #againBtn,html:not(.hw-paint-v2) #playTuneBtn,html:not(.hw-paint-v2) #reelInBtn,html:not(.hw-paint-v2) #celebrateBtn,html:not(.hw-paint-v2) #makeStory,html:not(.hw-paint-v2) #toyDone{min-height:68px!important;min-width:160px!important;font-size:max(1.15em,20px)!important}
+html:not(.hw-paint-v2) #winHomeBtn{min-height:52px!important;opacity:.86;font-size:16px!important}
+
+/* Riley (age 2) >=64px touch floor across all interactive HUD & gameplay controls in all 20 games */
+html:not(.hw-paint-v2) .round-btn,
+html:not(.hw-paint-v2) #hearBtn,
+html:not(.hw-paint-v2) #targetSound,
+html:not(.hw-paint-v2) #frogBtn,
+html:not(.hw-paint-v2) #duckBtn,
+html:not(.hw-paint-v2) #nextBtn,
+html:not(.hw-paint-v2) #nextFishBtn,
+html:not(.hw-paint-v2) #teachHearBtn,
+html:not(.hw-paint-v2) #watchBtn,
+html:not(.hw-paint-v2) #listenBtn,
+html:not(.hw-paint-v2) #backBtn,
+html:not(.hw-paint-v2) #storyPrev,
+html:not(.hw-paint-v2) #storyNext,
+html:not(.hw-paint-v2) #surpriseStory,
+html:not(.hw-paint-v2) #toyRandom,
+html:not(.hw-paint-v2) #toyDownload,
+html:not(.hw-paint-v2) .act-btn,
+html:not(.hw-paint-v2) .food,
+html:not(.hw-paint-v2) .bub,
+html:not(.hw-paint-v2) .fall,
+html:not(.hw-paint-v2) .balloon,
+html:not(.hw-paint-v2) .pot,
+html:not(.hw-paint-v2) .splat-btn,
+html:not(.hw-paint-v2) .pad,
+html:not(.hw-paint-v2) .tile,
+html:not(.hw-paint-v2) .choice-btn,
+html:not(.hw-paint-v2) .shape-btn,
+html:not(.hw-paint-v2) .num-btn,
+html:not(.hw-paint-v2) .card,
+html:not(.hw-paint-v2) .spot,
+html:not(.hw-paint-v2) .item,
+html:not(.hw-paint-v2) .animal-choice,
+html:not(.hw-paint-v2) .meet-home,
+html:not(.hw-paint-v2) .num-chip,
+html:not(.hw-paint-v2) .find-friend,
+html:not(.hw-paint-v2) .mini,
+html:not(.hw-paint-v2) .pod,
+html:not(.hw-paint-v2) .quest,
+html:not(.hw-paint-v2) .fishwrap,
+html:not(.hw-paint-v2) #wandBtn,
+html:not(.hw-paint-v2) #hatBtn,
+html:not(.hw-paint-v2) #reelBtn,
+html:not(.hw-paint-v2) #bigFriend,
+html:not(.hw-paint-v2) button.chip,
+html:not(.hw-paint-v2) button.swatch{min-width:64px!important;min-height:64px!important;touch-action:manipulation}
+
+/* Twinkle Stars moving targets: generous >=68px (64px on short screens) for 2yo fingers */
+html:not(.hw-paint-v2) .fall-star{min-width:68px!important;min-height:68px!important;touch-action:manipulation}
+@media (max-height:560px){html:not(.hw-paint-v2) .fall-star{min-width:64px!important;min-height:64px!important}}
+
+/* Mode chips & tabs: generous >=56px (64px on tall screens) without breaking wrap */
+html:not(.hw-paint-v2) .mode-chip,html:not(.hw-paint-v2) .tab-btn,html:not(.hw-paint-v2) .cat-btn,html:not(.hw-paint-v2) .char-chip,html:not(.hw-paint-v2) .inst-chip,html:not(.hw-paint-v2) .song-chip,html:not(.hw-paint-v2) .mpill{min-height:56px!important;touch-action:manipulation}
+@media (min-height:600px){html:not(.hw-paint-v2) .mode-chip,html:not(.hw-paint-v2) .cat-btn,html:not(.hw-paint-v2) .char-chip,html:not(.hw-paint-v2) .inst-chip{min-height:64px!important}}
+
+/* Finger Paint Studio drawer controls also meet the >=64px floor */
+html.hw-paint-v2 .mode-tab,html.hw-paint-v2 .pic-chip{min-width:64px!important;min-height:64px!important}
+
+/* Protect ultra-short iPhone landscape from oversized HUD chrome while keeping play targets >=64px */
+@media (max-height:450px){html:not(.hw-paint-v2) .round-btn,html:not(.hw-paint-v2) #hearBtn{min-width:52px!important;min-height:52px!important}}
+
+html.hf,html.hf body{height:100%!important;overflow:hidden!important}
+.hfT{transform-origin:top center!important}
+@media (orientation:landscape) and (max-height:540px){html:not(.hw-paint-v2),html:not(.hw-paint-v2) body{height:auto!important;min-height:100%!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch}html:not(.hw-paint-v2) #stage,html:not(.hw-paint-v2) #scene,html:not(.hw-paint-v2) #app{position:relative!important;height:auto!important;min-height:100vh!important;overflow-y:visible!important}}

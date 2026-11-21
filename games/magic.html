@@ -460,7 +460,7 @@ function reveal(){
   if(busy||state!=="playing"||dead) return;
   if(revealed&&mode!=="peek"){ say("That trick is done, magician! A brand-new surprise is coming!"); return; }
   if(mode==="hiding"&&!guessed){ say("First, guess who&rsquo;s hiding! Tap a picture under my stage!"); enqueue("hoot-look-closely.mp3","hint"); return; }
-  if(charge<30){ say("The wand first! Tap the sparkly wand so my hat glows, then tap the hat."); placeMagicHand(wandBtn); bumpIdle(); return; }
+  if(charge<30){ audio(); tone(520,680,0.14,"triangle",0.12); hatBtn.classList.remove("wiggle"); void hatBtn.offsetWidth; hatBtn.classList.add("wiggle"); say("The wand first! Tap the sparkly wand so my hat glows, then tap the hat."); placeMagicHand(wandBtn); if(window.__hootSpeak) window.__hootSpeak("idle"); bumpIdle(); return; }
   busy=true; audio();
   hatBtn.classList.remove("wiggle"); void hatBtn.offsetWidth; hatBtn.classList.add("wiggle");
   tone(240,520,0.4,"sine",0.1);

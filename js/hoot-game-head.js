@@ -54,22 +54,60 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       if(h>0 && h<130){ bs[i].style.pointerEvents="none"; bs[i].setAttribute("aria-hidden","true"); bs[i].tabIndex=-1; }
     }
   }
-  /* 3. One big pulsing Play button on the start screen (voice explains the rest). */
+  /* 3. One big pulsing obvious next-action button (Riley age-2 floor):
+        - Win screen: ALWAYS #againBtn (never #winHomeBtn / "Start Screen"!).
+        - Start screen: ALWAYS #playBtn / .big-play.
+        - Active play: single required action (#playTuneBtn, #reelInBtn.ready,
+          #nextFishBtn, #wandBtn.ready, #hatBtn.glow, #nextBtn.show, #celebrateBtn.on). */
+  function vis(el){
+    if(!el||el.hidden||el.disabled) return false;
+    var r=el.getBoundingClientRect(); if(!r.width||!r.height) return false;
+    var cs=getComputedStyle(el); if(cs.visibility==="hidden"||cs.display==="none"||cs.pointerEvents==="none") return false;
+    var p=el.parentElement;
+    while(p&&p.nodeType===1){
+      if(p.hidden) return false;
+      var pcs=getComputedStyle(p); if(pcs.display==="none"||pcs.visibility==="hidden") return false;
+      p=p.parentElement;
+    }
+    return true;
+  }
   function bigPlay(){
-    var bs=document.querySelectorAll("button,[role=button]"), best=null, area=0;
-    for(var i=0;i<bs.length;i++){
-      var b=bs[i], r=b.getBoundingClientRect();
-      if(!r.width||!r.height) continue;
-      var cs=getComputedStyle(b); if(cs.visibility==="hidden"||cs.display==="none") continue;
-      if(!/(▶|play|start|let.?s go)/i.test(b.textContent||"")) continue;
-      if(r.width*r.height>area){ area=r.width*r.height; best=b; }
+    var best=null;
+    var win=document.getElementById("winOverlay");
+    if(win&&vis(win)){
+      var ag=document.getElementById("againBtn");
+      if(vis(ag)) best=ag;
+    }
+    if(!best){
+      var stp=document.getElementById("startPanel")||document.getElementById("startOverlay");
+      if(stp&&vis(stp)){
+        var pb=document.getElementById("playBtn")||stp.querySelector(".big-play,.play-btn");
+        if(vis(pb)) best=pb;
+      }
+    }
+    if(!best){
+      var cands=["#playTuneBtn","#reelInBtn.ready","#nextFishBtn","#wandBtn.ready","#hatBtn.glow","#nextBtn.show","#celebrateBtn.on"];
+      for(var c=0;c<cands.length;c++){
+        var el=document.querySelector(cands[c]);
+        if(vis(el)){ best=el; break; }
+      }
+    }
+    if(!best){
+      var bs=document.querySelectorAll("button,[role=button]"), area=0;
+      for(var i=0;i<bs.length;i++){
+        var b=bs[i];
+        if(b.id==="winHomeBtn"||b.id==="homeBtn"||!vis(b)) continue;
+        if(!/(▶|play again|dance again|find again|fly again|let.?s go|start the|start dressing|start adventuring)/i.test(b.textContent||"")) continue;
+        var r=b.getBoundingClientRect();
+        if(r.width*r.height>area){ area=r.width*r.height; best=b; }
+      }
     }
     var old=document.querySelectorAll(".hoot-go");
     for(var j=0;j<old.length;j++) if(old[j]!==best) old[j].classList.remove("hoot-go");
     if(best) best.classList.add("hoot-go");
   }
   var st=document.createElement("style");
-  st.textContent=".hoot-go{animation:hootGo 1.4s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 5px #ffd93b!important}@keyframes hootGo{50%{transform:scale(1.06)}}";
+  st.textContent=".hoot-go{animation:hootGo 1.35s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 6px #ffd93b,0 0 22px rgba(255,217,59,.75)!important}@keyframes hootGo{50%{transform:scale(1.06)}}.hoot-nudge{animation:hootNudge 1.1s ease-in-out 3!important;box-shadow:0 0 0 5px #ffd93b!important}@keyframes hootNudge{50%{transform:scale(1.08)}}";
   /* 3e59: a win screen ignores taps for its first 0.8 s. It pops up while a fast little one is
      still tapping the board, and that tap used to land on its Home button and skip the celebration. */
   function winVisible(el){ return !el.hidden && getComputedStyle(el).display!=='none' && getComputedStyle(el).visibility!=='hidden'; }
@@ -336,9 +374,24 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     });
   }
 
+  function clearNudge(){
+    document.querySelectorAll(".hoot-nudge").forEach(function(el){ el.classList.remove("hoot-nudge"); });
+  }
+  function nudgeVisual(){
+    clearNudge();
+    var target=document.querySelector(".hoot-go")||document.getElementById("hearBtn")||document.querySelector(".balloon,.bub,.fall-star,.food,.pot,.pad,.tile,.choice-btn,.shape-btn,.num-btn,.card:not(.matched),.spot:not(.revealed),.animal-choice,.find-friend,.pod,.quest");
+    if(target){
+      var r=target.getBoundingClientRect();
+      if(r.width>0&&r.height>0){
+        target.classList.add("hoot-nudge");
+        setTimeout(function(){ target.classList.remove("hoot-nudge"); }, 3500);
+      }
+    }
+  }
   function bumpIdle(){
+    clearNudge();
     if(window.__hootIdleTimer) clearTimeout(window.__hootIdleTimer);
-    window.__hootIdleTimer=setTimeout(function idleTry(){ if(Date.now()-(window.__hootLastVoice||0)<8000){ window.__hootIdleTimer=setTimeout(idleTry,2000); return; } speak("idle"); }, 12000); /* 3e43: only after 12 s with no taps, and never while Hoot is talking */
+    window.__hootIdleTimer=setTimeout(function idleTry(){ if(Date.now()-(window.__hootLastVoice||0)<7000){ window.__hootIdleTimer=setTimeout(idleTry,2000); return; } nudgeVisual(); speak("idle"); }, 10000); /* Wave 3 Riley floor: 10s visual + spoken nudge, never while Hoot is talking */
   }
 
   wrapMedia();
