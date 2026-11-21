@@ -537,8 +537,14 @@ var HW_THUMBS = {}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp 
   function hiddenToday() { var pid = state.profile && state.profile.id; return pid ? (planDay(pid).d.hide || []).slice() : []; }
   /* free play for ages 2–7: "after" the path is done (default), "always", or "off" */
   function freeMode(pid) { var m = kidPlan(planAll(), pid).free; return m === "always" || m === "off" ? m : "after"; }
+  /* Passive/offline stops (story, outdoor) are fun optional cards and NEVER block
+     or count toward unlocking Play games (Dawid/Muse 2026-11-21). Grown-up custom
+     stops stay required when explicitly scheduled in Parents -> Planner. */
+  function isRequiredStop(it) {
+    return !!(it && it.kind !== "story" && it.title !== STORY_STOP && it.kind !== "outdoor");
+  }
   function pathDone() {
-    var req = currentPlan().filter(function (it) { return it && it.kind !== "story" && it.title !== STORY_STOP; });
+    var req = currentPlan().filter(isRequiredStop);
     return req.every(stoneDone);
   }
   function playUnlocked() {
@@ -905,7 +911,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var p = state.profile, plan = currentPlan();
     rememberDay(plan);
     var nextIdx = -1;
-    plan.forEach(function (it, i) { if (nextIdx < 0 && !stoneDone(it)) nextIdx = i; });
+    plan.forEach(function (it, i) { if (nextIdx < 0 && isRequiredStop(it) && !stoneDone(it)) nextIdx = i; });
     var doneN = plan.filter(stoneDone).length;
     var sky = skyOf(), season = seasonOf(), bday = isBirthdayMonth(p.id), magic = isLittleBand();
     var line = nextIdx < 0 ? "You did ALL your stones today, " + p.label + "! Hoo hoo — you're a star!"
@@ -2750,7 +2756,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (!state.profile || !isLittleBand()) { window.__hwFromTodayPath = false; closeOverlay(); return; }
     var plan = currentPlan(), nxt = null;
     for (var i = 0; i < plan.length; i++) {
-      if (!stoneDone(plan[i])) { nxt = plan[i]; break; }
+      if (isRequiredStop(plan[i]) && !stoneDone(plan[i])) { nxt = plan[i]; break; }
     }
     if (!nxt) {
       window.__hwFromTodayPath = false;
