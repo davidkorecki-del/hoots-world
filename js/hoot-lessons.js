@@ -235,7 +235,7 @@
 
   /* ---------- audio: clips only, one queue, cancellable ---------- */
   var gen = 0, cur = null, lastSaid = {};
-  function stopAudio() { gen++; if (cur) { try { cur.pause(); } catch (e) {} cur = null; } }
+  function stopAudio() { gen++; if (cur) { cur.__govWait = false; cur.__govNext = null; cur.onended = cur.onerror = null; try { cur.pause(); } catch (e) {} cur = null; } }
   function say(keys, done) {
     var my = ++gen, i = 0;
     keys = (keys || []).filter(Boolean);
@@ -524,7 +524,9 @@
       var bigDay = sg && !wasAll && setDone(set);
       setBubble("🦉 " + (bigDay ? "🏆 " + set.all : lesson.recap + " You earned a sticker!"));
       var nk = ""; try { nk = window.__llNameKey ? window.__llNameKey() || "" : ""; } catch (e) {}
-      say((nk ? ["great-job-" + nk] : []).concat(["hoot-you-learned"]).concat(teach.slice(0, 4).map(function (t) { return t.say ? t.say[0] : t.clip; }).filter(Boolean)), function () {
+      var recapNames = [];
+      teach.slice(0, 4).forEach(function (t) { teachClips(t).forEach(function (c) { if (c) recapNames.push(c); }); });
+      say((nk ? ["great-job-" + nk] : []).concat(["hoot-you-learned"]).concat(recapNames), function () {
         var sb = end.querySelector(".hl-song");
         if (bigDay && alive() && sb && !sb.classList.contains("pg-singing")) g.sing(set.key, sb);
       });

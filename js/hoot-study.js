@@ -257,7 +257,7 @@
   }
   function stdStop() {
     stdGen++; stdQueue.length = 0; stdBusy = false;
-    if (stdEl) { try { stdEl.pause(); } catch (e) {} stdEl = null; }
+    if (stdEl) { stdEl.__govWait = false; stdEl.__govNext = null; stdEl.onended = stdEl.onerror = null; try { stdEl.pause(); } catch (e) {} stdEl = null; }
   }
 
   /* ---------- UI ---------- */

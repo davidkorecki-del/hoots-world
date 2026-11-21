@@ -47,6 +47,13 @@
   if(typeof window!=='undefined'){
     window.__hwBlockedWrites=blocked;
     window.HW_SAFE=onStaging();
+    try{
+      var root=document.documentElement;
+      if(root){
+        root.classList.toggle('hw-is-preview', !!window.HW_SAFE);
+        root.classList.toggle('hw-is-live', !window.HW_SAFE);
+      }
+    }catch(e){}
   }
   if(onStaging() && typeof window!=='undefined' && !window.__hwSafeFetch){
     window.__hwSafeFetch=true;
@@ -77,6 +84,8 @@
 (function(){
   function fix(){
     var b=document.getElementById('preview-banner'); if(!b) return;
+    if(!window.HW_SAFE){ b.hidden=true; return; }
+    b.hidden=false;
     var A=window.HootAccount;
     if(A && A.active && A.active()) b.textContent='Test copy: saves only to your new family account, never to the old family data.';
   }

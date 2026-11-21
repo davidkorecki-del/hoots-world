@@ -299,7 +299,7 @@
           if (b.disabled || !alive()) return;
           if (b.getAttribute("data-l") === target) {
             b.disabled = true; win(b); b.classList.add("pg-popped"); left--;
-            if (left === 0) { stage.querySelectorAll(".pg-bub").forEach(function (x) { x.disabled = true; }); setB("⭐ POP! Those say “" + target.toUpperCase() + "”!"); say(["call-letter-" + target, fresh(PRAISE)], wonRound()); }
+            if (left === 0) { stage.querySelectorAll(".pg-bub").forEach(function (x) { x.disabled = true; }); setB("⭐ POP! Those say “" + target.toUpperCase() + "”!"); var lName = (window.__hootNameClip && window.__hootNameClip("letter", target)) || ("name-letter-" + target); say([lName, fresh(PRAISE)], wonRound()); }
             else setB("POP! One more " + target.toUpperCase() + "!");
           } else wrongTap(b, "That bubble is " + b.getAttribute("data-l").toUpperCase() + ". Listen again for the sound!", ["coach/phonics-" + target]);
         });
