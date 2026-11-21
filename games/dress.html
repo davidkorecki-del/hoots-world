@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="dress";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Dress Up Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{ --ink:#22304a; --ink-soft:#5a6b8a; --paper:#fffdf6; --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#e04a3f; --teal:#17bebb; --leaf:#57cc62; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#ffe9ec; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column; background:linear-gradient(180deg,#fff3d6 0%,#ffe9ec 55%,#ffeef7 100%); }
+  /* HUD */
+  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(6px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:46px; height:46px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(34,48,74,.16),0 8px 16px rgba(34,48,74,.1); cursor:pointer; }
+  .round-btn:active{ transform:scale(.9); } .round-btn svg{ width:23px; height:23px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:5px 15px 5px 10px; box-shadow:0 4px 0 rgba(34,48,74,.13),0 8px 16px rgba(34,48,74,.09); font-family:"Fredoka",sans-serif; font-weight:700; font-size:21px; }
+  #starBank .star-ic{ width:24px; height:24px; } #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+  /* guide row: Hoot the GUIDE (never stacked over the wardrobe) */
+  #guideRow{ position:relative; z-index:5; display:flex; align-items:flex-end; gap:8px; padding:4px 10px 0; }
+  #guideHoot{ flex:0 0 auto; width:62px; height:66px; border:none; background:none; padding:0; cursor:pointer; }
+  #guideHoot svg{ width:100%; height:100%; display:block; }
+  #guideHoot.talking svg{ animation:talkBob .38s ease-in-out infinite alternate; }
+  #guideHoot.celebrate svg{ animation:celebrate .8s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes talkBob{ from{ transform:translateY(0) rotate(-1.5deg);} to{ transform:translateY(-4px) rotate(1.5deg);} }
+  @keyframes celebrate{ 0%{transform:translateY(0)} 35%{transform:translateY(-14px) rotate(-5deg)} 70%{transform:translateY(-4px) rotate(4deg)} 100%{transform:translateY(0)} }
+  #bubbleCol{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding-bottom:2px; }
+  #bubble{ background:var(--paper); border:3px solid #fff; border-radius:16px; border-bottom-left-radius:4px; box-shadow:0 4px 0 rgba(34,48,74,.12),0 10px 20px rgba(34,48,74,.1); padding:7px 12px; font-weight:800; font-size:clamp(14px,3.9vw,17.5px); line-height:1.25; max-width:100%; }
+  #bubble .b-big{ font-family:"Fredoka",sans-serif; color:var(--coral-dark); letter-spacing:.02em; }
+  #hootName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.14em; color:#fff; background:var(--coral); border-radius:999px; padding:2px 10px; margin-left:8px; }
+  /* character picker */
+  #charRow{ position:relative; z-index:5; display:grid; grid-template-columns:repeat(6,1fr); gap:6px; padding:6px 10px 0; }
+  .char-chip{ border:3px solid #fff; background:rgba(255,253,246,.92); border-radius:14px; padding:4px 2px 3px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:1px; box-shadow:0 3px 0 rgba(34,48,74,.1); font-family:inherit; }
+  .char-chip svg{ width:34px; height:34px; display:block; }
+  .char-chip span{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:10.5px; line-height:1.05; color:var(--ink); text-align:center; }
+  .char-chip.sel{ border-color:var(--coral); background:#fff0ec; transform:translateY(-2px); }
+  .char-chip:active{ transform:scale(.94); }
+  /* main split */
+  #main{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
+  /* boutique stage */
+  #scene{ position:relative; margin:6px 10px 0; border-radius:20px; overflow:hidden; flex:0 0 auto; height:236px;
+    background:linear-gradient(180deg,#fff8e1 0%,#ffefd0 70%,#f7d9a8 100%); border:3px solid #fff; box-shadow:0 5px 0 rgba(34,48,74,.1),0 12px 24px rgba(34,48,74,.1); }
+  #scene::before{ content:""; position:absolute; top:0; left:0; right:0; height:26px; background:repeating-linear-gradient(90deg,#e14e63 0 26px,#f2768a 26px 52px); border-bottom:5px solid #ffc93c; }
+  .curtain{ position:absolute; top:0; bottom:0; width:26px; background:repeating-linear-gradient(0deg,#d93a50 0 14px,#e14e63 14px 28px); z-index:2; }
+  .curtain.l{ left:0; border-right:4px solid #ffc93c; } .curtain.r{ right:0; border-left:4px solid #ffc93c; }
+  .sparkle-dot{ position:absolute; border-radius:50%; background:#ffd93b; opacity:.75; animation:twinkle 2.2s ease-in-out infinite alternate; z-index:1; }
+  @keyframes twinkle{ from{ opacity:.25; transform:scale(.7);} to{ opacity:.95; transform:scale(1.25);} }
+  #rug{ position:absolute; left:50%; bottom:8px; transform:translateX(-50%); width:62%; height:34px; border-radius:50%; background:radial-gradient(ellipse at center,#ff9db0 0 34%,#ffd166 36% 62%,#57cc62 64% 100%); z-index:1; }
+  #figureWrap{ position:absolute; left:50%; bottom:12px; transform:translateX(-50%); width:172px; height:196px; z-index:3; }
+  #figureWrap svg{ width:100%; height:100%; display:block; }
+  #figureWrap.runway{ animation:runway 2.8s ease-in-out; }
+  @keyframes runway{ 0%{ transform:translateX(-50%);} 30%{ transform:translateX(-118%);} 55%{ transform:translateX(-118%) scaleX(-1);} 85%{ transform:translateX(-50%) scaleX(-1);} 100%{ transform:translateX(-50%);} }
+  #scene.lights #flashL,#scene.lights #flashR{ opacity:1; }
+  #flashL,#flashR{ position:absolute; top:34px; width:54px; height:54px; border-radius:50%; background:radial-gradient(circle,#fff8c9 0%,rgba(255,217,59,.55) 55%,transparent 72%); opacity:.25; transition:opacity .18s; z-index:2; }
+  #flashL{ left:36px; } #flashR{ right:36px; }
+  .burst-star{ position:absolute; font-size:20px; pointer-events:none; z-index:4; animation:burstFly .8s ease-out forwards; }
+  @keyframes burstFly{ from{ transform:translate(0,0) scale(.6); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(40deg); opacity:0;} }
+  /* actions */
+  #actions{ display:flex; gap:7px; padding:7px 10px 0; position:relative; z-index:5; }
+  .act-btn{ flex:1 1 0; border:3px solid #fff; border-radius:999px; padding:8px 4px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; cursor:pointer; box-shadow:0 4px 0 rgba(34,48,74,.15); color:var(--ink); background:var(--paper); }
+  .act-btn:active{ transform:scale(.95); }
+  #tadaBtn{ background:var(--coral); color:#fff; flex:1.25 1 0; }
+  #surpriseBtn{ background:var(--teal); color:#fff; }
+  /* wardrobe */
+  #wardrobe{ padding:6px 10px 0; position:relative; z-index:5; }
+  #modeRow{ display:flex; gap:7px; }
+  .mode-chip{ flex:1 1 0; border:3px solid #e8ddcb; background:rgba(255,253,246,.85); border-radius:14px; padding:5px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; color:var(--ink-soft); cursor:pointer; text-align:center; }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11px; }
+  .mode-chip.sel{ border-color:var(--coral); background:#fff; color:var(--ink); box-shadow:0 3px 0 rgba(224,74,63,.25); }
+  #challengeBar{ display:none; align-items:center; gap:9px; margin-top:6px; background:#fff8dc; border:3px dashed #ffd166; border-radius:14px; padding:4px 10px; }
+  #challengeBar.on{ display:flex; }
+  #challengeBar .cb-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:12px; letter-spacing:.08em; color:#a86e00; }
+  #cbName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:16.5px; color:var(--coral-dark); }
+  #progressDots{ display:flex; gap:5px; margin-left:auto; }
+  #progressDots i{ width:14px; height:14px; border-radius:50%; background:#e8ddcb; border:2px solid #fff; }
+  #progressDots i.on{ background:var(--sun); box-shadow:0 0 0 2px #ffd166; }
+  #catRow{ display:flex; gap:6px; margin-top:7px; }
+  .cat-btn{ flex:1 1 0; border:3px solid #fff; background:rgba(255,253,246,.9); border-radius:12px; padding:5px 2px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:12.5px; color:var(--ink-soft); cursor:pointer; box-shadow:0 3px 0 rgba(34,48,74,.08); }
+  .cat-btn.sel{ background:var(--sun); color:var(--ink); }
+  .cat-btn:active{ transform:scale(.94); }
+  #tiles{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-top:7px; }
+  .tile{ border:3px solid #fff; background:var(--paper); border-radius:15px; padding:4px 2px 3px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0; box-shadow:0 3px 0 rgba(34,48,74,.1); font-family:inherit; }
+  .tile svg{ width:40px; height:34px; display:block; }
+  .tile span{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:11px; line-height:1.1; color:var(--ink); text-align:center; }
+  .tile.on{ border-color:var(--leaf); background:#eefbee; }
+  .tile:active{ transform:scale(.93); }
+  .tile.wanted{ animation:wantedPulse 1s ease-in-out infinite; border-color:var(--sun); }
+  @keyframes wantedPulse{ 0%,100%{ box-shadow:0 3px 0 rgba(34,48,74,.1);} 50%{ box-shadow:0 0 0 5px rgba(255,201,60,.55);} }
+  /* album strip */
+  #albumRow{ padding:6px 10px max(7px,env(safe-area-inset-bottom)); position:relative; z-index:5; }
+  #albumLab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.1em; color:var(--ink-soft); margin:0 0 3px 2px; }
+  #album{ display:flex; gap:7px; overflow-x:auto; min-height:52px; scrollbar-width:none; }
+  #album::-webkit-scrollbar{ display:none; }
+  .album-card{ flex:0 0 auto; width:52px; height:52px; border-radius:10px; border:3px solid #fff; background:#fff8e1; box-shadow:0 3px 0 rgba(34,48,74,.12); position:relative; overflow:hidden; }
+  .album-card svg{ width:100%; height:100%; display:block; }
+  .album-card .a-star{ position:absolute; right:1px; bottom:0; font-size:13px; color:#e8a90c; text-shadow:0 1px 0 #fff; }
+  .album-empty{ font-weight:800; font-size:12.5px; color:var(--ink-soft); align-self:center; padding-left:2px; }
+  /* overlays */
+  .overlay{ position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; background:rgba(34,48,74,.42); padding:16px; }
+  .overlay[hidden]{ display:none; }
+  .card{ background:var(--paper); border:3px solid #fff; border-radius:24px; box-shadow:0 10px 0 rgba(34,48,74,.18),0 24px 48px rgba(34,48,74,.25); padding:20px 20px 16px; max-width:430px; width:100%; text-align:center; }
+  .card h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0 0 6px; line-height:1.08; }
+  .card h1 .t1{ color:var(--coral-dark); } .card h1 .t2{ color:#0e8f8c; }
+  .card p{ font-weight:800; font-size:15.5px; line-height:1.4; color:var(--ink-soft); margin:0 0 13px; }
+  .big-play{ border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px; border-radius:999px; padding:12px 34px; cursor:pointer; box-shadow:0 6px 0 var(--coral-dark); }
+  .big-play:active{ transform:scale(.95); }
+  #winStars{ font-size:30px; color:#e8a90c; letter-spacing:4px; min-height:38px; }
+  .win-btns{ display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
+  .win-btn{ border:3px solid #fff; border-radius:999px; padding:10px 20px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:16.5px; cursor:pointer; box-shadow:0 4px 0 rgba(34,48,74,.18); }
+  #againBtn{ background:var(--leaf); color:#fff; } #winHomeBtn{ background:var(--paper); color:var(--ink); }
+  @media (min-width:760px) and (min-aspect-ratio:1/1){
+    #main{ flex-direction:row; align-items:stretch; padding:0 6px; }
+    #sceneCol{ flex:1.05 1 0; display:flex; flex-direction:column; }
+    #scene{ flex:1 1 auto; height:auto; }
+    #wardrobe{ flex:1 1 0; display:flex; flex-direction:column; justify-content:center; }
+    #figureWrap{ width:210px; height:240px; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
+</style>
+<style>@media (max-width:759px),(max-aspect-ratio:1/1){#stage{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#main{flex:1 0 auto!important;min-height:auto!important}}</style></head>
+<body>
+<div id="stage">
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#22304a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#22304a"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#22304a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#22304a"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#22304a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#ffe9ec"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <div id="guideRow">
+    <button id="guideHoot" type="button" aria-label="Hoot the guide — tap to hear him again"></button>
+    <div id="bubbleCol">
+      <div id="bubble" aria-live="polite">Hi! I&rsquo;m Hoot, your guide! Pick a friend, then dress them up!</div>
+      <span id="hootName">HOOT &bull; YOUR GUIDE</span>
+    </div>
+  </div>
+
+  <div id="charRow" role="group" aria-label="Who shall we dress up today?"></div>
+
+  <div id="main">
+    <div id="sceneCol">
+      <section id="scene" aria-label="Hoot's boutique stage">
+        <div class="curtain l"></div><div class="curtain r"></div>
+        <div id="flashL"></div><div id="flashR"></div>
+        <div id="rug"></div>
+        <div id="figureWrap" role="img" aria-label="Your friend on the stage"></div>
+      </section>
+      <div id="actions">
+        <button class="act-btn" id="surpriseBtn" type="button">Surprise me!</button>
+        <button class="act-btn" id="tadaBtn" type="button">&#9733; Ta-da!</button>
+        <button class="act-btn" id="allOffBtn" type="button">All off</button>
+        <button class="act-btn" id="photoBtn" type="button">Photo Booth</button>
+      </div>
+    </div>
+
+    <section id="wardrobe" aria-label="Hoot's Wardrobe">
+      <div id="modeRow" role="group" aria-label="Choose how to play">
+        <button class="mode-chip sel" id="modeFree" type="button">Dress Freely<small>Anything goes!</small></button>
+        <button class="mode-chip" id="modeChallenge" type="button">Hoot Says<small>Find what Hoot calls out!</small></button>
+      </div>
+      <div id="challengeBar"><span class="cb-lab">HOOT WANTS</span><span id="cbName">Crown</span><div id="progressDots"><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div id="catRow" role="group" aria-label="Wardrobe shelves"></div>
+      <div id="tiles" role="group" aria-label="Clothes and treasures"></div>
+    </section>
+  </div>
+
+  <div id="albumRow">
+    <p id="albumLab">TA-DA ALBUM &bull; YOUR RUNWAY STARS LIVE HERE</p>
+    <div id="album"><span class="album-empty" id="albumEmpty">Press Ta-da! after dressing your friend &mdash; their runway photo lands here with a star.</span></div>
+  </div>
+
+  <div class="overlay" id="startOverlay">
+    <div class="card">
+      <h1><span class="t1">Dress Up</span> <span class="t2">Friends</span></h1>
+      <p>Hoot is your guide! Pick a friend &mdash; Milo, Lily, the princesses, Turbo Truck, even Hoot &mdash; dress them up, then send them down the Ta-Da Runway!</p>
+      <button class="big-play" id="playBtn" type="button">&#9654; Start Dressing!</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="winOverlay" hidden>
+    <div class="card">
+      <div id="winStars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <h1><span class="t1">Fashion</span> <span class="t2">Star!</span></h1>
+      <p id="winSub">You found everything Hoot called out. What a stylist you are!</p>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">&#8635; Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= DATA: characters who LOOK like themselves ================= */
+function eyes(x1,x2,y,r){ return '<circle cx="'+x1+'" cy="'+y+'" r="'+(r+4.5)+'" fill="#fff"/><circle cx="'+x2+'" cy="'+y+'" r="'+(r+4.5)+'" fill="#fff"/><circle cx="'+x1+'" cy="'+y+'" r="'+r+'" fill="#22304a"/><circle cx="'+x2+'" cy="'+y+'" r="'+r+'" fill="#22304a"/><circle cx="'+(x1+1.6)+'" cy="'+(y-1.6)+'" r="'+(r*0.36)+'" fill="#fff"/><circle cx="'+(x2+1.6)+'" cy="'+(y-1.6)+'" r="'+(r*0.36)+'" fill="#fff"/>'; }
+var HOOT_MINI = '<svg viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="10" fill="#22304a"/><circle cx="122" cy="72" r="10" fill="#22304a"/><circle cx="82" cy="68" r="3.6" fill="#fff"/><circle cx="126" cy="68" r="3.6" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/><path d="M76 190 q-8 8 -14 6 M124 190 q8 8 14 6" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
+
+function hootFigure(){
+  return '<ellipse cx="52" cy="238" rx="20" ry="52" fill="#8a5a33" transform="rotate(12 52 238)"/>'
+  + '<ellipse cx="268" cy="238" rx="20" ry="52" fill="#8a5a33" transform="rotate(-12 268 238)"/>'
+  + '<ellipse cx="160" cy="246" rx="86" ry="90" fill="#a06a3b"/>'
+  + '<ellipse cx="160" cy="268" rx="56" ry="58" fill="#fdeed3"/>'
+  + '<path d="M124 250 Q142 262 160 250 Q178 262 196 250 M122 278 Q141 291 160 278 Q179 291 198 278" stroke="#e3c491" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  + '<g data-slot="shoes"></g><g data-slot="outfit"></g>'
+  + '<path d="M100 62 Q84 22 114 33 Q129 39 122 66 Z" fill="#8a5a33"/><path d="M220 62 Q236 22 206 33 Q191 39 198 66 Z" fill="#8a5a33"/>'
+  + '<circle cx="160" cy="108" r="67" fill="#a06a3b"/>'
+  + '<ellipse cx="130" cy="110" rx="30" ry="32" fill="#fdeed3"/><ellipse cx="190" cy="110" rx="30" ry="32" fill="#fdeed3"/>'
+  + eyes(130,190,108,10.5)
+  + '<circle cx="106" cy="134" r="8.5" fill="#ffb59d" opacity=".85"/><circle cx="214" cy="134" r="8.5" fill="#ffb59d" opacity=".85"/>'
+  + '<path d="M146 126 Q160 120 174 126 Q170 144 160 147 Q150 144 146 126 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>'
+  + '<g data-slot="face"></g><g data-slot="treasure"></g><g data-slot="hat"></g>'
+  + '<ellipse cx="126" cy="344" rx="20" ry="9" fill="#ff9f1c"/><ellipse cx="194" cy="344" rx="20" ry="9" fill="#ff9f1c"/>';
+}
+function boyFigure(name, skin, hair, top, shorts){
+  return '<rect x="128" y="282" width="24" height="52" rx="10" fill="'+skin+'"/><rect x="168" y="282" width="24" height="52" rx="10" fill="'+skin+'"/>'
+  + '<g data-slot="shoes"></g>'
+  + '<rect x="118" y="238" width="84" height="52" rx="10" fill="'+shorts+'"/>'
+  + '<path d="M104 176 Q100 240 112 252 L132 252 Q126 210 128 182 Z" fill="'+skin+'"/><path d="M216 176 Q220 240 208 252 L188 252 Q194 210 192 182 Z" fill="'+skin+'"/>'
+  + '<path d="M118 168 L202 168 L208 246 Q160 258 112 246 Z" fill="'+top+'"/>'
+  + '<g data-slot="outfit"></g>'
+  + '<circle cx="160" cy="106" r="54" fill="'+skin+'"/>'
+  + '<path d="M106 104 Q102 48 160 48 Q218 48 214 104 Q200 72 176 76 Q150 60 128 78 Q112 88 106 104 Z" fill="'+hair+'"/>'
+  + eyes(138,182,106,5.2)
+  + '<path d="M146 128 Q160 138 174 128" stroke="#b84a2b" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  + '<circle cx="120" cy="124" r="7" fill="#ffb59d" opacity=".7"/><circle cx="200" cy="124" r="7" fill="#ffb59d" opacity=".7"/>'
+  + '<g data-slot="face"></g><g data-slot="treasure"></g><g data-slot="hat"></g>';
+}
+function girlFigure(){
+  /* Lily: curly brown hair, peach dress */
+  return '<rect x="132" y="292" width="20" height="44" rx="9" fill="#ffdfc4"/><rect x="168" y="292" width="20" height="44" rx="9" fill="#ffdfc4"/>'
+  + '<g data-slot="shoes"></g>'
+  + '<path d="M106 182 Q100 238 110 248 L128 244 Q124 208 126 186 Z" fill="#ffdfc4"/><path d="M214 182 Q220 238 210 248 L192 244 Q196 208 194 186 Z" fill="#ffdfc4"/>'
+  + '<path d="M160 158 L206 168 L226 300 Q160 318 94 300 L114 168 Z" fill="#ff8fab"/>'
+  + '<path d="M114 168 Q160 184 206 168 L210 196 Q160 210 110 196 Z" fill="#ff6b93"/>'
+  + '<g data-slot="outfit"></g>'
+  + '<circle cx="160" cy="104" r="52" fill="#ffdfc4"/>'
+  + '<g fill="#5b3413"><circle cx="112" cy="76" r="17"/><circle cx="130" cy="58" r="18"/><circle cx="160" cy="50" r="19"/><circle cx="190" cy="58" r="18"/><circle cx="208" cy="76" r="17"/><circle cx="104" cy="102" r="14"/><circle cx="216" cy="102" r="14"/><circle cx="102" cy="130" r="12"/><circle cx="218" cy="130" r="12"/></g>'
+  + '<circle cx="160" cy="106" r="44" fill="#ffdfc4"/>'
+  + '<path d="M118 92 Q160 58 202 92 Q196 66 160 64 Q124 66 118 92Z" fill="#5b3413"/>'
+  + eyes(140,180,104,5)
+  + '<path d="M147 124 Q160 134 173 124" stroke="#b84a2b" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  + '<circle cx="124" cy="120" r="7.5" fill="#ff9db0"/><circle cx="196" cy="120" r="7.5" fill="#ff9db0"/>'
+  + '<path d="M196 52 l7 -10 7 10 -7 8 Z" fill="#ff6b5e"/><circle cx="203" cy="52" r="4" fill="#ffc93c"/>'
+  + '<g data-slot="face"></g><g data-slot="treasure"></g><g data-slot="hat"></g>';
+}
+function princessFigure(skin, hair, gown, gownDark, crownFill, crownStroke){
+  return '<path d="M118 120 Q104 260 112 330 L132 330 Q126 230 132 128 Z" fill="'+hair+'"/>'
+  + '<path d="M202 120 Q216 260 208 330 L188 330 Q194 230 188 128 Z" fill="'+hair+'"/>'
+  + '<path d="M160 168 C 120 200 96 268 84 344 L236 344 C 224 268 200 200 160 168 Z" fill="'+gown+'"/>'
+  + '<path d="M160 168 C 140 210 132 280 130 344 L190 344 C 188 280 180 210 160 168 Z" fill="'+gownDark+'" opacity=".45"/>'
+  + '<path d="M108 186 Q102 232 112 240 L128 236 Q124 206 126 190 Z" fill="'+skin+'"/><path d="M212 186 Q218 232 208 240 L192 236 Q196 206 194 190 Z" fill="'+skin+'"/>'
+  + '<path d="M126 160 L194 160 L200 208 Q160 220 120 208 Z" fill="'+gownDark+'"/>'
+  + '<circle cx="160" cy="182" r="7" fill="#ffd93b" stroke="#e8a90c" stroke-width="1.6"/>'
+  + '<g data-slot="shoes"></g><g data-slot="outfit"></g>'
+  + '<circle cx="160" cy="102" r="52" fill="'+skin+'"/>'
+  + '<path d="M108 100 Q104 44 160 44 Q216 44 212 100 Q206 66 178 62 Q150 74 128 64 Q112 74 108 100Z" fill="'+hair+'"/>'
+  + eyes(140,180,102,5)
+  + '<path d="M148 122 Q160 130 172 122" stroke="#b84a2b" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  + '<circle cx="124" cy="118" r="7" fill="#ffb59d" opacity=".8"/><circle cx="196" cy="118" r="7" fill="#ffb59d" opacity=".8"/>'
+  + '<path d="M126 52 L130 26 L146 40 L160 20 L174 40 L190 26 L194 52 Z" fill="'+crownFill+'" stroke="'+crownStroke+'" stroke-width="2.4" stroke-linejoin="round"/><circle cx="160" cy="38" r="4.6" fill="#ff6b5e"/><circle cx="138" cy="42" r="3.6" fill="#17bebb"/><circle cx="182" cy="42" r="3.6" fill="#17bebb"/>'
+  + '<g data-slot="face"></g><g data-slot="treasure"></g><g data-slot="hat"></g>';
+}
+function truckFigure(color, tire, sign){
+  var wheel = tire==="big" ? 34 : tire==="rainbow" ? 29 : 27;
+  var hub = tire==="rainbow" ? '#ff8fab' : tire==="star" ? '#ffc93c' : '#dbe7f2';
+  var signSVG = sign==="heart" ? '<path d="M238 218 C224 202 206 214 212 228 C216 238 238 250 238 250 C238 250 260 238 264 228 C270 214 252 202 238 218Z" fill="#fff"/>'
+    : sign==="bolt" ? '<path d="M242 204 L224 232 L236 232 L230 252 L254 222 L241 222 Z" fill="#fff"/>'
+    : sign==="smile" ? '<circle cx="238" cy="228" r="24" fill="#fff"/><circle cx="229" cy="222" r="3.4" fill="#22304a"/><circle cx="247" cy="222" r="3.4" fill="#22304a"/><path d="M226 234 Q238 244 250 234" stroke="#22304a" stroke-width="3.4" fill="none" stroke-linecap="round"/>'
+    : '<path d="M238 206 l6.7 13.6 15 2.2 -10.9 10.6 2.6 14.9 L238 240.4 l-13.4 6.9 2.6 -14.9 -10.9 -10.6 15 -2.2 Z" fill="#fff"/>';
+  return '<rect x="18" y="318" width="284" height="16" rx="8" fill="#c9d6e3"/>'
+  + '<path d="M28 236 L28 168 Q28 156 40 156 L168 156 L168 268 L40 268 Q28 268 28 256 Z" fill="'+color+'"/>'
+  + '<path d="M168 190 L216 190 Q228 190 236 202 L262 240 Q270 252 270 260 L270 268 L168 268 Z" fill="'+color+'"/>'
+  + '<path d="M180 200 L214 200 Q222 200 227 208 L244 234 L180 234 Z" fill="#bfe9ff" stroke="#7fb8d9" stroke-width="3"/>'
+  + '<rect x="28" y="252" width="242" height="16" fill="rgba(0,0,0,.13)"/>'
+  + signSVG
+  + '<circle cx="92" cy="272" r="'+wheel+'" fill="#2b2b33"/><circle cx="92" cy="272" r="'+(wheel*0.45)+'" fill="'+hub+'" stroke="#22304a" stroke-width="3"/>'
+  + '<circle cx="222" cy="272" r="'+wheel+'" fill="#2b2b33"/><circle cx="222" cy="272" r="'+(wheel*0.45)+'" fill="'+hub+'" stroke="#22304a" stroke-width="3"/>'
+  + '<circle cx="272" cy="246" r="7" fill="#ffd93b"/><rect x="24" y="238" width="8" height="12" rx="3" fill="#ff6b5e"/>'
+  + '<g data-slot="extra"></g>';
+}
+var CHARACTERS = [
+  { id:"hoot", name:"Hoot", tag:"Owl" },
+  { id:"milo", name:"Milo", tag:"Boy" },
+  { id:"lily", name:"Lily", tag:"Girl" },
+  { id:"rose", name:"Princess Rose", tag:"Princess" },
+  { id:"luna", name:"Princess Luna", tag:"Princess" },
+  { id:"truck", name:"Turbo Truck", tag:"Truck" }
+];
+function charFaceSVG(id){
+  if(id==="hoot") return '<circle cx="30" cy="30" r="26" fill="#a06a3b"/><ellipse cx="21" cy="29" rx="7" ry="8" fill="#fff"/><ellipse cx="39" cy="29" rx="7" ry="8" fill="#fff"/><circle cx="21" cy="29" r="3.2" fill="#22304a"/><circle cx="39" cy="29" r="3.2" fill="#22304a"/><path d="M25 37 L30 43 L35 37 Z" fill="#ff9f1c"/>';
+  if(id==="milo") return '<circle cx="30" cy="32" r="24" fill="#ffdfc4"/><path d="M6 30 Q8 6 30 6 Q52 6 54 30 Q40 15 30 19 Q18 15 6 30Z" fill="#6b3a14"/><circle cx="21" cy="32" r="3" fill="#22304a"/><circle cx="39" cy="32" r="3" fill="#22304a"/><path d="M23 42 Q30 47 37 42" stroke="#b84a2b" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  if(id==="lily") return '<g fill="#5b3413"><circle cx="12" cy="20" r="9"/><circle cx="30" cy="10" r="10"/><circle cx="48" cy="20" r="9"/><circle cx="8" cy="34" r="7"/><circle cx="52" cy="34" r="7"/></g><circle cx="30" cy="32" r="22" fill="#ffdfc4"/><circle cx="21" cy="32" r="3" fill="#22304a"/><circle cx="39" cy="32" r="3" fill="#22304a"/><path d="M23 42 Q30 47 37 42" stroke="#b84a2b" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  if(id==="rose") return '<circle cx="30" cy="32" r="24" fill="#ffe3c2"/><path d="M6 30 Q6 6 30 6 Q54 6 54 30 Q54 14 30 13 Q6 14 6 30Z" fill="#ffd93b"/><path d="M16 8 L19 0 L24 5 L30 -2 L36 5 L41 0 L44 8Z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4"/><circle cx="21" cy="32" r="3" fill="#22304a"/><circle cx="39" cy="32" r="3" fill="#22304a"/><path d="M23 42 Q30 47 37 42" stroke="#b84a2b" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  if(id==="luna") return '<g fill="#2b2118"><circle cx="11" cy="18" r="10"/><circle cx="30" cy="9" r="11"/><circle cx="49" cy="18" r="10"/><circle cx="8" cy="32" r="8"/><circle cx="52" cy="32" r="8"/></g><circle cx="30" cy="33" r="22" fill="#8a5a33"/><circle cx="21" cy="33" r="3" fill="#fff"/><circle cx="39" cy="33" r="3" fill="#fff"/><path d="M23 43 Q30 48 37 43" stroke="#5b2d16" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 10 L30 2 L42 10 L39 14 L30 8 L21 14Z" fill="#dbe7f2"/>';
+  return '<rect x="4" y="18" width="34" height="24" rx="5" fill="#ff5a4e"/><path d="M38 26 L48 26 L54 36 L54 42 L38 42Z" fill="#ff5a4e"/><path d="M41 29 L47 29 L51 35 L41 35Z" fill="#bfe9ff"/><circle cx="16" cy="44" r="7" fill="#2b2b33"/><circle cx="44" cy="44" r="7" fill="#2b2b33"/>';
+}
+/* ================= DATA: wardrobe ================= */
+var CATS = [
+  { id:"hats", name:"Hats" }, { id:"costumes", name:"Costumes" }, { id:"faces", name:"Faces" },
+  { id:"shoes", name:"Shoes" }, { id:"treasures", name:"Treasures" }
+];
+var TRUCK_CATS = [ { id:"paint", name:"Paint" }, { id:"tires", name:"Tires" }, { id:"signs", name:"Signs" } ];
+var ITEMS = [
+  { id:"party", cat:"hats", slot:"hat", name:"Party Hat", tile:'<path d="M30 6 L44 40 L16 40Z" fill="#ff6b5e"/><circle cx="30" cy="6" r="5" fill="#ffc93c"/>', svg:'<path d="M124 62 L160 4 L196 62Z" fill="#ff6b5e"/><path d="M138 38 L182 38" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".65"/><rect x="120" y="56" width="80" height="11" rx="5.5" fill="#17bebb"/><circle cx="160" cy="6" r="10" fill="#ffc93c" stroke="#e8a90c" stroke-width="2"/>' },
+  { id:"crown", cat:"hats", slot:"hat", name:"Crown", tile:'<path d="M12 38 L10 14 L22 24 L30 10 L38 24 L50 14 L48 38Z" fill="#ffc93c" stroke="#e8a90c" stroke-width="2"/>', svg:'<path d="M108 60 L106 18 L134 38 L160 10 L186 38 L214 18 L212 60Z" fill="#ffc93c" stroke="#e8a90c" stroke-width="2.5" stroke-linejoin="round"/><circle cx="160" cy="40" r="6" fill="#ff6b5e"/><circle cx="128" cy="46" r="5" fill="#17bebb"/><circle cx="192" cy="46" r="5" fill="#4f9cf9"/>' },
+  { id:"pirate", cat:"hats", slot:"hat", name:"Pirate Hat", tile:'<path d="M8 34 Q30 12 52 34 Q30 24 8 34Z" fill="#2b2d42"/><circle cx="30" cy="24" r="5" fill="#fff"/>', svg:'<path d="M112 56 Q160 12 208 56 Q160 38 112 56Z" fill="#353755"/><path d="M84 68 Q160 20 236 68 Q198 46 160 48 Q122 46 84 68Z" fill="#2b2d42"/><circle cx="160" cy="38" r="8" fill="#fff"/><path d="M152 48 L168 40 M152 40 L168 48" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>' },
+  { id:"sunhat", cat:"hats", slot:"hat", name:"Sun Hat", tile:'<ellipse cx="30" cy="32" rx="24" ry="7" fill="#ffd166"/><path d="M16 32 Q18 14 30 14 Q42 14 44 32Z" fill="#ffdf8a"/>', svg:'<ellipse cx="160" cy="58" rx="86" ry="17" fill="#ffd166"/><path d="M118 56 Q124 12 160 12 Q196 12 202 56Z" fill="#ffdf8a" stroke="#e8b93c" stroke-width="2"/><path d="M122 44 Q160 56 198 44" stroke="#ff6b5e" stroke-width="7" fill="none"/>' },
+  { id:"dino", cat:"costumes", slot:"outfit", name:"Dino Costume", tile:'<ellipse cx="30" cy="26" rx="17" ry="15" fill="#57cc62"/><circle cx="22" cy="20" r="3" fill="#fff"/><circle cx="22" cy="20" r="1.6" fill="#22304a"/><path d="M40 34 L52 40 L40 44Z" fill="#3da347"/>', svg:'<path d="M112 160 L208 160 L214 268 Q160 284 106 268Z" fill="#57cc62"/><ellipse cx="160" cy="226" rx="34" ry="38" fill="#d9f7c9"/><path d="M160 158 l-9 -16 18 0Z M138 162 l-8 -13 15 2Z M182 162 l8 -13 -15 2Z" fill="#3da347"/><path d="M212 250 Q262 262 258 218 Q276 258 236 282 Q218 290 208 276Z" fill="#57cc62"/>' },
+  { id:"super", cat:"costumes", slot:"outfit", name:"Super Suit", tile:'<path d="M14 10 L46 10 L46 38 Q30 46 14 38Z" fill="#3b5bdb"/><path d="M30 15 l3.4 7 7.6 1 -5.5 5.4 1.3 7.6 L30 32.4 23.2 36 24.5 28.4 19 23 26.6 22Z" fill="#ffd93b"/>', svg:'<path d="M110 158 Q96 240 104 300 L128 300 Q122 220 126 168Z" fill="#e14e2e"/><path d="M210 158 Q224 240 216 300 L192 300 Q198 220 194 168Z" fill="#e14e2e"/><path d="M114 158 L206 158 L212 264 Q160 280 108 264Z" fill="#3b5bdb"/><path d="M160 178 l8.5 17.4 19.2 2.8 -13.9 13.5 3.3 19.1 L160 221.6 142.9 230.8 146.2 211.7 132.3 198.2 151.5 195.4Z" fill="#ffd93b" stroke="#e8a90c" stroke-width="2"/>' },
+  { id:"chef", cat:"costumes", slot:"outfit", name:"Chef Outfit", tile:'<rect x="14" y="12" width="32" height="30" rx="5" fill="#fff" stroke="#d9dee6" stroke-width="2.4"/><circle cx="30" cy="22" r="2.6" fill="#9fb2c8"/><circle cx="30" cy="32" r="2.6" fill="#9fb2c8"/>', svg:'<path d="M114 158 L206 158 L212 264 Q160 280 108 264Z" fill="#ffffff" stroke="#d9dee6" stroke-width="2"/><path d="M138 160 Q160 178 182 160 L176 190 Q160 200 144 190Z" fill="#ff6b5e"/><circle cx="160" cy="216" r="4.4" fill="#9fb2c8"/><circle cx="160" cy="240" r="4.4" fill="#9fb2c8"/>' },
+  { id:"rainbow", cat:"costumes", slot:"outfit", name:"Rainbow Top", tile:'<path d="M12 14 Q30 8 48 14 L48 24 Q30 18 12 24Z" fill="#ef4444"/><path d="M12 24 Q30 18 48 24 L48 33 Q30 27 12 33Z" fill="#ffd21f"/><path d="M12 33 Q30 27 48 33 L48 42 Q30 36 12 42Z" fill="#38b6e3"/>', svg:'<path d="M114 158 L206 158 L212 264 Q160 280 108 264Z" fill="#ef4444"/><path d="M110 196 Q160 210 210 196 L212 226 Q160 240 108 226Z" fill="#ffd21f"/><path d="M108 232 Q160 246 212 232 L212 264 Q160 280 108 264Z" fill="#38b6e3"/>' },
+  { id:"shades", cat:"faces", slot:"face", name:"Sunglasses", tile:'<rect x="6" y="18" width="20" height="14" rx="6" fill="#22304a"/><rect x="34" y="18" width="20" height="14" rx="6" fill="#22304a"/><path d="M26 22 h8" stroke="#22304a" stroke-width="3.4"/>', svg:'<rect x="96" y="94" width="56" height="34" rx="15" fill="#22304a"/><rect x="168" y="94" width="56" height="34" rx="15" fill="#22304a"/><path d="M152 104 h16" stroke="#22304a" stroke-width="7"/><path d="M104 102 l30 0 M176 102 l30 0" stroke="#fff" stroke-width="4" opacity=".35" stroke-linecap="round"/>' },
+  { id:"starglasses", cat:"faces", slot:"face", name:"Star Glasses", tile:'<path d="M18 12 l4 8 9 1.3 -6.5 6.3 1.5 9 L18 32.4 10 36.6 11.5 27.6 5 21.3 14 20Z" fill="#ff8fab"/><path d="M42 12 l4 8 9 1.3 -6.5 6.3 1.5 9 L42 32.4 34 36.6 35.5 27.6 29 21.3 38 20Z" fill="#ffc93c"/>', svg:'<path d="M130 78 l7.5 15.2 16.8 2.4 -12.1 11.9 2.8 16.7 L130 116.3 115 124.2 117.8 107.5 105.7 95.6 122.5 93.2Z" fill="#ff8fab" stroke="#e56b8c" stroke-width="2"/><path d="M190 78 l7.5 15.2 16.8 2.4 -12.1 11.9 2.8 16.7 L190 116.3 175 124.2 177.8 107.5 165.7 95.6 182.5 93.2Z" fill="#ffc93c" stroke="#e8a90c" stroke-width="2"/>' },
+  { id:"mask", cat:"faces", slot:"face", name:"Super Mask", tile:'<path d="M8 18 Q30 10 52 18 Q50 34 30 32 Q10 34 8 18Z" fill="#17bebb"/><circle cx="20" cy="22" r="4" fill="#fff"/><circle cx="40" cy="22" r="4" fill="#fff"/>', svg:'<path d="M92 92 Q160 66 228 92 Q224 132 160 128 Q96 132 92 92Z" fill="#17bebb"/><ellipse cx="130" cy="104" rx="17" ry="12" fill="#fff"/><ellipse cx="190" cy="104" rx="17" ry="12" fill="#fff"/>' },
+  { id:"blush", cat:"faces", slot:"face", name:"Rosy Cheeks", tile:'<circle cx="16" cy="26" r="8" fill="#ff9db0"/><circle cx="44" cy="26" r="8" fill="#ff9db0"/><path d="M22 30 Q30 37 38 30" stroke="#b84a2b" stroke-width="3" fill="none" stroke-linecap="round"/>', svg:'<circle cx="112" cy="128" r="14" fill="#ff8fa3" opacity=".85"/><circle cx="208" cy="128" r="14" fill="#ff8fa3" opacity=".85"/><path d="M142 132 Q160 146 178 132" stroke="#b84a2b" stroke-width="4.6" fill="none" stroke-linecap="round"/>' },
+  { id:"boots", cat:"shoes", slot:"shoes", name:"Red Boots", tile:'<path d="M14 8 L26 8 L26 26 L40 30 L40 38 L12 38Z" fill="#e14e2e"/><path d="M12 33 L40 33" stroke="#fff" stroke-width="3"/>', svg:'<path d="M106 306 L148 306 L148 340 L100 340 Q98 322 106 306Z" fill="#e14e2e"/><path d="M172 306 L214 306 L222 340 L174 340Z" fill="#e14e2e"/><path d="M100 330 L148 330 M174 330 L222 330" stroke="#fff" stroke-width="4"/>' },
+  { id:"sneakers", cat:"shoes", slot:"shoes", name:"Sneakers", tile:'<path d="M8 30 Q10 18 22 20 L34 26 Q48 28 50 34 L50 38 L8 38Z" fill="#4f9cf9"/><path d="M8 34 L50 34" stroke="#fff" stroke-width="3.4"/>', svg:'<path d="M102 322 Q106 302 130 304 L150 312 Q162 316 162 330 L162 340 L100 340Z" fill="#4f9cf9"/><path d="M158 330 L220 330 Q220 316 206 310 L186 304 Q164 302 160 322Z" fill="#4f9cf9" transform="translate(-2 0)"/><path d="M100 332 L162 332 M158 332 L220 332" stroke="#fff" stroke-width="4.4"/>' },
+  { id:"sparkleshoes", cat:"shoes", slot:"shoes", name:"Sparkle Shoes", tile:'<path d="M8 30 Q10 18 22 20 L34 26 Q48 28 50 34 L50 38 L8 38Z" fill="#ffc93c"/><path d="M30 12 l2 4.4 4.8.7 -3.5 3.4.8 4.8L30 23l-4.1 2.3.8 -4.8 -3.5 -3.4 4.8 -.7Z" fill="#e8a90c"/>', svg:'<path d="M102 322 Q106 302 130 304 L150 312 Q162 316 162 330 L162 340 L100 340Z" fill="#ffc93c"/><path d="M160 322 Q164 302 188 304 L208 312 Q218 316 218 330 L218 340 L158 340Z" fill="#ffc93c"/><path d="M131 296 l3 6.6 7.3 1 -5.3 5.1 1.3 7.2 -6.3 -3.4 -6.3 3.4 1.3 -7.2 -5.3 -5.1 7.3 -1Z" fill="#e8a90c"/><path d="M189 296 l3 6.6 7.3 1 -5.3 5.1 1.3 7.2 -6.3 -3.4 -6.3 3.4 1.3 -7.2 -5.3 -5.1 7.3 -1Z" fill="#e8a90c"/>' },
+  { id:"dinofeet", cat:"shoes", slot:"shoes", name:"Dino Feet", tile:'<ellipse cx="20" cy="30" rx="13" ry="9" fill="#57cc62"/><ellipse cx="42" cy="30" rx="13" ry="9" fill="#57cc62"/><path d="M12 22 l-3 -6 M20 20 l0 -7 M28 22 l3 -6" stroke="#3da347" stroke-width="3" stroke-linecap="round"/>', svg:'<ellipse cx="128" cy="330" rx="30" ry="14" fill="#57cc62"/><ellipse cx="192" cy="330" rx="30" ry="14" fill="#57cc62"/><path d="M106 320 l-6 -13 M124 316 l1 -14 M144 320 l7 -12 M170 320 l-6 -13 M188 316 l1 -14 M208 320 l7 -12" stroke="#3da347" stroke-width="5" stroke-linecap="round"/>' },
+  { id:"wand", cat:"treasures", slot:"treasure", name:"Star Wand", tile:'<path d="M38 40 L22 16" stroke="#b07a3f" stroke-width="4.4" stroke-linecap="round"/><path d="M24 4 l3.4 7 7.6 1 -5.5 5.4 1.3 7.6 L24 21.4 17.2 25 18.5 17.4 13 12 20.6 11Z" fill="#ffd93b" stroke="#e8a90c" stroke-width="1.6"/>', svg:'<path d="M238 268 L268 176" stroke="#b07a3f" stroke-width="7" stroke-linecap="round"/><path d="M272 128 l10.5 21.3 23.5 3.4 -17 16.6 4 23.3 -21 -11 -21 11 4 -23.3 -17 -16.6 23.5 -3.4Z" fill="#ffd93b" stroke="#e8a90c" stroke-width="2.4" stroke-linejoin="round"/>' },
+  { id:"medal", cat:"treasures", slot:"treasure", name:"Gold Medal", tile:'<path d="M20 6 L26 18 M40 6 L34 18" stroke="#e14e2e" stroke-width="5"/><circle cx="30" cy="30" r="13" fill="#ffc93c" stroke="#e8a90c" stroke-width="2.4"/><path d="M30 22 l2.4 4.9 5.4.8 -3.9 3.8.9 5.4L30 34.4 25.2 36.9 26.1 31.5 22.2 27.7 27.6 26.9Z" fill="#fff"/>', svg:'<path d="M140 158 L156 196 M180 158 L164 196" stroke="#e14e2e" stroke-width="9"/><circle cx="160" cy="216" r="24" fill="#ffc93c" stroke="#e8a90c" stroke-width="3"/><path d="M160 200 l4.9 10 11 1.6 -8 7.7 1.9 10.9 L160 225.2 149.8 230.2 151.7 219.3 143.7 211.6 154.7 210Z" fill="#fff"/>' },
+  { id:"lei", cat:"treasures", slot:"treasure", name:"Flower Lei", tile:'<path d="M12 10 Q30 44 48 10" stroke="#57cc62" stroke-width="3" fill="none"/><circle cx="16" cy="18" r="5" fill="#ff8fab"/><circle cx="24" cy="28" r="5" fill="#ffd93b"/><circle cx="34" cy="30" r="5" fill="#ff8fab"/><circle cx="44" cy="20" r="5" fill="#ffd93b"/>', svg:'<path d="M118 156 Q160 226 202 156" stroke="#57cc62" stroke-width="4" fill="none"/><g><circle cx="124" cy="168" r="9" fill="#ff8fab"/><circle cx="138" cy="188" r="9" fill="#ffd93b"/><circle cx="160" cy="196" r="9" fill="#ff8fab"/><circle cx="182" cy="188" r="9" fill="#ffd93b"/><circle cx="196" cy="168" r="9" fill="#ff8fab"/></g>' },
+  { id:"balloonp", cat:"treasures", slot:"treasure", name:"Balloon", tile:'<ellipse cx="30" cy="18" rx="13" ry="15" fill="#ff6b5e"/><path d="M30 34 q-4 6 0 10" stroke="#54677f" stroke-width="2" fill="none"/>', svg:'<ellipse cx="52" cy="120" rx="34" ry="40" fill="#ff6b5e"/><ellipse cx="40" cy="106" rx="10" ry="15" fill="#fff" opacity=".38"/><path d="M46 158 L58 158 L52 168Z" fill="#e04a3f"/><path d="M52 168 q28 30 44 62" stroke="#54677f" stroke-width="2.6" fill="none"/>' }
+];
+var TRUCK_ITEMS = [
+  { id:"paint-red", cat:"paint", name:"Berry Red Paint", tile:'<ellipse cx="30" cy="24" rx="20" ry="16" fill="#ff5a4e"/>', paint:"#ff5a4e" },
+  { id:"paint-blue", cat:"paint", name:"Sky Blue Paint", tile:'<ellipse cx="30" cy="24" rx="20" ry="16" fill="#3aa7e0"/>', paint:"#3aa7e0" },
+  { id:"paint-green", cat:"paint", name:"Leaf Green Paint", tile:'<ellipse cx="30" cy="24" rx="20" ry="16" fill="#23a26d"/>', paint:"#23a26d" },
+  { id:"paint-purple", cat:"paint", name:"Grape Purple Paint", tile:'<ellipse cx="30" cy="24" rx="20" ry="16" fill="#8b6fd8"/>', paint:"#8b6fd8" },
+  { id:"tire-classic", cat:"tires", name:"Classic Tires", tile:'<circle cx="30" cy="24" r="17" fill="#2b2b33"/><circle cx="30" cy="24" r="7" fill="#dbe7f2"/>', tire:"classic" },
+  { id:"tire-big", cat:"tires", name:"Big Tires", tile:'<circle cx="30" cy="24" r="21" fill="#2b2b33"/><circle cx="30" cy="24" r="8" fill="#dbe7f2"/>', tire:"big" },
+  { id:"tire-rainbow", cat:"tires", name:"Rainbow Hubs", tile:'<circle cx="30" cy="24" r="17" fill="#2b2b33"/><circle cx="30" cy="24" r="8" fill="#ff8fab"/>', tire:"rainbow" },
+  { id:"tire-star", cat:"tires", name:"Star Hubs", tile:'<circle cx="30" cy="24" r="17" fill="#2b2b33"/><circle cx="30" cy="24" r="9" fill="#ffc93c"/>', tire:"star" },
+  { id:"sign-star", cat:"signs", name:"Star Sign", tile:'<path d="M30 8 l6 12.2 13.5 2 -9.8 9.5 2.3 13.4L30 38.8 18 45.1 20.3 31.7 10.5 22.2 24 20.2Z" fill="#ffc93c"/>', sign:"star" },
+  { id:"sign-heart", cat:"signs", name:"Heart Sign", tile:'<path d="M30 40 C14 28 12 12 24 12 C28 12 30 16 30 16 C30 16 32 12 36 12 C48 12 46 28 30 40Z" fill="#ff6b93"/>', sign:"heart" },
+  { id:"sign-bolt", cat:"signs", name:"Bolt Sign", tile:'<path d="M34 6 L16 28 L27 28 L22 44 L42 20 L30 20Z" fill="#ffd93b" stroke="#e8a90c" stroke-width="1.6"/>', sign:"bolt" },
+  { id:"sign-smile", cat:"signs", name:"Smiley Sign", tile:'<circle cx="30" cy="24" r="17" fill="#ffd93b"/><circle cx="23" cy="20" r="2.6" fill="#22304a"/><circle cx="37" cy="20" r="2.6" fill="#22304a"/><path d="M21 28 Q30 36 39 28" stroke="#22304a" stroke-width="2.8" fill="none" stroke-linecap="round"/>', sign:"smile" }
+];
+var GOAL = 5;
+
+/* ================= STATE ================= */
+var state = "start"; /* start | playing | won */
+var mode = "free";   /* free | challenge */
+var currentChar = "hoot", currentCat = "hats";
+var equipped = { hat:null, outfit:null, face:null, shoes:null, treasure:null };
+var truckState = { paint:"#ff5a4e", tire:"classic", sign:"star", paintId:"paint-red", tireId:"tire-classic", signId:"sign-star" };
+var stars = 0, progress = 0, target = null, busy = false, dead = false;
+var soundOn = true, praiseIdx = 0, lastSignature = "";
+
+/* ================= ELMS ================= */
+function $(id){ return document.getElementById(id); }
+var bubble=$("bubble"), guideHoot=$("guideHoot"), figureWrap=$("figureWrap"), scene=$("scene"),
+    starCount=$("starCount"), starBank=$("starBank"), charRow=$("charRow"), catRow=$("catRow"),
+    tilesEl=$("tiles"), challengeBar=$("challengeBar"), cbName=$("cbName"),
+    dots=$("progressDots").children, albumEl=$("album"), startOverlay=$("startOverlay"), winOverlay=$("winOverlay");
+guideHoot.innerHTML = HOOT_MINI;
+(function(){ for(var i=0;i<14;i++){ var s=document.createElement("span"); s.className="sparkle-dot"; s.style.left=(6+Math.random()*88)+"%"; s.style.top=(18+Math.random()*60)+"%"; var sz=3+Math.random()*4; s.style.width=sz+"px"; s.style.height=sz+"px"; s.style.animationDelay=(-Math.random()*2)+"s"; scene.appendChild(s); } })();
+
+/* ================= SOUND FX ================= */
+var AC=null;
+function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+function tone(f0,f1,dur,type,vol,delay){ if(!soundOn) return; var ac=audio(); if(!ac) return; var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain(); o.type=type||"sine"; o.frequency.setValueAtTime(f0,t); if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.13,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05); }
+function popSound(){ tone(520,180,0.12,"square",0.13); }
+function sparkleSound(){ tone(1180,1180,0.09,"sine",0.09); tone(1560,1560,0.12,"sine",0.09,0.07); }
+function fanfareSound(){ [523,659,784,1047,784,1047,1319].forEach(function(f,i){ tone(f,f,0.32,"triangle",0.16,i*0.1); }); }
+function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
+function honkSound(){ tone(392,392,0.16,"square",0.14); tone(392,392,0.2,"square",0.14,0.22); }
+
+/* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+   Only the recorded clips in assets/voice are used — no device text-to-speech.
+   Item call-outs have no recorded clip, so the words live in Hoot's bubble and
+   the closest recorded clip (look-closely / praise / giggle) carries the voice. */
+var VBASE="assets/voice/";
+var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+function getVoice(){ if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();}); voiceEl.addEventListener("error",vNext); } return voiceEl; }
+function hubQuiet(){ try{ var d=window.parent&&window.parent.document; if(!d||d===document) return false; var b=d.querySelector('.voice-btn[data-voice="off"]'); return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true")); }catch(e){ return false; } }
+function silenced(){ return !soundOn||hubQuiet(); }
+function hootTalking(on){ guideHoot.classList.toggle("talking",!!on); }
+function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice(); }
+function pumpVoice(){ if(vPlaying||dead) return; var item=vQueue.shift(); if(!item) return; if(item.onStart){ try{ item.onStart(); }catch(e){} } if(silenced()){ pumpVoice(); return; } var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true); el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file; var p=el.play(); if(p&&p.catch) p.catch(function(){ vNext(); }); }
+function enqueue(file,kind,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){return;} vQueue.push({file:file,kind:kind||"",onStart:onStart||null}); pumpVoice(); }
+function clearPending(){ vQueue.length=0; }
+var PRAISE=["hoot-amazing.mp3","hoot-great-job.mp3","hoot-star.mp3"];
+function enqueuePraise(onStart){ var f=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++; enqueue(f,"praise",onStart); }
+
+/* ================= WORDS ================= */
+function say(html){ bubble.innerHTML=html; }
+function hootReact(){ guideHoot.classList.remove("celebrate"); void guideHoot.offsetWidth; guideHoot.classList.add("celebrate"); setTimeout(function(){ guideHoot.classList.remove("celebrate"); },850); }
+function charById(id){ for(var i=0;i<CHARACTERS.length;i++) if(CHARACTERS[i].id===id) return CHARACTERS[i]; return CHARACTERS[0]; }
+function itemById(id){ var i; for(i=0;i<ITEMS.length;i++) if(ITEMS[i].id===id) return ITEMS[i]; for(i=0;i<TRUCK_ITEMS.length;i++) if(TRUCK_ITEMS[i].id===id) return TRUCK_ITEMS[i]; return null; }
+function isTruck(){ return currentChar==="truck"; }
+function cats(){ return isTruck()?TRUCK_CATS:CATS; }
+function catName(id){ var c=cats(); for(var i=0;i<c.length;i++) if(c[i].id===id) return c[i].name; return ""; }
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+function figureSVG(){
+  var inner;
+  if(isTruck()) inner = truckFigure(truckState.paint, truckState.tire, truckState.sign);
+  else if(currentChar==="hoot") inner = hootFigure();
+  else if(currentChar==="milo") inner = boyFigure("Milo","#ffdfc4","#6b3a14","#57cc62","#3b5bdb");
+  else if(currentChar==="lily") inner = girlFigure();
+  else if(currentChar==="rose") inner = princessFigure("#ffe3c2","#f2c230","#ff8fab","#e56b8c","#ffc93c","#e8a90c");
+  else inner = princessFigure("#8a5a33","#2b2118","#8b6fd8","#6c4bd8","#dbe7f2","#9fb2c8");
+  if(!isTruck()){
+    var slots={ hat:"", outfit:"", face:"", shoes:"", treasure:"" };
+    Object.keys(equipped).forEach(function(k){ var it=itemById(equipped[k]); if(it) slots[it.slot]=it.svg; });
+    inner = inner.replace('<g data-slot="shoes"></g>', slots.shoes)
+                 .replace('<g data-slot="outfit"></g>', slots.outfit)
+                 .replace('<g data-slot="face"></g>', slots.face)
+                 .replace('<g data-slot="treasure"></g>', slots.treasure)
+                 .replace('<g data-slot="hat"></g>', slots.hat);
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" aria-hidden="true">'+inner+'</svg>';
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" aria-hidden="true"><g transform="translate(0,26)">'+inner+'</g></svg>';
+}
+function renderFigure(){ figureWrap.innerHTML=figureSVG(); }
+function outfitSignature(){ if(isTruck()) return currentChar+"|"+truckState.paintId+"|"+truckState.tireId+"|"+truckState.signId; return currentChar+"|"+Object.keys(equipped).map(function(k){ return equipped[k]||"-"; }).join("|"); }
+
+/* ================= PICKERS ================= */
+function renderChars(){
+  charRow.innerHTML="";
+  CHARACTERS.forEach(function(c){
+    var b=document.createElement("button"); b.type="button"; b.className="char-chip"+(c.id===currentChar?" sel":"");
+    b.setAttribute("aria-label","Dress "+c.name);
+    b.innerHTML='<svg viewBox="0 0 60 60" aria-hidden="true">'+charFaceSVG(c.id)+'</svg><span>'+c.name.replace("Princess ","P. ")+'</span>';
+    b.addEventListener("click",function(){ if(busy) return; currentChar=c.id; currentCat=cats()[0].id; popSound(); renderChars(); renderCats(); renderTiles(); renderFigure();
+      if(isTruck()){ say("Vroom! <span class='b-big'>Turbo Truck</span> is in the garage corner! Paint him, pick tires, add a sign!"); if(window.__hootSpeak) window.__hootSpeak("idle"); }
+      else if(c.id==="hoot"){ say("That&rsquo;s ME! Dress <span class='b-big'>Hoot</span> up &mdash; I love trying on treasures!"); if(window.__hootSpeak) window.__hootSpeak("idle"); }
+      else { say("<span class='b-big'>"+c.name+"</span> is on the stage! Tap clothes below to dress them up!"); }
+      if(mode==="challenge") newTarget(false);
+    });
+    charRow.appendChild(b);
+  });
+}
+function renderCats(){
+  catRow.innerHTML="";
+  cats().forEach(function(c){
+    var b=document.createElement("button"); b.type="button"; b.className="cat-btn"+(c.id===currentCat?" sel":""); b.textContent=c.name;
+    b.addEventListener("click",function(){ currentCat=c.id; popSound(); renderCats(); renderTiles(); });
+    catRow.appendChild(b);
+  });
+}
+function isEquipped(it){
+  if(isTruck()) return truckState.paintId===it.id||truckState.tireId===it.id||truckState.signId===it.id;
+  return equipped[it.slot]===it.id;
+}
+function renderTiles(){
+  tilesEl.innerHTML="";
+  var pool=(isTruck()?TRUCK_ITEMS:ITEMS).filter(function(it){ return it.cat===currentCat; });
+  pool.forEach(function(it){
+    var b=document.createElement("button"); b.type="button"; b.className="tile"+(isEquipped(it)?" on":"")+((mode==="challenge"&&target&&target.id===it.id)?" wanted":"");
+    b.setAttribute("aria-label",it.name);
+    b.innerHTML='<svg viewBox="0 0 60 48" aria-hidden="true">'+it.tile+'</svg><span>'+it.name+'</span>';
+    b.addEventListener("click",function(){ onItemTap(it,b); });
+    tilesEl.appendChild(b);
+  });
+}
+function sparkleBurst(){
+  var r=figureWrap.getBoundingClientRect(), sr=scene.getBoundingClientRect();
+  for(var i=0;i<8;i++){ var s=document.createElement("span"); s.className="burst-star"; s.textContent=i%2?"\u2726":"\u2605"; s.style.color=i%2?"#ff8fab":"#e8a90c"; s.style.left=(r.left-sr.left+r.width*(0.25+Math.random()*0.5))+"px"; s.style.top=(r.top-sr.top+r.height*0.3)+"px"; s.style.setProperty("--dx",((Math.random()*110)-55)+"px"); s.style.setProperty("--dy",(-(24+Math.random()*60))+"px"); scene.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },850); })(s); }
+}
+
+/* ================= GAME LOGIC ================= */
+function addStar(){
+  stars++; starCount.textContent=stars; starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); starSound();
+}
+function onItemTap(it,btn){
+  if(state!=="playing"||busy) return;
+  audio();
+  if(isTruck()){
+    if(it.paint){ truckState.paint=it.paint; truckState.paintId=it.id; }
+    if(it.tire){ truckState.tire=it.tire; truckState.tireId=it.id; }
+    if(it.sign){ truckState.sign=it.sign; truckState.signId=it.id; }
+    honkSound();
+  } else {
+    if(equipped[it.slot]===it.id && !(mode==="challenge"&&target&&it.id===target.id)){ equipped[it.slot]=null; popSound(); renderFigure(); renderTiles(); say(it.name+" is off again. Pick something else!"); return; } /* 3e44: tapping the wanted item counts even if it is already on */
+    equipped[it.slot]=it.id; popSound(); sparkleSound();
+  }
+  renderFigure(); renderTiles();
+  if(mode==="challenge"&&target){
+    if(it.id===target.id){ onTargetFound(it); return; }
+    say("That&rsquo;s the <span class='b-big'>"+it.name+"</span>! Hoot wants the <span class='b-big'>"+target.name.toUpperCase()+"</span> &mdash; it&rsquo;s in the "+catName(target.cat)+"!");
+    enqueue("hoot-try-again.mp3","hint");
+    return;
+  }
+  say("<span class='b-big'>"+it.name+"</span>! "+(isTruck()?"Turbo looks fantastic!":"Looking fabulous!")+" Press Ta-da! when the outfit is ready!");
+  (function(){ var w="word-"+String(it.name).toLowerCase().replace(/[^a-z ]/g,"").trim().replace(/ +/g,"-"); var H=(function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}}); if(H(w)) enqueue(w+".mp3","name"); else { var m=String(it.name).toLowerCase().match(/sky blue|red|orange|yellow|green|blue|purple|pink|brown|black|white/); if(m){ var c="name-color-"+m[0].replace(" ","-"); enqueue(c+".mp3","name"); } } })(); /* 3e51: says what was put on (Turbo's paint: its colour) */
+}
+function newTarget(keepBubble){
+  var pool=(isTruck()?TRUCK_ITEMS:ITEMS).filter(function(it){ return !target||it.id!==target.id; });
+  target=pool[Math.floor(Math.random()*pool.length)];
+  cbName.textContent=target.name;
+  challengeBar.classList.add("on");
+  renderDots(); renderTiles();
+  if(!keepBubble){
+    say("Hoot says&hellip; can you find the <span class='b-big'>"+target.name.toUpperCase()+"</span>? It&rsquo;s in the "+catName(target.cat)+"!");
+    (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})(),w="word-"+target.name.toLowerCase().replace(/ /g,"-");if(h["ask-can-you-find"]&&h[w]){ enqueue("ask-can-you-find.mp3","callout"); enqueue(w+".mp3","callout"); } else enqueue("hoot-look-closely.mp3","callout");})(); /* 3e44: "Can you find the… crown?" out loud */
+  }
+}
+function renderDots(){ for(var i=0;i<dots.length;i++) dots[i].className=i<progress?"on":""; }
+function onTargetFound(it){
+  busy=true; progress++; addStar(); sparkleBurst(); hootReact();
+  say("YES! The <span class='b-big'>"+it.name.toUpperCase()+"</span>! You found it!");
+  enqueuePraise();
+  renderDots();
+  setTimeout(function(){
+    busy=false; if(dead||state!=="playing") return;
+    if(progress>=GOAL){ winGame(); return; }
+    newTarget(false);
+  },1500);
+}
+function winGame(){
+  state="won"; clearPending();
+  say("You found <span class='b-big'>five</span> things Hoot called out! Fashion Star!");
+  enqueue("hoot-you-learned.mp3","recap");
+  fanfareSound();
+  setTimeout(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },600);
+}
+function setMode(m){
+  if(busy) return;
+  mode=m; progress=0; target=null; renderDots();
+  $("modeFree").classList.toggle("sel",m==="free"); $("modeChallenge").classList.toggle("sel",m==="challenge");
+  popSound();
+  if(m==="challenge"){ newTarget(false); }
+  else { challengeBar.classList.remove("on"); renderTiles(); say("Dress Freely! Anything goes &mdash; make the silliest, sparkliest outfit you can!"); }
+}
+
+/* ================= ACTIONS ================= */
+$("surpriseBtn").addEventListener("click",function(){
+  if(state!=="playing"||busy) return; audio(); popSound();
+  if(isTruck()){ var p=TRUCK_ITEMS.filter(function(i){return i.paint;}), t=TRUCK_ITEMS.filter(function(i){return i.tire;}), s=TRUCK_ITEMS.filter(function(i){return i.sign;});
+    var pi=p[Math.floor(Math.random()*p.length)], ti=t[Math.floor(Math.random()*t.length)], si=s[Math.floor(Math.random()*s.length)];
+    truckState.paint=pi.paint; truckState.paintId=pi.id; truckState.tire=ti.tire; truckState.tireId=ti.id; truckState.sign=si.sign; truckState.signId=si.id;
+  } else { ["hat","outfit","face","shoes","treasure"].forEach(function(slot){ var pool=ITEMS.filter(function(i){return i.slot===slot;}); equipped[slot]=Math.random()<0.82?pool[Math.floor(Math.random()*pool.length)].id:null; }); }
+  renderFigure(); renderTiles(); sparkleBurst();
+  say("Surprise! What a look! Hoot loves it!");
+  if(window.__hootSpeak) window.__hootSpeak("idle");
+});
+$("allOffBtn").addEventListener("click",function(){
+  if(state!=="playing"||busy) return; audio();
+  equipped={ hat:null, outfit:null, face:null, shoes:null, treasure:null };
+  truckState={ paint:"#ff5a4e", tire:"classic", sign:"star", paintId:"paint-red", tireId:"tire-classic", signId:"sign-star" };
+  renderFigure(); renderTiles(); popSound();
+  say("All off! Back to comfy clothes &mdash; tickle! Dress them up again!");
+  if(window.__hootSpeak) window.__hootSpeak("idle");
+});
+function addAlbumCard(){
+  var card=document.createElement("div"); card.className="album-card";
+  card.innerHTML=figureSVG()+'<span class="a-star">\u2605</span>';
+  var empty=$("albumEmpty"); if(empty) empty.remove();
+  albumEl.appendChild(card); albumEl.scrollLeft=albumEl.scrollWidth;
+}
+$("tadaBtn").addEventListener("click",function(){
+  if(state!=="playing"||busy) return; audio(); busy=true;
+  figureWrap.classList.remove("runway"); void figureWrap.offsetWidth; figureWrap.classList.add("runway");
+  scene.classList.add("lights"); fanfareSound();
+  var flasher=setInterval(function(){ scene.classList.toggle("lights"); },260);
+  say("TA-DAAA! Down the runway they go! Cameras, lights &mdash; strike a pose!");
+  enqueuePraise();
+  setTimeout(function(){
+    clearInterval(flasher); scene.classList.remove("lights"); figureWrap.classList.remove("runway");
+    addAlbumCard();
+    var sig=outfitSignature();
+    if(sig!==lastSignature){ lastSignature=sig; addStar(); say("PHOTO SNAPPED! That outfit is in your Ta-Da Album with a star!"); }
+    else say("PHOTO SNAPPED! That outfit is in your Ta-Da Album! Change a piece and Ta-da again for another star!");
+    sparkleBurst(); hootReact(); busy=false;
+  },2850);
+});
+$("photoBtn").addEventListener("click",function(){
+  if(state!=="playing"||busy) return; audio(); busy=true; sparkleSound();
+  addAlbumCard();
+  try{
+    var svg=figureSVG(); var url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+    var img=new Image();
+    img.onload=function(){ try{ var cv=document.createElement("canvas"); cv.width=480; cv.height=570; var cx=cv.getContext("2d"); cx.fillStyle="#fff8e1"; cx.fillRect(0,0,480,570); cx.drawImage(img,40,10,400,475); cx.fillStyle="#22304a"; cx.font="700 26px sans-serif"; cx.textAlign="center"; cx.fillText(charById(currentChar).name+" \u00B7 Dress Up Friends",240,530); var a=document.createElement("a"); a.download="dress-up-photo.png"; a.href=cv.toDataURL("image/png"); a.click(); }catch(e){} busy=false; };
+    img.onerror=function(){ busy=false; };
+    img.src=url;
+  }catch(e){ busy=false; }
+  say("Photo Booth! Cheese! Your photo is in the album &mdash; and downloading for a grown-up too!");
+  if(window.__hootSpeak) window.__hootSpeak("idle");
+});
+figureWrap.addEventListener("click",function(){ if(state!=="playing") return; audio(); if(isTruck()) honkSound(); else { popSound(); hootReact(); } });
+guideHoot.addEventListener("click",function(){ audio(); if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact(); if(mode==="challenge"&&target) say("Hoot says&hellip; can you find the <span class='b-big'>"+target.name.toUpperCase()+"</span>? It&rsquo;s in the "+catName(target.cat)+"!"); });
+
+/* ================= FLOW ================= */
+function resetRun(){
+  stars=0; starCount.textContent="0"; progress=0; target=null; lastSignature="";
+  equipped={ hat:null, outfit:null, face:null, shoes:null, treasure:null };
+  truckState={ paint:"#ff5a4e", tire:"classic", sign:"star", paintId:"paint-red", tireId:"tire-classic", signId:"sign-star" };
+  albumEl.innerHTML='<span class="album-empty" id="albumEmpty">Press Ta-da! after dressing your friend &mdash; their runway photo lands here with a star.</span>';
+  renderDots(); renderFigure(); renderTiles();
+}
+function startGame(){
+  state="playing"; startOverlay.hidden=true; winOverlay.hidden=true; resetRun();
+  say("Hi! I&rsquo;m Hoot, your guide! Pick a friend above, then tap clothes to dress them!");
+  if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
+}
+$("playBtn").addEventListener("click",function(){ audio(); startGame(); });
+$("againBtn").addEventListener("click",function(){ audio(); winOverlay.hidden=true; state="playing"; progress=0; target=null; renderDots(); if(mode==="challenge") newTarget(false); else say("Keep dressing! Make a brand-new look!"); });
+$("winHomeBtn").addEventListener("click",function(){ winOverlay.hidden=true; startOverlay.hidden=false; state="start"; });
+$("homeBtn").addEventListener("click",function(){ clearPending(); state="start"; winOverlay.hidden=true; startOverlay.hidden=false; });
+$("modeFree").addEventListener("click",function(){ if(state==="playing") setMode("free"); });
+$("modeChallenge").addEventListener("click",function(){ if(state==="playing") setMode("challenge"); });
+$("soundBtn").addEventListener("click",function(){
+  soundOn=!soundOn;
+  $("soundOnIc").style.display=soundOn?"":"none"; $("soundOffIc").style.display=soundOn?"none":"";
+  this.setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+  if(!soundOn){ clearPending(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} vPlaying=false; vCurrent=null; hootTalking(false); } }
+  else { audio(); popSound(); }
+});
+
+/* teardown: no stale timers or ghost audio when the hub closes the game */
+function teardown(){ dead=true; clearPending(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} } }
+window.addEventListener("pagehide",teardown);
+document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+renderChars(); renderCats(); renderFigure(); renderTiles();
+
+/* Probe/debug handle: read-only snapshot of the game state. */
+window.__dressGame={
+  snapshot:function(){
+    return { state:state, mode:mode, char:currentChar, cat:currentCat, stars:stars, progress:progress,
+      target:target?target.id:null, equipped:Object.assign({},equipped), truck:Object.assign({},truckState),
+      signature:outfitSignature(), albumCards:albumEl.querySelectorAll(".album-card").length,
+      winShown:!winOverlay.hidden, voicePlaying:vPlaying, voiceQueue:vQueue.map(function(q){ return q.file; }) };
+  }
+};
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

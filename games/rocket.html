@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="rocket";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Rocket Count-Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
+    --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#d84a3d; --teal:#17bebb; --leaf:#57cc62; --leaf-dark:#3da147;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#141433; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
+    background:linear-gradient(180deg,#0d1030 0%,#1d1d4e 34%,#43307a 62%,#8a4a7d 84%,#c65f5e 100%); }
+
+  /* ---------- dusk sky decor ---------- */
+  .bg-star{ position:absolute; color:#ffe98a; line-height:1; pointer-events:none; animation:twinkleStar 1.8s ease-in-out infinite alternate; }
+  @keyframes twinkleStar{ from{ opacity:.4; transform:scale(.8);} to{ opacity:1; transform:scale(1.15);} }
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
+  #moon{ top:64px; right:10px; width:64px; height:64px; z-index:1; filter:drop-shadow(0 0 16px rgba(255,240,180,.5)); }
+  #moon svg{ width:100%; height:100%; display:block; }
+  #moon:active{ transform:scale(.92); }
+  #moon.glow{ animation:moonGlow .7s ease-in-out 2 alternate; }
+  @keyframes moonGlow{ from{ filter:drop-shadow(0 0 10px rgba(255,240,180,.4));} to{ filter:drop-shadow(0 0 30px rgba(255,240,180,.95));} }
+  .firefly{ z-index:2; width:30px; height:30px; display:grid; place-items:center; animation:flyWander 9s ease-in-out infinite alternate; }
+  .firefly i{ width:9px; height:9px; border-radius:50%; background:#ffe98a; box-shadow:0 0 12px 4px rgba(255,233,138,.75); display:block; animation:flyBlink 2.6s ease-in-out infinite; }
+  @keyframes flyBlink{ 0%,100%{ opacity:.25;} 50%{ opacity:1;} }
+  @keyframes flyWander{ 0%{ transform:translate(0,0);} 50%{ transform:translate(26px,-22px);} 100%{ transform:translate(-16px,-6px);} }
+  .firefly.blink i{ animation:flyBlink .18s ease-in-out 6; }
+
+  /* ---------- HUD ---------- */
+  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(6,10,40,.4),0 8px 16px rgba(6,10,40,.3); cursor:pointer; transition:transform .12s ease; }
+  .round-btn:active{ transform:scale(.9); }
+  .round-btn svg{ width:25px; height:25px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(6,10,40,.35); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
+  #starBank .star-ic{ width:25px; height:25px; }
+  #starBank.bump{ animation:bankBump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bankBump{ 0%{ transform:scale(1);} 40%{ transform:scale(1.16) rotate(-3deg);} 100%{ transform:scale(1);} }
+
+  /* ---------- mission card + fuel gauge ---------- */
+  #targetCard{ position:relative; z-index:6; margin:8px auto 0; display:flex; align-items:center; gap:12px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(6,10,40,.3),0 12px 22px rgba(6,10,40,.3); padding:7px 10px 7px 16px; max-width:min(94vw,520px); }
+  #targetCard.new-target{ animation:tcIn .45s cubic-bezier(.34,1.7,.5,1); }
+  @keyframes tcIn{ 0%{ transform:scale(.8); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
+  #targetMain{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(20px,5.6vw,28px); line-height:1.08; color:#43307a; }
+  .tc-label{ font-weight:900; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
+  #fuelGauge{ display:flex; gap:3px; margin-top:5px; }
+  #fuelGauge i{ width:16px; height:11px; border-radius:4px; background:#e3e9f4; border:2px solid #c3d2e6; display:block; }
+  #fuelGauge i.on{ background:linear-gradient(180deg,#ffb703,#ff7b3c); border-color:#e07f00; box-shadow:0 0 7px rgba(255,150,50,.7); }
+  #hearBtn{ width:44px; height:44px; flex:0 0 auto; border-radius:50%; border:3px solid #ffe1a8; background:#fff6dd; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(232,169,12,.35); }
+  #hearBtn:active{ transform:scale(.9); }
+  #hearBtn svg{ width:23px; height:23px; }
+
+  /* ---------- scene ---------- */
+  #scene{ position:relative; flex:1 1 auto; min-height:0; z-index:1; }
+  #visual{ position:absolute; z-index:3; left:0; right:34%; top:2%; min-height:74px; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:7px; padding:4px 10px; }
+  .track-chip{ min-width:46px; height:46px; padding:0 8px; border-radius:14px; background:rgba(255,253,246,.96); border:3px solid #fff; box-shadow:0 4px 0 rgba(6,10,40,.3); display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; color:#43307a; }
+  .track-chip.qmark{ background:var(--sun); color:#7a4d00; border-color:#ffe9a8; }
+  .track-arrow{ color:#ffe98a; font-size:22px; font-weight:900; text-shadow:0 2px 6px rgba(0,0,0,.4); }
+  .op-sign{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:26px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.45); }
+  .star-group{ display:inline-flex; flex-wrap:wrap; gap:2px; max-width:130px; justify-content:center; }
+  .star-group svg{ width:24px; height:24px; }
+  #visual.scatter .star-group{ max-width:none; }
+  .count-star{ position:absolute; width:30px; height:30px; }
+  .count-star svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 0 6px rgba(255,210,80,.6)); }
+  .count-star.bounce{ animation:starBounce .5s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBounce{ 0%{ transform:translateY(0) scale(1);} 40%{ transform:translateY(-13px) scale(1.25);} 100%{ transform:translateY(0) scale(1);} }
+  /* rocket + pad */
+  #padBase{ position:absolute; z-index:1; right:2%; bottom:15%; width:clamp(150px,38vw,220px); height:26px; background:radial-gradient(ellipse at center,#5b6690 0%,#39406b 70%,rgba(57,64,107,0) 100%); border-radius:50%; }
+  #rocketWrap{ position:absolute; z-index:4; right:5%; bottom:17%; width:clamp(104px,27vw,150px); transform-origin:50% 100%; }
+  #rocketWrap svg{ width:100%; display:block; overflow:visible; filter:drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
+  #rocketWrap.tremble{ animation:rocketTremble .3s ease-in-out infinite; }
+  @keyframes rocketTremble{ 0%,100%{ transform:translate(0,0) rotate(0);} 25%{ transform:translate(.8px,0) rotate(.5deg);} 75%{ transform:translate(-.8px,0) rotate(-.5deg);} }
+  #rocketWrap.tremble-hard{ animation:rocketTremble .16s ease-in-out infinite; }
+  #rocketWrap.wobble{ animation:rocketWobble .45s ease-in-out 2; }
+  @keyframes rocketWobble{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-6deg);} 75%{ transform:rotate(6deg);} }
+  #flame{ opacity:0; transform-box:fill-box; transform-origin:50% 0%; }
+  #rocketWrap.launching #flame{ opacity:1; animation:flameFlick .12s ease-in-out infinite alternate; }
+  @keyframes flameFlick{ from{ transform:scaleY(.8);} to{ transform:scaleY(1.25);} }
+  .smoke{ position:absolute; z-index:3; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 70%); pointer-events:none; }
+  /* fuel tank segments beside rocket */
+  #tank{ position:absolute; z-index:4; right:calc(5% + clamp(104px,27vw,150px) + 6px); bottom:17%; display:flex; flex-direction:column-reverse; gap:3px; }
+  #tank i{ width:17px; height:12px; border-radius:4px; background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.4); display:block; }
+  #tank i.on{ background:linear-gradient(180deg,#ffb703,#ff7b3c); border-color:#ffd28a; box-shadow:0 0 8px rgba(255,150,50,.8); }
+  /* number pods */
+  #podRow{ position:absolute; z-index:5; left:0; right:0; bottom:2%; display:flex; justify-content:center; gap:10px; padding:0 10px; flex-wrap:wrap; }
+  .pod{ width:clamp(62px,17vw,78px); height:clamp(62px,17vw,78px); border-radius:50%; border:3px solid #fff; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,34px); color:#fff; box-shadow:0 6px 0 rgba(6,10,40,.45),0 12px 20px rgba(6,10,40,.35); transition:transform .12s ease; position:relative; }
+  .pod:active{ transform:scale(.9); }
+  .pod.p1{ background:radial-gradient(circle at 35% 30%,#7fd4ff,#2f8fc4); }
+  .pod.p2{ background:radial-gradient(circle at 35% 30%,#ffb3c8,#e0577f); }
+  .pod.p3{ background:radial-gradient(circle at 35% 30%,#a5e8ae,#3da147); }
+  .pod.p4{ background:radial-gradient(circle at 35% 30%,#d3b8ff,#7a4fd0); }
+  .pod.used{ visibility:hidden; }
+  .pod.wrong{ animation:podWiggle .4s ease-in-out; }
+  @keyframes podWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-7deg);} 75%{ transform:rotate(7deg);} }
+  .pod.dim{ opacity:.45; filter:grayscale(.5); }
+  /* planets during flight */
+  #planetLayer{ position:absolute; inset:0; z-index:5; pointer-events:none; }
+  .planet{ position:absolute; border:none; background:none; padding:0; cursor:pointer; pointer-events:auto; animation:planetDrift 7s ease-in-out infinite alternate; }
+  .planet svg{ width:100%; display:block; filter:drop-shadow(0 0 12px rgba(160,190,255,.5)); }
+  @keyframes planetDrift{ from{ transform:translateY(0) rotate(-3deg);} to{ transform:translateY(16px) rotate(3deg);} }
+  .planet:active{ transform:scale(.9); }
+
+  /* ---------- Hoot row ---------- */
+  #groundRow{ position:relative; z-index:6; display:flex; align-items:flex-end; gap:6px; padding:0 10px max(8px,env(safe-area-inset-bottom)); }
+  #hootZone{ display:flex; align-items:flex-end; gap:8px; flex:1 1 auto; min-width:0; }
+  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,29vw,168px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(0,0,0,.4)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
+  #hootFig svg{ width:100%; display:block; overflow:visible; }
+  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-4px) rotate(-1deg);} }
+  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
+  @keyframes hootJump{ 0%{ transform:translateY(0);} 35%{ transform:translateY(-26px) rotate(-3deg);} 70%{ transform:translateY(2px);} 100%{ transform:translateY(0);} }
+  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
+  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
+  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ from{ transform:translateY(0) scale(1);} to{ transform:translateY(-2px) scale(1.018);} }
+  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
+  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
+  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
+  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
+  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
+  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
+  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
+  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
+  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
+  @keyframes blink{ 0%,92%,100%{ transform:scaleY(1);} 95%{ transform:scaleY(.08);} }
+  #bubbleCol{ flex:1 1 auto; min-width:0; padding-bottom:6px; }
+  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(6,10,40,.35),0 12px 24px rgba(6,10,40,.3); padding:10px 14px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(15px,4.1vw,19px); line-height:1.3; color:var(--ink); }
+  #bubble::after{ content:""; position:absolute; left:-11px; bottom:16px; border:6px solid transparent; border-right:9px solid var(--paper); }
+  #bubble .b-big{ color:#7a4fd0; font-size:1.22em; font-weight:700; }
+  #hootName{ display:inline-block; margin-top:5px; margin-left:8px; background:#ffe9a8; color:#43307a; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.22em; padding:2px 10px 2px 12px; border-radius:99px; }
+
+  .fly-clone{ position:absolute; z-index:9; pointer-events:none; border-radius:50%; display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:700; color:#fff; }
+  .particle{ position:absolute; z-index:9; width:10px; height:10px; border-radius:3px; pointer-events:none; }
+  .confetti{ position:absolute; z-index:9; width:11px; height:11px; border-radius:3px; pointer-events:none; }
+
+  /* ---------- start panel / win ---------- */
+  #startPanel{ position:absolute; z-index:8; left:50%; top:45%; transform:translate(-50%,-50%); width:min(94vw,452px); background:rgba(255,253,246,.98); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(6,10,40,.3),0 24px 48px rgba(6,10,40,.4); padding:16px 18px 14px; text-align:center; max-height:92dvh; overflow:auto; }
+  #startPanel[hidden]{ display:none; }
+  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,36px); margin:0; color:var(--ink); }
+  #startPanel h1 .t-a{ color:#7a4fd0; } #startPanel h1 .t-b{ color:var(--coral-dark); }
+  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15px; line-height:1.4; margin:7px 0 0; }
+  .mode-row{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin:13px 0 4px; }
+  .mode-chip{ flex:1 1 46%; border:3px solid #dcebf5; background:#f2f9ff; border-radius:16px; padding:8px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15.5px; color:var(--ink); cursor:pointer; line-height:1.15; }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .mode-chip.selected{ border-color:var(--sun); background:#fff6dd; box-shadow:0 4px 0 rgba(232,169,12,.4); }
+  #playBtn{ margin-top:12px; border:none; cursor:pointer; background:#7a4fd0; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:23px; padding:12px 44px; border-radius:999px; box-shadow:0 6px 0 #4c2a8f,0 14px 24px rgba(76,42,143,.4); transition:transform .12s ease; }
+  #playBtn:active{ transform:scale(.95); }
+  #winOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(10,12,40,.45); padding:14px; }
+  #winOverlay[hidden]{ display:none; }
+  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 12px 0 rgba(6,10,40,.3),0 30px 60px rgba(6,10,40,.45); padding:20px 22px 18px; text-align:center; width:min(94vw,470px); max-height:92dvh; overflow:auto; }
+  #winStars{ font-size:30px; letter-spacing:6px; color:#e3edf5; line-height:1; }
+  #winStars span{ display:inline-block; }
+  #winStars span.lit{ color:var(--sun); text-shadow:0 0 14px rgba(255,201,60,.8); animation:starLit .4s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starLit{ 0%{ transform:scale(.3) rotate(-30deg);} 100%{ transform:scale(1) rotate(0);} }
+  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:8px 0 0; }
+  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.45; margin:8px 0 0; }
+  #winChips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
+  .chip{ background:#efe9fd; border:2px solid #d3b8ff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; padding:4px 12px; border-radius:999px; }
+  .chip.reading{ background:var(--sun); border-color:#e8a90c; transform:scale(1.15); }
+  .win-btns{ display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .win-btn{ border:none; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; padding:11px 24px; border-radius:999px; }
+  #againBtn{ background:#7a4fd0; color:#fff; box-shadow:0 5px 0 #4c2a8f; }
+  #winHomeBtn{ background:#eef5fb; color:var(--ink); box-shadow:0 5px 0 #cfdfec; }
+  .win-btn:active{ transform:scale(.95); }
+
+  @media (max-height:500px) and (min-width:560px){
+    #hootFig{ width:clamp(80px,24vh,104px); }
+    #rocketWrap{ width:clamp(76px,20vh,104px); bottom:20%; }
+    #targetCard{ margin-top:4px; padding:4px 8px 4px 12px; }
+    #startPanel{ top:50%; padding:10px 16px; }
+    .pod{ width:54px; height:54px; font-size:24px; }
+    #visual{ min-height:56px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .firefly,.bg-star{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <button class="decor" id="moon" type="button" aria-label="Moon — tap for a glow">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M63 8 A40 40 0 1 0 92 58 A32 32 0 0 1 63 8 Z" fill="#fff3c4" stroke="#e8cf8a" stroke-width="3"/></svg>
+  </button>
+  <button class="decor firefly" type="button" style="left:10%;top:30%" aria-label="Firefly — tap to make it blink"><i></i></button>
+  <button class="decor firefly" type="button" style="left:20%;top:52%;animation-delay:-3s" aria-label="Firefly — tap to make it blink"><i></i></button>
+  <button class="decor firefly" type="button" style="right:38%;top:22%;animation-delay:-6s" aria-label="Firefly — tap to make it blink"><i></i></button>
+
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <div id="targetCard" style="display:none">
+    <div>
+      <div id="targetMain">Tap number 1!</div>
+      <div class="tc-label" id="tcLabel">Mission control Hoot says…</div>
+      <div id="fuelGauge" aria-label="Rocket fuel"></div>
+    </div>
+    <button id="hearBtn" type="button" aria-label="Hear the mission again">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <div id="scene">
+    <div id="visual"></div>
+    <div id="planetLayer"></div>
+    <div id="padBase"></div>
+    <div id="tank" aria-hidden="true"></div>
+    <div id="rocketWrap">
+      <svg viewBox="0 0 120 190" aria-hidden="true">
+        <g id="flame"><path d="M48 168 Q60 205 72 168 Q66 178 60 180 Q54 178 48 168 Z" fill="#ff7b3c"/><path d="M53 168 Q60 190 67 168 Q60 176 53 168 Z" fill="#ffc93c"/></g>
+        <path d="M22 150 Q6 172 4 186 L26 178 Q24 164 22 150 Z" fill="#e0577f"/>
+        <path d="M98 150 Q114 172 116 186 L94 178 Q96 164 98 150 Z" fill="#e0577f"/>
+        <path d="M60 4 Q92 44 92 108 L92 152 Q92 164 80 164 L40 164 Q28 164 28 152 L28 108 Q28 44 60 4 Z" fill="#eef3fa"/>
+        <path d="M60 4 Q92 44 92 108 L92 118 L28 118 L28 108 Q28 44 60 4 Z" fill="#ff6b5e"/>
+        <circle cx="60" cy="76" r="19" fill="#aee7ff" stroke="#2f8fc4" stroke-width="5"/>
+        <circle cx="53" cy="69" r="6" fill="#fff" opacity=".8"/>
+        <rect x="28" y="132" width="64" height="10" fill="#ffc93c"/>
+        <rect x="44" y="148" width="32" height="9" rx="4" fill="#b9c9dd"/>
+      </svg>
+    </div>
+    <div id="podRow"></div>
+  </div>
+
+  <div id="groundRow">
+    <div id="hootZone">
+      <button id="hootFig" type="button" aria-label="Mission control Hoot — tap to hear the mission again">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M47 62 A56 56 0 0 1 153 62" stroke="#2f8fc4" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <rect x="38" y="56" width="15" height="24" rx="7" fill="#2f8fc4"/>
+          <path d="M46 80 Q50 104 74 108" stroke="#2f8fc4" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <circle cx="78" cy="109" r="6" fill="#17324f"/>
+        </svg>
+      </button>
+      <div id="bubbleCol">
+        <div id="bubble">Mission control Hoot here! Count with me and we&rsquo;ll blast off to the stars!</div>
+        <span id="hootName">HOOT</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="startPanel">
+    <h1><span class="t-a">Rocket</span> <span class="t-b">Count-Up</span></h1>
+    <p>Hoot is mission control! Count out loud with him, fuel the rocket number by number, and blast off past the planets!</p>
+    <div class="mode-row" role="group" aria-label="Choose how to play">
+      <button class="mode-chip selected" type="button" data-mode="countup">Count Up!<small>Tap 1, 2, 3… all the way to blast off</small></button>
+      <button class="mode-chip" type="button" data-mode="count">Count On<small>What number comes next?</small></button>
+      <button class="mode-chip" type="button" data-mode="add">Adding Up<small>Put two groups of stars together</small></button>
+      <button class="mode-chip" type="button" data-mode="stars">Count the Stars<small>How many stars can you see?</small></button>
+    </div>
+    <button id="playBtn" type="button">▶ Play</button>
+  </div>
+
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <h2 id="winTitle">BLAST OFF!</h2>
+      <p id="winRecap"></p>
+      <div id="winChips"></div>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">↻ Fly Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+  /* ================= CONSTANTS ================= */
+  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var COUNTUP_GOAL=10, QUIZ_GOAL=5;
+  var PODCLS=["p1","p2","p3","p4"];
+
+  /* ================= STATE ================= */
+  var state="start";            /* start | playing | launch | won */
+  var mode="countup";           /* countup | count | add | stars */
+  var stars=0, praiseIdx=0, soundOn=true, dead=false;
+  var inputLock=false, roundToken=0, lastHintAt=0, wonFlag=false;
+  var fuel=0, fuelGoal=COUNTUP_GOAL;
+  var nextN=1, counted=[];
+  var mission=null, missionsDone=0;
+  var launchAnim=null, smokeTimer=null;
+
+  /* ================= ELMS ================= */
+  function $(id){ return document.getElementById(id); }
+  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
+      targetCard=$("targetCard"), targetMain=$("targetMain"), tcLabel=$("tcLabel"), fuelGauge=$("fuelGauge"),
+      starCount=$("starCount"), starBank=$("starBank"), visual=$("visual"), podRow=$("podRow"),
+      rocketWrap=$("rocketWrap"), tank=$("tank"), planetLayer=$("planetLayer"),
+      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"), winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars");
+
+  /* background stars */
+  (function makeBgStars(){
+    var glyphs=["★","✦","·","✧"];
+    for(var i=0;i<26;i++){
+      var s=document.createElement("span"); s.className="bg-star";
+      s.textContent=glyphs[i%glyphs.length];
+      s.style.left=(Math.random()*97)+"%"; s.style.top=(Math.random()*55)+"%";
+      s.style.fontSize=(8+Math.random()*9)+"px";
+      s.style.animationDelay=(-Math.random()*2)+"s";
+      scene.appendChild(s);
+    }
+  })();
+
+  /* ================= SOUND FX (WebAudio tones) ================= */
+  var AC=null;
+  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+  function tone(f0,f1,dur,type,vol,delay){
+    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
+    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  }
+  function fuelSound(){ tone(400,900,0.24,"sine",0.1); tone(600,1200,0.2,"triangle",0.07,0.05); }
+  function wobbleSound(){ tone(220,90,0.3,"sawtooth",0.07); }
+  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.09); tone(1560,1560,0.12,"sine",0.09,0.07); }
+  function launchSound(){ tone(120,600,1.6,"sawtooth",0.06); tone(200,1200,1.4,"sine",0.07,0.1); }
+  function starSound(){ tone(990,990,0.08,"triangle",0.09); tone(1320,1320,0.1,"triangle",0.09,0.06); tone(1760,1760,0.14,"triangle",0.08,0.12); }
+
+  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+     Every clip goes through this single queue on a single Audio element.
+     A line that has started always finishes: the next clip is only loaded
+     from the 'ended' event, never from a timer, and pending (not yet
+     started) lines can be replaced when the game moves on. The hub's
+     injected voice governor arbitrates this element against every other
+     voice in the app the same way. No device text-to-speech anywhere.
+     Mission control Hoot counts with the recorded number clips. */
+  var VBASE="assets/voice/";
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl=new Audio(); voiceEl.preload="auto";
+      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("error",vNext);
+    }
+    return voiceEl;
+  }
+  function hubQuiet(){
+    try{
+      var d=window.parent&&window.parent.document;
+      if(!d||d===document) return false;
+      var b=d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+    }catch(e){ return false; }
+  }
+  function silenced(){ return !soundOn||hubQuiet(); }
+  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying||dead) return;
+    var item=vQueue.shift(); if(!item) return;
+    if(item.onStart){ try{ item.onStart(); }catch(e){} }
+    if(silenced()){ pumpVoice(); return; }
+    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
+    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    var p=el.play();
+    if(p&&p.catch) p.catch(function(){ vNext(); });
+  }
+  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
+    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    pumpVoice();
+  }
+  function clearPending(){ vQueue.length=0; }
+  function enqueuePraise(){
+    praiseIdx++;
+    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise","",null);
+  }
+  function callPendingOrPlaying(kind,target){
+    if(vCurrent&&vCurrent.kind===kind&&String(vCurrent.target)===String(target)) return true;
+    for(var i=0;i<vQueue.length;i++) if(vQueue[i].kind===kind&&String(vQueue[i].target)===String(target)) return true;
+    return false;
+  }
+  function enqueueHint(target){
+    var now=Date.now();
+    var fresh=now-lastHintAt>=4500;
+    if(fresh){ lastHintAt=now; enqueue("hoot-try-again.mp3","hint","",null); }
+    if(target!=null&&!callPendingOrPlaying("callout",target)){
+      enqueue("call-number-"+target+".mp3","callout",String(target),null);
+    }
+  }
+
+  /* ================= HOOT'S FACE / WORDS ================= */
+  function say(html){ bubble.innerHTML=html; }
+  function hootReact(cls,ms){
+    hootFig.classList.remove("celebrate","shake");
+    void hootFig.offsetWidth;
+    hootFig.classList.add(cls);
+    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  }
+
+  /* ================= HELPERS ================= */
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function starSVG(fill){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="'+fill+'" stroke="#e8a90c" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+  }
+  function updateHUD(){ starCount.textContent=stars; }
+  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
+  function renderFuel(){
+    fuelGauge.innerHTML=""; tank.innerHTML="";
+    for(var i=0;i<fuelGoal;i++){
+      var g=document.createElement("i"); if(i<fuel) g.className="on"; fuelGauge.appendChild(g);
+      var t=document.createElement("i"); if(i<fuel) t.className="on"; tank.appendChild(t);
+    }
+    rocketWrap.classList.toggle("tremble", fuel>=3&&fuel<fuelGoal&&state==="playing");
+    rocketWrap.classList.toggle("tremble-hard", fuel>=Math.ceil(fuelGoal*0.7)&&fuel<fuelGoal&&state==="playing");
+  }
+  function burst(x,y){
+    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#7fd4ff","#ff8fa3","#a5e8ae"];
+    for(var i=0;i<7;i++){
+      var p=document.createElement("div"); p.className="particle";
+      p.style.background=cols[i%cols.length];
+      p.style.left=(x-sr.left-5)+"px"; p.style.top=(y-sr.top-5)+"px";
+      scene.appendChild(p);
+      var ang=(Math.PI*2*i)/7+Math.random()*0.5, dist=40+Math.random()*34;
+      if(p.animate) p.animate([
+        {transform:"translate(0,0) scale(1)",opacity:1},
+        {transform:"translate("+Math.cos(ang)*dist+"px,"+(Math.sin(ang)*dist+24)+"px) scale(.4)",opacity:0}
+      ],{duration:520,easing:"cubic-bezier(.2,.7,.3,1)"});
+      (function(el){ setTimeout(function(){ el.remove(); },560); })(p);
+    }
+  }
+  function confetti(){
+    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#57cc62","#ff8fa3","#4ea8e0","#ff6b5e"];
+    for(var i=0;i<26;i++){
+      var c=document.createElement("div"); c.className="confetti";
+      c.style.background=cols[i%cols.length];
+      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
+      scene.appendChild(c);
+      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      if(c.animate) c.animate([
+        {transform:"translate(0,0) rotate(0deg)",opacity:1},
+        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
+      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+    }
+  }
+  function flyOrb(value,fromRect,done){
+    var orb=document.createElement("div"); orb.className="fly-clone";
+    orb.textContent=value;
+    orb.style.background="radial-gradient(circle at 35% 30%,#ffd98a,#ff7b3c)";
+    orb.style.border="3px solid #fff"; orb.style.boxShadow="0 0 16px rgba(255,150,50,.8)";
+    var sr=scene.getBoundingClientRect(), rr=rocketWrap.getBoundingClientRect();
+    var w=46;
+    var x0=fromRect.left+fromRect.width/2-sr.left-w/2, y0=fromRect.top+fromRect.height/2-sr.top-w/2;
+    var x1=rr.left+rr.width/2-sr.left-w/2, y1=rr.top+rr.height*0.55-sr.top-w/2;
+    orb.style.width=w+"px"; orb.style.height=w+"px"; orb.style.fontSize="22px";
+    orb.style.left=x0+"px"; orb.style.top=y0+"px";
+    scene.appendChild(orb);
+    var finished=false;
+    function finish(){ if(finished) return; finished=true; orb.remove(); done(); }
+    if(orb.animate){
+      var anim=orb.animate([
+        {transform:"translate(0,0) scale(1)",opacity:1},
+        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.5-46)+"px) scale(1.05)",opacity:1,offset:0.55},
+        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.5)",opacity:.9}
+      ],{duration:540,easing:"cubic-bezier(.3,.6,.4,1)"});
+      anim.onfinish=finish;
+      setTimeout(finish,720);
+    } else setTimeout(finish,120);
+  }
+  function makePod(value,cls){
+    var b=document.createElement("button"); b.type="button"; b.className="pod "+cls;
+    b.textContent=value; b.dataset.value=value;
+    b.setAttribute("aria-label","Number "+value);
+    return b;
+  }
+
+  /* ================= COUNT UP MODE ================= */
+  function presentCountStep(){
+    targetMain.textContent="Tap number "+nextN+"!";
+    tcLabel.textContent="Count up with Hoot — fuel the rocket!";
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    visual.innerHTML="";
+    counted.forEach(function(n){
+      var chip=document.createElement("span"); chip.className="track-chip"; chip.textContent=n; visual.appendChild(chip);
+    });
+    var q=document.createElement("span"); q.className="track-chip qmark"; q.textContent="?"; visual.appendChild(q);
+    var pool=[nextN];
+    var cand=shuffle([nextN-2,nextN-1,nextN+1,nextN+2,nextN+3].filter(function(v){ return v>=1&&v<=10&&v!==nextN; }));
+    while(pool.length<4&&cand.length) pool.push(cand.shift());
+    var vals=shuffle(pool);
+    podRow.innerHTML="";
+    vals.forEach(function(v,i){
+      var b=makePod(v,PODCLS[i%4]);
+      b.addEventListener("click",function(){ onCountPod(b,v); });
+      podRow.appendChild(b);
+    });
+    inputLock=false;
+  }
+  function callCountStep(){
+    var n=nextN, done=counted.slice();
+    if(!callPendingOrPlaying("callout",n)){
+      enqueue("call-number-"+n+".mp3","callout",String(n),function(){
+        say(done.length ? "We counted <span class='b-big'>"+done.join(", ")+"</span>… now tap <span class='b-big'>"+n+"</span>!"
+                         : "Count with me! Tap <span class='b-big'>1</span> to start the fuel!");
+      });
+    }
+  }
+  function onCountPod(b,v){
+    if(state!=="playing"||inputLock||dead) return;
+    if(b.dataset.done) return;
+    audio();
+    if(v!==nextN){
+      b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
+      rocketWrap.classList.remove("wobble"); void rocketWrap.offsetWidth; rocketWrap.classList.add("wobble");
+      wobbleSound(); hootReact("shake",900);
+      say("Whoops — the rocket needs <span class='b-big'>"+nextN+"</span> next! Count with me: "+(counted.length?counted.join(", ")+", …":"")+" then <span class='b-big'>"+nextN+"</span>!");
+      enqueueHint(nextN);
+      return;
+    }
+    b.dataset.done="1"; inputLock=true;
+    var r=b.getBoundingClientRect();
+    b.classList.add("used");
+    flyOrb(v,r,function(){
+      if(dead) return;
+      fuel++; counted.push(v); nextN++;
+      stars++; bumpStars(); updateHUD();
+      renderFuel(); fuelSound(); starSound();
+      var rr=rocketWrap.getBoundingClientRect(); burst(rr.left+rr.width/2,rr.top+rr.height*0.4);
+      if(nextN>COUNTUP_GOAL){ blastOff(); return; }
+      presentCountStep();
+      callCountStep();
+    });
+  }
+
+  /* ================= QUIZ MODES ================= */
+  function newMission(){
+    if(dead||state!=="playing") return;
+    visual.className=""; visual.innerHTML=""; podRow.innerHTML="";
+    var opts;
+    if(mode==="count"){
+      var n=1+Math.floor(Math.random()*9);
+      mission={ answer:n+1, hint:"Count out loud with me: "+(n>1?(n-1)+", ":"")+n+"… then what comes next?" };
+      targetMain.textContent="What comes after "+n+"?";
+      tcLabel.textContent="Count On — fuel the rocket!";
+      if(n>1) visual.innerHTML+='<span class="track-chip">'+(n-1)+'</span><span class="track-arrow">→</span>';
+      visual.innerHTML+='<span class="track-chip">'+n+'</span><span class="track-arrow">→</span><span class="track-chip qmark">?</span>';
+      opts=shuffle([n+1,n,Math.min(10,n+2)]);
+      clearPending();
+      enqueue("call-number-"+n+".mp3","name",String(n),function(){
+        say("The rocket is at <span class='b-big'>"+n+"</span>! What number comes AFTER "+n+"?");
+      });
+      enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-what-comes-after")?"ask-what-comes-after.mp3":"ask-what-comes-next.mp3","callout","",null); /* 3e51: asks the question, not just the number */
+    } else if(mode==="add"){
+      var a=1+Math.floor(Math.random()*5), b=1+Math.floor(Math.random()*5);
+      mission={ answer:a+b, hint:"Count ALL the stars: start at "+a+", then count "+b+" more!" };
+      targetMain.textContent="What is "+a+" + "+b+"?";
+      tcLabel.textContent="Adding Up — fuel the rocket!";
+      var h='<span class="star-group">';
+      for(var i=0;i<a;i++) h+=starSVG("#ffc93c");
+      h+='</span><span class="op-sign">+</span><span class="star-group">';
+      for(var j=0;j<b;j++) h+=starSVG("#7fd4ff");
+      h+='</span><span class="op-sign">=</span><span class="track-chip qmark">?</span>';
+      visual.innerHTML=h;
+      opts=shuffle([a+b,Math.max(1,a+b-1),a+b+2]);
+      clearPending();
+      enqueue("call-number-"+a+".mp3","name",String(a),null);
+      if((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("word-plus")) enqueue("word-plus.mp3","callout","",null);
+      enqueue("call-number-"+b+".mp3","name",String(b),function(){
+        say("Count all the stars together — what is <span class='b-big'>"+a+" + "+b+"</span>?");
+      });
+      if((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-how-many-altogether")) enqueue("ask-how-many-altogether.mp3","callout","",null); /* 3e51 */
+    } else { /* stars */
+      var c=3+Math.floor(Math.random()*8);
+      mission={ answer:c, hint:"Touch each star in the sky as you count: 1, 2, 3… take your time!" };
+      targetMain.textContent="How many stars?";
+      tcLabel.textContent="Count the Stars — fuel the rocket!";
+      visual.className="scatter";
+      var positions=[[6,4],[30,0],[54,8],[78,2],[16,44],[42,38],[66,46],[88,34],[26,72],[58,74]];
+      for(var k=0;k<c;k++){
+        var s=document.createElement("span"); s.className="count-star"; s.id="cstar"+k;
+        s.style.left=positions[k][0]+"%"; s.style.top=positions[k][1]+"%";
+        s.style.transform="rotate("+((k%2? -1:1)*(4+(k*7)%14))+"deg)";
+        s.innerHTML=starSVG(k%3===2?"#ff8fa3":"#ffc93c");
+        visual.appendChild(s);
+      }
+      var others=shuffle([c-1,c+1,c+2,c-2].filter(function(v){ return v>0&&v!==c; })).slice(0,2);
+      opts=shuffle([c].concat(others));
+      clearPending();
+      enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-how-many-stars")?"ask-how-many-stars.mp3":"hoot-look-closely.mp3","look","",function(){ /* 3e51 */
+        say("Count the twinkling stars in the sky — how many can you see?");
+      });
+    }
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    opts.forEach(function(v,i){
+      var b=makePod(v,PODCLS[i%4]);
+      b.addEventListener("click",function(){ onQuizPod(b,v); });
+      podRow.appendChild(b);
+    });
+    inputLock=false;
+  }
+  function onQuizPod(b,v){
+    if(state!=="playing"||inputLock||dead) return;
+    if(b.dataset.done) return;
+    audio();
+    if(v!==mission.answer){
+      b.dataset.done="1"; b.classList.add("dim");
+      rocketWrap.classList.remove("wobble"); void rocketWrap.offsetWidth; rocketWrap.classList.add("wobble");
+      wobbleSound(); hootReact("shake",900);
+      say(mission.hint);
+      enqueueHint(null);
+      return;
+    }
+    b.dataset.done="1"; inputLock=true;
+    var r=b.getBoundingClientRect();
+    b.classList.add("used");
+    flyOrb(v,r,function(){
+      if(dead) return;
+      fuel++; missionsDone++; stars++; bumpStars(); updateHUD();
+      renderFuel(); fuelSound();
+      var rr=rocketWrap.getBoundingClientRect(); burst(rr.left+rr.width/2,rr.top+rr.height*0.4);
+      clearPending();
+      enqueue("call-number-"+mission.answer+".mp3","answer",String(mission.answer),function(){
+        say("<span class='b-big'>"+mission.answer+"!</span> That&rsquo;s right — fuel in the tank!");
+      });
+      enqueuePraise();
+      var tk=++roundToken;
+      setTimeout(function(){
+        if(dead||tk!==roundToken||state!=="playing") return;
+        if(fuel>=QUIZ_GOAL){ blastOff(); } else { newMission(); }
+      },1250);
+    });
+  }
+
+  /* ================= BLAST OFF ================= */
+  function smokePuff(){
+    if(dead) return;
+    var rr=rocketWrap.getBoundingClientRect(), sr=scene.getBoundingClientRect();
+    var s=document.createElement("div"); s.className="smoke";
+    var sz=26+Math.random()*30;
+    s.style.width=sz+"px"; s.style.height=sz+"px";
+    s.style.left=(rr.left-sr.left+rr.width/2-sz/2+(Math.random()*36-18))+"px";
+    s.style.top=(rr.bottom-sr.top-14)+"px";
+    scene.appendChild(s);
+    if(s.animate) s.animate([
+      {transform:"translateY(0) scale(.6)",opacity:.9},
+      {transform:"translateY(26px) scale(1.7)",opacity:0}
+    ],{duration:900,easing:"ease-out"});
+    setTimeout(function(){ s.remove(); },950);
+  }
+  function spawnPlanets(){
+    planetLayer.innerHTML="";
+    var planets=[
+      {c1:"#ffb3c8",c2:"#e0577f",ring:true,x:"6%",y:"6%",w:74},
+      {c1:"#a5e8ae",c2:"#3da147",ring:false,x:"30%",y:"0%",w:56},
+      {c1:"#d3b8ff",c2:"#7a4fd0",ring:true,x:"58%",y:"10%",w:66},
+      {c1:"#ffe98a",c2:"#e8a90c",ring:false,x:"82%",y:"2%",w:50}
+    ];
+    planets.forEach(function(p,i){
+      var b=document.createElement("button"); b.type="button"; b.className="planet";
+      b.style.left=p.x; b.style.top=p.y; b.style.width=p.w+"px"; b.style.animationDelay=(-i*1.7)+"s";
+      b.setAttribute("aria-label","Planet — tap for sparkles");
+      b.innerHTML='<svg viewBox="0 0 100 70" aria-hidden="true">'+(p.ring?'<ellipse cx="50" cy="38" rx="47" ry="12" fill="none" stroke="#ffe9a8" stroke-width="5" opacity=".85"/>':"")+'<circle cx="50" cy="38" r="26" fill="'+p.c1+'"/><circle cx="41" cy="30" r="7" fill="'+p.c2+'" opacity=".55"/><circle cx="60" cy="46" r="5" fill="'+p.c2+'" opacity=".55"/></svg>';
+      b.addEventListener("click",function(){
+        audio(); sparkleSound();
+        var r=b.getBoundingClientRect(); burst(r.left+r.width/2,r.top+r.height/2);
+        b.remove();
+      });
+      planetLayer.appendChild(b);
+    });
+  }
+  function blastOff(){
+    if(state!=="playing") return;
+    state="launch"; inputLock=true;
+    podRow.innerHTML=""; visual.innerHTML="";
+    rocketWrap.classList.remove("tremble","tremble-hard","wobble");
+    rocketWrap.classList.add("launching");
+    launchSound();
+    hootReact("celebrate",2400);
+    clearPending();
+    enqueue("hoot-amazing.mp3","cheer","",function(){
+      say("BLAST OFF! We did it — look, the rocket is flying past the planets! Tap a planet!");
+    });
+    smokeTimer=setInterval(smokePuff,130);
+    setTimeout(function(){ if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; } },1500);
+    spawnPlanets();
+    if(rocketWrap.animate){
+      launchAnim=rocketWrap.animate([
+        {transform:"translateY(0)"},
+        {transform:"translateY(-6px)",offset:0.12},
+        {transform:"translateY(-130vh) rotate(4deg)"}
+      ],{duration:2400,easing:"cubic-bezier(.5,0,.8,.4)",fill:"forwards",delay:250});
+    }
+    var tk=++roundToken;
+    setTimeout(function(){
+      if(dead||tk!==roundToken) return;
+      winRound();
+    },4300);
+  }
+
+  /* ================= START / WIN ================= */
+  function startRound(){
+    clearPending(); roundToken++;
+    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; }
+    if(launchAnim){ launchAnim.cancel(); launchAnim=null; }
+    rocketWrap.classList.remove("launching");
+    planetLayer.innerHTML="";
+    stars=0; fuel=0; nextN=1; counted=[]; missionsDone=0; inputLock=false; wonFlag=false;
+    fuelGoal=(mode==="countup")?COUNTUP_GOAL:QUIZ_GOAL;
+    winOverlay.hidden=true; startPanel.hidden=true;
+    state="playing"; updateHUD(); renderFuel();
+    enqueue("hoot-game-hello.mp3","hello","",function(){ say("Mission control Hoot here! Let&rsquo;s fuel the rocket!"); });
+    if(mode==="countup"){ presentCountStep(); callCountStep(); }
+    else newMission();
+  }
+  function winRound(){
+    if(wonFlag) return; wonFlag=true; state="won";
+    targetCard.style.display="none";
+    podRow.innerHTML="";
+    vQueue=vQueue.filter(function(q){ return q.kind==="praise"||q.kind==="cheer"; });
+    winChips.innerHTML="";
+    if(mode==="countup"){
+      winTitle.textContent="BLAST OFF!";
+      winRecap.innerHTML="We counted <b>1, 2, 3 … 10</b> together and the rocket flew past the planets! Listen — Hoot will count it all back!";
+      for(var i=1;i<=10;i++){
+        var c=document.createElement("span"); c.className="chip"; c.id="wchip"+i; c.textContent=i; winChips.appendChild(c);
+      }
+      for(var n=1;n<=10;n++){
+        (function(num){
+          enqueue("call-number-"+num+".mp3","recap",String(num),function(){
+            var chips=winChips.children;
+            for(var j=0;j<chips.length;j++) chips[j].classList.toggle("reading",j===num-1);
+            say("We counted <span class='b-big'>"+counted.slice(0,num).join(", ")+"</span>"+(num===10?"… BLAST OFF!":"…"));
+            if(num===10) setTimeout(function(){ for(var k=0;k<chips.length;k++) chips[k].classList.remove("reading"); },900);
+          });
+        })(n);
+      }
+      enqueue("hoot-star.mp3","recap","",null);
+    } else {
+      winTitle.textContent="BLAST OFF!";
+      var label={count:"Count On",add:"Adding Up",stars:"Count the Stars"}[mode];
+      winRecap.innerHTML="Five perfect missions in <b>"+label+"</b> filled the tank and the rocket blasted off! Counting takes us to the stars!";
+      for(var m=1;m<=QUIZ_GOAL;m++){ var c2=document.createElement("span"); c2.className="chip"; c2.textContent="Mission "+m+" ✓"; winChips.appendChild(c2); }
+      enqueue("hoot-you-learned.mp3","recap","",function(){ say("Counting takes us to the stars!"); });
+    }
+    var starEls=winStars.children;
+    for(var i2=0;i2<starEls.length;i2++){
+      starEls[i2].classList.remove("lit");
+      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i2],200+i2*180);
+    }
+    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+  }
+  function resetToStart(){
+    clearPending(); roundToken++;
+    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; }
+    if(launchAnim){ launchAnim.cancel(); launchAnim=null; }
+    rocketWrap.classList.remove("launching","tremble","tremble-hard");
+    planetLayer.innerHTML="";
+    state="start"; inputLock=false; wonFlag=false; fuel=0;
+    winOverlay.hidden=true; startPanel.hidden=false;
+    targetCard.style.display="none";
+    podRow.innerHTML=""; visual.innerHTML="";
+    renderFuel();
+    say("Mission control Hoot here! Tap <span class='b-big'>Play</span> — count with me and we&rsquo;ll blast off to the stars!");
+    hootFig.classList.add("wave");
+    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  }
+
+  /* ================= CONTROLS ================= */
+  function hearAgain(){
+    audio();
+    if(state!=="playing"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact("celebrate",1000); return; }
+    if(mode==="countup"){ callCountStep(); }
+    else if(mission){
+      if(mode==="count"){ say("What number comes after the one Hoot said? "+mission.hint); }
+      else say(mission.hint);
+      if(!vPlaying) enqueue("hoot-look-closely.mp3","look","",null);
+    }
+  }
+  hootFig.addEventListener("click",hearAgain);
+  $("hearBtn").addEventListener("click",hearAgain);
+  $("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    $("soundOnIc").style.display=soundOn?"block":"none";
+    $("soundOffIc").style.display=soundOn?"none":"block";
+    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+    if(!soundOn){ clearPending(); }
+    else { audio(); tone(660,660,0.1,"triangle",0.12); }
+  });
+  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
+  document.querySelectorAll(".mode-chip").forEach(function(ch){
+    ch.addEventListener("click",function(){
+      mode=ch.getAttribute("data-mode");
+      document.querySelectorAll(".mode-chip").forEach(function(c){ c.classList.toggle("selected",c===ch); });
+      tone(660,660,0.1,"triangle",0.1);
+    });
+  });
+  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+
+  /* ================= LIVING SCENE TAPS ================= */
+  $("moon").addEventListener("click",function(){
+    audio(); var m=$("moon"); m.classList.remove("glow"); void m.offsetWidth; m.classList.add("glow");
+    sparkleSound();
+    if(state==="start") say("That&rsquo;s the Moon! Our rocket will fly right past it!");
+  });
+  document.querySelectorAll(".firefly").forEach(function(f){
+    f.addEventListener("click",function(){
+      audio(); f.classList.add("blink"); tone(1500,1900,0.12,"sine",0.07);
+      setTimeout(function(){ f.classList.remove("blink"); },1200);
+    });
+  });
+
+  /* ================= LEAVING THE GAME ================= */
+  function teardown(){
+    dead=true; clearPending(); hootTalking(false);
+    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; }
+  }
+  window.addEventListener("pagehide",teardown);
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+  /* ================= INIT ================= */
+  fuelGoal=COUNTUP_GOAL;
+  renderFuel();
+  updateHUD();
+  hootFig.classList.add("wave");
+  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+
+  /* Probe/debug handle: read-only snapshot of the round state. */
+  window.__rocketGame={
+    snapshot:function(){
+      return { state:state, mode:mode, stars:stars, fuel:fuel, fuelGoal:fuelGoal,
+        nextN:nextN, counted:counted.slice(), missionsDone:missionsDone,
+        answer:mission?mission.answer:null,
+        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
+        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

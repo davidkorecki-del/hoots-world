@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="balloon";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Balloon ABC Pop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
+    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#aee7ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
+    background:linear-gradient(180deg,#6ec9f7 0%,#a5e3ff 34%,#d8f6ff 62%,#eafcff 100%); }
+
+  /* ---------- living sky decor ---------- */
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
+  #sun{ top:84px; right:8px; width:92px; height:92px; z-index:1; }
+  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
+  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
+  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
+  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
+  #sun:active{ transform:scale(.93); }
+  .cloud{ z-index:1; width:118px; height:52px; opacity:.95; animation:drift linear infinite; }
+  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.22,1.35); }
+  .cloud:active svg{ transform:scale(1.12); }
+  @keyframes drift{ from{ transform:translateX(-140px); } to{ transform:translateX(112vw); } }
+  .bird{ z-index:2; width:54px; height:36px; animation:flyby linear infinite; }
+  .bird svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .bird .wing{ transform-box:fill-box; transform-origin:80% 90%; animation:flap .34s ease-in-out infinite alternate; }
+  @keyframes flap{ from{ transform:rotate(0deg); } to{ transform:rotate(-34deg); } }
+  @keyframes flyby{ from{ transform:translate(-70px,0); } to{ transform:translate(112vw,-26px); } }
+  #hills{ position:absolute; left:0; right:0; bottom:0; height:19%; min-height:104px; z-index:0; pointer-events:none; }
+  .flower{ z-index:2; width:44px; height:58px; bottom:6px; transform-origin:50% 100%; animation:sway 3.4s ease-in-out infinite alternate; }
+  .flower svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .flower.bloom svg{ animation:bloomPop .55s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes sway{ from{ transform:rotate(-4deg); } to{ transform:rotate(4deg); } }
+  @keyframes bloomPop{ 0%{ transform:scale(1);} 45%{ transform:scale(1.45) rotate(-7deg);} 100%{ transform:scale(1);} }
+  .bfly{ z-index:2; width:40px; height:32px; animation:flutter 7s ease-in-out infinite alternate; }
+  .bfly svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .bfly .bw{ transform-box:fill-box; animation:flap .22s ease-in-out infinite alternate; }
+  .bfly .bw-l{ transform-origin:100% 50%; } .bfly .bw-r{ transform-origin:0% 50%; }
+  @keyframes flutter{ 0%{ transform:translate(0,0) rotate(-4deg);} 50%{ transform:translate(26px,-20px) rotate(5deg);} 100%{ transform:translate(-14px,-8px) rotate(-3deg);} }
+
+  /* ---------- HUD ---------- */
+  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
+  .round-btn:active{ transform:scale(.9); }
+  .round-btn svg{ width:25px; height:25px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
+  #starBank .star-ic{ width:25px; height:25px; display:block; }
+  #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+
+  /* ---------- target card ---------- */
+  #targetCard{ position:relative; z-index:6; margin:8px auto 0; width:fit-content; max-width:calc(100vw - 20px); display:flex; align-items:center; gap:11px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; padding:7px 14px 7px 10px; box-shadow:0 5px 0 rgba(23,50,79,.15),0 12px 24px rgba(23,50,79,.14); }
+  #targetLetter{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:46px; line-height:.95; color:var(--coral); width:56px; height:56px; display:grid; place-items:center; background:#fff2cf; border-radius:15px; border:3px dashed #ffd166; flex:0 0 auto; }
+  #targetCard.new-target #targetLetter{ animation:letterIn .55s cubic-bezier(.34,1.7,.5,1); }
+  @keyframes letterIn{ 0%{transform:scale(.3) rotate(-14deg)} 100%{transform:scale(1) rotate(0)} }
+  .tc-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; line-height:1.15; }
+  #progressDots{ display:flex; gap:5px; margin-top:4px; }
+  #progressDots i{ width:11px; height:11px; border-radius:50%; background:#dbe7f2; display:block; transition:background .2s,transform .2s; }
+  #progressDots i.on{ background:var(--sun); transform:scale(1.25); }
+  #hearBtn{ flex:0 0 auto; width:46px; height:46px; border-radius:50%; border:3px solid #ffd166; background:#fff2cf; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(23,50,79,.15); transition:transform .12s; }
+  #hearBtn:active{ transform:scale(.88); }
+  #hearBtn svg{ width:23px; height:23px; }
+
+  /* ---------- play area / balloons ---------- */
+  #playArea{ position:relative; z-index:3; flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; padding:4px 8px; }
+  #balloonRow{ position:absolute; inset:0; }
+  .balloon{ position:absolute; left:0; top:0; border:none; background:none; padding:0; cursor:pointer; width:clamp(76px,21vw,112px); aspect-ratio:0.82; transform-origin:50% 90%; font-family:"Fredoka",sans-serif; will-change:transform; touch-action:manipulation; }
+  .balloon svg{ position:absolute; inset:0; width:100%; height:100%; display:block; filter:drop-shadow(0 8px 10px rgba(23,50,79,.18)); }
+  .balloon .b-letter{ position:absolute; left:0; right:0; top:16%; font-weight:700; font-size:clamp(30px,8.5vw,44px); color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.18); pointer-events:none; }
+  .balloon:active{ filter:brightness(1.1); }
+  .balloon.popped{ animation:popBurst .28s ease-in forwards; pointer-events:none; }
+  @keyframes popBurst{ 40%{ transform:scale(1.22); opacity:1;} 100%{ transform:scale(1.7); opacity:0;} }
+  .balloon.boing-away{ animation:boingAway .5s ease-in forwards; pointer-events:none; }
+  @keyframes boingAway{ 0%{ transform:scale(1,1);} 25%{ transform:scale(1.18,.78);} 55%{ transform:scale(.9,1.12) translateY(-16px);} 100%{ transform:scale(.92,1.05) translateY(-46vh) rotate(9deg); opacity:0;} }
+  .balloon.deco{ pointer-events:none; opacity:.92; }
+  .particle{ position:absolute; width:10px; height:10px; border-radius:50%; z-index:11; pointer-events:none; }
+  #splash{ position:absolute; z-index:11; pointer-events:none; background:var(--paper); border:3px solid #fff; border-radius:16px; box-shadow:0 8px 20px rgba(23,50,79,.25); padding:6px 14px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:var(--ink); opacity:0; transform:scale(.6); transition:opacity .18s,transform .18s cubic-bezier(.34,1.7,.5,1); white-space:nowrap; }
+  #splash.show{ opacity:1; transform:scale(1); }
+  #splash b{ color:var(--coral); font-size:24px; }
+
+  /* ---------- ground row: Hoot + basket ---------- */
+  #groundRow{ position:relative; z-index:4; display:flex; align-items:flex-end; justify-content:space-between; gap:6px; padding:0 8px max(6px,env(safe-area-inset-bottom)); }
+  #hootZone{ display:flex; align-items:flex-end; gap:7px; min-width:0; }
+  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(118px,31vw,188px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
+  #hootFig svg{ width:100%; display:block; overflow:visible; }
+  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(-1.1deg);} 50%{ transform:translateY(-6px) rotate(1.1deg);} }
+  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
+  @keyframes hootJump{ 0%{transform:translateY(0) scale(1,1)} 35%{transform:translateY(-26px) scale(.96,1.05) rotate(-4deg)} 70%{transform:translateY(0) scale(1.06,.92)} 100%{transform:translateY(0) scale(1,1)} }
+  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
+  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
+  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ 0%{ transform:translateY(0) scale(1,1);} 100%{ transform:translateY(-4px) scale(1.03,.97);} }
+  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
+  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
+  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
+  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
+  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
+  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
+  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
+  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
+  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
+  @keyframes blink{ 0%,91%,100%{ transform:scaleY(1);} 94%,96%{ transform:scaleY(.08);} }
+  #bubbleCol{ display:flex; flex-direction:column; align-items:flex-start; gap:5px; margin-bottom:26px; min-width:0; }
+  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:18px; box-shadow:0 5px 0 rgba(23,50,79,.13),0 12px 24px rgba(23,50,79,.16); padding:9px 13px; font-weight:800; font-size:clamp(14.5px,4vw,18.5px); line-height:1.3; max-width:min(40vw,290px); }
+  #bubble:after{ content:""; position:absolute; left:-8px; bottom:16px; width:15px; height:15px; background:var(--paper); transform:rotate(45deg); }
+  #bubble .b-letter{ color:var(--coral); font-family:"Fredoka",sans-serif; }
+  #hootName{ background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.06em; padding:3px 11px; border-radius:999px; border:2px solid #fff; box-shadow:0 3px 8px rgba(23,50,79,.2); }
+  #basketZone{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:0 0 auto; }
+  #basketBtn{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,27vw,142px); transition:transform .15s; }
+  #basketBtn:active{ transform:scale(.93); }
+  #basketBtn svg{ width:100%; display:block; overflow:visible; filter:drop-shadow(0 7px 9px rgba(23,50,79,.22)); }
+  #basketBtn.bounce{ animation:basketBounce .5s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes basketBounce{ 0%{transform:scale(1)} 40%{transform:scale(1.12,0.9)} 100%{transform:scale(1)} }
+  #basketTray{ display:flex; gap:4px; flex-wrap:wrap; justify-content:center; max-width:150px; min-height:26px; }
+  .chip{ width:26px; height:26px; display:grid; place-items:center; background:var(--sun); border:2px solid #fff; border-radius:50%; font-family:"Fredoka",sans-serif; font-weight:700; font-size:14px; color:var(--ink); box-shadow:0 2px 6px rgba(23,50,79,.25); }
+  .chip.reading{ outline:3px solid var(--coral); transform:scale(1.3); }
+  #basketLabel{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:12.5px; color:var(--ink); background:rgba(255,253,246,.9); border-radius:999px; padding:2px 10px; border:2px solid #fff; }
+  .fly-star{ position:absolute; z-index:12; width:44px; height:44px; display:grid; place-items:center; pointer-events:none; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:var(--ink); }
+  .fly-star svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .fly-star span{ position:relative; }
+
+  /* ---------- start panel ---------- */
+  #startPanel{ position:absolute; z-index:8; left:50%; top:44%; transform:translate(-50%,-50%); width:min(92vw,430px); background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:18px 20px 16px; text-align:center; }
+  #startPanel[hidden]{ display:none; }
+  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0; color:var(--ink); }
+  #startPanel h1 .t-bal{ color:var(--coral); } #startPanel h1 .t-abc{ color:#2f83c4; }
+  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.4; margin:8px 0 0; }
+  .mode-row{ display:flex; gap:9px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  .mode-chip{ border:3px solid #dbe7f2; background:#fff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:16px; padding:10px 16px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .mode-chip:active{ transform:scale(.94); }
+  .mode-chip.selected{ background:var(--sun); border-color:#fff; box-shadow:0 4px 0 rgba(23,50,79,.16); }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
+  #playBtn{ margin-top:16px; border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; padding:14px 44px; border-radius:999px; cursor:pointer; box-shadow:0 7px 0 #d84a3f,0 16px 30px rgba(255,107,94,.4); transition:transform .12s; animation:playPulse 1.6s ease-in-out infinite; }
+  #playBtn:active{ transform:translateY(4px); box-shadow:0 3px 0 #d84a3f; }
+  @keyframes playPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.05);} }
+
+  /* ---------- win overlay ---------- */
+  #winOverlay{ position:absolute; inset:0; z-index:9; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
+  #winOverlay[hidden]{ display:none; }
+  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 14px 40px rgba(23,50,79,.35); padding:18px 20px 16px; text-align:center; width:min(92vw,440px); max-height:100%; overflow:hidden; animation:winIn .5s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes winIn{ from{ transform:scale(.7) translateY(30px); opacity:0;} to{ transform:scale(1) translateY(0); opacity:1;} }
+  #winStars{ font-size:27px; letter-spacing:4px; color:#dbe7f2; }
+  #winStars .lit{ color:var(--sun); text-shadow:0 2px 0 #e8a90c; }
+  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:6px 0 0; }
+  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:16px; line-height:1.45; margin:8px 0 0; }
+  #winChips{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:11px; }
+  #winChips .chip{ width:38px; height:38px; font-size:19px; }
+  .win-btns{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .win-btn{ border:3px solid #fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:12px 26px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .win-btn:active{ transform:translateY(3px); }
+  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 6px 0 #3da347,0 12px 24px rgba(87,204,98,.35); }
+  #winHomeBtn{ background:#fff; color:var(--ink); border-color:#dbe7f2; box-shadow:0 5px 0 rgba(23,50,79,.14); }
+  .confetti{ position:absolute; z-index:10; width:11px; height:15px; border-radius:3px; pointer-events:none; }
+
+  @media (max-width:430px){
+    #bubble{ font-size:13.5px; padding:8px 10px; }
+    #basketLabel{ font-size:11px; padding:2px 7px; }
+    .chip{ width:23px; height:23px; font-size:12.5px; }
+  }
+  @media (max-height:560px){
+    #hootFig{ width:clamp(84px,26vh,108px); }
+    #basketBtn{ width:76px; }
+    #basketTray{ min-height:20px; } #basketTray .chip{ width:20px; height:20px; font-size:11px; }
+    .balloon{ width:clamp(50px,15vh,66px); }
+    #targetLetter{ width:42px; height:42px; font-size:34px; }
+    #targetCard{ margin-top:4px; padding:5px 10px 5px 7px; }
+    #hearBtn{ width:38px; height:38px; }
+    #hud{ padding-top:6px; } .round-btn{ width:42px; height:42px; }
+    #starBank{ font-size:18px; padding:4px 12px 4px 8px; }
+    #bubble{ margin-bottom:0; font-size:12.5px; max-width:30vw; padding:7px 10px; }
+    #bubbleCol{ margin-bottom:6px; }
+    #sun{ width:60px; height:60px; top:52px; }
+    #hills{ min-height:64px; }
+    .flower{ width:32px; height:42px; }
+    #startPanel{ top:50%; padding:12px 16px 10px; }
+    #playBtn{ font-size:20px; padding:10px 34px; margin-top:10px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cloud,.bird,#hootFig,.balloon,.flower,#sun .rays{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- living sky -->
+  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.6" fill="#17324f"/><circle cx="59" cy="46" r="3.6" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/><circle cx="65" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/></svg>
+  </button>
+  <button class="decor cloud" type="button" style="top:12%;animation-duration:74s;animation-delay:-30s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <button class="decor cloud" type="button" style="top:26%;animation-duration:96s;animation-delay:-64s;width:86px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <button class="decor cloud" type="button" style="top:5%;animation-duration:110s;animation-delay:-88s;width:150px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <button class="decor bird" type="button" style="top:15%;animation-duration:27s;animation-delay:-9s" aria-label="Bird — tap for a chirp"><svg viewBox="0 0 54 36" aria-hidden="true"><path d="M14 22 Q8 28 3 27 Q10 20 13 15 Q15 20 14 22Z" fill="#5b8dd9"/><ellipse cx="28" cy="20" rx="13" ry="8.5" fill="#7fb2f0"/><circle cx="40" cy="15" r="6.5" fill="#7fb2f0"/><path class="wing" d="M24 15 Q14 2 4 6 Q12 14 20 19Z" fill="#5b8dd9"/><path d="M46 15 L53 17.5 L46 20 Z" fill="#ff9f1c"/><circle cx="42" cy="13.5" r="1.7" fill="#17324f"/></svg></button>
+  <button class="decor bird" type="button" style="top:30%;animation-duration:35s;animation-delay:-24s;width:42px" aria-label="Bird — tap for a chirp"><svg viewBox="0 0 54 36" aria-hidden="true"><path d="M14 22 Q8 28 3 27 Q10 20 13 15 Q15 20 14 22Z" fill="#e2703a"/><ellipse cx="28" cy="20" rx="13" ry="8.5" fill="#f49d65"/><circle cx="40" cy="15" r="6.5" fill="#f49d65"/><path class="wing" d="M24 15 Q14 2 4 6 Q12 14 20 19Z" fill="#e2703a"/><path d="M46 15 L53 17.5 L46 20 Z" fill="#ff9f1c"/><circle cx="42" cy="13.5" r="1.7" fill="#17324f"/></svg></button>
+  <svg id="hills" viewBox="0 0 400 110" preserveAspectRatio="none" aria-hidden="true"><path d="M0 55 Q90 15 200 48 Q310 78 400 40 L400 110 L0 110Z" fill="#8edd7e"/><path d="M0 78 Q110 45 230 72 Q330 92 400 66 L400 110 L0 110Z" fill="#57cc62"/></svg>
+  <button class="decor flower" type="button" style="left:6%" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q20 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 44 Q12 42 10 34 Q19 34 22 40Z" fill="#57cc62"/><g fill="#ff8fab"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ffc93c"/></svg></button>
+  <button class="decor flower" type="button" style="left:44%;animation-delay:-1.4s" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q24 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 46 Q32 44 34 36 Q25 36 22 42Z" fill="#57cc62"/><g fill="#c39bff"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#fff"/></svg></button>
+  <button class="decor flower" type="button" style="right:5%;animation-delay:-2.2s" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q20 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 44 Q12 42 10 34 Q19 34 22 40Z" fill="#57cc62"/><g fill="#ffd93b"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ff9f1c"/></svg></button>
+  <button class="decor bfly" type="button" style="left:16%;bottom:21%" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><ellipse cx="20" cy="17" rx="2.6" ry="8" fill="#17324f"/></svg></button>
+  <button class="decor bfly" type="button" style="right:14%;bottom:26%;animation-delay:-3.5s" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#7fd4ff"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#aee7ff"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#7fd4ff"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#aee7ff"/></g><ellipse cx="20" cy="17" rx="2.6" ry="8" fill="#17324f"/></svg></button>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <!-- target card -->
+  <div id="targetCard">
+    <div id="targetLetter">B</div>
+    <div>
+      <div class="tc-label" id="tcLabel">Pop the letter</div>
+      <div id="progressDots"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <button id="hearBtn" type="button" aria-label="Hear Hoot say the letter again">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <!-- balloons -->
+  <div id="playArea">
+    <div id="balloonRow"></div>
+    <div id="splash" aria-hidden="true"></div>
+  </div>
+
+  <!-- Hoot + basket -->
+  <div id="groundRow">
+    <div id="hootZone">
+      <button id="hootFig" type="button" aria-label="Hoot — tap to hear the letter again">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div id="bubbleCol">
+        <div id="bubble">Hi! I&rsquo;m Hoot! Tap <span class="b-letter">Play</span> and let&rsquo;s pop letter balloons together!</div>
+        <span id="hootName">HOOT</span>
+      </div>
+    </div>
+    <div id="basketZone">
+      <button id="basketBtn" type="button" aria-label="Hoot's Letter Basket — tap and Hoot reads your letters back">
+        <svg viewBox="0 0 150 108" aria-hidden="true">
+          <path d="M30 34 Q75 -6 120 34" stroke="#8a5a2b" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M18 38 h114 l-10 52 a10 10 0 0 1 -10 8 H38 a10 10 0 0 1 -10 -8 Z" fill="#b07a3f"/>
+          <path d="M18 38 h114 l-2.4 13 H20.4 Z" fill="#c98d4e"/>
+          <path d="M34 56 h84 M30 72 h90" stroke="#8a5a2b" stroke-width="4" opacity=".55"/>
+          <path d="M48 40 l4 52 M75 40 v54 M102 40 l-4 52" stroke="#8a5a2b" stroke-width="4" opacity=".4"/>
+          <rect x="12" y="30" width="126" height="13" rx="6.5" fill="#8a5a2b"/>
+        </svg>
+      </button>
+      <div id="basketTray" aria-label="Letters in the basket"></div>
+      <span id="basketLabel">Hoot&rsquo;s Letter Basket</span>
+    </div>
+  </div>
+
+  <!-- start panel -->
+  <div id="startPanel">
+    <h1><span class="t-bal">Balloon</span> <span class="t-abc">ABC</span> Pop</h1>
+    <p>Hoot calls out a letter — find its balloon, pop it, and catch the letter-star in Hoot&rsquo;s basket!</p>
+    <div class="mode-row" role="group" aria-label="Choose how to play">
+      <button class="mode-chip selected" id="modeFind" type="button">Find the Letter<small>Hoot calls it — you pop it!</small></button>
+      <button class="mode-chip" id="modeFree" type="button">Pop Party<small>Pop any balloon — Hoot names it!</small></button>
+    </div>
+    <button id="playBtn" type="button">▶ Play</button>
+  </div>
+
+  <!-- win overlay -->
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <h2 id="winTitle">You did it!</h2>
+      <p id="winRecap"></p>
+      <div id="winChips"></div>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ================= DATA ================= */
+  var DATA = {
+    A:{s:"ah",w:"Apple"}, B:{s:"buh",w:"Balloon"}, C:{s:"kuh",w:"Cat"}, D:{s:"duh",w:"Dog"},
+    E:{s:"eh",w:"Egg"}, F:{s:"fff",w:"Fish"}, G:{s:"guh",w:"Goat"}, H:{s:"huh",w:"Hat"},
+    I:{s:"ih",w:"Igloo"}, J:{s:"juh",w:"Juice"}, K:{s:"kuh",w:"Kite"}, L:{s:"lll",w:"Lion"},
+    M:{s:"mmm",w:"Monkey"}, N:{s:"nnn",w:"Nest"}, O:{s:"ah",w:"Octopus"}, P:{s:"puh",w:"Penguin"},
+    Q:{s:"kwuh",w:"Queen"}, R:{s:"rrr",w:"Rainbow"}, S:{s:"sss",w:"Sun"}, T:{s:"tuh",w:"Turtle"},
+    U:{s:"uh",w:"Umbrella"}, V:{s:"vvv",w:"Violin"}, W:{s:"wuh",w:"Whale"}, X:{s:"ks",w:"Fox"},
+    Y:{s:"yuh",w:"Yo-yo"}, Z:{s:"zzz",w:"Zebra"}
+  };
+  var ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  var BCOLORS = [
+    {c:"#ff6b5e",d:"#d84a3f"},{c:"#4aa8e0",d:"#2f7fb8"},{c:"#ffc93c",d:"#e8a90c"},
+    {c:"#57cc62",d:"#3da347"},{c:"#c39bff",d:"#9b6fe0"},{c:"#ff8fab",d:"#e56b8c"},
+    {c:"#17bebb",d:"#0e9594"},{c:"#ff9f43",d:"#e07f1f"}
+  ];
+  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var GOAL = 5, FREE_GOAL = 10;
+
+  /* ================= STATE ================= */
+  var state = "start";           /* start | playing | won */
+  var mode = "find";             /* find | free */
+  var targets = [], tIdx = 0, targetLetter = "B";
+  var found = [];                /* letters in the basket, in pop order */
+  var stars = 0, freePops = 0;
+  var presentLetters = [];
+  var inputLock = false, wonRound = false, dead = false;
+  var soundOn = true, praiseIdx = 0;
+
+  /* ================= ELMS ================= */
+  function $(id){ return document.getElementById(id); }
+  var stage=$("stage"), row=$("balloonRow"), bubble=$("bubble"), hootFig=$("hootFig"),
+      targetCard=$("targetCard"), targetLetterEl=$("targetLetter"), tcLabel=$("tcLabel"),
+      dots=$("progressDots").children, starCount=$("starCount"), starBank=$("starBank"),
+      basketBtn=$("basketBtn"), basketTray=$("basketTray"), splash=$("splash"),
+      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"),
+      winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars");
+
+  /* ================= SOUND FX (WebAudio tones) ================= */
+  var AC=null;
+  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+  function tone(f0,f1,dur,type,vol,delay){
+    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
+    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  }
+  function popSound(){ tone(520,140,0.14,"square",0.16); tone(880,220,0.1,"triangle",0.1); }
+  function boingSound(){ tone(300,70,0.34,"sine",0.2); tone(150,60,0.3,"triangle",0.08,0.03); }
+  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.1); tone(1560,1560,0.12,"sine",0.1,0.07); }
+  function chirpSound(){ tone(1250,1900,0.09,"sine",0.09); tone(1350,2000,0.09,"sine",0.09,0.11); }
+  function poofSound(){ tone(220,120,0.16,"triangle",0.1); }
+  function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
+
+  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+     Every clip goes through this single queue on a single Audio element.
+     A line that has started always finishes: the next clip is only loaded
+     from the 'ended' event, never from a timer, and pending (not yet
+     started) lines can be replaced when the game moves on. The hub's
+     injected voice governor arbitrates this element against every other
+     voice in the app the same way. No device text-to-speech anywhere. */
+  var VBASE="assets/voice/";
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl=new Audio(); voiceEl.preload="auto";
+      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("error",vNext);
+    }
+    return voiceEl;
+  }
+  function hubQuiet(){
+    try{
+      var d=window.parent&&window.parent.document;
+      if(!d||d===document) return false;
+      var b=d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+    }catch(e){ return false; }
+  }
+  function silenced(){ return !soundOn||hubQuiet(); }
+  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying||dead) return;
+    var item=vQueue.shift(); if(!item) return;
+    if(item.onStart){ try{ item.onStart(); }catch(e){} }
+    if(silenced()){ pumpVoice(); return; }
+    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
+    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    var p=el.play();
+    if(p&&p.catch) p.catch(function(){ vNext(); });
+  }
+  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
+    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    pumpVoice();
+  }
+  function clearPending(){ vQueue.length=0; }
+  function calloutPendingOrPlaying(L){
+    if(vCurrent&&vCurrent.kind==="callout"&&vCurrent.target===L) return true;
+    for(var i=0;i<vQueue.length;i++) if(vQueue[i].kind==="callout"&&vQueue[i].target===L) return true;
+    return false;
+  }
+  function enqueueCallout(L,full){
+    if(calloutPendingOrPlaying(L)) return;
+    enqueue("call-letter-"+L.toLowerCase()+".mp3","callout",L,function(){
+      if(full) say("Find the letter <span class='b-letter'>"+L+"</span>! "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+"!");
+      else say("Find the letter <span class='b-letter'>"+L+"</span>!");
+      targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    });
+  }
+
+  /* ================= HOOT'S FACE / WORDS ================= */
+  function say(html){ bubble.innerHTML=html; }
+  function hootReact(cls,ms){
+    hootFig.classList.remove("celebrate","shake");
+    void hootFig.offsetWidth;
+    hootFig.classList.add(cls);
+    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  }
+
+  /* ================= HELPERS ================= */
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function pickDistractors(L,n){
+    var pool=ALPHA.filter(function(x){ return x!==L; }); shuffle(pool); return pool.slice(0,n);
+  }
+  function listWords(arr){
+    if(arr.length<=1) return arr.join("");
+    return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1];
+  }
+
+  /* ================= BALLOONS ================= */
+  function balloonSVG(col){
+    return "<svg viewBox='0 0 100 122' aria-hidden='true'>"
+      +"<ellipse cx='50' cy='44' rx='38' ry='44' fill='"+col.c+"'/>"
+      +"<ellipse cx='35' cy='28' rx='11' ry='17' fill='#ffffff' opacity='.38'/>"
+      +"<path d='M45 86 L55 86 L50 96 Z' fill='"+col.d+"'/>"
+      +"<path d='M50 96 q-6 8 0 14 q6 6 0 12' stroke='#54677f' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>";
+  }
+  function makeBalloon(L,deco){
+    var b=document.createElement("button");
+    b.type="button"; b.className="balloon"+(deco?" deco":"");
+    b.dataset.letter=L;
+    b.setAttribute("aria-label","Balloon letter "+L);
+    var col=BCOLORS[Math.floor(Math.random()*BCOLORS.length)];
+    b.innerHTML=balloonSVG(col)+"<span class='b-letter'>"+L+"</span>";
+    if(!deco) b.addEventListener("click",function(){ onBalloonTap(b); });
+    return b;
+  }
+  /* ================= BALLOON FLIGHT =================
+     The balloons truly fly: each one rises at its own gentle speed,
+     wanders side to side, and recycles from the bottom of the sky when
+     it reaches the top, so every target is always reachable. Flight is
+     driven by one rAF loop writing transforms; the play area IS the sky
+     box, so a balloon can never drift behind Hoot, his bubble, the
+     basket or any control, and never leaves the visible area. Hit areas
+     are the full balloon buttons, which track the flight exactly. */
+  var flyers=[], flightOn=false, lastTick=0;
+  var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  function addFlyer(el,fx,fy){
+    var f={ el:el, fx:fx, fy:fy, vy:6+Math.random()*8, ph:Math.random()*6.28,
+            sw:0.5+Math.random()*0.7, amp:10+Math.random()*16, dead:false };
+    el._flyer=f; flyers.push(f);
+    placeFlyer(f,0);
+    return f;
+  }
+  function placeFlyer(f,t){
+    var W=row.clientWidth, H=row.clientHeight; if(!W||!H) return;
+    var w=f.el.offsetWidth||84, h=f.el.offsetHeight||102;
+    var M=7; /* rotation margin: a tilted balloon's bounding box must stay fully inside the sky */
+    var maxX=Math.max(0,W-w), maxY=Math.max(0,H-h);
+    var x=f.fx*maxX + Math.sin(t*0.001*f.sw+f.ph)*f.amp;
+    x=Math.max(M,Math.min(Math.max(M,maxX-M),x));
+    var y=f.fy*maxY + Math.sin(t*0.0013*f.sw+f.ph*1.7)*3.5;
+    y=Math.max(M,Math.min(Math.max(M,maxY-M),y));
+    var rot=Math.sin(t*0.0009*f.sw+f.ph)*3.2;
+    f.el.style.transform="translate("+x.toFixed(1)+"px,"+y.toFixed(1)+"px) rotate("+rot.toFixed(2)+"deg)";
+  }
+  function flightTick(ts){
+    if(dead){ flightOn=false; return; }
+    var dt=Math.min(50, lastTick? ts-lastTick : 16); lastTick=ts;
+    var H=row.clientHeight||1;
+    flyers=flyers.filter(function(f){ return f.el.isConnected; });
+    flyers.forEach(function(f){
+      if(f.dead) return;
+      var h=f.el.offsetHeight||102, travel=Math.max(1,H-h);
+      f.fy -= (f.vy*dt/1000)/travel;
+      if(f.fy<=0){ f.fy=1; f.fx=0.05+Math.random()*0.82; f.vy=6+Math.random()*8; }
+      placeFlyer(f,ts);
+    });
+    requestAnimationFrame(flightTick);
+  }
+  function startFlight(){
+    if(flightOn||REDUCED) return;
+    flightOn=true; lastTick=0;
+    requestAnimationFrame(flightTick);
+  }
+  function killFlight(el){ if(el&&el._flyer) el._flyer.dead=true; }
+  function anchorFor(i,n){
+    var fx=n<=1?0.4:0.06+ (0.82*(i/(n-1))) + (Math.random()*0.05-0.025);
+    var fy=0.08+((i*0.34)%0.62)+Math.random()*0.1;
+    return { fx:Math.max(0.02,Math.min(0.9,fx)), fy:Math.min(0.92,fy) };
+  }
+  function renderBalloons(letters){
+    row.innerHTML=""; flyers=[]; presentLetters=letters.slice();
+    letters.forEach(function(L,i){
+      var b=makeBalloon(L,false); row.appendChild(b);
+      var a=anchorFor(i,letters.length); addFlyer(b,a.fx,a.fy);
+    });
+    startFlight();
+  }
+  function showDecoBalloons(){
+    row.innerHTML=""; flyers=[]; presentLetters=[];
+    ["H","O","O","T"].forEach(function(L,i){
+      var b=makeBalloon(L,true); row.appendChild(b);
+      var a=anchorFor(i,4); addFlyer(b,a.fx,a.fy);
+    });
+    startFlight();
+  }
+
+  /* ================= FX ================= */
+  function burst(x,y){
+    var sr=stage.getBoundingClientRect();
+    for(var i=0;i<7;i++){
+      var p=document.createElement("div"); p.className="particle";
+      p.style.background=BCOLORS[i%BCOLORS.length].c;
+      p.style.left=(x-sr.left-5)+"px"; p.style.top=(y-sr.top-5)+"px";
+      stage.appendChild(p);
+      var ang=(Math.PI*2*i)/7+Math.random()*0.5, dist=44+Math.random()*36;
+      if(p.animate){
+        p.animate([
+          {transform:"translate(0,0) scale(1)",opacity:1},
+          {transform:"translate("+Math.cos(ang)*dist+"px,"+(Math.sin(ang)*dist+26)+"px) scale(.4)",opacity:0}
+        ],{duration:520,easing:"cubic-bezier(.2,.7,.3,1)"});
+      }
+      (function(el){ setTimeout(function(){ el.remove(); },560); })(p);
+    }
+  }
+  function showSplash(L,x,y){
+    splash.innerHTML="<b>"+L+"</b> is for "+DATA[L].w+"!";
+    var sr=stage.getBoundingClientRect();
+    splash.style.left=Math.min(Math.max(x-sr.left-70,6),sr.width-150)+"px";
+    splash.style.top=Math.max(y-sr.top-64,4)+"px";
+    splash.classList.add("show");
+    clearTimeout(showSplash._t);
+    showSplash._t=setTimeout(function(){ splash.classList.remove("show"); },950);
+  }
+  function flyStar(L,fromRect,done){
+    var star=document.createElement("div"); star.className="fly-star";
+    star.innerHTML="<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z' fill='#ffc93c' stroke='#e8a90c' stroke-width='1.2' stroke-linejoin='round'/></svg><span>"+L+"</span>";
+    var sr=stage.getBoundingClientRect(), br=basketBtn.getBoundingClientRect();
+    var x0=fromRect.left+fromRect.width/2-sr.left-22, y0=fromRect.top+fromRect.height/2-sr.top-22;
+    var x1=br.left+br.width/2-sr.left-22, y1=br.top+br.height/2-sr.top-22;
+    star.style.left=x0+"px"; star.style.top=y0+"px";
+    stage.appendChild(star);
+    var finished=false;
+    function finish(){ if(finished) return; finished=true; star.remove(); basketBtn.classList.remove("bounce"); void basketBtn.offsetWidth; basketBtn.classList.add("bounce"); starSound(); done(); }
+    if(star.animate){
+      var anim=star.animate([
+        {transform:"translate(0,0) scale(1) rotate(0deg)",opacity:1},
+        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.45-64)+"px) scale(1.18) rotate(10deg)",opacity:1,offset:0.55},
+        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.5) rotate(-6deg)",opacity:.95}
+      ],{duration:720,easing:"cubic-bezier(.3,.6,.4,1)"});
+      anim.onfinish=finish;
+      setTimeout(finish,900);
+    } else setTimeout(finish,120);
+  }
+  function confetti(){
+    var sr=stage.getBoundingClientRect();
+    for(var i=0;i<26;i++){
+      var c=document.createElement("div"); c.className="confetti";
+      c.style.background=BCOLORS[i%BCOLORS.length].c;
+      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.32)+"px";
+      stage.appendChild(c);
+      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      if(c.animate){
+        c.animate([
+          {transform:"translate(0,0) rotate(0deg)",opacity:1},
+          {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
+        ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+      }
+      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+    }
+  }
+
+  /* ================= HUD ================= */
+  function updateHUD(){
+    starCount.textContent=stars;
+    for(var i=0;i<dots.length;i++) dots[i].classList.toggle("on", mode==="find" ? i<found.length : i<Math.min(freePops,GOAL));
+  }
+  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
+  function addChip(L){
+    var chip=document.createElement("span"); chip.className="chip"; chip.textContent=L; chip.dataset.letter=L;
+    basketTray.appendChild(chip);
+  }
+
+  /* ================= GAME FLOW — FIND THE LETTER ================= */
+  function presentTarget(){
+    targetLetter=targets[tIdx];
+    targetLetterEl.textContent=targetLetter;
+    tcLabel.textContent="Pop the letter";
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    var set=shuffle([targetLetter].concat(pickDistractors(targetLetter,3)));
+    renderBalloons(set);
+    updateHUD();
+  }
+  function startRound(){
+    clearPending();
+    found=[]; basketTray.innerHTML=""; stars=0; freePops=0; wonRound=false; inputLock=false;
+    targets=(function(){var r=shuffle(ALPHA.slice()).slice(0,GOAL);try{var P=window.parent,W=String(P.__llLetterOfWeek&&P.__llLetterOfWeek()||"").toUpperCase();if(ALPHA.indexOf(W)<0)return r;var ln=shuffle((P.__llLettersLearned?P.__llLettersLearned():[]).map(function(x){return String(x).toUpperCase();}).filter(function(x){return x!==W&&ALPHA.indexOf(x)>-1;}));var o=shuffle(ALPHA.filter(function(x){return x!==W&&ln.indexOf(x)<0;}));var rest=ln.concat(o);var t=[];var k=0;for(var i=0;i<GOAL;i++)t.push(i%3===0?W:rest[k++]);return t;}catch(e){return r;}})(); tIdx=0;
+    winOverlay.hidden=true; startPanel.hidden=true;
+    state="playing";
+    if(mode==="find"){
+      presentTarget();
+      enqueue("hoot-game-hello.mp3","hello","",function(){ say("Hello! Let&rsquo;s pop letter balloons! Listen to Hoot&hellip;"); });
+      enqueueCallout(targetLetter,true);
+    } else {
+      targetLetterEl.textContent="\u2605"; tcLabel.textContent="Pop Party \u2014 tap any balloon!";
+      targetCard.style.display="flex";
+      renderBalloons(shuffle(ALPHA.slice()).slice(0,5));
+      updateHUD();
+      say("Pop Party! Pop <span class='b-letter'>ANY</span> balloon \u2014 Hoot will name its letter!");
+      enqueue("hoot-game-hello.mp3","hello","",null);
+    }
+  }
+  function winRound(){
+    if(wonRound) return; wonRound=true; state="won";
+    updateHUD();
+    var recapLetters=found.slice();
+    /* Keep a praise line that is already queued; drop anything staler. */
+    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
+    if(mode==="find"){
+      enqueue("hoot-you-learned.mp3","recap","",function(){
+        say("You found <span class='b-letter'>"+recapLetters.join(", ")+"</span>! Hoot is so proud of you!");
+      });
+      winTitle.textContent="You popped all 5 letters!";
+      winRecap.innerHTML="Hoot&rsquo;s basket is full! You found <b>"+listWords(recapLetters)+"</b> \u2014 every letter Hoot called out!";
+    } else {
+      enqueue("hoot-amazing.mp3","recap","",function(){
+        say("Pop Party star! You popped <span class='b-letter'>"+recapLetters.join(", ")+"</span>!");
+      });
+      winTitle.textContent="Pop Party Star!";
+      winRecap.innerHTML="You popped "+FREE_GOAL+" balloons and learned their letters: <b>"+listWords(recapLetters.slice(-FREE_GOAL))+"</b>!";
+    }
+    winChips.innerHTML="";
+    recapLetters.forEach(function(L){ var chip=document.createElement("span"); chip.className="chip"; chip.textContent=L; winChips.appendChild(chip); });
+    var starEls=winStars.children;
+    for(var i=0;i<starEls.length;i++){
+      starEls[i].classList.remove("lit");
+      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
+    }
+    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+  }
+  function resetToStart(){
+    clearPending();
+    state="start"; found=[]; basketTray.innerHTML=""; stars=0; freePops=0; wonRound=false; inputLock=false;
+    winOverlay.hidden=true; startPanel.hidden=false;
+    targetCard.style.display="none";
+    showDecoBalloons(); updateHUD();
+    say("Hi! I&rsquo;m Hoot! Tap <span class='b-letter'>Play</span> and let&rsquo;s pop letter balloons together!");
+    hootFig.classList.add("wave");
+    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  }
+
+  /* ================= BALLOON TAPS ================= */
+  function onBalloonTap(b){
+    if(state!=="playing"||inputLock||dead) return;
+    if(b.dataset.done) return;
+    audio();
+    var L=b.dataset.letter, r=b.getBoundingClientRect();
+    if(mode==="free"){ freePop(b,L,r); return; }
+    if(L===targetLetter){ correctPop(b,L,r); } else { wrongPop(b,L); }
+  }
+  function correctPop(b,L,r){
+    b.dataset.done="1"; killFlight(b); inputLock=true;
+    b.classList.add("popped");
+    popSound(); burst(r.left+r.width/2,r.top+r.height/2); showSplash(L,r.left+r.width/2,r.top);
+    hootReact("celebrate",1750);
+    var praiseText="<span class='b-letter'>"+L+"!</span> "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+"! Star for Hoot&rsquo;s basket!";
+    say(praiseText);
+    stars++; found.push(L); bumpStars(); updateHUD();
+    var isLast=(tIdx>=GOAL-1);
+    var nextL=isLast?null:targets[tIdx+1];
+    clearPending();
+    praiseIdx++;
+    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise",L,null);
+    if(!isLast) enqueueCallout(nextL,true); /* recap line is queued by winRound */
+    flyStar(L,r,function(){
+      if(dead) return;
+      addChip(L);
+      if(isLast){ winRound(); }
+      else { tIdx++; presentTarget(); inputLock=false; }
+    });
+  }
+  function wrongPop(b,L){
+    b.dataset.done="1"; killFlight(b);
+    b.classList.add("boing-away");
+    boingSound();
+    hootReact("shake",1100);
+    var T=targetLetter;
+    say("That was the <span class='b-letter'>"+L+"</span> balloon \u2014 good try! Find the <span class='b-letter'>"+T+"</span> balloon!");
+    var hintPlaying=vCurrent&&(vCurrent.kind==="hint"&&vCurrent.target===T);
+    var hintPending=vQueue.some(function(q){ return q.kind==="hint"&&q.target===T; });
+    if(!hintPlaying&&!hintPending){
+      enqueue("hoot-try-again.mp3","hint",T,null);
+      enqueueCallout(T);
+    }
+    presentLetters=presentLetters.filter(function(x){ return x!==L; });
+    setTimeout(function(){
+      if(dead||state!=="playing"||mode!=="find") return;
+      b.remove();
+      var used=presentLetters.concat([targetLetter]);
+      var pool=ALPHA.filter(function(x){ return used.indexOf(x)<0; });
+      var NL=pool[Math.floor(Math.random()*pool.length)];
+      presentLetters.push(NL);
+      var nb=makeBalloon(NL,false); row.appendChild(nb);
+      addFlyer(nb,0.08+Math.random()*0.76,0.98);
+    },520);
+  }
+  function freePop(b,L,r){
+    b.dataset.done="1"; killFlight(b); inputLock=true;
+    b.classList.add("popped");
+    popSound(); burst(r.left+r.width/2,r.top+r.height/2); showSplash(L,r.left+r.width/2,r.top);
+    hootReact("celebrate",1200);
+    say("<span class='b-letter'>"+L+"!</span> "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+"!");
+    stars++; freePops++; found.push(L); bumpStars(); updateHUD();
+    clearPending();
+    enqueue("call-letter-"+L.toLowerCase()+".mp3","name",L,null);
+    presentLetters=presentLetters.filter(function(x){ return x!==L; });
+    flyStar(L,r,function(){
+      if(dead) return;
+      addChip(L);
+      if(freePops>=FREE_GOAL){ winRound(); return; }
+      var used=presentLetters.concat(found.slice(-3));
+      var pool=ALPHA.filter(function(x){ return used.indexOf(x)<0; });
+      var NL=pool[Math.floor(Math.random()*pool.length)]||"A";
+      presentLetters.push(NL);
+      var nb2=makeBalloon(NL,false); row.appendChild(nb2);
+      addFlyer(nb2,0.08+Math.random()*0.76,0.98);
+      inputLock=false;
+    });
+  }
+
+  /* ================= BASKET READ-BACK ================= */
+  basketBtn.addEventListener("click",function(){
+    audio();
+    basketBtn.classList.remove("bounce"); void basketBtn.offsetWidth; basketBtn.classList.add("bounce");
+    if(!found.length){
+      say("My basket is empty! Pop the right balloon and its letter-star drops in here!");
+      if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+      sparkleSound();
+      return;
+    }
+    clearPending();
+    var letters=found.slice();
+    say("Your basket says: <span class='b-letter'>"+letters.join(" ")+"</span> \u2014 listen to Hoot read them!");
+    letters.forEach(function(L,i){
+      enqueue("call-letter-"+L.toLowerCase()+".mp3","readback",L,function(){
+        var chips=basketTray.children;
+        for(var j=0;j<chips.length;j++) chips[j].classList.toggle("reading",j===i);
+        if(i===letters.length-1) setTimeout(function(){ for(var k=0;k<chips.length;k++) chips[k].classList.remove("reading"); },900);
+      });
+    });
+  });
+
+  /* ================= HOOT TAP / HEAR AGAIN ================= */
+  function hearAgain(){
+    audio();
+    if(state==="playing"&&mode==="find"){ enqueueCallout(targetLetter); }
+    else if(state==="start"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact("celebrate",1100); }
+    else if(state==="won"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); }
+  }
+  hootFig.addEventListener("click",hearAgain);
+  $("hearBtn").addEventListener("click",hearAgain);
+
+  /* ================= LIVING SCENE TAPS ================= */
+  $("sun").addEventListener("click",function(){
+    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
+    sparkleSound();
+    if(state==="start") say("That&rsquo;s Mr. Sun! He loves letter balloons too!");
+  });
+  document.querySelectorAll(".cloud").forEach(function(c){
+    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); poofSound(); setTimeout(function(){ c.classList.remove("puff"); },300); });
+  });
+  document.querySelectorAll(".bird").forEach(function(bd){
+    bd.addEventListener("click",function(){
+      audio(); chirpSound();
+      if(bd.animate) bd.animate([{transform:"rotate(0deg)"},{transform:"rotate(-14deg) translateY(-10px)"},{transform:"rotate(0deg)"}],{duration:480,easing:"ease-in-out"});
+    });
+  });
+  document.querySelectorAll(".flower").forEach(function(f,i){
+    f.addEventListener("click",function(){
+      audio(); f.classList.add("bloom"); tone(620+i*90,880+i*90,0.16,"sine",0.11);
+      setTimeout(function(){ f.classList.remove("bloom"); },580);
+    });
+  });
+  document.querySelectorAll(".bfly").forEach(function(bf){
+    bf.addEventListener("click",function(){
+      audio(); sparkleSound();
+      if(bf.animate) bf.animate([{transform:"rotate(0deg) scale(1)"},{transform:"rotate(360deg) scale(1.25)"}],{duration:560,easing:"ease-in-out"});
+    });
+  });
+
+  /* ================= CONTROLS ================= */
+  $("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    $("soundOnIc").style.display=soundOn?"block":"none";
+    $("soundOffIc").style.display=soundOn?"none":"block";
+    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+    if(!soundOn){ clearPending(); }
+    else { audio(); tone(660,660,0.1,"triangle",0.12); if(state==="playing"&&mode==="find") enqueueCallout(targetLetter); }
+  });
+  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
+  $("modeFind").addEventListener("click",function(){ mode="find"; $("modeFind").classList.add("selected"); $("modeFree").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
+  $("modeFree").addEventListener("click",function(){ mode="free"; $("modeFree").classList.add("selected"); $("modeFind").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
+  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+
+  /* ================= LEAVING THE GAME ================= */
+  function teardown(){ dead=true; clearPending(); hootTalking(false); }
+  window.addEventListener("pagehide",teardown);
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+  /* ================= INIT ================= */
+  targetCard.style.display="none";
+  showDecoBalloons();
+  updateHUD();
+  hootFig.classList.add("wave");
+  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+
+  /* Probe/debug handle: read-only snapshot of the round state. */
+  window.__balloonGame={
+    snapshot:function(){
+      return { state:state, mode:mode, target:targetLetter, stars:stars,
+        found:found.slice(), presented:presentLetters.slice(),
+        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
+        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

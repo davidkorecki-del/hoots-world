@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="friends";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Animal Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
+    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62; --pink:#ff8fab;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#aee7ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
+    background:linear-gradient(180deg,#6ec9f7 0%,#a5e3ff 26%,#d8f6ff 40%,#b9ec9d 41%,#8edd7e 62%,#57cc62 100%); }
+
+  /* ---------- living farmyard decor ---------- */
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
+  #sun{ top:70px; right:8px; width:80px; height:80px; z-index:1; }
+  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
+  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
+  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
+  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
+  #sun:active{ transform:scale(.93); }
+  .cloud{ z-index:1; width:110px; height:48px; opacity:.95; animation:drift linear infinite; }
+  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.22,1.35); }
+  @keyframes drift{ from{ transform:translateX(-130px); } to{ transform:translateX(112vw); } }
+  #barn{ position:absolute; z-index:1; left:2%; top:24%; width:clamp(110px,30vw,170px); pointer-events:none; opacity:.96; }
+  #fence{ position:absolute; z-index:1; left:0; right:0; top:41%; height:30px; pointer-events:none; opacity:.9; }
+  .bfly{ z-index:3; width:40px; height:32px; animation:flutter 7s ease-in-out infinite alternate; }
+  .bfly svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .bfly .bw{ transform-box:fill-box; animation:flap .22s ease-in-out infinite alternate; }
+  .bfly .bw-l{ transform-origin:100% 50%; } .bfly .bw-r{ transform-origin:0% 50%; }
+  @keyframes flap{ from{ transform:rotate(0deg);} to{ transform:rotate(-30deg);} }
+  @keyframes flutter{ 0%{ transform:translate(0,0) rotate(-4deg);} 50%{ transform:translate(26px,-20px) rotate(5deg);} 100%{ transform:translate(-14px,-8px) rotate(-3deg);} }
+  .flower{ z-index:2; width:40px; height:52px; transform-origin:50% 100%; animation:sway 3.4s ease-in-out infinite alternate; }
+  .flower svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .flower.bloom svg{ animation:bloomPop .55s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes sway{ from{ transform:rotate(-4deg); } to{ transform:rotate(4deg); } }
+  @keyframes bloomPop{ 0%{ transform:scale(1);} 45%{ transform:scale(1.45) rotate(-7deg);} 100%{ transform:scale(1);} }
+
+  /* ---------- HUD ---------- */
+  #hud{ position:relative; z-index:8; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
+  .round-btn:active{ transform:scale(.9); }
+  .round-btn svg{ width:25px; height:25px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
+  #starBank .star-ic{ width:25px; height:25px; display:block; }
+  #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+
+  /* ---------- friendship garland ---------- */
+  #garland{ position:relative; z-index:7; margin:7px auto 0; width:fit-content; max-width:calc(100vw - 16px); background:rgba(255,253,246,.94); border:3px solid #fff; border-radius:999px; padding:5px 14px 6px; box-shadow:0 4px 0 rgba(23,50,79,.12),0 8px 16px rgba(23,50,79,.1); display:flex; align-items:center; gap:5px; }
+  #garland .g-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:12px; letter-spacing:.04em; color:var(--ink-soft); text-transform:uppercase; margin-right:2px; }
+  #garland .heart{ width:24px; height:24px; display:block; }
+  #garland .heart path{ fill:#e3edf5; stroke:#c3d5e4; stroke-width:1.6; transition:fill .3s; }
+  #garland .heart.full path{ fill:var(--pink); stroke:#e56b8c; }
+  #garland .heart.pop{ animation:heartPop .55s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes heartPop{ 0%{ transform:scale(.4);} 55%{ transform:scale(1.5) rotate(-8deg);} 100%{ transform:scale(1);} }
+
+  /* ---------- target card (Find mode) ---------- */
+  #targetCard{ position:relative; z-index:8; margin:8px auto 0; width:fit-content; max-width:calc(100vw - 20px); display:none; align-items:center; gap:11px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; padding:7px 14px 7px 10px; box-shadow:0 5px 0 rgba(23,50,79,.15),0 12px 24px rgba(23,50,79,.14); }
+  #targetSound{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:34px; line-height:.95; color:#e56b8c; min-width:86px; height:56px; display:grid; place-items:center; background:#fff0f4; border-radius:15px; border:3px dashed var(--pink); flex:0 0 auto; padding:0 8px; }
+  #targetCard.new-target #targetSound{ animation:letterIn .55s cubic-bezier(.34,1.7,.5,1); }
+  @keyframes letterIn{ 0%{transform:scale(.3) rotate(-14deg)} 100%{transform:scale(1) rotate(0)} }
+  .tc-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; line-height:1.15; }
+  #hearBtn{ flex:0 0 auto; width:46px; height:46px; border-radius:50%; border:3px solid var(--pink); background:#fff0f4; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(23,50,79,.15); transition:transform .12s; }
+  #hearBtn:active{ transform:scale(.88); }
+  #hearBtn svg{ width:23px; height:23px; }
+
+  /* ---------- meadow scene ---------- */
+  #scene{ position:relative; z-index:3; flex:1 1 auto; min-height:0; }
+  #bigFriend{ position:absolute; z-index:4; left:50%; top:44%; transform:translate(-50%,-50%); border:none; background:none; padding:0; cursor:pointer; text-align:center; }
+  #bigFriend .patch{ width:clamp(168px,48vw,230px); height:clamp(168px,48vw,230px); border-radius:50%; display:grid; place-items:center; border:4px solid #fff; box-shadow:0 10px 24px rgba(23,50,79,.22), inset 0 -14px 0 rgba(0,0,0,.06); margin:0 auto; animation:friendBob 2.6s ease-in-out infinite alternate; }
+  @keyframes friendBob{ from{ transform:translateY(0);} to{ transform:translateY(-8px);} }
+  #bigFriend .face{ font-size:clamp(96px,27vw,132px); line-height:1; display:block; filter:drop-shadow(0 6px 8px rgba(23,50,79,.2)); }
+  #bigFriend.met .patch{ animation:friendDance .5s ease-in-out 3; }
+  @keyframes friendDance{ 0%,100%{ transform:rotate(0) translateY(0);} 25%{ transform:rotate(-7deg) translateY(-14px);} 75%{ transform:rotate(7deg) translateY(-6px);} }
+  #bigFriend .nameplate{ display:inline-block; margin-top:10px; background:var(--paper); border:3px solid #fff; border-radius:999px; padding:4px 18px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(18px,5vw,23px); box-shadow:0 4px 10px rgba(23,50,79,.2); }
+  #bigFriend:active .patch{ transform:scale(.95); }
+  .find-friend{ position:absolute; z-index:4; border:none; background:none; padding:0; cursor:pointer; text-align:center; width:clamp(96px,26vw,128px); }
+  .find-friend .patch{ width:100%; aspect-ratio:1; border-radius:50%; display:grid; place-items:center; border:4px solid #fff; box-shadow:0 8px 18px rgba(23,50,79,.2), inset 0 -10px 0 rgba(0,0,0,.06); animation:friendBob 2.8s ease-in-out infinite alternate; }
+  .find-friend .face{ font-size:clamp(52px,14.5vw,72px); line-height:1; display:block; }
+  .find-friend .nameplate{ display:inline-block; margin-top:5px; background:rgba(255,253,246,.95); border:2px solid #fff; border-radius:999px; padding:1px 10px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:13px; box-shadow:0 3px 8px rgba(23,50,79,.18); }
+  .find-friend:active .patch{ transform:scale(.93); }
+  .find-friend.wiggle .patch{ animation:wiggle .45s ease-in-out 2; }
+  @keyframes wiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-8deg);} 75%{ transform:rotate(8deg);} }
+  .find-friend.met .patch{ animation:friendDance .5s ease-in-out 3; }
+  #nextBtn{ position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%); border:3px solid #fff; background:var(--leaf); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:11px 28px; border-radius:999px; cursor:pointer; box-shadow:0 5px 0 #3da347,0 12px 22px rgba(87,204,98,.35); display:none; white-space:nowrap; animation:playPulse 1.4s ease-in-out infinite; }
+  #nextBtn.show{ display:block; }
+  #nextBtn:active{ transform:translateX(-50%) translateY(3px); }
+  .heart-particle{ position:absolute; z-index:9; pointer-events:none; font-size:20px; }
+  #miniRow{ position:absolute; z-index:5; left:0; right:0; bottom:6px; display:none; justify-content:center; gap:6px; flex-wrap:wrap; padding:0 8px; }
+  #miniRow.show{ display:flex; }
+  .mini{ width:44px; height:44px; border-radius:50%; border:3px solid #fff; display:grid; place-items:center; font-size:24px; cursor:pointer; box-shadow:0 3px 8px rgba(23,50,79,.2); opacity:.45; filter:grayscale(.6); transition:opacity .3s,filter .3s,transform .15s; padding:0; }
+  .mini:active{ transform:scale(.9); }
+  .mini.met{ opacity:1; filter:none; }
+  .parade-friend{ position:absolute; z-index:6; font-size:52px; pointer-events:none; filter:drop-shadow(0 5px 6px rgba(23,50,79,.25)); }
+
+  /* ---------- ground row: Hoot ---------- */
+  #groundRow{ position:relative; z-index:5; display:flex; align-items:flex-end; justify-content:flex-start; gap:6px; padding:0 8px max(6px,env(safe-area-inset-bottom)); }
+  #hootZone{ display:flex; align-items:flex-end; gap:7px; min-width:0; }
+  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(112px,29vw,178px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
+  #hootFig svg{ width:100%; display:block; overflow:visible; }
+  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(-1.1deg);} 50%{ transform:translateY(-6px) rotate(1.1deg);} }
+  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
+  @keyframes hootJump{ 0%{transform:translateY(0) scale(1,1)} 35%{transform:translateY(-26px) scale(.96,1.05) rotate(-4deg)} 70%{transform:translateY(0) scale(1.06,.92)} 100%{transform:translateY(0) scale(1,1)} }
+  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
+  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
+  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ 0%{ transform:translateY(0) scale(1,1);} 100%{ transform:translateY(-4px) scale(1.03,.97);} }
+  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
+  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
+  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
+  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
+  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
+  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
+  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
+  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
+  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
+  @keyframes blink{ 0%,91%,100%{ transform:scaleY(1);} 94%,96%{ transform:scaleY(.08);} }
+  #bubbleCol{ display:flex; flex-direction:column; align-items:flex-start; gap:5px; margin-bottom:26px; min-width:0; }
+  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:18px; box-shadow:0 5px 0 rgba(23,50,79,.13),0 12px 24px rgba(23,50,79,.16); padding:9px 13px; font-weight:800; font-size:clamp(14.5px,4vw,18.5px); line-height:1.3; max-width:min(52vw,320px); }
+  #bubble:after{ content:""; position:absolute; left:-8px; bottom:16px; width:15px; height:15px; background:var(--paper); transform:rotate(45deg); }
+  #bubble .b-big{ color:#e56b8c; font-family:"Fredoka",sans-serif; }
+  #hootName{ background:#e56b8c; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.06em; padding:3px 11px; border-radius:999px; border:2px solid #fff; box-shadow:0 3px 8px rgba(23,50,79,.2); }
+
+  /* ---------- start panel ---------- */
+  #startPanel{ position:absolute; z-index:10; left:50%; top:44%; transform:translate(-50%,-50%); width:min(92vw,430px); background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:18px 20px 16px; text-align:center; }
+  #startPanel[hidden]{ display:none; }
+  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0; color:var(--ink); }
+  #startPanel h1 .t-an{ color:#3da347; } #startPanel h1 .t-fr{ color:#e56b8c; }
+  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.4; margin:8px 0 0; }
+  .mode-row{ display:flex; gap:9px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  .mode-chip{ border:3px solid #d9ecd2; background:#fff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:16px; padding:10px 16px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .mode-chip:active{ transform:scale(.94); }
+  .mode-chip.selected{ background:var(--sun); border-color:#fff; box-shadow:0 4px 0 rgba(23,50,79,.16); }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
+  #playBtn{ margin-top:16px; border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; padding:14px 44px; border-radius:999px; cursor:pointer; box-shadow:0 7px 0 #d84a3f,0 16px 30px rgba(255,107,94,.4); transition:transform .12s; animation:playPulse 1.6s ease-in-out infinite; }
+  #playBtn:active{ transform:translateY(4px); box-shadow:0 3px 0 #d84a3f; }
+  @keyframes playPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.05);} }
+
+  /* ---------- win overlay ---------- */
+  #winOverlay{ position:absolute; inset:0; z-index:11; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
+  #winOverlay[hidden]{ display:none; }
+  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 14px 40px rgba(23,50,79,.35); padding:18px 20px 16px; text-align:center; width:min(92vw,440px); max-height:100%; overflow:hidden; animation:winIn .5s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes winIn{ from{ transform:scale(.7) translateY(30px); opacity:0;} to{ transform:scale(1) translateY(0); opacity:1;} }
+  #winHearts{ font-size:25px; letter-spacing:3px; color:#f3d3de; }
+  #winHearts .lit{ color:var(--pink); text-shadow:0 2px 0 #e56b8c; }
+  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:6px 0 0; }
+  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:16px; line-height:1.45; margin:8px 0 0; }
+  #winFaces{ display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin-top:11px; font-size:30px; }
+  .win-btns{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .win-btn{ border:3px solid #fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:12px 26px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .win-btn:active{ transform:translateY(3px); }
+  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 6px 0 #3da347,0 12px 24px rgba(87,204,98,.35); }
+  #winHomeBtn{ background:#fff; color:var(--ink); border-color:#d9ecd2; box-shadow:0 5px 0 rgba(23,50,79,.14); }
+  .confetti{ position:absolute; z-index:12; width:11px; height:15px; border-radius:3px; pointer-events:none; }
+
+  @media (max-width:430px){
+    #bubble{ font-size:13.5px; padding:8px 10px; }
+    #garland .g-label{ display:none; }
+  }
+  @media (max-height:560px){
+    #hootFig{ width:clamp(80px,24vh,104px); }
+    #bigFriend .patch{ width:clamp(104px,30vh,140px); height:clamp(104px,30vh,140px); }
+    #bigFriend .face{ font-size:clamp(56px,17vh,76px); }
+    #bigFriend{ top:40%; }
+    #targetSound{ height:42px; font-size:26px; min-width:70px; }
+    #targetCard{ margin-top:4px; padding:5px 10px 5px 7px; }
+    #hearBtn{ width:38px; height:38px; }
+    #hud{ padding-top:6px; } .round-btn{ width:42px; height:42px; }
+    #starBank{ font-size:18px; padding:4px 12px 4px 8px; }
+    #garland{ margin-top:4px; padding:3px 10px 4px; } #garland .heart{ width:19px; height:19px; }
+    #bubble{ margin-bottom:0; font-size:12.5px; max-width:36vw; padding:7px 10px; }
+    #bubbleCol{ margin-bottom:8px; }
+    #sun{ width:56px; height:56px; top:48px; }
+    #barn{ top:30%; width:96px; }
+    #startPanel{ top:50%; padding:12px 16px 10px; }
+    #playBtn{ font-size:20px; padding:10px 34px; margin-top:10px; }
+    .find-friend{ width:clamp(64px,17vh,84px); } .find-friend .face{ font-size:clamp(36px,10vh,48px); }
+    .mini{ width:36px; height:36px; font-size:19px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cloud,#hootFig,.flower,#sun .rays,.bfly{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- living farmyard -->
+  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.6" fill="#17324f"/><circle cx="59" cy="46" r="3.6" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/><circle cx="65" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/></svg>
+  </button>
+  <button class="decor cloud" type="button" style="top:10%;animation-duration:80s;animation-delay:-34s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <button class="decor cloud" type="button" style="top:22%;animation-duration:105s;animation-delay:-72s;width:82px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <svg id="barn" viewBox="0 0 170 130" aria-hidden="true"><path d="M10 130 V60 L85 15 L160 60 V130 Z" fill="#e0574a"/><path d="M85 15 L160 60 H10 Z" fill="#b03a30"/><rect x="62" y="76" width="46" height="54" fill="#fff" stroke="#b03a30" stroke-width="4"/><path d="M62 76 L108 130 M108 76 L62 130" stroke="#b03a30" stroke-width="4"/><rect x="66" y="34" width="38" height="30" fill="#fff" stroke="#b03a30" stroke-width="4"/><path d="M85 34 V64 M66 49 H104" stroke="#b03a30" stroke-width="3.4"/></svg>
+  <svg id="fence" viewBox="0 0 400 30" preserveAspectRatio="none" aria-hidden="true"><g fill="#c98d4e"><rect x="0" y="7" width="400" height="6"/><rect x="0" y="19" width="400" height="6"/><rect x="14" y="2" width="9" height="28" rx="3"/><rect x="104" y="2" width="9" height="28" rx="3"/><rect x="194" y="2" width="9" height="28" rx="3"/><rect x="284" y="2" width="9" height="28" rx="3"/><rect x="374" y="2" width="9" height="28" rx="3"/></g></svg>
+  <button class="decor bfly" type="button" style="left:20%;top:34%" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><ellipse cx="20" cy="17" rx="2.6" ry="8" fill="#17324f"/></svg></button>
+  <button class="decor bfly" type="button" style="right:16%;top:52%;animation-delay:-3.5s" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#7fd4ff"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#aee7ff"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#7fd4ff"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#aee7ff"/></g><ellipse cx="20" cy="17" rx="2.6" ry="8" fill="#17324f"/></svg></button>
+  <button class="decor flower" type="button" style="left:8%;bottom:24%" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q20 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 44 Q12 42 10 34 Q19 34 22 40Z" fill="#57cc62"/><g fill="#ff8fab"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ffc93c"/></svg></button>
+  <button class="decor flower" type="button" style="right:7%;bottom:30%;animation-delay:-1.6s" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q24 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 46 Q32 44 34 36 Q25 36 22 42Z" fill="#57cc62"/><g fill="#ffd93b"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ff9f1c"/></svg></button>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <!-- friendship garland -->
+  <div id="garland" aria-label="Friendship Garland — one heart for every friend you meet">
+    <span class="g-label">Friendship Garland</span>
+  </div>
+
+  <!-- target card (Find mode) -->
+  <div id="targetCard">
+    <div id="targetSound">MOO!</div>
+    <div>
+      <div class="tc-label">Find the friend who says…</div>
+    </div>
+    <button id="hearBtn" type="button" aria-label="Hear the clue again">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <!-- meadow -->
+  <div id="scene">
+    <button id="bigFriend" type="button" aria-label="The animal friend — tap to meet it">
+      <span class="patch" id="bigPatch"><span class="face" id="bigFace">🐮</span></span>
+      <span class="nameplate" id="bigName">Daisy the Cow</span>
+    </button>
+    <div id="findLayer"></div>
+    <button id="nextBtn" type="button">Next Friend ➜</button>
+    <div id="miniRow" aria-label="Friends you have met — tap one to visit it again"></div>
+  </div>
+
+  <!-- Hoot -->
+  <div id="groundRow">
+    <div id="hootZone">
+      <button id="hootFig" type="button" aria-label="Hoot — tap to hear him again">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div id="bubbleCol">
+        <div id="bubble">Hi! I&rsquo;m Hoot! Tap <span class="b-big">Play</span> and come meet my animal friends!</div>
+        <span id="hootName">HOOT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- start panel -->
+  <div id="startPanel">
+    <h1><span class="t-an">Animal</span> <span class="t-fr">Friends</span></h1>
+    <p>Hoot introduces every friend — tap them to say hello, learn their sounds, and fill the Friendship Garland with hearts!</p>
+    <div class="mode-row" role="group" aria-label="Choose how to play">
+      <button class="mode-chip selected" id="modeMeet" type="button">Meet the Friends<small>Hoot introduces — you say hello!</small></button>
+      <button class="mode-chip" id="modeFind" type="button">Who Says That?<small>Find the friend by its sound!</small></button>
+    </div>
+    <button id="playBtn" type="button">▶ Play</button>
+  </div>
+
+  <!-- win overlay -->
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div id="winHearts" aria-hidden="true"><span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span></div>
+      <h2 id="winTitle">Friendship Party!</h2>
+      <p id="winRecap"></p>
+      <div id="winFaces"></div>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ================= DATA ================= */
+  var ANIMALS = [
+    { id:"dog",   name:"Buddy",   species:"Dog",   face:"\uD83D\uDC36", color:"#FFE0B2", say:"WOOF!",   fact:"A dog&rsquo;s nose can smell things people cannot smell at all!" },
+    { id:"cat",   name:"Mittens", species:"Cat",   face:"\uD83D\uDC31", color:"#FCE4EC", say:"MEOW!",   fact:"Cats sleep a lot — a cat can nap for 12 to 16 hours a day!" },
+    { id:"cow",   name:"Daisy",   species:"Cow",   face:"\uD83D\uDC2E", color:"#E8F5E9", say:"MOO!",    fact:"Cows have best friends, and they love to stay close to them!" },
+    { id:"pig",   name:"Rosie",   species:"Pig",   face:"\uD83D\uDC37", color:"#FCE4EC", say:"OINK!",   fact:"Pigs are very clever, and they love a cool mud bath on a hot day!" },
+    { id:"duck",  name:"Waddles", species:"Duck",  face:"\uD83E\uDD86", color:"#FFF8E1", say:"QUACK!",  fact:"Ducklings follow their mother in a neat little line!" },
+    { id:"frog",  name:"Puddles", species:"Frog",  face:"\uD83D\uDC38", color:"#E0F2D8", say:"RIBBIT!", fact:"A tiny tadpole grows legs and turns into a frog!" },
+    { id:"bunny", name:"Clover",  species:"Bunny", face:"\uD83D\uDC30", color:"#F1F1F1", say:"WIGGLE!", fact:"Bunnies are quiet friends — they say hello by wiggling their noses!" },
+    { id:"sheep", name:"Woolly",  species:"Sheep", face:"\uD83D\uDC11", color:"#EFEBE9", say:"BAA!",    fact:"Sheep have woolly coats that keep them warm and cozy!" }
+  ];
+  var BY_ID = {}; ANIMALS.forEach(function(a){ BY_ID[a.id]=a; });
+  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var GOAL = ANIMALS.length;
+
+  /* ================= STATE ================= */
+  var state = "start";           /* start | meet | meet-done | find | won */
+  var mode = "meet";             /* meet | find */
+  var meetOrder = [], meetIdx = 0, current = null;
+  var findOrder = [], findIdx = 0, findTarget = null, findPresent = [];
+  var metIds = {};               /* id -> true once befriended (either mode) */
+  var hearts = 0, stars = 0;
+  var inputLock = false, wonRound = false, dead = false;
+  var soundOn = true, praiseIdx = 0, advanceTimer = null;
+
+  /* ================= ELMS ================= */
+  function $(id){ return document.getElementById(id); }
+  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
+      starCount=$("starCount"), starBank=$("starBank"), garland=$("garland"),
+      targetCard=$("targetCard"), targetSound=$("targetSound"),
+      bigFriend=$("bigFriend"), bigPatch=$("bigPatch"), bigFace=$("bigFace"), bigName=$("bigName"),
+      findLayer=$("findLayer"), nextBtn=$("nextBtn"), miniRow=$("miniRow"),
+      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"),
+      winFaces=$("winFaces"), winTitle=$("winTitle"), winHearts=$("winHearts");
+  var heartEls = [];
+  (function buildGarland(){
+    for(var i=0;i<GOAL;i++){
+      var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
+      s.setAttribute("viewBox","0 0 24 24"); s.setAttribute("class","heart"); s.setAttribute("aria-hidden","true");
+      s.innerHTML="<path d='M12 21 C6 16.5 2.5 12.6 2.5 8.6 C2.5 5.4 5 3 8 3 C9.9 3 11.4 3.9 12 5.2 C12.6 3.9 14.1 3 16 3 C19 3 21.5 5.4 21.5 8.6 C21.5 12.6 18 16.5 12 21 Z'/>";
+      garland.appendChild(s); heartEls.push(s);
+    }
+  })();
+
+  /* ================= SOUND FX (WebAudio tones) ================= */
+  var AC=null;
+  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+  function tone(f0,f1,dur,type,vol,delay){
+    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
+    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  }
+  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.1); tone(1560,1560,0.12,"sine",0.1,0.07); }
+  function popSound(){ tone(520,140,0.14,"square",0.12); tone(880,220,0.1,"triangle",0.08); }
+  /* Playful synthesized animal sounds — no recordings exist for these. */
+  function animalSound(id){
+    if(!soundOn) return;
+    if(id==="dog"){ tone(170,110,0.11,"square",0.16); tone(170,110,0.11,"square",0.16,0.16); }
+    else if(id==="cat"){ tone(620,940,0.16,"sine",0.15); tone(940,480,0.2,"sine",0.15,0.15); }
+    else if(id==="cow"){ tone(150,85,0.5,"sawtooth",0.13); }
+    else if(id==="pig"){ tone(300,190,0.09,"square",0.15); tone(300,190,0.09,"square",0.15,0.13); }
+    else if(id==="duck"){ tone(300,160,0.12,"sawtooth",0.13); tone(300,160,0.12,"sawtooth",0.13,0.16); }
+    else if(id==="frog"){ tone(130,90,0.09,"square",0.14); tone(130,90,0.09,"square",0.14,0.12); tone(130,90,0.12,"square",0.14,0.24); }
+    else if(id==="bunny"){ tone(1250,1500,0.05,"sine",0.07); tone(1250,1500,0.05,"sine",0.07,0.09); tone(1250,1500,0.05,"sine",0.07,0.18); }
+    else if(id==="sheep"){ tone(420,380,0.1,"sawtooth",0.1); tone(420,380,0.1,"sawtooth",0.1,0.11); tone(420,360,0.16,"sawtooth",0.1,0.22); }
+  }
+
+  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+     Every clip goes through this single queue on a single Audio element.
+     A line that has started always finishes: the next clip is only loaded
+     from the 'ended' event, never from a timer, and pending (not yet
+     started) lines can be replaced when the game moves on. The hub's
+     injected voice governor arbitrates this element against every other
+     voice in the app the same way. No device text-to-speech anywhere.
+     Animal names and facts have no recorded clips, so they live in Hoot's
+     bubble while the recorded praise/hint clips carry his voice. */
+  var VBASE="assets/voice/";
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl=new Audio(); voiceEl.preload="auto";
+      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("error",vNext);
+    }
+    return voiceEl;
+  }
+  function hubQuiet(){
+    try{
+      var d=window.parent&&window.parent.document;
+      if(!d||d===document) return false;
+      var b=d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+    }catch(e){ return false; }
+  }
+  function silenced(){ return !soundOn||hubQuiet(); }
+  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying||dead) return;
+    var item=vQueue.shift(); if(!item) return;
+    if(item.onStart){ try{ item.onStart(); }catch(e){} }
+    if(silenced()){ pumpVoice(); return; }
+    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
+    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    var p=el.play();
+    if(p&&p.catch) p.catch(function(){ vNext(); });
+  }
+  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
+    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    pumpVoice();
+  }
+  function clearPending(){ vQueue.length=0; }
+  function enqueueFindCallout(a,full){
+    var playing=vCurrent&&vCurrent.kind==="callout"&&vCurrent.target===a.id;
+    var pending=vQueue.some(function(q){ return q.kind==="callout"&&q.target===a.id; });
+    if(playing||pending) return;
+    enqueue("find-friends-"+a.id+".mp3","callout",a.id,function(){
+      if(a.id==="bunny") say(full?"Who&rsquo;s hiding a wiggle? Find the friend who says <span class='b-big'>hello with a nose WIGGLE</span> — shhh, no sound!":"Find the friend who says <span class='b-big'>hello with a nose WIGGLE</span>!");
+      else if(full) say("Find the friend who says <span class='b-big'>"+a.say+"</span> Listen with your ears, then tap that friend!");
+      else say("Find the friend who says <span class='b-big'>"+a.say+"</span>");
+      targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    });
+  }
+
+  /* ================= HOOT'S FACE / WORDS ================= */
+  function say(html){ bubble.innerHTML=html; }
+  function hootReact(cls,ms){
+    hootFig.classList.remove("celebrate","shake");
+    void hootFig.offsetWidth;
+    hootFig.classList.add(cls);
+    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  }
+
+  /* ================= HELPERS ================= */
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function listWords(arr){
+    if(arr.length<=1) return arr.join("");
+    return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1];
+  }
+  function heartsBurst(el){
+    var sr=stage.getBoundingClientRect(), r=el.getBoundingClientRect();
+    var cx=r.left-sr.left+r.width/2, cy=r.top-sr.top+r.height/2;
+    for(var i=0;i<6;i++){
+      var h=document.createElement("span"); h.className="heart-particle"; h.textContent="💗";
+      h.style.left=cx+"px"; h.style.top=cy+"px"; stage.appendChild(h);
+      var dx=(Math.random()-0.5)*130, dy=-(40+Math.random()*70);
+      if(h.animate) h.animate([
+        {transform:"translate(-50%,-50%) scale(.5)",opacity:1},
+        {transform:"translate(calc(-50% + "+dx+"px),"+dy+"px) scale(1.15)",opacity:0}
+      ],{duration:800+Math.random()*300,easing:"cubic-bezier(.2,.7,.3,1)"});
+      (function(e2){ setTimeout(function(){ e2.remove(); },1200); })(h);
+    }
+  }
+  function confetti(n){
+    var sr=stage.getBoundingClientRect();
+    var colors=["#ff6b5e","#ffc93c","#57cc62","#ff8fab","#4aa8e0","#c39bff"];
+    for(var i=0;i<(n||26);i++){
+      var c=document.createElement("div"); c.className="confetti";
+      c.style.background=colors[i%colors.length];
+      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
+      stage.appendChild(c);
+      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      if(c.animate) c.animate([
+        {transform:"translate(0,0) rotate(0deg)",opacity:1},
+        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
+      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+    }
+  }
+
+  /* ================= HUD / GARLAND ================= */
+  function updateHUD(){ starCount.textContent=stars; }
+  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
+  function fillHeart(){
+    if(hearts>=GOAL) return;
+    var h=heartEls[hearts]; hearts++;
+    if(h){ h.classList.add("full","pop"); setTimeout(function(){ h.classList.remove("pop"); },600); }
+    sparkleSound();
+  }
+  function buildMiniRow(){
+    miniRow.innerHTML="";
+    ANIMALS.forEach(function(a){
+      var b=document.createElement("button"); b.type="button"; b.className="mini"+(metIds[a.id]?" met":"");
+      b.style.background=a.color; b.textContent=a.face; b.dataset.id=a.id;
+      b.setAttribute("aria-label", metIds[a.id] ? ("Visit "+a.name+" the "+a.species+" again") : (a.species+" — not met yet"));
+      b.addEventListener("click",function(){ visitMini(a,b); });
+      miniRow.appendChild(b);
+    });
+  }
+  function refreshMiniRow(){
+    Array.prototype.forEach.call(miniRow.children,function(m){ m.classList.toggle("met",!!metIds[m.dataset.id]); });
+  }
+  function befriend(a){
+    if(metIds[a.id]) return false;
+    metIds[a.id]=true; fillHeart(); stars++; bumpStars(); updateHUD(); refreshMiniRow();
+    return true;
+  }
+
+  /* ================= MEET MODE ================= */
+  function presentFriend(a){
+    current=a;
+    bigFace.textContent=a.face;
+    bigPatch.style.background=a.color;
+    bigName.textContent=a.name+" the "+a.species;
+    bigFriend.classList.remove("met");
+    bigFriend.style.display="block";
+    state="meet";
+    if(a.id==="bunny") say("This is <span class='b-big'>"+a.name+" the "+a.species+"</span>! Bunnies are quiet — she says hello by wiggling her nose! Tap "+a.name+" to say hello!");
+    else say("This is <span class='b-big'>"+a.name+" the "+a.species+"</span>! "+a.name+" says <span class='b-big'>"+a.say+"</span> Tap "+a.name+" to say hello!");
+    try{ var _sp=String(a.species).toLowerCase(), _sd=String(a.say||"").toLowerCase().replace(/[^a-z]/g,""); enqueue("word-"+(_sp==="bunny"?"bunny":_sp)+".mp3","name",a.id,null); if(/^(woof|meow|moo|oink|quack|ribbit|baa)$/.test(_sd)) enqueue("sound-"+_sd+".mp3","name",a.id,null); }catch(_e){} /* 3e51: says the animal and its sound */
+  }
+  function onBigFriendTap(){
+    if(dead||inputLock) return;
+    audio();
+    if(state==="meet"&&current){
+      inputLock=true;
+      var a=current;
+      animalSound(a.id);
+      bigFriend.classList.add("met");
+      heartsBurst(bigPatch);
+      hootReact("celebrate",1500);
+      var newFriend=befriend(a);
+      say("<span class='b-big'>"+a.name+"!</span> "+(a.id==="bunny"?"Wiggle wiggle — that&rsquo;s bunny for hello!":a.say+" "+a.say)+" "+a.fact);
+      clearPending();
+      praiseIdx++;
+      enqueue(PRAISE[praiseIdx%PRAISE.length],"praise",a.id,null);
+      state="meet-done";
+      nextBtn.textContent = hearts>=GOAL ? "Friendship Parade! 🎉" : "Next Friend ➜";
+      setTimeout(function(){ if(!dead&&state==="meet-done"){ nextBtn.classList.add("show"); armMeetTimer(); } inputLock=false; },650);
+    } else if(state==="meet-done"&&current){
+      /* re-tap: hear the sound and fact again — never another heart */
+      animalSound(current.id);
+      bigFriend.classList.remove("met"); void bigFriend.offsetWidth; bigFriend.classList.add("met");
+      say("<span class='b-big'>"+current.name+"!</span> "+(current.id==="bunny"?"Wiggle wiggle!":current.say+" "+current.say)+" "+current.fact);
+      armMeetTimer();
+    }
+  }
+  bigFriend.addEventListener("click",onBigFriendTap);
+  function __hwAuto(ok,go,pause){var t0=Date.now(),q=0;function w(){if(dead||!ok())return;var now=Date.now(),b=vPlaying||vQueue.length;if(b&&now-t0<12000){q=0;setTimeout(w,200);return;}if(!q)q=now;if(now-q>=pause||now-t0>=12000){go();return;}setTimeout(w,200);}setTimeout(w,300);}
+  function visitMini(a){
+    if(mode!=="meet"||state==="start"||state==="won"||dead) return;
+    audio();
+    if(!metIds[a.id]){ tone(300,200,0.12,"sine",0.08); say("We haven&rsquo;t met the <span class='b-big'>"+a.species+"</span> yet — keep going, friend by friend!"); return; }
+    current=a; presentFriend(a); state="meet-done";
+    animalSound(a.id);
+    bigFriend.classList.add("met");
+    say("<span class='b-big'>"+a.name+"!</span> "+(a.id==="bunny"?"Wiggle wiggle!":a.say+" "+a.say)+" "+a.fact);
+    nextBtn.textContent = hearts>=GOAL ? "Friendship Parade! 🎉" : "Next Friend ➜";
+    nextBtn.classList.add("show");
+    armMeetTimer();
+  }
+  function advanceFriend(){
+    if(advanceTimer){ clearTimeout(advanceTimer); advanceTimer=null; }
+    nextBtn.classList.remove("show");
+    if(hearts>=GOAL){ parade(); return; }
+    if(mode==="meet"){
+      meetIdx++;
+      while(meetIdx<meetOrder.length && metIds[meetOrder[meetIdx].id]) meetIdx++;
+      if(meetIdx>=meetOrder.length){ parade(); return; }
+      presentFriend(meetOrder[meetIdx]);
+    }
+  }
+  function armMeetTimer(){
+    if(advanceTimer) clearTimeout(advanceTimer);
+    advanceTimer=setTimeout(function(){
+      if(!dead&&state==="meet-done") advanceFriend();
+    },3000);
+  }
+  nextBtn.addEventListener("click",function(){
+    audio(); tone(740,740,0.1,"triangle",0.12);
+    advanceFriend();
+  });
+
+  /* ================= FIND MODE ================= */
+  var FIND_SPOTS=[ {left:"5%",top:"7%"}, {left:"56%",top:"5%"}, {left:"12%",top:"48%"}, {left:"62%",top:"46%"} ];
+  function presentFindRound(){
+    findTarget=findOrder[findIdx];
+    targetSound.textContent=findTarget.say;
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    var others=shuffle(ANIMALS.filter(function(a){ return a.id!==findTarget.id; })).slice(0,3);
+    findPresent=shuffle([findTarget].concat(others));
+    findLayer.innerHTML="";
+    findPresent.forEach(function(a,i){
+      var b=document.createElement("button"); b.type="button"; b.className="find-friend";
+      b.style.left=FIND_SPOTS[i].left; b.style.top=FIND_SPOTS[i].top;
+      b.dataset.id=a.id;
+      b.setAttribute("aria-label",a.name+" the "+a.species);
+      b.innerHTML="<span class='patch' style='background:"+a.color+"'><span class='face'>"+a.face+"</span></span><span class='nameplate'>"+a.name+"</span>";
+      b.addEventListener("click",function(){ onFindTap(b,a); });
+      findLayer.appendChild(b);
+    });
+    state="find";
+    if(findTarget.id==="bunny") say("Who&rsquo;s hiding a wiggle? Find the friend who says <span class='b-big'>hello with a nose WIGGLE</span> — shhh, no sound!");
+    else say("Find the friend who says <span class='b-big'>"+findTarget.say+"</span> Listen with your ears, then tap that friend!");
+    enqueueFindCallout(findTarget,true);
+  }
+  function onFindTap(b,a){
+    if(state!=="find"||inputLock||dead) return;
+    if(b.dataset.done) return;
+    audio();
+    if(a.id===findTarget.id){
+      inputLock=true; b.dataset.done="1";
+      animalSound(a.id);
+      b.classList.add("met");
+      heartsBurst(b);
+      hootReact("celebrate",1500);
+      befriend(a);
+      say("<span class='b-big'>YES!</span> That&rsquo;s "+a.name+" the "+a.species+" — "+(a.id==="bunny"?"wiggle wiggle!":a.say+" "+a.say)+" "+a.fact);
+      clearPending();
+      praiseIdx++;
+      enqueue(PRAISE[praiseIdx%PRAISE.length],"praise",a.id,null);
+      if(advanceTimer) clearTimeout(advanceTimer);
+      advanceTimer=setTimeout(function(){
+        if(dead||state!=="find") return;
+        inputLock=false;
+        if(hearts>=GOAL){ parade(); return; }
+        findIdx++;
+        while(findIdx<findOrder.length && metIds[findOrder[findIdx].id] && findOrder[findIdx].id!==findTarget.id) findIdx++;
+        if(findIdx>=findOrder.length){ parade(); return; }
+        presentFindRound();
+      },1700);
+    } else {
+      b.classList.remove("wiggle"); void b.offsetWidth; b.classList.add("wiggle");
+      animalSound(a.id);
+      hootReact("shake",1000);
+      say("That&rsquo;s "+a.name+" the "+a.species+" — "+(a.id==="bunny"?"she wiggles her nose!":"says "+a.say)+" We need the friend who says <span class='b-big'>"+findTarget.say+"</span>!");
+      var hintPlaying=vCurrent&&vCurrent.kind==="hint";
+      var hintPending=vQueue.some(function(q){ return q.kind==="hint"; });
+      if(!hintPlaying&&!hintPending){
+        enqueue("hoot-try-again.mp3","hint",findTarget.id,null);
+        enqueueFindCallout(findTarget);
+      }
+    }
+  }
+
+  /* ================= PARADE + WIN ================= */
+  function parade(){
+    if(wonRound) return; wonRound=true; state="won";
+    targetCard.style.display="none";
+    bigFriend.style.display="none";
+    findLayer.innerHTML="";
+    nextBtn.classList.remove("show");
+    miniRow.classList.remove("show");
+    var sr=scene.getBoundingClientRect();
+    ANIMALS.forEach(function(a,i){
+      var s=document.createElement("span"); s.className="parade-friend"; s.textContent=a.face;
+      s.style.left="-70px"; s.style.top=(sr.height*0.32+((i%3)-1)*36)+"px";
+      scene.appendChild(s);
+      if(s.animate){
+        s.animate([
+          {transform:"translate(0,0)"},
+          {transform:"translate("+(sr.width*0.5+70)+"px,-16px)",offset:0.5},
+          {transform:"translate("+(sr.width+140)+"px,0)"}
+        ],{duration:3400,easing:"linear",delay:i*260});
+      }
+      (function(el){ setTimeout(function(){ el.remove(); },3600+i*260); })(s);
+    });
+    hootReact("celebrate",2200);
+    var names=ANIMALS.map(function(a){ return a.name; });
+    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
+    enqueue("hoot-you-learned.mp3","recap","",function(){
+      say("The Friendship Garland is FULL! You are friends with <span class='b-big'>everyone</span>!");
+    });
+    winTitle.textContent="Friendship Party!";
+    winRecap.innerHTML="The garland is full of hearts! You made friends with <b>"+listWords(names)+"</b> — and learned every friend&rsquo;s sound!";
+    winFaces.textContent=ANIMALS.map(function(a){ return a.face; }).join(" ");
+    var heartEls2=winHearts.children;
+    for(var i=0;i<heartEls2.length;i++){
+      heartEls2[i].classList.remove("lit");
+      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(heartEls2[i],200+i*150);
+    }
+    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(32); sparkleSound(); } },1900);
+  }
+
+  /* ================= FLOW ================= */
+  function startRound(){
+    clearPending();
+    if(advanceTimer){ clearTimeout(advanceTimer); advanceTimer=null; }
+    metIds={}; hearts=0; stars=0; wonRound=false; inputLock=false;
+    heartEls.forEach(function(h){ h.classList.remove("full"); });
+    winOverlay.hidden=true; startPanel.hidden=true;
+    findLayer.innerHTML="";
+    buildMiniRow(); refreshMiniRow();
+    updateHUD();
+    if(mode==="meet"){
+      targetCard.style.display="none";
+      bigFriend.style.display="block";
+      miniRow.classList.add("show");
+      meetOrder=shuffle(ANIMALS.slice()); meetIdx=0;
+      enqueue("hoot-game-hello.mp3","hello","",null);
+      presentFriend(meetOrder[0]);
+    } else {
+      bigFriend.style.display="none";
+      miniRow.classList.remove("show");
+      findOrder=shuffle(ANIMALS.filter(function(a){var P={};try{P=window.parent||{};}catch(e){}var H=P.HOOT_HAVE||{},S={dog:"woof",cat:"meow",cow:"moo",pig:"oink",duck:"quack",frog:"ribbit",sheep:"baa"},HAVE={woof:1,moo:1,quack:1,meow:1,oink:1,ribbit:1,baa:1};var s=S[a.id];return !!s&&(HAVE[s]||H["ask-who-says-"+s]);})); if(findOrder.length<2) findOrder=shuffle(ANIMALS.filter(function(a){return a.id!=="bunny";})); findIdx=0; /* 3e44: only animals Hoot can ask about out loud */
+      enqueue("hoot-game-hello.mp3","hello","",function(){ say("Listen closely! Hoot will call a sound — find the friend who says it!"); });
+      presentFindRound();
+    }
+  }
+  function resetToStart(){
+    clearPending();
+    if(advanceTimer){ clearTimeout(advanceTimer); advanceTimer=null; }
+    state="start"; metIds={}; hearts=0; stars=0; wonRound=false; inputLock=false;
+    heartEls.forEach(function(h){ h.classList.remove("full"); });
+    winOverlay.hidden=true; startPanel.hidden=false;
+    targetCard.style.display="none";
+    bigFriend.style.display="block";
+    findLayer.innerHTML="";
+    nextBtn.classList.remove("show"); miniRow.classList.remove("show");
+    current=BY_ID.cow;
+    bigFace.textContent=current.face; bigPatch.style.background=current.color; bigName.textContent=current.name+" the "+current.species;
+    updateHUD();
+    say("Hi! I&rsquo;m Hoot! Tap <span class='b-big'>Play</span> and come meet my animal friends!");
+    hootFig.classList.add("wave");
+    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  }
+
+  /* ================= HOOT TAP / HEAR AGAIN ================= */
+  function hearAgain(){
+    audio();
+    if(state==="find"&&findTarget){ clearPending(); enqueueFindCallout(findTarget); animalSound(findTarget.id); }
+    else if(state==="meet"&&current){ animalSound(current.id); say(current.id==="bunny"
+      ? "<span class='b-big'>"+current.name+"</span> wiggles her nose to say hello! Tap her to be friends!"
+      : "<span class='b-big'>"+current.name+"</span> says "+current.say+" Tap "+current.name+" to be friends!"); }
+    else if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+  }
+  hootFig.addEventListener("click",hearAgain);
+  $("hearBtn").addEventListener("click",function(){
+    audio();
+    if(state==="find"&&findTarget){ clearPending(); enqueueFindCallout(findTarget); animalSound(findTarget.id); }
+  });
+
+  /* ================= LIVING FARMYARD TAPS ================= */
+  $("sun").addEventListener("click",function(){
+    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
+    sparkleSound();
+    if(state==="start") say("That&rsquo;s Mr. Sun! He warms the whole farmyard!");
+  });
+  document.querySelectorAll(".cloud").forEach(function(c){
+    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); popSound(); setTimeout(function(){ c.classList.remove("puff"); },300); });
+  });
+  document.querySelectorAll(".flower").forEach(function(f,i){
+    f.addEventListener("click",function(){
+      audio(); f.classList.add("bloom"); tone(620+i*90,880+i*90,0.16,"sine",0.11);
+      setTimeout(function(){ f.classList.remove("bloom"); },580);
+    });
+  });
+  document.querySelectorAll(".bfly").forEach(function(bf){
+    bf.addEventListener("click",function(){
+      audio(); sparkleSound();
+      if(bf.animate) bf.animate([{transform:"rotate(0deg) scale(1)"},{transform:"rotate(360deg) scale(1.25)"}],{duration:560,easing:"ease-in-out"});
+    });
+  });
+
+  /* ================= CONTROLS ================= */
+  $("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    $("soundOnIc").style.display=soundOn?"block":"none";
+    $("soundOffIc").style.display=soundOn?"none":"block";
+    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+    if(!soundOn){ clearPending(); }
+    else { audio(); tone(660,660,0.1,"triangle",0.12); if(state==="find"&&findTarget) enqueueFindCallout(findTarget); }
+  });
+  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
+  $("modeMeet").addEventListener("click",function(){ mode="meet"; $("modeMeet").classList.add("selected"); $("modeFind").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
+  $("modeFind").addEventListener("click",function(){ mode="find"; $("modeFind").classList.add("selected"); $("modeMeet").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
+  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+
+  /* ================= LEAVING THE GAME ================= */
+  function teardown(){ dead=true; clearPending(); if(advanceTimer) clearTimeout(advanceTimer); hootTalking(false); }
+  window.addEventListener("pagehide",teardown);
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+  /* ================= INIT ================= */
+  current=BY_ID.cow;
+  bigFace.textContent=current.face; bigPatch.style.background=current.color; bigName.textContent=current.name+" the "+current.species;
+  buildMiniRow();
+  updateHUD();
+  hootFig.classList.add("wave");
+  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+
+  /* Probe/debug handle: read-only snapshot of the round state. */
+  window.__friendsGame={
+    snapshot:function(){
+      return { state:state, mode:mode, hearts:hearts, stars:stars,
+        met:Object.keys(metIds), current:current?current.id:null,
+        findTarget:findTarget?findTarget.id:null,
+        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
+        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

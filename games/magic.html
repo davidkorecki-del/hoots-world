@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="magic";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Magic Hat Surprises</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{ --ink:#2a2140; --ink-soft:#5d5480; --paper:#fffdf6; --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#e04a3f; --teal:#17bebb; --leaf:#57cc62; --plum:#6c4bd8; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#241b45; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column; background:linear-gradient(180deg,#2c2160 0%,#3d2a72 60%,#2a1e52 100%); }
+  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(6px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:46px; height:46px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); display:grid; place-items:center; box-shadow:0 4px 0 rgba(10,6,30,.35); cursor:pointer; }
+  .round-btn:active{ transform:scale(.9); } .round-btn svg{ width:23px; height:23px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:5px 15px 5px 10px; box-shadow:0 4px 0 rgba(10,6,30,.3); font-family:"Fredoka",sans-serif; font-weight:700; font-size:21px; }
+  #starBank .star-ic{ width:24px; height:24px; } #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+  /* magic stage */
+  #scene{ position:relative; margin:6px 10px 0; border-radius:20px; overflow:hidden; flex:1 1 auto; min-height:0; background:radial-gradient(ellipse at 50% 30%,#57449c 0%,#3d2a72 55%,#2a1e52 100%); border:3px solid rgba(255,255,255,.3); }
+  #scene::before,#scene::after{ content:""; position:absolute; top:0; bottom:0; width:30px; background:repeating-linear-gradient(0deg,#a02c46 0 18px,#c23a58 18px 36px); z-index:2; }
+  #scene::before{ left:0; border-right:4px solid #ffc93c; } #scene::after{ right:0; border-left:4px solid #ffc93c; }
+  .stage-star{ position:absolute; color:#ffd93b; opacity:.8; animation:twinkle 2.4s ease-in-out infinite alternate; z-index:1; pointer-events:none; }
+  @keyframes twinkle{ from{ opacity:.3; transform:scale(.75) rotate(-8deg);} to{ opacity:1; transform:scale(1.2) rotate(8deg);} }
+  /* Hoot the magician + bubble */
+  #hootZone{ position:absolute; left:34px; right:34px; top:8px; z-index:3; display:flex; align-items:flex-start; gap:8px; }
+  #hootFig{ flex:0 0 auto; width:86px; height:96px; border:none; background:none; padding:0; cursor:pointer; }
+  #hootFig svg{ width:100%; height:100%; display:block; }
+  #hootFig.talking svg{ animation:talkBob .38s ease-in-out infinite alternate; }
+  #hootFig.celebrate svg{ animation:celebrate .8s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes talkBob{ from{ transform:translateY(0) rotate(-1.5deg);} to{ transform:translateY(-4px) rotate(1.5deg);} }
+  @keyframes celebrate{ 0%{transform:translateY(0)} 35%{transform:translateY(-13px) rotate(-5deg)} 70%{transform:translateY(-4px) rotate(4deg)} 100%{transform:translateY(0)} }
+  #bubbleCol{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
+  #bubble{ background:var(--paper); border:3px solid #fff; border-radius:16px; border-bottom-left-radius:4px; box-shadow:0 4px 0 rgba(10,6,30,.3); padding:7px 12px; font-weight:800; font-size:clamp(13.5px,3.7vw,17px); line-height:1.28; }
+  #bubble .b-big{ font-family:"Fredoka",sans-serif; color:var(--coral-dark); }
+  #hootName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.14em; color:#fff; background:var(--plum); border-radius:999px; padding:2px 10px; margin-left:8px; }
+  /* hat area */
+  #hatZone{ position:absolute; left:0; right:0; bottom:8px; z-index:3; display:flex; flex-direction:column; align-items:center; }
+  #popZone{ height:104px; display:flex; align-items:flex-end; justify-content:center; position:relative; }
+  #popArt{ width:104px; height:104px; }
+  #popArt svg{ width:100%; height:100%; display:block; }
+  #popArt.pop{ animation:popBounce var(--popdur,.8s) cubic-bezier(.34,1.6,.5,1); }
+  @keyframes popBounce{ 0%{ transform:scale(.2) translateY(46px); opacity:0;} 45%{ transform:scale(1.18) translateY(-16px); opacity:1;} 70%{ transform:scale(.94) translateY(2px);} 100%{ transform:scale(1) translateY(0);} }
+  #countRow{ display:none; gap:5px; flex-wrap:wrap; justify-content:center; max-width:330px; padding:0 8px; }
+  #countRow .cstar{ font-size:30px; color:#ffd93b; text-shadow:0 2px 0 rgba(10,6,30,.4); animation:popBounce .6s cubic-bezier(.34,1.6,.5,1) backwards; }
+  #surpriseName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:#ffd93b; min-height:24px; text-shadow:0 2px 0 rgba(10,6,30,.45); text-align:center; padding:0 40px; }
+  #hatRow{ display:flex; align-items:flex-end; gap:14px; }
+  #hatBtn{ width:158px; height:104px; border:none; background:none; padding:0; cursor:pointer; position:relative; }
+  #hatBtn svg{ width:100%; height:100%; display:block; }
+  #hatBtn.wiggle svg{ animation:hatWiggle .55s ease-in-out; }
+  #hatBtn.glow svg{ filter:drop-shadow(0 0 14px rgba(255,217,59,.95)); }
+  @keyframes hatWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-6deg) translateY(-4px);} 55%{ transform:rotate(6deg) translateY(-7px);} 80%{ transform:rotate(-3deg);} }
+  #wandWrap{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+  #wandBtn{ width:66px; height:66px; border-radius:50%; border:3px solid #fff; background:radial-gradient(circle at 35% 30%,#8b6fd8,#573aa8); cursor:pointer; font-size:29px; color:#ffd93b; box-shadow:0 4px 0 rgba(10,6,30,.35); touch-action:none; }
+  #wandBtn:active{ transform:scale(.92) rotate(-14deg); }
+  #wandBtn.ready{ animation:wandPulse 1s ease-in-out infinite; }
+  #wandBtn.cue, #hatBtn.cue{ position:relative; }
+  #hatBtn.cue{ animation:hatCue 1s ease-in-out infinite; }
+  @keyframes hatCue{ 50%{ transform:scale(1.06); } }
+  #magicHand{ position:absolute; z-index:8; font-size:34px; line-height:1; pointer-events:none; animation:handBob .7s ease-in-out infinite; filter:drop-shadow(0 2px 0 #fff); }
+  #wandBtn #magicHand{ top:-22px; right:-10px; }
+  #hatBtn #magicHand{ top:-30px; left:50%; right:auto; margin-left:-17px; }
+  @keyframes handBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(8px);} }
+  #howRow{ display:flex; align-items:center; justify-content:center; gap:8px; margin:12px 0 4px; }
+  .how-step{ display:flex; flex-direction:column; align-items:center; gap:2px; min-width:72px; }
+  .how-ic{ font-size:28px; line-height:1; }
+  .how-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; color:#5a4a86; line-height:1.15; }
+  .how-arrow{ font-size:18px; color:#8b6fd8; font-weight:700; }
+  #letterBadge{ position:absolute; left:8px; top:8px; z-index:7; min-width:44px; min-height:44px; border-radius:12px; background:#ffd93b; color:#2a1a4a; font-family:"Fredoka",sans-serif; font-weight:700; font-size:28px; display:none; place-items:center; border:3px solid #fff; box-shadow:0 4px 0 rgba(10,6,30,.3); }
+  #letterBadge.on{ display:grid; }
+  #chargeWrap{ min-width:72px; }
+  #chargeBar{ height:10px; border-radius:999px; background:rgba(255,255,255,.2); overflow:hidden; border:2px solid rgba(255,255,255,.4); }
+  #chargeLab{ font-size:10px; letter-spacing:.06em; }
+  @keyframes wandPulse{ 0%,100%{ box-shadow:0 4px 0 rgba(10,6,30,.35);} 50%{ box-shadow:0 0 0 6px rgba(255,217,59,.6),0 4px 0 rgba(10,6,30,.35);} }
+  #chargeWrap{ width:74px; }
+  #chargeLab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:10px; letter-spacing:.08em; color:#cfc4ff; text-align:center; margin:0 0 2px; }
+  #chargeBar{ height:11px; border-radius:999px; background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.4); overflow:hidden; }
+  #chargeFill{ height:100%; width:0%; background:linear-gradient(90deg,#ffd93b,#ff8fab); transition:width .18s; }
+  .sparkle-fly{ position:absolute; font-size:16px; color:#ffd93b; pointer-events:none; z-index:4; animation:sparkFly .55s ease-out forwards; }
+  @keyframes sparkFly{ from{ transform:translate(0,0) scale(.7); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.25); opacity:0;} }
+  .burst-star{ position:absolute; font-size:20px; pointer-events:none; z-index:4; animation:burstFly .8s ease-out forwards; }
+  @keyframes burstFly{ from{ transform:translate(0,0) scale(.6); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(40deg); opacity:0;} }
+  /* panel */
+  #panel{ position:relative; z-index:5; padding:7px 10px max(8px,env(safe-area-inset-bottom)); }
+  #modeRow{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .mode-chip{ border:3px solid rgba(255,255,255,.35); background:rgba(255,253,246,.12); border-radius:13px; padding:5px 2px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:12.5px; color:#e9e2ff; cursor:pointer; text-align:center; }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:10px; opacity:.85; }
+  .mode-chip.sel{ border-color:var(--sun); background:var(--paper); color:var(--ink); }
+  #choices{ display:none; gap:7px; margin-top:7px; }
+  #choices.on{ display:flex; }
+  .choice-btn{ flex:1 1 0; border:3px solid #fff; background:var(--paper); border-radius:15px; padding:6px 3px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:17px; color:var(--ink); cursor:pointer; box-shadow:0 4px 0 rgba(10,6,30,.3); display:flex; flex-direction:column; align-items:center; gap:1px; }
+  .choice-btn svg{ width:40px; height:36px; }
+  .choice-btn small{ font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
+  .choice-btn:active{ transform:scale(.94); }
+  .choice-btn.off{ opacity:.35; pointer-events:none; }
+  #underRow{ display:flex; align-items:center; gap:9px; margin-top:7px; }
+  #roundLab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:12px; letter-spacing:.08em; color:#cfc4ff; white-space:nowrap; }
+  #starsBox{ display:flex; gap:4px; }
+  #starsBox span{ font-size:19px; color:rgba(255,255,255,.25); }
+  #starsBox span.on{ color:#ffd93b; text-shadow:0 0 9px rgba(255,217,59,.8); }
+  #nextBtn{ margin-left:auto; border:3px solid #fff; background:var(--leaf); color:#fff; border-radius:999px; padding:8px 18px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15px; cursor:pointer; box-shadow:0 4px 0 rgba(10,6,30,.3); display:none; }
+  #nextBtn.on{ display:block; }
+  #nextBtn:active{ transform:scale(.94); }
+  #collection{ display:flex; gap:6px; margin-top:7px; overflow-x:auto; min-height:42px; scrollbar-width:none; align-items:center; }
+  #collection::-webkit-scrollbar{ display:none; }
+  .coll-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:10.5px; letter-spacing:.09em; color:#cfc4ff; flex:0 0 auto; }
+  .coll-item{ flex:0 0 auto; width:42px; height:42px; border-radius:11px; background:rgba(255,253,246,.94); border:2px solid #fff; display:grid; place-items:center; }
+  .coll-item svg{ width:34px; height:34px; }
+  .overlay{ position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; background:rgba(16,10,40,.55); padding:16px; }
+  .overlay[hidden]{ display:none; }
+  .card{ background:var(--paper); border:3px solid #fff; border-radius:24px; box-shadow:0 10px 0 rgba(10,6,30,.3),0 24px 48px rgba(10,6,30,.35); padding:20px 20px 16px; max-width:430px; width:100%; text-align:center; }
+  .card h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,36px); margin:0 0 6px; line-height:1.08; }
+  .card h1 .t1{ color:var(--plum); } .card h1 .t2{ color:var(--coral-dark); }
+  .card p{ font-weight:800; font-size:15.5px; line-height:1.4; color:var(--ink-soft); margin:0 0 13px; }
+  .big-play{ border:3px solid #fff; background:var(--plum); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px; border-radius:999px; padding:12px 30px; cursor:pointer; box-shadow:0 6px 0 #46318f; }
+  .big-play:active{ transform:scale(.95); }
+  #winStars{ font-size:30px; color:#e8a90c; letter-spacing:4px; min-height:38px; }
+  .win-btns{ display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
+  .win-btn{ border:3px solid #fff; border-radius:999px; padding:10px 20px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:16.5px; cursor:pointer; box-shadow:0 4px 0 rgba(10,6,30,.25); }
+  #againBtn{ background:var(--leaf); color:#fff; } #winHomeBtn{ background:var(--paper); color:var(--ink); }
+  @media (max-height:700px){ #popZone{ height:84px; } #popArt{ width:84px; height:84px; } #hatBtn{ width:132px; height:88px; } #hootFig{ width:72px; height:80px; } }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#2a2140" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#2a2140"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#2a2140" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#2a2140"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2a2140" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#cfc4ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <main id="scene" aria-label="Magic stage. Hoot the Magician presents his hat.">
+    <div id="hootZone">
+      <button id="hootFig" type="button" aria-label="Hoot the Magician — tap to hear him giggle"></button>
+      <div id="bubbleCol">
+        <div id="bubble" aria-live="polite">Abracadabra! I&rsquo;m Hoot the Magician! Wave my wand, then tap my hat!</div>
+        <span id="hootName">HOOT THE MAGICIAN</span>
+      </div>
+    </div>
+    <div id="hatZone">
+      <div id="popZone"><div id="letterBadge" aria-hidden="true"></div><div id="popArt" hidden></div><div id="countRow"></div></div>
+      <div id="surpriseName" aria-live="polite"></div>
+      <div id="hatRow">
+        <button id="hatBtn" type="button" aria-label="Tap the magic hat"></button>
+        <div id="wandWrap">
+          <button id="wandBtn" type="button" aria-label="Wave the magic wand to charge the hat with sparkles">&#10022;</button>
+          <div id="chargeWrap"><p id="chargeLab">WAND SPARKLES</p><div id="chargeBar"><div id="chargeFill"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section id="panel" aria-label="Magic controls">
+    <div id="modeRow" role="group" aria-label="Choose a trick">
+      <button class="mode-chip sel" type="button" data-mode="peek">✨ Surprise Peek<small>Name it &amp; its letter</small></button>
+      <button class="mode-chip" type="button" data-mode="hiding">🔍 What&rsquo;s Hiding?<small>Guess the clue</small></button>
+      <button class="mode-chip" type="button" data-mode="count">⭐ Count the Magic<small>Count 1&ndash;10</small></button>
+      <button class="mode-chip" type="button" data-mode="letter">🔤 Letter Magic<small>First letters</small></button>
+    </div>
+    <div id="choices" role="group" aria-label="Your choices"></div>
+    <div id="underRow">
+      <span id="roundLab">0 OF 5 STARS</span>
+      <div id="starsBox" aria-hidden="true"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
+      <button id="nextBtn" type="button">Next Trick &rarr;</button>
+    </div>
+    <div id="collection"><span class="coll-lab">YOUR SURPRISES</span><span id="collEmpty" style="font-weight:800;font-size:12px;color:#cfc4ff;">Your surprises will appear here&hellip;</span></div>
+  </section>
+
+  <div class="overlay" id="startOverlay">
+    <div class="card">
+      <h1><span class="t1">Magic Hat</span> <span class="t2">Surprises</span></h1>
+      <p>Tap the wand so the hat glows, then tap the hat. A surprise pops out &mdash; we will say its name and its first letter!</p>
+      <div id="howRow" aria-hidden="true">
+        <div class="how-step"><span class="how-ic">✨</span><span class="how-lab">Tap the wand</span></div>
+        <span class="how-arrow">→</span>
+        <div class="how-step"><span class="how-ic">🎩</span><span class="how-lab">Tap the glowing hat</span></div>
+        <span class="how-arrow">→</span>
+        <div class="how-step"><span class="how-ic">🐰</span><span class="how-lab">Name it &amp; its letter</span></div>
+      </div>
+      <button class="big-play" id="playBtn" type="button">&#9654; Start the Show!</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="winOverlay" hidden>
+    <div class="card">
+      <div id="winStars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <h1><span class="t1">Magic</span> <span class="t2">Star!</span></h1>
+      <p id="winSub">You filled all 5 magic stars! Hoot is so proud &mdash; you are a real Magic Star.</p>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">&#8635; Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= DATA ================= */
+function art(id){
+  switch(id){
+    case "bunny": return '<ellipse cx="38" cy="26" rx="7" ry="17" fill="#fff" stroke="#d9c8e8" stroke-width="2"/><ellipse cx="62" cy="26" rx="7" ry="17" fill="#fff" stroke="#d9c8e8" stroke-width="2"/><ellipse cx="38" cy="26" rx="3" ry="10" fill="#ff8fab"/><ellipse cx="62" cy="26" rx="3" ry="10" fill="#ff8fab"/><circle cx="50" cy="62" r="26" fill="#fff" stroke="#d9c8e8" stroke-width="2"/><circle cx="41" cy="58" r="3.4" fill="#2a2140"/><circle cx="59" cy="58" r="3.4" fill="#2a2140"/><path d="M46 68 Q50 66 54 68 Q50 74 46 68Z" fill="#ff8fab"/>';
+    case "frog": return '<circle cx="34" cy="36" r="10" fill="#57cc62"/><circle cx="66" cy="36" r="10" fill="#57cc62"/><circle cx="34" cy="36" r="4.4" fill="#fff"/><circle cx="66" cy="36" r="4.4" fill="#fff"/><circle cx="34" cy="37" r="2.4" fill="#2a2140"/><circle cx="66" cy="37" r="2.4" fill="#2a2140"/><ellipse cx="50" cy="62" rx="30" ry="24" fill="#57cc62"/><ellipse cx="50" cy="70" rx="17" ry="13" fill="#d9f7c9"/><path d="M34 62 Q50 74 66 62" stroke="#2e7d3a" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+    case "butterfly": return '<ellipse cx="28" cy="38" rx="17" ry="12" fill="#ff8fab" transform="rotate(-24 28 38)"/><ellipse cx="72" cy="38" rx="17" ry="12" fill="#ff8fab" transform="rotate(24 72 38)"/><ellipse cx="30" cy="64" rx="13" ry="9" fill="#c39bff" transform="rotate(20 30 64)"/><ellipse cx="70" cy="64" rx="13" ry="9" fill="#c39bff" transform="rotate(-20 70 64)"/><ellipse cx="50" cy="54" rx="6" ry="22" fill="#2a2140"/><circle cx="50" cy="28" r="7" fill="#2a2140"/><path d="M45 22 q-7 -9 -13 -8 M55 22 q7 -9 13 -8" stroke="#2a2140" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    case "teddy": return '<circle cx="26" cy="26" r="12" fill="#b07a45"/><circle cx="74" cy="26" r="12" fill="#b07a45"/><circle cx="26" cy="26" r="6" fill="#ecd0a8"/><circle cx="74" cy="26" r="6" fill="#ecd0a8"/><circle cx="50" cy="42" r="24" fill="#b07a45"/><ellipse cx="50" cy="50" rx="11" ry="9" fill="#ecd0a8"/><circle cx="41" cy="38" r="3.2" fill="#2a2140"/><circle cx="59" cy="38" r="3.2" fill="#2a2140"/><ellipse cx="50" cy="47" rx="4.4" ry="3.4" fill="#5b3413"/><ellipse cx="50" cy="76" rx="17" ry="13" fill="#ecd0a8"/>';
+    case "duck": return '<circle cx="50" cy="34" r="19" fill="#ffd93b"/><ellipse cx="50" cy="68" rx="27" ry="19" fill="#ffd93b"/><circle cx="43" cy="31" r="3.2" fill="#2a2140"/><circle cx="57" cy="31" r="3.2" fill="#2a2140"/><path d="M40 40 Q50 34 60 40 Q50 50 40 40Z" fill="#f97316"/><path d="M26 60 q-12 -8 -6 -18 q10 4 12 12Z" fill="#f2c230"/>';
+    case "fish": return '<path d="M14 50 Q38 22 64 34 Q86 44 88 50 Q86 56 64 66 Q38 78 14 50Z" fill="#38b6e3"/><path d="M14 50 L2 34 Q8 50 2 66Z" fill="#2f8fc4"/><circle cx="66" cy="44" r="4.4" fill="#fff"/><circle cx="67" cy="44" r="2.4" fill="#2a2140"/><path d="M40 34 q6 16 0 32 M54 36 q5 14 0 28" stroke="#2f8fc4" stroke-width="3.4" fill="none"/><circle cx="84" cy="24" r="5" fill="#aee7ff"/><circle cx="92" cy="12" r="3.4" fill="#aee7ff"/>';
+    case "bird": return '<ellipse cx="50" cy="58" rx="24" ry="22" fill="#7fb2f0"/><circle cx="50" cy="30" r="16" fill="#7fb2f0"/><path d="M28 48 Q8 30 4 44 Q16 62 30 62Z" fill="#5b8dd9"/><path d="M72 48 Q92 30 96 44 Q84 62 70 62Z" fill="#5b8dd9"/><circle cx="44" cy="28" r="2.8" fill="#2a2140"/><circle cx="56" cy="28" r="2.8" fill="#2a2140"/><path d="M44 36 L56 36 L50 44Z" fill="#ff9f1c"/><ellipse cx="50" cy="64" rx="12" ry="11" fill="#d6ebff"/>';
+    case "flower": return '<path d="M50 96 Q48 66 50 48" stroke="#3da347" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="M50 76 Q36 74 33 62 Q46 63 50 70Z" fill="#57cc62"/><g fill="#ff8fab"><circle cx="50" cy="18" r="10"/><circle cx="33" cy="30" r="10"/><circle cx="67" cy="30" r="10"/><circle cx="39" cy="44" r="10"/><circle cx="61" cy="44" r="10"/></g><circle cx="50" cy="32" r="9" fill="#ffc93c"/>';
+    case "apple": return '<path d="M50 26 Q48 12 60 8" stroke="#7a4a21" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="M52 16 q14 -8 20 2 q-10 9 -20 -2Z" fill="#57cc62"/><path d="M50 30 C 30 14 12 32 16 56 C 19 76 36 90 50 82 C 64 90 81 76 84 56 C 88 32 70 14 50 30Z" fill="#ef4444"/><ellipse cx="32" cy="44" rx="7" ry="11" fill="#fff" opacity=".4"/>';
+    case "balloon": return '<ellipse cx="50" cy="34" rx="24" ry="28" fill="#ff6b5e"/><ellipse cx="41" cy="24" rx="7" ry="11" fill="#fff" opacity=".4"/><path d="M44 60 L56 60 L50 70Z" fill="#e04a3f"/><path d="M50 70 q-7 9 0 16 q7 7 0 12" stroke="#8ea6c9" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    case "kitten": return '<path d="M26 34 L20 12 L40 22Z" fill="#f49d65"/><path d="M74 34 L80 12 L60 22Z" fill="#f49d65"/><path d="M28 30 L25 18 L36 24Z" fill="#ff8fab"/><path d="M72 30 L75 18 L64 24Z" fill="#ff8fab"/><circle cx="50" cy="52" r="30" fill="#f49d65"/><circle cx="39" cy="48" r="3.4" fill="#2a2140"/><circle cx="61" cy="48" r="3.4" fill="#2a2140"/><path d="M45 58 Q50 55 55 58 Q50 64 45 58Z" fill="#ff8fab"/><path d="M14 52 h16 M16 62 l14 -3 M86 52 H70 M84 62 l-14 -3" stroke="#d98a4b" stroke-width="2.4" stroke-linecap="round"/>';
+    case "moon": return '<path d="M66 8 A40 40 0 1 0 66 92 A31 31 0 1 1 66 8Z" fill="#ffd93b"/><path d="M76 20 l2.4 5.4 5.9.7 -4.3 4 1.1 5.8 -5.1 -2.8 -5.1 2.8 1.1 -5.8 -4.3 -4 5.9 -.7Z" fill="#fff"/>';
+    case "star": return '<path d="M50 6 l13.4 27.1 29.9 4.3 -21.6 21.1 5.1 29.8 L50 74.4 23.2 88.3 28.3 58.5 6.7 37.4 36.6 33.1Z" fill="#ffd93b" stroke="#e8a90c" stroke-width="2.6" stroke-linejoin="round"/>';
+  }
+  return "";
+}
+var ITEMS=[
+  {id:"bunny",name:"Bunny",letter:"B",clue:"I hop, wiggle my nose, and my ears are very, very long!",fact:"Happy bunnies jump and twist in the air!"},
+  {id:"frog",name:"Frog",letter:"F",clue:"It hops and says ribbit, ribbit \u2014 and jumps from lily pad to lily pad!",fact:"Frogs are champion jumpers!"},
+  {id:"butterfly",name:"Butterfly",letter:"B",clue:"I flutter on pretty wings and visit flowers all day.",fact:"Butterflies taste with their feet!"},
+  {id:"teddy",name:"Teddy Bear",letter:"T",clue:"I am soft and cuddly, and I love big hugs.",fact:"Teddy gives the best hugs!"},
+  {id:"duck",name:"Duckling",letter:"D",clue:"I say quack, quack \u2014 and I love splashing in puddles!",fact:"Ducklings follow in a line!"},
+  {id:"fish",name:"Fish",letter:"F",clue:"I swim under the water and blow little bubbles.",fact:"Fish sleep with their eyes open!"},
+  {id:"bird",name:"Bird",letter:"B",clue:"I sing tweet-tweet and flap my wings to fly.",fact:"Birds sing to say good morning!"},
+  {id:"flower",name:"Flower",letter:"F",clue:"I bloom in the garden and smell sweet.",fact:"Flowers turn to face the sunshine!"},
+  {id:"apple",name:"Apple",letter:"A",clue:"I am crunchy, red, and I grow on a tree.",fact:"An apple a day is a yummy snack!"},
+  {id:"balloon",name:"Balloon",letter:"B",clue:"I float up, up, up into the sky!",fact:"Balloons love birthday parties!"},
+  {id:"kitten",name:"Kitten",letter:"K",clue:"I say meow, purr softly, and chase balls of yarn.",fact:"Kittens purr when they are happy!"},
+  {id:"moon",name:"Moon",letter:"M",clue:"I shine in the night sky while you sleep.",fact:"The Moon lights up the night!"}
+];
+var GOAL=5;
+var HAT_SVG='<svg viewBox="0 0 200 130" aria-hidden="true"><ellipse cx="100" cy="112" rx="96" ry="15" fill="#241b45" stroke="#ffd93b" stroke-width="3"/><path d="M52 112 L64 30 Q100 12 136 30 L148 112Z" fill="#2f2763" stroke="#ffd93b" stroke-width="3"/><rect x="56" y="88" width="88" height="15" fill="#c23a58"/><path d="M84 52 l3.4 7 7.6 1 -5.5 5.4 1.3 7.6 L84 69.4 77.2 73 78.5 65.4 73 60 80.6 59Z" fill="#ffd93b"/><circle cx="118" cy="66" r="4.4" fill="#ffd93b"/></svg>';
+var HOOT_MAGICIAN='<svg viewBox="0 0 200 210" aria-hidden="true"><path d="M28 108 Q4 170 34 196 L86 178 Q52 150 28 108Z" fill="#573aa8"/><path d="M172 108 Q196 170 166 196 L114 178 Q148 150 172 108Z" fill="#573aa8"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#2a2140"/><circle cx="122" cy="72" r="11" fill="#2a2140"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/><path d="M58 34 L66 6 L84 20 L100 2 L116 20 L134 6 L142 34Z" fill="#2f2763" stroke="#ffd93b" stroke-width="2.4" stroke-linejoin="round"/><path d="M76 190 q-8 8 -14 6 M124 190 q8 8 14 6" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
+
+/* ================= STATE ================= */
+var state="start"; /* start | playing | won */
+var mode="peek"; /* peek | hiding | count | letter */
+var stars=0, bank=0, busy=false, dead=false, soundOn=true, praiseIdx=0;
+var current=null, lastId=null, charge=0, guessed=false, firstTry=true, countN=0, answered=false, revealed=false;
+var collection={};
+var timers=[];
+function later(fn,ms){ var id=setTimeout(function(){ timers=timers.filter(function(x){return x!==id;}); fn(); },ms); timers.push(id); return id; }
+function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+
+/* ================= ELMS ================= */
+function $(id){ return document.getElementById(id); }
+var scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"), hatBtn=$("hatBtn"), wandBtn=$("wandBtn"),
+    chargeFill=$("chargeFill"), popArt=$("popArt"), countRow=$("countRow"), nameEl=$("surpriseName"),
+    choicesEl=$("choices"), nextBtn=$("nextBtn"), roundLab=$("roundLab"), starsBox=$("starsBox"),
+    starCount=$("starCount"), starBank=$("starBank"), collEl=$("collection"),
+    startOverlay=$("startOverlay"), winOverlay=$("winOverlay");
+hootFig.innerHTML=HOOT_MAGICIAN; hatBtn.innerHTML=HAT_SVG;
+(function(){ var glyphs=["\u2605","\u2726","\u2606"]; for(var i=0;i<12;i++){ var s=document.createElement("span"); s.className="stage-star"; s.textContent=glyphs[i%3]; s.style.left=(5+Math.random()*90)+"%"; s.style.top=(4+Math.random()*46)+"%"; s.style.fontSize=(11+Math.random()*11)+"px"; s.style.animationDelay=(-Math.random()*2.4)+"s"; scene.appendChild(s); } })();
+function renderStars(){ var s=starsBox.children; for(var i=0;i<s.length;i++) s[i].className=i<stars?"on":""; roundLab.textContent=stars+" OF "+GOAL+" STARS"; }
+
+/* ================= SOUND FX ================= */
+var AC=null;
+function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+function tone(f0,f1,dur,type,vol,delay){ if(!soundOn) return; var ac=audio(); if(!ac) return; var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain(); o.type=type||"sine"; o.frequency.setValueAtTime(f0,t); if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.13,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05); }
+function popSound(){ tone(300,900,0.16,"sine",0.18); tone(700,1200,0.12,"triangle",0.1,0.03); }
+function sparkleSound(){ tone(1180,1180,0.09,"sine",0.08); tone(1560,1560,0.11,"sine",0.08,0.06); tone(2090,2090,0.13,"sine",0.07,0.12); }
+function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
+function fanfareSound(){ [523,659,784,1047,1319,1568].forEach(function(f,i){ tone(f,f,0.34,"triangle",0.15,i*0.1); }); }
+function wrongSound(){ tone(330,262,0.2,"sine",0.1); }
+
+/* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+   Teaching lines that match a recorded clip use it (call-letter, call-number,
+   hoot-* praise/hints). Surprise names + facts have no recorded clip, so those
+   words live in Hoot's bubble and the closest praise/giggle clip carries the voice. */
+var VBASE="assets/voice/";
+var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+function getVoice(){ if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();}); voiceEl.addEventListener("error",vNext); } return voiceEl; }
+function hubQuiet(){ try{ var d=window.parent&&window.parent.document; if(!d||d===document) return false; var b=d.querySelector('.voice-btn[data-voice="off"]'); return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true")); }catch(e){ return false; } }
+function silenced(){ return !soundOn||hubQuiet(); }
+function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice(); }
+function pumpVoice(){ if(vPlaying||dead) return; var item=vQueue.shift(); if(!item) return; if(item.onStart){ try{ item.onStart(); }catch(e){} } if(silenced()){ pumpVoice(); return; } var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true); el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file; var p=el.play(); if(p&&p.catch) p.catch(function(){ vNext(); }); }
+function enqueue(file,kind){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){return;} vQueue.push({file:file,kind:kind||""}); pumpVoice(); }
+function clearPending(){ vQueue.length=0; }
+var HOOT_LINES = {
+  intro: "Tap the wand so my hat glows, then tap the hat. A surprise will pop out — we will say its name and its first letter!",
+  idle: "Tap the sparkly wand, then tap the hat!",
+  wrong: "Not that one. Listen to the clue again, then pick a new picture!",
+  praise: "Yes! We named the surprise and its first letter!"
+};
+var idleTimer=null;
+function bumpIdle(){
+  if(idleTimer) clearTimeout(idleTimer);
+  idleTimer=setTimeout(function(){
+    if(dead||state!=="playing") return;
+    if(mode==="hiding"&&!guessed) say("Listen to my clue, then tap a picture under the stage!");
+    else if(charge<30) say(HOOT_LINES.idle);
+    else say("The hat is glowing — tap the hat!");
+  },8000);
+}
+function placeMagicHand(onEl){
+  var old=document.getElementById("magicHand"); if(old) old.remove();
+  document.querySelectorAll("#wandBtn.cue,#hatBtn.cue").forEach(function(el){ el.classList.remove("cue"); });
+  if(!onEl) return;
+  onEl.classList.add("cue");
+  var hand=document.createElement("span"); hand.id="magicHand"; hand.setAttribute("aria-hidden","true"); hand.textContent="👆";
+  onEl.style.position=onEl.style.position||"relative";
+  onEl.appendChild(hand);
+}
+function cueWandOrHat(){
+  if(state!=="playing") return;
+  if(mode==="hiding"&&!guessed){ placeMagicHand(null); return; }
+  if(charge<30) placeMagicHand(wandBtn);
+  else placeMagicHand(hatBtn);
+}
+function articleFor(name){ return /^[AEIOUaeiou]/.test(name)?"an":"a"; }
+var PRAISE=["hoot-amazing.mp3","hoot-great-job.mp3","hoot-star.mp3"];
+function enqueuePraise(){ var f=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++; enqueue(f,"praise"); }
+
+/* ================= WORDS & FX ================= */
+function say(html){ bubble.innerHTML=html; }
+function hootReact(){ hootFig.classList.remove("celebrate"); void hootFig.offsetWidth; hootFig.classList.add("celebrate"); setTimeout(function(){ hootFig.classList.remove("celebrate"); },850); }
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function sparkleBurst(){
+  var r=hatBtn.getBoundingClientRect(), sr=scene.getBoundingClientRect();
+  for(var i=0;i<9;i++){ var s=document.createElement("span"); s.className="burst-star"; s.textContent=i%2?"\u2726":"\u2605"; s.style.color=i%2?"#ff8fab":"#ffd93b"; s.style.left=(r.left-sr.left+r.width*(0.25+Math.random()*0.5))+"px"; s.style.top=(r.top-sr.top-6)+"px"; s.style.setProperty("--dx",((Math.random()*130)-65)+"px"); s.style.setProperty("--dy",(-(30+Math.random()*70))+"px"); scene.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },850); })(s); }
+}
+function addStar(){
+  stars++; bank++; starCount.textContent=bank;
+  starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+  starSound(); renderStars();
+}
+function addToCollection(item){
+  if(collection[item.id]) return; collection[item.id]=true;
+  var empty=$("collEmpty"); if(empty) empty.remove();
+  var d=document.createElement("div"); d.className="coll-item"; d.title=item.name;
+  d.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+art(item.id)+'</svg>';
+  collEl.appendChild(d); collEl.scrollLeft=collEl.scrollWidth;
+}
+
+/* ================= TRICK FLOW ================= */
+function pickItem(){
+  var pool=ITEMS.filter(function(it){ return it.id!==lastId; });
+  current=pool[Math.floor(Math.random()*pool.length)]; lastId=current.id;
+}
+function setCharge(n){
+  charge=Math.max(0,Math.min(100,n)); chargeFill.style.width=charge+"%";
+  hatBtn.classList.toggle("glow",charge>=30);
+  wandBtn.classList.toggle("ready",charge<30);
+}
+function resetTrick(){
+  busy=false; answered=false; guessed=false; firstTry=true; revealed=false; setCharge(0);
+  popArt.hidden=true; popArt.innerHTML=""; popArt.classList.remove("pop");
+  countRow.style.display="none"; countRow.innerHTML=""; nameEl.textContent="";
+  var lb=document.getElementById("letterBadge"); if(lb){ lb.classList.remove("on"); lb.textContent=""; }
+  choicesEl.classList.remove("on"); choicesEl.innerHTML=""; nextBtn.classList.remove("on");
+  clearTimeout(trickTimer);
+  placeMagicHand(null);
+}
+function beginTrick(){
+  resetTrick(); pickItem();
+  if(mode==="hiding"){
+    say("Something is hiding in my hat! Clue: <span class='b-big'>"+current.clue+"</span> Tap a picture, then we will pop the hat!");
+    enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-whos-in-hat")?"ask-whos-in-hat.mp3":"hoot-look-closely.mp3","hint"); /* 3e51 */
+    showGuessChoices();
+  } else if(mode==="count"){
+    say("Tap the wand so the hat glows, then tap the hat. Magic stars will pop out — count them with me!");
+    if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
+  } else if(mode==="letter"){
+    say("Tap the wand so the hat glows, then tap the hat. A surprise will pop out — you tell me its first letter!");
+    if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
+  } else {
+    say(HOOT_LINES.intro);
+    if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
+  }
+  cueWandOrHat();
+  bumpIdle();
+}
+function showGuessChoices(){
+  choicesEl.innerHTML=""; choicesEl.classList.add("on");
+  var others=shuffle(ITEMS.filter(function(it){ return it.id!==current.id; })).slice(0,2);
+  var opts=shuffle([current].concat(others));
+  opts.forEach(function(it){
+    var b=document.createElement("button"); b.type="button"; b.className="choice-btn";
+    b.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+art(it.id)+'</svg>'+it.name;
+    b.addEventListener("click",function(){
+      if(busy||guessed) return; audio();
+      if(it.id===current.id){ guessed=true; b.style.borderColor="#57cc62"; sparkleSound(); say("You picked the <span class='b-big'>"+it.name+"</span>! Let&rsquo;s open the hat&hellip;"); setCharge(100); later(function(){ if(!dead) reveal(); },550); }
+      else { firstTry=false; b.classList.add("off"); wrongSound(); say(HOOT_LINES.wrong+" <span class='b-big'>"+current.clue+"</span>"); enqueue("hoot-try-again.mp3","hint"); bumpIdle(); }
+    });
+    choicesEl.appendChild(b);
+  });
+}
+function showNumberChoices(){
+  choicesEl.innerHTML=""; choicesEl.classList.add("on");
+  var opts=new Set([countN]); while(opts.size<3){ var n=1+Math.floor(Math.random()*10); opts.add(n); }
+  shuffle(Array.from(opts)).forEach(function(n){
+    var b=document.createElement("button"); b.type="button"; b.className="choice-btn"; b.textContent=n;
+    b.addEventListener("click",function(){
+      if(answered) return; audio();
+      if(n===countN){ answered=true; b.style.borderColor="#57cc62"; onCorrectAnswer("You counted <span class='b-big'>"+countN+"</span> magic stars! Counting star!","call-number-"+countN+".mp3"); }
+      else { b.classList.add("off"); wrongSound(); say("Count with Hoot again &mdash; touch each star: 1, 2, 3&hellip; How many are there?"); enqueue("hoot-try-again.mp3","hint"); }
+    });
+    choicesEl.appendChild(b);
+  });
+}
+function showLetterChoices(){
+  choicesEl.innerHTML=""; choicesEl.classList.add("on");
+  var letters=new Set([current.letter]); while(letters.size<3){ letters.add("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)]); }
+  shuffle(Array.from(letters)).forEach(function(L){
+    var b=document.createElement("button"); b.type="button"; b.className="choice-btn"; b.innerHTML=L+"<small>tap me</small>";
+    b.addEventListener("click",function(){
+      if(answered) return; audio();
+      if(L===current.letter){ answered=true; b.style.borderColor="#57cc62"; onCorrectAnswer("<span class='b-big'>"+current.name+"</span> starts with <span class='b-big'>"+L+"</span>! Letter Magic mastered!","call-letter-"+L.toLowerCase()+".mp3"); }
+      else { b.classList.add("off"); wrongSound(); say("Not "+L+" &mdash; say it slowly: <span class='b-big'>"+current.name+"</span>&hellip; what sound does it start with?"); enqueue("hoot-try-again.mp3","hint"); }
+    });
+    choicesEl.appendChild(b);
+  });
+}
+function onCorrectAnswer(msg,clip){
+  addStar(); sparkleBurst(); hootReact();
+  say(msg);
+  if(clip) enqueue(clip,"teach");
+  enqueuePraise();
+  afterStar();
+}
+var trickTimer=null;
+function showNext(){
+  nextBtn.classList.add("on");
+  clearTimeout(trickTimer);
+  trickTimer=later(function(){
+    if(!dead&&state==="playing"&&!busy&&charge===0){ popSound(); beginTrick(); }
+  },3000);
+}
+function __hwAuto(ok,go,pause){var t0=Date.now(),q=0;function w(){if(dead||!ok())return;var now=Date.now(),b=vPlaying||vQueue.length;if(b&&now-t0<12000){q=0;setTimeout(w,200);return;}if(!q)q=now;if(now-q>=pause||now-t0>=12000){go();return;}setTimeout(w,200);}setTimeout(w,300);}
+function __hwNextTrick(){__hwAuto(function(){return state==="playing"&&!busy&&nextBtn.classList.contains("on");},function(){popSound();beginTrick();},1500);}
+function afterStar(){
+  if(stars>=GOAL){ later(winGame,1300); }
+  else showNext();
+}
+function reveal(){
+  if(busy||state!=="playing"||dead) return;
+  if(revealed&&mode!=="peek"){ say("That trick is done, magician! A brand-new surprise is coming!"); return; }
+  if(mode==="hiding"&&!guessed){ say("First, guess who&rsquo;s hiding! Tap a picture under my stage!"); enqueue("hoot-look-closely.mp3","hint"); return; }
+  if(charge<30){ say("The wand first! Tap the sparkly wand so my hat glows, then tap the hat."); placeMagicHand(wandBtn); bumpIdle(); return; }
+  busy=true; audio();
+  hatBtn.classList.remove("wiggle"); void hatBtn.offsetWidth; hatBtn.classList.add("wiggle");
+  tone(240,520,0.4,"sine",0.1);
+  later(function(){
+    if(dead) return;
+    revealed=true;
+    popSound(); sparkleBurst();
+    var big=charge>=80, mid=charge>=55;
+    popArt.style.setProperty("--popdur", big? "1.05s" : mid? "0.85s" : "0.65s");
+    if(mode==="count"){
+      countN=1+Math.floor(Math.random()*10);
+      popArt.hidden=true; countRow.style.display="flex"; countRow.innerHTML="";
+      for(var i=0;i<countN;i++){ var s=document.createElement("span"); s.className="cstar"; s.textContent="\u2605"; s.style.animationDelay=(i*0.09)+"s"; countRow.appendChild(s); }
+      nameEl.textContent="Magic Stars!";
+      say("POP! Magic stars! Count them with Hoot &mdash; touch each one: 1, 2, 3&hellip; How many stars are there?");
+      showNumberChoices();
+    } else {
+      popArt.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+art(current.id)+'</svg>';
+      popArt.hidden=false; popArt.classList.remove("pop"); void popArt.offsetWidth; popArt.classList.add("pop");
+      popArt.style.transform="scale("+(big?1.22:mid?1.08:1)+")";
+      nameEl.textContent=current.name+"!";
+      addToCollection(current);
+      (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})(),M={duck:"duckling",teddy:"teddy-bear"},w="word-"+(M[current.id]||current.id);if(current.id==="apple"&&!h[w]) w="teach-apple";if(h[w]||w==="teach-apple") enqueue(w+".mp3","name");})(); /* 3e44: Hoot names the surprise */
+      if(mode==="peek"){
+        var lb=document.getElementById("letterBadge");
+        if(lb){ lb.textContent=current.letter; lb.classList.add("on"); }
+        say("POP! It&rsquo;s "+articleFor(current.name)+" <span class='b-big'>"+current.name+"</span>! "+current.name+" starts with <span class='b-big'>"+current.letter+"</span>! "+current.fact);
+        enqueuePraise();
+        addStar(); hootReact(); afterStar();
+        placeMagicHand(null);
+        pickItem(); /* the next wand + hat cycle pops a NEW surprise */
+      } else if(mode==="hiding"){
+        if(firstTry){ say("POP! You were RIGHT &mdash; it&rsquo;s the <span class='b-big'>"+current.name.toUpperCase()+"</span>! "+current.fact); addStar(); hootReact(); afterStar(); }
+        else { say("POP! It was the <span class='b-big'>"+current.name.toUpperCase()+"</span> all along! "+current.fact+" The star waits for a first-try guess &mdash; next trick!"); showNext(); }
+        enqueuePraise();
+      } else if(mode==="letter"){
+        var lb2=document.getElementById("letterBadge");
+        if(lb2){ lb2.textContent="?"; lb2.classList.add("on"); }
+        say("POP! It&rsquo;s "+articleFor(current.name)+" <span class='b-big'>"+current.name+"</span>! What letter does "+current.name+" start with?");
+        showLetterChoices();
+      }
+    }
+    setCharge(0); busy=false;
+  },560);
+}
+/* wand: tap or swoosh (pointer move while pressed) charges the hat */
+var wandDown=false, lastSpark=0;
+function wandSpark(x,y){
+  var now=Date.now(); if(now-lastSpark<110) return; lastSpark=now;
+  if(state!=="playing"||busy||answered) return;
+  audio(); setCharge(charge+(charge<30?50:16)); sparkleSound();
+  var sr=scene.getBoundingClientRect();
+  var fx=x-sr.left, fy=y-sr.top;
+  for(var i=0;i<3;i++){ var s=document.createElement("span"); s.className="sparkle-fly"; s.textContent="\u2726"; s.style.left=fx+"px"; s.style.top=fy+"px"; s.style.setProperty("--dx",((Math.random()*70)-35)+"px"); s.style.setProperty("--dy",(-(16+Math.random()*36))+"px"); scene.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },600); })(s); }
+  if(charge>=30&&charge<66) say("The hat is GLOWING! Tap the hat!");
+  cueWandOrHat();
+  bumpIdle();
+}
+wandBtn.addEventListener("pointerdown",function(e){ wandDown=true; wandSpark(e.clientX,e.clientY); });
+wandBtn.addEventListener("pointermove",function(e){ if(wandDown) wandSpark(e.clientX,e.clientY); });
+window.addEventListener("pointerup",function(){ wandDown=false; });
+hatBtn.addEventListener("click",reveal);
+nextBtn.addEventListener("click",function(){ if(state==="playing"&&!busy){ popSound(); beginTrick(); } });
+hootFig.addEventListener("click",function(){ audio(); if(mode==="hiding"&&current&&!guessed){ enqueue("hoot-look-closely.mp3","hint"); say("Clue: <span class='b-big'>"+current.clue+"</span>"); } else { say(HOOT_LINES.idle); } });
+
+/* ================= FLOW ================= */
+function winGame(){
+  if(dead||state!=="playing") return;
+  state="won"; clearPending();
+  say("You filled all 5 magic stars &mdash; you are a real Magic Star!");
+  enqueue("hoot-you-learned.mp3","recap"); fanfareSound(); sparkleBurst();
+  later(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },650);
+}
+function setMode(m){
+  if(state!=="playing"||busy) return;
+  mode=m;
+  Array.prototype.forEach.call(document.querySelectorAll(".mode-chip"),function(c){ c.classList.toggle("sel",c.getAttribute("data-mode")===m); });
+  popSound(); beginTrick();
+}
+Array.prototype.forEach.call(document.querySelectorAll(".mode-chip"),function(c){ c.addEventListener("click",function(){ setMode(c.getAttribute("data-mode")); }); });
+function resetRun(){ stars=0; bank=0; starCount.textContent="0"; collection={}; lastId=null; collEl.innerHTML='<span class="coll-lab">YOUR SURPRISES</span><span id="collEmpty" style="font-weight:800;font-size:12px;color:#cfc4ff;">Your surprises will appear here&hellip;</span>'; renderStars(); }
+function startGame(){
+  state="playing"; startOverlay.hidden=true; winOverlay.hidden=true; resetRun();
+  say(HOOT_LINES.intro);
+  if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
+  beginTrick();
+}
+$("playBtn").addEventListener("click",function(){ audio(); startGame(); });
+$("againBtn").addEventListener("click",function(){ audio(); winOverlay.hidden=true; state="playing"; resetRun(); say("The show goes on! Wave the wand for a brand-new trick!"); beginTrick(); });
+$("winHomeBtn").addEventListener("click",function(){ winOverlay.hidden=true; startOverlay.hidden=false; state="start"; clearTimers(); });
+$("homeBtn").addEventListener("click",function(){ clearPending(); clearTimers(); state="start"; winOverlay.hidden=true; startOverlay.hidden=false; });
+$("soundBtn").addEventListener("click",function(){
+  soundOn=!soundOn;
+  $("soundOnIc").style.display=soundOn?"":"none"; $("soundOffIc").style.display=soundOn?"none":"";
+  this.setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+  if(!soundOn){ clearPending(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} vPlaying=false; vCurrent=null; hootTalking(false); } }
+  else audio();
+});
+
+/* teardown: no stale timers or ghost audio when the hub closes the game */
+function teardown(){ dead=true; clearPending(); clearTimers(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} } }
+window.addEventListener("pagehide",teardown);
+document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+renderStars();
+
+/* Probe/debug handle: read-only snapshot of the game state. */
+window.__magicGame={
+  snapshot:function(){
+    return { state:state, mode:mode, stars:stars, bank:bank, charge:charge, busy:busy,
+      current:current?current.id:null, guessed:guessed, firstTry:firstTry, countN:countN, answered:answered,
+      collected:Object.keys(collection), winShown:!winOverlay.hidden,
+      voicePlaying:vPlaying, voiceQueue:vQueue.map(function(q){ return q.file; }) };
+  }
+};
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>

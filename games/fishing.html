@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="fishing";</script>
+<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+
+<title>Letter Fishing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
+    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#7ecdf0; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
+    background:linear-gradient(180deg,#79c9f2 0%,#a5e3ff 20%,#cdeffd 30%,#57b6dd 31%,#3d9fd2 55%,#2b83ba 100%); }
+
+  /* ---------- living sky ---------- */
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
+  #sun{ top:70px; right:8px; width:78px; height:78px; z-index:1; }
+  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
+  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
+  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
+  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
+  #sun:active{ transform:scale(.93); }
+  .cloud{ z-index:1; width:104px; height:46px; opacity:.95; animation:drift linear infinite; }
+  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.22,1.35); }
+  @keyframes drift{ from{ transform:translateX(-130px); } to{ transform:translateX(112vw); } }
+
+  /* ---------- HUD ---------- */
+  #hud{ position:relative; z-index:8; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
+  .hud-btns{ display:flex; gap:8px; }
+  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
+  .round-btn:active{ transform:scale(.9); }
+  .round-btn svg{ width:25px; height:25px; }
+  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
+  #starBank .star-ic{ width:25px; height:25px; display:block; }
+  #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+
+  /* ---------- target card ---------- */
+  #targetCard{ position:relative; z-index:8; margin:8px auto 0; width:fit-content; max-width:calc(100vw - 20px); display:flex; align-items:center; gap:11px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; padding:7px 14px 7px 10px; box-shadow:0 5px 0 rgba(23,50,79,.15),0 12px 24px rgba(23,50,79,.14); }
+  #targetLetter{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:46px; line-height:.95; color:#2b83ba; width:56px; height:56px; display:grid; place-items:center; background:#dff3ff; border-radius:15px; border:3px dashed #57b6dd; flex:0 0 auto; }
+  #targetCard.new-target #targetLetter{ animation:letterIn .55s cubic-bezier(.34,1.7,.5,1); }
+  @keyframes letterIn{ 0%{transform:scale(.3) rotate(-14deg)} 100%{transform:scale(1) rotate(0)} }
+  .tc-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; line-height:1.15; }
+  #progressDots{ display:flex; gap:5px; margin-top:4px; }
+  #progressDots i{ width:11px; height:11px; border-radius:50%; background:#cfe6f2; display:block; transition:background .2s,transform .2s; }
+  #progressDots i.on{ background:var(--sun); transform:scale(1.25); }
+  #hearBtn{ flex:0 0 auto; width:46px; height:46px; border-radius:50%; border:3px solid #57b6dd; background:#dff3ff; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(23,50,79,.15); transition:transform .12s; }
+  #hearBtn:active{ transform:scale(.88); }
+  #hearBtn svg{ width:23px; height:23px; }
+
+  /* ---------- pond scene ---------- */
+  #scene{ position:relative; z-index:3; flex:1 1 auto; min-height:0; }
+  #waveBand{ position:absolute; left:0; right:0; top:0; height:100%; pointer-events:none; overflow:hidden; }
+  .wave{ position:absolute; left:-4%; width:108%; height:26px; opacity:.35; animation:waveSlide 5s ease-in-out infinite alternate; }
+  @keyframes waveSlide{ from{ transform:translateX(0);} to{ transform:translateX(-22px);} }
+  .lily{ position:absolute; z-index:2; width:74px; height:30px; pointer-events:none; opacity:.9; }
+  .fishwrap{ position:absolute; z-index:4; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,27vw,138px); animation:driftX ease-in-out infinite alternate; will-change:transform,left,top; }
+  .fishwrap svg{ width:100%; display:block; filter:drop-shadow(0 6px 8px rgba(8,45,80,.35)); }
+  .fishwrap .swim{ display:block; animation:bob 2.2s ease-in-out infinite alternate; }
+  @keyframes bob{ from{ transform:translateY(-3px) rotate(-2deg);} to{ transform:translateY(4px) rotate(2deg);} }
+  @keyframes driftX{ from{ margin-left:-16px;} to{ margin-left:16px;} }
+  .fishwrap.golden svg{ filter:drop-shadow(0 0 12px rgba(255,201,60,.95)) drop-shadow(0 5px 5px rgba(8,45,80,.3)); }
+  .fishwrap.golden .swim{ animation-duration:1.4s; }
+  .fishwrap.hooked{ animation:none; z-index:5; }
+  .fishwrap.boing-away{ animation:boingAway .5s ease-in forwards; pointer-events:none; }
+  @keyframes boingAway{ 0%{ transform:scale(1,1);} 25%{ transform:scale(1.18,.78);} 55%{ transform:scale(.9,1.12) translateY(-14px);} 100%{ transform:scale(.92,1.05) translateY(30vh) rotate(9deg); opacity:0;} }
+  .sparkles{ position:absolute; inset:-8px; pointer-events:none; animation:sparkleTwinkle .8s ease-in-out infinite alternate; font-size:17px; }
+  @keyframes sparkleTwinkle{ from{ opacity:.4; transform:scale(.9);} to{ opacity:1; transform:scale(1.12);} }
+  .pondlife{ position:absolute; z-index:4; border:none; background:none; padding:0; cursor:pointer; }
+  #frogBtn{ width:74px; height:56px; }
+  #frogBtn.jump{ animation:frogJump .55s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes frogJump{ 0%{ transform:translateY(0);} 40%{ transform:translateY(-30px) rotate(-6deg);} 100%{ transform:translateY(0);} }
+  #duckBtn{ width:92px; height:62px; animation:duckSwim 16s ease-in-out infinite alternate; }
+  @keyframes duckSwim{ from{ transform:translateX(0);} to{ transform:translateX(52px);} }
+  #duckBtn.splashy{ animation:duckSplash .5s ease-in-out 2; }
+  @keyframes duckSplash{ 0%,100%{ transform:rotate(0);} 30%{ transform:rotate(-9deg) translateY(-5px);} 70%{ transform:rotate(8deg);} }
+  .dragonfly{ width:52px; height:38px; animation:dfly 6s ease-in-out infinite alternate; z-index:5; }
+  @keyframes dfly{ 0%{ transform:translate(0,0) rotate(-4deg);} 50%{ transform:translate(22px,-16px) rotate(5deg);} 100%{ transform:translate(-12px,-6px) rotate(-3deg);} }
+  .dragonfly.loop{ animation:dflyLoop .7s ease-in-out 1; }
+  @keyframes dflyLoop{ from{ transform:rotate(0);} to{ transform:rotate(360deg) translateY(-14px);} }
+  .reed{ position:absolute; bottom:0; z-index:2; width:44px; height:96px; pointer-events:auto; cursor:pointer; border:none; background:none; padding:0; transform-origin:50% 100%; animation:reedSway 3.6s ease-in-out infinite alternate; }
+  @keyframes reedSway{ from{ transform:rotate(-3deg);} to{ transform:rotate(3deg);} }
+  .ripple{ position:absolute; z-index:3; border:3px solid rgba(255,255,255,.75); border-radius:50%; pointer-events:none; animation:rippleGo .8s ease-out forwards; }
+  @keyframes rippleGo{ from{ transform:translate(-50%,-50%) scale(.25); opacity:.9;} to{ transform:translate(-50%,-50%) scale(1.6); opacity:0;} }
+  .droplet{ position:absolute; z-index:6; width:8px; height:12px; border-radius:50% 50% 60% 60%; background:#bfeaff; pointer-events:none; }
+  #rodSvg{ position:absolute; inset:0; z-index:6; pointer-events:none; overflow:visible; }
+  #reelBtn{ position:absolute; z-index:7; width:64px; height:64px; border-radius:50%; border:3px solid #8a5a2b; background:radial-gradient(circle at 35% 35%,#ffe98a,#ffc93c 60%,#e8a90c); cursor:pointer; box-shadow:0 5px 0 rgba(90,50,0,.35),0 10px 18px rgba(8,45,80,.3); display:none; }
+  #reelBtn .crank{ position:absolute; inset:0; transition:transform .4s cubic-bezier(.3,1.4,.5,1); }
+  #reelBtn .arm{ position:absolute; left:50%; top:50%; width:26px; height:6px; margin-top:-3px; background:#8a5a2b; border-radius:3px; transform-origin:0 50%; }
+  #reelBtn .knob{ position:absolute; right:-4px; top:50%; width:16px; height:16px; margin-top:-8px; background:#e0342b; border-radius:50%; border:2px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,.3); }
+  #reelBtn.reeling{ animation:reelPulse .7s ease-in-out infinite alternate; display:block; }
+  @keyframes reelPulse{ from{ box-shadow:0 5px 0 rgba(90,50,0,.35),0 0 0 0 rgba(255,201,60,.0);} to{ box-shadow:0 5px 0 rgba(90,50,0,.35),0 0 0 12px rgba(255,201,60,.35);} }
+  #reelInBtn{ position:absolute; z-index:7; left:50%; bottom:10px; transform:translateX(-50%); border:3px solid #fff; background:#b9c4c9; color:#43545c; font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(18px,5vw,23px); padding:12px 26px; border-radius:999px; cursor:pointer; box-shadow:0 6px 0 rgba(23,50,79,.25); display:none; white-space:nowrap; }
+  #reelInBtn.ready{ display:block; background:var(--coral); color:#fff; box-shadow:0 6px 0 #d84a3f,0 14px 26px rgba(255,107,94,.4); animation:reelBtnPulse .55s ease-in-out infinite alternate; }
+  @keyframes reelBtnPulse{ from{ transform:translateX(-50%) scale(1);} to{ transform:translateX(-50%) scale(1.05);} }
+  #reelInBtn:active{ transform:translateX(-50%) translateY(3px); }
+  #splashWord{ position:absolute; z-index:9; pointer-events:none; background:var(--paper); border:3px solid #fff; border-radius:16px; box-shadow:0 8px 20px rgba(23,50,79,.25); padding:6px 14px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:var(--ink); opacity:0; transform:scale(.6); transition:opacity .18s,transform .18s cubic-bezier(.34,1.7,.5,1); white-space:nowrap; }
+  #splashWord.show{ opacity:1; transform:scale(1); }
+  #splashWord b{ color:#2b83ba; font-size:24px; }
+
+  /* ---------- teach card ---------- */
+  #teachCard{ position:absolute; z-index:9; left:50%; top:46%; transform:translate(-50%,-50%); width:min(88vw,360px); background:rgba(255,253,246,.98); border:3px solid #fff; border-radius:24px; box-shadow:0 12px 34px rgba(8,45,80,.4); padding:14px 16px 12px; text-align:center; animation:winIn .45s cubic-bezier(.34,1.6,.5,1); }
+  #teachCard[hidden]{ display:none; }
+  #teachCard .tc-fish{ width:150px; margin:0 auto; }
+  #teachCard .tc-fish svg{ width:100%; display:block; }
+  #teachSay{ font-weight:900; font-size:17.5px; line-height:1.35; margin:6px 0 0; }
+  #teachSay b{ color:#2b83ba; font-family:"Fredoka",sans-serif; font-size:21px; }
+  #nextFishBtn{ margin-top:11px; border:3px solid #fff; background:var(--leaf); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:10px 28px; border-radius:999px; cursor:pointer; box-shadow:0 5px 0 #3da347; animation:playPulse 1.4s ease-in-out infinite; }
+  #nextFishBtn:active{ transform:translateY(3px); }
+  #teachHearBtn{ margin-top:11px; margin-left:8px; border:3px solid #fff; background:#ffb703; color:#17324f; font-family:"Fredoka",sans-serif; font-weight:700; font-size:16px; padding:10px 18px; border-radius:999px; cursor:pointer; box-shadow:0 4px 0 #d18d00; }
+  #teachHearBtn:active{ transform:translateY(2px); }
+
+  /* ---------- ground row: dock, Hoot + basket ---------- */
+  #groundRow{ position:relative; z-index:5; display:flex; flex-direction:column; padding:0 8px max(6px,env(safe-area-inset-bottom)); }
+  #dockRow{ position:relative; display:flex; align-items:flex-end; justify-content:space-between; gap:6px; width:100%; }
+  #bubbleStrip{ display:flex; align-items:center; gap:8px; width:100%; margin-top:5px; flex:0 0 auto; }
+  #dockPlank{ position:absolute; left:0; right:0; bottom:0; height:34px; z-index:-1; background:repeating-linear-gradient(90deg,#a9713c 0 54px,#96622f 54px 58px); border-top:5px solid #c98d4e; border-radius:6px 6px 0 0; }
+  #hootZone{ display:flex; align-items:flex-end; gap:7px; min-width:0; }
+  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(112px,29vw,178px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
+  #hootFig svg{ width:100%; display:block; overflow:visible; }
+  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(-1.1deg);} 50%{ transform:translateY(-6px) rotate(1.1deg);} }
+  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
+  @keyframes hootJump{ 0%{transform:translateY(0) scale(1,1)} 35%{transform:translateY(-26px) scale(.96,1.05) rotate(-4deg)} 70%{transform:translateY(0) scale(1.06,.92)} 100%{transform:translateY(0) scale(1,1)} }
+  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
+  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
+  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ 0%{ transform:translateY(0) scale(1,1);} 100%{ transform:translateY(-4px) scale(1.03,.97);} }
+  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
+  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
+  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
+  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
+  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
+  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
+  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
+  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
+  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
+  @keyframes blink{ 0%,91%,100%{ transform:scaleY(1);} 94%,96%{ transform:scaleY(.08);} }
+  #bubble{ position:relative; flex:1 1 auto; min-width:0; background:var(--paper); border:3px solid #fff; border-radius:14px; box-shadow:0 4px 0 rgba(23,50,79,.13),0 8px 16px rgba(23,50,79,.14); padding:7px 12px; font-weight:800; font-size:clamp(13.5px,3.7vw,16.5px); line-height:1.28; max-height:calc(1.28em * 3 + 20px); overflow:hidden; }
+  #bubbleStrip.mini #bubble{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12.5px; line-height:1.2; padding:5px 10px; max-height:32px; }
+  #bubbleStrip.mini #hootName{ display:none; }
+  #bubble .b-letter{ color:#2b83ba; font-family:"Fredoka",sans-serif; }
+  #hootName{ flex:0 0 auto; background:#2b83ba; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.06em; padding:3px 11px; border-radius:999px; border:2px solid #fff; box-shadow:0 3px 8px rgba(23,50,79,.2); }
+  #basketZone{ display:flex; flex-direction:column; align-items:center; gap:2px; flex:0 0 auto; }
+  #basketBtn{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(100px,26vw,138px); transition:transform .15s; }
+  #basketBtn:active{ transform:scale(.93); }
+  #basketBtn svg{ width:100%; display:block; overflow:visible; filter:drop-shadow(0 7px 9px rgba(23,50,79,.22)); }
+  #basketBtn.bounce{ animation:basketBounce .5s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes basketBounce{ 0%{transform:scale(1)} 40%{transform:scale(1.12,0.9)} 100%{transform:scale(1)} }
+  #basketTray{ display:flex; gap:4px; flex-wrap:wrap; justify-content:center; max-width:148px; min-height:26px; }
+  .chip{ width:26px; height:26px; display:grid; place-items:center; background:var(--sun); border:2px solid #fff; border-radius:50%; font-family:"Fredoka",sans-serif; font-weight:700; font-size:14px; color:var(--ink); box-shadow:0 2px 6px rgba(23,50,79,.25); }
+  .chip.reading{ outline:3px solid var(--coral); transform:scale(1.3); }
+  #basketLabel{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:12.5px; color:var(--ink); background:rgba(255,253,246,.9); border-radius:999px; padding:2px 10px; border:2px solid #fff; }
+  .fly-fish{ position:absolute; z-index:12; width:74px; pointer-events:none; }
+  .fly-fish svg{ width:100%; display:block; }
+
+  /* ---------- start panel ---------- */
+  #startPanel{ position:absolute; z-index:10; left:50%; top:44%; transform:translate(-50%,-50%); width:min(92vw,430px); background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:18px 20px 16px; text-align:center; }
+  #startPanel[hidden]{ display:none; }
+  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0; color:var(--ink); }
+  #startPanel h1 .t-let{ color:#2b83ba; } #startPanel h1 .t-fish{ color:#e2703a; }
+  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.4; margin:8px 0 0; }
+  .mode-row{ display:flex; gap:9px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  .mode-chip{ border:3px solid #cfe6f2; background:#fff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:16px; padding:10px 16px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .mode-chip:active{ transform:scale(.94); }
+  .mode-chip.selected{ background:var(--sun); border-color:#fff; box-shadow:0 4px 0 rgba(23,50,79,.16); }
+  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
+  #playBtn{ margin-top:16px; border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; padding:14px 44px; border-radius:999px; cursor:pointer; box-shadow:0 7px 0 #d84a3f,0 16px 30px rgba(255,107,94,.4); transition:transform .12s; animation:playPulse 1.6s ease-in-out infinite; }
+  #playBtn:active{ transform:translateY(4px); box-shadow:0 3px 0 #d84a3f; }
+  @keyframes playPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.05);} }
+
+  /* ---------- win overlay ---------- */
+  #winOverlay{ position:absolute; inset:0; z-index:11; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
+  #winOverlay[hidden]{ display:none; }
+  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 14px 40px rgba(23,50,79,.35); padding:18px 20px 16px; text-align:center; width:min(92vw,440px); max-height:100%; overflow:hidden; animation:winIn .5s cubic-bezier(.34,1.6,.5,1); }
+  @keyframes winIn{ from{ transform:scale(.7) translateY(30px); opacity:0;} to{ transform:scale(1) translateY(0); opacity:1;} }
+  #winStars{ font-size:27px; letter-spacing:4px; color:#cfe6f2; }
+  #winStars .lit{ color:var(--sun); text-shadow:0 2px 0 #e8a90c; }
+  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:6px 0 0; }
+  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:16px; line-height:1.45; margin:8px 0 0; }
+  #winChips{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:11px; }
+  #winChips .chip{ width:38px; height:38px; font-size:19px; }
+  .win-btns{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .win-btn{ border:3px solid #fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:12px 26px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .win-btn:active{ transform:translateY(3px); }
+  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 6px 0 #3da347,0 12px 24px rgba(87,204,98,.35); }
+  #winHomeBtn{ background:#fff; color:var(--ink); border-color:#cfe6f2; box-shadow:0 5px 0 rgba(23,50,79,.14); }
+  .confetti{ position:absolute; z-index:12; width:11px; height:15px; border-radius:3px; pointer-events:none; }
+
+  @media (max-width:430px){
+    #bubble{ font-size:13px; padding:6px 10px; }
+    #basketLabel{ font-size:11px; padding:2px 7px; }
+    .chip{ width:23px; height:23px; font-size:12.5px; }
+  }
+  @media (max-height:560px){
+    #hootFig{ width:clamp(80px,24vh,104px); }
+    #basketBtn{ width:74px; }
+    #basketTray{ min-height:20px; } #basketTray .chip{ width:20px; height:20px; font-size:11px; }
+    .fishwrap{ width:clamp(64px,17vh,84px); }
+    #targetLetter{ width:42px; height:42px; font-size:34px; }
+    #targetCard{ margin-top:4px; padding:5px 10px 5px 7px; }
+    #hearBtn{ width:38px; height:38px; }
+    #hud{ padding-top:6px; } .round-btn{ width:42px; height:42px; }
+    #starBank{ font-size:18px; padding:4px 12px 4px 8px; }
+    #bubble{ font-size:12px; padding:5px 9px; max-height:calc(1.28em * 2 + 16px); }
+    #sun{ width:56px; height:56px; top:48px; }
+    #teachCard{ width:min(88vw,300px); padding:10px 12px 8px; } #teachCard .tc-fish{ width:104px; }
+    #startPanel{ top:50%; padding:12px 16px 10px; }
+    #playBtn{ font-size:20px; padding:10px 34px; margin-top:10px; }
+    #reelBtn{ width:52px; height:52px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cloud,#hootFig,.fishwrap .swim,.reed,#duckBtn{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- living sky -->
+  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.6" fill="#17324f"/><circle cx="59" cy="46" r="3.6" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/><circle cx="65" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/></svg>
+  </button>
+  <button class="decor cloud" type="button" style="top:9%;animation-duration:78s;animation-delay:-30s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+  <button class="decor cloud" type="button" style="top:20%;animation-duration:104s;animation-delay:-70s;width:80px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-btns">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      </button>
+    </div>
+    <div id="starBank" aria-label="Stars collected">
+      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span id="starCount">0</span>
+    </div>
+  </div>
+
+  <!-- target card -->
+  <div id="targetCard">
+    <div id="targetLetter">B</div>
+    <div>
+      <div class="tc-label" id="tcLabel">Catch the letter</div>
+      <div id="progressDots"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <button id="hearBtn" type="button" aria-label="Hear Hoot call the letter again">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <!-- pond -->
+  <div id="scene">
+    <div id="waveBand" aria-hidden="true">
+      <svg class="wave" style="top:6%" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 13 Q25 3 50 13 T100 13 T150 13 T200 13 T250 13 T300 13 T350 13 T400 13" stroke="#fff" stroke-width="3" fill="none"/></svg>
+      <svg class="wave" style="top:44%;animation-delay:-2s" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 13 Q25 3 50 13 T100 13 T150 13 T200 13 T250 13 T300 13 T350 13 T400 13" stroke="#fff" stroke-width="3" fill="none"/></svg>
+      <svg class="wave" style="top:78%;animation-delay:-3.4s" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 13 Q25 3 50 13 T100 13 T150 13 T200 13 T250 13 T300 13 T350 13 T400 13" stroke="#fff" stroke-width="3" fill="none"/></svg>
+    </div>
+    <svg class="lily" style="left:6%;top:64%" viewBox="0 0 74 30" aria-hidden="true"><path d="M37 4 A26 13 0 1 0 37 26 L37 15 Z" fill="#3da347"/><circle cx="30" cy="8" r="4.5" fill="#ff8fab"/><circle cx="30" cy="8" r="1.8" fill="#ffc93c"/></svg>
+    <svg class="lily" style="right:8%;top:22%;width:56px" viewBox="0 0 74 30" aria-hidden="true"><path d="M37 4 A26 13 0 1 0 37 26 L37 15 Z" fill="#57cc62"/></svg>
+    <div id="fishLayer"></div>
+    <button class="pondlife" id="frogBtn" type="button" style="left:5%;top:56%" aria-label="Freddy the Frog — tap for a croak">
+      <svg viewBox="0 0 74 56" aria-hidden="true"><ellipse cx="37" cy="38" rx="30" ry="17" fill="#57cc62"/><circle cx="20" cy="16" r="10" fill="#57cc62"/><circle cx="54" cy="16" r="10" fill="#57cc62"/><circle cx="20" cy="16" r="6" fill="#fff"/><circle cx="54" cy="16" r="6" fill="#fff"/><circle cx="20" cy="17" r="3.2" fill="#17324f"/><circle cx="54" cy="17" r="3.2" fill="#17324f"/><path d="M22 40 Q37 50 52 40" stroke="#2c7a35" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="12" cy="32" r="4" fill="#ffb59d" opacity=".8"/><circle cx="62" cy="32" r="4" fill="#ffb59d" opacity=".8"/></svg>
+    </button>
+    <button class="pondlife" id="duckBtn" type="button" style="right:12%;top:8%" aria-label="Daisy the Duck — tap for a quack">
+      <svg viewBox="0 0 92 62" aria-hidden="true"><ellipse cx="42" cy="38" rx="32" ry="19" fill="#fff"/><path d="M16 32 Q4 22 10 14 Q20 20 24 30Z" fill="#f2f2f2"/><circle cx="70" cy="22" r="13" fill="#fff"/><path d="M81 20 L92 24 L81 29 Z" fill="#ff9f1c"/><circle cx="73" cy="19" r="2.6" fill="#17324f"/><path d="M30 34 Q44 26 56 34 Q44 40 30 34Z" fill="#ffe066"/><path d="M6 56 Q24 50 42 56 T78 56" stroke="#bfeaff" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <button class="pondlife dragonfly" id="dfly1" type="button" style="left:38%;top:10%" aria-label="Dragonfly — tap for a loop">
+      <svg viewBox="0 0 52 38" aria-hidden="true"><ellipse cx="14" cy="10" rx="12" ry="5" fill="#bfeaff" opacity=".85" transform="rotate(-24 14 10)"/><ellipse cx="38" cy="10" rx="12" ry="5" fill="#bfeaff" opacity=".85" transform="rotate(24 38 10)"/><ellipse cx="26" cy="22" rx="3" ry="13" fill="#17bebb"/><circle cx="26" cy="8" r="4.6" fill="#0e9594"/><circle cx="24" cy="7" r="1.6" fill="#17324f"/><circle cx="28" cy="7" r="1.6" fill="#17324f"/></svg>
+    </button>
+    <button class="pondlife dragonfly" id="dfly2" type="button" style="right:26%;top:34%;animation-delay:-3s" aria-label="Dragonfly — tap for a loop">
+      <svg viewBox="0 0 52 38" aria-hidden="true"><ellipse cx="14" cy="10" rx="12" ry="5" fill="#ffe3f1" opacity=".9" transform="rotate(-24 14 10)"/><ellipse cx="38" cy="10" rx="12" ry="5" fill="#ffe3f1" opacity=".9" transform="rotate(24 38 10)"/><ellipse cx="26" cy="22" rx="3" ry="13" fill="#ff8fab"/><circle cx="26" cy="8" r="4.6" fill="#e56b8c"/><circle cx="24" cy="7" r="1.6" fill="#17324f"/><circle cx="28" cy="7" r="1.6" fill="#17324f"/></svg>
+    </button>
+    <button class="reed" type="button" style="left:1%" aria-label="Cattails — tap for a rustle"><svg viewBox="0 0 44 96" aria-hidden="true"><path d="M14 96 Q12 50 10 22 M24 96 Q24 44 26 12 M34 96 Q36 56 38 30" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="6" y="4" width="8" height="24" rx="4" fill="#8a5a33"/><rect x="22" y="0" width="8" height="26" rx="4" fill="#a9713c"/></svg></button>
+    <button class="reed" type="button" style="right:1%;animation-delay:-1.8s" aria-label="Cattails — tap for a rustle"><svg viewBox="0 0 44 96" aria-hidden="true"><path d="M14 96 Q12 50 10 22 M24 96 Q24 44 26 12 M34 96 Q36 56 38 30" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="6" y="4" width="8" height="24" rx="4" fill="#8a5a33"/><rect x="30" y="8" width="8" height="22" rx="4" fill="#a9713c"/></svg></button>
+    <svg id="rodSvg" aria-hidden="true">
+      <path id="rodPath" d="" stroke="#8a5a2b" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path id="linePath" d="" stroke="#fffdf6" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0"/>
+      <circle id="bobber" r="7" fill="#e0342b" stroke="#fff" stroke-width="2.5" opacity="0"/>
+    </svg>
+    <button id="reelInBtn" type="button">🎣 REEL IT IN!</button>
+    <div id="splashWord" aria-hidden="true"></div>
+
+    <!-- teach card -->
+    <div id="teachCard" hidden>
+      <div class="tc-fish" id="teachFish"></div>
+      <p id="teachSay"></p>
+      <button id="nextFishBtn" type="button">Next Fish ➜</button>
+      <button id="teachHearBtn" type="button">🔊 Hear it again</button>
+    </div>
+  </div>
+  <button id="reelBtn" type="button" aria-label="The gold reel with the red crank — tap to reel in"><span class="crank" id="crankEl"><span class="arm"></span><span class="knob"></span></span></button>
+
+  <!-- Hoot + basket on the dock -->
+  <div id="groundRow">
+   <div id="dockRow">
+    <div id="dockPlank" aria-hidden="true"></div>
+    <div id="hootZone">
+      <button id="hootFig" type="button" aria-label="Hoot — tap to hear the letter again">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div id="basketZone">
+      <button id="basketBtn" type="button" aria-label="Hoot's Letter Basket — tap and Hoot reads your caught letters back">
+        <svg viewBox="0 0 150 108" aria-hidden="true">
+          <path d="M30 34 Q75 -6 120 34" stroke="#8a5a2b" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M18 38 h114 l-10 52 a10 10 0 0 1 -10 8 H38 a10 10 0 0 1 -10 -8 Z" fill="#b07a3f"/>
+          <path d="M18 38 h114 l-2.4 13 H20.4 Z" fill="#c98d4e"/>
+          <path d="M34 56 h84 M30 72 h90" stroke="#8a5a2b" stroke-width="4" opacity=".55"/>
+          <path d="M48 40 l4 52 M75 40 v54 M102 40 l-4 52" stroke="#8a5a2b" stroke-width="4" opacity=".4"/>
+          <rect x="12" y="30" width="126" height="13" rx="6.5" fill="#8a5a2b"/>
+        </svg>
+      </button>
+      <div id="basketTray" aria-label="Letters in the basket"></div>
+      <span id="basketLabel">Hoot&rsquo;s Letter Basket</span>
+    </div>
+   </div>
+    <div id="bubbleStrip">
+      <span id="hootName">HOOT</span>
+      <div id="bubble">Hi! I&rsquo;m Hoot! Tap <span class="b-letter">Play</span> and let&rsquo;s go fishing for letters!</div>
+    </div>
+  </div>
+
+  <!-- start panel -->
+  <div id="startPanel">
+    <h1><span class="t-let">Letter</span> <span class="t-fish">Fishing</span></h1>
+    <p>Hoot calls a letter — tap its fish to cast the line, crank the reel, and fill Hoot&rsquo;s Letter Basket with all 5!</p>
+    <div class="mode-row" role="group" aria-label="Choose how to play">
+      <button class="mode-chip selected" id="modeQuest" type="button">Letter Quest<small>Hoot calls it — you catch it!</small></button>
+      <button class="mode-chip" id="modeFree" type="button">Free Fishing<small>Catch any fish — just for fun!</small></button>
+    </div>
+    <button id="playBtn" type="button">▶ Play</button>
+  </div>
+
+  <!-- win overlay -->
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <h2 id="winTitle">You did it!</h2>
+      <p id="winRecap"></p>
+      <div id="winChips"></div>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
+        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ================= DATA ================= */
+  var DATA = {
+    A:{s:"ah",w:"Apple",emoji:"\uD83C\uDF4E",color:"#ff6b5e",deep:"#d84a3f"},
+    B:{s:"buh",w:"Balloon",emoji:"\uD83C\uDF88",color:"#4aa8e0",deep:"#2f7fb8"},
+    C:{s:"kuh",w:"Cat",emoji:"\uD83D\uDC31",color:"#ffc93c",deep:"#e8a90c"},
+    D:{s:"duh",w:"Dog",emoji:"\uD83D\uDC36",color:"#c39bff",deep:"#9b6fe0"},
+    E:{s:"eh",w:"Egg",emoji:"\uD83E\uDD5A",color:"#57cc62",deep:"#3da347"},F:{s:"fff",w:"Fish",emoji:"\uD83D\uDC1F",color:"#ff6b5e",deep:"#d84a3f"},G:{s:"guh",w:"Goat",emoji:"\uD83D\uDC10",color:"#4aa8e0",deep:"#2f7fb8"},H:{s:"huh",w:"Hat",emoji:"\uD83C\uDFA9",color:"#ffc93c",deep:"#e8a90c"},I:{s:"ih",w:"Igloo",emoji:"\uD83E\uDDCA",color:"#c39bff",deep:"#9b6fe0"},J:{s:"juh",w:"Juice",emoji:"\uD83E\uDDC3",color:"#57cc62",deep:"#3da347"},K:{s:"kuh",w:"Kite",emoji:"\uD83E\uDE81",color:"#ff6b5e",deep:"#d84a3f"},L:{s:"lll",w:"Lion",emoji:"\uD83E\uDD81",color:"#4aa8e0",deep:"#2f7fb8"},M:{s:"mmm",w:"Monkey",emoji:"\uD83D\uDC35",color:"#ffc93c",deep:"#e8a90c"},N:{s:"nnn",w:"Nest",emoji:"\uD83E\uDEBA",color:"#c39bff",deep:"#9b6fe0"},O:{s:"ah",w:"Octopus",emoji:"\uD83D\uDC19",color:"#57cc62",deep:"#3da347"},P:{s:"puh",w:"Penguin",emoji:"\uD83D\uDC27",color:"#ff6b5e",deep:"#d84a3f"},Q:{s:"kwuh",w:"Queen",emoji:"\uD83D\uDC78",color:"#4aa8e0",deep:"#2f7fb8"},R:{s:"rrr",w:"Rainbow",emoji:"\uD83C\uDF08",color:"#ffc93c",deep:"#e8a90c"},S:{s:"sss",w:"Sun",emoji:"\u2600\uFE0F",color:"#c39bff",deep:"#9b6fe0"},T:{s:"tuh",w:"Turtle",emoji:"\uD83D\uDC22",color:"#57cc62",deep:"#3da347"},U:{s:"uh",w:"Umbrella",emoji:"\u2602\uFE0F",color:"#ff6b5e",deep:"#d84a3f"},V:{s:"vvv",w:"Violin",emoji:"\uD83C\uDFBB",color:"#4aa8e0",deep:"#2f7fb8"},W:{s:"wuh",w:"Whale",emoji:"\uD83D\uDC33",color:"#ffc93c",deep:"#e8a90c"},X:{s:"ks",w:"Fox",emoji:"\uD83E\uDD8A",color:"#c39bff",deep:"#9b6fe0"},Y:{s:"yuh",w:"Yo-yo",emoji:"\uD83E\uDE80",color:"#57cc62",deep:"#3da347"},Z:{s:"zzz",w:"Zebra",emoji:"\uD83E\uDD93",color:"#ff6b5e",deep:"#d84a3f"}
+  };
+  var LETTERS = ["A","B","C","D","E"]; function __hwFishLetters(){var A=Object.keys(DATA);function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}try{var P=window.parent,W=String(P.__llLetterOfWeek&&P.__llLetterOfWeek()||"").toUpperCase();var ln=sh((P.__llLettersLearned?P.__llLettersLearned():[]).map(function(x){return String(x).toUpperCase();}).filter(function(x){return x!==W&&A.indexOf(x)>-1;})).slice(0,2);var o=sh(A.filter(function(x){return x!==W&&ln.indexOf(x)<0;}));var r=(A.indexOf(W)>-1?[W]:[]).concat(ln);while(r.length<5)r.push(o.shift());return r;}catch(e){return sh(A.slice()).slice(0,5);}}
+  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var REEL_LINES = ["That&rsquo;s it — crank, crank, crank!","Halfway out of the water — keep reeling!","Nearly there — one more BIG crank!"];
+  var GOAL = 5;
+
+  /* ================= STATE ================= */
+  var state = "start";           /* start | aim | casting | hooked | teach | won */
+  var mode = "quest";            /* quest | free */
+  var targets = [], tIdx = 0, targetLetter = "B";
+  var caught = [];               /* letters in the basket, in catch order */
+  var stars = 0, bonusStars = 0, freeCaught = 0;
+  var presentLetters = [];
+  var hookedEl = null, hookedData = null, reelStep = 0, crankDeg = 0, reelStage = -1;
+  var fishStart = null, fishDock = null;
+  var inputLock = false, wonRound = false, dead = false;
+  var soundOn = true, praiseIdx = 0, teachTimer = null, teachLetter = "";
+
+  /* ================= ELMS ================= */
+  function $(id){ return document.getElementById(id); }
+  var stage=$("stage"), scene=$("scene"), fishLayer=$("fishLayer"), bubble=$("bubble"), bubbleStrip=$("bubbleStrip"), hootFig=$("hootFig"),
+      targetCard=$("targetCard"), targetLetterEl=$("targetLetter"), tcLabel=$("tcLabel"),
+      dots=$("progressDots").children, starCount=$("starCount"), starBank=$("starBank"),
+      basketBtn=$("basketBtn"), basketTray=$("basketTray"), splashWord=$("splashWord"),
+      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"),
+      winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars"),
+      teachCard=$("teachCard"), teachFish=$("teachFish"), teachSay=$("teachSay"),
+      rodPath=$("rodPath"), linePath=$("linePath"), bobber=$("bobber"),
+      reelBtn=$("reelBtn"), crankEl=$("crankEl"), reelInBtn=$("reelInBtn");
+
+  /* ================= SOUND FX (WebAudio tones) ================= */
+  var AC=null;
+  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+  function tone(f0,f1,dur,type,vol,delay){
+    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
+    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  }
+  function noiseBurst(dur,freq,vol,delay){
+    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    var t=ac.currentTime+(delay||0), len=Math.max(1,(dur*ac.sampleRate)|0);
+    var buf=ac.createBuffer(1,len,ac.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
+    var src=ac.createBufferSource(); src.buffer=buf;
+    var f=ac.createBiquadFilter(); f.type="bandpass"; f.frequency.value=freq||1200; f.Q.value=0.9;
+    var g=ac.createGain(); g.gain.setValueAtTime(vol||0.12,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    src.connect(f); f.connect(g); g.connect(ac.destination); src.start(t);
+  }
+  function splashSound(){ noiseBurst(0.28,900,0.16); tone(300,90,0.22,"sine",0.1); }
+  function plipSound(){ tone(700,990,0.07,"sine",0.1); }
+  function crankSound(){ tone(240,180,0.06,"square",0.07); noiseBurst(0.05,2400,0.05); }
+  function croakSound(){ tone(140,70,0.16,"sawtooth",0.14); tone(130,65,0.14,"sawtooth",0.12,0.2); }
+  function quackSound(){ tone(320,180,0.13,"square",0.12); tone(320,180,0.13,"square",0.12,0.17); }
+  function zingSound(){ tone(1500,2300,0.14,"sine",0.08); }
+  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.1); tone(1560,1560,0.12,"sine",0.1,0.07); }
+  function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
+  function boingSound(){ tone(300,70,0.34,"sine",0.2); tone(150,60,0.3,"triangle",0.08,0.03); }
+  function goldenSound(){ tone(784,784,0.13,"sine",0.12); tone(988,988,0.13,"sine",0.12,0.12); tone(1175,1175,0.2,"sine",0.12,0.24); }
+
+  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
+     Every clip goes through this single queue on a single Audio element.
+     A line that has started always finishes: the next clip is only loaded
+     from the 'ended' event, never from a timer, and pending (not yet
+     started) lines can be replaced when the game moves on. The hub's
+     injected voice governor arbitrates this element against every other
+     voice in the app the same way. No device text-to-speech anywhere. */
+  var VBASE="assets/voice/";
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl=new Audio(); voiceEl.preload="auto";
+      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("error",vNext);
+    }
+    return voiceEl;
+  }
+  function hubQuiet(){
+    try{
+      var d=window.parent&&window.parent.document;
+      if(!d||d===document) return false;
+      var b=d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+    }catch(e){ return false; }
+  }
+  function silenced(){ return !soundOn||hubQuiet(); }
+  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying||dead) return;
+    var item=vQueue.shift(); if(!item) return;
+    if(item.onStart){ try{ item.onStart(); }catch(e){} }
+    if(silenced()){ pumpVoice(); return; }
+    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
+    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    var p=el.play();
+    if(p&&p.catch) p.catch(function(){ vNext(); });
+  }
+  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
+    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    pumpVoice();
+  }
+  function clearPending(){ vQueue.length=0; }
+  function calloutPendingOrPlaying(L){
+    if(vCurrent&&vCurrent.kind==="callout"&&vCurrent.target===L) return true;
+    for(var i=0;i<vQueue.length;i++) if(vQueue[i].kind==="callout"&&vQueue[i].target===L) return true;
+    return false;
+  }
+  /* Short prompts only (owner standard): the FIRST presentation of a round
+     pairs the short "Find the letter" clip with the headline + the letter's
+     sound line, once. Every repeat (wrong tap, hear-again, sound toggle)
+     uses the other short clip ("Can you catch the letter…?") and shows
+     only the short headline — never the long sentence again. */
+  function enqueueCallout(L,full){
+    if(calloutPendingOrPlaying(L)) return;
+    if(full){
+      enqueue("call-letter-"+L.toLowerCase()+".mp3","callout",L,function(){
+        say("Find the letter <span class='b-letter'>"+L+"</span>! "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+"!");
+        targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+      });
+    } else {
+      enqueue("fish-call-"+L.toLowerCase()+".mp3","callout",L,function(){
+        say("Find the letter <span class='b-letter'>"+L+"</span>!");
+      });
+    }
+  }
+  function enqueueTeach(L,golden){
+    enqueue(("ABCDE".indexOf(L)>-1?"fish-teach-"+L.toLowerCase():"coach/phonics-"+L.toLowerCase())+".mp3","teach",L,function(){
+      teachSay.innerHTML="You caught <b>"+L+"</b>! "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+" "+DATA[L].emoji+"!";
+    });
+    praiseIdx++;
+    enqueue(golden?"hoot-amazing.mp3":PRAISE[praiseIdx%PRAISE.length],"praise",L,null);
+  }
+
+  /* ================= HOOT'S FACE / WORDS ================= */
+  function say(html){ bubble.innerHTML=html; }
+  function hootReact(cls,ms){
+    hootFig.classList.remove("celebrate","shake");
+    void hootFig.offsetWidth;
+    hootFig.classList.add(cls);
+    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  }
+
+  /* ================= HELPERS ================= */
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function listWords(arr){
+    if(arr.length<=1) return arr.join("");
+    return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1];
+  }
+  function sceneRect(){ return scene.getBoundingClientRect(); }
+  function elCenter(el){
+    var r=sceneRect(), b=el.getBoundingClientRect();
+    return { x:b.left-r.left+b.width/2, y:b.top-r.top+b.height/2, w:b.width, h:b.height };
+  }
+
+  /* ================= FISH ================= */
+  function fishSVG(f){
+    var col=f.golden?"#FFD93D":f.color, deep=f.golden?"#D99613":f.deep;
+    return "<svg viewBox='0 0 118 86' aria-hidden='true'>"
+      +"<path d='M86 43 L112 20 Q117 43 112 66 Z' fill='"+deep+"'/>"
+      +"<ellipse cx='52' cy='43' rx='50' ry='33' fill='"+col+"'/>"
+      +"<path d='M40 14 Q56 4 68 15 Q54 19 40 14 Z' fill='"+deep+"'/>"
+      +"<circle cx='24' cy='36' r='6.5' fill='#fff'/><circle cx='25.5' cy='37' r='3.4' fill='#17324f'/>"
+      +"<path d='M8 48 Q14 53 21 49' stroke='#17324f' stroke-width='2.6' fill='none' stroke-linecap='round'/>"
+      +"<circle cx='58' cy='43' r='21' fill='#fff' stroke='"+deep+"' stroke-width='3.5'/>"
+      +"<text x='58' y='55' text-anchor='middle' font-family='Fredoka,sans-serif' font-weight='700' font-size='30' fill='#17324f'>"+f.L+"</text></svg>";
+  }
+  var LANES=[ {top:"6%",left:"8%"}, {top:"34%",left:"38%"}, {top:"58%",left:"12%"}, {top:"16%",left:"58%"}, {top:"46%",left:"64%"} ];
+  function makeFish(L,golden,laneIdx){
+    var f={L:L,golden:!!golden,color:DATA[L].color,deep:DATA[L].deep};
+    var b=document.createElement("button");
+    b.type="button"; b.className="fishwrap"+(golden?" golden":"");
+    b.dataset.letter=L; if(golden) b.dataset.golden="1";
+    b.setAttribute("aria-label",golden?("GOLDEN fish with letter "+L+" — a bonus fish!"):("Fish with letter "+L));
+    var lane=LANES[laneIdx%LANES.length];
+    b.style.left=lane.left; b.style.top=lane.top;
+    b.style.animationDuration=(3.4+laneIdx*0.7)+"s";
+    b.innerHTML="<span class='swim'>"+fishSVG(f)+"</span>"+(golden?"<span class='sparkles' aria-hidden='true'>✨ ⭐ ✨</span>":"");
+    b.addEventListener("click",function(){ onFishTap(b); });
+    return b;
+  }
+  function renderFish(letters,goldenLetter){
+    fishLayer.innerHTML=""; presentLetters=letters.slice();
+    letters.forEach(function(L,i){ fishLayer.appendChild(makeFish(L,goldenLetter===L,i)); });
+  }
+  function showDecoFish(){
+    fishLayer.innerHTML=""; presentLetters=[];
+    ["B","E","A"].forEach(function(L,i){ var f=makeFish(L,false,i); f.style.pointerEvents="none"; fishLayer.appendChild(f); });
+  }
+
+  /* ================= ROD / LINE GEOMETRY ================= */
+  function rodGeom(){
+    var r=sceneRect(), hr=hootFig.getBoundingClientRect();
+    var base={ x:hr.left-r.left+hr.width*0.86, y:hr.top-r.top+hr.height*0.30+scene.offsetTop*0 };
+    /* hootFig sits below the scene; convert: scene-relative y of Hoot's wing */
+    var stageR=stage.getBoundingClientRect(), sr2=scene.getBoundingClientRect();
+    base={ x:hr.left-stageR.left+hr.width*0.88, y:hr.top-stageR.top+hr.height*0.22 };
+    var tip={ x:base.x+Math.min(r.width*0.30,190), y:base.y-150 };
+    return { base:base, tip:tip, stageOff:{ x:sr2.left-stageR.left, y:sr2.top-stageR.top } };
+  }
+  function drawRod(){
+    var g=rodGeom();
+    var sx=g.base.x-g.stageOff.x, sy=g.base.y-g.stageOff.y;
+    var tx=g.tip.x-g.stageOff.x, ty=g.tip.y-g.stageOff.y;
+    rodPath.setAttribute("d","M"+sx+" "+sy+" Q "+(sx+ (tx-sx)*0.6)+" "+(sy-40)+" "+tx+" "+ty);
+    /* reel button sits at the rod base — it is a stage-level child, so it
+       takes stage coordinates and always paints (and taps) above the dock
+       row and Hoot's speech strip below it */
+    reelBtn.style.left=(g.base.x-32)+"px"; reelBtn.style.top=(g.base.y-10)+"px";
+    return { tip:{x:tx,y:ty} };
+  }
+  function drawLineTo(x,y,sag){
+    var tip=drawRod().tip;
+    linePath.setAttribute("d","M"+tip.x+" "+tip.y+" Q "+((tip.x+x)/2)+" "+(Math.max(tip.y,y)+ (sag||26))+" "+x+" "+y);
+    linePath.setAttribute("opacity","1");
+    bobber.setAttribute("cx",x); bobber.setAttribute("cy",y); bobber.setAttribute("opacity","1");
+  }
+  function hideLine(){ linePath.setAttribute("opacity","0"); bobber.setAttribute("opacity","0"); }
+
+  /* ================= FX ================= */
+  function ripple(x,y,big){
+    var d=document.createElement("div"); d.className="ripple";
+    var s=big?74:44; d.style.width=s+"px"; d.style.height=(s*0.42)+"px";
+    d.style.left=x+"px"; d.style.top=y+"px";
+    scene.appendChild(d); setTimeout(function(){ d.remove(); },850);
+  }
+  function droplets(x,y,n){
+    for(var i=0;i<(n||8);i++){
+      var d=document.createElement("div"); d.className="droplet";
+      d.style.left=x+"px"; d.style.top=y+"px"; scene.appendChild(d);
+      var dx=(Math.random()-0.5)*90, up=-(30+Math.random()*50);
+      if(d.animate){
+        d.animate([
+          {transform:"translate(0,0)",opacity:1},
+          {transform:"translate("+dx*0.6+"px,"+up+"px)",opacity:1,offset:0.45},
+          {transform:"translate("+dx+"px,26px)",opacity:0}
+        ],{duration:620+Math.random()*200,easing:"cubic-bezier(.2,.7,.3,1)"});
+      }
+      (function(el){ setTimeout(function(){ el.remove(); },900); })(d);
+    }
+  }
+  function showSplashWord(L,x,y){
+    splashWord.innerHTML="<b>"+L+"</b> is for "+DATA[L].w+"!";
+    var r=sceneRect();
+    splashWord.style.left=Math.min(Math.max(x-70,6),r.width-160)+"px";
+    splashWord.style.top=Math.max(y-64,4)+"px";
+    splashWord.classList.add("show");
+    clearTimeout(showSplashWord._t);
+    showSplashWord._t=setTimeout(function(){ splashWord.classList.remove("show"); },950);
+  }
+  function flyFishToBasket(L,golden,fromRect,done){
+    var wrap=document.createElement("div"); wrap.className="fly-fish";
+    wrap.innerHTML=fishSVG({L:L,golden:golden,color:DATA[L].color,deep:DATA[L].deep});
+    var sr=stage.getBoundingClientRect(), br=basketBtn.getBoundingClientRect();
+    var x0=fromRect.left+fromRect.width/2-sr.left-37, y0=fromRect.top+fromRect.height/2-sr.top-28;
+    var x1=br.left+br.width/2-sr.left-37, y1=br.top+br.height/2-sr.top-28;
+    wrap.style.left=x0+"px"; wrap.style.top=y0+"px";
+    stage.appendChild(wrap);
+    var finished=false;
+    function finish(){ if(finished) return; finished=true; wrap.remove(); basketBtn.classList.remove("bounce"); void basketBtn.offsetWidth; basketBtn.classList.add("bounce"); starSound(); done(); }
+    if(wrap.animate){
+      var anim=wrap.animate([
+        {transform:"translate(0,0) scale(1) rotate(0deg)",opacity:1},
+        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.4-84)+"px) scale(1.1) rotate(-10deg)",opacity:1,offset:0.55},
+        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.45) rotate(6deg)",opacity:.95}
+      ],{duration:740,easing:"cubic-bezier(.3,.6,.4,1)"});
+      anim.onfinish=finish;
+      setTimeout(finish,950);
+    } else setTimeout(finish,120);
+  }
+  function confetti(n){
+    var sr=stage.getBoundingClientRect();
+    var colors=["#ff6b5e","#ffc93c","#57cc62","#4aa8e0","#c39bff","#ff8fab"];
+    for(var i=0;i<(n||26);i++){
+      var c=document.createElement("div"); c.className="confetti";
+      c.style.background=colors[i%colors.length];
+      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
+      stage.appendChild(c);
+      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      if(c.animate){
+        c.animate([
+          {transform:"translate(0,0) rotate(0deg)",opacity:1},
+          {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
+        ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+      }
+      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+    }
+  }
+
+  /* ================= HUD ================= */
+  function updateHUD(){
+    starCount.textContent=stars;
+    for(var i=0;i<dots.length;i++) dots[i].classList.toggle("on", i<caught.length);
+  }
+  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
+  function addChip(L){
+    var chip=document.createElement("span"); chip.className="chip"; chip.textContent=L; chip.dataset.letter=L;
+    basketTray.appendChild(chip);
+  }
+
+  /* ================= GAME FLOW ================= */
+  function presentTarget(){
+    targetLetter=targets[tIdx];
+    targetLetterEl.textContent=targetLetter;
+    tcLabel.textContent="Catch the letter";
+    targetCard.style.display="flex";
+    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
+    var pool=LETTERS.filter(function(x){ return x!==targetLetter && caught.indexOf(x)<0; });
+    shuffle(pool);
+    var letters=shuffle([targetLetter].concat(pool.slice(0,2)));
+    var goldenLetter=(mode==="quest" && Math.random()<0.35) ? targetLetter : null;
+    renderFish(letters,goldenLetter);
+    updateHUD();
+  }
+  function presentFree(){
+    tcLabel.textContent="Free Fishing — tap any fish!";
+    targetLetterEl.textContent="\uD83C\uDF63";
+    targetCard.style.display="flex";
+    var letters=shuffle(LETTERS.slice()).slice(0,4);
+    var goldenLetter=Math.random()<0.3 ? letters[0] : null;
+    renderFish(letters,goldenLetter);
+    updateHUD();
+  }
+  function startRound(){
+    clearPending();
+    if(teachTimer){ clearTimeout(teachTimer); teachTimer=null; }
+    caught=[]; basketTray.innerHTML=""; stars=0; bonusStars=0; freeCaught=0; wonRound=false; inputLock=false;
+    hookedEl=null; hookedData=null; reelStep=0; hideLine();
+    reelBtn.classList.remove("reeling"); reelBtn.style.display="none"; reelInBtn.classList.remove("ready");
+    bubbleStrip.classList.remove("mini");
+    teachCard.hidden=true;
+    LETTERS=__hwFishLetters(); try{window.__hwFishSet=LETTERS.slice();}catch(e){} targets=shuffle(LETTERS.slice()); tIdx=0;
+    winOverlay.hidden=true; startPanel.hidden=true;
+    state="aim";
+    drawRod();
+    if(mode==="quest"){
+      presentTarget();
+      enqueue("hoot-game-hello.mp3","hello","",function(){ say("Hello, fisher friend! Hoot will call a letter — catch its fish! Listen&hellip;"); });
+      enqueueCallout(targetLetter,true);
+    } else {
+      presentFree();
+      say("Free Fishing! No right or wrong here — tap <span class='b-letter'>ANY</span> fish, reel it in, and splash about! Freddy, Daisy and the dragonflies love a tap too!");
+      enqueue("hoot-game-hello.mp3","hello","",null);
+    }
+  }
+  function winRound(){
+    if(wonRound) return; wonRound=true; state="won";
+    updateHUD();
+    var recapLetters=caught.slice();
+    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
+    enqueue("hoot-you-learned.mp3","recap","",function(){
+      say("You caught <span class='b-letter'>"+recapLetters.join(", ")+"</span>! Hoot is so proud of you!");
+    });
+    winTitle.textContent="You caught all 5 letter fish!";
+    winRecap.innerHTML="Hoot&rsquo;s basket is full! You reeled in <b>"+listWords(recapLetters)+"</b>"+(bonusStars?(" — plus <b>"+bonusStars+" golden bonus star"+(bonusStars===1?"":"s")+"</b>!"):"!")+" Every letter Hoot called!";
+    winChips.innerHTML="";
+    recapLetters.forEach(function(L){ var chip=document.createElement("span"); chip.className="chip"; chip.textContent=L; winChips.appendChild(chip); });
+    var starEls=winStars.children;
+    for(var i=0;i<starEls.length;i++){
+      starEls[i].classList.remove("lit");
+      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
+    }
+    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(30); sparkleSound(); } },650);
+  }
+  function resetToStart(){
+    clearPending();
+    if(teachTimer){ clearTimeout(teachTimer); teachTimer=null; }
+    state="start"; caught=[]; basketTray.innerHTML=""; stars=0; bonusStars=0; freeCaught=0; wonRound=false; inputLock=false;
+    hookedEl=null; hookedData=null; hideLine();
+    reelBtn.classList.remove("reeling"); reelBtn.style.display="none"; reelInBtn.classList.remove("ready");
+    bubbleStrip.classList.remove("mini");
+    teachCard.hidden=true;
+    winOverlay.hidden=true; startPanel.hidden=false;
+    targetCard.style.display="none";
+    showDecoFish(); updateHUD();
+    say("Hi! I&rsquo;m Hoot! Tap <span class='b-letter'>Play</span> and let&rsquo;s go fishing for letters!");
+    hootFig.classList.add("wave");
+    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  }
+
+  /* ================= FISH TAPS: CAST + REEL ================= */
+  function onFishTap(b){
+    if(state!=="aim"||inputLock||dead) return;
+    if(b.dataset.done) return;
+    audio();
+    var L=b.dataset.letter, golden=b.dataset.golden==="1";
+    if(mode==="quest" && L!==targetLetter){ wrongFish(b,L); return; }
+    hookFish(b,L,golden);
+  }
+  function wrongFish(b,L){
+    b.dataset.done="1";
+    b.classList.add("boing-away");
+    boingSound();
+    hootReact("shake",1100);
+    var T=targetLetter;
+    say("That was the <span class='b-letter'>"+L+"</span> fish — good try! Find the <span class='b-letter'>"+T+"</span> fish!");
+    var hintPlaying=vCurrent&&(vCurrent.kind==="hint"&&vCurrent.target===T);
+    var hintPending=vQueue.some(function(q){ return q.kind==="hint"&&q.target===T; });
+    if(!hintPlaying&&!hintPending){
+      enqueue("hoot-try-again.mp3","hint",T,null);
+      enqueueCallout(T);
+    }
+    presentLetters=presentLetters.filter(function(x){ return x!==L; });
+    setTimeout(function(){
+      if(dead||state!=="aim"||mode!=="quest") return;
+      b.remove();
+      var used=presentLetters.concat([targetLetter]).concat(caught);
+      var pool=LETTERS.filter(function(x){ return used.indexOf(x)<0; });
+      if(!pool.length) return;
+      var NL=pool[Math.floor(Math.random()*pool.length)];
+      presentLetters.push(NL);
+      fishLayer.appendChild(makeFish(NL,false,presentLetters.length+1));
+    },520);
+  }
+  function hookFish(b,L,golden){
+    inputLock=true; state="casting";
+    b.dataset.done="1";
+    hookedEl=b; hookedData={L:L,golden:golden};
+    var c=elCenter(b), r=sceneRect();
+    /* freeze the fish where it swims */
+    var br=b.getBoundingClientRect();
+    b.classList.add("hooked");
+    b.style.left=(br.left-r.left)+"px"; b.style.top=(br.top-r.top)+"px";
+    b.style.marginLeft="0";
+    fishStart={ x:br.left-r.left, y:br.top-r.top, cx:c.x, cy:c.y };
+    /* the catch travels down to the dock at the pond's bottom-left corner */
+    fishDock={ x:Math.max(2,r.width*0.03), y:Math.max(2,r.height-b.offsetHeight-2) };
+    drawLineTo(c.x,c.y,30);
+    ripple(c.x,c.y,true); splashSound(); droplets(c.x,c.y,9);
+    setTimeout(function(){
+      if(dead||state!=="casting") return;
+      state="hooked"; reelStep=0; reelStage=-1;
+      reelBtn.style.display="block"; reelBtn.classList.add("reeling");
+      reelInBtn.classList.add("ready");
+      bubbleStrip.classList.add("mini");
+      if(golden){ goldenSound(); say("✨ <span class='b-letter'>GOLDEN FISH</span> ON THE LINE! ✨ Crank that reel — tap REEL IT IN again and again!"); }
+      else say("SPLASH! You hooked the <span class='b-letter'>"+L+"</span> fish! 🎣 Now crank the reel — tap <span class='b-letter'>REEL IT IN</span> again and again!");
+      if(window.__hootSpeak) window.__hootSpeak("idle");
+      inputLock=false;
+    },650);
+  }
+  function reelTap(){
+    if(state!=="hooked"||dead) return;
+    audio();
+    reelStep++;
+    crankDeg+=160; crankEl.style.transform="rotate("+crankDeg+"deg)";
+    crankSound(); plipSound();
+    var frac=Math.min(1,reelStep/4);
+    var x=fishStart.x+(fishDock.x-fishStart.x)*frac;
+    var y=fishStart.y+(fishDock.y-fishStart.y)*frac;
+    hookedEl.style.transition="left .4s cubic-bezier(.3,1.2,.5,1), top .4s cubic-bezier(.3,1.2,.5,1)";
+    hookedEl.style.left=x+"px"; hookedEl.style.top=y+"px";
+    var cx=x+hookedEl.offsetWidth/2, cy=y+hookedEl.offsetHeight/2;
+    drawLineTo(cx,cy,20);
+    ripple(cx,cy+14,false);
+    var stageIdx=reelStep>=4?3:reelStep-1;
+    if(reelStep<4 && stageIdx>reelStage){ reelStage=stageIdx; say("🦉 Hoot cheers: "+REEL_LINES[stageIdx]); hootReact("celebrate",900); }
+    if(reelStep>=4){
+      state="teach";
+      reelBtn.classList.remove("reeling"); reelBtn.style.display="none"; reelInBtn.classList.remove("ready");
+      bubbleStrip.classList.remove("mini");
+      hideLine();
+      finishCatch();
+    }
+  }
+  reelInBtn.addEventListener("click",reelTap);
+  reelBtn.addEventListener("click",reelTap);
+
+  function finishCatch(){
+    var f=hookedData, L=f.L, golden=f.golden;
+    var fr=hookedEl.getBoundingClientRect();
+    var wasEl=hookedEl; hookedEl=null;
+    if(wasEl) wasEl.remove();
+    hootReact("celebrate",1750);
+    if(golden){ bonusStars++; stars++; goldenSound(); confetti(16); }
+    stars++; caught.push(L); bumpStars(); updateHUD();
+    clearPending();
+    flyFishToBasket(L,golden,fr,function(){
+      if(dead) return;
+      addChip(L);
+      /* teach card: Hoot teaches this letter before the next cast */
+      teachFish.innerHTML=fishSVG({L:L,golden:golden,color:DATA[L].color,deep:DATA[L].deep});
+      teachSay.innerHTML="You caught <b>"+L+"</b>! "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+" "+DATA[L].emoji+"!";
+      teachCard.hidden=false;
+      showSplashWord(L,fr.left+fr.width/2,fr.top);
+      enqueueTeach(L,golden);__hwAuto(function(){return state==="teach"&&!teachCard.hidden;},nextAfterTeach,1000);
+      /* Auto-advance (owner standard): the teach card celebrates briefly,
+         then the game moves on by itself — Next Fish stays as a shortcut,
+         never a required step. */
+      teachLetter=L;
+      armTeachTimer();
+      if(mode==="free"){
+        freeCaught++;
+        say("Free Fishing catch! The <span class='b-letter'>"+L+"</span> fish is in the basket — here comes the next fish!");
+      }
+    });
+  }
+  var TEACH_MS=3000;
+  function armTeachTimer(){
+    if(teachTimer) clearTimeout(teachTimer);
+    teachTimer=setTimeout(function(){ teachTimer=null; nextAfterTeach(); },TEACH_MS);
+  }
+  function __hwAuto(ok,go,pause){var t0=Date.now(),q=0;function w(){if(dead||!ok())return;var now=Date.now(),b=vPlaying||vQueue.length;if(b&&now-t0<12000){q=0;setTimeout(w,200);return;}if(!q)q=now;if(now-q>=pause||now-t0>=12000){go();return;}setTimeout(w,200);}setTimeout(w,300);}
+  function nextAfterTeach(){
+    if(state!=="teach"||dead) return;
+    if(teachTimer){ clearTimeout(teachTimer); teachTimer=null; }
+    teachCard.hidden=true;
+    if(mode==="free"){ state="aim"; presentFree(); return; }
+    if(tIdx>=GOAL-1){ winRound(); return; }
+    tIdx++; state="aim";
+    presentTarget();
+    enqueueCallout(targetLetter,true);
+  }
+  $("nextFishBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); nextAfterTeach(); });
+  $("teachHearBtn").addEventListener("click",function(e){
+    e.stopPropagation();
+    audio();
+    if(state!=="teach"||!teachLetter) return;
+    var L=teachLetter;
+    var tPlaying=vCurrent&&vCurrent.kind==="teach"&&vCurrent.target===L;
+    var tPending=vQueue.some(function(q){ return q.kind==="teach"&&q.target===L; });
+    if(!tPlaying&&!tPending) enqueue(("ABCDE".indexOf(L)>-1?"fish-teach-"+L.toLowerCase():"coach/phonics-"+L.toLowerCase())+".mp3","teach",L,null);
+    armTeachTimer();
+  });
+  teachCard.addEventListener("click",function(e){ if(e.target!==$("nextFishBtn")&&e.target!==$("teachHearBtn")) nextAfterTeach(); });
+
+  /* ================= BASKET READ-BACK ================= */
+  basketBtn.addEventListener("click",function(){
+    audio();
+    basketBtn.classList.remove("bounce"); void basketBtn.offsetWidth; basketBtn.classList.add("bounce");
+    if(!caught.length){
+      say("My basket is empty! Catch the right fish and its letter drops in here!");
+      if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+      sparkleSound();
+      return;
+    }
+    clearPending();
+    var letters=caught.slice();
+    say("Your basket says: <span class='b-letter'>"+letters.join(" ")+"</span> — listen to Hoot read them!");
+    letters.forEach(function(L,i){
+      enqueue("call-letter-"+L.toLowerCase()+".mp3","readback",L,function(){
+        var chips=basketTray.children;
+        for(var j=0;j<chips.length;j++) chips[j].classList.toggle("reading",j===i);
+        if(i===letters.length-1) setTimeout(function(){ for(var k=0;k<chips.length;k++) chips[k].classList.remove("reading"); },900);
+      });
+    });
+  });
+
+  /* ================= HOOT TAP / HEAR AGAIN ================= */
+  function hearAgain(){
+    audio();
+    if(state==="aim"&&mode==="quest"){ enqueueCallout(targetLetter); }
+    else if(state==="start"||state==="won"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); if(state==="start") hootReact("celebrate",1100); }
+    else if(state==="hooked"){ say("Crank the reel — tap <span class='b-letter'>REEL IT IN</span>!"); crankSound(); }
+  }
+  hootFig.addEventListener("click",hearAgain);
+  $("hearBtn").addEventListener("click",hearAgain);
+
+  /* ================= LIVING POND TAPS ================= */
+  $("sun").addEventListener("click",function(){
+    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
+    sparkleSound();
+    if(state==="start") say("That&rsquo;s Mr. Sun! He loves watching us fish!");
+  });
+  document.querySelectorAll(".cloud").forEach(function(c){
+    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); noiseBurst(0.16,700,0.07); setTimeout(function(){ c.classList.remove("puff"); },300); });
+  });
+  $("frogBtn").addEventListener("click",function(){
+    audio(); croakSound();
+    var f=$("frogBtn"); f.classList.remove("jump"); void f.offsetWidth; f.classList.add("jump");
+    var c=elCenter(f); ripple(c.x,c.y+18,false);
+    if(state==="aim"||state==="start") say("That&rsquo;s <span class='b-letter'>Freddy the Frog</span>! Ribbit ribbit! He cheers for every catch!");
+  });
+  $("duckBtn").addEventListener("click",function(){
+    audio(); quackSound();
+    var d=$("duckBtn"); d.classList.remove("splashy"); void d.offsetWidth; d.classList.add("splashy");
+    var c=elCenter(d); droplets(c.x,c.y+16,7); ripple(c.x,c.y+18,false);
+    if(state==="aim"||state==="start") say("That&rsquo;s <span class='b-letter'>Daisy the Duck</span>! Quack quack! She swims over to watch you fish!");
+  });
+  document.querySelectorAll(".dragonfly").forEach(function(df){
+    df.addEventListener("click",function(){
+      audio(); zingSound();
+      df.classList.remove("loop"); void df.offsetWidth; df.classList.add("loop");
+      setTimeout(function(){ df.classList.remove("loop"); },750);
+    });
+  });
+  document.querySelectorAll(".reed").forEach(function(rd){
+    rd.addEventListener("click",function(){ audio(); noiseBurst(0.2,1600,0.06); });
+  });
+
+  /* ================= CONTROLS ================= */
+  $("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    $("soundOnIc").style.display=soundOn?"block":"none";
+    $("soundOffIc").style.display=soundOn?"none":"block";
+    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
+    if(!soundOn){ clearPending(); }
+    else { audio(); tone(660,660,0.1,"triangle",0.12); if(state==="aim"&&mode==="quest") enqueueCallout(targetLetter); }
+  });
+  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
+  $("modeQuest").addEventListener("click",function(){ mode="quest"; $("modeQuest").classList.add("selected"); $("modeFree").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
+  $("modeFree").addEventListener("click",function(){ mode="free"; $("modeFree").classList.add("selected"); $("modeQuest").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
+  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
+  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+  window.addEventListener("resize",function(){ drawRod(); });
+
+  /* ================= LEAVING THE GAME ================= */
+  function teardown(){ dead=true; clearPending(); if(teachTimer) clearTimeout(teachTimer); hootTalking(false); }
+  window.addEventListener("pagehide",teardown);
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+
+  /* ================= INIT ================= */
+  targetCard.style.display="none";
+  showDecoFish();
+  updateHUD();
+  drawRod();
+  hootFig.classList.add("wave");
+  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+
+  /* Probe/debug handle: read-only snapshot of the round state. */
+  window.__fishingGame={
+    snapshot:function(){
+      function R(id){ var e=document.getElementById(id); if(!e) return null; var r=e.getBoundingClientRect(); return [Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height)]; }
+      return { state:state, mode:mode, target:targetLetter, stars:stars, bonus:bonusStars,
+        caught:caught.slice(), presented:presentLetters.slice(), reelStep:reelStep,
+        winShown:!winOverlay.hidden, teachShown:!teachCard.hidden, voicePlaying:vPlaying,
+        voiceQueue:vQueue.map(function(q){ return q.file; }),
+        bubbleText:bubble.textContent, stripMini:bubbleStrip.classList.contains("mini"),
+        layout:{ bubble:R("bubble"), strip:R("bubbleStrip"), reel:R("reelBtn"), reelIn:R("reelInBtn"), basket:R("basketBtn"), ground:R("groundRow"), dock:R("dockRow"), hoot:R("hootFig"), scene:R("scene"), teach:R("teachCard") } };
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+</body>
+</html>
