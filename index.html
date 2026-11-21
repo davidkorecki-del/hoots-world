@@ -5756,11 +5756,21 @@
       var $$ = function(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
 
       /* ---------- sound + voice helpers ---------- */
+      /* Wave 3: shared singleton AudioContext across the whole shell (iOS Safari caps active contexts at ~4-6) */
+      window.__hwAudioCtx = window.__hwAudioCtx || function(){
+        try{
+          if(!window.__hwSharedAC){
+            var C = window.AudioContext || window.webkitAudioContext;
+            if(C) window.__hwSharedAC = new C();
+          }
+          if(window.__hwSharedAC && window.__hwSharedAC.state === "suspended") window.__hwSharedAC.resume();
+          return window.__hwSharedAC || null;
+        }catch(e){ return null; }
+      };
       var actx = null;
       function tone(freq, dur, type, vol, when){
         try{
-          if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-          if(actx.state === "suspended") actx.resume();
+          actx = window.__hwAudioCtx(); if(!actx) return;
           var t = actx.currentTime + (when||0);
           var o = actx.createOscillator(), g = actx.createGain();
           o.type = type||"sine"; o.frequency.setValueAtTime(freq, t);
@@ -8207,7 +8217,8 @@
         function tone(freq, dur, type, vol, delay, slideTo){
           if(quiet()) return;
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var t0 = actx.currentTime + (delay || 0);
             var o = actx.createOscillator(), g = actx.createGain();
@@ -9268,7 +9279,8 @@
         function tone(freq, dur, type, vol, delay, slideTo){
           if(quiet()) return;
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var t0 = actx.currentTime + (delay || 0);
             var o = actx.createOscillator(), g = actx.createGain();
@@ -10047,7 +10059,8 @@
         var actx = null;
         function beep(freq){
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var o = actx.createOscillator(), g = actx.createGain();
             o.type = "sine"; o.frequency.value = freq || 600;
@@ -10144,7 +10157,8 @@
         var actx = null;
         function beep(freq, delay){
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var t0 = actx.currentTime + (delay || 0);
             var o = actx.createOscillator(), g = actx.createGain();
@@ -11778,7 +11792,8 @@
         var AC = null;
         function pop(){
           try{
-            if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+            AC = window.__hwAudioCtx ? window.__hwAudioCtx() : (AC || new (window.AudioContext || window.webkitAudioContext)());
+            if(!AC) return;
             if(AC.state === "suspended") AC.resume();
             var o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
             o.type = "sine"; o.frequency.setValueAtTime(620, t); o.frequency.exponentialRampToValueAtTime(940, t + .09);

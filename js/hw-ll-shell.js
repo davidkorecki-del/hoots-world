@@ -973,8 +973,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (STORIES[w]) return w;
     var keys = Object.keys(STORIES); return keys[new Date().getDate() % keys.length];
   }
-  var storyA = null;
-  function stopStory() { if (storyA) { storyA.__govWait = false; try { storyA.pause(); } catch (e) {} storyA.onended = null; storyA = null; } var b = document.querySelector(".st-play"); if (b) { b.textContent = "▶ Play the story"; b.classList.remove("on"); } var st = document.querySelector(".st-stage"); if (st) st.classList.remove("playing"); }
+  var storyA = null, storyPoolEl = null;
+  function stopStory() { if (storyA) { storyA.__govWait = false; storyA.__govNext = null; try { storyA.pause(); } catch (e) {} storyA.onended = null; storyA = null; } var b = document.querySelector(".st-play"); if (b) { b.textContent = "▶ Play the story"; b.classList.remove("on"); } var st = document.querySelector(".st-stage"); if (st) st.classList.remove("playing"); }
   function playStory(k, withIntro) {
     stopStory();
     var b = document.querySelector(".st-play"), st = document.querySelector(".st-stage");
@@ -982,7 +982,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var list = (withIntro ? ["story-intro"] : []).concat(["story-" + k]), i = 0;
     (function next() {
       if (i >= list.length) { stopStory(); return; }
-      var a = storyA = new Audio("assets/voice/" + list[i++] + ".mp3"); a.__govWait = false;
+      if (!storyPoolEl) storyPoolEl = new Audio();
+      var a = storyA = storyPoolEl; a.__govWait = false; a.__govNext = null; a.onended = null;
+      try { a.pause(); } catch (e) {}
+      a.src = "assets/voice/" + list[i++] + ".mp3";
       a.onended = function () { if (storyA === a) next(); };
       var pr = a.play(); if (pr && pr.catch) pr.catch(function () { if (storyA === a) stopStory(); });
     })();
@@ -1053,9 +1056,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     d[pid] = today; try { localStorage.setItem(BYE_KEY, JSON.stringify(d)); } catch (e) {}
     var b = document.querySelector(".kh-bye"); if (window.HootGames) window.HootGames.sing("song-goodbye", b);
   }
-  var sayClipEl = null;
-  function stopSayClip() { if (sayClipEl) { sayClipEl.__govWait = false; sayClipEl.__govNext = null; try { sayClipEl.pause(); } catch (e) {} sayClipEl = null; } }
-  function sayClip(k) { try { stopSayClip(); var a = sayClipEl = new Audio("assets/voice/" + k + ".mp3"); a.onended = a.onerror = function () { if (sayClipEl === a) sayClipEl = null; }; var pr = a.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
+  var sayClipEl = null, sayClipPoolEl = null;
+  function stopSayClip() { if (sayClipEl) { sayClipEl.__govWait = false; sayClipEl.__govNext = null; sayClipEl.onended = sayClipEl.onerror = null; try { sayClipEl.pause(); } catch (e) {} sayClipEl = null; } }
+  function sayClip(k) { try { stopSayClip(); if (!sayClipPoolEl) sayClipPoolEl = new Audio(); var a = sayClipEl = sayClipPoolEl; a.__govWait = false; a.__govNext = null; a.src = "assets/voice/" + k + ".mp3"; a.onended = a.onerror = function () { if (sayClipEl === a) sayClipEl = null; }; var pr = a.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
   /* a game / shelf / outdoor stone counts as done once the child has been in it and comes back */
   function finishPendingStone() {
     var t = state.pendingStone; state.pendingStone = null;
