@@ -199,8 +199,10 @@
     return m || "Something went wrong. Try again.";
   }
   function cardHtml() {
-    if (!configured()) return "";
     var head = '<section class="ll-card ac-card" id="hoot-account"><h2 style="margin:0 0 4px">Family account</h2>';
+    if (!configured()) {
+      return head + '<p class="hoot-line" style="margin:0">Everything is saved on this device. Family Sync can be switched on later to share progress across devices.</p></section>';
+    }
     var note = (ui.note ? '<p class="ac-note" role="status">' + esc(ui.note) + "</p>" : "") + (ui.err ? '<p class="ac-err" role="alert">' + esc(ui.err) + "</p>" : "");
     var dis = ui.busy ? " disabled" : "";
     if (recovery) {

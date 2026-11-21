@@ -1,0 +1,2762 @@
+{
+  "schema": "hoot-lessons-data v1",
+  "source": "hoot-v2/index.html (.lsn structures + TEACHBACK literal) + little-band CFG rounds via card._cfg",
+  "count": 48,
+  "lessons": [
+    {
+      "id": "little-colour-names",
+      "band": "little",
+      "num": 1,
+      "title": "Colour names",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Colours have names. Look at each one and say its name out loud together:"
+        },
+        {
+          "kind": "visual",
+          "text": "REDYELLOWBLUE"
+        },
+        {
+          "kind": "text",
+          "text": "The first one is RED — like a strawberry 🍓. Say it: “red!”"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the RED one.",
+          "options": [
+            {
+              "text": "Yellow",
+              "right": false,
+              "hint": "That's YELLOW — like the sun ☀️. Look for the one that looks like a strawberry 🍓."
+            },
+            {
+              "text": "Red",
+              "right": true,
+              "praise": "⭐ YES! That's RED — like a strawberry! Colour name learned!"
+            },
+            {
+              "text": "Blue",
+              "right": false,
+              "hint": "That's BLUE — like the sky. Look for the strawberry colour 🍓."
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 1,
+          "q": "Your turn! Tap the YELLOW one — the sun colour.",
+          "askClips": [
+            "call-color-yellow"
+          ],
+          "praise": "⭐ YES! YELLOW — like the sun! Next colour…",
+          "praiseClips": [
+            "name-color-yellow",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "That's RED — the strawberry colour. Find YELLOW, like the sun!",
+            "2": "That's BLUE — the sky colour. Find YELLOW, like the sun!"
+          }
+        },
+        {
+          "opt": 2,
+          "item": 2,
+          "q": "Now tap the BLUE one — the sky colour.",
+          "askClips": [
+            "call-color-blue"
+          ],
+          "praise": "⭐ YES! BLUE — like the sky! One more…",
+          "praiseClips": [
+            "name-color-blue",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "0": "That's YELLOW — the sun colour. Find BLUE, like the sky!",
+            "1": "That's RED — the strawberry colour. Find BLUE, like the sky!"
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-shape-names",
+      "band": "little",
+      "num": 2,
+      "title": "Shape names",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Shapes have names too. A circle is round like a ball. A square has 4 straight sides. A triangle has 3 pointy corners — count them: 1, 2, 3!"
+        },
+        {
+          "kind": "visual",
+          "text": "Circle Square Triangle"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the TRIANGLE — the one with 3 pointy corners.",
+          "options": [
+            {
+              "text": "Circle",
+              "right": false,
+              "hint": "That's the CIRCLE — it's round like a ball, no corners. A triangle has 3 pointy corners!"
+            },
+            {
+              "text": "Triangle",
+              "right": true,
+              "praise": "⭐ YES! TRIANGLE — 1, 2, 3 pointy corners! Shape name learned!"
+            },
+            {
+              "text": "Square",
+              "right": false,
+              "hint": "That's the SQUARE — it has 4 sides. The triangle has 3 pointy corners!"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 0,
+          "q": "Your turn! Tap the CIRCLE — round like a ball, no corners.",
+          "askClips": [
+            "call-shape-circle"
+          ],
+          "praise": "⭐ YES! CIRCLE — round like a ball! Now let's find another shape…",
+          "praiseClips": [
+            "name-shape-circle",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "That's the TRIANGLE — it has 3 pointy corners. The circle is round like a ball, no corners!",
+            "2": "That's the SQUARE — 4 straight sides. The circle is round like a ball!"
+          }
+        },
+        {
+          "opt": 2,
+          "item": 1,
+          "q": "Now tap the SQUARE — 4 straight sides.",
+          "askClips": [
+            "call-shape-square"
+          ],
+          "praise": "⭐ YES! SQUARE — 1, 2, 3, 4 straight sides! One more shape…",
+          "praiseClips": [
+            "name-shape-square",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "0": "That's the CIRCLE — it's round, no sides. The square has 4 straight sides!",
+            "1": "That's the TRIANGLE — only 3 sides. The square has 4!"
+          }
+        },
+        {
+          "final": true,
+          "item": 2
+        }
+      ]
+    },
+    {
+      "id": "little-counting-to-5",
+      "band": "little",
+      "num": 3,
+      "title": "Counting to 5",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Counting means touching each thing one time and saying its number. Tap every apple and count out loud with Hoot:"
+        },
+        {
+          "kind": "visual",
+          "text": "🍎 🍎 🍎 🍎 🍎"
+        },
+        {
+          "kind": "text",
+          "text": "One tap, one number — that's counting!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! ⭐⭐⭐ — how many stars are there?",
+          "options": [
+            {
+              "text": "2",
+              "right": false,
+              "hint": "Count them one at a time, touching each star: 1… 2… one more!"
+            },
+            {
+              "text": "3",
+              "right": true,
+              "praise": "⭐ YES! 1, 2, 3 stars! You counted them!"
+            },
+            {
+              "text": "4",
+              "right": false,
+              "hint": "Too many! Touch each star as you count: 1, 2… and one more makes…?"
+            }
+          ]
+        }
+      ],
+      "teachback": null
+    },
+    {
+      "id": "little-first-letter-sounds",
+      "band": "little",
+      "num": 4,
+      "title": "First letter sounds",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Letters make sounds. Say each sound out loud together:"
+        },
+        {
+          "kind": "visual",
+          "text": "A 🍎A says “ah” — Apple B 🎈B says “buh” — Balloon C 🐱C says “kuh” — Cat"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Which letter says “buh”?",
+          "options": [
+            {
+              "text": "A",
+              "right": false,
+              "hint": "A says “ah” — like Apple 🍎. Which letter is for Balloon 🎈?"
+            },
+            {
+              "text": "B",
+              "right": true,
+              "praise": "⭐ YES! B says “buh” — Balloon! First letter sound learned!"
+            },
+            {
+              "text": "C",
+              "right": false,
+              "hint": "C says “kuh” — like Cat 🐱. “Buh” is the Balloon letter!"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 2,
+          "item": 2,
+          "q": "Your turn! Which letter says “kuh”?",
+          "askClips": [
+            "coach/phonics-c"
+          ],
+          "praise": "⭐ YES! C says “kuh”! Next sound…",
+          "praiseClips": [
+            "call-letter-c",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "0": "That's A — A says “ah”. Listen: which one says “kuh”?",
+            "1": "That's B — B says “buh”. Listen: which one says “kuh”?"
+          }
+        },
+        {
+          "opt": 0,
+          "item": 0,
+          "q": "Which letter says “ah”?",
+          "askClips": [
+            "coach/phonics-a"
+          ],
+          "praise": "⭐ YES! A says “ah”! One more…",
+          "praiseClips": [
+            "call-letter-a",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "1": "That's B — B says “buh”. Which one says “ah”?",
+            "2": "That's C — C says “kuh”. Which one says “ah”?"
+          }
+        },
+        {
+          "final": true,
+          "item": 1
+        }
+      ]
+    },
+    {
+      "id": "little-big-and-small",
+      "band": "little",
+      "num": 5,
+      "title": "Big and small",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Some things are BIG and some are small. Look — say it out loud together:"
+        },
+        {
+          "kind": "visual",
+          "text": "🐘BIG elephant 🐭small mouse"
+        },
+        {
+          "kind": "text",
+          "text": "The elephant takes up lots of room. The mouse takes up just a tiny bit!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the BIG one.",
+          "options": [
+            {
+              "text": "🐭Mouse",
+              "right": false,
+              "hint": "That's the mouse — it's SMALL and tiny. Look for the one that takes up lots of room!"
+            },
+            {
+              "text": "🐘Elephant",
+              "right": true,
+              "praise": "⭐ YES! The ELEPHANT is BIG — it takes up lots of room! Big and small learned!"
+            },
+            {
+              "text": "🐜Ant",
+              "right": false,
+              "hint": "That's an ant — the smallest one of all! The BIG one is much, much larger."
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 2,
+          "item": null,
+          "q": "Your turn! Which one is the SMALLEST — the tiniest of all?",
+          "askClips": [
+            "ask-which-smallest"
+          ],
+          "praise": "⭐ YES! The ANT is the smallest! Now find the BIG one…",
+          "praiseClips": [
+            "word-ant",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "0": "The mouse is small — but look for something even tinier!",
+            "1": "The elephant is BIG! Find the tiniest one."
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-counting-back-from-5",
+      "band": "little",
+      "num": 6,
+      "title": "Counting back from 5",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Counting can go backwards too — like a rocket getting ready to launch! Say it out loud together, slower and quieter… then BLAST OFF:"
+        },
+        {
+          "kind": "text",
+          "text": "5 … 4 … 3 … 2 … 1 … 🚀"
+        },
+        {
+          "kind": "text",
+          "text": "Each number is one LESS than the one before it."
+        }
+      ],
+      "questions": [
+        {
+          "text": "5…❓Your turn! Counting back: 5… what comes next?",
+          "options": [
+            {
+              "text": "6",
+              "right": false,
+              "hint": "6 is one MORE than 5 — that's counting forwards! Counting back means one LESS."
+            },
+            {
+              "text": "4",
+              "right": true,
+              "praise": "⭐ YES! 5… 4! One less! You're ready for blast off!"
+            },
+            {
+              "text": "3",
+              "right": false,
+              "hint": "3 comes later — you skipped one! After 5 comes the number just one less: 5, then…?"
+            }
+          ]
+        }
+      ],
+      "teachback": null
+    },
+    {
+      "id": "little-more-letter-sounds",
+      "band": "little",
+      "num": 7,
+      "title": "More letter sounds",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Three more letters, three more sounds. Say them out loud together:"
+        },
+        {
+          "kind": "visual",
+          "text": "D 🐶D says “duh” — Dog F 🐸F says “fff” — Frog G 🍇G says “guh” — Grapes"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Which letter says “duh”?",
+          "options": [
+            {
+              "text": "F",
+              "right": false,
+              "hint": "F says “fff” — like Frog 🐸. “Duh” is the Dog letter!"
+            },
+            {
+              "text": "D",
+              "right": true,
+              "praise": "⭐ YES! D says “duh” — Dog! Another letter sound learned!"
+            },
+            {
+              "text": "G",
+              "right": false,
+              "hint": "G says “guh” — like Grapes 🍇. Which letter starts Dog?"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 1,
+          "q": "Your turn! Which letter says “fff”?",
+          "askClips": [
+            "coach/phonics-f"
+          ],
+          "praise": "⭐ YES! F says “fff”! Next sound…",
+          "praiseClips": [
+            "call-letter-f",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "That's D — D says “duh”. Which one says “fff”?",
+            "2": "That's G — G says “guh”. Which one says “fff”?"
+          }
+        },
+        {
+          "opt": 2,
+          "item": 2,
+          "q": "Which letter says “guh”?",
+          "askClips": [
+            "coach/phonics-g"
+          ],
+          "praise": "⭐ YES! G says “guh”! One more…",
+          "praiseClips": [
+            "call-letter-g",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "0": "That's F — F says “fff”. Which one says “guh”?",
+            "1": "That's D — D says “duh”. Which one says “guh”?"
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-sorting-things-that-go-together",
+      "band": "little",
+      "num": 8,
+      "title": "Sorting: things that go together",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Sorting means putting things that are the same together. Look: all the RED things go in one pile, all the BLUE things in another:"
+        },
+        {
+          "kind": "visual",
+          "text": "🔴 Red pile🍎 🚗 🎈 🔵 Blue pile🧢 🐳 🫐"
+        },
+        {
+          "kind": "text",
+          "text": "Everything in a pile matches that pile's colour!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Here comes a RED strawberry 🍓. Which pile does it go in?",
+          "options": [
+            {
+              "text": "The blue pile",
+              "right": false,
+              "hint": "The strawberry is RED — the blue pile is only for blue things. Match the colour!"
+            },
+            {
+              "text": "The red pile",
+              "right": true,
+              "praise": "⭐ YES! Red goes with red — you sorted it! Sorting star earned!"
+            },
+            {
+              "text": "On the floor",
+              "right": false,
+              "hint": "Nothing goes on the floor — everything has a pile where it matches. The strawberry is red, so…?"
+            }
+          ]
+        }
+      ],
+      "teachback": null
+    },
+    {
+      "id": "little-counting-to-10",
+      "band": "little",
+      "num": 9,
+      "title": "Counting to 10",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "After 5, the numbers keep going: 6, 7, 8, 9, 10! Tap every star and count all the way up with Hoot:"
+        },
+        {
+          "kind": "visual",
+          "text": "⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐"
+        },
+        {
+          "kind": "text",
+          "text": "One tap, one number — all the way to 10!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! 🐥🐥🐥🐥🐥🐥🐥🐥 — how many ducklings are there?",
+          "options": [
+            {
+              "text": "7",
+              "right": false,
+              "hint": "Count them one at a time, touching each duckling: 1… 2… keep going past 5!"
+            },
+            {
+              "text": "8",
+              "right": true,
+              "praise": "⭐ YES! 8 ducklings — you counted past 5! Counting to 10 learned!"
+            },
+            {
+              "text": "9",
+              "right": false,
+              "hint": "Too many! Touch each duckling as you count and stop at the last one: …6, 7, and one more!"
+            }
+          ]
+        }
+      ],
+      "teachback": null
+    },
+    {
+      "id": "little-more-colours-green-orange-purple",
+      "band": "little",
+      "num": 10,
+      "title": "More colours: green, orange, purple",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Three more colours to name. Say each one out loud together:"
+        },
+        {
+          "kind": "visual",
+          "text": "GREENORANGEPURPLE"
+        },
+        {
+          "kind": "text",
+          "text": "GREEN is grass 🌱, ORANGE is an orange 🍊, and PURPLE is grapes 🍇!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the GREEN one — the grass colour.",
+          "options": [
+            {
+              "text": "Purple",
+              "right": false,
+              "hint": "That's PURPLE — like grapes 🍇. Green is the colour of grass 🌱."
+            },
+            {
+              "text": "Orange",
+              "right": false,
+              "hint": "That's ORANGE — like an orange 🍊. Look for the grass colour 🌱."
+            },
+            {
+              "text": "Green",
+              "right": true,
+              "praise": "⭐ YES! That's GREEN — like grass! Three new colours learned!"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 1,
+          "item": 1,
+          "q": "Your turn! Tap the ORANGE one — like an orange!",
+          "askClips": [
+            "call-color-orange"
+          ],
+          "praise": "⭐ YES! ORANGE — like an orange! Next colour…",
+          "praiseClips": [
+            "name-color-orange",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "0": "That's PURPLE — like grapes. Find ORANGE!",
+            "2": "That's GREEN — the grass colour. Find ORANGE!"
+          }
+        },
+        {
+          "opt": 0,
+          "item": 2,
+          "q": "Now tap the PURPLE one — like grapes.",
+          "askClips": [
+            "call-color-purple"
+          ],
+          "praise": "⭐ YES! PURPLE — like grapes! One more…",
+          "praiseClips": [
+            "name-color-purple",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "1": "That's ORANGE. Find PURPLE, like grapes!",
+            "2": "That's GREEN — the grass colour. Find PURPLE, like grapes!"
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-animal-sounds",
+      "band": "little",
+      "num": 11,
+      "title": "Animal sounds",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Every animal has its own sound. Make them together — as loud as you like!"
+        },
+        {
+          "kind": "visual",
+          "text": "🐮Cow says “moo!” 🦆Duck says “quack!” 🐶Dog says “woof!”"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Who says “moo”?",
+          "options": [
+            {
+              "text": "🦆Duck",
+              "right": false,
+              "hint": "The duck says “quack!” 🦆. “Moo” is a big farm animal with horns."
+            },
+            {
+              "text": "🐮Cow",
+              "right": true,
+              "praise": "⭐ YES! The COW says “moo!” Animal sounds learned!"
+            },
+            {
+              "text": "🐶Dog",
+              "right": false,
+              "hint": "The dog says “woof!” 🐶. Who says “moo” on the farm?"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 1,
+          "q": "Your turn! Who says “quack”?",
+          "askClips": [
+            "ask-who-says-quack"
+          ],
+          "praise": "⭐ YES! The DUCK says quack! Next one…",
+          "praiseClips": [
+            "word-duck",
+            "sound-quack",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "The COW says moo. Who says quack?",
+            "2": "The DOG says woof. Who says quack?"
+          }
+        },
+        {
+          "opt": 2,
+          "item": 2,
+          "q": "Who says “woof”?",
+          "askClips": [
+            "ask-who-says-woof"
+          ],
+          "praise": "⭐ YES! The DOG says woof! One more…",
+          "praiseClips": [
+            "word-dog",
+            "sound-woof",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "0": "The DUCK says quack. Who says woof?",
+            "1": "The COW says moo. Who says woof?"
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-feelings-faces",
+      "band": "little",
+      "num": 12,
+      "title": "Feelings faces",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Faces show feelings. Look at each face and make it on your own face too!"
+        },
+        {
+          "kind": "visual",
+          "text": "😀HAPPY — big smile 😢Sad — wobbly mouth 😴Sleepy — closing eyes"
+        },
+        {
+          "kind": "text",
+          "text": "Feelings are okay to have — and okay to say out loud: “I feel happy!”"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the HAPPY face — the one with the big smile.",
+          "options": [
+            {
+              "text": "😢Sad",
+              "right": false,
+              "hint": "That face is SAD 😢. Happy has a big smile — find the smiliest one!"
+            },
+            {
+              "text": "😴Sleepy",
+              "right": false,
+              "hint": "That face is SLEEPY 😴 — its eyes are closing. Happy is wide awake and smiling!"
+            },
+            {
+              "text": "😀Happy",
+              "right": true,
+              "praise": "⭐ YES! That's the HAPPY face — big smile! Feelings learned!"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 1,
+          "q": "Your turn! Tap the SAD face — the wobbly mouth.",
+          "askClips": [
+            "teach-sad"
+          ],
+          "praise": "⭐ YES! That face is SAD. It's OK to feel sad — a hug helps. One more…",
+          "praiseClips": [
+            "teach-sad",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "That face is SLEEPY — eyes closed. Find the SAD one, with the wobbly mouth.",
+            "2": "That face is HAPPY — big smile. Find the SAD one, with the wobbly mouth."
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-up-and-down",
+      "band": "little",
+      "num": 13,
+      "title": "Up and down",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Some things are UP high, and some are DOWN low. Point up, then point down as you say them:"
+        },
+        {
+          "kind": "visual",
+          "text": "⬆️ 🐦UP — bird in the sky ⬇️ 🐜DOWN — ant on the ground"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the one that is UP.",
+          "options": [
+            {
+              "text": "🐦Bird in the sky",
+              "right": true,
+              "praise": "⭐ YES! The BIRD is UP in the sky! Up and down learned!"
+            },
+            {
+              "text": "🐜Ant on the ground",
+              "right": false,
+              "hint": "The ant is DOWN low on the ground 🐜. UP is high, high above your head!"
+            },
+            {
+              "text": "🪱Worm in the soil",
+              "right": false,
+              "hint": "The worm is DOWN under the ground 🪱. Look for the one flying high in the sky!"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 2,
+          "item": null,
+          "q": "Your turn! Which one is UNDER the ground?",
+          "askClips": [
+            "ask-which-under"
+          ],
+          "praise": "⭐ YES! The WORM lives under the ground! Now find one that is UP…",
+          "praiseClips": [
+            "teach-down",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "0": "The bird is UP in the sky. Who is under the ground?",
+            "1": "The ant walks ON the ground. Who is UNDER it?"
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "little-patterns-what-comes-next",
+      "band": "little",
+      "num": 14,
+      "title": "Patterns: what comes next?",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "A pattern repeats the same thing, over and over. Look and say it out loud:"
+        },
+        {
+          "kind": "text",
+          "text": "🔴 🔵 🔴 🔵 🔴 🔵"
+        },
+        {
+          "kind": "text",
+          "text": "Red, blue, red, blue… after blue always comes red again! The pattern tells you what is next."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! 🍎 🍌 🍎 🍌 🍎 … what comes next?",
+          "options": [
+            {
+              "text": "🍇Grapes",
+              "right": false,
+              "hint": "Grapes aren't in this pattern at all! The pattern only uses apple, banana, apple, banana…"
+            },
+            {
+              "text": "🍎Apple",
+              "right": false,
+              "hint": "The apple just came! The pattern takes turns: apple, banana, apple, banana — so after apple comes…?"
+            },
+            {
+              "text": "🍌Banana",
+              "right": true,
+              "praise": "⭐ YES! Apple, banana, apple, banana — BANANA comes next! Patterns learned!"
+            }
+          ]
+        }
+      ],
+      "teachback": null
+    },
+    {
+      "id": "little-my-body-eyes-ears-nose",
+      "band": "little",
+      "num": 15,
+      "title": "My body: eyes, ears, nose",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Your body parts each have a job. Touch each one as Hoot names it:"
+        },
+        {
+          "kind": "visual",
+          "text": "👀EYES are for seeing 👂EARS are for hearing 👃NOSE is for smelling"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Hoot is playing a song 🎵. What do you hear it with?",
+          "options": [
+            {
+              "text": "Your eyes",
+              "right": false,
+              "hint": "Eyes are for SEEING 👀. A song is a sound — which body part catches sounds?"
+            },
+            {
+              "text": "Your ears",
+              "right": true,
+              "praise": "⭐ YES! Your EARS hear the song! Body parts learned!"
+            },
+            {
+              "text": "Your nose",
+              "right": false,
+              "hint": "Your nose is for SMELLING 👃 — flowers and cookies! Music goes in a different part."
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 0,
+          "q": "Your turn! What do you SEE a picture with?",
+          "askClips": [
+            "ask-see-with"
+          ],
+          "praise": "⭐ YES! We SEE with our EYES! Next one…",
+          "praiseClips": [
+            "teach-eyes",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "EARS are for hearing. What do you SEE with?",
+            "2": "Your NOSE is for smelling. What do you SEE with?"
+          }
+        },
+        {
+          "opt": 2,
+          "item": 2,
+          "q": "What do you SMELL a flower with?",
+          "askClips": [
+            "ask-smell-with"
+          ],
+          "praise": "⭐ YES! We SMELL with our NOSE! One more…",
+          "praiseClips": [
+            "teach-nose",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "0": "EYES are for seeing. What do you SMELL with?",
+            "1": "EARS are for hearing. What do you SMELL with?"
+          }
+        },
+        {
+          "final": true,
+          "item": 1
+        }
+      ]
+    },
+    {
+      "id": "little-star-and-heart-shapes",
+      "band": "little",
+      "num": 16,
+      "title": "Star and heart shapes",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Two more shapes to know! A star has 5 pointy points — count them: 1, 2, 3, 4, 5! A heart is round on top and pointy at the bottom."
+        },
+        {
+          "kind": "visual",
+          "text": "Star Heart"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Tap the STAR — the one with 5 pointy points.",
+          "options": [
+            {
+              "text": "Heart",
+              "right": false,
+              "hint": "That's the HEART — round on top, one point at the bottom. The star has FIVE points!"
+            },
+            {
+              "text": "Circle",
+              "right": false,
+              "hint": "That's the CIRCLE — round all the way, no points at all. Count the star's points: 1, 2, 3, 4, 5!"
+            },
+            {
+              "text": "Star",
+              "right": true,
+              "praise": "⭐ YES! STAR — 1, 2, 3, 4, 5 pointy points! You finished all 16 Little Explorers lessons — superstar!"
+            }
+          ]
+        }
+      ],
+      "teachback": null,
+      "rounds": [
+        {
+          "opt": 0,
+          "item": 1,
+          "q": "Your turn! Tap the HEART — the love shape.",
+          "askClips": [
+            "call-shape-heart"
+          ],
+          "praise": "⭐ YES! HEART — the love shape! Next shape…",
+          "praiseClips": [
+            "name-shape-heart",
+            "hoot-great-job"
+          ],
+          "hints": {
+            "1": "That's a CIRCLE — round, no points. Find the HEART!",
+            "2": "That's the STAR — 5 points. Find the HEART!"
+          }
+        },
+        {
+          "opt": 1,
+          "item": null,
+          "q": "Now tap the CIRCLE — round like a ball.",
+          "askClips": [
+            "call-shape-circle"
+          ],
+          "praise": "⭐ YES! CIRCLE — round like a ball! One more…",
+          "praiseClips": [
+            "name-shape-circle",
+            "hoot-amazing"
+          ],
+          "hints": {
+            "0": "That's the HEART. Find the round CIRCLE!",
+            "2": "That's the STAR — pointy. Find the round CIRCLE!"
+          }
+        },
+        {
+          "final": true,
+          "item": 0
+        }
+      ]
+    },
+    {
+      "id": "early-letter-sounds",
+      "band": "early",
+      "num": 1,
+      "title": "Letter sounds",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Every letter makes its own sound. Say them out loud:"
+        },
+        {
+          "kind": "visual",
+          "text": "S 🐍“sss” — like a snake M 🐮“mmm” — like yummy food T 🐢“tuh” — a tiny tap sound"
+        },
+        {
+          "kind": "text",
+          "text": "Reading starts here: know the sound, and you can start sounding out whole words."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Which letter makes the “sss” snake sound?",
+          "options": [
+            {
+              "text": "M",
+              "right": false,
+              "hint": "M says “mmm”. The snake sound “sss” belongs to another letter — which one hisses?"
+            },
+            {
+              "text": "S",
+              "right": true,
+              "praise": "⭐ YES! S says “sss” — like a snake! Letter sound learned!"
+            },
+            {
+              "text": "T",
+              "right": false,
+              "hint": "T says “tuh”. Listen for the hiss: “sss…” — which letter is the snake's?"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Every letter makes its own sound — S says “sss” like a snake.",
+            "right": true
+          },
+          {
+            "t": "All letters make the same sound.",
+            "fix": "Not quite! If all letters sounded the same, we couldn't read words. Remember the chips: S hisses “sss”, M hums “mmm”, T taps “tuh” — every letter has its OWN sound. Pick the sentence that says that!"
+          },
+          {
+            "t": "Letters are just pictures to look at.",
+            "fix": "Not quite — letters aren't just pictures! Each letter stands for a sound you say out loud: S says “sss”. Pick the sentence that tells Hoot that!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-blend-sounds-into-words",
+      "band": "early",
+      "num": 2,
+      "title": "Blend sounds into words",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Blending means pushing letter sounds together until they become one word. Watch:"
+        },
+        {
+          "kind": "text",
+          "text": "c … a … t → caaat → CAT 🐱"
+        },
+        {
+          "kind": "text",
+          "text": "Say the sounds slowly, then faster and faster — the word pops out! This is how ALL reading works."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Push these together: m … a … p. What word do you get?",
+          "options": [
+            {
+              "text": "MOP",
+              "right": false,
+              "hint": "Say it slowly: mmm…aaa…p. What do you use to find treasure?"
+            },
+            {
+              "text": "MAP",
+              "right": true,
+              "praise": "⭐ YES! m-a-p blends into MAP! You just read a word!"
+            },
+            {
+              "text": "MAN",
+              "right": false,
+              "hint": "That word ends in “n”. Our sounds end in “p”: m…a…p…"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Push the sounds together — slow, then faster — and they pop into a word: m…a…p makes MAP!",
+            "right": true
+          },
+          {
+            "t": "Say each sound on its own and stop — the word stays in pieces.",
+            "fix": "Not quite — stopping between sounds keeps the word in pieces! Blending means NO gaps: say m…a…p faster and faster until MAP pops out. Pick the sentence that says that!"
+          },
+          {
+            "t": "Blending means mixing the letters up in any order.",
+            "fix": "Not quite — the sounds stay in order! m first, a next, p last: m…a…p. Push them together in that order and you get MAP."
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-counting-on-to-add",
+      "band": "early",
+      "num": 3,
+      "title": "Counting on to add",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Adding trick: don't start from 1 — start from the big number and count on. Watch 3 + 2:"
+        },
+        {
+          "kind": "visual",
+          "text": "+"
+        },
+        {
+          "kind": "text",
+          "text": "Hold “3” in your head… then count on for the red dots: 4, 5! So 3 + 2 = 5."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! 4 + 2 = ? Hold 4 in your head, then count on two more.",
+          "options": [
+            {
+              "text": "5",
+              "right": false,
+              "hint": "Start at 4 and count on: the next number is 5… and one more after that?"
+            },
+            {
+              "text": "6",
+              "right": true,
+              "praise": "⭐ YES! 4… 5, 6! 4 + 2 = 6. Counting on works!"
+            },
+            {
+              "text": "7",
+              "right": false,
+              "hint": "You counted on three. We only add 2: 4… 5, and one more."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Start at the big number and count on — don't go back to 1.",
+            "right": true
+          },
+          {
+            "t": "Always start counting from 1, every time.",
+            "fix": "Not quite — starting back at 1 is the slow way! Hold the big number in your head: for 4 + 2, start at 4 and count on — 5, 6! Pick the sentence that says that!"
+          },
+          {
+            "t": "Counting on means counting the big number again and again.",
+            "fix": "Not quite — the big number is already counted inside your head. You only count the NEW ones on: 4 in your head, then 5, 6."
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-read-a-line-and-understand-it",
+      "band": "early",
+      "num": 4,
+      "title": "Read a line — and understand it",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Reading isn't just saying words — it's picturing what they mean. Read this line out loud, word by word:"
+        },
+        {
+          "kind": "text",
+          "text": "The cat sat on the mat."
+        },
+        {
+          "kind": "text",
+          "text": "Now picture it: a cat, sitting, on a mat. If you can see the picture in your head, you truly read it!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! In that line, WHO sat on the mat?",
+          "options": [
+            {
+              "text": "The cat",
+              "right": true,
+              "praise": "⭐ YES! The CAT sat on the mat — you read it AND understood it!"
+            },
+            {
+              "text": "The dog",
+              "right": false,
+              "hint": "There's no dog in the line. Read it again slowly: “The … sat on the mat.”"
+            },
+            {
+              "text": "The mat",
+              "right": false,
+              "hint": "The mat is what got sat ON. Who did the sitting? Read the first words again."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Reading means picturing it in your head — who is there, and what is happening.",
+            "right": true
+          },
+          {
+            "t": "Reading is only saying the words out loud.",
+            "fix": "Not quite — just saying the words isn't really reading yet! You truly read it when you can PICTURE it: the cat, sitting, on the mat."
+          },
+          {
+            "t": "The mat did the sitting in the line.",
+            "fix": "Not quite — the mat got sat ON! The CAT did the sitting. Good readers picture who does what — pick the sentence that says that!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-rhyming-words",
+      "band": "early",
+      "num": 5,
+      "title": "Rhyming words",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Words rhyme when they end with the same sound. Listen: cat and hat both end in “at” — they rhyme! So do sun and run, with their “un” ending. Rhyming words are word cousins — and hearing rhymes makes reading easier."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! Which word rhymes with DOG?",
+          "options": [
+            {
+              "text": "CAT",
+              "right": false,
+              "hint": "CAT ends in “at” — that's the cat/hat rhyme family. DOG ends in “og”… which word ends the same way?"
+            },
+            {
+              "text": "LOG",
+              "right": true,
+              "praise": "⭐ YES! DOG and LOG both end in “og” — they rhyme!"
+            },
+            {
+              "text": "SUN",
+              "right": false,
+              "hint": "SUN ends in “un” — it rhymes with RUN. DOG's rhyme has to end in “og”."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Rhyming words end with the same sound — DOG and LOG both end in “og”.",
+            "right": true
+          },
+          {
+            "t": "Rhyming words start with the same sound.",
+            "fix": "Not quite — rhymes match at the END, not the start! Listen to the tails: d-OG and l-OG end the same way. Pick the sentence that says that!"
+          },
+          {
+            "t": "Words rhyme when they look the same on the page.",
+            "fix": "Not quite — trust your ears, not your eyes! Rhyming is about the SOUND at the end: DOG and LOG sound the same at the end, so they rhyme."
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-taking-away",
+      "band": "early",
+      "num": 6,
+      "title": "Taking away",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Adding puts more in. Taking away leaves less. Start with 5 apples and take 2 away to eat:"
+        },
+        {
+          "kind": "visual",
+          "text": "🍎🍎🍎🍎🍎"
+        },
+        {
+          "kind": "text",
+          "text": "Count what's left: 1, 2, 3. So 5 − 2 = 3. The faded apples are the ones that got eaten!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! 6 − 2 = ? Start at 6, take 2 away, count what's left.",
+          "options": [
+            {
+              "text": "2",
+              "right": false,
+              "hint": "That's how many you took away. The question asks how many are LEFT: 6… take away 1 (that's 5), take away 1 more (that's…?)."
+            },
+            {
+              "text": "4",
+              "right": true,
+              "praise": "⭐ YES! 6 take away 2 leaves 4! Taking away works!"
+            },
+            {
+              "text": "5",
+              "right": false,
+              "hint": "That's taking away only 1. We take away TWO: 6, then 5, then one more…"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Taking away means some leave — then you count what is LEFT.",
+            "right": true
+          },
+          {
+            "t": "Taking away means counting the ones that left.",
+            "fix": "Not quite — the ones that left are gone! The answer is what's still there: 6 take away 2 leaves 4. Count the ones LEFT — pick the sentence that says that!"
+          },
+          {
+            "t": "After taking away, there is more than you started with.",
+            "fix": "Not quite — taking away makes LESS, never more! Start with everything, take the leaving ones away, and count what's left."
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-tens-and-ones",
+      "band": "early",
+      "num": 7,
+      "title": "Tens and ones",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Big numbers are built from tens and ones. Look at 14: it is ONE bundle of ten, plus 4 loose ones:"
+        },
+        {
+          "kind": "visual",
+          "text": "🧺 101 ten+🍎🍎🍎🍎4 ones"
+        },
+        {
+          "kind": "text",
+          "text": "The first digit tells the tens, the last digit tells the ones. That's the secret code inside every number!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! In the number 23, how many TENS are there?",
+          "options": [
+            {
+              "text": "3",
+              "right": false,
+              "hint": "3 is the last digit — those are the ONES. The FIRST digit tells the tens."
+            },
+            {
+              "text": "2",
+              "right": true,
+              "praise": "⭐ YES! 23 = 2 tens and 3 ones. You cracked the number code!"
+            },
+            {
+              "text": "23",
+              "right": false,
+              "hint": "23 is the whole number, not the tens. Split it up: how many bundles of ten fit inside 23?"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "The first digit tells the tens and the last digit tells the ones — 23 is 2 tens and 3 ones.",
+            "right": true
+          },
+          {
+            "t": "The last digit tells the tens.",
+            "fix": "Not quite — it's the other way round! The FIRST digit counts the bundles of ten, and the LAST digit counts the loose ones: 23 = 2 tens and 3 ones."
+          },
+          {
+            "t": "23 is just 23 ones, with no tens inside.",
+            "fix": "Not quite — bundles of ten hide inside big numbers! 23 holds 2 whole tens (that's 20) plus 3 loose ones. Pick the sentence that says that!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "early-answer-questions-about-a-story",
+      "band": "early",
+      "num": 8,
+      "title": "Answer questions about a story",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Good readers can answer questions about what they read — the answers hide INSIDE the words. Read this line out loud:"
+        },
+        {
+          "kind": "text",
+          "text": "The frog jumped into the pond."
+        },
+        {
+          "kind": "text",
+          "text": "Picture it: a frog, a big jump, a splash! Now hunt for the answer in the line."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your turn! WHERE did the frog jump?",
+          "options": [
+            {
+              "text": "Onto a log",
+              "right": false,
+              "hint": "There's no log in the line. Read it again and look for the place words: “into the …”"
+            },
+            {
+              "text": "Into the pond",
+              "right": true,
+              "praise": "⭐ YES! “Into the pond” — the answer was hiding right there in the line!"
+            },
+            {
+              "text": "Up a tree",
+              "right": false,
+              "hint": "The frog in this line jumps into water, not up a tree. Read the last words again: “into the …”"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "The answers hide inside the line — a WHERE question wants a place, like “into the pond”.",
+            "right": true
+          },
+          {
+            "t": "You guess the answer without looking at the line.",
+            "fix": "Not quite — good readers don't guess! The answer is hiding IN the words: “into the pond” was right there in the line. Pick the sentence that says that!"
+          },
+          {
+            "t": "A WHERE question wants a person.",
+            "fix": "Not quite — WHERE asks for a PLACE! WHO wants a person or an animal. Listen to the question word, then hunt for that kind of word in the line."
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-times-tables-are-groups",
+      "band": "quest",
+      "num": 1,
+      "title": "Times tables are groups",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "3 × 4 means 3 groups of 4. Look at the dots — 3 rows of 4:"
+        },
+        {
+          "kind": "visual",
+          "text": ""
+        },
+        {
+          "kind": "text",
+          "text": "Count them in 4s: 4, 8, 12. So 3 × 4 = 12. Any times table is just groups you can count — you never have to guess."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! 5 × 3 = ? (5 groups of 3 — count in 3s: 3, 6, 9…)",
+          "options": [
+            {
+              "text": "8",
+              "right": false,
+              "hint": "That's 5 + 3. Multiplying means GROUPS: count five 3s — 3, 6, 9, 12… one more!"
+            },
+            {
+              "text": "15",
+              "right": true,
+              "praise": "⭐ YES! 3, 6, 9, 12, 15 — 5 × 3 = 15! Groups mastered!"
+            },
+            {
+              "text": "12",
+              "right": false,
+              "hint": "You counted four 3s. 5 × 3 needs FIVE groups of 3: 3, 6, 9, 12, …"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A times table is just equal groups you can count — 3 × 4 is 3 groups of 4: count in 4s — 4, 8, 12.",
+            "right": true
+          },
+          {
+            "t": "Multiplying is adding the two numbers together.",
+            "fix": "Not quite — 3 × 4 is not 3 + 4! Multiplying builds GROUPS: 3 groups of 4. Count the groups in 4s — 4, 8, 12 — and you never have to guess. Pick the sentence that says that!"
+          },
+          {
+            "t": "Times tables can only be memorised — there is no way to work them out.",
+            "fix": "Not quite — there IS a way to work every one out! Each table is groups you can count: 5 × 3 is five 3s — 3, 6, 9, 12, 15. Pick the sentence that says that!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-fractions-equal-parts",
+      "band": "quest",
+      "num": 2,
+      "title": "Fractions: equal parts",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "A fraction is a whole cut into equal parts. This pizza is cut in half — each piece is 1/2. Cut it into 4 and each piece is 1/4:"
+        },
+        {
+          "kind": "visual",
+          "text": "1/2 — one of 2 parts 1/4 — one of 4 parts"
+        },
+        {
+          "kind": "text",
+          "text": "The trick everyone trips on: more parts means each part is SMALLER. So 1/2 is bigger than 1/4 — even though 4 is bigger than 2!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! Which is the bigger slice?",
+          "options": [
+            {
+              "text": "1/2 of a pizza",
+              "right": true,
+              "praise": "⭐ YES! 1/2 wins — fewer parts, bigger slices! Fractions understood!"
+            },
+            {
+              "text": "1/4 of a pizza",
+              "right": false,
+              "hint": "Careful — that's the trap! Cut into 4, every slice gets SMALLER. Which cut makes the biggest pieces?"
+            },
+            {
+              "text": "They're the same",
+              "right": false,
+              "hint": "They're not equal — look at the pizzas above. The half slice is much bigger than a quarter slice."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A fraction is a whole cut into EQUAL parts — and the more parts you cut, the smaller each part is, so 1/2 is bigger than 1/4.",
+            "right": true
+          },
+          {
+            "t": "1/4 is bigger than 1/2, because 4 is bigger than 2.",
+            "fix": "That's the trap this lesson warned about! The bottom number counts the parts — MORE parts means each part is SMALLER. Cut into 2 and the slices are big; cut into 4 and they shrink. Pick the sentence that says that!"
+          },
+          {
+            "t": "The parts of a fraction don't have to be equal, as long as they make the whole.",
+            "fix": "Not quite — EQUAL parts are the whole point of a fraction! If the pieces aren't equal, you can't call each one a quarter. Pick the sentence that says the parts are equal!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-find-the-main-idea",
+      "band": "quest",
+      "num": 3,
+      "title": "Find the main idea",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Strong readers ask: what is this whole text about? That's the main idea. Read this:"
+        },
+        {
+          "kind": "text",
+          "text": "“Deep under a volcano, rock melts into magma. Pressure builds and builds — until the magma bursts out as lava, ash and gas. That explosion is an eruption.”"
+        },
+        {
+          "kind": "text",
+          "text": "“Lava is hot” is true, but it's just one detail. The whole text explains one thing: how a volcano erupts."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! What is the main idea of that text?",
+          "options": [
+            {
+              "text": "Lava is very hot",
+              "right": false,
+              "hint": "True — but that's one small detail. The main idea covers the WHOLE text, beginning to end."
+            },
+            {
+              "text": "How a volcano erupts",
+              "right": true,
+              "praise": "⭐ YES! Magma, pressure, eruption — the whole text is about how volcanoes erupt!"
+            },
+            {
+              "text": "Rocks are very old",
+              "right": false,
+              "hint": "The text never talks about old rocks. Ask: what does EVERY sentence help explain?"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "The main idea is what the WHOLE text is about — every sentence works together to explain that one thing.",
+            "right": true
+          },
+          {
+            "t": "The main idea is the most interesting detail in the text.",
+            "fix": "Not quite — “Lava is very hot” is a real detail, but it's only ONE piece. The main idea covers the WHOLE text, beginning to end: how a volcano erupts. Pick the sentence that says that!"
+          },
+          {
+            "t": "The main idea is always stated in the first sentence.",
+            "fix": "Not quite — the first sentence can open the topic without stating the point. Ask what EVERY sentence helps explain — magma, pressure, bursting out — and that's the main idea."
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-coding-order-matters",
+      "band": "quest",
+      "num": 4,
+      "title": "Coding: order matters",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Code is a list of instructions a computer follows exactly, in order. This code — ➡ ➡ ⬆ — moves Hoot right, right, up. Swap the order and Hoot ends up somewhere completely different. Programmers plan the whole path before pressing run."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! Hoot needs to go UP first, then RIGHT. Which code does that?",
+          "options": [
+            {
+              "text": "➡ then ⬆",
+              "right": false,
+              "hint": "That code goes RIGHT first. Hoot needs to go UP before he goes right."
+            },
+            {
+              "text": "⬆ then ➡",
+              "right": true,
+              "praise": "⭐ YES! ⬆ then ➡ — up first, then right. You think like a coder!"
+            },
+            {
+              "text": "⬇ then ➡",
+              "right": false,
+              "hint": "That starts by going DOWN — the wrong way entirely! Hoot's first step is UP."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Code is a list of instructions a computer follows exactly, in order — swap the order and you end up somewhere completely different.",
+            "right": true
+          },
+          {
+            "t": "A computer figures out what you meant, even if the steps are in the wrong order.",
+            "fix": "Not quite — computers don't guess what you mean! They follow the list exactly as written, step by step — so ⬆ then ➡ lands somewhere different from ➡ then ⬆. Pick the sentence that says that!"
+          },
+          {
+            "t": "The order of the steps only matters at the start of a program.",
+            "fix": "Not quite — order matters for EVERY step, because each step starts from where the last one ended. Change any step's place and the whole path changes."
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-division-is-sharing-equally",
+      "band": "quest",
+      "num": 5,
+      "title": "Division is sharing equally",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Dividing is sharing equally — the opposite of multiplying. Share 12 cookies fairly between 3 friends: deal them out one at a time — round 1, round 2, round 3, round 4 — and each friend ends with 4. So 12 ÷ 3 = 4. Check it with your times tables: 3 × 4 = 12 ✓. Division and multiplication are a team."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! 20 stickers shared equally among 4 friends. How many does each friend get?",
+          "options": [
+            {
+              "text": "4",
+              "right": false,
+              "hint": "Check with multiplication: 4 × 4 = 16, not 20. Each friend needs one more round of dealing."
+            },
+            {
+              "text": "5",
+              "right": true,
+              "praise": "⭐ YES! 4 × 5 = 20, so 20 ÷ 4 = 5 stickers each. Fair shares!"
+            },
+            {
+              "text": "6",
+              "right": false,
+              "hint": "Too many — 4 × 6 = 24, more stickers than we have. Deal out 20 between 4 friends and count the rounds."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Dividing means sharing equally — and you can check it with multiplication: 20 ÷ 4 = 5 because 4 × 5 = 20.",
+            "right": true
+          },
+          {
+            "t": "Dividing means taking things away until nothing is left.",
+            "fix": "Not quite — division isn't about what's taken away, it's about FAIR SHARES. Deal 20 stickers to 4 friends one at a time and each friend ends with 5. Pick the sentence that says that!"
+          },
+          {
+            "t": "Division and multiplication are separate tricks that have nothing to do with each other.",
+            "fix": "Not quite — they're a team! Multiplication builds the groups and division shares them back out, so one always checks the other: 3 × 4 = 12 means 12 ÷ 3 = 4."
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-how-plants-make-food",
+      "band": "quest",
+      "num": 6,
+      "title": "How plants make food",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Plants are food factories that run on sunshine. It's called photosynthesis: the roots drink water, the leaves catch sunlight and breathe in air — and the plant turns them into its own food, releasing the oxygen we breathe out the other side. Nearly every meal you have ever eaten started inside a leaf!"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! What do leaves mainly catch, to make the plant's food?",
+          "options": [
+            {
+              "text": "Sunlight",
+              "right": true,
+              "praise": "⭐ YES! Sunlight powers the whole factory — photosynthesis understood!"
+            },
+            {
+              "text": "Rainwater",
+              "right": false,
+              "hint": "Water matters, but the ROOTS drink it — leaves don't catch it to make food. What shines down on leaves all day?"
+            },
+            {
+              "text": "Bugs",
+              "right": false,
+              "hint": "Leaves aren't bug traps (one rare plant aside!). Think about what every leaf is facing, all day long."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "In photosynthesis, a plant turns sunlight, water and air into its own food — and releases oxygen while it does it.",
+            "right": true
+          },
+          {
+            "t": "Plants take their food ready-made from the soil, the way animals eat a meal.",
+            "fix": "Not quite — plants MAKE their food; they don't eat it! The roots only drink water. The leaves catch sunlight and turn water and air into food — that's photosynthesis."
+          },
+          {
+            "t": "Photosynthesis is how plants breathe while they sleep.",
+            "fix": "Not quite — photosynthesis is food-making, and it runs on SUNLIGHT, so it happens in the light: leaves catch the light and turn it into food, letting oxygen out."
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-topic-sentences",
+      "band": "quest",
+      "num": 7,
+      "title": "Topic sentences",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "A paragraph has ONE main idea, and its first sentence — the topic sentence — announces it. Read: “Bees are tiny flying farmers. One bee visits about 50 flowers on a single trip, carrying pollen from flower to flower as it goes…” Everything after the first sentence works to prove it. A weak opener like “Bees are insects” announces nothing worth proving."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! Which is the strongest topic sentence for a paragraph about how dogs help people?",
+          "options": [
+            {
+              "text": "Dogs are animals with four legs.",
+              "right": false,
+              "hint": "True, but it announces nothing to prove — any paragraph at all could follow it. A topic sentence makes a claim the paragraph then backs up."
+            },
+            {
+              "text": "Dogs help people as guides, guards and rescue partners.",
+              "right": true,
+              "praise": "⭐ YES! A real claim — now the whole paragraph can prove it with examples. Topic sentence mastered!"
+            },
+            {
+              "text": "My dog is the best dog ever.",
+              "right": false,
+              "hint": "That's a feeling about one dog, not an idea a paragraph can explore and prove. Look for the sentence with a job to do."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A topic sentence opens a paragraph by announcing its one main idea as a claim — and every sentence after it works to prove that claim.",
+            "right": true
+          },
+          {
+            "t": "A topic sentence is any true fact about the topic.",
+            "fix": "Not quite — “Bees are insects” is true, but it announces nothing worth proving. A real topic sentence makes a claim — “Bees are tiny flying farmers” — that the whole paragraph then backs up. Pick the sentence that says that!"
+          },
+          {
+            "t": "A topic sentence belongs at the end, where it sums the paragraph up.",
+            "fix": "Not quite — a summary can close a paragraph, but the topic sentence OPENS it: it tells the reader the one main idea up front, and everything after it proves that idea."
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest-area-length-width",
+      "band": "quest",
+      "num": 8,
+      "title": "Area: length × width",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Area measures how much flat space something covers — counted in squares. This rug is 4 squares long and 3 squares wide:"
+        },
+        {
+          "kind": "visual",
+          "text": "🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦"
+        },
+        {
+          "kind": "text",
+          "text": "Count them: 12 squares. The fast way is length × width: 4 × 3 = 12. Rows times columns, every time."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your challenge! A garden is 5 squares long and 2 squares wide. What is its area?",
+          "options": [
+            {
+              "text": "7 squares",
+              "right": false,
+              "hint": "7 is 5 + 2 — that's adding the sides. Area MULTIPLIES length × width: picture two rows of 5 squares."
+            },
+            {
+              "text": "10 squares",
+              "right": true,
+              "praise": "⭐ YES! 5 × 2 = 10 squares of garden. Area mastered!"
+            },
+            {
+              "text": "12 squares",
+              "right": false,
+              "hint": "That's the rug from the lesson (4 × 3). This garden is 5 × 2 — count two rows of five."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Area measures the flat space a shape covers, counted in squares — and you find it with length × width: 4 × 3 = 12 squares.",
+            "right": true
+          },
+          {
+            "t": "You find area by adding the length and the width together.",
+            "fix": "Not quite — adding walks along two sides: 5 + 2 = 7. Area counts the SQUARES covering the surface: two rows of 5 squares is 5 × 2 = 10. Pick the sentence that says that!"
+          },
+          {
+            "t": "Area measures the distance around the edge of a shape.",
+            "fix": "Not quite — the distance around the edge is the perimeter. Area is the space INSIDE the shape, counted in squares — rows times columns, length × width."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-ratios-scale-both-sides",
+      "band": "creator",
+      "num": 1,
+      "title": "Ratios: scale both sides",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Your lemonade recipe is a ratio: 2 cups lemon : 3 cups water. Making a double batch? Double both sides — 4 : 6 — and it tastes identical. Scale only one side and the ratio breaks. Every recipe, map, model and mix in your projects works this way."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! You're scaling up to 12 cups of water. How much lemon keeps the taste the same?",
+          "options": [
+            {
+              "text": "4 cups",
+              "right": false,
+              "hint": "That's doubling the lemon, but the water went ×4 (3 → 12), not ×2. Both sides must scale by the SAME number."
+            },
+            {
+              "text": "8 cups",
+              "right": true,
+              "praise": "⭐ YES! Water ×4 means lemon ×4: 2 × 4 = 8. Ratio held!"
+            },
+            {
+              "text": "11 cups",
+              "right": false,
+              "hint": "That's adding the same amount to both sides — ratios don't work by adding. They scale by MULTIPLYING both sides equally."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A ratio stays the same only when BOTH sides are multiplied by the same number — 2 : 3 scaled by 4 becomes 8 : 12.",
+            "right": true
+          },
+          {
+            "t": "A ratio stays the same if you add the same amount to both sides.",
+            "fix": "Not quite — adding changes the relationship: 2 : 3 with 9 added to both sides is 11 : 12, a completely different mix. Ratios scale by multiplying both sides by the same number."
+          },
+          {
+            "t": "To make a bigger batch, scale up the side you need more of.",
+            "fix": "Not quite — scaling one side alone breaks the ratio and changes the taste. Whatever multiplier the water gets, the lemon gets too: 3 → 12 is ×4, so 2 cups of lemon becomes 8."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-research-you-can-trust",
+      "band": "creator",
+      "num": 2,
+      "title": "Research you can trust",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Before any fact goes into your project, run the 3 checks: 1) Who wrote it — an expert or organisation you can name? 2) Can another source confirm it? 3) Is it informing you — or selling to you? A source that passes all three earns its place; one that fails gets dropped, however cool it sounds."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! Which source is strongest for the Volcano Lab?",
+          "options": [
+            {
+              "text": "A comment under a volcano video",
+              "right": false,
+              "hint": "Run the checks: who wrote it? Nobody you can name — and nothing confirms it. Comments are opinions, not sources."
+            },
+            {
+              "text": "A geologist's page on a university website",
+              "right": true,
+              "praise": "⭐ YES! Named experts, checkable, informing not selling — all 3 checks passed!"
+            },
+            {
+              "text": "An advert for a volcano toy kit",
+              "right": false,
+              "hint": "Check 3 fails: it's SELLING volcano toys. Ads can spark ideas, but they're not evidence."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A source earns trust by passing three checks: a named, credible author; confirmation from another source; and a purpose of informing, not selling.",
+            "right": true
+          },
+          {
+            "t": "A source is trustworthy if it sounds confident and detailed.",
+            "fix": "Not quite — confidence is not one of the checks. Run the three: WHO wrote it — can you name them? Can another source CONFIRM it? Is it informing you, or SELLING to you? A polished advert fails them."
+          },
+          {
+            "t": "The newest source is automatically the most trustworthy.",
+            "fix": "Not quite — newness is not one of the checks either. A university page by a named geologist passes all three; a brand-new anonymous comment passes none."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-debug-change-one-thing",
+      "band": "creator",
+      "num": 3,
+      "title": "Debug: change ONE thing",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "The maker's rule when something breaks: change ONE thing, retest, write down what happened. Change three things at once and the build might work — but you'll never know which change fixed it, so you'll be stuck again next time."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! In your game, the jump is broken AND the sprite is the wrong colour. What's the first move?",
+          "options": [
+            {
+              "text": "Fix the jump only, retest, then the colour",
+              "right": true,
+              "praise": "⭐ YES! One fix, one retest — you'll know exactly what worked. That's debugging!"
+            },
+            {
+              "text": "Change both at the same time",
+              "right": false,
+              "hint": "Tempting — but if the game then works, which change fixed it? You'd never know. One thing at a time."
+            },
+            {
+              "text": "Delete it and start the game over",
+              "right": false,
+              "hint": "Starting over throws away everything that already works. Makers isolate the fault first: one change, one retest."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "When something breaks, change ONE thing, retest, and write down what happened — that is the only way to know which change actually fixed it.",
+            "right": true
+          },
+          {
+            "t": "Changing several things at once is just as good, because it is faster.",
+            "fix": "Not quite — it may be faster, but it teaches you nothing: if the build works afterwards, you cannot say which change fixed it, so you will be stuck again next time. One change, one retest."
+          },
+          {
+            "t": "If a build breaks, the safest move is to delete it and start over.",
+            "fix": "Not quite — starting over throws away everything that already works. Isolate the fault instead: one small change, one retest, one note about what happened."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-present-hook-build-land",
+      "band": "creator",
+      "num": 4,
+      "title": "Present: hook, build, land",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Every strong presentation has the same skeleton: HOOK — one line that makes people care. BUILD — show the work, including what went wrong and what you changed. LAND — finish with what you'd do next. Beginning, middle, end — on purpose, not by accident."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! Which opening is a real HOOK for the Volcano Lab?",
+          "options": [
+            {
+              "text": "“First, I will read my list of materials.”",
+              "right": false,
+              "hint": "That's a list, not a hook — nobody leans in for materials. A hook opens with the most exciting TRUE thing about the work."
+            },
+            {
+              "text": "“Um, so… this is my project, I guess.”",
+              "right": false,
+              "hint": "Honest, but it gives the audience nothing to hold on to. Lead with the result — the moment it all paid off."
+            },
+            {
+              "text": "“Our volcano erupted for 40 seconds — here's how we made it do that.”",
+              "right": true,
+              "praise": "⭐ YES! A real result, up front — now everyone wants to know HOW. That's a hook!"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A strong presentation runs hook, build, land: open with the result that makes people care, show the work — including what went wrong — and finish with what you would do next.",
+            "right": true
+          },
+          {
+            "t": "A strong presentation opens by listing the materials and steps in order.",
+            "fix": "Not quite — a materials list is part of the build, not the opening. The HOOK comes first: the most exciting TRUE result, up front, so the audience leans in to hear how you did it."
+          },
+          {
+            "t": "The build should show only what went well, so the work looks polished.",
+            "fix": "Not quite — the build is more convincing WITH the failures: what went wrong and what you changed is the proof the result was earned. Polish belongs to the landing, not to hiding the process."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-percentages-parts-of-100",
+      "band": "creator",
+      "num": 5,
+      "title": "Percentages: parts of 100",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "A percent is a slice of 100. The maker's shortcut: find 10% first — just move the decimal one place left — then build up. 10% of 240 playtesters is 24, so 25% is 24 + 24 + 12 = 60. Fundraising goals, discounts, battery bars and test scores all speak percent; now you can speak it back."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! 50% of your 80 playtesters finished the demo. How many players is that?",
+          "options": [
+            {
+              "text": "50 players",
+              "right": false,
+              "hint": "That's using 50 as a count of people, not a percent. 50% means exactly HALF — what is half of 80?"
+            },
+            {
+              "text": "40 players",
+              "right": true,
+              "praise": "⭐ YES! 50% = half: 80 ÷ 2 = 40 players. Percent fluency earned!"
+            },
+            {
+              "text": "30 players",
+              "right": false,
+              "hint": "30 is less than half of 80. 50% is exactly half — and half of 80 is…?"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A percent is a part of 100 — find 10% first by moving the decimal one place left, then build up to the percent you need.",
+            "right": true
+          },
+          {
+            "t": "50% of 80 is 50, because the percent number is the count.",
+            "fix": "Not quite — the percent is a rate out of 100, not a headcount. 50% means exactly half of the whole, whatever the whole is — and half of 80 playtesters is 40."
+          },
+          {
+            "t": "To find a percent of a number, multiply the number by the percent and stop there.",
+            "fix": "Not quite — 80 × 50 gives 4,000, more people than exist in the problem. A percent is per hundred: 50 out of every 100 is a half, so find the fraction of the whole — half of 80 is 40."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-the-design-loop-test-fix-retest",
+      "band": "creator",
+      "num": 6,
+      "title": "The design loop: test, fix, retest",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "No first version survives contact with a real user — and that's the plan, not a failure. Professionals work in a loop: sketch it rough → test it on a real person → fix the ONE biggest problem → test again. Polish comes last, never first: a beautiful level nobody can finish is still a broken level."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! Your first playtester gets stuck at the level-1 door for two whole minutes. What's the first move?",
+          "options": [
+            {
+              "text": "Add three more levels so there's more to play",
+              "right": false,
+              "hint": "More content built behind a door nobody can open just makes a bigger stuck game. Fix the biggest blocker first, then retest the loop."
+            },
+            {
+              "text": "Watch where they get stuck, fix just the door, retest",
+              "right": true,
+              "praise": "⭐ YES! Watch, fix the door, retest — the design loop in action. That's how real games ship!"
+            },
+            {
+              "text": "Decide the playtester just isn't good at games",
+              "right": false,
+              "hint": "The playtester isn't the bug — the door is. When a real user stalls somewhere, the design is telling you something."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "The design loop is: test on a real person, fix the ONE biggest problem you find, then test again — polish comes last, never first.",
+            "right": true
+          },
+          {
+            "t": "When a playtester gets stuck, the tester is the problem — find better testers.",
+            "fix": "Not quite — a stuck tester is the design talking to you. The playtester isn't the bug; the door is. Watch where they stall, fix that one thing, and retest the loop."
+          },
+          {
+            "t": "Adding more content is the fastest way to improve a design that testers struggle with.",
+            "fix": "Not quite — content built behind a door nobody can open just makes a bigger stuck product. The loop fixes the biggest blocker first, then tests again to prove the fix."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-make-a-claim-bring-evidence",
+      "band": "creator",
+      "num": 7,
+      "title": "Make a claim — bring evidence",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Persuasive writing is a claim carrying its proof. Weak: “Our film is the best.” — nothing there can be checked. Strong: “Our film holds attention because every scene ends on an unanswered question — test viewers named the cliffhangers as the reason they kept watching.” Claim, reason, evidence — in one breath."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! Which sentence is a claim WITH evidence, for the Backyard Scientist journal?",
+          "options": [
+            {
+              "text": "“The sunny bed grew 9 cm taller than the shady bed over six weeks, so sunlight drove the growth.”",
+              "right": true,
+              "praise": "⭐ YES! Claim, numbers, comparison — evidence doing real work. Argument writing unlocked!"
+            },
+            {
+              "text": "“Plants obviously love the sun more.”",
+              "right": false,
+              "hint": "An opinion with no measurement behind it — nothing a reader can check. Strong writing attaches numbers or observations to the claim."
+            },
+            {
+              "text": "“On Tuesday I watered the plants.”",
+              "right": false,
+              "hint": "That's a diary entry — it records a day but claims nothing. A claim says WHAT something means or WHY, and brings proof."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A strong claim carries its proof: it states what is true, gives the reason, and attaches evidence a reader can check — numbers, observations, comparisons.",
+            "right": true
+          },
+          {
+            "t": "A claim sounds stronger with words like “obviously” doing the persuading.",
+            "fix": "Not quite — “Plants obviously love the sun” gives a reader nothing to check. “The sunny bed grew 9 cm taller than the shady bed” can be verified — evidence, not emphasis, does the persuading."
+          },
+          {
+            "t": "A day-by-day diary of what you did counts as evidence for a claim.",
+            "fix": "Not quite — a diary records events but claims nothing. Evidence has to back a CLAIM: the six-week growth comparison is evidence because it supports the statement that sunlight drove the growth."
+          }
+        ]
+      }
+    },
+    {
+      "id": "creator-budget-the-project",
+      "band": "creator",
+      "num": 8,
+      "title": "Budget the project",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Real projects run on real budgets, and a budget is just careful adding done before you spend. Volcano Lab budget: $60. Already spent: board $25 and paint $20 — that's $45, leaving $15. Every new cost gets checked against what's LEFT, not against the original $60. That one habit is the difference between finished projects and abandoned ones."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Your call! The eruption kit costs $12. Can the Volcano Lab afford it?",
+          "options": [
+            {
+              "text": "No — the kit pushes it over budget",
+              "right": false,
+              "hint": "Add it up again: 25 + 20 + 12 = 57, and the budget is 60. Recheck before deciding — the numbers say it fits."
+            },
+            {
+              "text": "Yes — $57 total, with $3 left over",
+              "right": true,
+              "praise": "⭐ YES! $25 + $20 + $12 = $57 — inside the $60 budget with $3 to spare. Budget kept!"
+            },
+            {
+              "text": "Yes — and you'll still have $15 left",
+              "right": false,
+              "hint": "$15 left before the kit is right — but the kit costs $12, which comes OUT of that $15. How much would actually remain?"
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Every new cost is checked against what is LEFT of the budget — not against the original total — because money already spent is already gone.",
+            "right": true
+          },
+          {
+            "t": "A project is fine as long as each single item costs less than the original budget.",
+            "fix": "Not quite — the $12 kit costs far less than $60, but $45 was already spent. Items are not checked one by one against the original total; they are checked against the $15 that remains."
+          },
+          {
+            "t": "What is left of a budget is the original total minus the price of the newest item.",
+            "fix": "Not quite — what is left subtracts EVERYTHING already spent: $60 − $25 − $20 leaves $15. The newest item then comes out of that remainder — $12 out of $15 leaves $3."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-biology-where-energy-comes-from",
+      "band": "teen",
+      "num": 1,
+      "title": "Biology: where energy comes from",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Every cell runs on ATP — energy currency. The mitochondria mint it: they take glucose from food plus oxygen from breathing and convert them into ATP. Muscles, brain, everything spends it. That's why you breathe faster when you run: your cells are demanding more ATP, so the mitochondria need more oxygen."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! Which organelle produces most of a cell's ATP?",
+          "options": [
+            {
+              "text": "The mitochondria",
+              "right": true,
+              "praise": "⭐ Correct — mitochondria convert glucose + oxygen into ATP. That's how every cell gets its energy."
+            },
+            {
+              "text": "The nucleus",
+              "right": false,
+              "hint": "The nucleus stores DNA — it's the instruction library, not the power plant. Which organelle CONVERTS food and oxygen into energy?"
+            },
+            {
+              "text": "The ribosome",
+              "right": false,
+              "hint": "Ribosomes build proteins. Energy production happens in a different organelle — the one that uses oxygen."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "The mitochondria produce most of a cell's ATP by converting glucose and oxygen — ATP is the energy currency that every cellular process spends.",
+            "right": true
+          },
+          {
+            "t": "The nucleus produces the cell's energy and distributes it to the other organelles.",
+            "fix": "Not quite — the nucleus stores DNA; it is the instruction library, not the power plant. Energy conversion — glucose plus oxygen into ATP — happens in the mitochondria."
+          },
+          {
+            "t": "ATP is produced by the lungs during breathing and stored there until cells need it.",
+            "fix": "Not quite — ATP is minted inside the cells themselves, in the mitochondria. Breathing only supplies the oxygen — which is precisely why it speeds up when cellular demand for ATP rises."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-algebra-ii-keep-the-balance",
+      "band": "teen",
+      "num": 2,
+      "title": "Algebra II: keep the balance",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Solving an equation means getting x alone — and an equation is a balance: whatever you do to one side, you must do to the other. Worked example:"
+        },
+        {
+          "kind": "text",
+          "text": "x + 5 = 12 → subtract 5 from BOTH sides → x = 7"
+        },
+        {
+          "kind": "text",
+          "text": "Check: 7 + 5 = 12 ✓. Every one-step equation is this same move — undo what's been done to x, one step at a time."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! x + 7 = 15. What is x?",
+          "options": [
+            {
+              "text": "22",
+              "right": false,
+              "hint": "That's adding 7 + 15. To undo “+7”, SUBTRACT 7 from both sides: 15 − 7 = ?"
+            },
+            {
+              "text": "8",
+              "right": true,
+              "praise": "⭐ Correct — 15 − 7 = 8, and 8 + 7 = 15 ✓. Balance kept!"
+            },
+            {
+              "text": "7",
+              "right": false,
+              "hint": "Close — but check it: 7 + 7 = 14, not 15. x must make the left side equal 15 exactly."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Solving an equation means isolating the variable, and whatever operation is applied to one side must be applied to the other — the balance is never broken.",
+            "right": true
+          },
+          {
+            "t": "To solve an equation, move each number across the equals sign and flip its sign.",
+            "fix": "Not quite — nothing moves by itself. The flipped sign is the visible result of applying the inverse operation to BOTH sides: x + 5 = 12 becomes x = 7 because 5 was subtracted from each side."
+          },
+          {
+            "t": "One side of an equation can be simplified on its own, provided you balance it at the end.",
+            "fix": "Not quite — equality survives only if both sides change together at every step. Alter one side alone and it is a different equation, whose answer will fail the check: 7 + 5 = 12."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-history-a-thesis-is-a-claim",
+      "band": "teen",
+      "num": 3,
+      "title": "History: a thesis is a claim",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "A history essay stands or falls on its thesis — and a thesis is a claim you must prove, not a topic. Weak: “This essay is about the transcontinental railroad.” That announces a subject; it argues nothing. Strong: “The transcontinental railroad reshaped American migration by cutting a six-month journey to one week.” Specific, arguable, and provable with evidence — every paragraph can now do a job."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! Which of these is a real thesis?",
+          "options": [
+            {
+              "text": "“This essay will discuss westward expansion.”",
+              "right": false,
+              "hint": "That's a topic announcement — it claims nothing, so there's nothing to prove. A thesis takes a position evidence can support."
+            },
+            {
+              "text": "“Homesteading succeeded only where railroads arrived first, because access to markets decided which farms survived.”",
+              "right": true,
+              "praise": "⭐ Correct — a specific, arguable claim with a reason attached. That's a thesis an essay can prove."
+            },
+            {
+              "text": "“The railroad was completed in 1869.”",
+              "right": false,
+              "hint": "True, but it's a bare fact, not an argument — nobody could disagree, so there's nothing to prove. A thesis must be arguable."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A thesis is a specific, arguable claim that evidence can prove — it takes a position rather than announcing a topic or restating a settled fact.",
+            "right": true
+          },
+          {
+            "t": "A thesis is a clear statement of the topic the essay will discuss.",
+            "fix": "Not quite — “This essay is about the transcontinental railroad” announces a subject and argues nothing. A thesis takes a position a reader could dispute — that the railroad reshaped migration — and every paragraph then works to prove it."
+          },
+          {
+            "t": "A thesis is strongest when it states a fact nobody can dispute.",
+            "fix": "Not quite — an undisputed fact needs no essay; nobody writes five paragraphs proving the railroad was completed in 1869. A thesis must be arguable, because the argument is the essay."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-study-science-test-don-t-re-read",
+      "band": "teen",
+      "num": 4,
+      "title": "Study science: test, don't re-read",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Memory research is blunt: retrieval practice beats re-reading. Forcing your brain to pull an answer out — flashcards, self-quizzing — strengthens the memory far more than looking at the page again, and spreading short sessions across days (spacing) beats one long cram. So ten minutes of self-testing a day beats one long Sunday cram."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! The night before a test, which method works best?",
+          "options": [
+            {
+              "text": "Re-read your notes for three hours",
+              "right": false,
+              "hint": "It FEELS productive, but recognition isn't recall — on the test you must produce answers, not recognise them. Practise producing."
+            },
+            {
+              "text": "Self-test with flashcards, then sleep",
+              "right": true,
+              "praise": "⭐ Correct — retrieval practice plus sleep. That's how memory research says to study."
+            },
+            {
+              "text": "Highlight everything important",
+              "right": false,
+              "hint": "Highlighting marks what looks important without making you retrieve anything. Test yourself instead — that's the rep that counts."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "Retrieval practice — pulling answers out of memory through self-testing, spaced across days — builds stronger memory than re-reading, because it trains the exact act a test demands.",
+            "right": true
+          },
+          {
+            "t": "Re-reading works best because repeated exposure makes the material feel familiar.",
+            "fix": "Not quite — familiarity is recognition, and recognition is not recall. A test requires you to PRODUCE answers, not recognise them; self-testing is the repetition that trains production."
+          },
+          {
+            "t": "Highlighting is effective because it marks the important material for later review.",
+            "fix": "Not quite — highlighting sorts the page without requiring any retrieval. The evidence favours the harder act: close the notes, pull the answer out, then check it — and let sleep consolidate it."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-biology-dna-to-protein",
+      "band": "teen",
+      "num": 5,
+      "title": "Biology: DNA to protein",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "DNA is the instruction set. Its code stays protected inside the nucleus, but proteins are built OUTSIDE it — a messenger copy (mRNA) carries one gene's instructions to a ribosome, which reads the code and assembles the matching protein, amino acid by amino acid. DNA → message → protein: that single flow runs everything from muscle fibre to insulin."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! Where in the cell are proteins actually assembled?",
+          "options": [
+            {
+              "text": "The mitochondria",
+              "right": false,
+              "hint": "Mitochondria make ATP — that's lesson 1. Protein assembly happens where the mRNA message gets read and built from."
+            },
+            {
+              "text": "The ribosome",
+              "right": true,
+              "praise": "⭐ Correct — ribosomes read the mRNA copy and build the protein. The central flow of biology, learned."
+            },
+            {
+              "text": "The nucleus",
+              "right": false,
+              "hint": "The nucleus stores the DNA master copy, deliberately protected. Building happens outside it, at the organelle that reads the message."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "DNA stays protected in the nucleus; an mRNA copy carries one gene's instructions to a ribosome, which reads the code and assembles the matching protein.",
+            "right": true
+          },
+          {
+            "t": "Proteins are assembled inside the nucleus, where the DNA instructions are stored.",
+            "fix": "Not quite — the master copy never leaves the nucleus, and assembly never happens there. The mRNA messenger carries one gene's instructions out to a ribosome, where the protein is built."
+          },
+          {
+            "t": "The mitochondria read the DNA code and build proteins from it.",
+            "fix": "Not quite — mitochondria produce ATP; they do not read genes. Protein synthesis belongs to the ribosome, working from the mRNA copy of the DNA code."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-algebra-ii-two-step-equations",
+      "band": "teen",
+      "num": 6,
+      "title": "Algebra II: two-step equations",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Two-step equations just need the balance move twice — undo in reverse order, last thing on, first thing off. Worked example:"
+        },
+        {
+          "kind": "text",
+          "text": "2x + 3 = 11 → subtract 3: 2x = 8 → divide by 2: x = 4"
+        },
+        {
+          "kind": "text",
+          "text": "Check: 2 × 4 + 3 = 11 ✓. Undo the addition first, then the multiplication — every two-step equation follows exactly this order."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! 3x + 4 = 19. What is x?",
+          "options": [
+            {
+              "text": "6",
+              "right": false,
+              "hint": "Check it: 3 × 6 + 4 = 22, not 19. Subtract 4 from both sides first: 3x = 15 — then divide by 3."
+            },
+            {
+              "text": "5",
+              "right": true,
+              "praise": "⭐ Correct — 3x = 15, so x = 5, and 3 × 5 + 4 = 19 ✓. Two steps, balance kept!"
+            },
+            {
+              "text": "4",
+              "right": false,
+              "hint": "Check it: 3 × 4 + 4 = 16, not 19. Undo the +4 first, then undo the ×3."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A two-step equation is solved by undoing the operations in reverse order — the addition or subtraction first, then the multiplication or division — applying each step to both sides.",
+            "right": true
+          },
+          {
+            "t": "In a two-step equation you divide first, because multiplication is the stronger operation.",
+            "fix": "Not quite — the order is the reverse of how the expression was built: last operation on, first operation off. In 2x + 3 = 11 the +3 was applied last, so subtract 3 first (2x = 8), then divide by 2."
+          },
+          {
+            "t": "Once x is found, checking the answer is optional — the method guarantees it.",
+            "fix": "Not quite — the check is part of the method: substitute back and the equation confirms itself (2 × 4 + 3 = 11 ✓). Skipping it leaves arithmetic slips invisible."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-history-primary-vs-secondary-sources",
+      "band": "teen",
+      "num": 7,
+      "title": "History: primary vs secondary sources",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "Historians grade evidence by distance. A primary source was created AT the time, by someone who was there — a letter, a diary, a photograph, a ticket stub. A secondary source was made later, ABOUT the time — a textbook, a documentary, a museum label. An essay gets stronger the moment a primary source walks into it: real voices beat summaries of voices."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! Which of these is a PRIMARY source for a railroad-era essay?",
+          "options": [
+            {
+              "text": "A modern textbook chapter on westward expansion",
+              "right": false,
+              "hint": "A textbook is written long afterwards, ABOUT the era — that's secondary. Primary means created at the time, by someone who was there."
+            },
+            {
+              "text": "A letter written by a railroad worker in 1869",
+              "right": true,
+              "praise": "⭐ Correct — written in 1869 by someone doing the work. That's evidence an essay can stand on."
+            },
+            {
+              "text": "A documentary film about the railroad",
+              "right": false,
+              "hint": "A documentary is made later, however well researched — secondary. Look for the source created during the events themselves."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "A primary source was created at the time of the events by someone who was there; a secondary source was created later, about those events — the distinction is distance, not quality.",
+            "right": true
+          },
+          {
+            "t": "A primary source is a reliable source, and a secondary source is one to avoid.",
+            "fix": "Not quite — primary does not mean trustworthy, and secondary does not mean weak. A railroad worker's 1869 letter is primary because of when, and by whom, it was made; a rigorous modern textbook is secondary — and may still be excellent."
+          },
+          {
+            "t": "A letter or photograph becomes a secondary source once it is reprinted in a textbook.",
+            "fix": "Not quite — reprinting changes the container, not the source. The 1869 letter remains primary wherever it appears; it is the textbook's own commentary around it that is secondary."
+          }
+        ]
+      }
+    },
+    {
+      "id": "teen-spanish-ii-ar-verb-endings",
+      "band": "teen",
+      "num": 8,
+      "title": "Spanish II: -ar verb endings",
+      "steps": [
+        {
+          "kind": "text",
+          "text": "In Spanish, regular -ar verbs change their ending to match WHO is acting. Take hablar (to speak): drop the -ar, then add — yo hablo, tú hablas, él/ella habla. Learn that one pattern and it unlocks hundreds of verbs: estudiar → estudio, bailar → bailo, trabajar → trabajo."
+        }
+      ],
+      "questions": [
+        {
+          "text": "Check it! Complete the sentence: «Yo ___ español.»",
+          "options": [
+            {
+              "text": "habla",
+              "right": false,
+              "hint": "HABLA is the él/ella ending. The subject of this sentence is YO — which ending matches “I”?"
+            },
+            {
+              "text": "hablo",
+              "right": true,
+              "praise": "⭐ Correct — yo hablo. One pattern, hundreds of verbs unlocked."
+            },
+            {
+              "text": "hablan",
+              "right": false,
+              "hint": "HABLAN belongs to ellos — “they”. The sentence's subject is YO (“I”), which takes the -o ending."
+            }
+          ]
+        }
+      ],
+      "teachback": {
+        "options": [
+          {
+            "t": "For regular -ar verbs, drop the -ar and add the ending that matches the subject: yo hablo, tú hablas, él habla — one pattern unlocks hundreds of verbs.",
+            "right": true
+          },
+          {
+            "t": "The verb ending stays the same for every subject; only the pronoun changes.",
+            "fix": "Not quite — the ending is precisely what signals who is acting: hablo, hablas and habla are three forms of one verb. Spanish marks the subject on the verb itself."
+          },
+          {
+            "t": "Yo takes the -a ending, as in «yo habla».",
+            "fix": "Not quite — -a belongs to él/ella: habla means he or she speaks. Yo takes -o: «yo hablo». The ending is matched to the subject, every time."
+          }
+        ]
+      }
+    }
+  ]
+}

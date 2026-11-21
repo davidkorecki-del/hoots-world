@@ -1,4 +1,4 @@
-/* Hoot's World — 14/14 Family Sync Proof Test Suite
+/* Hoot's World — 17/17 Family Sync Proof Test Suite
    Runs directly in Apple WebKit JavaScriptCore (jsc) with zero dependencies:
      /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc tests/family-sync-proof.js
 
@@ -308,12 +308,12 @@
     return p;
   }
 
-  /* ---------- The 14 Proof Tests ---------- */
+  /* ---------- The 17 Proof Tests ---------- */
   var tests = [];
   function proof(name, fn) { tests.push({ name: name, fn: fn }); }
 
   // 1. Fresh Join / First Sync (Copy, Never Move)
-  proof("1. Fresh Join copies all 11 stores without moving/erasing Device A cloud state", function () {
+  proof("1. Fresh Join copies all 17 stores without moving/erasing Device A cloud state", function () {
     var cloud = makeCloud();
     var devA = makeDevice(cloud, {
       ls: {
@@ -387,7 +387,7 @@
   });
 
   // 3. Push Readiness Gate (allStoresRead)
-  proof("3. Push readiness gate ensures readStores() captures all 11 stores before pushing", function () {
+  proof("3. Push readiness gate ensures readStores() captures all 17 stores before pushing", function () {
     assert(SYNC_SRC.indexOf("function allStoresRead()") > 0, "allStoresRead gate exists");
     assert(SYNC_SRC.indexOf("if(!allStoresRead()){") > 0, "pushNow/schedulePush enforces allStoresRead");
     var cloud = makeCloud();
@@ -958,7 +958,7 @@
     });
   });
 
-  /* ---------- Execute all 14 proofs sequentially ---------- */
+  /* ---------- Execute all 17 proofs sequentially ---------- */
   var passed = 0;
   var chain = Promise.resolve();
   tests.forEach(function (t) {
