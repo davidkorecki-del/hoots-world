@@ -1,4 +1,4 @@
-const C='hw-hootv2-waveE2';
+const C='hw-hootv2-wave3-media';
 const PRECACHE=[
   'assets/lesson-art/creator-budget-the-project.svg',
   'assets/lesson-art/creator-debug-change-one-thing.svg',
@@ -203,8 +203,33 @@ const PRECACHE=[
   'assets/voice/coach/twinkle-praise.mp3',
   'assets/voice/coach/twinkle-wrong.mp3'
 ];
+/* Wave 3: strictly media-only cache (never HTML, CSS, or JS).
+   Resilient batched precache (one failed file never aborts install) +
+   bounded runtime media cache so iOS Safari CacheStorage stays healthy. */
+var MAX_MEDIA = 260;
+function isMediaUrl(u){
+  return u.indexOf('/assets/voice/') !== -1
+    || u.indexOf('/assets/lesson-art/') !== -1
+    || u.indexOf('/assets/book-art/') !== -1
+    || u.indexOf('/assets/thumbs/') !== -1;
+}
+function trimCache(c){
+  return c.keys().then(function(keys){
+    if(keys.length <= MAX_MEDIA) return;
+    var extra = keys.slice(0, keys.length - MAX_MEDIA);
+    return Promise.all(extra.map(function(k){ return c.delete(k); }));
+  }).catch(function(){});
+}
 self.addEventListener('install', function(e){
-  e.waitUntil(caches.open(C).then(function(c){ return c.addAll(PRECACHE); }).then(function(){ return self.skipWaiting(); }));
+  e.waitUntil(caches.open(C).then(function(c){
+    var i = 0, batch = 12;
+    function next(){
+      if(i >= PRECACHE.length) return Promise.resolve();
+      var slice = PRECACHE.slice(i, i + batch); i += batch;
+      return Promise.all(slice.map(function(u){ return c.add(u).catch(function(){}); })).then(next);
+    }
+    return next();
+  }).then(function(){ return self.skipWaiting(); }));
 });
 self.addEventListener('activate', function(e){
   e.waitUntil(caches.keys().then(function(keys){
@@ -212,9 +237,18 @@ self.addEventListener('activate', function(e){
   }).then(function(){ return self.clients.claim(); }));
 });
 self.addEventListener('fetch', function(e){
+  if(e.request.method !== 'GET') return;
   var u=e.request.url;
-  if(u.indexOf('/assets/voice/')===-1 && u.indexOf('/assets/lesson-art/')===-1) return;
+  if(!isMediaUrl(u)) return;
   e.respondWith(caches.open(C).then(function(c){
-    return c.match(e.request).then(function(hit){ return hit || fetch(e.request); });
+    return c.match(e.request).then(function(hit){
+      if(hit) return hit;
+      return fetch(e.request).then(function(res){
+        if(res && res.ok){
+          c.put(e.request, res.clone()).then(function(){ return trimCache(c); }).catch(function(){});
+        }
+        return res;
+      });
+    });
   }));
 });

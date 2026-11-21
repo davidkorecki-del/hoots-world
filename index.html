@@ -13145,7 +13145,9 @@
           }catch(e){ return []; }
           return Object.keys(took);
         }
+        var localDirty = false;
         function markSynced(state){
+          localDirty = false;
           delete marker.first;
           marker.lastSync = (state && state.updated_at) || marker.lastSync;
           marker.hash = stateHash(state || {});
@@ -13160,6 +13162,14 @@
           if(!pendingAdopt) return;
           if(!safeNow()){ setTimeout(trySafeAdopt, 3000); return; }
           var pa = pendingAdopt; pendingAdopt = null;
+          if(pa.fullState){
+            adopt(pa.fullState).then(function(changed){
+              lastFailed = false;
+              if(changed) reloadOnce(pa.cloudAt, "updated");
+              else statusDefault();
+            }).catch(function(){});
+            return;
+          }
           STORES.forEach(function(s){
             if(pa.names.indexOf(s.name) < 0) return;
             var str = JSON.stringify(pa.state[s.name]);
@@ -13200,14 +13210,35 @@
             })
             .then(function(rows){ return (rows && rows.length) ? rows[0] : null; });
         }
+        function syncConflict(){ var e = new Error("someone else saved first"); e.conflict = true; return e; }
         function upsertRow(code, state, keepalive, basedOn){
           var a2 = acct(); if(a2) return a2.pushState(state, keepalive, basedOn);
+          /* Wave 4: optimistic concurrency lock in family-code mode (matching HootAccount rev lock).
+             Conditional PATCH checks updated_at; 0 rows updated means another device saved first ->
+             throw conflict so pushNow re-pulls, 3-way merges, and retries without overwriting. */
+          var baseAt = basedOn && (basedOn.updated_at || (basedOn.state && basedOn.state.updated_at));
+          if(baseAt){
+            return sbFetch("/rest/v1/family_state?family_code=eq." + encodeURIComponent(code) + "&updated_at=eq." + encodeURIComponent(baseAt) + "&select=updated_at", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json", "Prefer": "return=representation" },
+              body: JSON.stringify({ state: state, updated_at: state.updated_at }),
+              keepalive: keepalive
+            }).then(function(res){
+              if(!res.ok) throw new Error("push " + res.status);
+              return res.json();
+            }).then(function(rows){
+              if(!rows || !rows.length) throw syncConflict();
+            });
+          }
           return sbFetch("/rest/v1/family_state", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates,return=minimal" },
+            headers: { "Content-Type": "application/json", "Prefer": "return=minimal" },
             body: JSON.stringify({ family_code: code, state: state, updated_at: state.updated_at }),
             keepalive: keepalive
-          }).then(function(res){ if(!res.ok) throw new Error("push " + res.status); });
+          }).then(function(res){
+            if(res.status === 409) throw syncConflict();
+            if(!res.ok) throw new Error("push " + res.status);
+          });
         }
         function acctNoPhotos(){ var a = acct(); return !!a && !a.photos(); }
         function bucketList(code){
@@ -13439,7 +13470,10 @@
                joins the state (and is uploaded below) rather than
                displacing — or being displaced by — the cloud copy.
                Tombstoned ids are subtracted from both sides. */
-            return pullRow(code).catch(function(){ return null; }).then(function(row){
+            /* Wave 4: never swallow a pullRow() network/HTTP failure as null —
+               only HTTP 200 with [] means "no row yet". A network error aborts
+               the push safely instead of overwriting the cloud row unmerged. */
+            return pullRow(code).then(function(row){
             var cloudState = (row && row.state) || {};
             /* 3e40: if the cloud moved on since this device last synced, fold
                the other device's pieces in before uploading */
@@ -13579,6 +13613,7 @@
                  the reconcile check and the backstop poll both see
                  local != marker and push, uploading the kept local
                  stores merged with whatever was adopted. */
+              localDirty = true;
               marker.hash = "kept-local-dirty";
               delete marker.first;
               marker.paths = flatten(state || {});
@@ -13618,6 +13653,12 @@
                   /* 3e40: this device has unsent changes of its own, so merge
                      (pushNow folds the cloud in) instead of replacing them */
                   if(marker.paths && marker.lastSync && lh !== marker.hash) return pushNow(false);
+                  /* Wave 4: never reload mid-game/lesson on online reconnect; defer until safeNow() */
+                  if(!safeNow()){
+                    pendingAdopt = { fullState: state, cloudAt: cloudAt };
+                    trySafeAdopt();
+                    return null;
+                  }
                   return adopt(state).then(function(changed){
                     lastFailed = false;
                     if(changed) reloadOnce(cloudAt, "updated");
@@ -13738,6 +13779,7 @@
             if(SYNCED[k]){
               /* A write from the owning script proves that store
                  has loaded this session. */
+              localDirty = true;
               STORES.forEach(function(s){ if(s.key === k) storesRead[s.name] = true; });
               schedulePush();
             }
@@ -13746,10 +13788,11 @@
         }catch(e){}
         /* Backstop poll: catches writes from anywhere else (games
            included) and photo add/remove, which live in IndexedDB. */
+        document.addEventListener("hw-photos-changed", function(){ localDirty = true; schedulePush(); });
         setInterval(function(){
           if(!getCode() || pushing) return;
           localHash().then(function(lh){
-            if(marker.hash && lh !== marker.hash) schedulePush();
+            if(marker.hash && lh !== marker.hash){ localDirty = true; schedulePush(); }
           }).catch(function(){});
         }, 10000);
         /* 3e40: once a minute, while the app is open and nothing is being
@@ -13760,10 +13803,10 @@
           reconcile();
         }, (window.HOOT_BACKEND && window.HOOT_BACKEND.pollMs) || 60000);
         document.addEventListener("visibilitychange", function(){
-          if(document.visibilityState === "hidden") pushNow(true);
+          if(document.visibilityState === "hidden"){ if(getCode() && (localDirty || !marker.lastSync)) pushNow(true); }
           else if(getCode() && !pushing && safeNow()) reconcile();
         });
-        window.addEventListener("beforeunload", function(){ pushNow(true); });
+        window.addEventListener("beforeunload", function(){ if(getCode() && (localDirty || !marker.lastSync)) pushNow(true); });
         window.addEventListener("online", function(){ lastFailed = false; statusDefault(); reconcile(); });
 
         /* Push readiness: read every local store once, up front.
@@ -13840,9 +13883,17 @@
   }
   function all(){ Array.prototype.forEach.call(document.querySelectorAll(".lsn-q"), big); }
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", all); else all();
-  if(window.MutationObserver) new MutationObserver(function(list){
-    list.forEach(function(m){ var el = m.target.nodeType === 3 ? m.target.parentNode : m.target; el = el && el.closest ? el.closest(".lsn-q") : null; if(el && !el.querySelector(".lsn-qpic")) big(el); });
-  }).observe(document.documentElement, { subtree:true, childList:true, characterData:true });
+  if(window.MutationObserver){
+    var moQ = new MutationObserver(function(list){
+      list.forEach(function(m){ var el = m.target.nodeType === 3 ? m.target.parentNode : m.target; el = el && el.closest ? el.closest(".lsn-q") : null; if(el && !el.querySelector(".lsn-qpic")) big(el); });
+    });
+    function watchQ(){
+      var targets = [document.getElementById("panel-little"), document.getElementById("ll-obody")].filter(Boolean);
+      if(!targets.length) targets = [document.body];
+      targets.forEach(function(t){ moQ.observe(t, { subtree:true, childList:true, characterData:true }); });
+    }
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", watchQ); else watchQ();
+  }
 })();
 </script>
   <script src="js/hoot-lessons.js?v=llprev3e65"></script>
@@ -13851,7 +13902,7 @@
   <script src="js/hoot-sci7.js?v=llprev3e65"></script>
   <script src="js/hoot-ss7.js?v=llprev3e65"></script>
   <script src="js/hoot-games.js?v=llprev3e65"></script>
-  <script src="js/hw-activities.js?v=3e65"></script>
+  <script src="js/hw-activities.js?v=llprev3e65"></script>
 <script src="js/hw-ll-shell.js?v=llprev3e65"></script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e65');}</script>
 </body>
