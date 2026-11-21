@@ -514,13 +514,13 @@ var HW_THUMBS = {}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp 
     var x = planDay(pid), hide = x.d.hide || [], order = x.d.order || [];
     var out = base.filter(function (it) { return hide.indexOf(it.title) < 0; });
     var has = function (t) { return out.some(function (it) { return it.title === t; }); };
-    var room = MAX_STOPS - (isLittleBand() ? 1 : 0);
+    var room = MAX_STOPS;
     extrasOn(x.k, new Date()).forEach(function (e) {
       if (out.length >= room || has(e.title) || hide.indexOf(e.title) >= 0) return;
       out.push({ kind: "custom", cid: e.id, title: e.title, emo: e.emo || "⭐", tags: ["Your plan"], color: "#7C3AED", blurb: "Planned by your grown-up. Tick it when it's done." });
     });
-    /* the story is the last stop of the day for the little ones */
-    if (isLittleBand() && hide.indexOf(STORY_STOP) < 0) out.push({ kind: "story", title: STORY_STOP, emo: "🌙", tags: ["Story"], color: "#3730A3", blurb: "Hoot reads a story." });
+    /* Story time is a free choice on Kid Home (storyBtnHtml), never a required
+       step blocking Play games (Dawid/Muse 2026-11-21). */
     if (order.length) {
       var pos = function (it, i) { var n = order.indexOf(it.title); return n < 0 ? 500 + i : n; };
       out = out.map(function (it, i) { return { it: it, p: pos(it, i) }; }).sort(function (a, b) { return a.p - b.p; }).map(function (o) { return o.it; });
@@ -537,7 +537,10 @@ var HW_THUMBS = {}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp 
   function hiddenToday() { var pid = state.profile && state.profile.id; return pid ? (planDay(pid).d.hide || []).slice() : []; }
   /* free play for ages 2–7: "after" the path is done (default), "always", or "off" */
   function freeMode(pid) { var m = kidPlan(planAll(), pid).free; return m === "always" || m === "off" ? m : "after"; }
-  function pathDone() { return currentPlan().every(stoneDone); }
+  function pathDone() {
+    var req = currentPlan().filter(function (it) { return it && it.kind !== "story" && it.title !== STORY_STOP; });
+    return req.every(stoneDone);
+  }
   function playUnlocked() {
     if (!state.profile || !isKidBand()) return true;
     var m = freeMode(state.profile.id);
@@ -943,7 +946,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
         (open ? '<button type="button" class="kh-big" data-kh-go="learn" style="--b:#1B7A34"><span aria-hidden="true">🌱</span><b>Learn</b></button>' : lockBtn("🌱", "Learn", "#1B7A34")) +
         (open ? '<button type="button" class="kh-big" data-kh-go="games" style="--b:#1D4ED8"><span aria-hidden="true">🎮</span><b>Play</b></button>' : lockBtn("🎮", "Play", "#1D4ED8")) +
         '<button type="button" class="kh-big" data-kh-go="stickers" style="--b:#BE185D"><span aria-hidden="true">📒</span><b>Stickers</b></button>' +
-      "</div>";
+      "</div>" +
+      (magic ? storyBtnHtml(sky) : "");
     html += msShowHtml(); /* Morning Show (2026-11-17): today's show + past shows */
     var extrasHtml = waveTodayHtml() + wc2TodayHtml() + we1TodayHtml() + we2TodayHtml();
     if (magic) {
