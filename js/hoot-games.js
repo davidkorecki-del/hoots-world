@@ -194,25 +194,31 @@
   /* ---------- Say It with Hoot: mic state (module level so stop() can kill it) ----------
      The child's recording lives in memory only; it is never saved or sent
      anywhere, and stop() — called on game exit — destroys it. */
-  var micRec = null, micUrl = null, micAudio = null, micTimer = null;
+  var micRec = null, micUrl = null, micAudio = null, micTimer = null, micPending = false;
   function sayitCleanup() {
+    micPending = false;
     if (micTimer) { clearTimeout(micTimer); micTimer = null; }
     if (micRec) {
       var r = micRec; micRec = null; r.dead = true;
       try { r.mr.stop(); } catch (e) {}
       try { r.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
     }
-    if (micAudio) { try { micAudio.pause(); } catch (e) {} }
+    if (micAudio) { micAudio.onended = micAudio.onerror = null; try { micAudio.pause(); } catch (e) {} }
     if (micUrl) { try { URL.revokeObjectURL(micUrl); } catch (e) {} micUrl = null; }
   }
 
   /* ---------- runner ---------- */
   var R = null;
-  function stop() { stopVoice(); stopMusic(); stopSing(); sayitCleanup(); if (R) { R.dead = true; clearInterval(R.iv); R = null; } }
+  function clearIdleTimers(s) {
+    if (!s || !s.idleT) return;
+    s.idleT.forEach(function (t) { clearTimeout(t); });
+    s.idleT = [];
+  }
+  function stop() { stopVoice(); stopMusic(); stopSing(); sayitCleanup(); if (R) { clearIdleTimers(R); R.dead = true; clearInterval(R.iv); R = null; } }
   function play(key, body) {
     var G = GAMES[key]; if (!G || !body) return false;
     stop();
-    var S = R = { key: key, round: 0, wrong: 0, dead: false, t0: Date.now(), iv: null };
+    var S = R = { key: key, round: 0, wrong: 0, dead: false, t0: Date.now(), iv: null, idleT: [] };
     body.innerHTML = '<div class="pg" style="--bg:' + G.bg + '">' +
       '<div class="pg-top"><div class="pg-hoot">' + hootSvg() + '</div><p class="pg-bubble" aria-live="polite"></p>' +
       '<button type="button" class="pg-music" aria-pressed="' + musicOn + '" aria-label="Music on or off">' + (musicOn ? "🎵" : "🔇") + "</button></div>" +
@@ -238,23 +244,47 @@
     function win(btn) {
       sfx("pop"); if (btn) { btn.classList.add("pg-yay"); var s = document.createElement("span"); s.className = "pg-burst"; s.textContent = "⭐"; btn.appendChild(s); }
     }
+    function clearIdle() { clearIdleTimers(S); }
+    /* Wave 2 (Finding 2): 7s / 14s gentle re-prompt + visual spotlight for 2-4 party games */
+    function armIdle(clips, nudgeSel, hintFn) {
+      clearIdle();
+      var r0 = S.round;
+      S.idleT.push(setTimeout(function () {
+        if (!alive() || S.won || S.round !== r0 || micRec || micPending) return;
+        if (nudgeSel) stage.querySelectorAll(nudgeSel).forEach(function (el) {
+          if (!el.disabled) { el.classList.remove("pg-idle-nudge"); void el.offsetWidth; el.classList.add("pg-idle-nudge"); }
+        });
+        if (clips && clips.length) say(clips, null, true);
+      }, 7000));
+      S.idleT.push(setTimeout(function () {
+        if (!alive() || S.won || S.round !== r0 || micRec || micPending) return;
+        if (typeof hintFn === "function") {
+          var targets = hintFn() || [];
+          targets.forEach(function (el) { if (el && !el.disabled) el.classList.add("pg-hint"); });
+        }
+        if (clips && clips.length) say(clips, null, true);
+      }, 14000));
+    }
     function roundDone() {
       if (!alive() || S.advanced) return;
+      clearIdle();
       S.advanced = true;
       S.round++; paint();
       if (S.round >= G.rounds) return finish();
       setTimeout(function () { if (alive()) { S.advanced = false; S.won = false; next(); } }, 500);
     }
     /* a won round always moves on: by Hoot's praise ending, or by this backup timer */
-    function wonRound() { S.won = true; var r = S.round; setTimeout(function () { if (alive() && S.round === r && S.won) roundDone(); }, 4500); return roundDone; }
+    function wonRound() { clearIdle(); S.won = true; var r = S.round; setTimeout(function () { if (alive() && S.round === r && S.won) roundDone(); }, 4500); return roundDone; }
     function wrongTap(btn, text, clips) {
       if (S.won) return;
+      clearIdle();
       S.wrong++; sfx("boing");
       if (btn) { btn.classList.remove("pg-no"); void btn.offsetWidth; btn.classList.add("pg-no"); }
       setB(text);
       say([fresh(NUDGE)].concat(clips || []));
     }
     function finish() {
+      clearIdle();
       stage.innerHTML = '<div class="pg-confetti" aria-hidden="true">' + Array.apply(null, Array(24)).map(function (_, i) { return '<i style="--x:' + ri(2, 96) + "%;--d:" + (ri(0, 8) / 10) + "s;--c:" + pick(["#F06595", "#FFD43B", "#1C7ED6", "#2F9E44", "#7048E8", "#FD7E14"]) + '"></i>'; }).join("") + "</div>";
       stopMusic(); sfx("win");
       var st = STICKERS[ORDER.indexOf(key) * 2 % STICKERS.length];
@@ -292,16 +322,19 @@
         return '<button type="button" class="pg-bub" data-l="' + l + '" style="--x:' + (2 + i * 18) + "%;--y:" + ri(75, 210) + "px;--t:" + (3 + ri(0, 2)) + "s;--d:-" + (i * 0.6) + 's" aria-label="Bubble ' + l.toUpperCase() + '">' + l.toUpperCase() + "</button>";
       }).join("") + "</div>";
       setB("Pop the bubbles that say… 🔊");
-      say([opt("say-pop-sound"), "coach/phonics-" + target].filter(Boolean), null, true);
+      var askBub = [opt("say-pop-sound"), "coach/phonics-" + target].filter(Boolean);
+      var hintBub = function () { return Array.prototype.slice.call(stage.querySelectorAll('.pg-bub[data-l="' + target + '"]:not(:disabled)')); };
+      say(askBub, function () { armIdle(askBub, ".pg-bub", hintBub); }, true);
       stage.querySelectorAll(".pg-bub").forEach(function (b) {
         b.addEventListener("animationiteration", function () { /* floated off the top: comes back, never lost */ });
         b.addEventListener("click", function () {
           if (b.disabled || !alive()) return;
+          clearIdle();
           if (b.getAttribute("data-l") === target) {
             b.disabled = true; win(b); b.classList.add("pg-popped"); left--;
-            if (left === 0) { stage.querySelectorAll(".pg-bub").forEach(function (x) { x.disabled = true; }); setB("⭐ POP! Those say “" + target.toUpperCase() + "”!"); say(["call-letter-" + target, fresh(PRAISE)], wonRound()); }
-            else setB("POP! One more " + target.toUpperCase() + "!");
-          } else wrongTap(b, "That bubble is " + b.getAttribute("data-l").toUpperCase() + ". Listen again for the sound!", ["coach/phonics-" + target]);
+            if (left === 0) { stage.querySelectorAll(".pg-bub").forEach(function (x) { x.disabled = true; }); setB("⭐ POP! Those say “" + target.toUpperCase() + "”!"); var lName = (window.__hootNameClip && window.__hootNameClip("letter", target)) || ("name-letter-" + target); say([lName, fresh(PRAISE)], wonRound()); }
+            else { setB("POP! One more " + target.toUpperCase() + "!"); armIdle(askBub, ".pg-bub", hintBub); }
+          } else { wrongTap(b, "That bubble is " + b.getAttribute("data-l").toUpperCase() + ". Listen again for the sound!", ["coach/phonics-" + target]); armIdle(askBub, ".pg-bub", hintBub); }
         });
       });
     }
@@ -315,13 +348,16 @@
       /* 3e37: call-number clips are questions ("Find the number…"), so they are
          never used to count; a name clip is used once it exists */
       var numName = function (k) { return window.__hootNameClip ? window.__hootNameClip("number", k) : null; };
-      say([opt("say-plant"), numName(n)].filter(Boolean), null, true);
+      var askGarden = [opt("say-plant"), numName(n)].filter(Boolean);
+      var hintGarden = function () { var one = stage.querySelector(".pg-soil:not(:disabled)"); return one ? [one] : []; };
+      say(askGarden, function () { armIdle(askGarden, ".pg-soil", hintGarden); }, true);
       stage.querySelectorAll(".pg-soil").forEach(function (b) {
         b.addEventListener("click", function () {
           if (b.disabled || !alive() || planted >= n) return;
+          clearIdle();
           b.disabled = true; planted++; b.innerHTML = '<span class="pg-flower">' + pick(FL) + "</span>"; counter.textContent = planted;
           sfx("pop");
-          if (planted < n) { var nc = numName(planted); if (nc) { stopVoice(); say([nc], null, true); } }
+          if (planted < n) { var nc = numName(planted); if (nc) { stopVoice(); say([nc], function () { armIdle(askGarden, ".pg-soil", hintGarden); }, true); } else armIdle(askGarden, ".pg-soil", hintGarden); }
           else {
             stage.querySelectorAll(".pg-soil").forEach(function (x) { x.disabled = true; });
             setB("⭐ " + n + " flowers! Your garden is growing!");
@@ -344,17 +380,20 @@
       setB("Load the " + target.toUpperCase() + " car!");
       /* "Load the…" + the name ("red"); the question clip is only a fallback */
       var tName = window.__hootNameClip ? window.__hootNameClip(colorMode ? "color" : "shape", target) : null;
-      say(tName ? [opt("say-load"), tName].filter(Boolean) : [(colorMode ? "call-color-" : "call-shape-") + target], null, true);
+      var askTrain = tName ? [opt("say-load"), tName].filter(Boolean) : [(colorMode ? "call-color-" : "call-shape-") + target];
+      var hintTrain = function () { var c = stage.querySelector('.pg-car[data-k="' + target + '"]'); return c ? [c] : []; };
+      say(askTrain, function () { armIdle(askTrain, ".pg-car", hintTrain); }, true);
       stage.querySelectorAll(".pg-car").forEach(function (b) {
         b.addEventListener("click", function () {
           if (b.disabled || !alive()) return;
+          clearIdle();
           if (b.getAttribute("data-k") === target) {
             stage.querySelectorAll(".pg-car").forEach(function (x) { x.disabled = true; });
             win(b); b.insertAdjacentHTML("beforeend", '<span class="pg-cargo" aria-hidden="true">🧸</span>');
             setB("⭐ All aboard the " + target.toUpperCase() + " car! Choo choo!");
             stage.querySelector(".pg-train").classList.add("pg-go");
             say([tName, fresh(PRAISE)].filter(Boolean), wonRound(), true);
-          } else wrongTap(b, "That's the " + b.getAttribute("data-k").toUpperCase() + " car. Find " + target.toUpperCase() + "!", [(colorMode ? "call-color-" : "call-shape-") + target]);
+          } else { wrongTap(b, "That's the " + b.getAttribute("data-k").toUpperCase() + " car. Find " + target.toUpperCase() + "!", [(colorMode ? "call-color-" : "call-shape-") + target]); armIdle(askTrain, ".pg-car", hintTrain); }
         });
       });
     }
@@ -367,13 +406,16 @@
       root.querySelector(".pg-hoot").classList.add("pg-dancing");
       var dir = target === "up" || target === "down";
       setB(dir ? "Which one is " + MOVES[target][2] + "?" : "Show me your… " + MOVES[target][2] + "!");
-      say(dir ? ["ask-which-" + target] : [opt("say-show-me"), MOVES[target][1]].filter(Boolean), null, true);
+      var askDance = dir ? ["ask-which-" + target] : [opt("say-show-me"), MOVES[target][1]].filter(Boolean);
+      var hintDance = function () { var m = stage.querySelector('.pg-move[data-k="' + target + '"]'); return m ? [m] : []; };
+      say(askDance, function () { armIdle(askDance, ".pg-move", hintDance); }, true);
       stage.querySelectorAll(".pg-move").forEach(function (b) {
         b.addEventListener("click", function () {
           if (b.disabled || !alive()) return;
+          clearIdle();
           var k = b.getAttribute("data-k");
           if (k === target) { stage.querySelectorAll(".pg-move").forEach(function (x) { x.disabled = true; }); win(b); setB("⭐ " + MOVES[k][2] + "! Wiggle wiggle!"); say([MOVES[k][1], fresh(PRAISE)], wonRound(), true); }
-          else wrongTap(b, "That's " + MOVES[k][2] + ". Show me " + MOVES[target][2] + "!", [MOVES[target][1]]);
+          else { wrongTap(b, "That's " + MOVES[k][2] + ". Show me " + MOVES[target][2] + "!", [MOVES[target][1]]); armIdle(askDance, ".pg-move", hintDance); }
         });
       });
     }
@@ -387,13 +429,16 @@
         return '<button type="button" class="pg-place" data-k="' + k + '"><span>' + H[k][1] + "</span><b>" + H[k][2] + "</b></button>";
       }).join("") + "</div>";
       setB("Where does this helper work?");
-      say([opt("say-where-work"), H[target][3]].filter(Boolean), null, true);
+      var askHelp = [opt("say-where-work"), H[target][3]].filter(Boolean);
+      var hintHelp = function () { var pl = stage.querySelector('.pg-place[data-k="' + target + '"]'); return pl ? [pl] : []; };
+      say(askHelp, function () { armIdle(askHelp, ".pg-place", hintHelp); }, true);
       stage.querySelectorAll(".pg-place").forEach(function (b) {
         b.addEventListener("click", function () {
           if (b.disabled || !alive()) return;
+          clearIdle();
           var k = b.getAttribute("data-k");
           if (k === target) { stage.querySelectorAll(".pg-place").forEach(function (x) { x.disabled = true; }); win(b); stage.querySelector(".pg-helper").classList.add("pg-walk"); setB("⭐ Yes! " + H[k][4].replace("teach-", "").replace("-", " ").toUpperCase() + " works at the " + H[k][2].toUpperCase() + "!"); say([H[k][4], fresh(PRAISE)], wonRound(), true); }
-          else wrongTap(b, "That's the " + H[k][2] + ". Where does the " + (target === "police" ? "police officer" : target) + " work?", [H[target][3]]);
+          else { wrongTap(b, "That's the " + H[k][2] + ". Where does the " + (target === "police" ? "police officer" : target) + " work?", [H[target][3]]); armIdle(askHelp, ".pg-place", hintHelp); }
         });
       });
     }
@@ -424,17 +469,22 @@
         '<button type="button" class="pg-sayagain">🔊 Hear Hoot again</button></div>' +
         '<p class="pg-sayhint">Tap the microphone, say it out loud, then tap again!</p>';
       setB("Say it with me… " + item.word + "!");
-      say([item.clip, "sayit-yourturn"], null, true);
+      var askSayit = [item.clip, "sayit-yourturn"];
       var micBtn = stage.querySelector(".pg-mic");
+      var hintSayit = function () { return micBtn ? [micBtn] : []; };
+      say(askSayit, function () { armIdle(askSayit, ".pg-mic", hintSayit); }, true);
       stage.querySelector(".pg-sayagain").addEventListener("click", function () {
-        if (alive() && !micRec) say([item.clip], null, true);
+        if (alive() && !micRec && !micPending) { clearIdle(); say([item.clip], function () { armIdle(askSayit, ".pg-mic", hintSayit); }, true); }
       });
       micBtn.addEventListener("click", function () {
-        if (!alive()) return;
+        if (!alive() || micPending) return;
+        clearIdle();
         if (micRec) { try { micRec.mr.stop(); } catch (e) {} return; }
         if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) { sayitCheer(false); return; }
+        micPending = true;
         stopVoice();
         navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+          micPending = false;
           if (!alive()) { stream.getTracks().forEach(function (t) { t.stop(); }); return; }
           var mr;
           try { mr = new MediaRecorder(stream); } catch (e) { stream.getTracks().forEach(function (t) { t.stop(); }); sayitCheer(false); return; }
@@ -447,7 +497,7 @@
             if (micTimer) { clearTimeout(micTimer); micTimer = null; }
             micRec = null;
             micBtn.classList.remove("on"); micBtn.textContent = "🎙️";
-            var blob = new Blob(chunks, { type: mr.mimeType || "audio/webm" });
+            var blob = mr.mimeType ? new Blob(chunks, { type: mr.mimeType }) : new Blob(chunks);
             if (!blob.size) { sayitCheer(false); return; }
             if (micUrl) { try { URL.revokeObjectURL(micUrl); } catch (e) {} }
             micUrl = URL.createObjectURL(blob);
@@ -457,6 +507,7 @@
               if (!micAudio) micAudio = new Audio();
               micAudio.src = micUrl;
               micAudio.onended = function () { sayitCheer(true); };
+              micAudio.onerror = function () { sayitCheer(false); };
               var p = micAudio.play();
               if (p && p.catch) p.catch(function () { sayitCheer(true); });
             }, true);
@@ -465,8 +516,8 @@
           mr.start();
           micBtn.classList.add("on"); micBtn.textContent = "⏺️";
           setB("I'm listening… say it now!");
-          micTimer = setTimeout(function () { if (micRec) { try { micRec.mr.stop(); } catch (e) {} } }, 6000);
-        }).catch(function () { if (alive()) sayitCheer(false); });
+          micTimer = setTimeout(function () { if (micRec) { try { micRec.mr.stop(); } catch (e) {} } }, 3500);
+        }).catch(function () { micPending = false; if (alive()) sayitCheer(false); });
       });
     }
   }
