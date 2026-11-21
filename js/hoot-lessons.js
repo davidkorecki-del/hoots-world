@@ -236,17 +236,22 @@
   function results(kid) { return load()[kid || kidId()] || {}; }
 
   /* ---------- audio: clips only, one queue, cancellable ---------- */
-  var gen = 0, cur = null, lastSaid = {};
+  var gen = 0, cur = null, voiceEl = null, lastSaid = {};
   function stopAudio() { gen++; if (cur) { cur.__govWait = false; cur.__govNext = null; cur.onended = cur.onerror = null; try { cur.pause(); } catch (e) {} cur = null; } }
   function say(keys, done) {
     var my = ++gen, i = 0;
+    if (cur) { cur.__govWait = false; cur.__govNext = null; cur.onended = cur.onerror = null; try { cur.pause(); } catch (e) {} }
     keys = (keys || []).filter(Boolean);
     (function next() {
       if (my !== gen) return;
       if (i >= keys.length) { if (done) done(); return; }
       var k = keys[i++];
       lastSaid[k] = Date.now();
-      var a = new Audio(VOICE + k + ".mp3");
+      if (!voiceEl) voiceEl = new Audio();
+      var a = voiceEl;
+      a.__govWait = false; a.__govNext = null; a.onended = a.onerror = null;
+      try { a.pause(); } catch (e) {}
+      a.src = VOICE + k + ".mp3";
       cur = a;
       var fin = function () { a.onended = a.onerror = null; if (my === gen) setTimeout(next, 180); };
       a.onended = fin; a.onerror = fin;
@@ -397,7 +402,7 @@
         if (!alive() || !R.cur || R.cur.rd !== rd) return;
         var tb = findTargetBtn(tgt.key);
         if (tb && !tb.disabled) tb.classList.add("hint");
-        say(askClips(rd, tgt));
+        say((hasClip("hoot-try-this-one") ? ["hoot-try-this-one"] : []).concat(askClips(rd, tgt)));
       }, 14000));
     }
     var teach = lesson.teachItems ? lesson.teachItems.map(function (t) { var it = item(t.kind, t.key); it.say = t.say; it.text = t.text; return it; })

@@ -5756,11 +5756,21 @@
       var $$ = function(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
 
       /* ---------- sound + voice helpers ---------- */
+      /* Wave 3: shared singleton AudioContext across the whole shell (iOS Safari caps active contexts at ~4-6) */
+      window.__hwAudioCtx = window.__hwAudioCtx || function(){
+        try{
+          if(!window.__hwSharedAC){
+            var C = window.AudioContext || window.webkitAudioContext;
+            if(C) window.__hwSharedAC = new C();
+          }
+          if(window.__hwSharedAC && window.__hwSharedAC.state === "suspended") window.__hwSharedAC.resume();
+          return window.__hwSharedAC || null;
+        }catch(e){ return null; }
+      };
       var actx = null;
       function tone(freq, dur, type, vol, when){
         try{
-          if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-          if(actx.state === "suspended") actx.resume();
+          actx = window.__hwAudioCtx(); if(!actx) return;
           var t = actx.currentTime + (when||0);
           var o = actx.createOscillator(), g = actx.createGain();
           o.type = type||"sine"; o.frequency.setValueAtTime(freq, t);
@@ -8207,7 +8217,8 @@
         function tone(freq, dur, type, vol, delay, slideTo){
           if(quiet()) return;
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var t0 = actx.currentTime + (delay || 0);
             var o = actx.createOscillator(), g = actx.createGain();
@@ -9268,7 +9279,8 @@
         function tone(freq, dur, type, vol, delay, slideTo){
           if(quiet()) return;
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var t0 = actx.currentTime + (delay || 0);
             var o = actx.createOscillator(), g = actx.createGain();
@@ -10047,7 +10059,8 @@
         var actx = null;
         function beep(freq){
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var o = actx.createOscillator(), g = actx.createGain();
             o.type = "sine"; o.frequency.value = freq || 600;
@@ -10144,7 +10157,8 @@
         var actx = null;
         function beep(freq, delay){
           try{
-            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            actx = window.__hwAudioCtx ? window.__hwAudioCtx() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+            if(!actx) return;
             if(actx.state === "suspended") actx.resume();
             var t0 = actx.currentTime + (delay || 0);
             var o = actx.createOscillator(), g = actx.createGain();
@@ -11778,7 +11792,8 @@
         var AC = null;
         function pop(){
           try{
-            if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+            AC = window.__hwAudioCtx ? window.__hwAudioCtx() : (AC || new (window.AudioContext || window.webkitAudioContext)());
+            if(!AC) return;
             if(AC.state === "suspended") AC.resume();
             var o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
             o.type = "sine"; o.frequency.setValueAtTime(620, t); o.frequency.exponentialRampToValueAtTime(940, t + .09);
@@ -12985,7 +13000,15 @@
           { name:"plan",      key:"hootworld.plan.v1" },
           /* Author shelf: Kaitlyn's writing-studio drafts ride Family Sync
              so her tutor's workshop can pick up submitted stories. */
-          { name:"stories",   key:"hootworld.stories.v1" }
+          { name:"stories",   key:"hootworld.stories.v1" },
+          /* Wave 4 (Muse/Grok Q3 approved): sync Book Library, Then & Now
+             completions, Oops Garden, and Activities log across family devices. */
+          { name:"library",     key:"hootworld.library.v1" },
+          { name:"libprog",     key:"hootworld.libprog.v1" },
+          { name:"homelib",     key:"hootworld.homelib.v1" },
+          { name:"completions", key:"hootworld.completions.v1" },
+          { name:"oops",        key:"hootworld.oops.v1" },
+          { name:"actlog",      key:"hootworld.actlog.v1" }
         ];
         var SYNCED = {};
         STORES.forEach(function(s){ SYNCED[s.key] = true; });
@@ -13018,6 +13041,12 @@
             if(name === "plan") return !!v.kids && Object.keys(v.kids).some(function(id){ var k = v.kids[id]; return !!k && ((Array.isArray(k.extra) && k.extra.length > 0) || !!k.free || (k.days && Object.keys(k.days).length > 0)); });
             if(name === "log") return Object.keys(v).some(function(id){ var a = v[id]; return Array.isArray(a) ? a.length > 0 : !!a && typeof a === "object" && Object.keys(a).length > 0; });
             if(name === "stories") return Object.keys(v).some(function(id){ var o = v[id]; if(!o || typeof o !== "object" || !o.drafts) return false; return Object.keys(o.drafts).some(function(did){ var d = o.drafts[did]; return !!d && (!!(d.title && String(d.title).trim()) || (Array.isArray(d.pages) && d.pages.some(function(pg){ return !!(pg && String(pg).trim()); }))); }); });
+            if(name === "library") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(k){ return !!o[k]; }); });
+            if(name === "libprog") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(k){ return typeof o[k] === "number" && o[k] > 0; }); });
+            if(name === "homelib") return Object.keys(v).some(function(id){ var a = v[id]; return Array.isArray(a) && a.length > 0; });
+            if(name === "completions") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(k){ return !!(o[k] && o[k].n > 0); }); });
+            if(name === "oops") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).length > 0; });
+            if(name === "actlog") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(d){ var dm = o[d]; return !!dm && typeof dm === "object" && Object.keys(dm).length > 0; }); });
             if(name === "profiles"){
               var snaps = v.snaps || {};
               return Object.keys(snaps).some(function(id){
@@ -13093,7 +13122,7 @@
            deeper (plan / kids / child / days / date) because both devices
            touch a child's plan all day; splitting by date and by list keeps a
            grown-up's new stop from colliding with a tick on another device. */
-        var DEPTH = { plan: 5 }, DEPTH_DEFAULT = 3;
+        var DEPTH = { plan: 5, actlog: 4 }, DEPTH_DEFAULT = 3;
         function flatten(obj){
           var out = {};
           function walk(v, path, left){
@@ -13145,7 +13174,9 @@
           }catch(e){ return []; }
           return Object.keys(took);
         }
+        var localDirty = false;
         function markSynced(state){
+          localDirty = false;
           delete marker.first;
           marker.lastSync = (state && state.updated_at) || marker.lastSync;
           marker.hash = stateHash(state || {});
@@ -13160,6 +13191,14 @@
           if(!pendingAdopt) return;
           if(!safeNow()){ setTimeout(trySafeAdopt, 3000); return; }
           var pa = pendingAdopt; pendingAdopt = null;
+          if(pa.fullState){
+            adopt(pa.fullState).then(function(changed){
+              lastFailed = false;
+              if(changed) reloadOnce(pa.cloudAt, "updated");
+              else statusDefault();
+            }).catch(function(){});
+            return;
+          }
           STORES.forEach(function(s){
             if(pa.names.indexOf(s.name) < 0) return;
             var str = JSON.stringify(pa.state[s.name]);
@@ -13200,14 +13239,35 @@
             })
             .then(function(rows){ return (rows && rows.length) ? rows[0] : null; });
         }
+        function syncConflict(){ var e = new Error("someone else saved first"); e.conflict = true; return e; }
         function upsertRow(code, state, keepalive, basedOn){
           var a2 = acct(); if(a2) return a2.pushState(state, keepalive, basedOn);
+          /* Wave 4: optimistic concurrency lock in family-code mode (matching HootAccount rev lock).
+             Conditional PATCH checks updated_at; 0 rows updated means another device saved first ->
+             throw conflict so pushNow re-pulls, 3-way merges, and retries without overwriting. */
+          var baseAt = basedOn && (basedOn.updated_at || (basedOn.state && basedOn.state.updated_at));
+          if(baseAt){
+            return sbFetch("/rest/v1/family_state?family_code=eq." + encodeURIComponent(code) + "&updated_at=eq." + encodeURIComponent(baseAt) + "&select=updated_at", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json", "Prefer": "return=representation" },
+              body: JSON.stringify({ state: state, updated_at: state.updated_at }),
+              keepalive: keepalive
+            }).then(function(res){
+              if(!res.ok) throw new Error("push " + res.status);
+              return res.json();
+            }).then(function(rows){
+              if(!rows || !rows.length) throw syncConflict();
+            });
+          }
           return sbFetch("/rest/v1/family_state", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates,return=minimal" },
+            headers: { "Content-Type": "application/json", "Prefer": "return=minimal" },
             body: JSON.stringify({ family_code: code, state: state, updated_at: state.updated_at }),
             keepalive: keepalive
-          }).then(function(res){ if(!res.ok) throw new Error("push " + res.status); });
+          }).then(function(res){
+            if(res.status === 409) throw syncConflict();
+            if(!res.ok) throw new Error("push " + res.status);
+          });
         }
         function acctNoPhotos(){ var a = acct(); return !!a && !a.photos(); }
         function bucketList(code){
@@ -13439,7 +13499,10 @@
                joins the state (and is uploaded below) rather than
                displacing — or being displaced by — the cloud copy.
                Tombstoned ids are subtracted from both sides. */
-            return pullRow(code).catch(function(){ return null; }).then(function(row){
+            /* Wave 4: never swallow a pullRow() network/HTTP failure as null —
+               only HTTP 200 with [] means "no row yet". A network error aborts
+               the push safely instead of overwriting the cloud row unmerged. */
+            return pullRow(code).then(function(row){
             var cloudState = (row && row.state) || {};
             /* 3e40: if the cloud moved on since this device last synced, fold
                the other device's pieces in before uploading */
@@ -13579,6 +13642,7 @@
                  the reconcile check and the backstop poll both see
                  local != marker and push, uploading the kept local
                  stores merged with whatever was adopted. */
+              localDirty = true;
               marker.hash = "kept-local-dirty";
               delete marker.first;
               marker.paths = flatten(state || {});
@@ -13618,6 +13682,12 @@
                   /* 3e40: this device has unsent changes of its own, so merge
                      (pushNow folds the cloud in) instead of replacing them */
                   if(marker.paths && marker.lastSync && lh !== marker.hash) return pushNow(false);
+                  /* Wave 4: never reload mid-game/lesson on online reconnect; defer until safeNow() */
+                  if(!safeNow()){
+                    pendingAdopt = { fullState: state, cloudAt: cloudAt };
+                    trySafeAdopt();
+                    return null;
+                  }
                   return adopt(state).then(function(changed){
                     lastFailed = false;
                     if(changed) reloadOnce(cloudAt, "updated");
@@ -13738,6 +13808,7 @@
             if(SYNCED[k]){
               /* A write from the owning script proves that store
                  has loaded this session. */
+              localDirty = true;
               STORES.forEach(function(s){ if(s.key === k) storesRead[s.name] = true; });
               schedulePush();
             }
@@ -13746,10 +13817,11 @@
         }catch(e){}
         /* Backstop poll: catches writes from anywhere else (games
            included) and photo add/remove, which live in IndexedDB. */
+        document.addEventListener("hw-photos-changed", function(){ localDirty = true; schedulePush(); });
         setInterval(function(){
           if(!getCode() || pushing) return;
           localHash().then(function(lh){
-            if(marker.hash && lh !== marker.hash) schedulePush();
+            if(marker.hash && lh !== marker.hash){ localDirty = true; schedulePush(); }
           }).catch(function(){});
         }, 10000);
         /* 3e40: once a minute, while the app is open and nothing is being
@@ -13760,10 +13832,10 @@
           reconcile();
         }, (window.HOOT_BACKEND && window.HOOT_BACKEND.pollMs) || 60000);
         document.addEventListener("visibilitychange", function(){
-          if(document.visibilityState === "hidden") pushNow(true);
+          if(document.visibilityState === "hidden"){ if(getCode() && (localDirty || !marker.lastSync)) pushNow(true); }
           else if(getCode() && !pushing && safeNow()) reconcile();
         });
-        window.addEventListener("beforeunload", function(){ pushNow(true); });
+        window.addEventListener("beforeunload", function(){ if(getCode() && (localDirty || !marker.lastSync)) pushNow(true); });
         window.addEventListener("online", function(){ lastFailed = false; statusDefault(); reconcile(); });
 
         /* Push readiness: read every local store once, up front.
@@ -13840,9 +13912,17 @@
   }
   function all(){ Array.prototype.forEach.call(document.querySelectorAll(".lsn-q"), big); }
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", all); else all();
-  if(window.MutationObserver) new MutationObserver(function(list){
-    list.forEach(function(m){ var el = m.target.nodeType === 3 ? m.target.parentNode : m.target; el = el && el.closest ? el.closest(".lsn-q") : null; if(el && !el.querySelector(".lsn-qpic")) big(el); });
-  }).observe(document.documentElement, { subtree:true, childList:true, characterData:true });
+  if(window.MutationObserver){
+    var moQ = new MutationObserver(function(list){
+      list.forEach(function(m){ var el = m.target.nodeType === 3 ? m.target.parentNode : m.target; el = el && el.closest ? el.closest(".lsn-q") : null; if(el && !el.querySelector(".lsn-qpic")) big(el); });
+    });
+    function watchQ(){
+      var targets = [document.getElementById("panel-little"), document.getElementById("ll-obody")].filter(Boolean);
+      if(!targets.length) targets = [document.body];
+      targets.forEach(function(t){ moQ.observe(t, { subtree:true, childList:true, characterData:true }); });
+    }
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", watchQ); else watchQ();
+  }
 })();
 </script>
   <script src="js/hoot-lessons.js?v=llprev3e65"></script>
@@ -13851,7 +13931,7 @@
   <script src="js/hoot-sci7.js?v=llprev3e65"></script>
   <script src="js/hoot-ss7.js?v=llprev3e65"></script>
   <script src="js/hoot-games.js?v=llprev3e65"></script>
-  <script src="js/hw-activities.js?v=3e65"></script>
+  <script src="js/hw-activities.js?v=llprev3e65"></script>
 <script src="js/hw-ll-shell.js?v=llprev3e65"></script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e65');}</script>
 </body>
