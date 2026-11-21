@@ -400,7 +400,7 @@
         if (!alive() || !R.cur || R.cur.rd !== rd) return;
         var tb = findTargetBtn(tgt.key);
         if (tb && !tb.disabled) tb.classList.add("hint");
-        say(askClips(rd, tgt));
+        say((hasClip("hoot-try-this-one") ? ["hoot-try-this-one"] : []).concat(askClips(rd, tgt)));
       }, 14000));
     }
     var teach = lesson.teachItems ? lesson.teachItems.map(function (t) { var it = item(t.kind, t.key); it.say = t.say; it.text = t.text; return it; })

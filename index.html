@@ -13000,7 +13000,15 @@
           { name:"plan",      key:"hootworld.plan.v1" },
           /* Author shelf: Kaitlyn's writing-studio drafts ride Family Sync
              so her tutor's workshop can pick up submitted stories. */
-          { name:"stories",   key:"hootworld.stories.v1" }
+          { name:"stories",   key:"hootworld.stories.v1" },
+          /* Wave 4 (Muse/Grok Q3 approved): sync Book Library, Then & Now
+             completions, Oops Garden, and Activities log across family devices. */
+          { name:"library",     key:"hootworld.library.v1" },
+          { name:"libprog",     key:"hootworld.libprog.v1" },
+          { name:"homelib",     key:"hootworld.homelib.v1" },
+          { name:"completions", key:"hootworld.completions.v1" },
+          { name:"oops",        key:"hootworld.oops.v1" },
+          { name:"actlog",      key:"hootworld.actlog.v1" }
         ];
         var SYNCED = {};
         STORES.forEach(function(s){ SYNCED[s.key] = true; });
@@ -13033,6 +13041,12 @@
             if(name === "plan") return !!v.kids && Object.keys(v.kids).some(function(id){ var k = v.kids[id]; return !!k && ((Array.isArray(k.extra) && k.extra.length > 0) || !!k.free || (k.days && Object.keys(k.days).length > 0)); });
             if(name === "log") return Object.keys(v).some(function(id){ var a = v[id]; return Array.isArray(a) ? a.length > 0 : !!a && typeof a === "object" && Object.keys(a).length > 0; });
             if(name === "stories") return Object.keys(v).some(function(id){ var o = v[id]; if(!o || typeof o !== "object" || !o.drafts) return false; return Object.keys(o.drafts).some(function(did){ var d = o.drafts[did]; return !!d && (!!(d.title && String(d.title).trim()) || (Array.isArray(d.pages) && d.pages.some(function(pg){ return !!(pg && String(pg).trim()); }))); }); });
+            if(name === "library") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(k){ return !!o[k]; }); });
+            if(name === "libprog") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(k){ return typeof o[k] === "number" && o[k] > 0; }); });
+            if(name === "homelib") return Object.keys(v).some(function(id){ var a = v[id]; return Array.isArray(a) && a.length > 0; });
+            if(name === "completions") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(k){ return !!(o[k] && o[k].n > 0); }); });
+            if(name === "oops") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).length > 0; });
+            if(name === "actlog") return Object.keys(v).some(function(id){ var o = v[id]; return !!o && typeof o === "object" && Object.keys(o).some(function(d){ var dm = o[d]; return !!dm && typeof dm === "object" && Object.keys(dm).length > 0; }); });
             if(name === "profiles"){
               var snaps = v.snaps || {};
               return Object.keys(snaps).some(function(id){
@@ -13108,7 +13122,7 @@
            deeper (plan / kids / child / days / date) because both devices
            touch a child's plan all day; splitting by date and by list keeps a
            grown-up's new stop from colliding with a tick on another device. */
-        var DEPTH = { plan: 5 }, DEPTH_DEFAULT = 3;
+        var DEPTH = { plan: 5, actlog: 4 }, DEPTH_DEFAULT = 3;
         function flatten(obj){
           var out = {};
           function walk(v, path, left){

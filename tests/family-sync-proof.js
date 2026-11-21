@@ -821,6 +821,143 @@
     });
   });
 
+  // 15. Wave 4 Q3: All 6 new stores (library, libprog, homelib, completions, oops, actlog) copy cleanly on Fresh Join
+  proof("15. [Wave 4 Q3] Fresh Join copies all 6 new stores (library, libprog, homelib, completions, oops, actlog)", function () {
+    var cloud = makeCloud();
+    var devA = makeDevice(cloud, {
+      ls: {
+        "hootworld.familycode.v1": "OWL-TEST15-NEW6AA",
+        "hootworld.library.v1": { kida: { "lib-pip-garden": "2026-11-21" } },
+        "hootworld.libprog.v1": { kida: { "lib-nina-star": 4 } },
+        "hootworld.homelib.v1": { kida: [{ id: "home-1", title: "Goodnight Moon", author: "Margaret Wise Brown", cover: "", date: "2026-11-21" }] },
+        "hootworld.completions.v1": { kida: { "colors-first": { n: 2, first: 100, last: 200, title: "Colour names" } } },
+        "hootworld.oops.v1": { kida: { "colors-first:r0": { state: "seed", title: "Colour names" } } },
+        "hootworld.actlog.v1": { kida: { "2026-11-21": { "Leaf Hunt Walk": { t: 300, place: "outdoor", together: true } } } }
+      }
+    });
+    devA.boot();
+    return tick(60).then(function () {
+      assert(cloud.rows["OWL-TEST15-NEW6AA"], "Device A uploaded all 6 new stores");
+      var devB = makeDevice(cloud, { clockBase: Date.parse("2026-11-21T13:05:00.000Z") });
+      devB.boot();
+      devB.els["sync-join-input"].value = "OWL-TEST15-NEW6AA";
+      devB.els["sync-join-btn"].click();
+      return tick(60).then(function () {
+        assert(devB.getJson("hootworld.library.v1").kida["lib-pip-garden"] === "2026-11-21", "library adopted");
+        assert(devB.getJson("hootworld.libprog.v1").kida["lib-nina-star"] === 4, "libprog adopted");
+        assert(devB.getJson("hootworld.homelib.v1").kida[0].title === "Goodnight Moon", "homelib adopted");
+        assert(devB.getJson("hootworld.completions.v1").kida["colors-first"].n === 2, "completions adopted");
+        assert(devB.getJson("hootworld.oops.v1").kida["colors-first:r0"].state === "seed", "oops adopted");
+        assert(devB.getJson("hootworld.actlog.v1").kida["2026-11-21"]["Leaf Hunt Walk"].together === true, "actlog adopted");
+      });
+    });
+  });
+
+  // 16. Wave 4 Q3: Empty cloud copies of all 6 new stores NEVER wipe non-empty local copies & heal cloud
+  proof("16. [Wave 4 Q3] Empty cloud copies of all 6 new stores never wipe non-empty local progress & heal cloud", function () {
+    var cloud = makeCloud();
+    cloud.rows["OWL-TEST16-NEW6BB"] = {
+      family_code: "OWL-TEST16-NEW6BB",
+      updated_at: "2026-11-21T13:10:00.000Z",
+      rev: 1,
+      state: {
+        v: 1,
+        updated_at: "2026-11-21T13:10:00.000Z",
+        library: { kida: {} },
+        libprog: { kida: { "lib-pip-garden": 0 } },
+        homelib: { kida: [] },
+        completions: { kida: { "colors-first": { n: 0 } } },
+        oops: { kida: {} },
+        actlog: { kida: { "2026-11-21": {} } },
+        photos: [],
+        deletedPhotoIds: []
+      }
+    };
+    var dev = makeDevice(cloud, {
+      clockBase: Date.parse("2026-11-21T13:12:00.000Z"),
+      ls: {
+        "hootworld.familycode.v1": "OWL-TEST16-NEW6BB",
+        "hootworld.library.v1": { kida: { "lib-moon-train": "2026-11-20" } },
+        "hootworld.libprog.v1": { kida: { "lib-nina-star": 6 } },
+        "hootworld.homelib.v1": { kida: [{ id: "home-2", title: "Blueberries for Sal", author: "", cover: "", date: "2026-11-20" }] },
+        "hootworld.completions.v1": { kida: { "shapes-first": { n: 1, first: 10, last: 10 } } },
+        "hootworld.oops.v1": { kida: { "shapes-first:r1": { state: "flower" } } },
+        "hootworld.actlog.v1": { kida: { "2026-11-20": { "Splash bowl": { t: 50, place: "outdoor" } } } }
+      }
+    });
+    dev.boot();
+    return tick(60).then(function () {
+      assert(dev.getJson("hootworld.library.v1").kida["lib-moon-train"] === "2026-11-20", "local library preserved");
+      assert(dev.getJson("hootworld.libprog.v1").kida["lib-nina-star"] === 6, "local libprog preserved");
+      assert(dev.getJson("hootworld.homelib.v1").kida[0].title === "Blueberries for Sal", "local homelib preserved");
+      assert(dev.getJson("hootworld.completions.v1").kida["shapes-first"].n === 1, "local completions preserved");
+      assert(dev.getJson("hootworld.oops.v1").kida["shapes-first:r1"].state === "flower", "local oops preserved");
+      assert(dev.getJson("hootworld.actlog.v1").kida["2026-11-20"]["Splash bowl"].t === 50, "local actlog preserved");
+      assert(dev.getJson("hootworld.familysync.v1").hash === "kept-local-dirty", "marked kept-local-dirty");
+      dev.runTimers(3000);
+      return tick(60).then(function () {
+        var st = cloud.rows["OWL-TEST16-NEW6BB"].state;
+        assert(st.library.kida["lib-moon-train"] === "2026-11-20", "cloud library healed");
+        assert(st.libprog.kida["lib-nina-star"] === 6, "cloud libprog healed");
+        assert(st.homelib.kida[0].title === "Blueberries for Sal", "cloud homelib healed");
+        assert(st.completions.kida["shapes-first"].n === 1, "cloud completions healed");
+        assert(st.oops.kida["shapes-first:r1"].state === "flower", "cloud oops healed");
+        assert(st.actlog.kida["2026-11-20"]["Splash bowl"].t === 50, "cloud actlog healed");
+      });
+    });
+  });
+
+  // 17. Wave 4 Q3: Concurrent 3-way merge across all 6 new stores (including depth-4 same-day actlog!)
+  proof("17. [Wave 4 Q3] 3-way concurrent merge preserves both devices across all 6 new stores incl. same-day actlog", function () {
+    var cloud = makeCloud();
+    var baseState = {
+      v: 1,
+      updated_at: "2026-11-21T13:00:00.000Z",
+      library: { kida: { "lib-pip-garden": "2026-11-19" } },
+      libprog: { kida: { "lib-moon-train": 2 } },
+      homelib: { kida: [{ id: "h0", title: "Book A" }], kidb: [{ id: "h1", title: "Book B" }] },
+      completions: { kida: { "letter-a": { n: 1 } } },
+      oops: { kida: { "letter-a:r0": { state: "seed" } } },
+      actlog: { kida: { "2026-11-21": { "Roll the ball": { t: 100, place: "home" } } } },
+      photos: [],
+      deletedPhotoIds: []
+    };
+    cloud.rows["OWL-TEST17-NEW6CC"] = { family_code: "OWL-TEST17-NEW6CC", updated_at: baseState.updated_at, rev: 1, state: JSON.parse(JSON.stringify(baseState)) };
+
+    var devA = makeDevice(cloud, { clockBase: Date.parse("2026-11-21T13:01:00.000Z"), ls: { "hootworld.familycode.v1": "OWL-TEST17-NEW6CC" } });
+    var devB = makeDevice(cloud, { clockBase: Date.parse("2026-11-21T13:02:00.000Z"), ls: { "hootworld.familycode.v1": "OWL-TEST17-NEW6CC" } });
+    devA.boot(); devB.boot();
+    return tick(60).then(function () {
+      // Device A updates kida entries on all 6 stores and pushes
+      var libA = devA.getJson("hootworld.library.v1"); libA.kida["lib-nina-star"] = "2026-11-21"; devA.setLs("hootworld.library.v1", libA);
+      var lpA = devA.getJson("hootworld.libprog.v1"); lpA.kida["lib-bruno-rain"] = 5; devA.setLs("hootworld.libprog.v1", lpA);
+      var hlA = devA.getJson("hootworld.homelib.v1"); hlA.kida.push({ id: "h2", title: "Book A2" }); devA.setLs("hootworld.homelib.v1", hlA);
+      var cpA = devA.getJson("hootworld.completions.v1"); cpA.kida["letter-b"] = { n: 1 }; devA.setLs("hootworld.completions.v1", cpA);
+      var opA = devA.getJson("hootworld.oops.v1"); opA.kida["letter-b:r0"] = { state: "seed" }; devA.setLs("hootworld.oops.v1", opA);
+      var alA = devA.getJson("hootworld.actlog.v1"); alA.kida["2026-11-21"]["Hat parade"] = { t: 200, place: "home" }; devA.setLs("hootworld.actlog.v1", alA);
+      devA.runTimers(3000);
+      return tick(60);
+    }).then(function () {
+      // Device B concurrently updates different items (including SAME child + SAME day in actlog!)
+      var libB = devB.getJson("hootworld.library.v1"); libB.kida["lib-milo-soup"] = "2026-11-21"; devB.setLs("hootworld.library.v1", libB);
+      var lpB = devB.getJson("hootworld.libprog.v1"); lpB.kida["lib-tito-kite"] = 7; devB.setLs("hootworld.libprog.v1", lpB);
+      var hlB = devB.getJson("hootworld.homelib.v1"); hlB.kidb.push({ id: "h3", title: "Book B2" }); devB.setLs("hootworld.homelib.v1", hlB);
+      var cpB = devB.getJson("hootworld.completions.v1"); cpB.kida["letter-c"] = { n: 1 }; devB.setLs("hootworld.completions.v1", cpB);
+      var opB = devB.getJson("hootworld.oops.v1"); opB.kida["letter-c:r0"] = { state: "flower" }; devB.setLs("hootworld.oops.v1", opB);
+      var alB = devB.getJson("hootworld.actlog.v1"); alB.kida["2026-11-21"]["Scarf dance"] = { t: 250, place: "home" }; devB.setLs("hootworld.actlog.v1", alB);
+      devB.runTimers(3000);
+      return tick(60);
+    }).then(function () {
+      var st = cloud.rows["OWL-TEST17-NEW6CC"].state;
+      assert(st.library.kida["lib-nina-star"] && st.library.kida["lib-milo-soup"], "library merged both books");
+      assert(st.libprog.kida["lib-bruno-rain"] === 5 && st.libprog.kida["lib-tito-kite"] === 7, "libprog merged both bookmarks");
+      assert(st.homelib.kida.length === 2 && st.homelib.kidb.length === 2, "homelib merged both kids");
+      assert(st.completions.kida["letter-b"] && st.completions.kida["letter-c"], "completions merged both items");
+      assert(st.oops.kida["letter-b:r0"] && st.oops.kida["letter-c:r0"], "oops merged both plots");
+      assert(st.actlog.kida["2026-11-21"]["Hat parade"] && st.actlog.kida["2026-11-21"]["Scarf dance"], "depth-4 actlog merged both same-day activities");
+    });
+  });
+
   /* ---------- Execute all 14 proofs sequentially ---------- */
   var passed = 0;
   var chain = Promise.resolve();
