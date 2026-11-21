@@ -29,20 +29,26 @@
   /* The app's voice governor (index.html) holds a clip that is asked to play while
      another is speaking and plays it later. A line we have moved past must
      therefore be taken out of that wait list, or it would speak late. */
-  var gen = 0, curA = null, said = {}, made = [];
-  function drop(a, hard) { a.__govWait = false; a.onended = a.onerror = null; if (hard || a.paused) { try { a.pause(); } catch (e) {} } }
-  function cancelOld(hard) { made.forEach(function (a) { if (hard || a !== curA || a.paused) drop(a, hard); }); made = hard ? [] : made.filter(function (a) { return a === curA && !a.paused && !a.ended; }); }
-  function stopVoice() { gen++; cancelOld(true); curA = null; duck(false); }
+  var gen = 0, curA = null, said = {}, voicePoolEl = null;
+  function resetAudioEl(a) {
+    if (!a) return;
+    a.__govWait = false; a.__govNext = null; a.onended = a.onerror = null;
+    try { a.pause(); } catch (e) {}
+  }
+  function stopVoice() { gen++; resetAudioEl(curA); curA = null; duck(false); }
   function say(keys, done, allowRepeat) {
     var my = ++gen, i = 0, now = Date.now();
-    cancelOld(false);
+    resetAudioEl(curA);
     keys = (keys || []).filter(function (k) { if (!k) return false; if (!allowRepeat && /^(hoot|owl)-/.test(k) && said[k] && now - said[k] < 15000) return false; return true; });
     duck(true);
     (function next() {
       if (my !== gen) return;
       if (i >= keys.length) { duck(false); if (done) done(); return; }
       var k = keys[i++]; said[k] = Date.now();
-      var a = new Audio(VOICE + k + ".mp3"); curA = a; made.push(a);
+      if (!voicePoolEl) voicePoolEl = new Audio();
+      var a = voicePoolEl; curA = a;
+      resetAudioEl(a);
+      a.src = VOICE + k + ".mp3";
       var fin = function () { a.onended = a.onerror = null; if (my === gen) setTimeout(next, 140); };
       a.onended = fin; a.onerror = fin;
       var p = a.play(); if (p && p.catch) p.catch(function () { setTimeout(fin, 700); });
@@ -56,7 +62,12 @@
   var AC = null, master = null, musicOn = true, loopT = null, ducked = false;
   var MELODY = [0, 2, 4, 7, 4, 2, 4, 9, 7, 4, 2, 0, 2, 4, 2, 0], BASS = [0, 0, 7, 7, 5, 5, 7, 7];
   function ac() {
-    if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); master = AC.createGain(); master.gain.value = 0.07; master.connect(AC.destination); } catch (e) { AC = null; } }
+    if (!AC) {
+      try {
+        AC = window.__hwAudioCtx ? window.__hwAudioCtx() : new (window.AudioContext || window.webkitAudioContext)();
+        if (AC) { master = AC.createGain(); master.gain.value = 0.07; master.connect(AC.destination); }
+      } catch (e) { AC = null; }
+    }
     return AC;
   }
   function note(semi, t, dur, type, vol) {

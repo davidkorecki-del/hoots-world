@@ -237,13 +237,17 @@
      are generated with fresh numbers each run, so their worked steps stay
      on-screen text; the tutor voices the math concepts, vocabulary and
      feedback. No device TTS anywhere. */
-  var stdEl = null, stdQueue = [], stdBusy = false, stdGen = 0;
+  var stdEl = null, stdPoolEl = null, stdQueue = [], stdBusy = false, stdGen = 0;
   function stdNext() {
     if (stdBusy || !stdQueue.length) return;
     var f = stdQueue.shift(), gen = stdGen;
     stdBusy = true;
     try {
-      var a = new Audio("assets/voice/" + f);
+      if (!stdPoolEl) stdPoolEl = new Audio();
+      var a = stdPoolEl;
+      a.__govWait = false; a.__govNext = null; a.onended = a.onerror = null;
+      try { a.pause(); } catch (e) {}
+      a.src = "assets/voice/" + f;
       stdEl = a;
       a.onended = a.onerror = function () { if (gen === stdGen) { stdBusy = false; stdNext(); } };
       var p = a.play(); if (p && p.catch) p.catch(function () { if (gen === stdGen) { stdBusy = false; stdNext(); } });

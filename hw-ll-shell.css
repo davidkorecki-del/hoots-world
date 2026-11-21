@@ -2836,3 +2836,8 @@ body.ll-shell-on #game-close, #ll-oclose { min-height: 52px; }
   #ll-obody .lsn-end .lsn-next.hw-next-pulse,
   #ll-obody .pg-hint { animation: none !important; }
 }
+
+/* ===== Wave 3 (Priority 6.1): Remaining ≥44px touch targets ===== */
+.ll-actm-rm { width: 44px; height: 44px; font-size: 22px; }
+.lib-homedel { width: 44px; height: 44px; font-size: 1.05rem; }
+body.ll-tab-days #rm-marker .rm-token { width: 48px; height: 48px; }
