@@ -128,8 +128,7 @@
       var right = lin(a + c, b + d), w1 = lin(a + c, b - d), w2 = lin(a + b + c + d, 0), w3 = lin(a - c, b + d);
       var choices = [right, w1, w2, w3].filter(function (x, i, arr) { return arr.indexOf(x) === i; });
       while (choices.length < 3) choices.push(lin(a + c + 1, b + d));
-      var order = choices.map(function (x, i) { return i; }).sort(function () { return Math.random() - 0.5; });
-      var shuffled = order.map(function (i) { return choices[i]; });
+      var shuffled = shuf(choices);
       return { q: "Simplify:  " + lin(a, b) + (c > 0 ? " + " : " − ") + Math.abs(c) + "x" + (d > 0 ? " + " : " − ") + Math.abs(d), type: "mc", choices: shuffled, ans: shuffled.indexOf(right),
         steps: ["x-terms: " + a + "x " + (c > 0 ? "+ " : "− ") + Math.abs(c) + "x = " + (a + c) + "x", "numbers: " + sgn(b) + (d > 0 ? " + " : " − ") + Math.abs(d) + " = " + sgn(b + d), "Answer: " + right],
         hints: ["Group the x-terms, then the numbers.", "Imagine x is a box: " + a + " boxes and " + (c > 0 ? c + " more boxes" : Math.abs(c) + " boxes taken away") + ".", "x-terms first: " + a + " " + (c > 0 ? "+ " : "− ") + Math.abs(c) + " = " + (a + c) + "."] };
@@ -142,7 +141,7 @@
       var a = nz(2, 9) * (Math.random() < 0.25 ? -1 : 1), b = nz(-9, 9);
       var right = lin(a, a * b), w = [lin(a, b), lin(1, a * b), lin(a, a + b)];
       var all = [right].concat(w).filter(function (x, i, arr) { return arr.indexOf(x) === i; });
-      var sh = all.slice().sort(function () { return Math.random() - 0.5; });
+      var sh = shuf(all);
       return { q: "Expand:  " + (a === -1 ? "−" : sgn(a)) + "(x " + (b > 0 ? "+ " : "− ") + Math.abs(b) + ")", type: "mc", choices: sh, ans: sh.indexOf(right),
         steps: [sgn(a) + " × x = " + lin(a, 0), sgn(a) + " × " + paren(b) + " = " + sgn(a * b), "Answer: " + right],
         hints: ["Multiply " + sgn(a) + " by BOTH terms inside.", "Think of " + Math.abs(a) + " copies of (x " + (b > 0 ? "+ " : "− ") + Math.abs(b) + ") added together" + (a < 0 ? ", then take the opposite." : "."), "First term: " + sgn(a) + " × x = " + lin(a, 0) + "."] };
@@ -166,7 +165,7 @@
       var gt = Math.random() < 0.5, r = p * x + q, flip = p < 0, sym = (gt !== flip) ? ">" : "<";
       var right = "x " + sym + " " + sgn(x), wrongSym = sym === ">" ? "<" : ">";
       var choices = [right, "x " + wrongSym + " " + sgn(x), "x " + sym + " " + sgn(-x), "x " + sym + " " + sgn(r)].filter(function (c, i, a) { return a.indexOf(c) === i; });
-      var sh = choices.slice().sort(function () { return Math.random() - 0.5; });
+      var sh = shuf(choices);
       return { q: "Solve:  " + lin(p, q) + " " + (gt ? ">" : "<") + " " + sgn(r), type: "mc", choices: sh, ans: sh.indexOf(right),
         steps: [(q > 0 ? "Subtract " + q : "Add " + Math.abs(q)) + ": " + lin(p, 0) + " " + (gt ? ">" : "<") + " " + sgn(r - q), "Divide by " + sgn(p) + (flip ? " — negative, so FLIP the sign" : ""), "Answer: " + right],
         hints: ["Do the same steps as an equation.", flip ? "You'll divide by a negative — what happens to the sign then?" : "Dividing by a positive keeps the sign the same.", (q > 0 ? "Subtract " + q : "Add " + Math.abs(q)) + " first: " + lin(p, 0) + " " + (gt ? ">" : "<") + " " + sgn(r - q) + "."] };
