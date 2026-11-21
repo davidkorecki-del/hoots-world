@@ -313,12 +313,15 @@
       }).join("") + "</div>";
       return true;
     }
+    var firstTodo = -1;
+    p.lessons.forEach(function (id, idx) { if (firstTodo < 0 && !(res[id] && res[id].done)) firstTodo = idx; });
     body.innerHTML = '<div class="hl hl-pathview"><p class="hl-pathlead">' + (pathId === "letters"
       ? "One letter at a time — Hoot says its name and its sound, then you find it. Earlier letters keep coming back so they stick."
       : "Colours, shapes and numbers — Hoot shows each one, then it's your turn.") + "</p>" +
-      '<div class="hl-tiles">' + p.lessons.map(function (id) {
-        var l = byId[id], done = res[id] && res[id].done;
-        return '<button type="button" class="hl-tile' + (done ? " done" : "") + '" data-hl-open="' + id + '" style="--c:' + l.color + '">' +
+      '<div class="hl-tiles">' + p.lessons.map(function (id, idx) {
+        var l = byId[id], done = res[id] && res[id].done, isNext = idx === firstTodo;
+        return '<button type="button" class="hl-tile' + (done ? " done" : "") + (isNext ? " next" : "") + '" data-hl-open="' + id + '" style="--c:' + l.color + '">' +
+          (isNext ? '<span class="hl-tile-go" aria-hidden="true">▶</span>' : "") +
           '<span class="hl-tile-emo">' + esc(l.emo) + "</span><span class=\"hl-tile-t\">" + esc(l.title) + "</span>" + (done ? '<span class="hl-tile-star" aria-label="done">⭐</span>' : "") + "</button>";
       }).join("") + "</div></div>";
     return true;
@@ -337,7 +340,13 @@
   function HG() { var g = window.HootGames; return g && g.songs && g.sing ? g : null; }
 
   var run = null;
-  function stop() { try { var g = HG(); if (g && !document.querySelector(".pg-singing.kh-bye")) g.stopSing(); } catch (e) {} stopAudio(); if (run) { run.dead = true; run = null; } try { if (window.HootStudy) window.HootStudy.stop(); } catch (e) {} }
+  function clearRunTimers(r) {
+    if (!r) return;
+    if (r.idleT) { r.idleT.forEach(function (t) { clearTimeout(t); }); r.idleT = []; }
+    if (r.autoT) { clearTimeout(r.autoT); r.autoT = null; }
+    if (r.ceilT) { clearTimeout(r.ceilT); r.ceilT = null; }
+  }
+  function stop() { try { var g = HG(); if (g && !document.querySelector(".pg-singing.kh-bye")) g.stopSing(); } catch (e) {} stopAudio(); if (run) { clearRunTimers(run); run.dead = true; run = null; } try { if (window.HootStudy) window.HootStudy.stop(); } catch (e) {} }
 
   /* other engines (Grade 7 math) register their paths here so progress,
      mastery, reviews, Practice and the dashboard work the same everywhere */
@@ -364,7 +373,31 @@
     if (!lesson || !body) return false;
     stop();
     if (lesson.ext && external[lesson.path]) { external[lesson.path](lesson, body); return true; }
-    var R = run = { lesson: lesson, round: 0, wrong: 0, dead: false, body: body, t0: Date.now() };
+    var R = run = { lesson: lesson, round: 0, wrong: 0, dead: false, body: body, t0: Date.now(), idleT: [], autoT: null, ceilT: null };
+    function hasClip(k) { return !!(window.HOOT_HAVE && window.HOOT_HAVE[k]); }
+    function clearIdle() { clearRunTimers(R); }
+    function findTargetBtn(key) {
+      var bs = choices.querySelectorAll(".hl-opt");
+      for (var i = 0; i < bs.length; i++) if (bs[i].getAttribute("data-k") === String(key)) return bs[i];
+      return null;
+    }
+    /* Wave 2 (Finding 2): 7s / 14s / 25s gentle idle re-prompt ladder (2-4 path only) */
+    function armIdle(rd, tgt) {
+      clearIdle();
+      R.idleT.push(setTimeout(function () {
+        if (!alive() || !R.cur || R.cur.rd !== rd) return;
+        choices.querySelectorAll(".hl-opt:not(:disabled)").forEach(function (o) {
+          o.classList.remove("hl-nudge"); void o.offsetWidth; o.classList.add("hl-nudge");
+        });
+        say(askClips(rd, tgt));
+      }, 7000));
+      R.idleT.push(setTimeout(function () {
+        if (!alive() || !R.cur || R.cur.rd !== rd) return;
+        var tb = findTargetBtn(tgt.key);
+        if (tb && !tb.disabled) tb.classList.add("hint");
+        say(askClips(rd, tgt));
+      }, 14000));
+    }
     var teach = lesson.teachItems ? lesson.teachItems.map(function (t) { var it = item(t.kind, t.key); it.say = t.say; it.text = t.text; return it; })
       : lesson.teach.map(function (k) { return item(lesson.kind, k); });
     /* teaching NAMES each item ("blue"), never asks ("Find the color blue").
@@ -384,8 +417,8 @@
         '<button type="button" class="hl-replay" disabled>🔊 Hoot is teaching…</button>' +
         '<div class="hl-dots" aria-hidden="true"></div>' +
         '<div class="hl-choices"></div>' +
-        '<div class="hl-end" hidden><p class="hl-sticker" aria-hidden="true"></p>' +
-          '<div class="hl-endbtns"><button type="button" class="hl-again">↻ Play again</button><button type="button" class="hl-next">Next lesson ▶</button>' + songHtml + "</div></div>" +
+        '<div class="hl-end" hidden><p class="hl-sticker" aria-hidden="true"></p><p class="hl-autonote" hidden></p>' +
+          '<div class="hl-endbtns"><button type="button" class="hl-next">Next lesson ▶</button><div class="hl-subbtns"><button type="button" class="hl-again">↻ Play again</button>' + songHtml + "</div></div></div>" +
       "</div>";
     var root = body.querySelector(".hl"), bubble = root.querySelector(".hl-bubble"), show = root.querySelector(".hl-show"),
       replay = root.querySelector(".hl-replay"), choices = root.querySelector(".hl-choices"), dots = root.querySelector(".hl-dots"), end = root.querySelector(".hl-end");
@@ -455,6 +488,7 @@
     }
     function startRound() {
       if (!alive()) return;
+      clearIdle();
       var rd = lesson.rounds[R.round], g = genRound(rd), tgt = g.tgt, opts = g.opts;
       show.hidden = true;
       R.opts = opts;
@@ -462,18 +496,24 @@
       paintDots();
       replay.disabled = false; replay.textContent = "🔊 Hear it again";
       choices.innerHTML = opts.map(function (it) {
-        return '<button type="button" class="hl-opt" data-k="' + esc(it.key) + '" aria-label="' + esc(it.name) + '">' + face(it, lesson) + label(it) + "</button>";
+        return '<button type="button" class="hl-opt hl-ready" data-k="' + esc(it.key) + '" aria-label="' + esc(it.name) + '">' + face(it, lesson) + label(it) + "</button>";
       }).join("");
       setBubble(askText(rd, tgt));
-      say(askClips(rd, tgt));
+      say(askClips(rd, tgt), function () { if (alive() && R.cur && R.cur.rd === rd) armIdle(rd, tgt); });
     }
     replay.addEventListener("click", function () {
       if (!alive()) return;
-      if (R.cur && !R.teaching) say(askClips(R.cur.rd, R.cur.tgt));
+      clearIdle();
+      if (R.cur && !R.teaching) {
+        var rd0 = R.cur.rd, tgt0 = R.cur.tgt;
+        say(askClips(rd0, tgt0), function () { if (alive() && R.cur && R.cur.rd === rd0) armIdle(rd0, tgt0); });
+      }
       else if (end && !end.hidden) teachAll();
     });
     choices.addEventListener("click", function (e) {
       var b = e.target.closest(".hl-opt"); if (!b || b.disabled || !alive() || !R.cur) return;
+      clearIdle();
+      choices.querySelectorAll(".hl-opt").forEach(function (o) { o.classList.remove("hl-nudge"); });
       var key = b.getAttribute("data-k"), tgt = R.cur.tgt, rd = R.cur.rd;
       if (String(key) === String(tgt.key)) {
         b.classList.add("right");
@@ -502,13 +542,16 @@
         var cmpT = rd.ask === "more" || rd.ask === "less" ? "That group has " + tapped.name + ". " + (rd.ask === "more" ? "Find the group with MORE!" : "Find the group with LESS!")
           : rd.ask === "same" || rd.ask === "different" ? "Those two are " + tapped.name + ". Find the pair that is " + (rd.ask === "same" ? "the SAME!" : "DIFFERENT!") : null;
         setBubble(cmpT || ("That one is " + tapped.name + ". " + (rd.ask === "sound" ? "Listen again — which letter makes this sound?" : "Look for " + tgt.name + "!")));
-        var target = choices.querySelector('.hl-opt[data-k="' + tgt.key + '"]');
+        var target = findTargetBtn(tgt.key);
         if (R.cur.wrongHere >= 2 && target) target.classList.add("hint");
         var nudge = pickFresh(NUDGE);
-        say([nudge].concat(tapped.kind === "pair" ? [] : sayName(tapped)).concat(askClips(rd, tgt)));
+        say([nudge].concat(tapped.kind === "pair" ? [] : sayName(tapped)).concat(askClips(rd, tgt)), function () {
+          if (alive() && R.cur && R.cur.rd === rd) armIdle(rd, tgt);
+        });
       }
     });
     function finish() {
+      clearIdle();
       paintDots();
       choices.innerHTML = "";
       replay.textContent = "↻ Watch Hoot teach again";
@@ -516,9 +559,26 @@
       var sticker = typeof window.__llStickerFor === "function" ? window.__llStickerFor(lesson.title) : "🌟";
       end.querySelector(".hl-sticker").textContent = sticker;
       end.hidden = false;
+      var fromToday = !!window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function";
       var nxt = nextLesson(lesson);
       var nb = end.querySelector(".hl-next");
-      if (!nxt) { nb.textContent = "🏆 Path complete"; nb.disabled = true; }
+      var note = end.querySelector(".hl-autonote");
+      if (fromToday) {
+        nb.disabled = false;
+        nb.textContent = "Next up ▶";
+        nb.classList.add("hw-next-pulse");
+        if (note) { note.hidden = false; note.textContent = "✨ Moving to the next stop…"; }
+      } else if (nxt) {
+        nb.disabled = false;
+        nb.textContent = "Next lesson ▶";
+        nb.classList.add("hw-next-pulse");
+        if (note) note.hidden = true;
+      } else {
+        nb.textContent = "🏆 Path complete";
+        nb.disabled = true;
+        nb.classList.remove("hw-next-pulse");
+        if (note) note.hidden = true;
+      }
       var wasAll = sg ? setDone(set) : true;
       record(lesson, R.wrong, lesson.rounds.length, Date.now() - R.t0);
       var bigDay = sg && !wasAll && setDone(set);
@@ -526,9 +586,31 @@
       var nk = ""; try { nk = window.__llNameKey ? window.__llNameKey() || "" : ""; } catch (e) {}
       var recapNames = [];
       teach.slice(0, 4).forEach(function (t) { teachClips(t).forEach(function (c) { if (c) recapNames.push(c); }); });
+      var advanced = false;
+      function doTodayAdvance() {
+        if (advanced || !alive()) return;
+        advanced = true;
+        clearIdle();
+        if (hasClip("hoot-next-one")) {
+          say(["hoot-next-one"], function () { if (alive() && typeof window.__llAdvanceTodayPath === "function") window.__llAdvanceTodayPath(); });
+        } else if (typeof window.__llAdvanceTodayPath === "function") {
+          window.__llAdvanceTodayPath();
+        }
+      }
+      function scheduleTodayAdvance() {
+        if (!fromToday || advanced || !alive()) return;
+        if (R.autoT) clearTimeout(R.autoT);
+        R.autoT = setTimeout(doTodayAdvance, 1500);
+      }
+      if (fromToday && !bigDay) {
+        R.ceilT = setTimeout(doTodayAdvance, 12000);
+      }
       say((nk ? ["great-job-" + nk] : []).concat(["hoot-you-learned"]).concat(recapNames), function () {
+        if (!alive()) return;
         var sb = end.querySelector(".hl-song");
-        if (bigDay && alive() && sb && !sb.classList.contains("pg-singing")) g.sing(set.key, sb);
+        if (bigDay && sb && !sb.classList.contains("pg-singing")) { g.sing(set.key, sb); return; }
+        if (fromToday) { scheduleTodayAdvance(); return; }
+        if (nxt && hasClip("hoot-tap-big-btn")) say(["hoot-tap-big-btn"]);
       });
       try {
         var sc = body; var r = end.getBoundingClientRect(), sr = sc.getBoundingClientRect();
@@ -536,9 +618,14 @@
       } catch (e) {}
     }
     var songB = end.querySelector(".hl-song");
-    if (songB) songB.addEventListener("click", function () { if (!alive()) return; stopAudio(); g.sing(set.key, songB); });
-    end.querySelector(".hl-again").addEventListener("click", function () { if (!alive()) return; if (songB && songB.classList.contains("pg-singing")) g.stopSing(); R.round = 0; R.wrong = 0; R.t0 = Date.now(); teachAll(); });
+    if (songB) songB.addEventListener("click", function () { if (!alive()) return; clearIdle(); stopAudio(); g.sing(set.key, songB); });
+    end.querySelector(".hl-again").addEventListener("click", function () { if (!alive()) return; clearIdle(); if (songB && songB.classList.contains("pg-singing")) g.stopSing(); R.round = 0; R.wrong = 0; R.t0 = Date.now(); teachAll(); });
     end.querySelector(".hl-next").addEventListener("click", function () {
+      clearIdle();
+      if (window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function") {
+        window.__llAdvanceTodayPath();
+        return;
+      }
       var nxt = nextLesson(lesson); if (!nxt) return;
       var ttl = document.querySelector("#ll-otitle"); if (ttl) ttl.textContent = nxt.title;
       play(nxt.id, body);
@@ -564,6 +651,8 @@
     if (!t) return;
     var body = t.closest("#ll-obody"); if (!body) return;
     var l = byId[t.getAttribute("data-hl-open")];
+    if (!l) return;
+    window.__hwFromTodayPath = false;
     var ttl = document.querySelector("#ll-otitle"); if (ttl) ttl.textContent = l.title;
     play(l.id, body);
     body.scrollTop = 0;

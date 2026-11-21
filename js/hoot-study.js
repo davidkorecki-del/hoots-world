@@ -8,7 +8,7 @@
      → Recap (4 of 5 right first try = learned; misses shown with solutions).
    Aligned to the grade 7 math standards used by New York (Next Generation)
    and Connecticut (Core Standards); codes shown are the shared 7.XX.n codes.
-   Text-only: older kids read, no recorded voice needed. */
+   Tutor-voiced with pre-recorded std-* clips (never device TTS). */
 (function () {
   "use strict";
   function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
@@ -335,19 +335,21 @@
           fb.textContent = "Not yet — try again.";
           fb.className = "hs-fb no";
           hint.textContent = "💡 " + p.hints[mode === "quiz" ? 0 : 1];
-          if (p.whyClip) stdSay(["std-notyet.mp3", mode === "quiz" ? p.hintClips[0] : (p.hintClip || p.hintClips[1])]);
+          var hClip = mode === "quiz" ? (p.hintClips && p.hintClips[0]) : (p.hintClip || (p.hintClips && p.hintClips[1]));
+          if (hClip) stdSay(["std-notyet.mp3", hClip]);
           else stdSay(["std-notyet.mp3"]);
           if (mode === "quiz") { S.wrongFirst++; S.misses.push(p); }
         } else {
           S.locked = true;
           fb.textContent = "Here's how it works:";
           fb.className = "hs-fb no";
-          if (p.whyClip) stdSay(["std-heres-how.mp3", p.methodClip, p.whyClip]);
-          else stdSay(["std-heres-how.mp3"]);
+          stdSay(["std-heres-how.mp3", p.methodClip, p.whyClip].filter(Boolean));
           finishItem(false);
         }
-        var pickBtn = body.querySelector('[data-hs-pick="' + val + '"]');
-        if (p.type === "mc" && pickBtn) pickBtn.classList.add(ok ? "right" : "wrong");
+        if (p.type === "mc") {
+          var pickBtn = body.querySelector('[data-hs-pick="' + String(val).replace(/"/g, "") + '"]');
+          if (pickBtn) pickBtn.classList.add(ok ? "right" : "wrong");
+        }
       };
       function finishItem(ok) {
         var p = S.p, after = body.querySelector(".hs-after");
@@ -375,7 +377,7 @@
       else if (what === "more") S.more();
       else if (what === "item") S.nextItem();
       else if (what === "again") play(lesson, body);
-      else if (what === "nextlesson") { var n = nextOf(lesson); var t = document.querySelector("#ll-otitle"); if (t) t.textContent = n.title; play(n, body); }
+      else if (what === "nextlesson") { var n = nextOf(lesson); if (!n) return; var t = document.querySelector("#ll-otitle"); if (t) t.textContent = n.title; play(n, body); }
     };
     learn();
   }
@@ -449,6 +451,17 @@
     }
     addCourse(meta, list.map(bank));
   };
-  var MATH = L.splice(0, L.length);
+  var MATH = L.splice(0, L.length).map(function (l) {
+    /* Wave 2: wire Grade 7 math method + 3 hint clips per lesson (Muse records
+       std-m7-<lesson>-method.mp3 and std-hint{1,2,3}-m7-<lesson>.mp3). */
+    var rawGen = l.gen;
+    l.gen = function () {
+      var p = rawGen();
+      if (!p.methodClip) p.methodClip = "std-" + l.id + "-method.mp3";
+      if (!p.hintClips) p.hintClips = ["std-hint1-" + l.id + ".mp3", "std-hint2-" + l.id + ".mp3", "std-hint3-" + l.id + ".mp3"];
+      return p;
+    };
+    return l;
+  });
   addCourse({ id: "math7", title: "Grade 7 math · full course", emo: "📐", color: "#0B5E43", subject: "Grade 7 math", again: "new numbers" }, MATH);
 })();

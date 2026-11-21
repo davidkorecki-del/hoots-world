@@ -77,7 +77,7 @@
     ["Action song", "home", "🎶", "Sing heads, shoulders, knees and toes, touching each part. Go slow, then fast, then whisper it."],
     ["Crawl tunnel", "home", "🚇", "Make a tunnel from chairs and a sheet. Crawl through it, then roll a ball through it."],
     ["Sponge squeeze", "home", "🧽", "On a towel, set out a bowl of water and an empty bowl. Soak a sponge and squeeze it into the empty one, with a grown-up close by."],
-    ["Pretend phone call", "home", "📞", "Use a toy phone and call teddy, grandma or the dog. Say hello, ask how they are and say goodbye."],
+    ["Pretend phone call", "home", "📞", "Use a toy phone and call teddy, Mama or the dog. Say hello, ask how they are and say goodbye."],
     ["Round, square, pointy", "home", "🔷", "Find something round, something square and something with a point. Put them in a row and name the shapes."],
     ["Dusting helper", "home", "🧤", "Put a clean sock on their hand and dust the table and chairs together."],
     ["Colour of the day", "home", "🟡", "Pick a colour, wear something that colour and find five things in the house that match."],

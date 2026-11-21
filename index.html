@@ -2413,10 +2413,10 @@
       @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
-  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e64">
-<script src="js/hoot-config.js?v=llprev3e64"></script>
-<script src="js/safe-preview.js?v=llprev3e64"></script>
-<script src="js/hoot-account.js?v=llprev3e64"></script>
+  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e65">
+<script src="js/hoot-config.js?v=llprev3e65"></script>
+<script src="js/safe-preview.js?v=llprev3e65"></script>
+<script src="js/hoot-account.js?v=llprev3e65"></script>
 </head>
   <body class="welcome-open ll-shell" data-view="home"><div id="preview-banner">Preview copy: nothing here changes your family's data.</div>
 <header class="ll-shell-header" id="ll-shell-header"><h1>🌈 Hoot's World</h1><div class="stars" id="ll-stars" aria-label="Stars earned">⭐ 0</div></header>
@@ -5020,7 +5020,7 @@
               <p class="ny-vocab" data-kidc-say="kidc-water-cycle-vocab.mp3">📖 Words to know: <b>evaporation</b> is when liquid water gains energy and turns into invisible water vapour that rises. <b>Condensation</b> is when vapour cools and gathers back into tiny liquid drops. <b>Precipitation</b> is water falling back down — rain, snow, sleet or hail. <b>Collection</b> is water gathering in oceans, lakes, rivers and the ground.</p>
               <div class="ny-phase" data-phase="watch">
                 <h5>👀 Watch me — I'll do one first</h5>
-                <div class="ny-passage">“Follow one drop of water. This morning it is resting in Long Island Sound, near Port Chester. The sun is climbing, the water is warming — and our drop is about to take the same trip water has taken for billions of years.”</div>
+                <div class="ny-passage">“Follow one drop of water. This morning it is resting in Long Island Sound, along the New York coast. The sun is climbing, the water is warming — and our drop is about to take the same trip water has taken for billions of years.”</div>
                 <div class="ny-steps">
                   <p class="ny-step" data-kidc-say="kidc-water-cycle-watch1.mp3"><b>Step 1 — EVAPORATION:</b> The sun heats the Sound. Our drop gains energy, spreads out, and turns into <b>water vapour</b> — invisible gas — and rises into the air. The drop hasn't vanished; it has changed form.<span class="ny-simple-wrap"><button type="button" class="ny-simple-btn" data-kidc-simple="kidc-water-cycle-simple1.mp3">Simpler, please</button><span class="ny-simple-txt" hidden>Step 1 — EVAPORATION: The sun heats the Sound. Our drop becomes invisible vapour and rises up. It hasn&#x27;t vanished — it just changed form.</span></span></p>
                   <p class="ny-step" hidden data-kidc-say="kidc-water-cycle-watch2.mp3"><b>Step 2 — CONDENSATION:</b> High above the shore the air is cold. The vapour cools, loses energy, and gathers with millions of other drops into tiny liquid droplets. Together they become a <b>cloud</b>.<span class="ny-simple-wrap"><button type="button" class="ny-simple-btn" data-kidc-simple="kidc-water-cycle-simple2.mp3">Simpler, please</button><span class="ny-simple-txt" hidden>Step 2 — CONDENSATION: High up, the air is cold. The vapour cools, and millions of tiny drops join together to make a cloud.</span></span></p>
@@ -6942,7 +6942,9 @@
       var TEXT_INJECT = '<style id="hw-text">#bubble{font-size:15.5px!important;line-height:1.3!important}'
         + '.mode-chip{font-size:16.5px!important}.mode-chip small{font-size:13.5px!important;line-height:1.25!important}'
         + '.how-lab,.mode-lab,.tool-lab{font-size:12.5px!important}.strip-lab,.plab,.tcap,.row-label{font-size:13px!important}'
-        + '.pempty,.strip-empty{font-size:14px!important}.cat-btn,.tab-btn,.inst-chip{font-size:15px!important}.k-note{font-size:14px!important}</style>';
+        + '.pempty,.strip-empty{font-size:14px!important}.cat-btn,.tab-btn,.inst-chip{font-size:15px!important}.k-note{font-size:14px!important}'
+        + 'html:not(.hw-paint-v2) .round-btn,html:not(.hw-paint-v2) #hearBtn,html:not(.hw-paint-v2) #targetSound,html:not(.hw-paint-v2) #frogBtn,html:not(.hw-paint-v2) #duckBtn,html:not(.hw-paint-v2) .food,html:not(.hw-paint-v2) .bub,html:not(.hw-paint-v2) .fall,html:not(.hw-paint-v2) .fall-star,html:not(.hw-paint-v2) #nextBtn,html:not(.hw-paint-v2) #againBtn,html:not(.hw-paint-v2) .play-btn,html:not(.hw-paint-v2) #playBtn{min-width:64px!important;min-height:64px!important;touch-action:manipulation}'
+        + '</style>';
       var NAMEFIX_INJECT = '<scr' + 'ipt>window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0-9]+)\\.mp3$/.exec(String(f||""));if(!m)return f;if(/^(callout|songcall|hint)$/.test(String(k||"")))return f;var N=null;try{N=window.parent&&window.parent.HOOT_NAMES;}catch(e){}var key=m[1]+"-"+m[2];return N&&N[key]?"name-"+key+".mp3":null;};</scr' + 'ipt>';
       function decode(key){
         var bin = atob(DATA[key]);
@@ -8331,6 +8333,7 @@
              picture, the replay button, leaving the app. Before, the lesson
              froze on that round with every answer disabled. */
           var cut = SEQ; SEQ = null;
+          clearLittleTimers();
           if(cut && cut.opts && cut.opts.onCancel && !cut.ended){ cut.ended = true; try{ cut.opts.onCancel(); }catch(e){} }
           cards.forEach(function(c){
             clearLit(c);
@@ -8340,6 +8343,31 @@
             }
           });
           setSpeakingAll(false);
+        }
+        var ltIdleTimers = [], ltAutoTimer = null, ltCeilTimer = null;
+        function clearLittleTimers(){
+          while(ltIdleTimers.length) clearTimeout(ltIdleTimers.pop());
+          if(ltAutoTimer){ clearTimeout(ltAutoTimer); ltAutoTimer = null; }
+          if(ltCeilTimer){ clearTimeout(ltCeilTimer); ltCeilTimer = null; }
+        }
+        function hasHootClip(k){ return !!(window.HOOT_HAVE && window.HOOT_HAVE[k]); }
+        /* Wave 2 (Finding 2): 7s / 14s idle re-prompt + visual spotlight for ages 2-4 legacy tutor */
+        function armLittleIdle(card){
+          clearLittleTimers();
+          if(!card || !card._cfg || card.classList.contains("lsn-finished")) return;
+          var myRound = card._round || 0, cfg = card._cfg;
+          ltIdleTimers.push(setTimeout(function(){
+            if(SEQ || card.classList.contains("lsn-finished") || (card._round || 0) !== myRound) return;
+            var opts = card.querySelectorAll(".lsn-opt:not(:disabled)");
+            for(var i = 0; i < opts.length; i++){ opts[i].classList.remove("lsn-idle-nudge"); void opts[i].offsetWidth; opts[i].classList.add("lsn-idle-nudge"); }
+            playSolo(card._roundAsk || cfg.askClips || []);
+          }, 7000));
+          ltIdleTimers.push(setTimeout(function(){
+            if(SEQ || card.classList.contains("lsn-finished") || (card._round || 0) !== myRound) return;
+            var right = card.querySelector(".lsn-opt[data-right]:not(:disabled)");
+            if(right){ right.classList.remove("lt-gold"); void right.offsetWidth; right.classList.add("lt-gold"); }
+            playSolo(card._roundAsk || cfg.askClips || []);
+          }, 14000));
         }
         window.__hwStopLittleTutor = stopTutor;
         /* A short standalone line (a counted number as the child taps)
@@ -8382,6 +8410,7 @@
             if(SEQ === seq) SEQ = null;
             setSpeakingAll(false);
             if(opts.onDone) opts.onDone();
+            if(opts.armIdle) armLittleIdle(card);
           }
           function next(){
             if(gen !== clipGen) return;
@@ -8729,7 +8758,7 @@
           if(card.querySelector(".lsn-end")) return;
           var bar = document.createElement("div");
           bar.className = "lsn-end";
-          bar.innerHTML = '<button type="button" class="lsn-end-btn lsn-again">↻ Play again</button><button type="button" class="lsn-end-btn lsn-next">Next lesson ▶</button>';
+          bar.innerHTML = '<p class="lsn-autonote" hidden></p><button type="button" class="lsn-end-btn lsn-next">Next lesson ▶</button><button type="button" class="lsn-end-btn lsn-again">↻ Play again</button>';
           var fb = card.querySelector(".lsn-fb");
           if(fb && fb.nextSibling) card.insertBefore(bar, fb.nextSibling); else card.appendChild(bar);
           var idx = cards.indexOf(card);
@@ -8737,11 +8766,17 @@
           if(idx === cards.length - 1){ nb.textContent = "🏆 Path complete"; nb.disabled = true; }
           bar.querySelector(".lsn-again").addEventListener("click", function(e){
             e.stopPropagation();
+            clearLittleTimers();
             playAgain(card);
           });
           nb.addEventListener("click", function(e){
             e.stopPropagation();
+            clearLittleTimers();
             stopTutor();
+            if(window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function"){
+              window.__llAdvanceTodayPath();
+              return;
+            }
             var nxt = cards[idx + 1];
             if(!nxt) return;
             var h = nxt.querySelector("h4");
@@ -8754,13 +8789,15 @@
           stopTutor();
           card._again = true; card._wrongN = 0;
           var opts = card.querySelectorAll(".lsn-opt");
-          for(var i = 0; i < opts.length; i++){ opts[i].disabled = false; opts[i].classList.remove("right", "wrong"); }
+          for(var i = 0; i < opts.length; i++){ opts[i].disabled = false; opts[i].classList.remove("right", "wrong", "lt-gold", "lsn-idle-nudge"); }
           var fb = card.querySelector(".lsn-fb"); if(fb) fb.textContent = "";
+          var an = card.querySelector(".lsn-autonote"); if(an) an.hidden = true;
           card.classList.remove("lsn-finished");
           if(cfg.rounds) setRound(card, 0);
-          runBeats(card, teachBeats(card), { replayBtn:true });
+          runBeats(card, teachBeats(card), { replayBtn:true, armIdle:true });
         }
         function onRoundRight(card, opt){
+          clearLittleTimers();
           var cfg = card._cfg, rd = cfg.rounds[card._round];
           card._wrongN = 0;
           opt.classList.add("right");
@@ -8775,11 +8812,12 @@
             if(moved) return; moved = true;
             if(card._round !== next - 1) return;
             setRound(card, next);
-            if(speak) runBeats(card, [{ t: askText(card), clips: card._roundAsk || [], pause: 1500 }], {});
+            if(speak) runBeats(card, [{ t: askText(card), clips: card._roundAsk || [], pause: 1500 }], { armIdle:true });
           }
           runBeats(card, [{ t: rd.praise, clips: pc }], { onDone: function(){ advance(true); }, onCancel: function(){ setTimeout(function(){ advance(false); }, 0); } });
         }
         function onRight(card, opt){
+          clearLittleTimers();
           var cfg = card._cfg;
           try { if (window.__oopsAnswer) window.__oopsAnswer({ card: card, item: (cfg && cfg.rounds) ? "r" + (card._round || 0) : "q", right: true }); } catch (e) {} /* Wave E2: Oops Garden */
           card._wrongN = 0;
@@ -8788,6 +8826,21 @@
           card.classList.add("lsn-finished");
           if(cfg.rounds){ card._round = cfg.rounds.length; roundDots(card); }
           card.classList.add("done");
+          var fromToday = !!window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function";
+          var nb = card.querySelector(".lsn-next"), an = card.querySelector(".lsn-autonote");
+          var idx0 = cards.indexOf(card), hasNextCard = idx0 >= 0 && idx0 < cards.length - 1;
+          if(nb){
+            if(fromToday){
+              nb.disabled = false; nb.textContent = "Next up ▶"; nb.classList.add("hw-next-pulse");
+              if(an){ an.hidden = false; an.textContent = "✨ Moving to the next stop…"; }
+            } else if(hasNextCard){
+              nb.disabled = false; nb.textContent = "Next lesson ▶"; nb.classList.add("hw-next-pulse");
+              if(an) an.hidden = true;
+            } else {
+              nb.textContent = "🏆 Path complete"; nb.disabled = true; nb.classList.remove("hw-next-pulse");
+              if(an) an.hidden = true;
+            }
+          }
           /* Bring Next / Play again into view inside the overlay only —
              never scroll document.body (keeps the Days marker fix intact). */
           function revealEnd(){
@@ -8810,12 +8863,29 @@
           var beats = [{ t: praise, clips: pcl, sound: cfg.praiseSound || null }];
           if(profileIs("kidb")) beats.push({ t: "🎀 Lily: Yay! You did it, superstar!", clips: ["lily-cheer"], pause: 700 });
           beats.push({ t: "🦉 So remember: " + cfg.recap, clips: (window.__hootNoAsk || function (l) { return l || []; })(cfg.recapClips || [], false) });
+          var autoMoved = false;
+          function doAutoAdvance(){
+            if(autoMoved || !card.classList.contains("lsn-finished")) return;
+            autoMoved = true;
+            clearLittleTimers();
+            if(hasHootClip("hoot-next-one")){
+              runBeats(card, [{ t: "🦉 Next one!", clips: ["hoot-next-one"] }], { onDone: function(){ if(typeof window.__llAdvanceTodayPath === "function") window.__llAdvanceTodayPath(); } });
+            } else if(typeof window.__llAdvanceTodayPath === "function"){
+              window.__llAdvanceTodayPath();
+            }
+          }
+          if(fromToday){ ltCeilTimer = setTimeout(doAutoAdvance, 12000); }
           /* the recap bubble grows the card, so reveal the end bar on each beat and at the end */
           var rv = setInterval(function(){ if(card._revealEnd) card._revealEnd(); }, 400);
-          runBeats(card, beats, { onDone: function(){ clearInterval(rv); if(card._revealEnd) card._revealEnd(); } });
+          runBeats(card, beats, { onDone: function(){
+            clearInterval(rv); if(card._revealEnd) card._revealEnd();
+            if(fromToday){ ltAutoTimer = setTimeout(doAutoAdvance, 1500); }
+            else if(hasNextCard && hasHootClip("hoot-tap-big-btn")){ playSolo(["hoot-tap-big-btn"]); }
+          } });
           setTimeout(function(){ clearInterval(rv); }, 20000);
         }
         function onWrong(card, opt){
+          clearLittleTimers();
           var cfg = card._cfg;
           try { if (window.__oopsAnswer) window.__oopsAnswer({ card: card, item: (cfg && cfg.rounds) ? "r" + (card._round || 0) : "q", right: false }); } catch (e) {} /* Wave E2: Oops Garden */
           opt.classList.add("wrong");
@@ -8828,7 +8898,7 @@
             { t: "🦉 " + hint, clips: whyClip ? ["hoot-try-again", whyClip] : ["hoot-try-again"] },
             { t: askText(card), clips: card._roundAsk || cfg.askClips || [], sound: cfg.askSound || null, pause: 1500 }
           ];
-          runBeats(card, beats, {});
+          runBeats(card, beats, { armIdle:true });
           var target = card._answerEl;
           if(target){
             target.classList.remove("lsn-hint-pulse"); void target.offsetWidth;
@@ -8919,7 +8989,7 @@
                lesson) used to show the answer in green and ignore every tap. It now starts
                fresh, exactly like Play again; the star it earned stays. */
             if(card.classList.contains("done") && !card._again){ playAgain(card); return; }
-            runBeats(card, teachBeats(card), { replayBtn:true });
+            runBeats(card, teachBeats(card), { replayBtn:true, armIdle:true });
           });
           endBar(card);
           if(card.classList.contains("done")) card.classList.add("lsn-finished");
@@ -13775,14 +13845,14 @@
   }).observe(document.documentElement, { subtree:true, childList:true, characterData:true });
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e64"></script>
-  <script src="js/hoot-study.js?v=llprev3e64"></script>
-  <script src="js/hoot-ela7.js?v=llprev3e64"></script>
-  <script src="js/hoot-sci7.js?v=llprev3e64"></script>
-  <script src="js/hoot-ss7.js?v=llprev3e64"></script>
-  <script src="js/hoot-games.js?v=llprev3e64"></script>
-  <script src="js/hw-activities.js?v=3e64"></script>
-<script src="js/hw-ll-shell.js?v=llprev3e64"></script>
-  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e64');}</script>
+  <script src="js/hoot-lessons.js?v=llprev3e65"></script>
+  <script src="js/hoot-study.js?v=llprev3e65"></script>
+  <script src="js/hoot-ela7.js?v=llprev3e65"></script>
+  <script src="js/hoot-sci7.js?v=llprev3e65"></script>
+  <script src="js/hoot-ss7.js?v=llprev3e65"></script>
+  <script src="js/hoot-games.js?v=llprev3e65"></script>
+  <script src="js/hw-activities.js?v=3e65"></script>
+<script src="js/hw-ll-shell.js?v=llprev3e65"></script>
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e65');}</script>
 </body>
 </html>
