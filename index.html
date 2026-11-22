@@ -2413,8 +2413,8 @@
       @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
-  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e107">
-  <link rel="stylesheet" href="js/hw-learn-fx.css?v=llprev3e107">
+  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e108">
+  <link rel="stylesheet" href="js/hw-learn-fx.css?v=llprev3e108">
   <link rel="stylesheet" href="js/hw-monti-works.css?v=llprev3e66">
 <script src="js/hoot-config.js?v=llprev3e66"></script>
 <script src="js/safe-preview.js?v=llprev3e66"></script>
@@ -6751,7 +6751,7 @@
     (function gamePlayer(){
       /* Wave 3: 20 embedded games extracted to static same-origin games/<key>.html files
          with shared runtime js/hoot-game-head.js, js/hoot-game-tail.css, js/hoot-game-tail.js. */
-      var GAME_VER = "llprev3e107";
+      var GAME_VER = "llprev3e108";
       var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Town Rescue Patrol", rocket: "Rocket Count-Up", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Thunder Weather Machine", shapes: "Fireworks Night", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat" };
       var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band" };
       var overlay = document.getElementById("game-overlay");
@@ -13547,15 +13547,15 @@
   }
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e107"></script>
+  <script src="js/hoot-lessons.js?v=llprev3e108"></script>
   <script src="js/hoot-study.js?v=llprev3e66"></script>
   <script src="js/hoot-ela7.js?v=llprev3e66"></script>
   <script src="js/hoot-sci7.js?v=llprev3e66"></script>
   <script src="js/hoot-ss7.js?v=llprev3e66"></script>
-  <script src="js/hoot-games.js?v=llprev3e107"></script>
+  <script src="js/hoot-games.js?v=llprev3e108"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e107"></script>
-  <script src="js/hw-learn-fx.js?v=llprev3e107"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e108"></script>
+  <script src="js/hw-learn-fx.js?v=llprev3e108"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>
   /* Device Report #5 (PWA Freshness & Nightly Bedtime Book Auto-Update):
@@ -13568,11 +13568,11 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e107', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e108', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
-    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e107';
+    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e108';
     var SIG_KEY = 'hw.pwa.sig.v1', RELOAD_KEY = 'hw.pwa.reloadAt.v1';
     var baseSig = null, lastChk = 0, pendingReload = false;
     function safeToReload(){

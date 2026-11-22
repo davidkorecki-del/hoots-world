@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="rocket";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e107"></script>
+<script src="js/hoot-game-head.js?v=llprev3e108"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>3D Rocket Count-Up</title>
@@ -532,7 +532,7 @@
   /* =========================================================================
      3. PIXAR 3D STUDIO ASSETS & SELECTIVE METALLIC PAINT SHOP
      ========================================================================= */
-  var VER = "?v=llprev3e107";
+  var VER = "?v=llprev3e108";
   var ART = {};
   var ASSET_LIST = {
     launchpad: "assets/rocket3d/bg_launchpad.jpg",
@@ -676,11 +676,13 @@
   var winOverlay = document.getElementById("winOverlay");
 
   var PLANETS = [
-    { key: "moon",   name: "Cheese Moon",           emo: "🌕", badge: 0 },
-    { key: "saturn", name: "Rainbow Saturn",        emo: "🪐", badge: 1 },
-    { key: "candy",  name: "Candy Star",            emo: "🍬", badge: 2 },
-    { key: "dino",   name: "Rainbow Volcano World", emo: "🌋", badge: 3 }
+    { key: "moon",   name: "Cheese Moon",           shortName: "Moon",    emo: "🌕", badge: 0 },
+    { key: "saturn", name: "Rainbow Saturn",        shortName: "Saturn",  emo: "🪐", badge: 1 },
+    { key: "candy",  name: "Candy Star",            shortName: "Candy",   emo: "🍬", badge: 2 },
+    { key: "dino",   name: "Rainbow Volcano World", shortName: "Volcano", emo: "🌋", badge: 3 }
   ];
+  var HOME_SITE = { key: "launchpad", name: "Launchpad", emo: "🌍" };
+  var currentSite = HOME_SITE;
   var planetIdx = 0, earnedPlanets = {};
   var maxCount = 5;
   var phase = "collect";
@@ -830,7 +832,7 @@
     nextPlanetBtn.hidden = true;
     flightBanner.hidden = true;
     countdownBanner.classList.remove("show");
-    transitionBg("launchpad");
+    transitionBg(currentSite.key);
     updatePassportUI();
 
     rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = isPortrait() ? 0.48 : 0.50;
@@ -847,7 +849,11 @@
     }
 
     var dest = PLANETS[planetIdx % PLANETS.length];
-    bubble.innerHTML = "⭐ <b>FUEL HOOT'S ROCKET!</b> Tap or drag the smiling <b>Golden Stars</b> to fly to <b>" + dest.emo + " " + dest.name + "</b>!";
+    if(currentSite.key === "launchpad"){
+      bubble.innerHTML = "⭐ <b>FUEL HOOT'S ROCKET!</b> Tap or drag the smiling <b>Golden Stars</b> to fly to <b>" + dest.emo + " " + dest.name + "</b>!";
+    } else {
+      bubble.innerHTML = "⭐ <b>REFUEL ON " + currentSite.emo + " " + currentSite.name.toUpperCase() + "!</b> Collect the <b>Golden Stars</b> to fly to <b>" + dest.emo + " " + dest.name + "</b>!";
+    }
     setStepVoice("hoot-r3d-tap-stars", ["ask-how-many-stars", "hoot-tap-big-btn"], speakNow !== false);
   }
 
@@ -1025,11 +1031,15 @@
     sfxFireworkPop();
 
     var pl = PLANETS[planetIdx % PLANETS.length];
+    currentSite = pl;
     earnedPlanets[pl.badge] = true;
     updatePassportUI();
 
+    var nextPl = PLANETS[(planetIdx + 1) % PLANETS.length];
+    var lblSpan = nextPlanetBtn.querySelector("span");
+    if(lblSpan) lblSpan.textContent = "🚀 Fly to " + nextPl.emo + " " + nextPl.shortName + "!";
     nextPlanetBtn.hidden = false;
-    bubble.innerHTML = pl.emo + " <b>WELCOME TO " + pl.name.toUpperCase() + "!</b> Open the <b>🎁 Space Chest</b>, flip our <b>Space Friends</b>, or tap the sky for fireworks!";
+    bubble.innerHTML = pl.emo + " <b>WELCOME TO " + pl.name.toUpperCase() + "!</b> Open the <b>🎁 Space Chest</b>, flip our <b>Space Friends</b>, or tap <b>" + nextPl.emo + " " + nextPl.shortName + "</b>!";
     setStepVoice("hoot-r3d-landed", ["hoot-win-star"], true);
   }
 
@@ -1039,6 +1049,7 @@
   launchBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); triggerCountdownLaunch(); });
   nextPlanetBtn.addEventListener("pointerdown", function(e){
     e.preventDefault(); e.stopPropagation();
+    if(phase !== "landed") return;
     planetIdx = (planetIdx + 1) % PLANETS.length;
     startRound(true);
   });
@@ -1099,9 +1110,10 @@
 
   document.querySelectorAll(".pbadge").forEach(function(b){
     b.addEventListener("click", function(){
-      planetIdx = parseInt(b.getAttribute("data-pl"), 10) || 0;
+      var pick = parseInt(b.getAttribute("data-pl"), 10) || 0;
+      planetIdx = pick;
       sfxBoing(); updatePassportUI();
-      if(phase === "collect") startRound(true);
+      if(phase === "collect" || phase === "landed") startRound(true);
     });
   });
 
@@ -1232,7 +1244,7 @@
     }
 
     /* 6. Living Launchpad Landmarks: Moon (upper-left), Saturn (upper-right), Radar Tower (mid-left)! */
-    if(phase === "collect" || phase === "match" || phase === "ready"){
+    if(currentSite.key === "launchpad" && (phase === "collect" || phase === "match" || phase === "ready")){
       /* Smiling Moon upper-left */
       if(cx < W * 0.20 && cy < H * 0.34){
         sfxStarCollect(4);
@@ -1553,7 +1565,7 @@
     ctx.beginPath(); ctx.moveTo(tx, botY); ctx.lineTo(tx, botY - (botY - topY) * pct); ctx.stroke();
     ctx.font = '26px "Fredoka", sans-serif'; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(pl.emo, tx, topY - 22);
-    ctx.fillText("🌍", tx, botY + 22);
+    ctx.fillText(currentSite.emo || "🌍", tx, botY + 22);
     ctx.fillText("🚀", tx, botY - (botY - topY) * pct);
     ctx.restore();
   }
@@ -1976,6 +1988,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e107"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e108"></script>
 </body>
 </html>
