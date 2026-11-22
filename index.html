@@ -2413,7 +2413,8 @@
       @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
-  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e80">
+  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e84">
+  <link rel="stylesheet" href="js/hw-learn-fx.css?v=llprev3e84">
   <link rel="stylesheet" href="js/hw-monti-works.css?v=llprev3e66">
 <script src="js/hoot-config.js?v=llprev3e66"></script>
 <script src="js/safe-preview.js?v=llprev3e66"></script>
@@ -13548,6 +13549,7 @@
   <script src="js/hoot-games.js?v=llprev3e79"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
   <script src="js/hw-ll-shell.js?v=llprev3e81"></script>
+  <script src="js/hw-learn-fx.js?v=llprev3e84"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>
   /* Device Report #5 (PWA Freshness & Nightly Bedtime Book Auto-Update):
@@ -13560,7 +13562,7 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e83', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e84', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;

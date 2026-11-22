@@ -1,0 +1,442 @@
+/* =====================================================================
+   Hoot's World — Learn FX (little-kid Learn lessons revamp)
+   Scope: ONLY when js/hw-learn-fx.js adds .lfx-on to #ll-overlay, which
+   it does only for little-kid profiles (kida / kidb) on Little Explorers
+   (.lsn in #panel-little) and HootLessons (.hl) lessons.
+   Never applies to Kaitlyn (kidc), .ny-lsn, Hoot Study (.hs), books, games.
+   Visual-only: animated scene behind the lesson, candy answer cards,
+   bouncy Hoot, confetti. No layout heights are increased.
+   ===================================================================== */
+
+/* ---------- Theme palettes ---------- */
+#ll-overlay.lfx-on{
+  --lfx-sky1:#7cc8ff; --lfx-sky2:#c9ecff; --lfx-sky3:#eefaff;
+  --lfx-hill1:#8fdc6a; --lfx-hill2:#5fc24a; --lfx-hill3:#46a83a;
+  --lfx-sun:#ffd93b; --lfx-sunglow:rgba(255,217,59,.45);
+  --lfx-deep:#2a5bd7; --lfx-accent:#ffb703;
+  --lfx-t1:#fff3bf; --lfx-t2:#d6eeff; --lfx-t3:#ffe0ef; --lfx-t4:#d8f6e1;
+  background:var(--lfx-sky3) !important;
+}
+#ll-overlay.lfx-on[data-lfx="rainbow"]{
+  --lfx-sky1:#ffc9e3; --lfx-sky2:#d9e8ff; --lfx-sky3:#f3fbff;
+  --lfx-hill1:#a6e88a; --lfx-hill2:#74cf5e; --lfx-hill3:#4fb348;
+  --lfx-deep:#c2367a;
+}
+#ll-overlay.lfx-on[data-lfx="candy"]{
+  --lfx-sky1:#b9a2ff; --lfx-sky2:#f5cdf0; --lfx-sky3:#fff0fa;
+  --lfx-hill1:#ffb3d6; --lfx-hill2:#f78fc0; --lfx-hill3:#e46aa8;
+  --lfx-sun:#fff07a; --lfx-sunglow:rgba(255,240,122,.5);
+  --lfx-deep:#7b3fe4;
+}
+#ll-overlay.lfx-on[data-lfx="orchard"]{
+  --lfx-sky1:#5fb8ff; --lfx-sky2:#b7e3ff; --lfx-sky3:#f0fbff;
+  --lfx-hill1:#9be36f; --lfx-hill2:#64c84a; --lfx-hill3:#3f9f37;
+  --lfx-deep:#1f7a3a;
+}
+#ll-overlay.lfx-on[data-lfx="storybook"]{
+  --lfx-sky1:#ffc58f; --lfx-sky2:#ffe7b8; --lfx-sky3:#fff8ea;
+  --lfx-hill1:#ffd36e; --lfx-hill2:#f4b448; --lfx-hill3:#df9532;
+  --lfx-sun:#fff1a8; --lfx-sunglow:rgba(255,255,255,.55);
+  --lfx-deep:#d4572a;
+}
+#ll-overlay.lfx-on[data-lfx="sunset"]{
+  --lfx-sky1:#ff9a8b; --lfx-sky2:#ffd1a8; --lfx-sky3:#fff3ea;
+  --lfx-hill1:#c9a2f5; --lfx-hill2:#a77ce8; --lfx-hill3:#8a5bd6;
+  --lfx-sun:#ffe066; --lfx-sunglow:rgba(255,200,90,.55);
+  --lfx-deep:#d1495b;
+}
+#ll-overlay.lfx-on[data-lfx="breezy"]{
+  --lfx-sky1:#4fa8ff; --lfx-sky2:#a8dcff; --lfx-sky3:#eaf7ff;
+  --lfx-hill1:#b8ecff; --lfx-hill2:#8fd8f5; --lfx-hill3:#6cc3e8;
+  --lfx-deep:#1e63c9;
+}
+
+/* ---------- The scene (sits behind the lesson) ---------- */
+#ll-overlay .lfx-scene{display:none}
+#ll-overlay.lfx-on .lfx-scene{
+  display:block;position:absolute;left:0;right:0;bottom:0;top:0;
+  z-index:0;overflow:hidden;pointer-events:none;
+  background:linear-gradient(180deg,var(--lfx-sky1) 0%,var(--lfx-sky2) 48%,var(--lfx-sky3) 100%);
+  transition:background .6s ease;
+}
+#ll-overlay.lfx-on > .ll-obar{position:relative;z-index:3}
+#ll-overlay.lfx-on > #ll-obody{position:relative;z-index:2;background:transparent !important}
+
+.lfx-sun{
+  position:absolute;top:70px;right:6%;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle at 40% 38%,#fffbe0 0%,var(--lfx-sun) 55%,var(--lfx-sun) 100%);
+  box-shadow:0 0 0 18px var(--lfx-sunglow),0 0 60px 30px var(--lfx-sunglow);
+  animation:lfxSun 6s ease-in-out infinite;
+}
+.lfx-sun::before{
+  content:"";position:absolute;inset:-46px;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,var(--lfx-sunglow) 0 10deg,transparent 10deg 30deg);
+  -webkit-mask:radial-gradient(circle,transparent 58%,#000 60%,#000 70%,transparent 72%);
+          mask:radial-gradient(circle,transparent 58%,#000 60%,#000 70%,transparent 72%);
+  animation:lfxSpin 40s linear infinite;
+}
+.lfx-rainbow{display:none}
+#ll-overlay[data-lfx="rainbow"] .lfx-rainbow,
+#ll-overlay[data-lfx="storybook"] .lfx-rainbow{
+  display:block;position:absolute;left:50%;bottom:6%;width:150vmax;height:150vmax;max-width:1500px;max-height:1500px;
+  transform:translateX(-50%);border-radius:50%;opacity:.38;
+  background:radial-gradient(circle,
+    transparent 54%,#ff5d5d 54%,#ff5d5d 56.5%,#ffa94d 56.5%,#ffa94d 59%,#ffe066 59%,#ffe066 61.5%,
+    #69db7c 61.5%,#69db7c 64%,#4dabf7 64%,#4dabf7 66.5%,#9775fa 66.5%,#9775fa 69%,transparent 69%);
+  animation:lfxGlow 7s ease-in-out infinite;
+}
+#ll-overlay[data-lfx="storybook"] .lfx-rainbow{opacity:.18}
+
+.lfx-cloud{
+  position:absolute;width:150px;height:46px;border-radius:46px;background:#fff;opacity:.92;
+  box-shadow:0 8px 0 rgba(255,255,255,.35);
+  animation:lfxDrift 46s linear infinite;
+}
+.lfx-cloud::before,.lfx-cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.lfx-cloud::before{width:66px;height:66px;left:22px;top:-32px}
+.lfx-cloud::after{width:52px;height:52px;left:74px;top:-22px}
+.lfx-cloud.c1{top:18%;left:-180px;animation-duration:52s;animation-delay:-8s}
+.lfx-cloud.c2{top:34%;left:-180px;transform:scale(.7);animation-duration:64s;animation-delay:-38s;opacity:.8}
+.lfx-cloud.c3{top:9%;left:-180px;transform:scale(.55);animation-duration:72s;animation-delay:-20s;opacity:.75}
+
+.lfx-hills{position:absolute;left:0;right:0;bottom:0;width:100%;height:34%;min-height:150px;display:block}
+.lfx-hills .h1{fill:var(--lfx-hill1)}
+.lfx-hills .h2{fill:var(--lfx-hill2)}
+.lfx-hills .h3{fill:var(--lfx-hill3)}
+.lfx-hills .fl{fill:#fff;opacity:.85}
+.lfx-hills .fl2{fill:#ffd93b;opacity:.9}
+.lfx-hills .tr{fill:var(--lfx-hill3)}
+.lfx-hills .tk{fill:#8a5a3b}
+
+.lfx-bird{position:absolute;top:22%;left:-60px;width:34px;height:14px;opacity:.55;animation:lfxFly 30s linear infinite}
+.lfx-bird::before,.lfx-bird::after{content:"";position:absolute;top:0;width:18px;height:12px;border-top:3px solid #1f2a44;border-radius:50% 50% 0 0}
+.lfx-bird::before{left:0;transform:rotate(-12deg);transform-origin:right bottom;animation:lfxFlap .5s ease-in-out infinite alternate}
+.lfx-bird::after{left:15px;transform:rotate(12deg);transform-origin:left bottom;animation:lfxFlapR .5s ease-in-out infinite alternate}
+.lfx-bird.b2{top:28%;animation-duration:38s;animation-delay:-14s;transform:scale(.7)}
+
+/* soft floating bubbles / sparkles — abstract only (never countable lesson objects) */
+.lfx-parts{position:absolute;inset:0}
+.lfx-p{
+  position:absolute;bottom:-60px;border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.95) 0 14%,rgba(255,255,255,.35) 15% 55%,rgba(255,255,255,.12) 56%);
+  border:2px solid rgba(255,255,255,.7);
+  animation:lfxRise linear infinite;opacity:0;
+}
+.lfx-p.spark{border:0;border-radius:0;background:none;color:#fff;font-size:22px;line-height:1;text-shadow:0 0 8px rgba(255,255,255,.9)}
+.lfx-p.spark::before{content:"✦"}
+#ll-overlay[data-lfx="sunset"] .lfx-p.spark::before{content:"♥";color:#ffd1dc}
+#ll-overlay[data-lfx="candy"] .lfx-p.spark::before{content:"✧"}
+
+/* ---------- Lesson surfaces ---------- */
+#ll-overlay.lfx-on .wc2-printrow,
+#ll-overlay.lfx-on #panel-little .tm-open,
+#ll-overlay.lfx-on #ll-obody .lsn-teach > p,
+#ll-overlay.lfx-on #ll-obody .lsn:not(.lsn-finished) .lsn-end{
+  display:none !important;
+}
+#ll-overlay.lfx-on #panel-little .ctap{
+  width:46px !important;height:46px !important;font-size:1.55rem !important;
+  box-shadow:0 3px 0 rgba(25,35,90,.14);
+}
+#ll-overlay.lfx-on #panel-little .ctap-num{
+  font-size:1.75rem !important;
+}
+#ll-overlay.lfx-on #panel-little .lsn-token{
+  min-width:46px !important;min-height:46px !important;font-size:1.45rem !important;
+  padding:2px 6px !important;
+}
+#ll-overlay.lfx-on #panel-little .lsn-qpic{
+  font-size:clamp(1.95rem,7.2vw,2.6rem) !important;
+  gap:6px !important;padding:4px 8px !important;margin:2px auto 4px !important;
+  background:rgba(255,255,255,.78) !important;
+}
+#ll-overlay.lfx-on #ll-obody [data-lsn-id="little-counting-to-5"] .lsn-opt,
+#ll-overlay.lfx-on #ll-obody [data-lsn-id="little-counting-back-from-5"] .lsn-opt,
+#ll-overlay.lfx-on #ll-obody [data-lsn-id="little-counting-to-10"] .lsn-opt,
+#ll-overlay.lfx-on #ll-obody [data-lsn-id="little-first-letter-sounds"] .lsn-opt,
+#ll-overlay.lfx-on #ll-obody [data-lsn-id="little-more-letter-sounds"] .lsn-opt{
+  font-size:3rem !important;font-weight:900 !important;line-height:1 !important;
+}
+#ll-overlay.lfx-on #ll-obody .curr{
+  background:transparent !important;border:0 !important;box-shadow:none !important;
+  margin-top:0 !important;padding:0 !important;
+}
+#ll-overlay.lfx-on #ll-obody .curr::after{display:none !important}
+#ll-overlay.lfx-on #ll-obody .lsn:not(.ny-lsn){
+  background:rgba(255,255,255,.64) !important;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-radius:30px !important;
+  box-shadow:0 14px 34px rgba(25,35,90,.18),0 6px 0 rgba(25,35,90,.10) !important;
+  border:3px solid rgba(255,255,255,.92) !important;
+}
+#ll-overlay.lfx-on #ll-obody .lsn:not(.ny-lsn) .lsn-teach{
+  background:rgba(255,255,255,.92) !important;
+  border-radius:22px !important;
+  box-shadow:0 6px 16px rgba(25,35,90,.10) !important;
+}
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn){animation:lfxCardIn .55s cubic-bezier(.2,1.4,.4,1) both}
+#ll-overlay.lfx-on #ll-obody .hl:not(.hs){
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-radius:30px;
+  box-shadow:0 14px 34px rgba(25,35,90,.18),0 6px 0 rgba(25,35,90,.10);
+  border:3px solid rgba(255,255,255,.92);
+  padding:10px 12px 16px !important;
+  margin-top:4px;
+  animation:lfxCardIn .55s cubic-bezier(.2,1.4,.4,1) both;
+}
+#ll-overlay.lfx-on #ll-obody .hl.hl-pathview{background:rgba(255,255,255,.78)}
+#ll-overlay.lfx-on #ll-obody .hl-tile{
+  background:linear-gradient(180deg,#ffffff 0%,#fffdf5 100%) !important;
+  border:3.5px solid #17263b !important;
+  border-radius:22px !important;
+  box-shadow:0 7px 0 var(--c,#17263b),0 12px 20px rgba(25,35,90,.16) !important;
+  transition:transform .14s ease,box-shadow .14s ease;
+}
+#ll-overlay.lfx-on #ll-obody .hl-tile:active{
+  translate:0 5px;
+  box-shadow:0 2px 0 var(--c,#17263b),0 6px 10px rgba(25,35,90,.14) !important;
+}
+#ll-overlay.lfx-on #ll-obody .hl-tile.done{
+  background:linear-gradient(180deg,#ffffff 0%,#dcfce7 100%) !important;
+}
+#ll-overlay.lfx-on #ll-obody .hl-tile.next{
+  background:linear-gradient(180deg,#fffef3 0%,#ffe885 100%) !important;
+  box-shadow:0 7px 0 #d99b00,0 0 0 5px rgba(255,217,59,.75) !important;
+}
+body.ll-tab-learn:not(.ll-teen) #learnGrid .ll-pathcard{
+  border:3.5px solid #17263b;
+  border-radius:26px;
+  background:linear-gradient(180deg,#ffffff 0%,#f0f9ff 100%);
+  box-shadow:0 8px 0 #17263b,0 14px 24px rgba(23,38,59,.14);
+  transition:transform .14s ease,box-shadow .14s ease;
+}
+body.ll-tab-learn:not(.ll-teen) #learnGrid .ll-pathcard:nth-child(4n+1){background:linear-gradient(180deg,#ffffff 0%,#fff3c4 100%)}
+body.ll-tab-learn:not(.ll-teen) #learnGrid .ll-pathcard:nth-child(4n+2){background:linear-gradient(180deg,#ffffff 0%,#d9f2ff 100%)}
+body.ll-tab-learn:not(.ll-teen) #learnGrid .ll-pathcard:nth-child(4n+3){background:linear-gradient(180deg,#ffffff 0%,#ffe0f0 100%)}
+body.ll-tab-learn:not(.ll-teen) #learnGrid .ll-pathcard:nth-child(4n+4){background:linear-gradient(180deg,#ffffff 0%,#dcfce7 100%)}
+body.ll-tab-learn:not(.ll-teen) #learnGrid .ll-pathcard:active{
+  translate:0 5px;
+  box-shadow:0 3px 0 #17263b,0 6px 12px rgba(23,38,59,.12);
+}
+#ll-overlay.lfx-on #ll-obody .lsn-intro,
+#ll-overlay.lfx-on #ll-obody .lsn-progress,
+#ll-overlay.lfx-on #ll-obody .curr-head{
+  border-radius:22px !important;box-shadow:0 8px 20px rgba(25,35,90,.14) !important;
+}
+
+/* ---------- Hoot comes alive ---------- */
+#ll-overlay.lfx-on .hl-hoot svg,
+#ll-overlay.lfx-on #panel-little .lt-hoot:not(.is-speaking) svg{
+  animation:lfxHoot 3.2s ease-in-out infinite;transform-origin:50% 90%;
+}
+#ll-overlay.lfx-on .hl-hoot{position:relative}
+#ll-overlay.lfx-on .hl-hoot::after{
+  content:"";position:absolute;left:18%;right:18%;bottom:-4px;height:8px;border-radius:50%;
+  background:rgba(25,35,90,.18);animation:lfxShadow 3.2s ease-in-out infinite;
+}
+
+/* speech bubble pops in each time Hoot says something new */
+#ll-overlay.lfx-on .hl-bubble,
+#ll-overlay.lfx-on #panel-little .lt-bubble{
+  background:linear-gradient(180deg,#fff 0%,#fffdf3 100%) !important;
+}
+#ll-overlay.lfx-on .lfx-pop{animation:lfxPop .42s cubic-bezier(.2,1.6,.4,1)}
+
+/* question line gets a friendly sparkle */
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-q.lfx-pop{animation:lfxPop .42s cubic-bezier(.2,1.6,.4,1)}
+
+/* ---------- Answer cards: candy 3D tiles ---------- */
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt,
+#ll-overlay.lfx-on #ll-obody .hl-opt,
+#ll-overlay.lfx-on #ll-obody .hl-item{
+  --lfx-tint:#fff;
+  background:linear-gradient(180deg,#ffffff 0%,#ffffff 38%,var(--lfx-tint) 100%) !important;
+  box-shadow:0 8px 0 var(--lfx-deep),0 14px 22px rgba(25,35,90,.18) !important;
+  border-color:#17263b !important;
+  transition:transform .14s ease,box-shadow .14s ease,background .2s ease !important;
+  position:relative;overflow:visible;
+}
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt:nth-child(4n+1),
+#ll-overlay.lfx-on #ll-obody .hl-opt:nth-child(4n+1),
+#ll-overlay.lfx-on #ll-obody .hl-item:nth-child(4n+1){--lfx-tint:var(--lfx-t1)}
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt:nth-child(4n+2),
+#ll-overlay.lfx-on #ll-obody .hl-opt:nth-child(4n+2),
+#ll-overlay.lfx-on #ll-obody .hl-item:nth-child(4n+2){--lfx-tint:var(--lfx-t2)}
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt:nth-child(4n+3),
+#ll-overlay.lfx-on #ll-obody .hl-opt:nth-child(4n+3),
+#ll-overlay.lfx-on #ll-obody .hl-item:nth-child(4n+3){--lfx-tint:var(--lfx-t3)}
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt:nth-child(4n+4),
+#ll-overlay.lfx-on #ll-obody .hl-opt:nth-child(4n+4),
+#ll-overlay.lfx-on #ll-obody .hl-item:nth-child(4n+4){--lfx-tint:var(--lfx-t4)}
+/* Colour lessons: plain white cards so the tile never competes with the colour being taught */
+#ll-overlay.lfx-on.lfx-plain #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt,
+#ll-overlay.lfx-on.lfx-plain #ll-obody .hl-opt,
+#ll-overlay.lfx-on.lfx-plain #ll-obody .hl-item{--lfx-tint:#f4f6ff !important}
+
+/* glossy shine strip */
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt::before,
+#ll-overlay.lfx-on #ll-obody .hl-opt::before,
+#ll-overlay.lfx-on #ll-obody .hl-item::before{
+  content:"";position:absolute;left:10%;right:10%;top:6px;height:22%;border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,0));
+  pointer-events:none;
+}
+/* press = squish down onto its shadow (uses translate, never global transform !important) */
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt:not(:disabled):active,
+#ll-overlay.lfx-on #ll-obody .hl-opt:not(:disabled):active,
+#ll-overlay.lfx-on #ll-obody .hl-item:active{
+  translate:0 6px;
+  box-shadow:0 2px 0 var(--lfx-deep),0 6px 10px rgba(25,35,90,.16) !important;
+}
+/* deal-in: cards bounce in one after another (skipped while a hint/nudge/answer state is showing) */
+#ll-overlay.lfx-on #ll-obody .lsn-opts.lfx-deal > .lsn-opt:not(.right):not(.wrong):not(.lt-gold):not(.lsn-idle-nudge):not(.lsn-hint-pulse),
+#ll-overlay.lfx-on #ll-obody .hl-opt.hl-ready:not(.right):not(.wrong):not(.hint):not(.hl-nudge){
+  animation:lfxDeal .5s cubic-bezier(.2,1.5,.4,1) both;
+}
+#ll-overlay.lfx-on #ll-obody .lsn-opts.lfx-deal > .lsn-opt:nth-child(2),
+#ll-overlay.lfx-on #ll-obody .hl-opt.hl-ready:nth-child(2){animation-delay:.09s}
+#ll-overlay.lfx-on #ll-obody .lsn-opts.lfx-deal > .lsn-opt:nth-child(3),
+#ll-overlay.lfx-on #ll-obody .hl-opt.hl-ready:nth-child(3){animation-delay:.18s}
+#ll-overlay.lfx-on #ll-obody .lsn-opts.lfx-deal > .lsn-opt:nth-child(4),
+#ll-overlay.lfx-on #ll-obody .hl-opt.hl-ready:nth-child(4){animation-delay:.27s}
+
+/* right answer: bright green jelly + glow ring */
+#ll-overlay.lfx-on #ll-obody .ll-lesson-focus:not(.ny-lsn) .lsn-opt.right,
+#ll-overlay.lfx-on #ll-obody .hl-opt.right{
+  background:linear-gradient(180deg,#4ade80 0%,#22a454 55%,#1b7a34 100%) !important;
+  border-color:#14532d !important;color:#fff !important;
+  box-shadow:0 8px 0 #14532d,0 0 0 7px rgba(255,217,59,.85),0 0 34px 10px rgba(255,217,59,.55) !important;
+  animation:lfxJelly .7s cubic-bezier(.2,1.4,.4,1) both;
+  z-index:2;
+}
+
+/* ---------- Teach visuals sparkle ---------- */
+#ll-overlay.lfx-on #panel-little .lt-scene{
+  border-radius:24px !important;
+  box-shadow:inset 0 -10px 0 rgba(255,255,255,.35),0 8px 18px rgba(25,35,90,.14) !important;
+}
+#ll-overlay.lfx-on #ll-obody .cdot{box-shadow:inset -5px -7px 0 rgba(0,0,0,.14),inset 5px 6px 0 rgba(255,255,255,.35)}
+#ll-overlay.lfx-on #ll-obody .hl-swatch{box-shadow:inset -5px -7px 0 rgba(0,0,0,.14),inset 5px 6px 0 rgba(255,255,255,.35)}
+#ll-overlay.lfx-on #ll-obody .hl-item.on{
+  box-shadow:0 8px 0 var(--lfx-deep),0 0 0 7px #ffd93b,0 0 30px 8px rgba(255,217,59,.6) !important;
+  translate:0 -4px;
+}
+
+/* ---------- Buttons ---------- */
+#ll-overlay.lfx-on #ll-obody .hl-replay,
+#ll-overlay.lfx-on #panel-little .lsn-replay{
+  background:linear-gradient(180deg,#ffe766 0%,#ffd43b 60%,#f5b700 100%) !important;
+  box-shadow:0 6px 0 #c98a00,0 10px 18px rgba(25,35,90,.16) !important;
+}
+#ll-overlay.lfx-on #ll-obody .hl-replay:not(:disabled):active,
+#ll-overlay.lfx-on #panel-little .lsn-replay:active{translate:0 4px;box-shadow:0 2px 0 #c98a00 !important}
+#ll-overlay.lfx-on #ll-obody .hl-endbtns .hl-next:not(:disabled),
+#ll-overlay.lfx-on #panel-little .lsn-end-btn.lsn-next:not(:disabled){
+  background:linear-gradient(180deg,#7c5cff 0%,#5b3ee6 60%,#4527c9 100%) !important;
+  border-color:#2b1a85 !important;color:#fff !important;
+  box-shadow:0 7px 0 #2b1a85,0 12px 22px rgba(60,30,160,.3) !important;
+}
+#ll-overlay.lfx-on #ll-obody .hl-endbtns .hl-again,
+#ll-overlay.lfx-on #panel-little .lsn-end-btn.lsn-again{
+  background:linear-gradient(180deg,#fff 0%,#eef6ff 100%) !important;
+  box-shadow:0 6px 0 #9fb4d1 !important;
+}
+
+/* ---------- Progress dots become a star trail ---------- */
+#ll-overlay.lfx-on #ll-obody .hl-dots i,
+#ll-overlay.lfx-on #panel-little .lsn-rounds i{
+  width:18px;height:18px;transition:transform .25s ease,background .25s ease;
+}
+#ll-overlay.lfx-on #ll-obody .hl-dots i.on,
+#ll-overlay.lfx-on #panel-little .lsn-rounds i.on{
+  background:radial-gradient(circle at 35% 30%,#fff6b0,#ffc300 60%,#e09b00) !important;
+  border-color:#b37800 !important;
+  box-shadow:0 0 10px rgba(255,195,0,.8);
+  animation:lfxDotPop .45s cubic-bezier(.2,1.6,.4,1);
+}
+#ll-overlay.lfx-on #ll-obody .hl-dots i.now{animation:lfxBeat 1.2s ease-in-out infinite}
+
+/* ---------- End screen ---------- */
+#ll-overlay.lfx-on #ll-obody .hl-end:not([hidden]){animation:lfxCardIn .5s cubic-bezier(.2,1.4,.4,1) both}
+#ll-overlay.lfx-on #ll-obody .hl-sticker{
+  position:relative;display:inline-block;font-size:5rem !important;line-height:1.1;
+  animation:lfxSticker .9s cubic-bezier(.2,1.5,.4,1) both !important;
+  filter:drop-shadow(0 6px 10px rgba(25,35,90,.25));
+}
+#ll-overlay.lfx-on #ll-obody .hl-sticker::before{
+  content:"";position:absolute;left:50%;top:50%;width:190px;height:190px;margin:-95px 0 0 -95px;z-index:-1;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,rgba(255,210,60,.55) 0 12deg,transparent 12deg 30deg);
+  -webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%);
+  animation:lfxSpin 9s linear infinite;
+}
+#ll-overlay.lfx-on #panel-little .lsn.lsn-finished .lsn-end{animation:lfxCardIn .5s cubic-bezier(.2,1.4,.4,1) both}
+
+/* ---------- Confetti / star bursts (spawned by hw-learn-fx.js) ---------- */
+.lfx-fx{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.lfx-c{
+  position:absolute;width:12px;height:16px;border-radius:3px;will-change:transform,opacity;
+  animation:lfxBurst .95s cubic-bezier(.15,.7,.3,1) forwards;
+}
+.lfx-c.star{width:auto;height:auto;background:none !important;font-size:22px;line-height:1;color:#ffc300;text-shadow:0 0 6px rgba(255,255,255,.9)}
+.lfx-c.star::before{content:"★"}
+.lfx-r{
+  position:absolute;top:-24px;width:11px;height:15px;border-radius:3px;will-change:transform;
+  animation:lfxFall linear forwards;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes lfxSun{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes lfxSpin{to{transform:rotate(360deg)}}
+@keyframes lfxGlow{0%,100%{opacity:.30}50%{opacity:.46}}
+@keyframes lfxDrift{from{translate:0 0}to{translate:calc(100vw + 360px) 0}}
+@keyframes lfxFly{0%{translate:0 0}50%{translate:55vw -30px}100%{translate:calc(100vw + 120px) 10px}}
+@keyframes lfxFlap{from{transform:rotate(-26deg)}to{transform:rotate(8deg)}}
+@keyframes lfxFlapR{from{transform:rotate(26deg)}to{transform:rotate(-8deg)}}
+@keyframes lfxRise{
+  0%{transform:translate(0,0) scale(.6);opacity:0}
+  10%{opacity:.85}
+  50%{transform:translate(18px,-50vh) scale(1)}
+  90%{opacity:.6}
+  100%{transform:translate(-14px,-105vh) scale(1.1);opacity:0}
+}
+@keyframes lfxCardIn{0%{opacity:0;transform:translateY(18px) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes lfxHoot{
+  0%,100%{transform:translateY(0) rotate(0)}
+  25%{transform:translateY(-6px) rotate(-4deg)}
+  50%{transform:translateY(0) rotate(0)}
+  75%{transform:translateY(-6px) rotate(4deg)}
+}
+@keyframes lfxShadow{0%,50%,100%{transform:scaleX(1);opacity:.9}25%,75%{transform:scaleX(.8);opacity:.6}}
+@keyframes lfxPop{0%{transform:scale(.9);opacity:.4}60%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
+@keyframes lfxDeal{0%{opacity:0;transform:translateY(26px) scale(.7) rotate(-4deg)}70%{opacity:1;transform:translateY(-6px) scale(1.05) rotate(1deg)}100%{opacity:1;transform:none}}
+@keyframes lfxJelly{
+  0%{transform:scale(1)}25%{transform:scale(1.16,.88)}45%{transform:scale(.92,1.1)}
+  65%{transform:scale(1.06,.96)}85%{transform:scale(.99,1.02)}100%{transform:scale(1.04)}
+}
+@keyframes lfxDotPop{0%{transform:scale(.4)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes lfxBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes lfxSticker{0%{transform:scale(0) rotate(-200deg);opacity:0}70%{transform:scale(1.25) rotate(12deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes lfxBurst{
+  0%{transform:translate(0,0) rotate(0) scale(1);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.6);opacity:0}
+}
+@keyframes lfxFall{
+  0%{transform:translate(0,0) rotate(0)}
+  100%{transform:translate(var(--sway),calc(100vh + 60px)) rotate(var(--rot))}
+}
+
+/* ---------- Calm mode ---------- */
+@media (prefers-reduced-motion: reduce){
+  #ll-overlay.lfx-on .lfx-scene *,
+  #ll-overlay.lfx-on .lfx-scene *::before,
+  #ll-overlay.lfx-on .lfx-scene *::after,
+  #ll-overlay.lfx-on #ll-obody *,
+  #ll-overlay.lfx-on #ll-obody *::before{animation:none !important;transition:none !important}
+  #ll-overlay.lfx-on .lfx-parts,.lfx-fx{display:none !important}
+}
+/* Short landscape screens: keep the scene light so lessons stay above the fold */
+@media (max-height:520px){
+  .lfx-sun{width:70px;height:70px;top:16px}
+  .lfx-hills{height:26%;min-height:90px}
+}

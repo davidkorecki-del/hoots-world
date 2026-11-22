@@ -2809,7 +2809,8 @@ button.ws2-step { cursor: pointer; }
   box-shadow: 0 7px 0 #17263b;
   animation: khGoPulse 1.5s ease-in-out infinite;
 }
-#ll-obody .lsn-end { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+#ll-obody .lsn.lsn-finished .lsn-end { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+#ll-obody .lsn:not(.lsn-finished) .lsn-end { display: none; }
 #ll-obody .lsn-end .lsn-again { min-height: 54px; font-size: 1rem; }
 
 /* 6. Idle re-prompt visual nudges & spotlights (Finding 2) */
