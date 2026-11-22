@@ -965,9 +965,8 @@ body:not(.ll-teen) #gameGrid .pgcard:nth-child(4n+4){
 body:not(.ll-teen) #gameGrid .pgcard:active{
   translate:0 7px;
 }
-body:not(.ll-teen) .pg-songbtn{
-  background:linear-gradient(180deg,#fff9db 0%,#ffd43b 100%) !important;
-  box-shadow:0 6px 0 #17263b,0 10px 18px rgba(20,30,80,.18) !important;
+.pg-songs,.pg-songbtn,#ll-obody .pg-sing,#ll-obody .hl-song{
+  display:none !important;
 }
 
 /* ---------- Confetti & Star Bursts ---------- */

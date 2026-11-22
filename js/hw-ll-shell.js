@@ -1,5 +1,8 @@
 /* 3e53: game thumbnails inlined so the preview stays under the hosting file limit */
-var HW_THUMBS = {}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp (-212 KB cold load) */
+var HW_THUMBS = {
+  splash: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset=".55" stop-color="#38bdf8"/><stop offset="1" stop-color="#fef08a"/></linearGradient></defs><rect width="320" height="320" rx="44" fill="url(#g)"/><circle cx="255" cy="70" r="36" fill="#ffd43b"/><path d="M30 245 Q160 190 290 245 L320 320 L0 320 Z" fill="#4ade80"/><rect x="55" y="195" width="52" height="44" rx="6" fill="#fff3bf" stroke="#17263b" stroke-width="5"/><polygon points="48,195 81,166 114,195" fill="#f03e3e" stroke="#17263b" stroke-width="5"/><circle cx="220" cy="222" r="20" fill="#fff" stroke="#17263b" stroke-width="4"/><circle cx="220" cy="194" r="14" fill="#fff" stroke="#17263b" stroke-width="4"/><path d="M55 78 a32 32 0 0 1 58 -12 a36 36 0 0 1 64 8 a28 28 0 0 1 12 52 H55 a26 26 0 0 1 0 -48 Z" fill="#312e81" stroke="#17263b" stroke-width="5"/><polygon points="122,122 98,166 120,166 106,204 148,154 124,154 140,122" fill="#ffd43b" stroke="#17263b" stroke-width="4"/></svg>'),
+  shapes: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"><defs><linearGradient id="n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070b1e"/><stop offset=".6" stop-color="#1e1b4b"/><stop offset="1" stop-color="#3b0764"/></linearGradient></defs><rect width="320" height="320" rx="44" fill="url(#n)"/><g stroke="#ffd43b" stroke-width="5" stroke-linecap="round"><line x1="160" y1="44" x2="160" y2="18"/><line x1="160" y1="186" x2="160" y2="212"/><line x1="88" y1="115" x2="62" y2="115"/><line x1="232" y1="115" x2="258" y2="115"/><line x1="108" y1="64" x2="88" y2="44"/><line x1="212" y1="64" x2="232" y2="44"/><line x1="108" y1="166" x2="88" y2="186"/><line x1="212" y1="166" x2="232" y2="186"/></g><circle cx="160" cy="115" r="52" fill="none" stroke="#ff4d6d" stroke-width="6" stroke-dasharray="10 12"/><circle cx="160" cy="115" r="78" fill="none" stroke="#38bdf8" stroke-width="5" stroke-dasharray="8 14"/><circle cx="72" cy="70" r="6" fill="#ffd43b"/><circle cx="248" cy="76" r="7" fill="#ff7eb6"/><circle cx="80" cy="160" r="6" fill="#4ade80"/><circle cx="244" cy="156" r="6" fill="#38bdf8"/><text x="160" y="132" font-size="56" text-anchor="middle">🦁</text><rect x="0" y="256" width="320" height="64" fill="#0f172a"/></svg>')
+}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp (-212 KB cold load) */
 /* Hoot's World layout preview 2 — v63 shell routing + data-to-card mapping.
    Does not rewrite Muse game, tutor, or lesson internals. */
 (function () {
@@ -33,8 +36,8 @@ var HW_THUMBS = {}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp 
     { key: "dance", title: "Dance Party", cat: "Music", emo: "💃", color: "#F5A623" },
     { key: "animals", title: "Animal Homes", cat: "Nature", emo: "🏠", color: "#E0457B" },
     { key: "piano", title: "Rainbow Piano", cat: "Music", emo: "🎹", color: "#3A56D4" },
-    { key: "splash", title: "Color Splash", cat: "Colours", emo: "🎨", color: "#0B8A5F" },
-    { key: "shapes", title: "Shape Hunt", cat: "Shapes", emo: "🔷", color: "#F5A623" },
+    { key: "splash", title: "Thunder Weather Machine", cat: "Weather", emo: "⛈️", color: "#0096C7" },
+    { key: "shapes", title: "Fireworks Night", cat: "Fireworks", emo: "🎆", color: "#7209B7" },
     { key: "feed", title: "Feed Hoot", cat: "Play", emo: "😋", color: "#E0457B" },
     { key: "peek", title: "Peekaboo Forest", cat: "Play", emo: "🌳", color: "#3A56D4" },
     { key: "find", title: "Find It!", cat: "Looking", emo: "🔎", color: "#0B8A5F" },
@@ -145,7 +148,7 @@ var HW_THUMBS = {}; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp 
   var TODAY_PLAN = {
     little: [
       { kind: "lesson", title: "Colour names", emo: "🎨", tags: ["Colours", "Listen"], color: "#E0457B", blurb: "Hoot's pick for today — name red, yellow and blue with the owl tutor." },
-      { kind: "game", title: "Color Splash", key: "splash", emo: "🎨", tags: ["Game", "Colours"], color: "#3A56D4", blurb: "Splash the right colour. A 5–8 minute play." },
+      { kind: "game", title: "Thunder Weather Machine", key: "splash", emo: "⛈️", tags: ["Game", "Weather"], color: "#0096C7", blurb: "Pull levers to make thunder storms, snow, kites and rainbow sunshine!" },
       { kind: "shelf", title: "Colour Bead Sorting", emo: "📿", tags: ["Work shelf", "Colours"], color: "#0B8A5F", blurb: "A quiet shelf work: sort beads by colour." },
       { kind: "outdoor", title: "Leaf Hunt Walk", emo: "🍃", tags: ["Outdoor", "Nature"], color: "#F5A623", blurb: "An Indoor / Outdoor adventure: collect three different leaves." }
     ],
@@ -1222,7 +1225,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var party = (window.HootGames ? window.HootGames.list : []).map(function (g) {
       return '<button type="button" class="gcard pgcard" data-pgame="' + g.key + '"><span class="pg-ico" aria-hidden="true">' + g.emo + "</span><b>" + esc(g.title) + "</b><small>New · with Hoot</small></button>";
     }).join("");
-    var HG = window.HootGames, songs = HG && HG.songs && HG.songs.length ? '<h2 class="pg-rowh">🎵 Sing with Hoot</h2><div class="pg-songs">' + HG.songs.map(function (sg) { return HG.songBtn(sg, "pg-songbtn"); }).join("") + "</div>" : "";
+    var songs = ""; /* Dawid ruling: remove Sing with Hoot */
     var cards = (party ? '<h2 class="pg-rowh">🎉 Hoot\'s Party Games</h2><div class="pg-row">' + party + "</div>" + songs + '<h2 class="pg-rowh">Hoot\'s picks</h2><div id="gameGridPicks" class="pg-grid">' : "") + picks.map(card).join("") + (party ? "</div>" : "") +
       '<details class="ll-moregames"' + (state.moreGames ? " open" : "") + '><summary>More games (' + more.length + ')</summary><div id="gameGridMore">' + more.map(card).join("") + "</div></details>";
     return '<div class="ll-kidbar">' + kidbarHtml() + '</div><section class="ll-card ll-hero" style="--k:' + state.profile.color + '"><div class="big">' + brownHootFace() + '</div><div class="htxt"><h2>Hoot\'s Games</h2><p class="hoot-line">Pick a game — they all open here, inside Hoot\'s World.</p></div></section><div id="gameGrid">' + cards + "</div>" + wc2MissionsEntryHtml() + we2CarEntryHtml(); /* Wave E2: car mode entry */
