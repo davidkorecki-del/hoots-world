@@ -3,896 +3,2012 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="rocket";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
-
+<script src="js/hoot-game-head.js?v=llprev3e103"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="color-scheme" content="light" />
-
-<title>Rocket Count-Up</title>
+<title>3D Rocket Count-Up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
-    --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#d84a3d; --teal:#17bebb; --leaf:#57cc62; --leaf-dark:#3da147;
-  }
-  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root{ --ink:#131d36; --gold:#ffd43b; --outline:#131d36; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
   [hidden]{ display:none !important; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#141433; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
-    background:linear-gradient(180deg,#0d1030 0%,#1d1d4e 34%,#43307a 62%,#8a4a7d 84%,#c65f5e 100%); }
+  html,body{ margin:0; width:100%; height:100%; overflow:hidden; font-family:"Nunito",system-ui,sans-serif; background:#090d24; touch-action:none; }
 
-  /* ---------- dusk sky decor ---------- */
-  .bg-star{ position:absolute; color:#ffe98a; line-height:1; pointer-events:none; animation:twinkleStar 1.8s ease-in-out infinite alternate; }
-  @keyframes twinkleStar{ from{ opacity:.4; transform:scale(.8);} to{ opacity:1; transform:scale(1.15);} }
-  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
-  #moon{ top:64px; right:10px; width:64px; height:64px; z-index:1; filter:drop-shadow(0 0 16px rgba(255,240,180,.5)); }
-  #moon svg{ width:100%; height:100%; display:block; }
-  #moon:active{ transform:scale(.92); }
-  #moon.glow{ animation:moonGlow .7s ease-in-out 2 alternate; }
-  @keyframes moonGlow{ from{ filter:drop-shadow(0 0 10px rgba(255,240,180,.4));} to{ filter:drop-shadow(0 0 30px rgba(255,240,180,.95));} }
-  .firefly{ z-index:2; width:30px; height:30px; display:grid; place-items:center; animation:flyWander 9s ease-in-out infinite alternate; }
-  .firefly i{ width:9px; height:9px; border-radius:50%; background:#ffe98a; box-shadow:0 0 12px 4px rgba(255,233,138,.75); display:block; animation:flyBlink 2.6s ease-in-out infinite; }
-  @keyframes flyBlink{ 0%,100%{ opacity:.25;} 50%{ opacity:1;} }
-  @keyframes flyWander{ 0%{ transform:translate(0,0);} 50%{ transform:translate(26px,-22px);} 100%{ transform:translate(-16px,-6px);} }
-  .firefly.blink i{ animation:flyBlink .18s ease-in-out 6; }
+  #stage{ position:fixed; inset:0; width:100%; height:100dvh; overflow:hidden; }
+  #glCanvas{ position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1; touch-action:none; }
 
-  /* ---------- HUD ---------- */
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(6,10,40,.4),0 8px 16px rgba(6,10,40,.3); cursor:pointer; transition:transform .12s ease; }
-  .round-btn:active{ transform:scale(.9); }
-  .round-btn svg{ width:25px; height:25px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(6,10,40,.35); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
-  #starBank .star-ic{ width:25px; height:25px; }
-  #starBank.bump{ animation:bankBump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bankBump{ 0%{ transform:scale(1);} 40%{ transform:scale(1.16) rotate(-3deg);} 100%{ transform:scale(1);} }
-
-  /* ---------- mission card + fuel gauge ---------- */
-  #targetCard{ position:relative; z-index:6; margin:8px auto 0; display:flex; align-items:center; gap:12px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(6,10,40,.3),0 12px 22px rgba(6,10,40,.3); padding:7px 10px 7px 16px; max-width:min(94vw,520px); }
-  #targetCard.new-target{ animation:tcIn .45s cubic-bezier(.34,1.7,.5,1); }
-  @keyframes tcIn{ 0%{ transform:scale(.8); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
-  #targetMain{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(20px,5.6vw,28px); line-height:1.08; color:#43307a; }
-  .tc-label{ font-weight:900; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
-  #fuelGauge{ display:flex; gap:3px; margin-top:5px; }
-  #fuelGauge i{ width:16px; height:11px; border-radius:4px; background:#e3e9f4; border:2px solid #c3d2e6; display:block; }
-  #fuelGauge i.on{ background:linear-gradient(180deg,#ffb703,#ff7b3c); border-color:#e07f00; box-shadow:0 0 7px rgba(255,150,50,.7); }
-  #hearBtn{ width:44px; height:44px; flex:0 0 auto; border-radius:50%; border:3px solid #ffe1a8; background:#fff6dd; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(232,169,12,.35); }
-  #hearBtn:active{ transform:scale(.9); }
-  #hearBtn svg{ width:23px; height:23px; }
-
-  /* ---------- scene ---------- */
-  #scene{ position:relative; flex:1 1 auto; min-height:0; z-index:1; }
-  #visual{ position:absolute; z-index:3; left:0; right:34%; top:2%; min-height:74px; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:7px; padding:4px 10px; }
-  .track-chip{ min-width:46px; height:46px; padding:0 8px; border-radius:14px; background:rgba(255,253,246,.96); border:3px solid #fff; box-shadow:0 4px 0 rgba(6,10,40,.3); display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; color:#43307a; }
-  .track-chip.qmark{ background:var(--sun); color:#7a4d00; border-color:#ffe9a8; }
-  .track-arrow{ color:#ffe98a; font-size:22px; font-weight:900; text-shadow:0 2px 6px rgba(0,0,0,.4); }
-  .op-sign{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:26px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.45); }
-  .star-group{ display:inline-flex; flex-wrap:wrap; gap:2px; max-width:130px; justify-content:center; }
-  .star-group svg{ width:24px; height:24px; }
-  #visual.scatter .star-group{ max-width:none; }
-  .count-star{ position:absolute; width:30px; height:30px; }
-  .count-star svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 0 6px rgba(255,210,80,.6)); }
-  .count-star.bounce{ animation:starBounce .5s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes starBounce{ 0%{ transform:translateY(0) scale(1);} 40%{ transform:translateY(-13px) scale(1.25);} 100%{ transform:translateY(0) scale(1);} }
-  /* rocket + pad */
-  #padBase{ position:absolute; z-index:1; right:2%; bottom:15%; width:clamp(150px,38vw,220px); height:26px; background:radial-gradient(ellipse at center,#5b6690 0%,#39406b 70%,rgba(57,64,107,0) 100%); border-radius:50%; }
-  #rocketWrap{ position:absolute; z-index:4; right:5%; bottom:17%; width:clamp(104px,27vw,150px); transform-origin:50% 100%; }
-  #rocketWrap svg{ width:100%; display:block; overflow:visible; filter:drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
-  #rocketWrap.tremble{ animation:rocketTremble .3s ease-in-out infinite; }
-  @keyframes rocketTremble{ 0%,100%{ transform:translate(0,0) rotate(0);} 25%{ transform:translate(.8px,0) rotate(.5deg);} 75%{ transform:translate(-.8px,0) rotate(-.5deg);} }
-  #rocketWrap.tremble-hard{ animation:rocketTremble .16s ease-in-out infinite; }
-  #rocketWrap.wobble{ animation:rocketWobble .45s ease-in-out 2; }
-  @keyframes rocketWobble{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-6deg);} 75%{ transform:rotate(6deg);} }
-  #flame{ opacity:0; transform-box:fill-box; transform-origin:50% 0%; }
-  #rocketWrap.launching #flame{ opacity:1; animation:flameFlick .12s ease-in-out infinite alternate; }
-  @keyframes flameFlick{ from{ transform:scaleY(.8);} to{ transform:scaleY(1.25);} }
-  .smoke{ position:absolute; z-index:3; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 70%); pointer-events:none; }
-  /* fuel tank segments beside rocket */
-  #tank{ position:absolute; z-index:4; right:calc(5% + clamp(104px,27vw,150px) + 6px); bottom:17%; display:flex; flex-direction:column-reverse; gap:3px; }
-  #tank i{ width:17px; height:12px; border-radius:4px; background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.4); display:block; }
-  #tank i.on{ background:linear-gradient(180deg,#ffb703,#ff7b3c); border-color:#ffd28a; box-shadow:0 0 8px rgba(255,150,50,.8); }
-  /* number pods */
-  #podRow{ position:absolute; z-index:5; left:0; right:0; bottom:2%; display:flex; justify-content:center; gap:10px; padding:0 10px; flex-wrap:wrap; }
-  .pod{ width:clamp(62px,17vw,78px); height:clamp(62px,17vw,78px); border-radius:50%; border:3px solid #fff; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,34px); color:#fff; box-shadow:0 6px 0 rgba(6,10,40,.45),0 12px 20px rgba(6,10,40,.35); transition:transform .12s ease; position:relative; }
-  .pod:active{ transform:scale(.9); }
-  .pod.p1{ background:radial-gradient(circle at 35% 30%,#7fd4ff,#2f8fc4); }
-  .pod.p2{ background:radial-gradient(circle at 35% 30%,#ffb3c8,#e0577f); }
-  .pod.p3{ background:radial-gradient(circle at 35% 30%,#a5e8ae,#3da147); }
-  .pod.p4{ background:radial-gradient(circle at 35% 30%,#d3b8ff,#7a4fd0); }
-  .pod.used{ visibility:hidden; }
-  .pod.wrong{ animation:podWiggle .4s ease-in-out; }
-  @keyframes podWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-7deg);} 75%{ transform:rotate(7deg);} }
-  .pod.dim{ opacity:.45; filter:grayscale(.5); }
-  /* planets during flight */
-  #planetLayer{ position:absolute; inset:0; z-index:5; pointer-events:none; }
-  .planet{ position:absolute; border:none; background:none; padding:0; cursor:pointer; pointer-events:auto; animation:planetDrift 7s ease-in-out infinite alternate; }
-  .planet svg{ width:100%; display:block; filter:drop-shadow(0 0 12px rgba(160,190,255,.5)); }
-  @keyframes planetDrift{ from{ transform:translateY(0) rotate(-3deg);} to{ transform:translateY(16px) rotate(3deg);} }
-  .planet:active{ transform:scale(.9); }
-
-  /* ---------- Hoot row ---------- */
-  #groundRow{ position:relative; z-index:6; display:flex; align-items:flex-end; gap:6px; padding:0 10px max(8px,env(safe-area-inset-bottom)); }
-  #hootZone{ display:flex; align-items:flex-end; gap:8px; flex:1 1 auto; min-width:0; }
-  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,29vw,168px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(0,0,0,.4)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
-  #hootFig svg{ width:100%; display:block; overflow:visible; }
-  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-4px) rotate(-1deg);} }
-  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
-  @keyframes hootJump{ 0%{ transform:translateY(0);} 35%{ transform:translateY(-26px) rotate(-3deg);} 70%{ transform:translateY(2px);} 100%{ transform:translateY(0);} }
-  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
-  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
-  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
-  @keyframes hootTalk{ from{ transform:translateY(0) scale(1);} to{ transform:translateY(-2px) scale(1.018);} }
-  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
-  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
-  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
-  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
-  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
-  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
-  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
-  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
-  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
-  @keyframes blink{ 0%,92%,100%{ transform:scaleY(1);} 95%{ transform:scaleY(.08);} }
-  #bubbleCol{ flex:1 1 auto; min-width:0; padding-bottom:6px; }
-  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(6,10,40,.35),0 12px 24px rgba(6,10,40,.3); padding:10px 14px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(15px,4.1vw,19px); line-height:1.3; color:var(--ink); }
-  #bubble::after{ content:""; position:absolute; left:-11px; bottom:16px; border:6px solid transparent; border-right:9px solid var(--paper); }
-  #bubble .b-big{ color:#7a4fd0; font-size:1.22em; font-weight:700; }
-  #hootName{ display:inline-block; margin-top:5px; margin-left:8px; background:#ffe9a8; color:#43307a; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.22em; padding:2px 10px 2px 12px; border-radius:99px; }
-
-  .fly-clone{ position:absolute; z-index:9; pointer-events:none; border-radius:50%; display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:700; color:#fff; }
-  .particle{ position:absolute; z-index:9; width:10px; height:10px; border-radius:3px; pointer-events:none; }
-  .confetti{ position:absolute; z-index:9; width:11px; height:11px; border-radius:3px; pointer-events:none; }
-
-  /* ---------- start panel / win ---------- */
-  #startPanel{ position:absolute; z-index:8; left:50%; top:45%; transform:translate(-50%,-50%); width:min(94vw,452px); background:rgba(255,253,246,.98); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(6,10,40,.3),0 24px 48px rgba(6,10,40,.4); padding:16px 18px 14px; text-align:center; max-height:92dvh; overflow:auto; }
-  #startPanel[hidden]{ display:none; }
-  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,36px); margin:0; color:var(--ink); }
-  #startPanel h1 .t-a{ color:#7a4fd0; } #startPanel h1 .t-b{ color:var(--coral-dark); }
-  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15px; line-height:1.4; margin:7px 0 0; }
-  .mode-row{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin:13px 0 4px; }
-  .mode-chip{ flex:1 1 46%; border:3px solid #dcebf5; background:#f2f9ff; border-radius:16px; padding:8px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15.5px; color:var(--ink); cursor:pointer; line-height:1.15; }
-  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
-  .mode-chip.selected{ border-color:var(--sun); background:#fff6dd; box-shadow:0 4px 0 rgba(232,169,12,.4); }
-  #playBtn{ margin-top:12px; border:none; cursor:pointer; background:#7a4fd0; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:23px; padding:12px 44px; border-radius:999px; box-shadow:0 6px 0 #4c2a8f,0 14px 24px rgba(76,42,143,.4); transition:transform .12s ease; }
-  #playBtn:active{ transform:scale(.95); }
-  #winOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(10,12,40,.45); padding:14px; }
-  #winOverlay[hidden]{ display:none; }
-  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 12px 0 rgba(6,10,40,.3),0 30px 60px rgba(6,10,40,.45); padding:20px 22px 18px; text-align:center; width:min(94vw,470px); max-height:92dvh; overflow:auto; }
-  #winStars{ font-size:30px; letter-spacing:6px; color:#e3edf5; line-height:1; }
-  #winStars span{ display:inline-block; }
-  #winStars span.lit{ color:var(--sun); text-shadow:0 0 14px rgba(255,201,60,.8); animation:starLit .4s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes starLit{ 0%{ transform:scale(.3) rotate(-30deg);} 100%{ transform:scale(1) rotate(0);} }
-  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:8px 0 0; }
-  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.45; margin:8px 0 0; }
-  #winChips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
-  .chip{ background:#efe9fd; border:2px solid #d3b8ff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; padding:4px 12px; border-radius:999px; }
-  .chip.reading{ background:var(--sun); border-color:#e8a90c; transform:scale(1.15); }
-  .win-btns{ display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-  .win-btn{ border:none; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; padding:11px 24px; border-radius:999px; }
-  #againBtn{ background:#7a4fd0; color:#fff; box-shadow:0 5px 0 #4c2a8f; }
-  #winHomeBtn{ background:#eef5fb; color:var(--ink); box-shadow:0 5px 0 #cfdfec; }
-  .win-btn:active{ transform:scale(.95); }
-
-  @media (max-height:500px) and (min-width:560px){
-    #hootFig{ width:clamp(80px,24vh,104px); }
-    #rocketWrap{ width:clamp(76px,20vh,104px); bottom:20%; }
-    #targetCard{ margin-top:4px; padding:4px 8px 4px 12px; }
-    #startPanel{ top:50%; padding:10px 16px; }
-    .pod{ width:54px; height:54px; font-size:24px; }
-    #visual{ min-height:56px; }
+  /* Top HUD */
+  #hud{
+    position:absolute; top:0; left:0; right:0; z-index:10;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) 14px 0 64px;
+    pointer-events:none;
   }
-  @media (prefers-reduced-motion:reduce){
-    .firefly,.bg-star{ animation:none !important; }
+  .hud-left{ display:flex; align-items:center; gap:10px; pointer-events:auto; max-width:min(68vw, 620px); }
+  #hootBtn{
+    width:68px; height:68px; flex:0 0 68px; border-radius:50%;
+    border:4px solid #fff;
+    background:radial-gradient(circle at 35% 30%, #fff4b8, #ffc93c 65%, #f09800 100%);
+    box-shadow:0 6px 0 var(--outline), 0 0 22px rgba(255,212,59,.6);
+    padding:4px; cursor:pointer;
+    animation:hootBob 2.2s ease-in-out infinite alternate;
   }
-  /* Wave 5C-2 (Big & Physical): hero rocket ship & giant glossy 3D fuel pods in iPad landscape */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #rocketWrap{ width:clamp(168px,24vh,214px) !important; right:7% !important; bottom:16% !important; }
-    #rocketWrap svg{ filter:drop-shadow(0 14px 22px rgba(0,0,0,.45)) !important; }
-    .pod{
-      width:clamp(88px,13vh,108px) !important; height:clamp(88px,13vh,108px) !important;
-      font-size:clamp(36px,5.2vh,46px) !important; border:4px solid #fff !important;
-      box-shadow:0 8px 0 rgba(12,24,52,.38), 0 14px 24px rgba(0,0,0,.28), inset 0 6px 12px rgba(255,255,255,.45) !important;
-    }
-    #fuelGauge{ gap:5px !important; }
-    #fuelGauge i{ width:22px !important; height:15px !important; border-radius:6px !important; }
-    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(12,24,52,.28) !important; padding:8px 18px !important; }
+  #hootBtn:active{ transform:scale(.9); }
+  @keyframes hootBob{ from{ transform:translateY(0); } to{ transform:translateY(-5px); } }
+  #promptBubble{
+    background:rgba(255,254,248,.96); color:var(--ink);
+    border:4px solid var(--outline); border-radius:22px;
+    padding:10px 16px; font-family:"Fredoka",sans-serif; font-weight:700;
+    font-size:clamp(14px, 2.2vw, 18.5px); line-height:1.22;
+    box-shadow:0 6px 0 var(--outline), 0 12px 24px rgba(0,0,0,.35);
+  }
+  #promptBubble b{ color:#e11d48; }
+
+  .hud-right{ display:flex; align-items:center; gap:8px; pointer-events:auto; flex-wrap:wrap; justify-content:flex-end; }
+  #passportBar{
+    display:flex; align-items:center; gap:5px;
+    background:rgba(15,23,42,.86); border:3.5px solid #fde047;
+    border-radius:999px; padding:4px 10px; box-shadow:0 5px 0 var(--outline);
+  }
+  .pbadge{
+    width:36px; height:36px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.35); background:rgba(255,255,255,.12);
+    display:grid; place-items:center; font-size:19px; cursor:pointer; padding:0;
+    filter:grayscale(1) opacity(.38); transition:transform .35s cubic-bezier(.34,1.8,.5,1), filter .3s;
+  }
+  .pbadge.earned{
+    filter:none; border-color:#131d36;
+    background:radial-gradient(circle at 32% 28%, #fef08a, #facc15 65%, #d97706 100%);
+    box-shadow:0 0 14px rgba(250,204,21,.95);
+    animation:popBadge .55s cubic-bezier(.34,1.8,.5,1);
+  }
+  @keyframes popBadge{ 0%{ transform:scale(.4) rotate(-20deg); } 65%{ transform:scale(1.3) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
+
+  #starPill{
+    display:flex; align-items:center; gap:6px;
+    background:#fffef8; border:4px solid var(--outline); border-radius:999px;
+    padding:6px 14px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:20px; color:var(--ink);
+    box-shadow:0 5px 0 var(--outline);
+  }
+  #doneBtn{
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:17px;
+    padding:8px 16px; cursor:pointer; white-space:nowrap;
+    box-shadow:0 5px 0 var(--outline); text-shadow:0 2px 0 rgba(0,0,0,.35);
+  }
+  #doneBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--outline); }
+
+  /* Giant Center Countdown Banner */
+  #countdownBanner{
+    position:absolute; left:50%; top:34%; transform:translate(-50%, -50%) scale(.4);
+    z-index:15; pointer-events:none; opacity:0;
+    font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:clamp(74px, 16vw, 138px); color:#fde047;
+    text-shadow:0 8px 0 #131d36, 0 0 42px rgba(251,146,60,.95);
+    transition:transform .22s cubic-bezier(.34,1.8,.5,1), opacity .22s;
+    white-space:nowrap;
+  }
+  #countdownBanner.show{ opacity:1; transform:translate(-50%, -50%) scale(1); }
+
+  /* Flight Steer Hint Banner */
+  #flightBanner{
+    position:absolute; left:50%; bottom:120px; transform:translateX(-50%);
+    z-index:14; pointer-events:none;
+    background:rgba(15,23,42,.82); border:3.5px solid #38bdf8; border-radius:999px;
+    padding:8px 20px; color:#fff; font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:clamp(15px, 2.4vw, 20px); box-shadow:0 6px 20px rgba(0,0,0,.45);
+    white-space:nowrap;
+  }
+
+  /* Center Action Stage (Number Pods / Blast Off Dome / Next Planet Button) */
+  #actionStage{
+    position:absolute; left:0; right:0; bottom:94px; z-index:12;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    pointer-events:none; padding:0 12px;
+  }
+
+  /* Glossy 3D-Bevel Number Match Pods */
+  #podRow{
+    display:flex; align-items:center; justify-content:center; gap:clamp(12px, 3vw, 24px);
+    pointer-events:auto;
+  }
+  .num-pod{
+    position:relative; min-width:clamp(100px, 20vw, 138px); min-height:clamp(104px, 18vh, 132px);
+    border-radius:28px; border:5px solid #fff;
+    background:linear-gradient(180deg, #38bdf8 0%, #2563eb 100%);
+    box-shadow:0 9px 0 #131d36, 0 16px 30px rgba(0,0,0,.45), inset 0 6px 0 rgba(255,255,255,.45);
+    color:#fff; cursor:pointer; padding:8px 12px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    transition:transform .16s cubic-bezier(.34,1.8,.5,1), box-shadow .16s;
+  }
+  .num-pod:nth-child(2){ background:linear-gradient(180deg, #f472b6 0%, #db2777 100%); }
+  .num-pod:nth-child(3){ background:linear-gradient(180deg, #fbbf24 0%, #ea580c 100%); }
+  .num-pod:active{ transform:translateY(6px); box-shadow:0 3px 0 #131d36; }
+  .num-pod.hint-glow{
+    border-color:#fde047;
+    box-shadow:0 0 0 7px #fde047, 0 9px 0 #131d36, 0 0 34px rgba(253,224,71,.95);
+    animation:podPulse .55s ease-in-out infinite alternate;
+  }
+  @keyframes podPulse{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.07); } }
+  .num-pod.shake{ animation:podShake .4s ease-in-out; }
+  @keyframes podShake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-11px); } 75%{ transform:translateX(11px); } }
+  .pod-num{
+    font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:clamp(42px, 7vw, 58px); line-height:1;
+    text-shadow:0 4px 0 rgba(19,29,54,.45);
+  }
+  .pod-dots{
+    font-size:clamp(14px, 2.2vw, 18px); line-height:1.05; letter-spacing:1px;
+    filter:drop-shadow(0 2px 0 rgba(0,0,0,.35)); max-width:110px;
+  }
+
+  /* Giant Red 3D Dome BLAST OFF & Next Planet Buttons */
+  #launchBtn, #nextPlanetBtn{
+    pointer-events:auto;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    border:6px solid #fff; border-radius:999px;
+    padding:14px 34px; cursor:pointer;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:clamp(24px, 4.4vw, 34px); color:#fff;
+    text-shadow:0 3px 0 rgba(19,29,54,.45);
+    animation:blastPulse .55s ease-in-out infinite alternate;
+  }
+  #launchBtn{
+    background:radial-gradient(circle at 35% 25%, #fca5a5 0%, #ef4444 45%, #b91c1c 100%);
+    box-shadow:0 10px 0 #131d36, 0 0 38px rgba(239,68,68,.9);
+  }
+  #nextPlanetBtn{
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    box-shadow:0 10px 0 #131d36, 0 0 36px rgba(74,222,128,.85);
+  }
+  #launchBtn:active, #nextPlanetBtn:active{ transform:translateY(6px); }
+  @keyframes blastPulse{
+    from{ transform:scale(1); box-shadow:0 10px 0 #131d36, 0 0 0 0 rgba(253,224,71,.7); }
+    to{ transform:scale(1.07); box-shadow:0 10px 0 #131d36, 0 0 0 10px rgba(253,224,71,.95); }
+  }
+  .tap-finger{
+    display:inline-block; font-size:34px; line-height:1;
+    animation:fingerHop .5s ease-in-out infinite alternate;
+  }
+  @keyframes fingerHop{ from{ transform:translateY(0); } to{ transform:translateY(-8px) scale(1.15); } }
+
+  /* Bottom 3D Space Command Console */
+  #commandBar{
+    position:absolute; left:50%; bottom:max(10px, env(safe-area-inset-bottom));
+    transform:translateX(-50%); z-index:11;
+    width:min(96vw, 780px);
+    background:linear-gradient(180deg, rgba(30,41,82,.94) 0%, rgba(15,23,52,.96) 100%);
+    border:4px solid #38bdf8; border-radius:26px;
+    padding:8px 14px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    box-shadow:0 8px 0 #090d24, 0 14px 30px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.28);
+  }
+  .paint-row{ display:flex; align-items:center; gap:8px; }
+  .paint-lbl{
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:14px; color:#bae6fd;
+    white-space:nowrap;
+  }
+  .paint-dot{
+    width:44px; height:44px; border-radius:50%;
+    border:4px solid #fff; cursor:pointer; padding:0;
+    box-shadow:0 4px 0 #090d24, inset 0 4px 6px rgba(255,255,255,.45);
+    transition:transform .16s cubic-bezier(.34,1.8,.5,1);
+  }
+  .paint-dot:active{ transform:scale(.88); }
+  .paint-dot.on{ transform:scale(1.16); border-color:#fde047; box-shadow:0 0 0 3px #fde047, 0 4px 0 #090d24; }
+
+  .console-right{ display:flex; align-items:center; gap:8px; }
+  .ctrl-pill{
+    border:3.5px solid #131d36; border-radius:999px;
+    background:linear-gradient(180deg, #fde047 0%, #f59e0b 100%);
+    color:#131d36; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px;
+    padding:8px 14px; cursor:pointer; white-space:nowrap;
+    box-shadow:0 4px 0 #131d36;
+  }
+  .ctrl-pill:active{ transform:translateY(3px); box-shadow:0 1px 0 #131d36; }
+  #rangeBtn{
+    background:linear-gradient(180deg, #e0f2fe 0%, #7dd3fc 100%);
+  }
+
+  /* Win Overlay */
+  #winOverlay{
+    position:fixed; inset:0; z-index:40;
+    background:rgba(9,13,36,.74); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .win-card{
+    background:linear-gradient(180deg, #fffef8 0%, #fef3c7 100%);
+    border:6px solid var(--outline); border-radius:34px;
+    padding:26px 24px; text-align:center; max-width:440px; width:100%;
+    box-shadow:0 14px 0 var(--outline), 0 26px 50px rgba(0,0,0,.55);
+  }
+  .win-trophy{ font-size:74px; line-height:1; margin-bottom:8px; }
+  .win-card h2{ margin:0 0 8px; font-family:"Fredoka",sans-serif; font-size:34px; color:#131d36; }
+  .win-card p{ margin:0 0 18px; font-weight:800; font-size:18px; color:#334155; }
+  .big-play{
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:22px;
+    padding:12px 32px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
+  }
+
+  #fallbackNotice{
+    position:fixed; inset:0; z-index:50; background:#0f172a; color:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:24px; font-family:"Fredoka",sans-serif;
+  }
+
+  @media (max-width: 680px){
+    #passportBar{ display:none; }
+    .paint-lbl{ display:none; }
+    .paint-dot{ width:38px; height:38px; }
+    #actionStage{ bottom:86px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <button class="decor" id="moon" type="button" aria-label="Moon — tap for a glow">
-    <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M63 8 A40 40 0 1 0 92 58 A32 32 0 0 1 63 8 Z" fill="#fff3c4" stroke="#e8cf8a" stroke-width="3"/></svg>
-  </button>
-  <button class="decor firefly" type="button" style="left:10%;top:30%" aria-label="Firefly — tap to make it blink"><i></i></button>
-  <button class="decor firefly" type="button" style="left:20%;top:52%;animation-delay:-3s" aria-label="Firefly — tap to make it blink"><i></i></button>
-  <button class="decor firefly" type="button" style="right:38%;top:22%;animation-delay:-6s" aria-label="Firefly — tap to make it blink"><i></i></button>
+  <canvas id="glCanvas" aria-label="3D Rocket Space Launchpad"></canvas>
 
+  <!-- Top HUD -->
   <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+    <div class="hud-left">
+      <button id="hootBtn" type="button" aria-label="Tap Hoot to hear again">
+        <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
-      </button>
+      <div id="promptBubble" aria-live="polite">🚀 <b>3D ROCKET!</b> Tap the glowing <b>3D Gold Stars</b> floating around the island to fuel your rocket!</div>
     </div>
-    <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      <span id="starCount">0</span>
-    </div>
-  </div>
-
-  <div id="targetCard" style="display:none">
-    <div>
-      <div id="targetMain">Tap number 1!</div>
-      <div class="tc-label" id="tcLabel">Mission control Hoot says…</div>
-      <div id="fuelGauge" aria-label="Rocket fuel"></div>
-    </div>
-    <button id="hearBtn" type="button" aria-label="Hear the mission again">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-    </button>
-  </div>
-
-  <div id="scene">
-    <div id="visual"></div>
-    <div id="planetLayer"></div>
-    <div id="padBase"></div>
-    <div id="tank" aria-hidden="true"></div>
-    <div id="rocketWrap">
-      <svg viewBox="0 0 120 190" aria-hidden="true">
-        <g id="flame"><path d="M48 168 Q60 205 72 168 Q66 178 60 180 Q54 178 48 168 Z" fill="#ff7b3c"/><path d="M53 168 Q60 190 67 168 Q60 176 53 168 Z" fill="#ffc93c"/></g>
-        <path d="M22 150 Q6 172 4 186 L26 178 Q24 164 22 150 Z" fill="#e0577f"/>
-        <path d="M98 150 Q114 172 116 186 L94 178 Q96 164 98 150 Z" fill="#e0577f"/>
-        <path d="M60 4 Q92 44 92 108 L92 152 Q92 164 80 164 L40 164 Q28 164 28 152 L28 108 Q28 44 60 4 Z" fill="#eef3fa"/>
-        <path d="M60 4 Q92 44 92 108 L92 118 L28 118 L28 108 Q28 44 60 4 Z" fill="#ff6b5e"/>
-        <circle cx="60" cy="76" r="19" fill="#aee7ff" stroke="#2f8fc4" stroke-width="5"/>
-        <circle cx="53" cy="69" r="6" fill="#fff" opacity=".8"/>
-        <rect x="28" y="132" width="64" height="10" fill="#ffc93c"/>
-        <rect x="44" y="148" width="32" height="9" rx="4" fill="#b9c9dd"/>
-      </svg>
-    </div>
-    <div id="podRow"></div>
-  </div>
-
-  <div id="groundRow">
-    <div id="hootZone">
-      <button id="hootFig" type="button" aria-label="Mission control Hoot — tap to hear the mission again">
-        <svg viewBox="0 0 200 210" aria-hidden="true">
-          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
-          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
-          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
-          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
-          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
-          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
-          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
-          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
-          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
-          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
-          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
-          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <path d="M47 62 A56 56 0 0 1 153 62" stroke="#2f8fc4" stroke-width="6" fill="none" stroke-linecap="round"/>
-          <rect x="38" y="56" width="15" height="24" rx="7" fill="#2f8fc4"/>
-          <path d="M46 80 Q50 104 74 108" stroke="#2f8fc4" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <circle cx="78" cy="109" r="6" fill="#17324f"/>
-        </svg>
-      </button>
-      <div id="bubbleCol">
-        <div id="bubble">Mission control Hoot here! Count with me and we&rsquo;ll blast off to the stars!</div>
-        <span id="hootName">HOOT</span>
+    <div class="hud-right">
+      <div id="passportBar" aria-label="Visited planets">
+        <button type="button" class="pbadge" data-pl="0" title="Cheese Moon">🌕</button>
+        <button type="button" class="pbadge" data-pl="1" title="Rainbow Saturn">🪐</button>
+        <button type="button" class="pbadge" data-pl="2" title="Bouncy Mars">🔴</button>
+        <button type="button" class="pbadge" data-pl="3" title="Candy Star">🍬</button>
       </div>
+      <div id="starPill">⭐ <span id="starCount">0</span></div>
+      <button id="doneBtn" type="button">🏆 Done</button>
     </div>
   </div>
 
-  <div id="startPanel">
-    <h1><span class="t-a">Rocket</span> <span class="t-b">Count-Up</span></h1>
-    <p>Hoot is mission control! Count out loud with him, fuel the rocket number by number, and blast off past the planets!</p>
-    <div class="mode-row" role="group" aria-label="Choose how to play">
-      <button class="mode-chip selected" type="button" data-mode="countup">Count Up!<small>Tap 1, 2, 3… all the way to blast off</small></button>
-      <button class="mode-chip" type="button" data-mode="count">Count On<small>What number comes next?</small></button>
-      <button class="mode-chip" type="button" data-mode="add">Adding Up<small>Put two groups of stars together</small></button>
-      <button class="mode-chip" type="button" data-mode="stars">Count the Stars<small>How many stars can you see?</small></button>
-    </div>
-    <button id="playBtn" type="button">▶ Play</button>
+  <!-- Big 3-2-1 Countdown Banner -->
+  <div id="countdownBanner" aria-live="assertive">3</div>
+
+  <!-- Interactive Space Flight Banner -->
+  <div id="flightBanner" hidden>✨ Steer left or right to fly through the Rainbow Rings! ✨</div>
+
+  <!-- Phase Action Controls (Number Pods / BLAST OFF / Next Planet) -->
+  <div id="actionStage">
+    <div id="podRow" hidden></div>
+    <button id="launchBtn" type="button" hidden><span>🚀 BLAST OFF!</span><span class="tap-finger" aria-hidden="true">👆</span></button>
+    <button id="nextPlanetBtn" type="button" hidden><span>🚀 Next Planet!</span><span class="tap-finger" aria-hidden="true">👆</span></button>
   </div>
 
+  <!-- Bottom 3D Rocket Customizer & Booster Console -->
+  <div id="commandBar" role="group" aria-label="Rocket paint and controls">
+    <div class="paint-row">
+      <span class="paint-lbl">🎨 Paint:</span>
+      <button type="button" class="paint-dot on" data-col="red" style="background:linear-gradient(180deg,#ff6b6b,#dc2626)" aria-label="Red rocket"></button>
+      <button type="button" class="paint-dot" data-col="blue" style="background:linear-gradient(180deg,#60a5fa,#2563eb)" aria-label="Blue rocket"></button>
+      <button type="button" class="paint-dot" data-col="yellow" style="background:linear-gradient(180deg,#fde047,#eab308)" aria-label="Yellow rocket"></button>
+      <button type="button" class="paint-dot" data-col="pink" style="background:linear-gradient(180deg,#f472b6,#db2777)" aria-label="Pink rocket"></button>
+      <button type="button" class="paint-dot" data-col="green" style="background:linear-gradient(180deg,#4ade80,#16a34a)" aria-label="Green rocket"></button>
+    </div>
+    <div class="console-right">
+      <button type="button" id="rangeBtn" class="ctrl-pill">⭐ 1–5</button>
+      <button type="button" id="boostBtn" class="ctrl-pill">🔥 Boost!</button>
+    </div>
+  </div>
+
+  <!-- Win Overlay -->
   <div id="winOverlay" hidden>
-    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
-      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <h2 id="winTitle">BLAST OFF!</h2>
-      <p id="winRecap"></p>
-      <div id="winChips"></div>
-      <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">↻ Fly Again</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
-      </div>
+    <div class="win-card">
+      <div class="win-trophy" aria-hidden="true">🚀🪐🌕⭐</div>
+      <h2>Space Captain!</h2>
+      <p id="winMsg">You counted the golden stars, steered through rainbow rings, and explored 3D planets!</p>
+      <button id="againBtn" class="big-play" type="button">↻ Keep Flying</button>
     </div>
+  </div>
+
+  <div id="fallbackNotice" hidden>
+    <h2>🚀 3D Space View Needs WebGL</h2>
+    <p>Your browser disabled WebGL graphics. Please reload on Safari or Chrome.</p>
   </div>
 </div>
 
+<script src="js/three.min.js?v=llprev3e103"></script>
 <script>
 (function(){
-"use strict";
-  /* ================= CONSTANTS ================= */
-  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
-  var COUNTUP_GOAL=10, QUIZ_GOAL=5;
-  var PODCLS=["p1","p2","p3","p4"];
-
-  /* ================= STATE ================= */
-  var state="start";            /* start | playing | launch | won */
-  var mode="countup";           /* countup | count | add | stars */
-  var stars=0, praiseIdx=0, soundOn=true, dead=false;
-  var inputLock=false, roundToken=0, lastHintAt=0, wonFlag=false;
-  var fuel=0, fuelGoal=COUNTUP_GOAL;
-  var nextN=1, counted=[];
-  var mission=null, missionsDone=0;
-  var launchAnim=null, smokeTimer=null;
-
-  /* ================= ELMS ================= */
-  function $(id){ return document.getElementById(id); }
-  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
-      targetCard=$("targetCard"), targetMain=$("targetMain"), tcLabel=$("tcLabel"), fuelGauge=$("fuelGauge"),
-      starCount=$("starCount"), starBank=$("starBank"), visual=$("visual"), podRow=$("podRow"),
-      rocketWrap=$("rocketWrap"), tank=$("tank"), planetLayer=$("planetLayer"),
-      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"), winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars");
-
-  /* background stars */
-  (function makeBgStars(){
-    var glyphs=["★","✦","·","✧"];
-    for(var i=0;i<26;i++){
-      var s=document.createElement("span"); s.className="bg-star";
-      s.textContent=glyphs[i%glyphs.length];
-      s.style.left=(Math.random()*97)+"%"; s.style.top=(Math.random()*55)+"%";
-      s.style.fontSize=(8+Math.random()*9)+"px";
-      s.style.animationDelay=(-Math.random()*2)+"s";
-      scene.appendChild(s);
-    }
-  })();
-
-  /* ================= SOUND FX (WebAudio tones) ================= */
-  var AC=null;
-  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-  function tone(f0,f1,dur,type,vol,delay){
-    if(!soundOn) return; var ac=audio(); if(!ac) return;
-    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
-    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
-    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  "use strict";
+  if(typeof THREE === "undefined"){
+    document.getElementById("fallbackNotice").hidden = false;
+    return;
   }
-  function fuelSound(){ tone(400,900,0.24,"sine",0.1); tone(600,1200,0.2,"triangle",0.07,0.05); }
-  function wobbleSound(){ tone(220,90,0.3,"sawtooth",0.07); }
-  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.09); tone(1560,1560,0.12,"sine",0.09,0.07); }
-  function launchSound(){ tone(120,600,1.6,"sawtooth",0.06); tone(200,1200,1.4,"sine",0.07,0.1); }
-  function starSound(){ tone(990,990,0.08,"triangle",0.09); tone(1320,1320,0.1,"triangle",0.09,0.06); tone(1760,1760,0.14,"triangle",0.08,0.12); }
 
-  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-     Every clip goes through this single queue on a single Audio element.
-     A line that has started always finishes: the next clip is only loaded
-     from the 'ended' event, never from a timer, and pending (not yet
-     started) lines can be replaced when the game moves on. The hub's
-     injected voice governor arbitrates this element against every other
-     voice in the app the same way. No device text-to-speech anywhere.
-     Mission control Hoot counts with the recorded number clips. */
-  var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-  function getVoice(){
-    if(!voiceEl){
-      voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
-      voiceEl.addEventListener("error",vNext);
-    }
-    return voiceEl;
-  }
-  function hubQuiet(){
+  /* =========================================================================
+     1. VOICE ENGINE (100% Real Studio Hoot Clips, Atomic Generation Guard)
+     ========================================================================= */
+  var voiceA = new Audio();
+  var voiceGen = 0, lastStepClips = null, idleHelpTimer = null, idleHelpReminded = false;
+  var won = false;
+
+  function hasClip(id){
     try{
-      var d=window.parent&&window.parent.document;
-      if(!d||d===document) return false;
-      var b=d.querySelector('.voice-btn[data-voice="off"]');
-      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
-    }catch(e){ return false; }
-  }
-  function silenced(){ return !soundOn||hubQuiet(); }
-  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
-  function vNext(){
-    if(!vPlaying){ pumpVoice(); return; }
-    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
-  }
-  function pumpVoice(){
-    if(vPlaying||dead) return;
-    var item=vQueue.shift(); if(!item) return;
-    if(item.onStart){ try{ item.onStart(); }catch(e){} }
-    if(silenced()){ pumpVoice(); return; }
-    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
-    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
-    var p=el.play();
-    if(p&&p.catch) p.catch(function(){ vNext(); });
-  }
-  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
-    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
-    pumpVoice();
-  }
-  function clearPending(){ vQueue.length=0; }
-  function enqueuePraise(){
-    praiseIdx++;
-    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise","",null);
-  }
-  function callPendingOrPlaying(kind,target){
-    if(vCurrent&&vCurrent.kind===kind&&String(vCurrent.target)===String(target)) return true;
-    for(var i=0;i<vQueue.length;i++) if(vQueue[i].kind===kind&&String(vQueue[i].target)===String(target)) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+    }catch(e){}
     return false;
   }
-  function enqueueHint(target){
-    var now=Date.now();
-    var fresh=now-lastHintAt>=4500;
-    if(fresh){ lastHintAt=now; enqueue("hoot-try-again.mp3","hint","",null); }
-    if(target!=null&&!callPendingOrPlaying("callout",target)){
-      enqueue("call-number-"+target+".mp3","callout",String(target),null);
+  function resolveCmd(preferredId, fallbacks){
+    if(preferredId && hasClip(preferredId)) return [preferredId];
+    return (fallbacks && fallbacks.length) ? fallbacks.slice() : [];
+  }
+  function clearIdleHelp(){
+    if(idleHelpTimer){ clearTimeout(idleHelpTimer); idleHelpTimer = null; }
+  }
+  function armIdleHelp(){
+    clearIdleHelp();
+    if(won || !lastStepClips || !lastStepClips.length || idleHelpReminded) return;
+    idleHelpTimer = setTimeout(function(){
+      if(won || !lastStepClips || !lastStepClips.length) return;
+      idleHelpReminded = true;
+      playVoice(lastStepClips);
+    }, 11000);
+  }
+  window.addEventListener("pointerdown", function(){
+    idleHelpReminded = false;
+    armIdleHelp();
+  }, true);
+
+  function playVoice(clips){
+    if(!clips || !clips.length) return;
+    var myGen = ++voiceGen, i = 0;
+    voiceA.onended = null; voiceA.onerror = null;
+    try{ voiceA.pause(); }catch(e){}
+    function step(){
+      if(myGen !== voiceGen || i >= clips.length) return;
+      var id = clips[i++];
+      if(!id){ step(); return; }
+      voiceA.src = "assets/voice/" + id + ".mp3";
+      voiceA.onended = step; voiceA.onerror = step;
+      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
     }
+    step();
+  }
+  function setStepVoice(preferredId, fallbacks, speakNow){
+    var seq = resolveCmd(preferredId, fallbacks);
+    lastStepClips = seq;
+    idleHelpReminded = false;
+    armIdleHelp();
+    if(speakNow !== false && seq.length) playVoice(seq);
   }
 
-  /* ================= HOOT'S FACE / WORDS ================= */
-  function say(html){ bubble.innerHTML=html; }
-  function hootReact(cls,ms){
-    hootFig.classList.remove("celebrate","shake");
-    void hootFig.offsetWidth;
-    hootFig.classList.add(cls);
-    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  /* =========================================================================
+     2. CINEMATIC WEBAUDIO SYNTHESIZER (Star Chimes, Hydraulic Hiss, Rocket Roar)
+     ========================================================================= */
+  var actx = null;
+  function ac(){
+    if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
+    if(actx && actx.state === "suspended") actx.resume();
+    return actx;
+  }
+  var PENTA = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.5, 1567.98];
+  function sfxStarCollect(idx){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, f = PENTA[(idx || 0) % PENTA.length];
+      [f, f * 1.5].forEach(function(freq, k){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = k === 0 ? "triangle" : "sine";
+        o.frequency.setValueAtTime(freq, t + k * 0.05);
+        g.gain.setValueAtTime(0.14, t + k * 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.36 + k * 0.05);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + k * 0.05); o.stop(t + 0.4 + k * 0.05);
+      });
+    }catch(e){}
+  }
+  function sfxCountdownBeep(finalBeep){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(finalBeep ? 1046.5 : 587.33, t);
+      if(finalBeep) o.frequency.exponentialRampToValueAtTime(1567.98, t + 0.25);
+      g.gain.setValueAtTime(0.16, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + (finalBeep ? 0.5 : 0.24));
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.52);
+    }catch(e){}
+  }
+  function sfxRocketRoar(duration){
+    try{
+      var c = ac(); if(!c) return;
+      var dur = duration || 2.2, t = c.currentTime;
+      var len = Math.floor(c.sampleRate * dur);
+      var buf = c.createBuffer(1, len, c.sampleRate);
+      var d = buf.getChannelData(0);
+      for(var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1);
+      var src = c.createBufferSource(); src.buffer = buf;
+      var flt = c.createBiquadFilter(); flt.type = "lowpass";
+      flt.frequency.setValueAtTime(220, t);
+      flt.frequency.linearRampToValueAtTime(680, t + dur * 0.4);
+      flt.frequency.exponentialRampToValueAtTime(140, t + dur);
+      var g = c.createGain();
+      g.gain.setValueAtTime(0.01, t);
+      g.gain.linearRampToValueAtTime(0.22, t + 0.25);
+      g.gain.exponentialRampToValueAtTime(0.002, t + dur);
+      src.connect(flt); flt.connect(g); g.connect(c.destination);
+      src.start(t);
+    }catch(e){}
+  }
+  function sfxBoing(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(260, t);
+      o.frequency.exponentialRampToValueAtTime(680, t + 0.14);
+      o.frequency.exponentialRampToValueAtTime(420, t + 0.26);
+      g.gain.setValueAtTime(0.14, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.3);
+    }catch(e){}
+  }
+  function sfxRingBoost(n){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, base = PENTA[(n || 0) % PENTA.length];
+      [base, base * 1.25, base * 1.5].forEach(function(freq, i){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "sine"; o.frequency.value = freq;
+        g.gain.setValueAtTime(0.11, t + i * 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35 + i * 0.05);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + i * 0.05); o.stop(t + 0.4 + i * 0.05);
+      });
+    }catch(e){}
+  }
+  function sfxFireworkPop(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [660, 880, 1175, 1397].forEach(function(f, i){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.09, t + i * 0.045);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3 + i * 0.045);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + i * 0.045); o.stop(t + 0.33 + i * 0.045);
+      });
+    }catch(e){}
   }
 
-  /* ================= HELPERS ================= */
-  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-  function starSVG(fill){
-    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="'+fill+'" stroke="#e8a90c" stroke-width="1.2" stroke-linejoin="round"/></svg>';
-  }
-  function updateHUD(){ starCount.textContent=stars; }
-  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
-  function renderFuel(){
-    fuelGauge.innerHTML=""; tank.innerHTML="";
-    for(var i=0;i<fuelGoal;i++){
-      var g=document.createElement("i"); if(i<fuel) g.className="on"; fuelGauge.appendChild(g);
-      var t=document.createElement("i"); if(i<fuel) t.className="on"; tank.appendChild(t);
-    }
-    rocketWrap.classList.toggle("tremble", fuel>=3&&fuel<fuelGoal&&state==="playing");
-    rocketWrap.classList.toggle("tremble-hard", fuel>=Math.ceil(fuelGoal*0.7)&&fuel<fuelGoal&&state==="playing");
-  }
-  function burst(x,y){
-    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#7fd4ff","#ff8fa3","#a5e8ae"];
-    for(var i=0;i<7;i++){
-      var p=document.createElement("div"); p.className="particle";
-      p.style.background=cols[i%cols.length];
-      p.style.left=(x-sr.left-5)+"px"; p.style.top=(y-sr.top-5)+"px";
-      scene.appendChild(p);
-      var ang=(Math.PI*2*i)/7+Math.random()*0.5, dist=40+Math.random()*34;
-      if(p.animate) p.animate([
-        {transform:"translate(0,0) scale(1)",opacity:1},
-        {transform:"translate("+Math.cos(ang)*dist+"px,"+(Math.sin(ang)*dist+24)+"px) scale(.4)",opacity:0}
-      ],{duration:520,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(el){ setTimeout(function(){ el.remove(); },560); })(p);
-    }
-  }
-  function confetti(){
-    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#57cc62","#ff8fa3","#4ea8e0","#ff6b5e"];
-    for(var i=0;i<26;i++){
-      var c=document.createElement("div"); c.className="confetti";
-      c.style.background=cols[i%cols.length];
-      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
-      scene.appendChild(c);
-      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
-      if(c.animate) c.animate([
-        {transform:"translate(0,0) rotate(0deg)",opacity:1},
-        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
-      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
-    }
-  }
-  function flyOrb(value,fromRect,done){
-    var orb=document.createElement("div"); orb.className="fly-clone";
-    orb.textContent=value;
-    orb.style.background="radial-gradient(circle at 35% 30%,#ffd98a,#ff7b3c)";
-    orb.style.border="3px solid #fff"; orb.style.boxShadow="0 0 16px rgba(255,150,50,.8)";
-    var sr=scene.getBoundingClientRect(), rr=rocketWrap.getBoundingClientRect();
-    var w=46;
-    var x0=fromRect.left+fromRect.width/2-sr.left-w/2, y0=fromRect.top+fromRect.height/2-sr.top-w/2;
-    var x1=rr.left+rr.width/2-sr.left-w/2, y1=rr.top+rr.height*0.55-sr.top-w/2;
-    orb.style.width=w+"px"; orb.style.height=w+"px"; orb.style.fontSize="22px";
-    orb.style.left=x0+"px"; orb.style.top=y0+"px";
-    scene.appendChild(orb);
-    var finished=false;
-    function finish(){ if(finished) return; finished=true; orb.remove(); done(); }
-    if(orb.animate){
-      var anim=orb.animate([
-        {transform:"translate(0,0) scale(1)",opacity:1},
-        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.5-46)+"px) scale(1.05)",opacity:1,offset:0.55},
-        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.5)",opacity:.9}
-      ],{duration:540,easing:"cubic-bezier(.3,.6,.4,1)"});
-      anim.onfinish=finish;
-      setTimeout(finish,720);
-    } else setTimeout(finish,120);
-  }
-  function makePod(value,cls){
-    var b=document.createElement("button"); b.type="button"; b.className="pod "+cls;
-    b.textContent=value; b.dataset.value=value;
-    b.setAttribute("aria-label","Number "+value);
-    return b;
+  /* =========================================================================
+     3. PROCEDURAL PBR TEXTURES & STUDIO ENVIRONMENT (Pixar Toy Look!)
+     ========================================================================= */
+  function makeGlowTexture(innerHex, midHex){
+    var cv = document.createElement("canvas");
+    cv.width = 128; cv.height = 128;
+    var g = cv.getContext("2d");
+    var gr = g.createRadialGradient(64, 64, 4, 64, 64, 62);
+    gr.addColorStop(0, innerHex || "rgba(255,255,255,1)");
+    gr.addColorStop(0.38, midHex || "rgba(253,224,71,0.7)");
+    gr.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 128, 128);
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding;
+    return tex;
   }
 
-  /* ================= COUNT UP MODE ================= */
-  function presentCountStep(){
-    targetMain.textContent="Tap number "+nextN+"!";
-    tcLabel.textContent="Count up with Hoot — fuel the rocket!";
-    targetCard.style.display="flex";
-    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
-    visual.innerHTML="";
-    counted.forEach(function(n){
-      var chip=document.createElement("span"); chip.className="track-chip"; chip.textContent=n; visual.appendChild(chip);
-    });
-    var q=document.createElement("span"); q.className="track-chip qmark"; q.textContent="?"; visual.appendChild(q);
-    var pool=[nextN];
-    var cand=shuffle([nextN-2,nextN-1,nextN+1,nextN+2,nextN+3].filter(function(v){ return v>=1&&v<=10&&v!==nextN; }));
-    while(pool.length<4&&cand.length) pool.push(cand.shift());
-    var vals=shuffle(pool);
-    podRow.innerHTML="";
-    vals.forEach(function(v,i){
-      var b=makePod(v,PODCLS[i%4]);
-      b.addEventListener("click",function(){ onCountPod(b,v); });
-      podRow.appendChild(b);
-    });
-    inputLock=false;
-  }
-  function callCountStep(){
-    var n=nextN, done=counted.slice();
-    if(!callPendingOrPlaying("callout",n)){
-      enqueue("call-number-"+n+".mp3","callout",String(n),function(){
-        say(done.length ? "We counted <span class='b-big'>"+done.join(", ")+"</span>… now tap <span class='b-big'>"+n+"</span>!"
-                         : "Count with me! Tap <span class='b-big'>1</span> to start the fuel!");
-      });
-    }
-  }
-  function onCountPod(b,v){
-    if(state!=="playing"||inputLock||dead) return;
-    if(b.dataset.done) return;
-    audio();
-    if(v!==nextN){
-      b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
-      rocketWrap.classList.remove("wobble"); void rocketWrap.offsetWidth; rocketWrap.classList.add("wobble");
-      wobbleSound(); hootReact("shake",900);
-      say("Whoops — the rocket needs <span class='b-big'>"+nextN+"</span> next! Count with me: "+(counted.length?counted.join(", ")+", …":"")+" then <span class='b-big'>"+nextN+"</span>!");
-      enqueueHint(nextN);
-      return;
-    }
-    b.dataset.done="1"; inputLock=true;
-    var r=b.getBoundingClientRect();
-    b.classList.add("used");
-    flyOrb(v,r,function(){
-      if(dead) return;
-      fuel++; counted.push(v); nextN++;
-      stars++; bumpStars(); updateHUD();
-      renderFuel(); fuelSound(); starSound();
-      var rr=rocketWrap.getBoundingClientRect(); burst(rr.left+rr.width/2,rr.top+rr.height*0.4);
-      if(nextN>COUNTUP_GOAL){ blastOff(); return; }
-      presentCountStep();
-      callCountStep();
-    });
-  }
-
-  /* ================= QUIZ MODES ================= */
-  function newMission(){
-    if(dead||state!=="playing") return;
-    visual.className=""; visual.innerHTML=""; podRow.innerHTML="";
-    var opts;
-    if(mode==="count"){
-      var n=1+Math.floor(Math.random()*9);
-      mission={ answer:n+1, hint:"Count out loud with me: "+(n>1?(n-1)+", ":"")+n+"… then what comes next?" };
-      targetMain.textContent="What comes after "+n+"?";
-      tcLabel.textContent="Count On — fuel the rocket!";
-      if(n>1) visual.innerHTML+='<span class="track-chip">'+(n-1)+'</span><span class="track-arrow">→</span>';
-      visual.innerHTML+='<span class="track-chip">'+n+'</span><span class="track-arrow">→</span><span class="track-chip qmark">?</span>';
-      opts=shuffle([n+1,n,Math.min(10,n+2)]);
-      clearPending();
-      enqueue("call-number-"+n+".mp3","name",String(n),function(){
-        say("The rocket is at <span class='b-big'>"+n+"</span>! What number comes AFTER "+n+"?");
-      });
-      enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-what-comes-after")?"ask-what-comes-after.mp3":"ask-what-comes-next.mp3","callout","",null); /* 3e51: asks the question, not just the number */
-    } else if(mode==="add"){
-      var a=1+Math.floor(Math.random()*5), b=1+Math.floor(Math.random()*5);
-      mission={ answer:a+b, hint:"Count ALL the stars: start at "+a+", then count "+b+" more!" };
-      targetMain.textContent="What is "+a+" + "+b+"?";
-      tcLabel.textContent="Adding Up — fuel the rocket!";
-      var h='<span class="star-group">';
-      for(var i=0;i<a;i++) h+=starSVG("#ffc93c");
-      h+='</span><span class="op-sign">+</span><span class="star-group">';
-      for(var j=0;j<b;j++) h+=starSVG("#7fd4ff");
-      h+='</span><span class="op-sign">=</span><span class="track-chip qmark">?</span>';
-      visual.innerHTML=h;
-      opts=shuffle([a+b,Math.max(1,a+b-1),a+b+2]);
-      clearPending();
-      enqueue("call-number-"+a+".mp3","name",String(a),null);
-      if((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("word-plus")) enqueue("word-plus.mp3","callout","",null);
-      enqueue("call-number-"+b+".mp3","name",String(b),function(){
-        say("Count all the stars together — what is <span class='b-big'>"+a+" + "+b+"</span>?");
-      });
-      if((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-how-many-altogether")) enqueue("ask-how-many-altogether.mp3","callout","",null); /* 3e51 */
-    } else { /* stars */
-      var c=3+Math.floor(Math.random()*8);
-      mission={ answer:c, hint:"Touch each star in the sky as you count: 1, 2, 3… take your time!" };
-      targetMain.textContent="How many stars?";
-      tcLabel.textContent="Count the Stars — fuel the rocket!";
-      visual.className="scatter";
-      var positions=[[6,4],[30,0],[54,8],[78,2],[16,44],[42,38],[66,46],[88,34],[26,72],[58,74]];
-      for(var k=0;k<c;k++){
-        var s=document.createElement("span"); s.className="count-star"; s.id="cstar"+k;
-        s.style.left=positions[k][0]+"%"; s.style.top=positions[k][1]+"%";
-        s.style.transform="rotate("+((k%2? -1:1)*(4+(k*7)%14))+"deg)";
-        s.innerHTML=starSVG(k%3===2?"#ff8fa3":"#ffc93c");
-        visual.appendChild(s);
-      }
-      var others=shuffle([c-1,c+1,c+2,c-2].filter(function(v){ return v>0&&v!==c; })).slice(0,2);
-      opts=shuffle([c].concat(others));
-      clearPending();
-      enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-how-many-stars")?"ask-how-many-stars.mp3":"hoot-look-closely.mp3","look","",function(){ /* 3e51 */
-        say("Count the twinkling stars in the sky — how many can you see?");
-      });
-    }
-    targetCard.style.display="flex";
-    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
-    opts.forEach(function(v,i){
-      var b=makePod(v,PODCLS[i%4]);
-      b.addEventListener("click",function(){ onQuizPod(b,v); });
-      podRow.appendChild(b);
-    });
-    inputLock=false;
-  }
-  function onQuizPod(b,v){
-    if(state!=="playing"||inputLock||dead) return;
-    if(b.dataset.done) return;
-    audio();
-    if(v!==mission.answer){
-      b.dataset.done="1"; b.classList.add("dim");
-      rocketWrap.classList.remove("wobble"); void rocketWrap.offsetWidth; rocketWrap.classList.add("wobble");
-      wobbleSound(); hootReact("shake",900);
-      say(mission.hint);
-      enqueueHint(null);
-      return;
-    }
-    b.dataset.done="1"; inputLock=true;
-    var r=b.getBoundingClientRect();
-    b.classList.add("used");
-    flyOrb(v,r,function(){
-      if(dead) return;
-      fuel++; missionsDone++; stars++; bumpStars(); updateHUD();
-      renderFuel(); fuelSound();
-      var rr=rocketWrap.getBoundingClientRect(); burst(rr.left+rr.width/2,rr.top+rr.height*0.4);
-      clearPending();
-      enqueue("call-number-"+mission.answer+".mp3","answer",String(mission.answer),function(){
-        say("<span class='b-big'>"+mission.answer+"!</span> That&rsquo;s right — fuel in the tank!");
-      });
-      enqueuePraise();
-      var tk=++roundToken;
-      setTimeout(function(){
-        if(dead||tk!==roundToken||state!=="playing") return;
-        if(fuel>=QUIZ_GOAL){ blastOff(); } else { newMission(); }
-      },1250);
-    });
-  }
-
-  /* ================= BLAST OFF ================= */
-  function smokePuff(){
-    if(dead) return;
-    var rr=rocketWrap.getBoundingClientRect(), sr=scene.getBoundingClientRect();
-    var s=document.createElement("div"); s.className="smoke";
-    var sz=26+Math.random()*30;
-    s.style.width=sz+"px"; s.style.height=sz+"px";
-    s.style.left=(rr.left-sr.left+rr.width/2-sz/2+(Math.random()*36-18))+"px";
-    s.style.top=(rr.bottom-sr.top-14)+"px";
-    scene.appendChild(s);
-    if(s.animate) s.animate([
-      {transform:"translateY(0) scale(.6)",opacity:.9},
-      {transform:"translateY(26px) scale(1.7)",opacity:0}
-    ],{duration:900,easing:"ease-out"});
-    setTimeout(function(){ s.remove(); },950);
-  }
-  function spawnPlanets(){
-    planetLayer.innerHTML="";
-    var planets=[
-      {c1:"#ffb3c8",c2:"#e0577f",ring:true,x:"6%",y:"6%",w:74},
-      {c1:"#a5e8ae",c2:"#3da147",ring:false,x:"30%",y:"0%",w:56},
-      {c1:"#d3b8ff",c2:"#7a4fd0",ring:true,x:"58%",y:"10%",w:66},
-      {c1:"#ffe98a",c2:"#e8a90c",ring:false,x:"82%",y:"2%",w:50}
+  function makeStudioEnvMap(renderer){
+    var cv = document.createElement("canvas");
+    cv.width = 512; cv.height = 256;
+    var g = cv.getContext("2d");
+    var sky = g.createLinearGradient(0, 0, 0, 256);
+    sky.addColorStop(0.0, "#101b4a");
+    sky.addColorStop(0.35, "#2b3b8c");
+    sky.addColorStop(0.58, "#7c3aed");
+    sky.addColorStop(0.75, "#f59e0b");
+    sky.addColorStop(1.0, "#1e1b4b");
+    g.fillStyle = sky; g.fillRect(0, 0, 512, 256);
+    /* Bright studio softboxes for crisp specular highlights on glossy 3D models */
+    var boxes = [
+      { x: 110, y: 62, r: 64, c: "rgba(255,250,230,0.95)" },
+      { x: 390, y: 80, r: 54, c: "rgba(125,211,252,0.85)" },
+      { x: 256, y: 180, r: 72, c: "rgba(251,191,36,0.55)" }
     ];
-    planets.forEach(function(p,i){
-      var b=document.createElement("button"); b.type="button"; b.className="planet";
-      b.style.left=p.x; b.style.top=p.y; b.style.width=p.w+"px"; b.style.animationDelay=(-i*1.7)+"s";
-      b.setAttribute("aria-label","Planet — tap for sparkles");
-      b.innerHTML='<svg viewBox="0 0 100 70" aria-hidden="true">'+(p.ring?'<ellipse cx="50" cy="38" rx="47" ry="12" fill="none" stroke="#ffe9a8" stroke-width="5" opacity=".85"/>':"")+'<circle cx="50" cy="38" r="26" fill="'+p.c1+'"/><circle cx="41" cy="30" r="7" fill="'+p.c2+'" opacity=".55"/><circle cx="60" cy="46" r="5" fill="'+p.c2+'" opacity=".55"/></svg>';
-      b.addEventListener("click",function(){
-        audio(); sparkleSound();
-        var r=b.getBoundingClientRect(); burst(r.left+r.width/2,r.top+r.height/2);
-        b.remove();
+    boxes.forEach(function(b){
+      var gr = g.createRadialGradient(b.x, b.y, 4, b.x, b.y, b.r);
+      gr.addColorStop(0, b.c); gr.addColorStop(1, "rgba(255,255,255,0)");
+      g.fillStyle = gr; g.beginPath(); g.arc(b.x, b.y, b.r, 0, Math.PI * 2); g.fill();
+    });
+    var tex = new THREE.CanvasTexture(cv);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.encoding = THREE.sRGBEncoding;
+    var pmrem = new THREE.PMREMGenerator(renderer);
+    var envRT = pmrem.fromEquirectangular(tex);
+    tex.dispose();
+    pmrem.dispose();
+    return envRT.texture;
+  }
+
+  function makeSkyDomeTexture(){
+    var cv = document.createElement("canvas");
+    cv.width = 1024; cv.height = 512;
+    var g = cv.getContext("2d");
+    var gr = g.createLinearGradient(0, 0, 0, 512);
+    gr.addColorStop(0.0, "#06091c");
+    gr.addColorStop(0.32, "#141b4d");
+    gr.addColorStop(0.56, "#2c246e");
+    gr.addColorStop(0.78, "#582c7d");
+    gr.addColorStop(0.93, "#b4536b");
+    gr.addColorStop(1.0, "#191538");
+    g.fillStyle = gr; g.fillRect(0, 0, 1024, 512);
+    /* Soft Milky Way Aurora Ribbons */
+    var ribbons = [
+      { x: 260, y: 170, rx: 240, ry: 55, c: "rgba(56,189,248,0.18)" },
+      { x: 680, y: 140, rx: 260, ry: 60, c: "rgba(232,121,249,0.2)" },
+      { x: 500, y: 240, rx: 320, ry: 48, c: "rgba(250,204,21,0.12)" }
+    ];
+    ribbons.forEach(function(rb){
+      g.save(); g.translate(rb.x, rb.y); g.scale(1, rb.ry / rb.rx);
+      var rg = g.createRadialGradient(0, 0, 8, 0, 0, rb.rx);
+      rg.addColorStop(0, rb.c); rg.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = rg; g.beginPath(); g.arc(0, 0, rb.rx, 0, Math.PI * 2); g.fill();
+      g.restore();
+    });
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding;
+    return tex;
+  }
+
+  function makeRocketBodyTexture(accentHex){
+    var cv = document.createElement("canvas");
+    cv.width = 512; cv.height = 512;
+    var g = cv.getContext("2d");
+    /* Crisp pearl-white hull with metallic panel lines & vibrant nose/belly stripes */
+    g.fillStyle = "#f8fafc";
+    g.fillRect(0, 0, 512, 512);
+    /* Nose cap color band */
+    g.fillStyle = accentHex;
+    g.fillRect(0, 0, 512, 145);
+    /* Gold accent stripe */
+    g.fillStyle = "#facc15";
+    g.fillRect(0, 145, 512, 22);
+    /* Lower belly stripe */
+    g.fillStyle = accentHex;
+    g.fillRect(0, 392, 512, 54);
+    g.fillStyle = "#facc15";
+    g.fillRect(0, 378, 512, 14);
+    /* Subtle panel seams & shiny metallic rivets */
+    g.strokeStyle = "rgba(15,23,42,0.14)";
+    g.lineWidth = 3;
+    for(var x = 64; x < 512; x += 128){
+      g.beginPath(); g.moveTo(x, 168); g.lineTo(x, 378); g.stroke();
+    }
+    g.fillStyle = "rgba(15,23,42,0.22)";
+    for(var rx = 16; rx < 512; rx += 32){
+      g.beginPath(); g.arc(rx, 178, 3, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(rx, 368, 3, 0, Math.PI * 2); g.fill();
+    }
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding;
+    return tex;
+  }
+
+  function makePadDeckTexture(){
+    var cv = document.createElement("canvas");
+    cv.width = 512; cv.height = 512;
+    var g = cv.getContext("2d");
+    g.fillStyle = "#475569"; g.fillRect(0, 0, 512, 512);
+    /* Concentric pad rings */
+    g.strokeStyle = "#fde047"; g.lineWidth = 22;
+    g.setLineDash([30, 22]);
+    g.beginPath(); g.arc(256, 256, 212, 0, Math.PI * 2); g.stroke();
+    g.setLineDash([]);
+    g.fillStyle = "#334155";
+    g.beginPath(); g.arc(256, 256, 174, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = "#38bdf8"; g.lineWidth = 10;
+    g.beginPath(); g.arc(256, 256, 134, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = "#1e293b";
+    g.beginPath(); g.arc(256, 256, 86, 0, Math.PI * 2); g.fill();
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding;
+    return tex;
+  }
+
+  function makePlanetTexture(type){
+    var cv = document.createElement("canvas");
+    cv.width = 512; cv.height = 256;
+    var g = cv.getContext("2d");
+    if(type === "moon"){
+      g.fillStyle = "#fde68a"; g.fillRect(0, 0, 512, 256);
+      for(var i = 0; i < 36; i++){
+        var cx = (i * 73) % 512, cy = 24 + ((i * 47) % 208), r = 10 + (i % 5) * 7;
+        g.fillStyle = "rgba(217,119,6,0.22)";
+        g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,251,235,0.45)";
+        g.beginPath(); g.arc(cx - 2, cy - 2, r * 0.72, 0, Math.PI * 2); g.fill();
+      }
+    } else if(type === "saturn"){
+      var bands = ["#fed7aa","#fb923c","#fde68a","#f97316","#ffedd5","#ea580c","#fdba74"];
+      bands.forEach(function(col, idx){
+        g.fillStyle = col; g.fillRect(0, idx * (256 / bands.length), 512, 256 / bands.length + 2);
       });
-      planetLayer.appendChild(b);
-    });
-  }
-  function blastOff(){
-    if(state!=="playing") return;
-    state="launch"; inputLock=true;
-    podRow.innerHTML=""; visual.innerHTML="";
-    rocketWrap.classList.remove("tremble","tremble-hard","wobble");
-    rocketWrap.classList.add("launching");
-    launchSound();
-    hootReact("celebrate",2400);
-    clearPending();
-    enqueue("hoot-amazing.mp3","cheer","",function(){
-      say("BLAST OFF! We did it — look, the rocket is flying past the planets! Tap a planet!");
-    });
-    smokeTimer=setInterval(smokePuff,130);
-    setTimeout(function(){ if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; } },1500);
-    spawnPlanets();
-    if(rocketWrap.animate){
-      launchAnim=rocketWrap.animate([
-        {transform:"translateY(0)"},
-        {transform:"translateY(-6px)",offset:0.12},
-        {transform:"translateY(-130vh) rotate(4deg)"}
-      ],{duration:2400,easing:"cubic-bezier(.5,0,.8,.4)",fill:"forwards",delay:250});
-    }
-    var tk=++roundToken;
-    (window.__hwFastWin||setTimeout)(function(){
-      if(dead||tk!==roundToken) return;
-      winRound();
-    },650);
-  }
-
-  /* ================= START / WIN ================= */
-  function startRound(){
-    clearPending(); roundToken++;
-    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; }
-    if(launchAnim){ launchAnim.cancel(); launchAnim=null; }
-    rocketWrap.classList.remove("launching");
-    planetLayer.innerHTML="";
-    stars=0; fuel=0; nextN=1; counted=[]; missionsDone=0; inputLock=false; wonFlag=false;
-    fuelGoal=(mode==="countup")?COUNTUP_GOAL:QUIZ_GOAL;
-    winOverlay.hidden=true; startPanel.hidden=true;
-    state="playing"; updateHUD(); renderFuel();
-    enqueue("hoot-game-hello.mp3","hello","",function(){ say("Mission control Hoot here! Let&rsquo;s fuel the rocket!"); });
-    if(mode==="countup"){ presentCountStep(); callCountStep(); }
-    else newMission();
-  }
-  function winRound(){
-    if(wonFlag) return; wonFlag=true; state="won";
-    targetCard.style.display="none";
-    podRow.innerHTML="";
-    vQueue=vQueue.filter(function(q){ return q.kind==="praise"||q.kind==="cheer"; });
-    winChips.innerHTML="";
-    if(mode==="countup"){
-      winTitle.textContent="BLAST OFF!";
-      winRecap.innerHTML="We counted <b>1, 2, 3 … 10</b> together and the rocket flew past the planets! Listen — Hoot will count it all back!";
-      for(var i=1;i<=10;i++){
-        var c=document.createElement("span"); c.className="chip"; c.id="wchip"+i; c.textContent=i; winChips.appendChild(c);
+    } else if(type === "mars"){
+      g.fillStyle = "#ef4444"; g.fillRect(0, 0, 512, 256);
+      g.fillStyle = "#fb923c";
+      for(var m = 0; m < 18; m++){
+        g.beginPath(); g.ellipse((m * 61) % 512, (m * 39) % 256, 44, 16, 0.2, 0, Math.PI * 2); g.fill();
       }
-      for(var n=1;n<=10;n++){
-        (function(num){
-          enqueue("call-number-"+num+".mp3","recap",String(num),function(){
-            var chips=winChips.children;
-            for(var j=0;j<chips.length;j++) chips[j].classList.toggle("reading",j===num-1);
-            say("We counted <span class='b-big'>"+counted.slice(0,num).join(", ")+"</span>"+(num===10?"… BLAST OFF!":"…"));
-            if(num===10) setTimeout(function(){ for(var k=0;k<chips.length;k++) chips[k].classList.remove("reading"); },900);
-          });
-        })(n);
+      g.fillStyle = "rgba(153,27,27,0.35)";
+      for(var c = 0; c < 14; c++){
+        g.beginPath(); g.arc((c * 89) % 512, 30 + ((c * 53) % 190), 14, 0, Math.PI * 2); g.fill();
       }
-      enqueue("hoot-star.mp3","recap","",null);
     } else {
-      winTitle.textContent="BLAST OFF!";
-      var label={count:"Count On",add:"Adding Up",stars:"Count the Stars"}[mode];
-      winRecap.innerHTML="Five perfect missions in <b>"+label+"</b> filled the tank and the rocket blasted off! Counting takes us to the stars!";
-      for(var m=1;m<=QUIZ_GOAL;m++){ var c2=document.createElement("span"); c2.className="chip"; c2.textContent="Mission "+m+" ✓"; winChips.appendChild(c2); }
-      enqueue("hoot-you-learned.mp3","recap","",function(){ say("Counting takes us to the stars!"); });
+      /* Candy Star Planet */
+      var cb = ["#f472b6","#38bdf8","#fde047","#a78bfa","#4ade80","#fb7185"];
+      for(var y = 0; y < 256; y += 32){
+        g.fillStyle = cb[(y / 32) % cb.length];
+        g.fillRect(0, y, 512, 34);
+      }
+      g.fillStyle = "rgba(255,255,255,0.55)";
+      for(var s = 0; s < 40; s++){
+        g.beginPath(); g.arc((s * 57) % 512, (s * 41) % 256, 6, 0, Math.PI * 2); g.fill();
+      }
     }
-    var starEls=winStars.children;
-    for(var i2=0;i2<starEls.length;i2++){
-      starEls[i2].classList.remove("lit");
-      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i2],200+i2*180);
-    }
-    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },250);
-  }
-  function resetToStart(){
-    clearPending(); roundToken++;
-    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; }
-    if(launchAnim){ launchAnim.cancel(); launchAnim=null; }
-    rocketWrap.classList.remove("launching","tremble","tremble-hard");
-    planetLayer.innerHTML="";
-    state="start"; inputLock=false; wonFlag=false; fuel=0;
-    winOverlay.hidden=true; startPanel.hidden=false;
-    targetCard.style.display="none";
-    podRow.innerHTML=""; visual.innerHTML="";
-    renderFuel();
-    say("Mission control Hoot here! Tap <span class='b-big'>Play</span> — count with me and we&rsquo;ll blast off to the stars!");
-    hootFig.classList.add("wave");
-    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding;
+    return tex;
   }
 
-  /* ================= CONTROLS ================= */
-  function hearAgain(){
-    audio();
-    if(state!=="playing"){ if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact("celebrate",1000); return; }
-    if(mode==="countup"){ callCountStep(); }
-    else if(mission){
-      if(mode==="count"){ say("What number comes after the one Hoot said? "+mission.hint); }
-      else say(mission.hint);
-      if(!vPlaying) enqueue("hoot-look-closely.mp3","look","",null);
-    }
+  /* =========================================================================
+     4. THREE.JS SCENE, CAMERA, RENDERER & STUDIO LIGHTING
+     ========================================================================= */
+  var canvas = document.getElementById("glCanvas");
+  var renderer;
+  try{
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: "high-performance" });
+  }catch(err){
+    document.getElementById("fallbackNotice").hidden = false;
+    return;
   }
-  hootFig.addEventListener("click",hearAgain);
-  $("hearBtn").addEventListener("click",hearAgain);
-  $("soundBtn").addEventListener("click",function(){
-    soundOn=!soundOn;
-    $("soundOnIc").style.display=soundOn?"block":"none";
-    $("soundOffIc").style.display=soundOn?"none":"block";
-    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-    if(!soundOn){ clearPending(); }
-    else { audio(); tone(660,660,0.1,"triangle",0.12); }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.88;
+
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x161642, 0.007);
+  scene.environment = makeStudioEnvMap(renderer);
+
+  var camera = new THREE.PerspectiveCamera(46, window.innerWidth / window.innerHeight, 0.1, 260);
+  camera.position.set(0, 4.8, 12.2);
+
+  /* Sky Dome */
+  var skyDome = new THREE.Mesh(
+    new THREE.SphereGeometry(140, 32, 24),
+    new THREE.MeshBasicMaterial({ map: makeSkyDomeTexture(), side: THREE.BackSide, fog: false })
+  );
+  scene.add(skyDome);
+
+  /* Calibrated Pixar Three-Point Studio + Dynamic Gameplay Lights (Rich Saturated Colors!) */
+  var hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x2a1450, 0.42);
+  scene.add(hemiLight);
+
+  var keyLight = new THREE.DirectionalLight(0xfff5e6, 0.95);
+  keyLight.position.set(9, 16, 11);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.width = 1024;
+  keyLight.shadow.mapSize.height = 1024;
+  keyLight.shadow.camera.near = 2;
+  keyLight.shadow.camera.far = 42;
+  keyLight.shadow.camera.left = -10; keyLight.shadow.camera.right = 10;
+  keyLight.shadow.camera.top = 12; keyLight.shadow.camera.bottom = -8;
+  keyLight.shadow.bias = -0.0005;
+  scene.add(keyLight);
+
+  var rimLight = new THREE.DirectionalLight(0x38bdf8, 0.55);
+  rimLight.position.set(-10, 8, -9);
+  scene.add(rimLight);
+
+  var engineLight = new THREE.PointLight(0xff7b24, 0.0, 18);
+  engineLight.position.set(0, 0.4, 0);
+  scene.add(engineLight);
+
+  var glowGoldTex = makeGlowTexture("rgba(255,255,255,1)", "rgba(253,224,71,0.75)");
+  var glowCyanTex = makeGlowTexture("rgba(255,255,255,1)", "rgba(56,189,248,0.75)");
+  var glowFireTex = makeGlowTexture("rgba(255,255,230,1)", "rgba(251,146,60,0.85)");
+
+  /* 500 Twinkling 3D Depth Stars */
+  var starFieldGeo = new THREE.BufferGeometry();
+  var starPos = new Float32Array(520 * 3);
+  var starCols = new Float32Array(520 * 3);
+  var STAR_PAL = [new THREE.Color(0xffffff), new THREE.Color(0xfef08a), new THREE.Color(0x7dd3fc), new THREE.Color(0xf9a8d4)];
+  for(var si = 0; si < 520; si++){
+    var r = 24 + Math.random() * 88;
+    var th = Math.random() * Math.PI * 2;
+    var ph = Math.acos(2 * Math.random() - 1);
+    starPos[si * 3] = r * Math.sin(ph) * Math.cos(th);
+    starPos[si * 3 + 1] = r * Math.cos(ph);
+    starPos[si * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+    var sc = STAR_PAL[si % STAR_PAL.length];
+    starCols[si * 3] = sc.r; starCols[si * 3 + 1] = sc.g; starCols[si * 3 + 2] = sc.b;
+  }
+  starFieldGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+  starFieldGeo.setAttribute("color", new THREE.BufferAttribute(starCols, 3));
+  var starField = new THREE.Points(starFieldGeo, new THREE.PointsMaterial({
+    size: 0.72, map: glowGoldTex, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  scene.add(starField);
+
+  /* =========================================================================
+     5. CRAFTED 3D LAUNCHPAD ISLAND, GANTRY TOWER, FUEL TUBE & SPARKY BOT
+     ========================================================================= */
+  var launchWorld = new THREE.Group();
+  scene.add(launchWorld);
+
+  /* Lush Floating 3D Toy Island */
+  var islandTop = new THREE.Mesh(
+    new THREE.CylinderGeometry(5.8, 5.2, 0.95, 32),
+    new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.78, metalness: 0.0, envMapIntensity: 0.3 })
+  );
+  islandTop.position.y = -0.5;
+  islandTop.receiveShadow = true;
+  launchWorld.add(islandTop);
+
+  var islandBase = new THREE.Mesh(
+    new THREE.ConeGeometry(5.15, 3.6, 18),
+    new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85, flatShading: true, envMapIntensity: 0.25 })
+  );
+  islandBase.rotation.x = Math.PI;
+  islandBase.position.y = -2.75;
+  launchWorld.add(islandBase);
+
+  /* Cheerful 3D Toy Flowers dotted on the emerald grass */
+  var flowerCols = [0xf472b6, 0xfacc15, 0x38bdf8, 0xfb7185, 0xc084fc];
+  [[-3.6,2.6],[-2.2,3.7],[1.6,3.8],[3.8,2.1],[-4.6,-0.2],[4.5,-0.5]].forEach(function(pt, idx){
+    var fl = new THREE.Group();
+    var petalMat = new THREE.MeshStandardMaterial({ color: flowerCols[idx % flowerCols.length], roughness: 0.45, envMapIntensity: 0.4 });
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 10), petalMat);
+    head.scale.set(1.2, 0.6, 1.2); head.position.y = 0.22; fl.add(head);
+    var ctr = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.35 }));
+    ctr.position.y = 0.28; fl.add(ctr);
+    fl.position.set(pt[0], -0.04, pt[1]);
+    launchWorld.add(fl);
   });
-  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
-  document.querySelectorAll(".mode-chip").forEach(function(ch){
-    ch.addEventListener("click",function(){
-      mode=ch.getAttribute("data-mode");
-      document.querySelectorAll(".mode-chip").forEach(function(c){ c.classList.toggle("selected",c===ch); });
-      tone(660,660,0.1,"triangle",0.1);
+
+  /* Metallic Octagonal Space Launchpad Deck */
+  var padDeck = new THREE.Mesh(
+    new THREE.CylinderGeometry(2.65, 2.95, 0.36, 8),
+    new THREE.MeshStandardMaterial({ map: makePadDeckTexture(), roughness: 0.35, metalness: 0.45 })
+  );
+  padDeck.position.y = 0.14;
+  padDeck.receiveShadow = true;
+  launchWorld.add(padDeck);
+
+  /* 4 Glowing Pad Beacon Lights */
+  var beaconMats = [];
+  for(var bi = 0; bi < 4; bi++){
+    var ba = (bi / 4) * Math.PI * 2 + Math.PI / 4;
+    var post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.11, 0.14, 0.42, 12),
+      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.6, roughness: 0.3 })
+    );
+    post.position.set(Math.cos(ba) * 2.55, 0.36, Math.sin(ba) * 2.55);
+    launchWorld.add(post);
+    var bMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xfacc15, emissiveIntensity: 0.85, roughness: 0.2 });
+    beaconMats.push(bMat);
+    var bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 14, 14), bMat);
+    bulb.position.set(Math.cos(ba) * 2.55, 0.62, Math.sin(ba) * 2.55);
+    launchWorld.add(bulb);
+  }
+
+  /* Cute Stylized 3D Toy Pine Trees & Glowing Flowers around the Island Rim */
+  function addToyTree(x, z, scale){
+    var tg = new THREE.Group();
+    var trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.14, 0.2, 0.75, 10),
+      new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85, envMapIntensity: 0.25 })
+    );
+    trunk.position.y = 0.35; trunk.castShadow = true; tg.add(trunk);
+    var leafMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.72, envMapIntensity: 0.3 });
+    [0.95, 1.48, 1.92].forEach(function(yy, idx){
+      var cone = new THREE.Mesh(new THREE.ConeGeometry(0.68 - idx * 0.16, 0.82 - idx * 0.1, 14), leafMat);
+      cone.position.y = yy; cone.castShadow = true; tg.add(cone);
     });
-  });
-  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
-
-  /* ================= LIVING SCENE TAPS ================= */
-  $("moon").addEventListener("click",function(){
-    audio(); var m=$("moon"); m.classList.remove("glow"); void m.offsetWidth; m.classList.add("glow");
-    sparkleSound();
-    if(state==="start") say("That&rsquo;s the Moon! Our rocket will fly right past it!");
-  });
-  document.querySelectorAll(".firefly").forEach(function(f){
-    f.addEventListener("click",function(){
-      audio(); f.classList.add("blink"); tone(1500,1900,0.12,"sine",0.07);
-      setTimeout(function(){ f.classList.remove("blink"); },1200);
-    });
-  });
-
-  /* ================= LEAVING THE GAME ================= */
-  function teardown(){
-    dead=true; clearPending(); hootTalking(false);
-    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer=null; }
+    tg.position.set(x, -0.04, z);
+    tg.scale.setScalar(scale || 1);
+    launchWorld.add(tg);
   }
-  window.addEventListener("pagehide",teardown);
-  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+  addToyTree(-4.2, -1.8, 1.05);
+  addToyTree(-3.4, -3.3, 0.82);
+  addToyTree(4.3, -1.9, 0.96);
+  addToyTree(3.5, -3.5, 0.78);
+  addToyTree(-4.4, 1.6, 0.76);
 
-  /* ================= INIT ================= */
-  fuelGoal=COUNTUP_GOAL;
-  renderFuel();
-  updateHUD();
-  hootFig.classList.add("wave");
-  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  /* Articulated 3D Gantry Launch Tower with Spinning Radar & Hinged Hydraulic Clamps */
+  var gantryGroup = new THREE.Group();
+  gantryGroup.position.set(-2.55, 0, -0.55);
+  launchWorld.add(gantryGroup);
 
-  /* Probe/debug handle: read-only snapshot of the round state. */
-  window.__rocketGame={
-    snapshot:function(){
-      return { state:state, mode:mode, stars:stars, fuel:fuel, fuelGoal:fuelGoal,
-        nextN:nextN, counted:counted.slice(), missionsDone:missionsDone,
-        answer:mission?mission.answer:null,
-        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
-        voiceQueue:vQueue.map(function(q){ return q.file; }) };
-    }
+  var steelMat = new THREE.MeshStandardMaterial({ color: 0xe11d48, metalness: 0.45, roughness: 0.32 });
+  var beamMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.4, roughness: 0.35 });
+  for(var gi = 0; gi < 4; gi++){
+    var gx = (gi % 2 === 0 ? -0.32 : 0.32), gz = (gi < 2 ? -0.32 : 0.32);
+    var col = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 4.9, 8), steelMat);
+    col.position.set(gx, 2.45, gz); col.castShadow = true;
+    gantryGroup.add(col);
+  }
+  for(var gy = 0.8; gy <= 4.4; gy += 0.9){
+    var ring = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.1, 0.76), beamMat);
+    ring.position.y = gy; gantryGroup.add(ring);
+  }
+  /* Spinning 3D Radar Dish atop the Tower */
+  var radarPivot = new THREE.Group();
+  radarPivot.position.set(0, 5.15, 0);
+  gantryGroup.add(radarPivot);
+  var radarStem = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.45, 10), beamMat);
+  radarPivot.add(radarStem);
+  var radarDish = new THREE.Mesh(
+    new THREE.SphereGeometry(0.55, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.45),
+    new THREE.MeshStandardMaterial({ color: 0xfef08a, metalness: 0.5, roughness: 0.22, side: THREE.DoubleSide })
+  );
+  radarDish.rotation.x = Math.PI * 0.72;
+  radarDish.position.set(0, 0.25, 0.18);
+  radarPivot.add(radarDish);
+
+  /* Two Hinged Gantry Support Clamps (Swing open smoothly on countdown!) */
+  var gantryArmTop = new THREE.Group();
+  gantryArmTop.position.set(0.32, 3.35, 0.25);
+  var armBar1 = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.18, 0.2), beamMat);
+  armBar1.position.x = 0.85; armBar1.castShadow = true;
+  gantryArmTop.add(armBar1);
+  gantryGroup.add(gantryArmTop);
+
+  var gantryArmMid = new THREE.Group();
+  gantryArmMid.position.set(0.32, 1.95, 0.25);
+  var armBar2 = new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.18, 0.2), beamMat);
+  armBar2.position.x = 0.8; armBar2.castShadow = true;
+  gantryArmMid.add(armBar2);
+  gantryGroup.add(gantryArmMid);
+
+  /* Transparent 3D Crystal Fuel Reactor Tube (Right side of Launchpad!) */
+  var fuelGroup = new THREE.Group();
+  fuelGroup.position.set(2.85, 0, -0.35);
+  launchWorld.add(fuelGroup);
+
+  var fuelPedestal = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.75, 0.86, 0.42, 18),
+    new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.55, roughness: 0.3 })
+  );
+  fuelPedestal.position.y = 0.2; fuelPedestal.castShadow = true;
+  fuelGroup.add(fuelPedestal);
+
+  var fuelGlass = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.56, 0.56, 3.6, 20, 1, true),
+    new THREE.MeshPhysicalMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.28, roughness: 0.08, metalness: 0.1, side: THREE.DoubleSide })
+  );
+  fuelGlass.position.y = 2.15;
+  fuelGroup.add(fuelGlass);
+
+  var fuelCap = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.68, 0.68, 0.28, 18),
+    new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.6, roughness: 0.22 })
+  );
+  fuelCap.position.y = 4.02;
+  fuelGroup.add(fuelCap);
+
+  var fuelCrystalsGroup = new THREE.Group();
+  fuelGroup.add(fuelCrystalsGroup);
+
+  /* Sparky the Interactive 3D Launch Bot rolling around the pad! */
+  var sparky = new THREE.Group();
+  sparky.userData.interactive = "sparky";
+  var spBody = new THREE.Mesh(
+    new THREE.BoxGeometry(0.72, 0.68, 0.62),
+    new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.45, roughness: 0.25 })
+  );
+  spBody.position.y = 0.58; spBody.castShadow = true; sparky.add(spBody);
+  var spVisor = new THREE.Mesh(
+    new THREE.BoxGeometry(0.54, 0.24, 0.08),
+    new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.15, metalness: 0.6 })
+  );
+  spVisor.position.set(0, 0.66, 0.3); sparky.add(spVisor);
+  [-0.14, 0.14].forEach(function(ex){
+    var eye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), new THREE.MeshStandardMaterial({ color: 0xfde047, emissive: 0xfde047, emissiveIntensity: 1.2 }));
+    eye.position.set(ex, 0.66, 0.34); sparky.add(eye);
+  });
+  var spWheelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 });
+  [-0.36, 0.36].forEach(function(wx){
+    var w = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.14, 14), spWheelMat);
+    w.rotation.z = Math.PI / 2; w.position.set(wx, 0.22, 0); sparky.add(w);
+  });
+  var spProp = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.06, 0.12), new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.4, roughness: 0.25 }));
+  spProp.position.set(0, 1.06, 0); sparky.add(spProp);
+  sparky.position.set(3.4, 0, 2.2);
+  launchWorld.add(sparky);
+  var sparkyBounce = 0;
+
+  /* =========================================================================
+     6. HERO PIXAR-STYLE 3D SPACE ROCKET + ARTICULATED 3D HOOT THE OWL
+     ========================================================================= */
+  var ROCKET_PAINTS = {
+    red:    { hex: "#ef4444", fin: 0x2563eb, clip: "name-color-red" },
+    blue:   { hex: "#2563eb", fin: 0xfacc15, clip: "name-color-blue" },
+    yellow: { hex: "#eab308", fin: 0xef4444, clip: "name-color-yellow" },
+    pink:   { hex: "#ec4899", fin: 0x38bdf8, clip: "name-color-pink" },
+    green:  { hex: "#16a34a", fin: 0xf59e0b, clip: "name-color-green" }
   };
+  var currentPaint = "red";
+
+  var rocketRoot = new THREE.Group();
+  rocketRoot.position.set(0, 0.32, 0);
+  scene.add(rocketRoot);
+
+  var rocketMeshGroup = new THREE.Group();
+  rocketMeshGroup.userData.interactive = "rocket";
+  rocketRoot.add(rocketMeshGroup);
+
+  /* Smooth Lathe-Turned Aerodynamic Rocket Fuselage */
+  var lathePts = [
+    new THREE.Vector2(0.01, 4.95),
+    new THREE.Vector2(0.22, 4.65),
+    new THREE.Vector2(0.62, 4.05),
+    new THREE.Vector2(0.95, 3.25),
+    new THREE.Vector2(1.12, 2.35),
+    new THREE.Vector2(1.10, 1.45),
+    new THREE.Vector2(0.92, 0.65),
+    new THREE.Vector2(0.72, 0.35)
+  ];
+  var rocketBodyMat = new THREE.MeshStandardMaterial({
+    map: makeRocketBodyTexture(ROCKET_PAINTS.red.hex),
+    roughness: 0.22,
+    metalness: 0.28
+  });
+  var rocketHull = new THREE.Mesh(new THREE.LatheGeometry(lathePts, 36), rocketBodyMat);
+  rocketHull.castShadow = true;
+  rocketHull.receiveShadow = true;
+  rocketHull.userData.interactive = "rocket";
+  rocketMeshGroup.add(rocketHull);
+
+  /* Metallic Gold Tip Spire */
+  var noseTip = new THREE.Mesh(
+    new THREE.SphereGeometry(0.18, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.78, roughness: 0.18 })
+  );
+  noseTip.position.y = 4.98;
+  rocketMeshGroup.add(noseTip);
+
+  /* 3 Swept Aerodynamic Tail Fins */
+  var finShape = new THREE.Shape();
+  finShape.moveTo(0, 0);
+  finShape.quadraticCurveTo(0.95, 0.05, 1.12, -0.58);
+  finShape.lineTo(0.86, -0.66);
+  finShape.quadraticCurveTo(0.55, -0.18, 0.04, 0.05);
+  finShape.lineTo(0, 1.45);
+  finShape.closePath();
+  var finGeo = new THREE.ExtrudeGeometry(finShape, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.04, bevelSegments: 3 });
+  finGeo.translate(0, 0, -0.08);
+  var rocketFinMat = new THREE.MeshStandardMaterial({ color: ROCKET_PAINTS.red.fin, roughness: 0.26, metalness: 0.38 });
+  for(var fi = 0; fi < 4; fi++){
+    var finWrap = new THREE.Group();
+    /* 4 symmetrical X-diagonal swept fins (45°, 135°, 225°, 315°) — clean open front view of Hoot & fuselage! */
+    finWrap.rotation.y = (fi / 4) * Math.PI * 2 + Math.PI / 4;
+    var fin = new THREE.Mesh(finGeo, rocketFinMat);
+    fin.position.set(0.76, 0.65, 0);
+    fin.castShadow = true;
+    fin.userData.interactive = "rocket";
+    finWrap.add(fin);
+    rocketMeshGroup.add(finWrap);
+  }
+
+  /* Brass Engine Bell Nozzle */
+  var nozzle = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.45, 0.72, 0.56, 24),
+    new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.75, roughness: 0.25 })
+  );
+  nozzle.position.y = 0.12;
+  rocketMeshGroup.add(nozzle);
+
+  /* Glossy Porthole Frame + Cute Sculpted 3D Hoot the Owl Peeking Out! */
+  var portFrame = new THREE.Mesh(
+    new THREE.TorusGeometry(0.56, 0.11, 16, 32),
+    new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.75, roughness: 0.2 })
+  );
+  portFrame.position.set(0, 2.55, 1.05);
+  rocketMeshGroup.add(portFrame);
+
+  var portBack = new THREE.Mesh(
+    new THREE.CircleGeometry(0.54, 24),
+    new THREE.MeshStandardMaterial({ color: 0x0369a1, emissive: 0x075985, emissiveIntensity: 0.35, roughness: 0.3 })
+  );
+  portBack.position.set(0, 2.55, 1.01);
+  rocketMeshGroup.add(portBack);
+
+  /* Sculpted 3D Hoot Head inside Porthole */
+  var hoot3D = new THREE.Group();
+  hoot3D.position.set(0, 2.52, 1.08);
+  var hootBrown = new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 0.68, envMapIntensity: 0.28 });
+  var hootCream = new THREE.MeshStandardMaterial({ color: 0xfde68a, roughness: 0.7, envMapIntensity: 0.28 });
+  var hootHead = new THREE.Mesh(new THREE.SphereGeometry(0.32, 18, 18), hootBrown);
+  hoot3D.add(hootHead);
+  [-0.22, 0.22].forEach(function(ex){
+    var tuft = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.22, 8), hootBrown);
+    tuft.position.set(ex, 0.28, 0.02); tuft.rotation.z = ex < 0 ? 0.4 : -0.4;
+    hoot3D.add(tuft);
+  });
+  var hootEyeMeshes = [];
+  [-0.12, 0.12].forEach(function(ex){
+    var disc = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 14), hootCream);
+    disc.scale.set(1, 1, 0.45); disc.position.set(ex, 0.04, 0.26); hoot3D.add(disc);
+    var pupil = new THREE.Mesh(new THREE.SphereGeometry(0.068, 12, 12), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 }));
+    pupil.position.set(ex, 0.04, 0.31); hoot3D.add(pupil);
+    hootEyeMeshes.push(pupil);
+  });
+  var hootBeak = new THREE.Mesh(
+    new THREE.ConeGeometry(0.08, 0.18, 10),
+    new THREE.MeshStandardMaterial({ color: 0xff9f1c, roughness: 0.3 })
+  );
+  hootBeak.rotation.x = Math.PI / 2; hootBeak.position.set(0, -0.05, 0.33);
+  hoot3D.add(hootBeak);
+  rocketMeshGroup.add(hoot3D);
+
+  var portGlass = new THREE.Mesh(
+    new THREE.SphereGeometry(0.54, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.42),
+    new THREE.MeshPhysicalMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.28, roughness: 0.05, metalness: 0.1 })
+  );
+  portGlass.rotation.x = Math.PI / 2;
+  portGlass.position.set(0, 2.55, 1.03);
+  rocketMeshGroup.add(portGlass);
+
+  /* Dual-Core Volumetric 3D Rocket Exhaust Flame + Glow Sprite */
+  var flameGroup = new THREE.Group();
+  flameGroup.position.y = -0.14;
+  flameGroup.visible = false;
+  rocketMeshGroup.add(flameGroup);
+
+  var outerFlame = new THREE.Mesh(
+    new THREE.ConeGeometry(0.62, 2.5, 18),
+    new THREE.MeshBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.88 })
+  );
+  outerFlame.rotation.x = Math.PI; outerFlame.position.y = -1.25;
+  flameGroup.add(outerFlame);
+
+  var innerFlame = new THREE.Mesh(
+    new THREE.ConeGeometry(0.36, 1.75, 16),
+    new THREE.MeshBasicMaterial({ color: 0xfef08a, transparent: true, opacity: 0.96 })
+  );
+  innerFlame.rotation.x = Math.PI; innerFlame.position.y = -0.88;
+  flameGroup.add(innerFlame);
+
+  var flameGlowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowFireTex, color: 0xfb923c, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  flameGlowSprite.scale.set(3.8, 3.8, 1);
+  flameGlowSprite.position.y = -0.9;
+  flameGroup.add(flameGlowSprite);
+
+  /* =========================================================================
+     7. INTERACTIVE SKY PLANETS (3D SATURN & MOON) + 3D FLIGHT CORRIDOR + LANDING PLANETS
+     ========================================================================= */
+  var skyDecorGroup = new THREE.Group();
+  scene.add(skyDecorGroup);
+
+  /* Giant Smiling 3D Ringed Saturn in Upper Right Sky */
+  var skySaturn = new THREE.Group();
+  skySaturn.position.set(9.5, 7.2, -13);
+  skySaturn.userData.interactive = "saturn";
+  var satBody = new THREE.Mesh(
+    new THREE.SphereGeometry(2.15, 28, 28),
+    new THREE.MeshStandardMaterial({ map: makePlanetTexture("saturn"), roughness: 0.45, metalness: 0.1 })
+  );
+  satBody.userData.interactive = "saturn";
+  skySaturn.add(satBody);
+  var satRing = new THREE.Mesh(
+    new THREE.RingGeometry(2.75, 4.35, 48),
+    new THREE.MeshStandardMaterial({ color: 0x7dd3fc, emissive: 0x0284c7, emissiveIntensity: 0.25, transparent: true, opacity: 0.82, side: THREE.DoubleSide, roughness: 0.25 })
+  );
+  satRing.rotation.x = Math.PI * 0.42; satRing.rotation.y = -0.28;
+  satRing.userData.interactive = "saturn";
+  skySaturn.add(satRing);
+  skyDecorGroup.add(skySaturn);
+
+  /* Glowing 3D Cratered Moon in Upper Left Sky */
+  var skyMoon = new THREE.Group();
+  skyMoon.position.set(-9.2, 6.8, -11.5);
+  skyMoon.userData.interactive = "moon";
+  var moonBody = new THREE.Mesh(
+    new THREE.SphereGeometry(1.75, 24, 24),
+    new THREE.MeshStandardMaterial({ map: makePlanetTexture("moon"), emissive: 0xf59e0b, emissiveIntensity: 0.18, roughness: 0.55 })
+  );
+  moonBody.userData.interactive = "moon";
+  skyMoon.add(moonBody);
+  /* Cute smiling eyes on Saturn & Cheese Moon so kids love tapping them! */
+  [-0.55, 0.55].forEach(function(ex){
+    var se = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 12), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 }));
+    se.position.set(ex, 0.25, 2.05); skySaturn.add(se);
+    var me = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 }));
+    me.position.set(ex * 0.82, 0.18, 1.66); skyMoon.add(me);
+  });
+  skyDecorGroup.add(skyMoon);
+  var saturnSpinBoost = 0, moonSpinBoost = 0;
+
+  /* 3D Extruded Bevelled Star Geometry (Crisp Jewel-Like Gold Stars!) */
+  var starShape = new THREE.Shape();
+  for(var sp = 0; sp < 10; sp++){
+    var ang = (sp / 10) * Math.PI * 2 - Math.PI / 2;
+    var rad = sp % 2 === 0 ? 0.56 : 0.26;
+    if(sp === 0) starShape.moveTo(Math.cos(ang) * rad, Math.sin(ang) * rad);
+    else starShape.lineTo(Math.cos(ang) * rad, Math.sin(ang) * rad);
+  }
+  starShape.closePath();
+  var star3DGeo = new THREE.ExtrudeGeometry(starShape, { depth: 0.2, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.05, bevelSegments: 3 });
+  star3DGeo.center();
+
+  /* Destination 3D Planets & Celebration Buddies (Shown on Landing!) */
+  var PLANETS = [
+    { key: "moon",   name: "Cheese Moon",    emo: "🌕", skyTint: 0x161642, col: 0xfde68a, badge: 0 },
+    { key: "saturn", name: "Rainbow Saturn", emo: "🪐", skyTint: 0x1e1348, col: 0xfb923c, badge: 1 },
+    { key: "mars",   name: "Bouncy Mars",    emo: "🔴", skyTint: 0x2b1035, col: 0xef4444, badge: 2 },
+    { key: "candy",  name: "Candy Star",     emo: "🍬", skyTint: 0x241452, col: 0xf472b6, badge: 3 }
+  ];
+  var planetIdx = 0, earnedPlanets = {};
+
+  var landingWorld = new THREE.Group();
+  landingWorld.visible = false;
+  scene.add(landingWorld);
+
+  var landingGroundMat = new THREE.MeshStandardMaterial({ map: makePlanetTexture("moon"), roughness: 0.5, metalness: 0.08 });
+  var landingGround = new THREE.Mesh(new THREE.SphereGeometry(11.5, 40, 32), landingGroundMat);
+  landingGround.position.y = -11.45;
+  landingGround.receiveShadow = true;
+  landingWorld.add(landingGround);
+
+  /* 3 Cute Articulated 3D Space Buddies cheering on the landing planet! */
+  var buddies = [];
+  function makeSpaceBuddy(colorHex, x, z, hasAntenna){
+    var g = new THREE.Group();
+    g.position.set(x, 0, z);
+    g.userData.interactive = "buddy";
+    var mat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.3, metalness: 0.15 });
+    var body = new THREE.Mesh(new THREE.SphereGeometry(0.52, 18, 18), mat);
+    body.scale.set(1, 1.12, 0.92); body.position.y = 0.58; body.castShadow = true; body.userData.interactive = "buddy";
+    g.add(body);
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.46, 18, 18), mat);
+    head.position.y = 1.32; head.castShadow = true; head.userData.interactive = "buddy";
+    g.add(head);
+    /* Cute glossy eyes + white catchlights + rosy cheeks + happy smile */
+    [-0.16, 0.16].forEach(function(ex){
+      var e = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 10), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 }));
+      e.position.set(ex, 1.38, 0.4); g.add(e);
+      var sp = new THREE.Mesh(new THREE.SphereGeometry(0.032, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      sp.position.set(ex - 0.025, 1.41, 0.475); g.add(sp);
+      var ch = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfb7185, transparent: true, opacity: 0.65 }));
+      ch.scale.set(1.2, 0.7, 0.4); ch.position.set(ex * 1.45, 1.24, 0.39); g.add(ch);
+    });
+    var smile = new THREE.Mesh(
+      new THREE.TorusGeometry(0.1, 0.025, 8, 16, Math.PI),
+      new THREE.MeshBasicMaterial({ color: 0x0f172a })
+    );
+    smile.rotation.z = Math.PI; smile.position.set(0, 1.24, 0.43); g.add(smile);
+    if(hasAntenna){
+      var stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.36, 8), mat);
+      stem.position.y = 1.9; g.add(stem);
+      var orb = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), new THREE.MeshStandardMaterial({ color: 0xfde047, emissive: 0xfde047, emissiveIntensity: 0.9 }));
+      orb.position.y = 2.1; g.add(orb);
+    } else {
+      [-0.18, 0.18].forEach(function(ex){
+        var ear = new THREE.Mesh(new THREE.CapsuleGeometry ? new THREE.CapsuleGeometry(0.09, 0.3, 6, 10) : new THREE.CylinderGeometry(0.09, 0.09, 0.42, 10), mat);
+        ear.position.set(ex, 1.88, 0); ear.rotation.z = ex < 0 ? 0.2 : -0.2; g.add(ear);
+      });
+    }
+    var armL = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.55, 10), mat);
+    armL.position.set(-0.56, 0.92, 0); armL.rotation.z = 0.85; g.add(armL);
+    var armR = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.55, 10), mat);
+    armR.position.set(0.56, 0.92, 0); armR.rotation.z = -0.85; g.add(armR);
+    landingWorld.add(g);
+    buddies.push({ g: g, armL: armL, armR: armR, flipT: 0, phase: Math.random() * 6.28 });
+  }
+  makeSpaceBuddy(0x4ade80, -2.5, 1.5, true);
+  makeSpaceBuddy(0xf472b6,  2.5, 1.6, false);
+  makeSpaceBuddy(0x38bdf8,  0.2, 3.1, true);
+
+  /* 3D Rainbow Boost Rings for Interactive Space Flight Stage! */
+  var flightGroup = new THREE.Group();
+  flightGroup.visible = false;
+  scene.add(flightGroup);
+  var flightRings = [];
+  var RING_COLS = [0xef4444, 0xf59e0b, 0xfde047, 0x4ade80, 0x38bdf8, 0xc084fc];
+  function spawnFlightRings(){
+    while(flightGroup.children.length) flightGroup.remove(flightGroup.children[0]);
+    flightRings = [];
+    for(var ri = 0; ri < 6; ri++){
+      var rg = new THREE.Group();
+      var col = RING_COLS[ri % RING_COLS.length];
+      var torus = new THREE.Mesh(
+        new THREE.TorusGeometry(2.6, 0.22, 16, 40),
+        new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.75, roughness: 0.2, metalness: 0.3 })
+      );
+      rg.add(torus);
+      /* Center collectible star inside each Rainbow Ring */
+      var cStar = new THREE.Mesh(
+        star3DGeo,
+        new THREE.MeshStandardMaterial({ color: 0xfde047, emissive: 0xf59e0b, emissiveIntensity: 0.65, metalness: 0.7, roughness: 0.18 })
+      );
+      cStar.scale.setScalar(0.85);
+      rg.add(cStar);
+      var rx = (ri % 2 === 0 ? -1 : 1) * (1.2 + (ri % 3) * 0.65);
+      rg.position.set(rx, 24 + ri * 14, 0);
+      rg.rotation.x = Math.PI / 2;
+      flightGroup.add(rg);
+      flightRings.push({ g: rg, star: cStar, x: rx, y: 24 + ri * 14, hit: false, idx: ri });
+    }
+    /* Puffy 3D Clouds to punch right through on liftoff! */
+    var cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, transparent: true, opacity: 0.88 });
+    for(var ci = 0; ci < 12; ci++){
+      var cg = new THREE.Group();
+      for(var p = 0; p < 3; p++){
+        var puff = new THREE.Mesh(new THREE.SphereGeometry(1.1 + p * 0.25, 12, 12), cloudMat);
+        puff.position.set((p - 1) * 1.1, (p % 2) * 0.35, 0);
+        cg.add(puff);
+      }
+      var ca = (ci / 12) * Math.PI * 2;
+      cg.position.set(Math.cos(ca) * (4.5 + (ci % 3) * 1.8), 11 + (ci % 4) * 2.8, Math.sin(ca) * 4.5);
+      flightGroup.add(cg);
+    }
+  }
+
+  /* =========================================================================
+     8. 3D PARTICLE SYSTEM (Smoke Billows, Golden Sparkles, Confetti Fireworks)
+     ========================================================================= */
+  var particles = [];
+  var pSphereGeo = new THREE.SphereGeometry(0.24, 10, 10);
+  function spawn3DBurst(pos, count, colors, speed, isSmoke){
+    for(var i = 0; i < count; i++){
+      var col = colors[i % colors.length];
+      var mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: isSmoke ? 0.82 : 1.0 });
+      var mesh = new THREE.Mesh(isSmoke ? pSphereGeo : star3DGeo, mat);
+      mesh.position.copy(pos);
+      var sc = isSmoke ? (0.7 + Math.random() * 1.1) : (0.18 + Math.random() * 0.22);
+      mesh.scale.setScalar(sc);
+      var a = Math.random() * Math.PI * 2;
+      var elev = isSmoke ? (Math.random() * 0.5) : ((Math.random() - 0.3) * 1.5);
+      var spd = (speed || 5.5) * (0.45 + Math.random() * 0.85);
+      scene.add(mesh);
+      particles.push({
+        mesh: mesh,
+        vx: Math.cos(a) * spd,
+        vy: elev * spd + (isSmoke ? 0.6 : 2.2),
+        vz: Math.sin(a) * spd,
+        life: 1.0,
+        decay: isSmoke ? (0.95 + Math.random() * 0.5) : (0.75 + Math.random() * 0.55),
+        grow: isSmoke ? 2.4 : -0.35,
+        grav: isSmoke ? -0.4 : -5.8,
+        spin: isSmoke ? 0.8 : 7.5
+      });
+    }
+  }
+
+  /* =========================================================================
+     9. GAME STATE MACHINE (collect -> match -> ready -> countdown -> flight -> landed)
+     ========================================================================= */
+  var bubble = document.getElementById("promptBubble");
+  var podRow = document.getElementById("podRow");
+  var launchBtn = document.getElementById("launchBtn");
+  var nextPlanetBtn = document.getElementById("nextPlanetBtn");
+  var countdownBanner = document.getElementById("countdownBanner");
+  var flightBanner = document.getElementById("flightBanner");
+  var starCountEl = document.getElementById("starCount");
+  var winOverlay = document.getElementById("winOverlay");
+
+  var maxCount = 5; /* Toddler-friendly 1..5 default; toggleable to 1..8 */
+  var phase = "collect";
+  var targetCount = 3, collectedCount = 0, totalStarsEarned = 0;
+  var collectibleStars = [], flyingStars = [];
+  var rocketBounce = 0, rocketSteerX = 0, targetSteerX = 0;
+  var gantryOpenT = 0, rocketVelY = 0, phaseTimer = 0, fireworkTimer = 0;
+
+  /* Camera orbit + spring-back */
+  var camYaw = 0, camPitch = 0.08, draggingSky = false, dragStartX = 0, dragStartY = 0, dragMoved = false;
+
+  function clearCollectibles(){
+    collectibleStars.forEach(function(st){ scene.remove(st.group); });
+    collectibleStars = [];
+    flyingStars.forEach(function(fs){ scene.remove(fs.group); });
+    flyingStars = [];
+    while(fuelCrystalsGroup.children.length) fuelCrystalsGroup.remove(fuelCrystalsGroup.children[0]);
+  }
+
+  function addFuelCrystalSlice(index, total){
+    var h = Math.min(0.62, 3.1 / Math.max(3, total));
+    var col = new THREE.Color().setHSL(0.55 - (index / Math.max(1, total)) * 0.45, 0.92, 0.48);
+    var slice = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.45, 0.45, h * 0.84, 18),
+      new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.42, roughness: 0.2, metalness: 0.25, envMapIntensity: 0.5 })
+    );
+    slice.position.y = 0.52 + index * (3.25 / Math.max(3, total)) + h * 0.4;
+    slice.scale.set(0.1, 0.1, 0.1);
+    slice.userData.popT = 0;
+    fuelCrystalsGroup.add(slice);
+  }
+
+  /* Framing horseshoe slots around Left & Right of the Rocket — NEVER blocking Hoot's cockpit face, always inside portrait & landscape viewports! */
+  var STAR_SLOTS = [
+    [-3.55, 3.35, 1.95], [3.55, 3.35, 1.95],
+    [-3.15, 1.55, 2.55], [3.15, 1.55, 2.55],
+    [-2.15, 4.65, 1.35], [2.15, 4.65, 1.35],
+    [-4.15, 2.45, 1.15], [4.15, 2.45, 1.15]
+  ];
+
+  function startRound(speakNow){
+    phase = "collect";
+    clearCollectibles();
+    podRow.hidden = true; podRow.innerHTML = "";
+    launchBtn.hidden = true;
+    nextPlanetBtn.hidden = true;
+    flightBanner.hidden = true;
+    countdownBanner.classList.remove("show");
+    launchWorld.visible = true;
+    skyDecorGroup.visible = true;
+    flightGroup.visible = false;
+    landingWorld.visible = false;
+
+    rocketRoot.position.set(0, 0.32, 0);
+    rocketRoot.rotation.set(0, 0, 0);
+    rocketMeshGroup.scale.set(1, 1, 1);
+    flameGroup.visible = false;
+    engineLight.intensity = 0;
+    gantryOpenT = 0;
+    rocketSteerX = 0; targetSteerX = 0;
+    scene.fog.color.setHex(0x161642);
+    beaconMats.forEach(function(m){ m.color.setHex(0xfacc15); m.emissive.setHex(0xfacc15); });
+
+    /* Pick a fun count (2..maxCount) */
+    targetCount = 2 + Math.floor(Math.random() * Math.max(1, maxCount - 1));
+    collectedCount = 0;
+
+    /* Spawn Big Chunky Bevelled 3D Golden Stars framing the Rocket! */
+    for(var i = 0; i < targetCount; i++){
+      var sg = new THREE.Group();
+      var starMat = new THREE.MeshStandardMaterial({
+        color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.24,
+        metalness: 0.72, roughness: 0.18, envMapIntensity: 0.9
+      });
+      var mesh = new THREE.Mesh(star3DGeo, starMat);
+      mesh.castShadow = true;
+      mesh.userData.starIdx = i;
+      sg.add(mesh);
+
+      /* Crisp glowing orbital halo ring + subtle bloom sprite */
+      var halo = new THREE.Mesh(
+        new THREE.TorusGeometry(0.76, 0.04, 10, 28),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.78 })
+      );
+      sg.add(halo);
+      var glow = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: glowGoldTex, color: 0xfacc15, transparent: true, opacity: 0.46, blending: THREE.AdditiveBlending, depthWrite: false
+      }));
+      glow.scale.set(1.85, 1.85, 1);
+      sg.add(glow);
+
+      var sl = STAR_SLOTS[i % STAR_SLOTS.length];
+      var bx = sl[0], by = sl[1], bz = sl[2];
+      sg.position.set(bx, by, bz);
+      scene.add(sg);
+      collectibleStars.push({ group: sg, mesh: mesh, halo: halo, bx: bx, by: by, bz: bz, phase: i * 1.15, collected: false });
+    }
+
+    var dest = PLANETS[planetIdx % PLANETS.length];
+    bubble.innerHTML = "⭐ <b>FUEL THE 3D ROCKET!</b> Tap all the glowing <b>Gold Stars</b> to fly to <b>" + dest.emo + " " + dest.name + "</b>!";
+    setStepVoice("hoot-r3d-tap-stars", ["ask-how-many-stars", "hoot-tap-big-btn"], speakNow !== false);
+  }
+
+  function collectStar(st){
+    if(st.collected || phase !== "collect") return;
+    st.collected = true;
+    collectedCount++;
+    totalStarsEarned++;
+    starCountEl.textContent = String(totalStarsEarned);
+
+    sfxStarCollect(collectedCount - 1);
+    playVoice(["name-number-" + collectedCount]);
+    spawn3DBurst(st.group.position, 18, [0xfde047, 0x38bdf8, 0xffffff, 0xf472b6], 5.2, false);
+    rocketBounce = 1.0;
+
+    /* Fly star along a sparkling 3D Bezier curve into the Crystal Fuel Tube! */
+    flyingStars.push({
+      group: st.group,
+      p0: st.group.position.clone(),
+      p1: new THREE.Vector3((st.group.position.x + 2.85) * 0.5, st.group.position.y + 2.8, st.group.position.z + 1.2),
+      p2: new THREE.Vector3(2.85, 3.85, -0.35),
+      t: 0,
+      slotIdx: collectedCount - 1
+    });
+
+    bubble.innerHTML = "⭐ <b>" + collectedCount + "!</b> Awesome! " + (collectedCount < targetCount ? "Tap the next glowing <b>Gold Star</b>!" : "All stars loaded!");
+
+    if(collectedCount >= targetCount){
+      setTimeout(function(){
+        if(phase === "collect") enterNumberMatchPhase();
+      }, 850);
+    }
+  }
+
+  function enterNumberMatchPhase(){
+    phase = "match";
+    podRow.innerHTML = "";
+    /* Pick 3 distinct numbers including targetCount */
+    var choices = [targetCount];
+    while(choices.length < 3){
+      var cand = 1 + Math.floor(Math.random() * Math.max(5, maxCount));
+      if(choices.indexOf(cand) < 0) choices.push(cand);
+    }
+    choices.sort(function(){ return Math.random() - 0.5; });
+
+    choices.forEach(function(n){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "num-pod choice-btn";
+      btn.setAttribute("data-num", String(n));
+      var starsStr = "";
+      for(var k = 0; k < n; k++) starsStr += "⭐";
+      btn.innerHTML = '<span class="pod-num">' + n + '</span><span class="pod-dots">' + starsStr + '</span>';
+      btn.addEventListener("pointerdown", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(phase !== "match") return;
+        if(n === targetCount){
+          sfxStarCollect(6);
+          spawn3DBurst(new THREE.Vector3(2.85, 3.6, -0.35), 24, [0x38bdf8, 0xfde047, 0x4ade80], 6.5, false);
+          spawn3DBurst(new THREE.Vector3(0, 2.5, 0), 24, [0xfde047, 0x38bdf8, 0xffffff], 6.2, false);
+          rocketBounce = 1.15;
+          podRow.hidden = true;
+          enterReadyLaunchPhase();
+        } else {
+          btn.classList.remove("shake"); void btn.offsetWidth; btn.classList.add("shake");
+          sfxBoing();
+          playVoice(["name-number-" + n, "name-number-" + targetCount]);
+          /* Gently highlight the matching pod so a 2-year-old always succeeds! */
+          var rightBtn = podRow.querySelector('[data-num="' + targetCount + '"]');
+          if(rightBtn) rightBtn.classList.add("hint-glow");
+        }
+      });
+      podRow.appendChild(btn);
+    });
+    podRow.hidden = false;
+    bubble.innerHTML = "🔢 <b>HOW MANY STARS?</b> Tap number <b>" + targetCount + "</b> to power up the engines!";
+    setStepVoice(null, ["ask-how-many-stars", "name-number-" + targetCount], true);
+  }
+
+  function enterReadyLaunchPhase(){
+    phase = "ready";
+    launchBtn.hidden = false;
+    flameGroup.visible = true;
+    engineLight.intensity = 2.2;
+    beaconMats.forEach(function(m){ m.color.setHex(0x4ade80); m.emissive.setHex(0x4ade80); });
+    bubble.innerHTML = "🚀 <b>ENGINES FULL!</b> Press the big red <b>BLAST OFF</b> button!";
+    setStepVoice("hoot-r3d-press-launch", ["hoot-ready-go", "hoot-tap-big-btn"], true);
+  }
+
+  function triggerCountdownLaunch(){
+    if(phase !== "ready") return;
+    phase = "countdown";
+    clearIdleHelp();
+    launchBtn.hidden = true;
+    phaseTimer = 0;
+    sfxRocketRoar(2.8);
+
+    /* Spoken 3 - 2 - 1 - BLAST OFF! */
+    var steps = [
+      { ms: 0,    txt: "3", clip: "name-number-3", fin: false },
+      { ms: 750,  txt: "2", clip: "name-number-2", fin: false },
+      { ms: 1500, txt: "1", clip: "name-number-1", fin: false },
+      { ms: 2250, txt: "🚀 BLAST OFF!", clip: null, fin: true }
+    ];
+    steps.forEach(function(s){
+      setTimeout(function(){
+        if(phase !== "countdown" && !s.fin) return;
+        countdownBanner.textContent = s.txt;
+        countdownBanner.classList.remove("show");
+        void countdownBanner.offsetWidth;
+        countdownBanner.classList.add("show");
+        sfxCountdownBeep(s.fin);
+        if(s.clip) playVoice([s.clip]);
+        if(s.fin){
+          startFlightPhase();
+          setTimeout(function(){ countdownBanner.classList.remove("show"); }, 900);
+        }
+      }, s.ms);
+    });
+  }
+
+  function startFlightPhase(){
+    phase = "flight";
+    phaseTimer = 0;
+    rocketVelY = 4.2;
+    spawnFlightRings();
+    flightGroup.visible = true;
+    flightBanner.hidden = false;
+    sfxRocketRoar(5.2);
+    bubble.innerHTML = "🌌 <b>FLYING IN 3D SPACE!</b> Drag left or right to soar through the <b>Rainbow Rings</b>!";
+    playVoice(resolveCmd("hoot-r3d-blastoff", ["hoot-super"]));
+  }
+
+  function startLandingPhase(){
+    phase = "landing";
+    phaseTimer = 0;
+    flightBanner.hidden = true;
+    flightGroup.visible = false;
+    launchWorld.visible = false;
+    skyDecorGroup.visible = false;
+
+    var pl = PLANETS[planetIdx % PLANETS.length];
+    landingGroundMat.map = makePlanetTexture(pl.key);
+    landingGroundMat.needsUpdate = true;
+    landingWorld.visible = true;
+    scene.fog.color.setHex(pl.skyTint);
+
+    rocketRoot.position.set(0, 12.5, 0);
+    rocketRoot.rotation.set(0, 0, 0);
+    rocketSteerX = 0; targetSteerX = 0;
+    sfxRocketRoar(1.4);
+    bubble.innerHTML = pl.emo + " <b>LANDING ON " + pl.name.toUpperCase() + "!</b> Hold on tight!";
+  }
+
+  function enterLandedParty(){
+    phase = "landed";
+    flameGroup.visible = false;
+    engineLight.intensity = 0;
+    rocketBounce = 1.3;
+    sfxFireworkPop();
+    spawn3DBurst(new THREE.Vector3(0, 0.4, 0), 26, [0xffffff, 0xfde047, 0x38bdf8], 6.5, true);
+
+    var pl = PLANETS[planetIdx % PLANETS.length];
+    earnedPlanets[pl.badge] = true;
+    var bEl = document.querySelector('.pbadge[data-pl="' + pl.badge + '"]');
+    if(bEl) bEl.classList.add("earned");
+
+    nextPlanetBtn.hidden = false;
+    bubble.innerHTML = pl.emo + " <b>WE LANDED ON " + pl.name.toUpperCase() + "!</b> Tap the dancing 3D Space Friends or press <b>Next Planet</b>!";
+    setStepVoice("hoot-r3d-landed", ["hoot-win-star"], true);
+  }
+
+  launchBtn.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    triggerCountdownLaunch();
+  });
+  nextPlanetBtn.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    planetIdx = (planetIdx + 1) % PLANETS.length;
+    startRound(true);
+  });
+
+  /* Live 3D Rocket Paint Buttons */
+  document.querySelectorAll(".paint-dot").forEach(function(dot){
+    dot.addEventListener("pointerdown", function(e){
+      e.preventDefault(); e.stopPropagation();
+      var col = dot.getAttribute("data-col");
+      var cfg = ROCKET_PAINTS[col]; if(!cfg) return;
+      currentPaint = col;
+      document.querySelectorAll(".paint-dot").forEach(function(d){ d.classList.toggle("on", d === dot); });
+      if(rocketBodyMat.map) rocketBodyMat.map.dispose();
+      rocketBodyMat.map = makeRocketBodyTexture(cfg.hex);
+      rocketBodyMat.needsUpdate = true;
+      rocketFinMat.color.setHex(cfg.fin);
+      rocketBounce = 0.85;
+      sfxBoing();
+      spawn3DBurst(new THREE.Vector3(rocketRoot.position.x, rocketRoot.position.y + 2.4, rocketRoot.position.z), 20, [new THREE.Color(cfg.hex).getHex(), 0xfde047, 0xffffff], 5.6, false);
+      playVoice([cfg.clip]);
+    });
+  });
+
+  /* Range Toggle (1-5 Toddler / 1-8 Big Kid) */
+  var rangeBtn = document.getElementById("rangeBtn");
+  rangeBtn.addEventListener("click", function(){
+    maxCount = maxCount === 5 ? 8 : 5;
+    rangeBtn.textContent = maxCount === 5 ? "⭐ 1–5" : "⭐ 1–8";
+    sfxBoing();
+    if(phase === "collect") startRound(true);
+  });
+
+  /* Fun Booster Puff Button */
+  document.getElementById("boostBtn").addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    rocketBounce = 1.05;
+    sfxRocketRoar(0.65);
+    spawn3DBurst(new THREE.Vector3(rocketRoot.position.x, rocketRoot.position.y + 0.1, rocketRoot.position.z), 16, [0xffffff, 0xfb923c, 0xfde047], 4.8, true);
+    if(phase === "collect" || phase === "match"){
+      flameGroup.visible = true;
+      engineLight.intensity = 2.6;
+      setTimeout(function(){ if(phase === "collect" || phase === "match"){ flameGroup.visible = false; engineLight.intensity = 0; } }, 420);
+    }
+  });
+
+  /* Tap Hoot to Repeat Current Step Voice Command */
+  document.getElementById("hootBtn").addEventListener("click", function(){
+    if(lastStepClips && lastStepClips.length) playVoice(lastStepClips);
+  });
+
+  /* Planet Passport Badges */
+  document.querySelectorAll(".pbadge").forEach(function(b){
+    b.addEventListener("click", function(){
+      planetIdx = parseInt(b.getAttribute("data-pl"), 10) || 0;
+      sfxBoing();
+      if(phase === "collect") startRound(true);
+    });
+  });
+
+  document.getElementById("doneBtn").addEventListener("click", function(){
+    won = true;
+    clearIdleHelp();
+    winOverlay.hidden = false;
+    playVoice(["hoot-win-star"]);
+  });
+  document.getElementById("againBtn").addEventListener("click", function(){
+    won = false;
+    winOverlay.hidden = true;
+    startRound(true);
+  });
+
+  /* =========================================================================
+     10. GENEROUS TODDLER 3D TOUCH RAYCASTER + SKY ORBIT & FLIGHT STEERING
+     ========================================================================= */
+  var raycaster = new THREE.Raycaster();
+  var pointerNDC = new THREE.Vector2();
+  var tmpProj = new THREE.Vector3();
+
+  function handleCanvasTap(clientX, clientY){
+    var rect = canvas.getBoundingClientRect();
+    pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+    /* 1. Generous Toddler-Friendly Collectible 3D Star Hit Check (68px screen radius!) */
+    if(phase === "collect"){
+      var bestStar = null, bestDist = 78;
+      collectibleStars.forEach(function(st){
+        if(st.collected) return;
+        tmpProj.copy(st.group.position).project(camera);
+        var sx = (tmpProj.x * 0.5 + 0.5) * rect.width + rect.left;
+        var sy = (-tmpProj.y * 0.5 + 0.5) * rect.height + rect.top;
+        var d = Math.hypot(clientX - sx, clientY - sy);
+        if(d < bestDist){ bestDist = d; bestStar = st; }
+      });
+      if(bestStar){
+        collectStar(bestStar);
+        return true;
+      }
+    }
+
+    /* 2. Raycast Interactive 3D Toys (Rocket, Sparky Bot, Saturn, Moon, Space Buddies) */
+    raycaster.setFromCamera(pointerNDC, camera);
+    var targets = [rocketMeshGroup, sparky, skySaturn, skyMoon];
+    if(phase === "landed") buddies.forEach(function(b){ targets.push(b.g); });
+    var hits = raycaster.intersectObjects(targets, true);
+    if(hits.length){
+      var obj = hits[0].object;
+      while(obj && !obj.userData.interactive) obj = obj.parent;
+      var kind = obj ? obj.userData.interactive : null;
+      if(kind === "rocket"){
+        rocketBounce = 1.0; sfxBoing();
+        spawn3DBurst(new THREE.Vector3(rocketRoot.position.x, rocketRoot.position.y + 2.5, rocketRoot.position.z), 14, [0xfde047, 0x38bdf8, 0xffffff], 4.5, false);
+        return true;
+      }
+      if(kind === "sparky"){
+        sparkyBounce = 1.0; sfxStarCollect(4);
+        spawn3DBurst(sparky.position.clone().add(new THREE.Vector3(0, 1.1, 0)), 16, [0x38bdf8, 0xfde047, 0xf472b6], 4.5, false);
+        return true;
+      }
+      if(kind === "saturn"){
+        saturnSpinBoost = 1.0; sfxStarCollect(5);
+        spawn3DBurst(skySaturn.position, 20, [0xfb923c, 0x38bdf8, 0xfde047], 7.0, false);
+        return true;
+      }
+      if(kind === "moon"){
+        moonSpinBoost = 1.0; sfxStarCollect(2);
+        spawn3DBurst(skyMoon.position, 20, [0xfde68a, 0xffffff, 0xf59e0b], 6.5, false);
+        return true;
+      }
+      if(kind === "buddy"){
+        buddies.forEach(function(b){ if(b.g === obj){ b.flipT = 1.0; spawn3DBurst(b.g.position.clone().add(new THREE.Vector3(0, 1.2, 0)), 18, [0x4ade80, 0xfde047, 0xf472b6, 0x38bdf8], 5.5, false); } });
+        sfxBoing();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  canvas.addEventListener("pointerdown", function(e){
+    e.preventDefault();
+    draggingSky = true;
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    dragMoved = false;
+    if(phase === "flight"){
+      var norm = (e.clientX / window.innerWidth) * 2 - 1;
+      targetSteerX = Math.max(-3.6, Math.min(3.6, norm * 4.2));
+      return;
+    }
+    if(handleCanvasTap(e.clientX, e.clientY)){
+      draggingSky = false;
+    }
+  });
+  window.addEventListener("pointermove", function(e){
+    if(!draggingSky) return;
+    if(phase === "flight"){
+      var norm = (e.clientX / window.innerWidth) * 2 - 1;
+      targetSteerX = Math.max(-3.6, Math.min(3.6, norm * 4.2));
+      return;
+    }
+    var dx = e.clientX - dragStartX, dy = e.clientY - dragStartY;
+    if(Math.hypot(dx, dy) > 8) dragMoved = true;
+    camYaw = Math.max(-0.85, Math.min(0.85, camYaw - dx * 0.0045));
+    camPitch = Math.max(-0.12, Math.min(0.42, camPitch + dy * 0.003));
+    dragStartX = e.clientX; dragStartY = e.clientY;
+  });
+  window.addEventListener("pointerup", function(){ draggingSky = false; });
+
+  window.addEventListener("resize", function(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  /* =========================================================================
+     11. 60FPS PIXAR ANIMATION & RENDER LOOP
+     ========================================================================= */
+  var clock = new THREE.Clock();
+  var tAcc = 0, blinkTimer = 0;
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var dt = Math.min(0.05, clock.getDelta());
+    tAcc += dt;
+
+    /* Gentle starfield drift & sky planets rotation */
+    starField.rotation.y += dt * 0.014;
+    skySaturn.rotation.y += dt * (0.35 + saturnSpinBoost * 8.5);
+    skyMoon.rotation.y += dt * (0.28 + moonSpinBoost * 8.5);
+    saturnSpinBoost = Math.max(0, saturnSpinBoost - dt * 1.4);
+    moonSpinBoost = Math.max(0, moonSpinBoost - dt * 1.4);
+
+    /* Radar dish spins faster as fuel crystals fill! */
+    radarPivot.rotation.y += dt * (1.2 + collectedCount * 0.65);
+
+    /* Articulated 3D Hoot blinking & subtle head curiosity inside porthole */
+    blinkTimer += dt;
+    var blinkClose = (blinkTimer % 3.6) > 3.46 ? 0.12 : 1.0;
+    hootEyeMeshes.forEach(function(em){ em.scale.y = blinkClose; });
+    hoot3D.rotation.y = Math.sin(tAcc * 1.3) * 0.22;
+
+    /* Sparky the Launch Bot patrols & hops happily */
+    if(launchWorld.visible){
+      var spAng = tAcc * 0.55;
+      sparky.position.x = Math.cos(spAng) * 3.7;
+      sparky.position.z = Math.sin(spAng) * 3.7;
+      sparky.rotation.y = -spAng;
+      spProp.rotation.y += dt * (10 + sparkyBounce * 24);
+      if(sparkyBounce > 0){
+        sparkyBounce = Math.max(0, sparkyBounce - dt * 2.2);
+        sparky.position.y = Math.sin(sparkyBounce * Math.PI) * 1.35;
+      } else {
+        sparky.position.y = 0;
+      }
+    }
+
+    /* Rocket Pixar Squash-and-Stretch Elastic Bounce */
+    if(rocketBounce > 0){
+      rocketBounce = Math.max(0, rocketBounce - dt * 2.6);
+      var sWave = Math.sin(rocketBounce * Math.PI * 2.5) * rocketBounce * 0.16;
+      rocketMeshGroup.scale.set(1 - sWave * 0.7, 1 + sWave, 1 - sWave * 0.7);
+    } else {
+      rocketMeshGroup.scale.set(1, 1, 1);
+    }
+
+    /* Collectible 3D Gold Stars gently bobbing & spinning */
+    collectibleStars.forEach(function(st){
+      if(st.collected) return;
+      st.group.position.y = st.by + Math.sin(tAcc * 2.6 + st.phase) * 0.28;
+      st.mesh.rotation.y = tAcc * 1.8 + st.phase;
+      st.halo.rotation.z = -tAcc * 1.4;
+      st.halo.rotation.x = Math.sin(tAcc * 1.6 + st.phase) * 0.4;
+    });
+
+    /* Flying Stars Arcing into the Crystal Fuel Reactor Tube */
+    for(var fi = flyingStars.length - 1; fi >= 0; fi--){
+      var fs = flyingStars[fi];
+      fs.t = Math.min(1, fs.t + dt * 1.85);
+      var u = fs.t, mu = 1 - u;
+      fs.group.position.set(
+        mu * mu * fs.p0.x + 2 * mu * u * fs.p1.x + u * u * fs.p2.x,
+        mu * mu * fs.p0.y + 2 * mu * u * fs.p1.y + u * u * fs.p2.y,
+        mu * mu * fs.p0.z + 2 * mu * u * fs.p1.z + u * u * fs.p2.z
+      );
+      fs.group.rotation.y += dt * 10;
+      fs.group.scale.setScalar(Math.max(0.25, 1 - u * 0.7));
+      if(u >= 1){
+        scene.remove(fs.group);
+        flyingStars.splice(fi, 1);
+        addFuelCrystalSlice(fs.slotIdx, targetCount);
+        spawn3DBurst(new THREE.Vector3(2.85, 3.85, -0.35), 14, [0x38bdf8, 0xfde047, 0xffffff], 4.2, false);
+      }
+    }
+
+    /* Pop-in animation for fuel slices */
+    fuelCrystalsGroup.children.forEach(function(sl){
+      if(sl.userData.popT < 1){
+        sl.userData.popT = Math.min(1, sl.userData.popT + dt * 4.5);
+        var e = 1 + Math.sin(sl.userData.popT * Math.PI) * 0.25;
+        sl.scale.set(sl.userData.popT * e, sl.userData.popT, sl.userData.popT * e);
+      }
+    });
+
+    /* Volumetric Flame Flicker */
+    if(flameGroup.visible){
+      var flk = 0.85 + Math.sin(tAcc * 48) * 0.22;
+      outerFlame.scale.set(1, flk * (phase === "flight" ? 1.65 : 1.0), 1);
+      innerFlame.scale.set(1, flk * (phase === "flight" ? 1.55 : 0.95), 1);
+      engineLight.position.set(rocketRoot.position.x, rocketRoot.position.y - 0.5, rocketRoot.position.z);
+    }
+
+    /* Phase-Specific Cinematic Motion & Camera Choreography */
+    if(phase === "collect" || phase === "match" || phase === "ready"){
+      if(!draggingSky){
+        camYaw += (0 - camYaw) * Math.min(1, dt * 2.2);
+        camPitch += (0.08 - camPitch) * Math.min(1, dt * 2.2);
+      }
+      var dist = window.innerWidth < 680 ? 14.5 : 11.8;
+      var cx = Math.sin(camYaw) * dist;
+      var cz = Math.cos(camYaw) * dist;
+      var cy = 4.2 + camPitch * 6.5;
+      camera.position.lerp(new THREE.Vector3(cx, cy, cz), Math.min(1, dt * 6));
+      camera.lookAt(0, 2.35, 0);
+      gantryArmTop.rotation.y = 0;
+      gantryArmMid.rotation.y = 0;
+      if(phase === "ready"){
+        rocketRoot.position.x = Math.sin(tAcc * 45) * 0.03;
+        if(Math.random() < 0.35) spawn3DBurst(new THREE.Vector3(0, 0.25, 0), 1, [0xffffff, 0xfde047], 2.5, true);
+      } else {
+        rocketRoot.position.x = 0;
+      }
+    } else if(phase === "countdown"){
+      phaseTimer += dt;
+      gantryOpenT = Math.min(1, phaseTimer / 1.5);
+      gantryArmTop.rotation.y = -gantryOpenT * 1.45;
+      gantryArmMid.rotation.y = -gantryOpenT * 1.45;
+      flameGroup.visible = true;
+      engineLight.intensity = 3.2 + Math.sin(tAcc * 35) * 0.9;
+      rocketRoot.position.x = (Math.random() - 0.5) * 0.14;
+      rocketRoot.position.z = (Math.random() - 0.5) * 0.14;
+      if(Math.random() < 0.85){
+        spawn3DBurst(new THREE.Vector3((Math.random() - 0.5) * 0.9, 0.25, (Math.random() - 0.5) * 0.9), 2, [0xffffff, 0xfef08a, 0xfb923c], 4.8, true);
+      }
+      camera.position.lerp(new THREE.Vector3(0.4 + (Math.random() - 0.5) * 0.12, 3.6, 11.2), Math.min(1, dt * 5));
+      camera.lookAt(0, 2.6, 0);
+    } else if(phase === "flight"){
+      phaseTimer += dt;
+      rocketVelY = Math.min(22, rocketVelY + dt * 9.5);
+      rocketRoot.position.y += rocketVelY * dt;
+
+      /* Gentle toddler auto-assist toward the next upcoming Rainbow Ring if not actively dragging! */
+      if(!draggingSky){
+        var upcoming = flightRings.find(function(r){ return !r.hit && r.y > rocketRoot.position.y; });
+        if(upcoming) targetSteerX += (upcoming.x - targetSteerX) * Math.min(1, dt * 1.4);
+      }
+      rocketSteerX += (targetSteerX - rocketSteerX) * Math.min(1, dt * 5.5);
+      var steerVel = targetSteerX - rocketSteerX;
+      rocketRoot.position.x = rocketSteerX;
+      rocketRoot.position.z = 0;
+      rocketRoot.rotation.z = Math.max(-0.42, Math.min(0.42, -steerVel * 0.25));
+      engineLight.intensity = 4.5;
+
+      /* Thruster sparkle & smoke trail */
+      if(Math.random() < 0.9){
+        spawn3DBurst(new THREE.Vector3(rocketRoot.position.x, rocketRoot.position.y - 0.8, 0), 2, [0xfef08a, 0xfb923c, 0x38bdf8, 0xffffff], 2.2, true);
+      }
+
+      /* Check Rainbow Ring Boost Hits! */
+      flightRings.forEach(function(rg){
+        rg.star.rotation.y += dt * 3.5;
+        if(!rg.hit && Math.abs(rocketRoot.position.y + 2.2 - rg.y) < 2.2){
+          if(Math.abs(rocketRoot.position.x - rg.x) < 3.4){
+            rg.hit = true;
+            rg.star.visible = false;
+            totalStarsEarned++;
+            starCountEl.textContent = String(totalStarsEarned);
+            sfxRingBoost(rg.idx);
+            rocketBounce = 0.75;
+            spawn3DBurst(new THREE.Vector3(rg.x, rg.y, 0), 26, [0xfde047, 0x38bdf8, 0xf472b6, 0x4ade80], 8.5, false);
+          }
+        }
+      });
+
+      /* Dynamic Chase Camera Swooping Up Behind & Beside Rocket */
+      camera.position.lerp(new THREE.Vector3(rocketSteerX * 0.45, rocketRoot.position.y - 3.6, 11.4), Math.min(1, dt * 6.5));
+      camera.lookAt(rocketSteerX * 0.65, rocketRoot.position.y + 4.2, 0);
+
+      if(rocketRoot.position.y > 112 || phaseTimer > 6.0){
+        startLandingPhase();
+      }
+    } else if(phase === "landing"){
+      phaseTimer += dt;
+      rocketRoot.position.y += (0.22 - rocketRoot.position.y) * Math.min(1, dt * 2.8);
+      rocketRoot.rotation.z *= 0.9;
+      flameGroup.visible = true;
+      engineLight.intensity = 2.8;
+      if(Math.random() < 0.65) spawn3DBurst(new THREE.Vector3(0, rocketRoot.position.y - 0.5, 0), 1, [0xffffff, 0xfde047], 3.2, true);
+      camera.position.lerp(new THREE.Vector3(0, 3.8, 11.2), Math.min(1, dt * 4));
+      camera.lookAt(0, 2.2, 0);
+      if(Math.abs(rocketRoot.position.y - 0.22) < 0.14){
+        rocketRoot.position.y = 0.22;
+        enterLandedParty();
+      }
+    } else if(phase === "landed"){
+      if(!draggingSky){
+        camYaw += (Math.sin(tAcc * 0.35) * 0.28 - camYaw) * Math.min(1, dt * 1.8);
+      }
+      var lDist = window.innerWidth < 680 ? 13.5 : 10.8;
+      camera.position.lerp(new THREE.Vector3(Math.sin(camYaw) * lDist, 3.8, Math.cos(camYaw) * lDist), Math.min(1, dt * 4));
+      camera.lookAt(0, 2.1, 0);
+
+      /* Dancing 3D Space Buddies + Periodic 3D Fireworks */
+      buddies.forEach(function(b){
+        var hop = Math.abs(Math.sin(tAcc * 5.2 + b.phase)) * 0.65;
+        b.g.position.y = hop;
+        b.armL.rotation.z = 0.6 + Math.sin(tAcc * 10 + b.phase) * 0.65;
+        b.armR.rotation.z = -0.6 - Math.sin(tAcc * 10 + b.phase) * 0.65;
+        if(b.flipT > 0){
+          b.flipT = Math.max(0, b.flipT - dt * 1.5);
+          b.g.rotation.x = (1 - b.flipT) * Math.PI * 2;
+          b.g.position.y = Math.sin(b.flipT * Math.PI) * 2.2;
+        } else {
+          b.g.rotation.x = 0;
+        }
+      });
+
+      fireworkTimer += dt;
+      if(fireworkTimer > 1.35){
+        fireworkTimer = 0;
+        spawn3DBurst(
+          new THREE.Vector3((Math.random() - 0.5) * 9, 4.5 + Math.random() * 3.5, -2 - Math.random() * 4),
+          22, [0xfde047, 0x38bdf8, 0xf472b6, 0x4ade80, 0xfb923c], 7.2, false
+        );
+      }
+    }
+
+    /* Update 3D Particles */
+    for(var pi = particles.length - 1; pi >= 0; pi--){
+      var p = particles[pi];
+      p.life -= p.decay * dt;
+      if(p.life <= 0){
+        scene.remove(p.mesh);
+        p.mesh.material.dispose();
+        particles.splice(pi, 1);
+        continue;
+      }
+      p.vy += p.grav * dt;
+      p.mesh.position.x += p.vx * dt;
+      p.mesh.position.y += p.vy * dt;
+      p.mesh.position.z += p.vz * dt;
+      p.mesh.rotation.x += p.spin * dt;
+      p.mesh.rotation.y += p.spin * dt;
+      if(p.grow > 0) p.mesh.scale.addScalar(p.grow * dt);
+      else p.mesh.scale.multiplyScalar(Math.max(0.1, 1 + p.grow * dt));
+      p.mesh.material.opacity = Math.max(0, p.life);
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  startRound(true);
+  animate();
 })();
 </script>
-
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e103"></script>
 </body>
 </html>
