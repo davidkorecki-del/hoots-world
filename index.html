@@ -3565,9 +3565,9 @@
                 <p>Everything in a pile matches that pile's colour!</p></div>
               <p class="lsn-q">Your turn! Here comes a RED strawberry 🍓. Which pile does it go in?</p>
               <div class="lsn-opts">
-                <button type="button" class="lsn-opt" data-hint="The strawberry is RED — the blue pile is only for blue things. Match the colour!">The blue pile</button>
-                <button type="button" class="lsn-opt" data-right="1" data-praise="⭐ YES! Red goes with red — you sorted it! Sorting star earned!">The red pile</button>
-                <button type="button" class="lsn-opt" data-hint="Nothing goes on the floor — everything has a pile where it matches. The strawberry is red, so…?">On the floor</button>
+                <button type="button" class="lsn-opt" data-hint="The strawberry is RED — the blue pile is only for blue things. Match the colour!"><span class="cdot" style="background:#2456a6;width:44px;height:44px" aria-hidden="true"></span>The blue pile</button>
+                <button type="button" class="lsn-opt" data-right="1" data-praise="⭐ YES! Red goes with red — you sorted it! Sorting star earned!"><span class="cdot" style="background:#e23b3b;width:44px;height:44px" aria-hidden="true"></span>The red pile</button>
+                <button type="button" class="lsn-opt" data-hint="Nothing goes on the floor — everything has a pile where it matches. The strawberry is red, so…?"><span style="font-size:1.6rem" aria-hidden="true">🧸</span>On the floor</button>
               </div>
               <p class="lsn-fb" aria-live="polite"></p>
             </div>
@@ -3687,9 +3687,9 @@
                 </div></div>
               <p class="lsn-q">Your turn! Hoot is playing a song 🎵. What do you hear it with?</p>
               <div class="lsn-opts">
-                <button type="button" class="lsn-opt" data-hint="Eyes are for SEEING 👀. A song is a sound — which body part catches sounds?">Your eyes</button>
-                <button type="button" class="lsn-opt" data-right="1" data-praise="⭐ YES! Your EARS hear the song! Body parts learned!">Your ears</button>
-                <button type="button" class="lsn-opt" data-hint="Your nose is for SMELLING 👃 — flowers and cookies! Music goes in a different part.">Your nose</button>
+                <button type="button" class="lsn-opt" data-hint="Eyes are for SEEING 👀. A song is a sound — which body part catches sounds?"><span style="font-size:1.6rem" aria-hidden="true">👀</span>Your eyes</button>
+                <button type="button" class="lsn-opt" data-right="1" data-praise="⭐ YES! Your EARS hear the song! Body parts learned!"><span style="font-size:1.6rem" aria-hidden="true">👂</span>Your ears</button>
+                <button type="button" class="lsn-opt" data-hint="Your nose is for SMELLING 👃 — flowers and cookies! Music goes in a different part."><span style="font-size:1.6rem" aria-hidden="true">👃</span>Your nose</button>
               </div>
               <p class="lsn-fb" aria-live="polite"></p>
             </div>
@@ -13560,7 +13560,7 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e82', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e83', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
