@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="real";</script>
-<script src="js/hoot-game-head.js?v=llprev3e96"></script>
+<script src="js/hoot-game-head.js?v=llprev3e97"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Town Rescue Patrol</title>
@@ -21,8 +21,8 @@
     display:flex; flex-direction:column; justify-content:space-between;
   }
 
-  /* Full-Screen Illustrated Cartoon Town SVG Backdrop */
-  #townSvg{
+  /* 4 Full-Screen Dedicated SVG Backdrops (One per Vehicle!) */
+  .scene-svg{
     position:absolute; inset:0; width:100%; height:100%;
     z-index:1; pointer-events:none;
   }
@@ -33,22 +33,24 @@
     z-index:6; touch-action:none;
   }
 
-  /* Interactive Mission Layer (Changes completely for each of the 4 vehicles!) */
+  /* Interactive Mission Layer */
   #rescueLayer{
     position:absolute; inset:0; z-index:7; pointer-events:none;
   }
 
-  /* 1. FIREFIGHTER Fire Zones */
+  /* =========================================================
+     1. FIREFIGHTER SCENE — Fire Zones on the Burning Bakery
+     ========================================================= */
   .fire-zone{
     position:absolute; transform:translate(-50%, -50%);
-    width:118px; height:118px; border-radius:50%;
+    width:122px; height:122px; border-radius:50%;
     border:none; background:transparent; cursor:pointer;
     pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
     padding:0;
   }
   .zone-meter{
     margin-bottom:-14px;
-    width:88px; height:16px; border-radius:999px;
+    width:92px; height:17px; border-radius:999px;
     background:#141e30; border:3px solid #fff;
     overflow:hidden; box-shadow:0 4px 0 rgba(0,0,0,.35);
   }
@@ -61,104 +63,122 @@
     margin-top:16px;
     background:#fff; color:#141e30;
     border:3px solid #141e30; border-radius:999px;
-    padding:2px 10px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:12.5px;
+    padding:2px 11px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:13px;
     box-shadow:0 3px 0 #141e30; white-space:nowrap;
   }
 
-  /* 2. DOCTOR Clinic Exam Card & Patient Teddy Bear */
-  #clinicCard{
-    position:absolute; left:52%; top:39%; transform:translate(-50%, -50%);
-    width:min(90vw, 460px); height:270px;
-    background:linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%);
-    border:5px solid #141e30; border-radius:30px;
-    box-shadow:0 10px 0 #141e30, 0 18px 36px rgba(0,0,0,.35);
-    pointer-events:auto; display:flex; align-items:center; justify-content:space-around;
-    padding:12px 16px;
-  }
-  #patientTeddy{
-    position:relative; width:190px; height:225px; flex:0 0 190px;
-  }
-  #patientTeddy svg{ width:100%; height:100%; overflow:visible; display:block; }
-  .doc-tool-col{
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .doc-tool-btn{
-    display:flex; align-items:center; gap:10px;
-    min-width:195px; min-height:64px;
-    background:#fff; border:4px solid #141e30; border-radius:20px;
-    padding:6px 14px; cursor:pointer;
-    font-family:"Fredoka",sans-serif; font-weight:800; font-size:16px; color:#141e30;
-    box-shadow:0 5px 0 #141e30;
-    transition:transform .16s cubic-bezier(.34,1.8,.5,1), background .2s;
-  }
-  .doc-tool-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #141e30; }
-  .doc-tool-btn.done{
-    background:#dcfce7; border-color:#16a34a; color:#15803d;
+  /* =========================================================
+     2. DOCTOR SCENE — Giant Full-Stage Teddy Bear & Big Tools
+     ========================================================= */
+  #doctorStageWrap{
+    position:absolute; left:50%; top:43%; transform:translate(-50%, -50%);
+    width:min(96vw, 880px); height:min(58dvh, 450px);
+    display:flex; align-items:center; justify-content:center; gap:clamp(14px, 4vw, 44px);
     pointer-events:none;
   }
-  .doc-tool-ic{ font-size:30px; line-height:1; }
+  #giantTeddyWrap{
+    position:relative;
+    width:clamp(250px, 42vw, 390px); height:clamp(270px, 54dvh, 430px);
+    pointer-events:auto;
+    filter:drop-shadow(0 14px 0 rgba(20,30,48,.28));
+    animation:teddyBreath 2s ease-in-out infinite alternate;
+  }
+  #giantTeddyWrap svg{ width:100%; height:100%; display:block; overflow:visible; }
+  @keyframes teddyBreath{
+    from{ transform:scale(1); }
+    to{ transform:scale(1.025) translateY(-4px); }
+  }
   .teddy-spot{
     position:absolute; transform:translate(-50%, -50%);
-    width:58px; height:58px; border-radius:50%;
-    border:3.5px dashed #e11d48; background:rgba(255, 228, 230, 0.88);
-    display:grid; place-items:center; font-size:26px; cursor:pointer;
-    box-shadow:0 0 16px rgba(225, 29, 72, 0.6);
-    animation:spotPulse 1s ease-in-out infinite alternate;
+    width:78px; height:78px; border-radius:50%;
+    border:4.5px dashed #e11d48; background:rgba(255, 228, 230, 0.92);
+    display:grid; place-items:center; font-size:36px; cursor:pointer;
+    box-shadow:0 0 22px rgba(225, 29, 72, 0.75), 0 6px 0 #141e30;
+    animation:spotPulse 0.95s ease-in-out infinite alternate;
+    pointer-events:auto;
   }
   .teddy-spot.healed{
-    border:3.5px solid #16a34a; background:#dcfce7;
-    box-shadow:0 0 12px rgba(22, 163, 74, 0.6);
+    border:4.5px solid #16a34a; background:#dcfce7;
+    box-shadow:0 0 18px rgba(22, 163, 74, 0.7), 0 5px 0 #141e30;
     animation:none; pointer-events:none;
   }
   @keyframes spotPulse{
-    from{ transform:translate(-50%, -50%) scale(.94); }
-    to{ transform:translate(-50%, -50%) scale(1.1); }
+    from{ transform:translate(-50%, -50%) scale(.92); }
+    to{ transform:translate(-50%, -50%) scale(1.12); }
   }
+  .doc-tool-tray{
+    display:flex; flex-direction:column; gap:12px; pointer-events:auto;
+  }
+  .doc-tool-btn{
+    display:flex; align-items:center; gap:12px;
+    min-width:clamp(190px, 28vw, 265px); min-height:78px;
+    background:linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+    border:4.5px solid #141e30; border-radius:24px;
+    padding:8px 18px; cursor:pointer;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:clamp(16px, 2.2vw, 21px); color:#141e30;
+    box-shadow:0 7px 0 #141e30, 0 12px 24px rgba(0,0,0,.22);
+    transition:transform .16s cubic-bezier(.34,1.8,.5,1), background .2s;
+  }
+  .doc-tool-btn:active{ transform:translateY(5px); box-shadow:0 2px 0 #141e30; }
+  .doc-tool-btn.done{
+    background:linear-gradient(180deg, #bbf7d0 0%, #4ade80 100%);
+    border-color:#141e30; color:#141e30;
+    pointer-events:none;
+  }
+  .doc-tool-ic{ font-size:40px; line-height:1; filter:drop-shadow(0 3px 0 rgba(0,0,0,.18)); }
 
-  /* 3. POLICE Crosswalk Walkers & Stop/Walk Signal */
+  /* =========================================================
+     3. POLICE SCENE — Giant Crosswalk & Big Animal Walkers
+     ========================================================= */
   .crosswalk-walker{
     position:absolute; transform:translate(-50%, -50%);
-    width:118px; height:132px; border:none; background:transparent;
+    width:154px; height:172px; border:none; background:transparent;
     cursor:pointer; pointer-events:auto;
     display:flex; flex-direction:column; align-items:center;
-    filter:drop-shadow(0 8px 0 rgba(20,30,48,.32));
-    transition:left .75s cubic-bezier(.34,1.4,.5,1), top .75s cubic-bezier(.34,1.4,.5,1), transform .3s;
+    filter:drop-shadow(0 10px 0 rgba(20,30,48,.32));
+    transition:left .8s cubic-bezier(.34,1.4,.5,1), top .8s cubic-bezier(.34,1.4,.5,1), transform .3s;
     animation:walkerBob 1.1s ease-in-out infinite alternate;
   }
-  .crosswalk-walker svg{ width:96px; height:96px; display:block; overflow:visible; }
+  .crosswalk-walker svg{ width:132px; height:132px; display:block; overflow:visible; }
   .walker-tag{
-    margin-top:-4px; background:#fde047; color:#141e30;
-    border:3px solid #141e30; border-radius:999px;
-    padding:2px 11px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:13px;
-    box-shadow:0 3px 0 #141e30; white-space:nowrap;
+    margin-top:-6px; background:#fde047; color:#141e30;
+    border:3.5px solid #141e30; border-radius:999px;
+    padding:4px 14px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px;
+    box-shadow:0 4px 0 #141e30; white-space:nowrap;
   }
   .crosswalk-walker.crossed .walker-tag{
     background:#4ade80;
   }
   @keyframes walkerBob{
     from{ transform:translate(-50%, -50%) translateY(0); }
-    to{ transform:translate(-50%, -50%) translateY(-8px); }
+    to{ transform:translate(-50%, -50%) translateY(-10px); }
   }
 
-  /* 4. SCHOOL BUS Student Boarding & Bus Windows */
+  /* =========================================================
+     4. SCHOOL BUS SCENE — Big Students Boarding Giant Bus
+     ========================================================= */
   .bus-student{
     position:absolute; transform:translate(-50%, -50%);
-    width:118px; height:132px; border:none; background:transparent;
+    width:150px; height:168px; border:none; background:transparent;
     cursor:pointer; pointer-events:auto;
     display:flex; flex-direction:column; align-items:center;
-    filter:drop-shadow(0 8px 0 rgba(20,30,48,.32));
+    filter:drop-shadow(0 10px 0 rgba(20,30,48,.32));
     transition:left .65s cubic-bezier(.34,1.5,.5,1), top .65s cubic-bezier(.34,1.5,.5,1), transform .5s;
     animation:walkerBob 1.1s ease-in-out infinite alternate;
   }
-  .bus-student svg{ width:96px; height:96px; display:block; overflow:visible; }
+  .bus-student svg{ width:128px; height:128px; display:block; overflow:visible; }
 
-  /* Animated Hero Rescue Vehicle on the Town Road */
+  /* Active Rescue Vehicle (Shown on road in Firefighter & Police modes; Giant Bus is center-stage in Teacher mode!) */
   #vehicleStage{
-    position:absolute; left:7%; bottom:23.5%; z-index:4;
-    width:clamp(240px, 35vw, 370px); height:clamp(150px, 22vw, 225px);
+    position:absolute; left:6%; bottom:23.5%; z-index:4;
+    width:clamp(245px, 36vw, 380px); height:clamp(155px, 23vw, 230px);
     pointer-events:auto; cursor:pointer;
     filter:drop-shadow(0 12px 0 rgba(20,30,48,.35));
     animation:truckIdle .7s ease-in-out infinite alternate;
+  }
+  #vehicleStage.giant-bus{
+    left:10%; bottom:24%;
+    width:clamp(330px, 54vw, 590px); height:clamp(210px, 35vw, 355px);
   }
   #vehicleStage.drive-in{
     animation:driveBounce .55s cubic-bezier(.34,1.6,.5,1);
@@ -174,10 +194,10 @@
     100%{ transform:translateX(0) scale(1); }
   }
 
-  /* Helper Friend in Town */
+  /* Helper Friend in Firefighter Scene */
   #friendStage{
     position:absolute; right:10%; bottom:26.5%; z-index:4;
-    width:clamp(115px, 17vw, 165px); height:clamp(125px, 18vw, 175px);
+    width:clamp(120px, 18vw, 175px); height:clamp(130px, 19vw, 185px);
     pointer-events:auto; cursor:pointer;
     filter:drop-shadow(0 9px 0 rgba(20,30,48,.3));
     animation:friendWave 1.3s ease-in-out infinite alternate;
@@ -329,10 +349,15 @@
 
   @media (max-width: 620px){
     #vehicleStage{ left:2%; bottom:24.5%; width:190px; height:120px; }
+    #vehicleStage.giant-bus{ left:3%; bottom:25%; width:255px; height:160px; }
     #friendStage{ right:3%; bottom:26%; width:98px; height:108px; }
-    #clinicCard{ width:94vw; height:240px; top:38%; padding:8px 10px; }
-    #patientTeddy{ width:145px; height:180px; flex:0 0 145px; }
-    .doc-tool-btn{ min-width:155px; min-height:54px; font-size:14px; padding:4px 10px; }
+    #doctorStageWrap{ flex-direction:row; gap:10px; top:43%; }
+    #giantTeddyWrap{ width:210px; height:250px; }
+    .teddy-spot{ width:64px; height:64px; font-size:28px; }
+    .doc-tool-btn{ min-width:155px; min-height:62px; font-size:15px; padding:6px 10px; }
+    .doc-tool-ic{ font-size:30px; }
+    .crosswalk-walker, .bus-student{ width:115px; height:130px; }
+    .crosswalk-walker svg, .bus-student svg{ width:96px; height:96px; }
     .bay-btn{ min-height:92px; }
     .bay-svg{ width:50px; height:40px; }
     .fire-zone{ width:96px; height:96px; }
@@ -341,70 +366,149 @@
 </head>
 <body>
 <div id="stage">
-  <!-- Full-Screen Cartoon Rescue Town SVG -->
-  <svg id="townSvg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+
+  <!-- ===================================================================
+       SCENE 1 BACKDROP: FIREFIGHTER — Burning 2-Story Town Bakery & Road
+       =================================================================== -->
+  <svg id="sceneFire" class="scene-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <defs>
-      <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
-        <stop id="skyTop" offset="0%" stop-color="#0284c7"/>
-        <stop id="skyBot" offset="100%" stop-color="#bae6fd"/>
+      <linearGradient id="skyFire" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#bae6fd"/>
       </linearGradient>
     </defs>
-    <rect width="1440" height="900" fill="url(#skyG)"/>
-
-    <!-- Smiling Sun & Fluffy Clouds -->
+    <rect width="1440" height="900" fill="url(#skyFire)"/>
     <g transform="translate(210,125)">
       <circle cx="0" cy="0" r="68" fill="#fde047" opacity=".35"/>
       <circle cx="0" cy="0" r="46" fill="#facc15" stroke="#141e30" stroke-width="6"/>
       <circle cx="-14" cy="-6" r="6.5" fill="#141e30"/><circle cx="14" cy="-6" r="6.5" fill="#141e30"/>
       <path d="M-13 11 Q0 22 13 11" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/>
     </g>
-    <g fill="#ffffff" stroke="#141e30" stroke-width="5.5">
-      <path d="M1010 140 A32 32 0 0 1 1040 92 A44 44 0 0 1 1125 88 A34 34 0 0 1 1165 140 Z"/>
-      <path d="M430 115 A26 26 0 0 1 455 78 A36 36 0 0 1 525 75 A28 28 0 0 1 555 115 Z"/>
-    </g>
-
-    <!-- Green Town Hills -->
     <path d="M0 510 Q380 430 760 495 T1440 480 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
-
-    <!-- Main 2-Story Town Building -->
-    <g id="townBuilding" transform="translate(720,235)">
-      <rect x="-185" y="35" width="370" height="275" rx="16" id="bldgWall" fill="#fef3c7" stroke="#141e30" stroke-width="7"/>
-      <polygon points="-210,42 0,-75 210,42" id="bldgRoof" fill="#ef4444" stroke="#141e30" stroke-width="7" stroke-linejoin="round"/>
+    <g transform="translate(720,235)">
+      <rect x="-185" y="35" width="370" height="275" rx="16" fill="#fef3c7" stroke="#141e30" stroke-width="7"/>
+      <polygon points="-210,42 0,-75 210,42" fill="#ef4444" stroke="#141e30" stroke-width="7" stroke-linejoin="round"/>
       <rect x="-125" y="-15" width="250" height="44" rx="12" fill="#ffffff" stroke="#141e30" stroke-width="5.5"/>
-      <text id="bldgSign" x="0" y="15" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="23" fill="#141e30">TOWN BAKERY</text>
-      <rect id="winLeft" x="-140" y="65" width="84" height="78" rx="10" fill="#bae6fd" stroke="#141e30" stroke-width="6"/>
+      <text x="0" y="15" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="23" fill="#141e30">TOWN BAKERY</text>
+      <rect id="winLeft" x="-140" y="65" width="84" height="78" rx="10" fill="#7f1d1d" stroke="#141e30" stroke-width="6"/>
       <line x1="-98" y1="65" x2="-98" y2="143" stroke="#141e30" stroke-width="5"/>
       <line x1="-140" y1="104" x2="-56" y2="104" stroke="#141e30" stroke-width="5"/>
-      <rect id="winRight" x="56" y="65" width="84" height="78" rx="10" fill="#bae6fd" stroke="#141e30" stroke-width="6"/>
+      <rect id="winRight" x="56" y="65" width="84" height="78" rx="10" fill="#7f1d1d" stroke="#141e30" stroke-width="6"/>
       <line x1="98" y1="65" x2="98" y2="143" stroke="#141e30" stroke-width="5"/>
       <line x1="56" y1="104" x2="140" y2="104" stroke="#141e30" stroke-width="5"/>
-      <circle id="winTop" cx="0" cy="-35" r="24" fill="#fde047" stroke="#141e30" stroke-width="5.5"/>
+      <circle id="winTop" cx="0" cy="-35" r="24" fill="#ef4444" stroke="#141e30" stroke-width="5.5"/>
       <path d="M-45 310 L-45 190 A45 45 0 0 1 45 190 L45 310 Z" fill="#fb923c" stroke="#141e30" stroke-width="6.5"/>
       <line x1="0" y1="145" x2="0" y2="310" stroke="#141e30" stroke-width="5"/>
     </g>
-
-    <!-- Town Road & Crosswalk -->
     <rect x="0" y="545" width="1440" height="175" fill="#334155" stroke="#141e30" stroke-width="6"/>
     <g fill="#facc15">
-      <rect x="80" y="626" width="90" height="14" rx="7"/>
-      <rect x="260" y="626" width="90" height="14" rx="7"/>
-      <rect x="440" y="626" width="90" height="14" rx="7"/>
-      <rect x="620" y="626" width="90" height="14" rx="7"/>
-      <rect x="800" y="626" width="90" height="14" rx="7"/>
+      <rect x="80" y="626" width="90" height="14" rx="7"/><rect x="260" y="626" width="90" height="14" rx="7"/>
+      <rect x="440" y="626" width="90" height="14" rx="7"/><rect x="620" y="626" width="90" height="14" rx="7"/>
+      <rect x="800" y="626" width="90" height="14" rx="7"/><rect x="980" y="626" width="90" height="14" rx="7"/>
     </g>
-    <!-- Wide White Zebra Crosswalk -->
-    <g fill="#ffffff" stroke="#141e30" stroke-width="3.5">
-      <rect x="860" y="555" width="220" height="24" rx="7"/>
-      <rect x="860" y="592" width="220" height="24" rx="7"/>
-      <rect x="860" y="629" width="220" height="24" rx="7"/>
-      <rect x="860" y="666" width="220" height="24" rx="7"/>
+  </svg>
+
+  <!-- ===================================================================
+       SCENE 2 BACKDROP: DOCTOR — Full-Screen Cozy Clinic Interior (NO Building!)
+       =================================================================== -->
+  <svg id="sceneDoctor" class="scene-svg" style="display:none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="clinicWall" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#bae6fd"/><stop offset="100%" stop-color="#e0f2fe"/>
+      </linearGradient>
+    </defs>
+    <!-- Soft Sky-Blue Clinic Room Wall & Checkered Floor -->
+    <rect width="1440" height="580" fill="url(#clinicWall)"/>
+    <rect y="580" width="1440" height="320" fill="#fef3c7" stroke="#141e30" stroke-width="7"/>
+    <!-- Clinic Wall Trim -->
+    <rect y="555" width="1440" height="28" fill="#38bdf8" stroke="#141e30" stroke-width="6"/>
+    <!-- Clinic Window on Left showing Ambulance parked outside -->
+    <g transform="translate(180,260)" stroke="#141e30" stroke-width="6">
+      <rect x="-110" y="-110" width="220" height="190" rx="18" fill="#7dd3fc"/>
+      <path d="M-104 40 Q0 10 104 40 L104 75 L-104 75 Z" fill="#4ade80"/>
+      <line x1="0" y1="-110" x2="0" y2="80"/><line x1="-110" y1="-15" x2="110" y2="-15"/>
+    </g>
+    <!-- Doctor Red Cross Crest & Heartbeat Monitor on Right Wall -->
+    <g transform="translate(1240,220)" stroke="#141e30" stroke-width="6">
+      <circle cx="0" cy="0" r="64" fill="#ffffff"/>
+      <rect x="-14" y="-38" width="28" height="76" rx="6" fill="#ef4444"/>
+      <rect x="-38" y="-14" width="76" height="28" rx="6" fill="#ef4444"/>
+    </g>
+    <!-- Big Cozy Exam Table Cushion in Center for Giant Teddy Bear -->
+    <ellipse cx="620" cy="610" rx="280" ry="52" fill="#f472b6" stroke="#141e30" stroke-width="7"/>
+    <ellipse cx="620" cy="598" rx="255" ry="38" fill="#fbcfe8" stroke="#141e30" stroke-width="5"/>
+  </svg>
+
+  <!-- ===================================================================
+       SCENE 3 BACKDROP: POLICE — Wide Open Park Crosswalk Intersection (NO Building!)
+       =================================================================== -->
+  <svg id="scenePolice" class="scene-svg" style="display:none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyPol" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#93c5fd"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#skyPol)"/>
+    <!-- Sunny Park Hills, Trees & Pond on the Safe Side (Right) -->
+    <path d="M0 430 Q420 350 920 410 T1440 390 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <!-- Big Park Trees -->
+    <g transform="translate(1150,275)" stroke="#141e30" stroke-width="6">
+      <rect x="-18" y="45" width="36" height="95" rx="6" fill="#b45309"/>
+      <circle cx="0" cy="0" r="64" fill="#22c55e"/>
+      <circle cx="-42" cy="24" r="46" fill="#16a34a"/>
+      <circle cx="42" cy="24" r="46" fill="#16a34a"/>
+    </g>
+    <!-- Giant Working Traffic Light Post in Center-Left -->
+    <g transform="translate(490,260)" stroke="#141e30" stroke-width="6">
+      <rect x="-12" y="65" width="24" height="175" fill="#475569"/>
+      <rect x="-44" y="-75" width="88" height="150" rx="22" fill="#1e293b"/>
+      <circle cx="0" cy="-35" r="24" fill="#ef4444" opacity=".35"/>
+      <circle cx="0" cy="30" r="28" fill="#4ade80"/>
+    </g>
+    <!-- Wide Town Road & Giant Center Zebra Crosswalk -->
+    <rect x="0" y="470" width="1440" height="245" fill="#334155" stroke="#141e30" stroke-width="7"/>
+    <g fill="#ffffff" stroke="#141e30" stroke-width="4.5">
+      <rect x="590" y="485" width="340" height="34" rx="10"/>
+      <rect x="590" y="535" width="340" height="34" rx="10"/>
+      <rect x="590" y="585" width="340" height="34" rx="10"/>
+      <rect x="590" y="635" width="340" height="34" rx="10"/>
+    </g>
+    <!-- Safe Park Goal Sign on Right Side of Crosswalk -->
+    <g transform="translate(1060,415)" stroke="#141e30" stroke-width="5.5">
+      <rect x="-8" y="20" width="16" height="70" fill="#78350f"/>
+      <rect x="-95" y="-32" width="190" height="56" rx="16" fill="#4ade80"/>
+      <text x="0" y="3" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="23" fill="#141e30">🌳 SAFE PARK</text>
+    </g>
+  </svg>
+
+  <!-- ===================================================================
+       SCENE 4 BACKDROP: TEACHER — Sunny Bus Stop Meadow (NO Building — Giant School Bus fills the stage!)
+       =================================================================== -->
+  <svg id="sceneTeacher" class="scene-svg" style="display:none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyBus" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#fef08a"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#skyBus)"/>
+    <path d="M0 460 Q450 380 950 440 T1440 420 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <!-- Bus Stop Sign on Right -->
+    <g transform="translate(1150,350)" stroke="#141e30" stroke-width="6">
+      <rect x="-10" y="30" width="20" height="160" fill="#475569"/>
+      <rect x="-95" y="-35" width="190" height="68" rx="18" fill="#facc15"/>
+      <text x="0" y="8" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="25" fill="#141e30">🚌 BUS STOP</text>
+    </g>
+    <rect x="0" y="510" width="1440" height="205" fill="#334155" stroke="#141e30" stroke-width="7"/>
+    <g fill="#facc15">
+      <rect x="80" y="605" width="110" height="16" rx="8"/><rect x="300" y="605" width="110" height="16" rx="8"/>
+      <rect x="520" y="605" width="110" height="16" rx="8"/><rect x="740" y="605" width="110" height="16" rx="8"/>
+      <rect x="960" y="605" width="110" height="16" rx="8"/><rect x="1180" y="605" width="110" height="16" rx="8"/>
     </g>
   </svg>
 
   <!-- Active Rescue Vehicle on the Road -->
   <div id="vehicleStage" role="button" tabindex="0" aria-label="Rescue vehicle"></div>
 
-  <!-- Town Animal Friend -->
+  <!-- Town Animal Friend (Shown in Firefighter mode) -->
   <div id="friendStage" role="button" tabindex="0" aria-label="Animal friend">
     <div id="friendSvgWrap"></div>
     <div id="friendBadge">Kitten!</div>
@@ -469,7 +573,7 @@
     <div class="win-card">
       <div class="win-trophy" aria-hidden="true">🚒🚑🚓🚌</div>
       <h2>Rescue Hero!</h2>
-      <p>You sprayed out the fires, gave Teddy Bear a checkup, walked pets across the street, and loaded the School Bus!</p>
+      <p>You sprayed out the fires, gave Giant Teddy Bear a checkup, walked pets across the street, and loaded the School Bus!</p>
       <button id="againBtn" class="big-play" type="button">↻ Keep Playing</button>
     </div>
   </div>
@@ -488,15 +592,17 @@
   var bubble = document.getElementById("bubble");
   var missionPill = document.getElementById("missionPill");
   var hoseBtn = document.getElementById("hoseBtn");
-  var bldgWall = document.getElementById("bldgWall");
-  var bldgRoof = document.getElementById("bldgRoof");
-  var bldgSign = document.getElementById("bldgSign");
   var winLeft = document.getElementById("winLeft");
   var winRight = document.getElementById("winRight");
   var winTop = document.getElementById("winTop");
   var winOverlay = document.getElementById("winOverlay");
   var starEls = Array.prototype.slice.call(document.querySelectorAll(".wstar"));
   var bayBtns = Array.prototype.slice.call(document.querySelectorAll(".bay-btn"));
+
+  var sceneFire = document.getElementById("sceneFire");
+  var sceneDoctor = document.getElementById("sceneDoctor");
+  var scenePolice = document.getElementById("scenePolice");
+  var sceneTeacher = document.getElementById("sceneTeacher");
 
   var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function resize(){
@@ -521,7 +627,7 @@
     step();
   }
 
-  /* ---------- WebAudio Siren, Water Spray, Stethoscope Heartbeat, Whistle & School Bell ---------- */
+  /* ---------- WebAudio Siren, Water Spray, Stethoscope Heartbeat & School Bell ---------- */
   var actx = null;
   function ac(){
     if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
@@ -611,9 +717,8 @@
   /* ---------- Kawaii Vector SVG Illustrations for Vehicles & Friends ---------- */
   var VEHICLE_SVGS = {
     firefighter: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="20" y="58" width="190" height="96" rx="16" fill="#ef4444"/><rect x="195" y="76" width="90" height="78" rx="16" fill="#dc2626"/><rect x="212" y="88" width="54" height="36" rx="8" fill="#bae6fd"/><rect x="34" y="34" width="140" height="18" rx="8" fill="#fde047"/><line x1="55" y1="34" x2="55" y2="52"/><line x1="90" y1="34" x2="90" y2="52"/><line x1="125" y1="34" x2="125" y2="52"/><circle cx="192" cy="40" r="16" fill="#94a3b8"/><rect x="186" y="18" width="32" height="16" rx="6" fill="#38bdf8"/><circle cx="222" cy="60" r="13" fill="#38bdf8"/><circle cx="246" cy="60" r="13" fill="#fde047"/><rect x="44" y="92" width="130" height="16" rx="6" fill="#fde047"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#fde047"/><circle cx="232" cy="158" r="28" fill="#1e293b"/><circle cx="232" cy="158" r="12" fill="#fde047"/></g></svg>',
-    doctor: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="24" y="50" width="186" height="104" rx="20" fill="#ffffff"/><rect x="196" y="74" width="88" height="80" rx="16" fill="#f8fafc"/><rect x="212" y="86" width="52" height="36" rx="8" fill="#bae6fd"/><rect x="24" y="114" width="260" height="18" fill="#ef4444"/><rect x="98" y="66" width="24" height="62" rx="6" fill="#ef4444"/><rect x="79" y="85" width="62" height="24" rx="6" fill="#ef4444"/><circle cx="115" cy="36" r="14" fill="#ef4444"/><circle cx="142" cy="36" r="14" fill="#38bdf8"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#e2e8f0"/><circle cx="232" cy="158" r="28" fill="#1e293b"/><circle cx="232" cy="158" r="12" fill="#e2e8f0"/></g></svg>',
     police: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><path d="M24 102 L60 54 L205 54 L245 100 L292 106 L292 154 L20 154 L20 102 Z" fill="#1d4ed8"/><rect x="85" y="102" width="115" height="48" fill="#ffffff"/><path d="M72 64 L194 64 L222 98 L54 98 Z" fill="#bae6fd"/><circle cx="122" cy="38" r="14" fill="#ef4444"/><circle cx="152" cy="38" r="14" fill="#38bdf8"/><polygon points="142,110 148,122 160,124 151,132 153,144 142,138 131,144 133,132 124,124 136,122" fill="#fde047" stroke-width="4"/><circle cx="78" cy="158" r="28" fill="#1e293b"/><circle cx="78" cy="158" r="12" fill="#94a3b8"/><circle cx="236" cy="158" r="28" fill="#1e293b"/><circle cx="236" cy="158" r="12" fill="#94a3b8"/></g></svg>',
-    teacher: '<svg viewBox="0 0 340 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="18" y="42" width="234" height="112" rx="20" fill="#facc15"/><rect x="242" y="80" width="58" height="74" rx="14" fill="#eab308"/><rect x="34" y="58" width="56" height="46" rx="8" fill="#bae6fd"/><rect x="102" y="58" width="56" height="46" rx="8" fill="#bae6fd"/><rect x="170" y="58" width="56" height="46" rx="8" fill="#bae6fd"/><g id="busWin1" opacity="0" transform="translate(38,60) scale(0.36)"><circle cx="65" cy="70" r="42" fill="#fff" stroke="#141e30" stroke-width="10"/><circle cx="50" cy="64" r="9" fill="#141e30"/><circle cx="80" cy="64" r="9" fill="#141e30"/></g><g id="busWin2" opacity="0" transform="translate(106,60) scale(0.36)"><circle cx="65" cy="70" r="42" fill="#ff85a1" stroke="#141e30" stroke-width="10"/><circle cx="50" cy="64" r="9" fill="#141e30"/><circle cx="80" cy="64" r="9" fill="#141e30"/></g><g id="busWin3" opacity="0" transform="translate(174,60) scale(0.36)"><circle cx="65" cy="70" r="42" fill="#facc15" stroke="#141e30" stroke-width="10"/><circle cx="50" cy="64" r="9" fill="#141e30"/><circle cx="80" cy="64" r="9" fill="#141e30"/></g><rect x="18" y="118" width="234" height="14" fill="#1e293b"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#fde047"/><circle cx="238" cy="158" r="28" fill="#1e293b"/><circle cx="238" cy="158" r="12" fill="#fde047"/></g></svg>'
+    teacher: '<svg viewBox="0 0 420 240"><g stroke="#141e30" stroke-width="7.5" stroke-linejoin="round"><rect x="18" y="34" width="308" height="148" rx="26" fill="#facc15"/><rect x="312" y="84" width="76" height="98" rx="18" fill="#eab308"/><rect x="330" y="96" width="46" height="42" rx="8" fill="#bae6fd"/><rect x="38" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><rect x="132" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><rect x="226" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><g id="busWin1" opacity="0" transform="translate(44,58) scale(0.5)"><ellipse cx="46" cy="24" rx="11" ry="22" fill="#fff"/><ellipse cx="84" cy="24" rx="11" ry="22" fill="#fff"/><circle cx="65" cy="72" r="38" fill="#fff"/><circle cx="50" cy="66" r="8" fill="#141e30"/><circle cx="80" cy="66" r="8" fill="#141e30"/><path d="M54 84 Q65 94 76 84" fill="none" stroke="#141e30" stroke-width="6" stroke-linecap="round"/></g><g id="busWin2" opacity="0" transform="translate(138,58) scale(0.5)"><polygon points="24,52 18,14 54,32" fill="#ff4d8d"/><polygon points="106,52 112,14 76,32" fill="#ff4d8d"/><circle cx="65" cy="72" r="38" fill="#ff85a1"/><circle cx="50" cy="66" r="8" fill="#141e30"/><circle cx="80" cy="66" r="8" fill="#141e30"/><path d="M54 84 Q65 94 76 84" fill="none" stroke="#141e30" stroke-width="6" stroke-linecap="round"/></g><g id="busWin3" opacity="0" transform="translate(232,58) scale(0.5)"><circle cx="65" cy="72" r="38" fill="#facc15"/><circle cx="50" cy="66" r="8" fill="#141e30"/><circle cx="80" cy="66" r="8" fill="#141e30"/><path d="M54 84 Q65 94 76 84" fill="none" stroke="#141e30" stroke-width="6" stroke-linecap="round"/></g><rect x="18" y="136" width="308" height="16" fill="#1e293b"/><circle cx="96" cy="186" r="34" fill="#1e293b"/><circle cx="96" cy="186" r="14" fill="#fde047"/><circle cx="308" cy="186" r="34" fill="#1e293b"/><circle cx="308" cy="186" r="14" fill="#fde047"/></g></svg>'
   };
 
   var FRIEND_SVGS = {
@@ -631,9 +736,6 @@
       friend: "kitten",
       friendName: "Kitten!",
       friendClip: "word-kitten",
-      sign: "TOWN BAKERY",
-      wall: "#fef3c7",
-      roof: "#ef4444",
       btnText: "💦 Spray Water Hose!",
       pill: "💦 HOLD OR DRAG ON THE FLAMES TO SPRAY THE FIRE TRUCK WATER HOSE!",
       prompt: "🚒 <b>FIREFIGHTER!</b> The Town Bakery is on fire! <b>Hold or drag your finger on the flames</b> to spray the <b>Water Hose</b> and put out every fire!"
@@ -645,12 +747,9 @@
       friend: "bear",
       friendName: "Teddy Bear!",
       friendClip: "word-teddy-bear",
-      sign: "TOWN CLINIC",
-      wall: "#e0f2fe",
-      roof: "#0284c7",
       btnText: "🩺 Use Doctor Tool!",
-      pill: "🩺 USE THE ICE PACK, STETHOSCOPE & BAND-AID TO HELP TEDDY BEAR!",
-      prompt: "🚑 <b>DOCTOR!</b> Tap the <b>Ice Pack</b>, <b>Stethoscope</b>, and <b>Heart Band-Aid</b> to give <b>Teddy Bear</b> his checkup!"
+      pill: "🩺 TAP THE ICE PACK, STETHOSCOPE & BAND-AID ON GIANT TEDDY BEAR!",
+      prompt: "🚑 <b>DOCTOR'S CLINIC!</b> Help Giant <b>Teddy Bear</b> feel better! Tap the <b>🧊 Ice Pack</b>, <b>🩺 Stethoscope</b>, and <b>🩹 Band-Aid</b>!"
     },
     police: {
       title: "POLICE OFFICER",
@@ -659,12 +758,9 @@
       friend: "puppy",
       friendName: "Puppy!",
       friendClip: "word-dog",
-      sign: "SAFE CROSSWALK",
-      wall: "#e0e7ff",
-      roof: "#1d4ed8",
       btnText: "🛑 Walk Next Pet!",
-      pill: "🚓 TAP PUPPY, KITTEN & BUNNY TO WALK THEM SAFELY ACROSS THE CROSSWALK!",
-      prompt: "🚓 <b>POLICE OFFICER!</b> Stop traffic and tap <b>Puppy</b>, <b>Kitten</b>, and <b>Bunny</b> to walk them safely across the white <b>Crosswalk</b>!"
+      pill: "🚓 TAP PUPPY, KITTEN & BUNNY TO WALK THEM ACROSS THE GIANT CROSSWALK!",
+      prompt: "🚓 <b>POLICE OFFICER!</b> The Walk light is green! Tap <b>Puppy</b>, <b>Kitten</b>, and <b>Bunny</b> to walk them across the <b>Crosswalk</b> to the park!"
     },
     teacher: {
       title: "TEACHER",
@@ -673,12 +769,9 @@
       friend: "bunny",
       friendName: "Bunny!",
       friendClip: "word-bunny",
-      sign: "LITTLE SCHOOL",
-      wall: "#fef9c3",
-      roof: "#f59e0b",
       btnText: "🚌 Board Next Student!",
-      pill: "🚌 TAP BUNNY, KITTEN & PUPPY TO HOP ABOARD THE YELLOW SCHOOL BUS!",
-      prompt: "🚌 <b>TEACHER &amp; SCHOOL BUS!</b> Tap <b>Bunny</b>, <b>Kitten</b>, and <b>Puppy</b> so they hop into the <b>School Bus windows</b> for school!"
+      pill: "🚌 TAP BUNNY, KITTEN & PUPPY TO HOP INTO THE GIANT YELLOW SCHOOL BUS!",
+      prompt: "🚌 <b>SCHOOL BUS STOP!</b> Tap <b>Bunny</b>, <b>Kitten</b>, and <b>Puppy</b> so they hop aboard the <b>Giant Yellow School Bus</b>!"
     }
   };
   var ROLE_KEYS = ["firefighter", "doctor", "police", "teacher"];
@@ -748,7 +841,6 @@
   function setupFirefighterMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
-    friendStage.hidden = false;
     winLeft.setAttribute("fill", "#7f1d1d");
     winRight.setAttribute("fill", "#7f1d1d");
     winTop.setAttribute("fill", "#ef4444");
@@ -820,7 +912,7 @@
       spawnCelebration(zx, zy);
       sfxChime();
       setTimeout(function(){ z.el.style.opacity = "0"; }, 350);
-      var alive = activeZones.filter(function( item ){ return item.hp > 0; }).length;
+      var alive = activeZones.filter(function(item){ return item.hp > 0; }).length;
       if(alive === 0){
         finishMissionWave("🚒 <b>ALL FIRES OUT!</b> The Fire Truck ladder rescued <b>Kitten</b>!", "word-kitten");
       }
@@ -828,79 +920,91 @@
   }
 
   /* =========================================================================
-     MISSION 2: DOCTOR & AMBULANCE — Real Clinic Checkup on Teddy Bear
-     (Ice Pack for Fever, Stethoscope for Heartbeat, Sticky Band-Aid for Knee!)
+     MISSION 2: DOCTOR — Full-Stage GIANT Teddy Bear & Big Doctor Tools!
      ========================================================================= */
   function setupDoctorMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
     spraying = false;
-    friendStage.hidden = true; /* Teddy Bear is inside the big Clinic Exam Card! */
-    winLeft.setAttribute("fill", "#bae6fd");
-    winRight.setAttribute("fill", "#bae6fd");
-    winTop.setAttribute("fill", "#fde047");
 
-    var card = document.createElement("div");
-    card.id = "clinicCard";
-    card.innerHTML =
-      '<div id="patientTeddy">' +
-        '<svg viewBox="0 0 180 220">' +
-          '<circle cx="44" cy="34" r="22" fill="#b45309" stroke="#141e30" stroke-width="6"/>' +
-          '<circle cx="136" cy="34" r="22" fill="#b45309" stroke="#141e30" stroke-width="6"/>' +
-          '<ellipse cx="90" cy="145" rx="52" ry="56" fill="#d97706" stroke="#141e30" stroke-width="6"/>' +
-          '<ellipse cx="90" cy="148" rx="34" ry="38" fill="#fde68a"/>' +
-          '<circle cx="40" cy="192" r="20" fill="#b45309" stroke="#141e30" stroke-width="6"/>' +
-          '<circle cx="140" cy="192" r="20" fill="#b45309" stroke="#141e30" stroke-width="6"/>' +
-          '<circle cx="90" cy="72" r="48" fill="#d97706" stroke="#141e30" stroke-width="6"/>' +
-          '<ellipse cx="90" cy="84" rx="22" ry="16" fill="#fde68a"/>' +
-          '<circle cx="72" cy="64" r="8" fill="#141e30"/><circle cx="108" cy="64" r="8" fill="#141e30"/>' +
-          '<ellipse cx="90" cy="78" rx="8" ry="6" fill="#141e30"/>' +
-          '<path id="teddyMouth" d="M78 94 Q90 86 102 94" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/>' +
+    var wrap = document.createElement("div");
+    wrap.id = "doctorStageWrap";
+    wrap.innerHTML =
+      '<div id="giantTeddyWrap">' +
+        '<svg viewBox="0 0 260 300">' +
+          '<!-- Big Ears -->' +
+          '<circle cx="62" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
+          '<circle cx="62" cy="48" r="18" fill="#fde68a"/>' +
+          '<circle cx="198" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
+          '<circle cx="198" cy="48" r="18" fill="#fde68a"/>' +
+          '<!-- Arms -->' +
+          '<ellipse cx="44" cy="180" rx="28" ry="44" transform="rotate(24 44 180)" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
+          '<ellipse cx="216" cy="180" rx="28" ry="44" transform="rotate(-24 216 180)" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
+          '<!-- Chubby Body & Tummy -->' +
+          '<ellipse cx="130" cy="198" rx="76" ry="80" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
+          '<ellipse cx="130" cy="202" rx="50" ry="54" fill="#fde68a"/>' +
+          '<!-- Big Paws / Feet -->' +
+          '<circle cx="72" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
+          '<circle cx="72" cy="264" r="16" fill="#fde68a"/>' +
+          '<circle cx="188" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
+          '<circle cx="188" cy="264" r="16" fill="#fde68a"/>' +
+          '<!-- Giant Head -->' +
+          '<circle cx="130" cy="98" r="68" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
+          '<!-- Fever Blush on Forehead (fades when cooled!) -->' +
+          '<ellipse id="feverGlow" cx="130" cy="56" rx="38" ry="16" fill="#ef4444" opacity="0.55"/>' +
+          '<ellipse cx="130" cy="112" rx="32" ry="24" fill="#fde68a"/>' +
+          '<circle cx="104" cy="88" r="10.5" fill="#141e30"/><circle cx="156" cy="88" r="10.5" fill="#141e30"/>' +
+          '<circle cx="101" cy="84" r="3.8" fill="#fff"/><circle cx="153" cy="84" r="3.8" fill="#fff"/>' +
+          '<ellipse cx="130" cy="105" rx="12" ry="8.5" fill="#141e30"/>' +
+          '<path id="teddyMouth" d="M112 128 Q130 116 148 128" fill="none" stroke="#141e30" stroke-width="6.5" stroke-linecap="round"/>' +
         '</svg>' +
         '<button type="button" class="teddy-spot choice-btn" data-doc="ice" style="left:50%;top:18%" aria-label="Cool fever with ice pack">🤒</button>' +
-        '<button type="button" class="teddy-spot choice-btn" data-doc="heart" style="left:50%;top:64%" aria-label="Listen to heartbeat with stethoscope">💓</button>' +
-        '<button type="button" class="teddy-spot choice-btn" data-doc="bandaid" style="left:76%;top:86%" aria-label="Put band-aid on knee">🩹</button>' +
+        '<button type="button" class="teddy-spot choice-btn" data-doc="heart" style="left:50%;top:62%" aria-label="Listen to heartbeat with stethoscope">💓</button>' +
+        '<button type="button" class="teddy-spot choice-btn" data-doc="bandaid" style="left:73%;top:85%" aria-label="Put band-aid on knee">🩹</button>' +
       '</div>' +
-      '<div class="doc-tool-col">' +
-        '<button type="button" class="doc-tool-btn choice-btn" data-doc="ice"><span class="doc-tool-ic">🧊</span><span>1. Cool Fever</span></button>' +
-        '<button type="button" class="doc-tool-btn choice-btn" data-doc="heart"><span class="doc-tool-ic">🩺</span><span>2. Heartbeat</span></button>' +
+      '<div class="doc-tool-tray">' +
+        '<button type="button" class="doc-tool-btn choice-btn" data-doc="ice"><span class="doc-tool-ic">🧊</span><span>1. Ice Pack</span></button>' +
+        '<button type="button" class="doc-tool-btn choice-btn" data-doc="heart"><span class="doc-tool-ic">🩺</span><span>2. Stethoscope</span></button>' +
         '<button type="button" class="doc-tool-btn choice-btn" data-doc="bandaid"><span class="doc-tool-ic">🩹</span><span>3. Band-Aid</span></button>' +
       '</div>';
 
-    rescueLayer.appendChild(card);
+    rescueLayer.appendChild(wrap);
 
     var doneSteps = {};
     function applyDoctorStep(stepKey){
       if(doneSteps[stepKey]) return;
       doneSteps[stepKey] = true;
-      var spot = card.querySelector('.teddy-spot[data-doc="' + stepKey + '"]');
-      var btn = card.querySelector('.doc-tool-btn[data-doc="' + stepKey + '"]');
+      var spot = wrap.querySelector('.teddy-spot[data-doc="' + stepKey + '"]');
+      var btn = wrap.querySelector('.doc-tool-btn[data-doc="' + stepKey + '"]');
+      if(stepKey === "ice"){
+        var fg = document.getElementById("feverGlow");
+        if(fg) fg.setAttribute("opacity", "0");
+      }
       if(spot){
         spot.classList.add("healed");
         spot.textContent = stepKey === "ice" ? "❄️" : stepKey === "heart" ? "❤️" : "🩹";
         var r = spot.getBoundingClientRect();
         spawnCelebration(r.left + r.width / 2, r.top + r.height / 2);
       }
-      if(btn){
-        btn.classList.add("done");
-      }
+      if(btn) btn.classList.add("done");
+
       if(stepKey === "heart") sfxHeartbeat();
       else sfxChime();
 
       if(Object.keys(doneSteps).length >= 3){
         var mouth = document.getElementById("teddyMouth");
-        if(mouth) mouth.setAttribute("d", "M76 90 Q90 104 104 90");
-        finishMissionWave("🚑 <b>ALL BETTER!</b> You checked Teddy Bear's fever, heartbeat, and bandage!", "word-teddy-bear");
+        if(mouth) mouth.setAttribute("d", "M108 122 Q130 144 152 122");
+        finishMissionWave("🚑 <b>TEDDY BEAR IS ALL BETTER!</b> You cooled his fever, checked his heartbeat, and bandaged his knee!", "word-teddy-bear");
       } else {
         bubble.innerHTML = stepKey === "ice"
-          ? "🧊 <b>Fever cooled!</b> Now tap the <b>🩺 Stethoscope</b> or <b>🩹 Band-Aid</b>!"
+          ? "🧊 <b>Fever cooled!</b> Now tap the <b>🩺 Stethoscope</b> or <b>🩹 Band-Aid</b> on Giant Teddy Bear!"
           : stepKey === "heart"
-            ? "🩺 <b>Lub-dub! Strong heartbeat!</b> Now tap the remaining checkup tool!"
+            ? "🩺 <b>Lub-dub! Strong heartbeat!</b> Tap the remaining tool to finish Teddy's checkup!"
             : "🩹 <b>Band-Aid on!</b> Tap the remaining tool to finish Teddy's checkup!";
       }
     }
 
-    card.querySelectorAll("[data-doc]").forEach(function(el){
+    wrap.querySelectorAll("[data-doc]").forEach(function(el){
       var k = el.getAttribute("data-doc");
       el.addEventListener("pointerdown", function(e){
         e.preventDefault(); e.stopPropagation();
@@ -913,21 +1017,17 @@
   }
 
   /* =========================================================================
-     MISSION 3: POLICE CAR — Walk Lost Animal Friends Across the Crosswalk!
+     MISSION 3: POLICE CAR — Walk Big Pets Across the Open Park Crosswalk!
      ========================================================================= */
   function setupPoliceMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
     spraying = false;
-    friendStage.hidden = true;
-    winLeft.setAttribute("fill", "#bae6fd");
-    winRight.setAttribute("fill", "#bae6fd");
-    winTop.setAttribute("fill", "#fde047");
 
     var walkers = [
-      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy, startX: 46, startY: 64, endX: 76, endY: 56 },
-      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten, startX: 55, startY: 68, endX: 84, endY: 62 },
-      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny, startX: 64, startY: 64, endX: 91, endY: 56 }
+      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy, startX: 42, startY: 57, endX: 78, endY: 62 },
+      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten, startX: 52, startY: 64, endX: 86, endY: 68 },
+      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny, startX: 62, startY: 57, endX: 93, endY: 62 }
     ];
     var crossedCount = 0;
 
@@ -952,7 +1052,7 @@
         playVoice([w.clip]);
         crossedCount++;
         if(crossedCount >= 3){
-          finishMissionWave("🚓 <b>SAFE CROSSING!</b> The Police Officer helped Puppy, Kitten, and Bunny cross the street safely!", "word-dog");
+          finishMissionWave("🚓 <b>SAFE CROSSING!</b> The Police Officer helped Puppy, Kitten, and Bunny walk across to the park!", "word-dog");
         }
       };
       b.addEventListener("pointerdown", cross);
@@ -962,21 +1062,17 @@
   }
 
   /* =========================================================================
-     MISSION 4: TEACHER & SCHOOL BUS — Board Animal Students onto the Bus!
+     MISSION 4: TEACHER & GIANT SCHOOL BUS — Board Students into Giant Bus!
      ========================================================================= */
   function setupTeacherMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
     spraying = false;
-    friendStage.hidden = true;
-    winLeft.setAttribute("fill", "#bae6fd");
-    winRight.setAttribute("fill", "#bae6fd");
-    winTop.setAttribute("fill", "#fde047");
 
     var students = [
-      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny, x: 52, y: 63, winId: "busWin1" },
-      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten, x: 67, y: 65, winId: "busWin2" },
-      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy, x: 82, y: 63, winId: "busWin3" }
+      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny, x: 58, y: 58, winId: "busWin1" },
+      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten, x: 73, y: 61, winId: "busWin2" },
+      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy, x: 88, y: 58, winId: "busWin3" }
     ];
     var boardedCount = 0;
 
@@ -992,9 +1088,8 @@
         if(e){ e.preventDefault(); e.stopPropagation(); }
         if(b.getAttribute("data-boarded")) return;
         b.setAttribute("data-boarded", "1");
-        /* Animate student hopping over into the yellow School Bus! */
-        b.style.left = "24%";
-        b.style.top = "62%";
+        b.style.left = "28%";
+        b.style.top = "55%";
         b.style.transform = "translate(-50%, -50%) scale(0.2)";
         sfxSchoolBell();
         playVoice([st.clip]);
@@ -1008,7 +1103,7 @@
         boardedCount++;
         if(boardedCount >= 3){
           setTimeout(function(){
-            finishMissionWave("🚌 <b>ALL ABOARD!</b> Bunny, Kitten, and Puppy are on the School Bus ready to learn!", "word-bunny");
+            finishMissionWave("🚌 <b>ALL ABOARD!</b> Bunny, Kitten, and Puppy are seated on the Giant School Bus!", "word-bunny");
           }, 550);
         }
       };
@@ -1026,15 +1121,29 @@
     bayBtns.forEach(function(b){
       b.classList.toggle("active", b.getAttribute("data-role") === currentRole);
     });
-    bldgWall.setAttribute("fill", cfg.wall);
-    bldgRoof.setAttribute("fill", cfg.roof);
-    bldgSign.textContent = cfg.sign;
+
+    /* Switch Full-Screen Dedicated Scene Backdrop! */
+    sceneFire.style.display = currentRole === "firefighter" ? "block" : "none";
+    sceneDoctor.style.display = currentRole === "doctor" ? "block" : "none";
+    scenePolice.style.display = currentRole === "police" ? "block" : "none";
+    sceneTeacher.style.display = currentRole === "teacher" ? "block" : "none";
+
     hoseBtn.textContent = cfg.btnText;
 
-    vehicleStage.innerHTML = VEHICLE_SVGS[currentRole];
-    vehicleStage.classList.remove("drive-in");
-    void vehicleStage.offsetWidth;
-    vehicleStage.classList.add("drive-in");
+    /* In Doctor mode, Giant Teddy Bear owns the full center stage (no road truck blocking him!);
+       in Teacher mode, the School Bus becomes GIANT center-left! */
+    if(currentRole === "doctor"){
+      vehicleStage.hidden = true;
+      friendStage.hidden = true;
+    } else {
+      vehicleStage.hidden = false;
+      vehicleStage.classList.toggle("giant-bus", currentRole === "teacher");
+      vehicleStage.innerHTML = VEHICLE_SVGS[currentRole];
+      vehicleStage.classList.remove("drive-in");
+      void vehicleStage.offsetWidth;
+      vehicleStage.classList.add("drive-in");
+      friendStage.hidden = currentRole !== "firefighter";
+    }
 
     friendSvgWrap.innerHTML = FRIEND_SVGS[cfg.friend];
     friendBadge.textContent = cfg.friendName;
@@ -1043,7 +1152,6 @@
     bubble.innerHTML = cfg.prompt;
     sfxSiren();
 
-    /* Only Firefighter uses the canvas drag-to-spray water hose; other roles let clicks pass straight to their interactive elements */
     canvas.style.pointerEvents = currentRole === "firefighter" ? "auto" : "none";
 
     if(currentRole === "firefighter") setupFirefighterMission();
@@ -1084,7 +1192,6 @@
     sfxWaterSpray();
   }
 
-  /* Continuous Pointer Dragging & Spraying ONLY in Firefighter mode */
   canvas.addEventListener("pointerdown", function(e){
     if(currentRole !== "firefighter") return;
     e.preventDefault();
@@ -1099,7 +1206,6 @@
     spraying = false;
   });
 
-  /* Context-aware Action Button per Vehicle! */
   hoseBtn.addEventListener("click", function(){
     if(currentRole === "firefighter"){
       var target = activeZones.find(function(z){ return z.hp > 0; });
@@ -1228,7 +1334,6 @@
     tick++;
     ctx.clearRect(0, 0, W, H);
 
-    /* 1. Smoke & Steam Puffs */
     for(var s = smokePuffs.length - 1; s >= 0; s--){
       var sm = smokePuffs[s];
       sm.x += sm.vx; sm.y += sm.vy;
@@ -1241,7 +1346,6 @@
       ctx.globalAlpha = 1;
     }
 
-    /* 2. Roaring Flames & Water Hose (FIREFIGHTER ONLY!) */
     if(currentRole === "firefighter"){
       activeZones.forEach(function(z, idx){
         if(z.hp <= 0) return;
@@ -1327,7 +1431,6 @@
       ctx.globalAlpha = 1;
     }
 
-    /* 3. Celebration Sparkles */
     for(var i = popSparks.length - 1; i >= 0; i--){
       var p = popSparks[i];
       p.x += p.vx; p.y += p.vy;
@@ -1350,6 +1453,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e96"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e97"></script>
 </body>
 </html>
