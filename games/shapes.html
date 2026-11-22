@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="shapes";</script>
-<script src="js/hoot-game-head.js?v=llprev3e85"></script>
+<script src="js/hoot-game-head.js?v=llprev3e86"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -12,182 +12,284 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --ink:#0f172a;
-    --gold:#ffd43b;
-  }
+  :root{--ink:#0f172a}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
   [hidden]{display:none !important}
-  html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Fredoka","Nunito",system-ui,sans-serif;background:#070b1e;touch-action:none}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Fredoka","Nunito",system-ui,sans-serif;background:#05081c;touch-action:none}
   #stage{
     position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden;
     display:flex;flex-direction:column;justify-content:space-between;
-  }
-  #fwCanvas{
-    position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;
-    cursor:crosshair;touch-action:none;
+    background:
+      radial-gradient(circle at 82% 16%,rgba(253,224,71,.22) 0%,transparent 28%),
+      radial-gradient(circle at 20% 28%,rgba(192,132,252,.18) 0%,transparent 40%),
+      linear-gradient(180deg,#04071a 0%,#0d153f 42%,#1e1b4b 72%,#311042 100%);
   }
 
-  /* Top HUD: Hoot Medallion + Speech Banner + 6 Firework Stars */
+  /* Crisp Pinkfong-Style SVG Carnival Skyline & Ferris Wheel Backdrop */
+  #carnivalSvg{
+    position:absolute;left:0;right:0;bottom:0;width:100%;height:42%;
+    z-index:1;pointer-events:none;display:block;
+  }
+  #ferrisWheel{
+    transform-box:fill-box;transform-origin:center;
+    animation:spinWheel 28s linear infinite;
+  }
+  @keyframes spinWheel{to{transform:rotate(360deg)}}
+
+  /* Additive HDR Neon Particle Canvas */
+  #fwCanvas{
+    position:absolute;inset:0;width:100%;height:100%;
+    z-index:2;display:block;cursor:crosshair;touch-action:none;
+  }
+
+  /* Interactive Floating Sky Bubble Targets (Pinkfong Arcade Gameplay) */
+  #skyTargets{
+    position:absolute;left:0;right:0;top:92px;bottom:170px;
+    z-index:4;pointer-events:none;overflow:hidden;
+  }
+  .sky-target{
+    position:absolute;pointer-events:auto;
+    width:clamp(84px,12.5vw,112px);height:clamp(84px,12.5vw,112px);
+    border-radius:50%;border:3.5px solid #fff;
+    background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.95) 0 14%,rgba(255,255,255,.25) 15% 58%,var(--glow) 100%);
+    box-shadow:0 0 24px var(--glow),inset 0 0 18px rgba(255,255,255,.75);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;padding:0;font-family:inherit;
+    animation:targetFloat 3.2s ease-in-out infinite;
+    transition:transform .15s ease;
+  }
+  .sky-target:active{transform:scale(1.25)}
+  .sky-target svg{width:72%;height:72%;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));pointer-events:none}
+  .sky-target .t-ring{
+    position:absolute;inset:-7px;border-radius:50%;
+    border:2.5px dashed rgba(255,240,138,.85);
+    animation:spinWheel 9s linear infinite;pointer-events:none;
+  }
+
+  /* Popping Vector Animal Firework Medallions in the Sky */
+  #burstLayer{
+    position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;
+  }
+  .animal-burst-svg{
+    position:absolute;transform:translate(-50%,-50%);
+    width:clamp(130px,22vw,190px);height:clamp(130px,22vw,190px);
+    filter:drop-shadow(0 0 22px var(--ac)) drop-shadow(0 0 44px var(--ac));
+    animation:burstZoom 1.45s cubic-bezier(.16,1.35,.3,1) forwards;
+  }
+  @keyframes burstZoom{
+    0%{transform:translate(-50%,-50%) scale(.15) rotate(-18deg);opacity:0}
+    28%{transform:translate(-50%,-50%) scale(1.18) rotate(4deg);opacity:1}
+    70%{transform:translate(-50%,-50%) scale(1.05) rotate(0deg);opacity:1}
+    100%{transform:translate(-50%,-42%) scale(1.25);opacity:0}
+  }
+
+  /* Top HUD */
   #hud{
-    position:relative;z-index:5;
+    position:relative;z-index:6;
     display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:max(8px,env(safe-area-inset-top)) clamp(10px,2.5vw,24px) 0;
+    padding:max(6px,env(safe-area-inset-top)) clamp(10px,2.2vw,22px) 0;
     pointer-events:none;
   }
-  .hud-host{
-    display:flex;align-items:center;gap:10px;flex:1;min-width:0;pointer-events:auto;
-  }
+  .hud-left{display:flex;align-items:center;gap:10px;pointer-events:auto;min-width:0;flex:1}
   #hootBtn{
-    flex:none;width:clamp(64px,10vw,82px);height:clamp(64px,10vw,82px);
-    border-radius:50%;border:4px solid var(--ink);
-    background:radial-gradient(circle at 35% 30%,#fffdf0 0%,#ffe066 65%,#ffb703 100%);
-    box-shadow:0 6px 0 var(--ink),0 0 20px rgba(255,212,59,.65);
-    padding:6px;cursor:pointer;display:grid;place-items:center;
-    animation:hootFloat 2.8s ease-in-out infinite;
+    flex:none;width:clamp(58px,8.5vw,76px);height:clamp(58px,8.5vw,76px);
+    border-radius:50%;border:3.5px solid var(--ink);
+    background:radial-gradient(circle at 35% 30%,#fffdf0 0%,#ffe066 65%,#f59f00 100%);
+    box-shadow:0 6px 0 var(--ink),0 0 22px rgba(255,212,59,.75);
+    padding:5px;cursor:pointer;display:grid;place-items:center;
+    animation:targetFloat 2.6s ease-in-out infinite;
   }
   #hootBtn svg{width:100%;height:100%;display:block}
   #bubble{
     background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
-    border:4px solid var(--ink);border-radius:24px;
-    padding:10px 16px;font-size:clamp(.98rem,2.1vw,1.34rem);font-weight:800;
-    color:var(--ink);line-height:1.25;
-    box-shadow:0 7px 0 var(--ink),0 0 24px rgba(124,58,237,.45);
-    max-width:640px;
+    border:3.5px solid var(--ink);border-radius:22px;
+    padding:8px 16px;font-size:clamp(.95rem,2vw,1.26rem);font-weight:800;
+    color:var(--ink);line-height:1.22;
+    box-shadow:0 6px 0 var(--ink),0 0 24px rgba(236,72,153,.45);
+    max-width:600px;
   }
-  #bubble b{color:#7c3aed}
+  #bubble b{color:#d946ef}
   #starBar{
     flex:none;pointer-events:auto;
     display:flex;align-items:center;gap:5px;
-    background:rgba(15,23,42,.88);border:3.5px solid #ffd43b;
-    border-radius:999px;padding:6px 14px;
-    box-shadow:0 0 18px rgba(255,212,59,.45);font-weight:900;font-size:1.1rem;color:#fff;
+    background:rgba(15,23,42,.92);border:3.5px solid #fde047;
+    border-radius:999px;padding:5px 14px;
+    box-shadow:0 0 20px rgba(253,224,71,.5);font-weight:900;
   }
-  .fstar{font-size:1.35rem;filter:grayscale(1) opacity(.35);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
-  .fstar.on{filter:none;transform:scale(1.2)}
+  .fstar{font-size:1.35rem;filter:grayscale(1) opacity(.3);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
+  .fstar.on{filter:none;transform:scale(1.22)}
 
-  /* Bottom Animal Rocket Launch Pad Dock */
-  #launchDock{
+  /* Bottom 3D Pinkfong Rocket Cannon Battery */
+  #cannonDock{
     position:relative;z-index:6;
-    margin:0 auto max(10px,env(safe-area-inset-bottom));
-    width:min(96vw,960px);
-    background:linear-gradient(180deg,rgba(30,27,75,.92) 0%,rgba(15,23,42,.96) 100%);
-    border:4px solid #ffd43b;border-radius:32px;
-    padding:10px clamp(8px,2vw,18px) 14px;
-    box-shadow:0 10px 0 #020617,0 0 32px rgba(139,92,246,.55);
+    margin:0 auto max(8px,env(safe-area-inset-bottom));
+    width:min(96vw,940px);
+    background:linear-gradient(180deg,rgba(49,16,66,.92) 0%,rgba(15,23,42,.96) 100%);
+    border:4px solid #fde047;border-radius:34px;
+    padding:10px clamp(8px,1.8vw,18px) 14px;
+    box-shadow:
+      inset 0 5px 0 rgba(255,255,255,.35),
+      0 10px 0 #020617,
+      0 0 36px rgba(217,70,239,.55);
   }
   #padGrid{
-    display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(6px,1.4vw,14px);
+    display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(6px,1.4vw,14px);align-items:stretch;
   }
-  .pad-btn{
-    min-height:clamp(84px,13.5vh,118px);
-    border:3.5px solid var(--ink);border-radius:24px;
-    background:linear-gradient(180deg,#ffffff 0%,var(--c1) 48%,var(--c2) 100%);
+  .cannon-btn{
+    position:relative;
+    min-height:clamp(92px,14.5vh,126px);
+    border:4px solid var(--ink);border-radius:26px;
+    background:linear-gradient(180deg,#ffffff 0%,var(--c1) 45%,var(--c2) 100%);
     box-shadow:
-      inset 0 4px 0 rgba(255,255,255,.9),
-      0 7px 0 var(--ped),
-      0 10px 0 var(--ink),
-      0 14px 22px rgba(0,0,0,.45);
-    padding:8px 4px;cursor:pointer;font-family:inherit;color:var(--ink);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+      inset 0 5px 0 rgba(255,255,255,.95),
+      0 8px 0 var(--ped),
+      0 12px 0 var(--ink),
+      0 16px 24px rgba(0,0,0,.5);
+    padding:6px 4px 8px;cursor:pointer;font-family:inherit;color:var(--ink);
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
     transition:translate .12s ease,box-shadow .12s ease;
     touch-action:manipulation;
   }
-  .pad-btn:active{translate:0 6px;box-shadow:0 2px 0 var(--ped),0 4px 0 var(--ink)}
-  .pad-btn[data-a="cat"]{--c1:#ffe3f1;--c2:#ff7eb6;--ped:#be185d}
-  .pad-btn[data-a="dog"]{--c1:#fff3bf;--c2:#ffd43b;--ped:#d97706}
-  .pad-btn[data-a="bunny"]{--c1:#e0f4ff;--c2:#74c0fc;--ped:#0284c7}
-  .pad-btn[data-a="butterfly"]{--c1:#f3d9fa;--c2:#da77f2;--ped:#862e9c}
-  .pad-btn[data-a="lion"]{--c1:#ffe8cc;--c2:#ffa94d;--ped:#d9480f}
-  .pad-btn[data-a="finale"]{
-    --c1:#fff9db;--c2:#fcc419;--ped:#b45309;
-    background:linear-gradient(135deg,#ff4d6d 0%,#ff9e00 35%,#ffe066 68%,#7209b7 100%);
+  .cannon-btn:active{translate:0 7px;box-shadow:0 2px 0 var(--ped),0 4px 0 var(--ink)}
+  .cannon-btn svg{width:clamp(48px,7.8vh,68px);height:clamp(48px,7.8vh,68px);display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.22));pointer-events:none}
+  .cannon-btn[data-a="cat"]{--c1:#fce7f3;--c2:#f472b6;--ped:#be185d}
+  .cannon-btn[data-a="dog"]{--c1:#fef9c3;--c2:#facc15;--ped:#ca8a04}
+  .cannon-btn[data-a="bunny"]{--c1:#e0f2fe;--c2:#38bdf8;--ped:#0284c7}
+  .cannon-btn[data-a="butterfly"]{--c1:#f3e8ff;--c2:#c084fc;--ped:#7e22ce}
+  .cannon-btn[data-a="lion"]{--c1:#ffedd5;--c2:#fb923c;--ped:#c2410c}
+  .cannon-btn[data-a="finale"]{
+    --c1:#fef08a;--c2:#f43f5e;--ped:#881337;
+    background:radial-gradient(circle at 35% 25%,#fff 0%,#fde047 28%,#f43f5e 68%,#7e22ce 100%);
     color:#fff;text-shadow:0 2px 0 var(--ink);
-    box-shadow:inset 0 4px 0 rgba(255,255,255,.65),0 7px 0 #7209b7,0 10px 0 var(--ink),0 0 22px rgba(255,212,59,.75);
-    animation:finalePulse 1.5s ease-in-out infinite;
+    box-shadow:inset 0 5px 0 rgba(255,255,255,.75),0 8px 0 #581c87,0 12px 0 var(--ink),0 0 26px rgba(253,224,71,.85);
+    animation:finaleBeat 1.3s ease-in-out infinite;
   }
-  .pad-emo{font-size:clamp(1.85rem,4.2vw,2.6rem);line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.22))}
-  .pad-lbl{font-size:clamp(.78rem,1.5vw,1rem);font-weight:900;line-height:1.1}
+  .pad-lbl{
+    font-size:clamp(.78rem,1.5vw,1.02rem);font-weight:900;
+    background:rgba(255,255,255,.9);color:var(--ink);text-shadow:none;
+    padding:2px 10px;border-radius:999px;border:2px solid var(--ink);line-height:1.1;
+  }
 
   /* Win Celebration Overlay */
   #winOverlay{
     position:fixed;inset:0;z-index:20;
-    background:rgba(7,11,30,.68);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    background:rgba(5,8,28,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
     display:flex;align-items:center;justify-content:center;padding:16px;
   }
   .win-card{
     width:min(92vw,480px);background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
     border:5px solid var(--ink);border-radius:36px;padding:24px 20px;text-align:center;
-    box-shadow:0 12px 0 var(--ink),0 0 48px rgba(255,212,59,.55);
-    animation:actorPop .5s cubic-bezier(.2,1.5,.4,1) both;
+    box-shadow:0 12px 0 var(--ink),0 0 48px rgba(253,224,71,.65);
   }
-  .win-trophy{font-size:5.2rem;line-height:1;margin:0 0 8px}
+  .win-trophy{font-size:5rem;line-height:1;margin:0 0 8px}
   .win-card h2{margin:0 0 6px;font-size:2rem;color:var(--ink)}
-  .win-card p{margin:0 0 16px;font-size:1.15rem;font-weight:800;color:#334155}
-  .win-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .win-card p{margin:0 0 16px;font-size:1.12rem;font-weight:800;color:#334155}
   .big-play{
-    min-height:68px;min-width:200px;padding:12px 28px;border-radius:999px;
+    min-height:66px;min-width:200px;padding:12px 28px;border-radius:999px;
     border:4px solid var(--ink);background:linear-gradient(180deg,#ffe066 0%,#fab005 100%);
-    color:var(--ink);font-family:inherit;font-size:1.35rem;font-weight:900;
+    color:var(--ink);font-family:inherit;font-size:1.32rem;font-weight:900;
     box-shadow:0 7px 0 var(--ink);cursor:pointer;
   }
-  .big-play:active{translate:0 5px;box-shadow:0 2px 0 var(--ink)}
 
   @media (max-width:540px){
     #padGrid{grid-template-columns:repeat(3,1fr)}
-    .pad-btn{min-height:74px}
+    .cannon-btn{min-height:80px}
   }
-
-  @keyframes hootFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-  @keyframes actorPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
-  @keyframes finalePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  @keyframes targetFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes finaleBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e85" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e86" />
 </head>
 <body>
 <div id="stage">
+  <!-- Illustrated Pinkfong-Style Carnival Harbor & Rotating Ferris Wheel SVG -->
+  <svg id="carnivalSvg" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Glowing Crescent Moon & Distant Hills -->
+    <path d="M0 250 Q260 180 540 235 T1080 220 T1440 240 L1440 420 L0 420 Z" fill="#171038"/>
+    <!-- Animated Neon Ferris Wheel (Left Harbor Pier) -->
+    <g transform="translate(210,155)">
+      <line x1="0" y1="0" x2="-52" y2="115" stroke="#f472b6" stroke-width="8" stroke-linecap="round"/>
+      <line x1="0" y1="0" x2="52" y2="115" stroke="#f472b6" stroke-width="8" stroke-linecap="round"/>
+      <g id="ferrisWheel">
+        <circle cx="0" cy="0" r="86" fill="none" stroke="#fde047" stroke-width="6"/>
+        <circle cx="0" cy="0" r="64" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="10 8"/>
+        <g stroke="#c084fc" stroke-width="3">
+          <line x1="-86" y1="0" x2="86" y2="0"/><line x1="0" y1="-86" x2="0" y2="86"/>
+          <line x1="-61" y1="-61" x2="61" y2="61"/><line x1="-61" y1="61" x2="61" y2="-61"/>
+        </g>
+        <circle cx="86" cy="0" r="12" fill="#ff4d6d" stroke="#fff" stroke-width="3"/>
+        <circle cx="-86" cy="0" r="12" fill="#38bdf8" stroke-width="3" stroke="#fff"/>
+        <circle cx="0" cy="86" r="12" fill="#4ade80" stroke-width="3" stroke="#fff"/>
+        <circle cx="0" cy="-86" r="12" fill="#facc15" stroke-width="3" stroke="#fff"/>
+        <circle cx="61" cy="61" r="12" fill="#e879f9" stroke-width="3" stroke="#fff"/>
+        <circle cx="-61" cy="-61" r="12" fill="#fb923c" stroke-width="3" stroke="#fff"/>
+        <circle cx="61" cy="-61" r="12" fill="#2dd4bf" stroke-width="3" stroke="#fff"/>
+        <circle cx="-61" cy="61" r="12" fill="#f43f5e" stroke-width="3" stroke="#fff"/>
+      </g>
+      <circle cx="0" cy="0" r="14" fill="#fde047" stroke="#141e30" stroke-width="4"/>
+    </g>
+    <!-- Fairytale Harbor Castle & Carousel Tent (Center-Right) -->
+    <g transform="translate(1060,130)">
+      <rect x="0" y="55" width="44" height="85" fill="#311042" stroke="#c084fc" stroke-width="3"/>
+      <polygon points="-8,55 22,8 52,55" fill="#f43f5e" stroke="#fde047" stroke-width="3"/>
+      <rect x="48" y="30" width="58" height="110" fill="#3b0764" stroke="#c084fc" stroke-width="3"/>
+      <polygon points="38,30 77,-26 116,30" fill="#a855f7" stroke="#fde047" stroke-width="3"/>
+      <rect x="110" y="55" width="44" height="85" fill="#311042" stroke="#c084fc" stroke-width="3"/>
+      <polygon points="102,55 132,8 162,55" fill="#f43f5e" stroke="#fde047" stroke-width="3"/>
+      <rect x="66" y="52" width="22" height="28" rx="11" fill="#fde047"/>
+      <rect x="14" y="76" width="16" height="20" rx="8" fill="#fde047"/>
+      <rect x="124" y="76" width="16" height="20" rx="8" fill="#fde047"/>
+    </g>
+    <!-- Harbor Bridge & Fairy Lights -->
+    <path d="M360 255 Q720 190 980 255" fill="none" stroke="#fde047" stroke-width="3" stroke-dasharray="6 10"/>
+    <!-- Deep Glossy Harbor Water Surface -->
+    <rect x="0" y="255" width="1440" height="165" fill="#070d29"/>
+    <line x1="0" y1="255" x2="1440" y2="255" stroke="#38bdf8" stroke-width="4" opacity=".6"/>
+  </svg>
+
   <canvas id="fwCanvas"></canvas>
+  <div id="burstLayer"></div>
+  <div id="skyTargets"></div>
 
   <div id="hud">
-    <div class="hud-host">
+    <div class="hud-left">
       <button id="hootBtn" type="button" aria-label="Hoot the Owl">
         <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <div id="bubble" aria-live="polite">Tap the night sky for <b>Animal Fireworks</b> — or <b>HOLD</b> your finger down for a <b>BIG FINALE</b>!</div>
+      <div id="bubble" aria-live="polite">Tap the <b>glowing sky bubbles</b> or <b>HOLD</b> your finger down for a <b>MEGA FINALE</b>!</div>
     </div>
     <div id="starBar" aria-label="Firework stars">
       <span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span>
     </div>
   </div>
 
-  <!-- Hidden start button kept for automated test harness compatibility -->
   <button id="playBtn" type="button" hidden>▶ Play</button>
 
-  <div id="launchDock" role="group" aria-label="Animal Firework Launchers">
+  <div id="cannonDock" role="group" aria-label="Animal Firework Cannons">
     <div id="padGrid">
-      <button type="button" class="pad-btn" data-a="cat" aria-label="Launch Cat Firework">
-        <span class="pad-emo" aria-hidden="true">🐱</span>
+      <button type="button" class="cannon-btn pad-btn" data-a="cat" aria-label="Kitten Firework Cannon">
+        <span class="c-svg" data-svg="cat"></span>
         <span class="pad-lbl">Kitten</span>
       </button>
-      <button type="button" class="pad-btn" data-a="dog" aria-label="Launch Dog Firework">
-        <span class="pad-emo" aria-hidden="true">🐶</span>
+      <button type="button" class="cannon-btn pad-btn" data-a="dog" aria-label="Puppy Firework Cannon">
+        <span class="c-svg" data-svg="dog"></span>
         <span class="pad-lbl">Puppy</span>
       </button>
-      <button type="button" class="pad-btn" data-a="bunny" aria-label="Launch Bunny Firework">
-        <span class="pad-emo" aria-hidden="true">🐰</span>
+      <button type="button" class="cannon-btn pad-btn" data-a="bunny" aria-label="Bunny Firework Cannon">
+        <span class="c-svg" data-svg="bunny"></span>
         <span class="pad-lbl">Bunny</span>
       </button>
-      <button type="button" class="pad-btn" data-a="butterfly" aria-label="Launch Butterfly Firework">
-        <span class="pad-emo" aria-hidden="true">🦋</span>
+      <button type="button" class="cannon-btn pad-btn" data-a="butterfly" aria-label="Butterfly Firework Cannon">
+        <span class="c-svg" data-svg="butterfly"></span>
         <span class="pad-lbl">Butterfly</span>
       </button>
-      <button type="button" class="pad-btn" data-a="lion" aria-label="Launch Lion Firework">
-        <span class="pad-emo" aria-hidden="true">🦁</span>
+      <button type="button" class="cannon-btn pad-btn" data-a="lion" aria-label="Lion Firework Cannon">
+        <span class="c-svg" data-svg="lion"></span>
         <span class="pad-lbl">Lion</span>
       </button>
-      <button type="button" class="pad-btn" data-a="finale" aria-label="Launch Big Finale">
-        <span class="pad-emo" aria-hidden="true">🎆</span>
-        <span class="pad-lbl">BIG FINALE!</span>
+      <button type="button" class="cannon-btn pad-btn" data-a="finale" aria-label="Mega Finale Cannon">
+        <span class="c-svg" data-svg="star"></span>
+        <span class="pad-lbl">FINALE!</span>
       </button>
     </div>
   </div>
@@ -196,10 +298,8 @@
     <div class="win-card">
       <div class="win-trophy" aria-hidden="true">🎆🦁🦋✨</div>
       <h2>Fireworks Superstar!</h2>
-      <p id="winRecap">You lit up the whole night sky with glowing animal fireworks and a grand finale!</p>
-      <div class="win-btns">
-        <button id="againBtn" class="big-play" type="button">↻ More Fireworks!</button>
-      </div>
+      <p id="winRecap">You lit up the whole carnival sky with glowing animal fireworks and a grand finale!</p>
+      <button id="againBtn" class="big-play" type="button">↻ More Fireworks!</button>
     </div>
   </div>
 </div>
@@ -210,9 +310,27 @@
   var canvas = document.getElementById("fwCanvas");
   var ctx = canvas.getContext("2d");
   var bubble = document.getElementById("bubble");
+  var burstLayer = document.getElementById("burstLayer");
+  var skyTargets = document.getElementById("skyTargets");
   var winOverlay = document.getElementById("winOverlay");
   var starEls = Array.prototype.slice.call(document.querySelectorAll(".fstar"));
-  var padBtns = Array.prototype.slice.call(document.querySelectorAll(".pad-btn"));
+  var padBtns = Array.prototype.slice.call(document.querySelectorAll(".cannon-btn"));
+
+  /* ---------- Custom Pinkfong-Style Kawaii Vector SVG Animal Art ---------- */
+  var ANIMAL_SVGS = {
+    cat: '<svg viewBox="0 0 120 120"><polygon points="18,48 24,12 54,34" fill="#ff4d8d" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><polygon points="102,48 96,12 66,34" fill="#ff4d8d" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><polygon points="26,42 29,22 48,36" fill="#fbcfe8"/><polygon points="94,42 91,22 72,36" fill="#fbcfe8"/><ellipse cx="60" cy="68" rx="44" ry="38" fill="#ff7eb6" stroke="#141e30" stroke-width="6"/><circle cx="43" cy="62" r="9" fill="#141e30"/><circle cx="77" cy="62" r="9" fill="#141e30"/><circle cx="40" cy="59" r="3.5" fill="#fff"/><circle cx="74" cy="59" r="3.5" fill="#fff"/><ellipse cx="30" cy="74" rx="7" ry="4.5" fill="#f43f5e" opacity=".7"/><ellipse cx="90" cy="74" rx="7" ry="4.5" fill="#f43f5e" opacity=".7"/><polygon points="54,70 66,70 60,78" fill="#f43f5e"/><path d="M50 82 Q60 90 70 82" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/><g stroke="#fff" stroke-width="4" stroke-linecap="round"><line x1="8" y1="66" x2="26" y2="70"/><line x1="8" y1="78" x2="26" y2="76"/><line x1="112" y1="66" x2="94" y2="70"/><line x1="112" y1="78" x2="94" y2="76"/></g></svg>',
+    dog: '<svg viewBox="0 0 120 120"><ellipse cx="20" cy="62" rx="14" ry="28" transform="rotate(18 20 62)" fill="#b45309" stroke="#141e30" stroke-width="6"/><ellipse cx="100" cy="62" rx="14" ry="28" transform="rotate(-18 100 62)" fill="#b45309" stroke="#141e30" stroke-width="6"/><ellipse cx="60" cy="64" rx="42" ry="38" fill="#facc15" stroke="#141e30" stroke-width="6"/><ellipse cx="44" cy="56" rx="14" ry="16" fill="#b45309" opacity=".35"/><circle cx="44" cy="58" r="9" fill="#141e30"/><circle cx="76" cy="58" r="9" fill="#141e30"/><circle cx="41" cy="55" r="3.5" fill="#fff"/><circle cx="73" cy="55" r="3.5" fill="#fff"/><ellipse cx="60" cy="76" rx="20" ry="15" fill="#fef9c3"/><ellipse cx="60" cy="70" rx="8" ry="6" fill="#141e30"/><path d="M54 84 Q60 94 66 84" fill="#ff4d6d" stroke="#141e30" stroke-width="4"/></svg>',
+    bunny: '<svg viewBox="0 0 120 120"><ellipse cx="42" cy="30" rx="13" ry="28" transform="rotate(-8 42 30)" fill="#7dd3fc" stroke="#141e30" stroke-width="6"/><ellipse cx="78" cy="30" rx="13" ry="28" transform="rotate(8 78 30)" fill="#7dd3fc" stroke="#141e30" stroke-width="6"/><ellipse cx="42" cy="30" rx="6" ry="18" transform="rotate(-8 42 30)" fill="#f472b6"/><ellipse cx="78" cy="30" rx="6" ry="18" transform="rotate(8 78 30)" fill="#f472b6"/><ellipse cx="60" cy="74" rx="40" ry="34" fill="#e0f2fe" stroke="#141e30" stroke-width="6"/><circle cx="44" cy="68" r="8.5" fill="#141e30"/><circle cx="76" cy="68" r="8.5" fill="#141e30"/><circle cx="41" cy="65" r="3.5" fill="#fff"/><circle cx="73" cy="65" r="3.5" fill="#fff"/><ellipse cx="30" cy="78" rx="7" ry="4.5" fill="#f472b6" opacity=".75"/><ellipse cx="90" cy="78" rx="7" ry="4.5" fill="#f472b6" opacity=".75"/><polygon points="55,76 65,76 60,82" fill="#f472b6"/><path d="M51 86 Q60 92 69 86" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>',
+    butterfly: '<svg viewBox="0 0 120 120"><ellipse cx="34" cy="44" rx="28" ry="24" transform="rotate(-20 34 44)" fill="#e879f9" stroke="#141e30" stroke-width="6"/><ellipse cx="86" cy="44" rx="28" ry="24" transform="rotate(20 86 44)" fill="#e879f9" stroke="#141e30" stroke-width="6"/><ellipse cx="38" cy="82" rx="22" ry="18" transform="rotate(16 38 82)" fill="#38bdf8" stroke="#141e30" stroke-width="6"/><ellipse cx="82" cy="82" rx="22" ry="18" transform="rotate(-16 82 82)" fill="#38bdf8" stroke="#141e30" stroke-width="6"/><circle cx="30" cy="42" r="10" fill="#fde047"/><circle cx="90" cy="42" r="10" fill="#fde047"/><circle cx="38" cy="82" r="7" fill="#fff"/><circle cx="82" cy="82" r="7" fill="#fff"/><rect x="53" y="34" width="14" height="60" rx="7" fill="#fde047" stroke="#141e30" stroke-width="5"/><circle cx="60" cy="30" r="12" fill="#facc15" stroke="#141e30" stroke-width="5"/><path d="M55 20 Q44 6 38 14 M65 20 Q76 6 82 14" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>',
+    lion: '<svg viewBox="0 0 120 120"><g fill="#ea580c" stroke="#141e30" stroke-width="5"><circle cx="60" cy="18" r="16"/><circle cx="88" cy="28" r="16"/><circle cx="102" cy="56" r="16"/><circle cx="92" cy="86" r="16"/><circle cx="60" cy="98" r="16"/><circle cx="28" cy="86" r="16"/><circle cx="18" cy="56" r="16"/><circle cx="32" cy="28" r="16"/></g><circle cx="60" cy="58" r="34" fill="#facc15" stroke="#141e30" stroke-width="6"/><circle cx="46" cy="52" r="8" fill="#141e30"/><circle cx="74" cy="52" r="8" fill="#141e30"/><circle cx="43" cy="49" r="3" fill="#fff"/><circle cx="71" cy="49" r="3" fill="#fff"/><polygon points="53,62 67,62 60,70" fill="#b45309"/><path d="M50 75 Q60 83 70 75" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    star: '<svg viewBox="0 0 120 120"><polygon points="60,8 75,42 112,46 84,71 92,108 60,89 28,108 36,71 8,46 45,42" fill="#fde047" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><circle cx="47" cy="56" r="7" fill="#141e30"/><circle cx="73" cy="56" r="7" fill="#141e30"/><circle cx="45" cy="54" r="2.5" fill="#fff"/><circle cx="71" cy="54" r="2.5" fill="#fff"/><path d="M50 70 Q60 78 70 70" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>'
+  };
+
+  /* Populate dock SVG icons */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-svg]"), function(el){
+    var k = el.getAttribute("data-svg");
+    el.innerHTML = ANIMAL_SVGS[k] || ANIMAL_SVGS.star;
+  });
 
   var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(window.devicePixelRatio || 1, 2);
   var bgStars = [];
@@ -221,8 +339,8 @@
     canvas.width = W * DPR; canvas.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     bgStars = [];
-    for(var i = 0; i < 65; i++){
-      bgStars.push({ x: Math.random() * W, y: Math.random() * H * 0.65, r: 1 + Math.random() * 2.2, p: Math.random() * 6.28 });
+    for(var i = 0; i < 75; i++){
+      bgStars.push({ x: Math.random() * W, y: Math.random() * H * 0.62, r: 1 + Math.random() * 2.4, p: Math.random() * 6.28 });
     }
   }
   window.addEventListener("resize", resize);
@@ -232,91 +350,69 @@
   var voiceA = new Audio();
   function playVoice(clips){
     if(!clips || !clips.length) return;
-    var idx = 0;
+    var i = 0;
     function step(){
-      if(idx >= clips.length) return;
-      var c = clips[idx++];
-      voiceA.src = "assets/voice/" + c + ".mp3";
-      voiceA.onended = step;
-      voiceA.onerror = step;
-      var p = voiceA.play();
-      if(p && p.catch) p.catch(function(){});
+      if(i >= clips.length) return;
+      voiceA.src = "assets/voice/" + clips[i++] + ".mp3";
+      voiceA.onended = step; voiceA.onerror = step;
+      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
     }
     step();
   }
-
   var actx = null;
   function ensureAudio(){
-    if(!actx){
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if(AC) actx = new AC();
-    }
+    if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
     if(actx && actx.state === "suspended") actx.resume();
     return actx;
   }
   function sfxWhistle(){
     try{
-      var ac = ensureAudio(); if(!ac) return;
-      var t = ac.currentTime;
+      var ac = ensureAudio(); if(!ac) return; var t = ac.currentTime;
       var o = ac.createOscillator(), g = ac.createGain();
-      o.type = "sine";
-      o.frequency.setValueAtTime(360, t);
-      o.frequency.exponentialRampToValueAtTime(1180, t + 0.34);
-      g.gain.setValueAtTime(0.12, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.36);
-      o.connect(g); g.connect(ac.destination);
-      o.start(t); o.stop(t + 0.37);
+      o.type = "sine"; o.frequency.setValueAtTime(380, t); o.frequency.exponentialRampToValueAtTime(1280, t + 0.32);
+      g.gain.setValueAtTime(0.11, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.34);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.35);
     }catch(e){}
   }
   function sfxBoom(big){
     try{
-      var ac = ensureAudio(); if(!ac) return;
-      var t = ac.currentTime;
-      var dur = big ? 0.95 : 0.6;
-      var buf = ac.createBuffer(1, ac.sampleRate * dur, ac.sampleRate);
-      var d = buf.getChannelData(0);
+      var ac = ensureAudio(); if(!ac) return; var t = ac.currentTime;
+      var dur = big ? 0.95 : 0.62;
+      var buf = ac.createBuffer(1, ac.sampleRate * dur, ac.sampleRate), d = buf.getChannelData(0);
       for(var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * (big ? 0.28 : 0.18)));
       var src = ac.createBufferSource(); src.buffer = buf;
-      var flt = ac.createBiquadFilter(); flt.type = "lowpass"; flt.frequency.value = big ? 380 : 520;
-      var g = ac.createGain(); g.gain.setValueAtTime(big ? 0.55 : 0.38, t); g.gain.exponentialRampToValueAtTime(0.008, t + dur);
-      src.connect(flt); flt.connect(g); g.connect(ac.destination);
-      src.start(t);
+      var flt = ac.createBiquadFilter(); flt.type = "lowpass"; flt.frequency.value = big ? 420 : 540;
+      var g = ac.createGain(); g.gain.setValueAtTime(big ? 0.58 : 0.4, t); g.gain.exponentialRampToValueAtTime(0.008, t + dur);
+      src.connect(flt); flt.connect(g); g.connect(ac.destination); src.start(t);
 
-      /* Sparkle chime overtone */
-      [880, 1174, 1567].forEach(function(freq, idx){
+      [880, 1174, 1567, 2093].forEach(function(freq, idx){
         var o = ac.createOscillator(), cg = ac.createGain();
         o.type = "triangle"; o.frequency.value = freq;
-        cg.gain.setValueAtTime(0.08, t + idx * 0.05);
-        cg.gain.exponentialRampToValueAtTime(0.001, t + 0.35 + idx * 0.05);
+        cg.gain.setValueAtTime(0.07, t + idx * 0.045);
+        cg.gain.exponentialRampToValueAtTime(0.001, t + 0.32 + idx * 0.045);
         o.connect(cg); cg.connect(ac.destination);
-        o.start(t + idx * 0.05); o.stop(t + 0.38 + idx * 0.05);
+        o.start(t + idx * 0.045); o.stop(t + 0.34 + idx * 0.045);
       });
     }catch(e){}
   }
 
-  /* ---------- Animal Constellation Shape Generators ---------- */
   var ANIMALS = {
-    cat: { name: "KITTEN", emo: "🐱", clip: "word-kitten", colors: ["#ff7eb6", "#ffd43b", "#ff4d6d", "#ffffff"] },
-    dog: { name: "PUPPY", emo: "🐶", clip: "word-dog", colors: ["#ffd43b", "#ffa94d", "#74c0fc", "#ffffff"] },
-    bunny: { name: "BUNNY", emo: "🐰", clip: "word-bunny", colors: ["#74c0fc", "#f783ac", "#a5f3fc", "#ffffff"] },
-    butterfly: { name: "BUTTERFLY", emo: "🦋", clip: "word-butterfly", colors: ["#da77f2", "#4dabf7", "#ffd43b", "#ff7eb6"] },
-    lion: { name: "LION", emo: "🦁", clip: "word-lion", colors: ["#ffa94d", "#ffd43b", "#ff6b6b", "#fff3bf"] },
-    frog: { name: "FROG", emo: "🐸", clip: "word-frog", colors: ["#69db7c", "#ffe066", "#38d9a9", "#ffffff"] },
-    duck: { name: "DUCK", emo: "🦆", clip: "word-duck", colors: ["#ffe066", "#ffa94d", "#74c0fc", "#ffffff"] },
-    star: { name: "STAR", emo: "⭐", clip: "word-star", colors: ["#ffd43b", "#fff9db", "#ff922b", "#ffffff"] }
+    cat: { name: "KITTEN", clip: "word-kitten", colors: ["#ff4d8d", "#fde047", "#ff85a1", "#ffffff"] },
+    dog: { name: "PUPPY", clip: "word-dog", colors: ["#facc15", "#fb923c", "#38bdf8", "#ffffff"] },
+    bunny: { name: "BUNNY", clip: "word-bunny", colors: ["#38bdf8", "#f472b6", "#7dd3fc", "#ffffff"] },
+    butterfly: { name: "BUTTERFLY", clip: "word-butterfly", colors: ["#e879f9", "#38bdf8", "#fde047", "#ff4d8d"] },
+    lion: { name: "LION", clip: "word-lion", colors: ["#fb923c", "#fde047", "#ef4444", "#ffffff"] },
+    star: { name: "STAR", clip: "word-star", colors: ["#fde047", "#fb923c", "#38bdf8", "#ffffff"] }
   };
-  var ANIMAL_KEYS = Object.keys(ANIMALS);
+  var ANIMAL_KEYS = ["cat", "dog", "bunny", "butterfly", "lion"];
 
-  /* Returns normalized (dx, dy) points outlining each animal shape! */
   function shapePoints(kind, count){
     var pts = [];
     for(var i = 0; i < count; i++){
-      var t = (i / count) * Math.PI * 2;
-      var x = 0, y = 0;
+      var t = (i / count) * Math.PI * 2, x = 0, y = 0;
       if(kind === "butterfly"){
         var r = Math.exp(Math.cos(t)) - 2 * Math.cos(4 * t) + Math.pow(Math.sin(t / 12), 5);
-        x = Math.sin(t) * r * 0.34;
-        y = -Math.cos(t) * r * 0.34;
+        x = Math.sin(t) * r * 0.35; y = -Math.cos(t) * r * 0.35;
       } else if(kind === "bunny"){
         if(i < count * 0.55){
           var a = (i / (count * 0.55)) * Math.PI * 2;
@@ -334,183 +430,212 @@
           x = Math.cos(ca) * 0.72; y = Math.sin(ca) * 0.65 + 0.12;
         } else {
           var ear = (i - count * 0.65) / (count * 0.35);
-          var side = ear < 0.5 ? -1 : 1;
-          var u = (ear % 0.5) * 2;
+          var side = ear < 0.5 ? -1 : 1, u = (ear % 0.5) * 2;
           x = side * (0.25 + u * 0.38);
           y = -0.35 - (1 - Math.abs(u - 0.5) * 2) * 0.55;
         }
       } else if(kind === "lion"){
         var wave = 0.85 + 0.22 * Math.sin(t * 12);
-        x = Math.cos(t) * wave;
-        y = Math.sin(t) * wave;
-      } else if(kind === "star"){
-        var sr = (i % 2 === 0) ? 1.0 : 0.46;
-        var sa = (i / count) * Math.PI * 2 - Math.PI / 2;
-        var starR = 0.72 + 0.32 * Math.cos(sa * 5);
-        x = Math.cos(sa) * starR;
-        y = Math.sin(sa) * starR;
+        x = Math.cos(t) * wave; y = Math.sin(t) * wave;
       } else {
-        /* puppy / frog / duck rounded head + ears/crest */
-        var rad = 0.75 + 0.22 * Math.sin(t * 3);
-        x = Math.cos(t) * rad;
-        y = Math.sin(t) * rad;
+        var starR = 0.75 + 0.28 * Math.cos(t * 5);
+        x = Math.cos(t) * starR; y = Math.sin(t) * starR;
       }
       pts.push({ dx: x, dy: y });
     }
     return pts;
   }
 
-  var rockets = [];
-  var sparks = [];
-  var badges = [];
-  var rings = [];
-  var stars = 0;
-  var won = false;
-  var tick = 0;
-  var skyFlash = 0;
+  var rockets = [], sparks = [], rings = [];
+  var stars = 0, won = false, tick = 0;
+  var holding = false, holdX = 0, holdY = 0, holdStart = 0;
 
-  /* Hold-to-charge Finale state */
-  var holding = false;
-  var holdX = 0, holdY = 0, holdStart = 0, holdPower = 0;
-
-  function updateStars(){
-    starEls.forEach(function(el, i){
-      el.classList.toggle("on", i < stars);
-    });
+  /* ---------- Interactive Floating Sky Bubble Targets ---------- */
+  function spawnSkyTargets(){
+    skyTargets.innerHTML = "";
+    var picks = ["cat", "dog", "bunny", "butterfly", "lion"];
+    for(var i = 0; i < 3; i++){
+      createOneTarget(picks[i % picks.length], i);
+    }
+  }
+  function createOneTarget(kind, slot){
+    var cfg = ANIMALS[kind] || ANIMALS.cat;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "sky-target";
+    b.style.setProperty("--glow", cfg.colors[0]);
+    b.style.left = (14 + slot * 31 + Math.round(Math.random() * 8)) + "%";
+    b.style.top = (12 + (slot % 2) * 28 + Math.round(Math.random() * 10)) + "%";
+    b.style.animationDelay = (-slot * 0.9) + "s";
+    b.setAttribute("aria-label", "Pop " + cfg.name + " firework bubble");
+    b.innerHTML = '<span class="t-ring"></span>' + (ANIMAL_SVGS[kind] || ANIMAL_SVGS.star);
+    var popTarget = function(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      var r = b.getBoundingClientRect();
+      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      b.remove();
+      explode(cx, cy, kind, 1.35);
+      bubble.innerHTML = "🎆 <b>" + cfg.name + " SUPER BURST!</b> Pop another glowing sky bubble!";
+      playVoice([cfg.clip]);
+      recordLaunch();
+      setTimeout(function(){
+        if(!won) createOneTarget(ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)], slot);
+      }, 900);
+    };
+    b.addEventListener("pointerdown", popTarget);
+    b.addEventListener("click", function(e){ if(e.detail === 0) popTarget(e); });
+    skyTargets.appendChild(b);
   }
 
   function recordLaunch(){
     if(won) return;
     stars = Math.min(6, stars + 1);
-    updateStars();
+    starEls.forEach(function(el, i){ el.classList.toggle("on", i < stars); });
     if(stars >= 6){
       won = true;
       setTimeout(function(){
         winOverlay.hidden = false;
         playVoice(["hoot-win-star"]);
-      }, 1400);
+      }, 1500);
     }
+  }
+
+  function spawnVectorAnimalBurst(x, y, kind){
+    var cfg = ANIMALS[kind] || ANIMALS.star;
+    var d = document.createElement("div");
+    d.className = "animal-burst-svg";
+    d.style.left = x + "px";
+    d.style.top = y + "px";
+    d.style.setProperty("--ac", cfg.colors[0]);
+    d.innerHTML = ANIMAL_SVGS[kind] || ANIMAL_SVGS.star;
+    burstLayer.appendChild(d);
+    setTimeout(function(){ d.remove(); }, 1450);
   }
 
   function explode(x, y, kind, scale){
     var cfg = ANIMALS[kind] || ANIMALS.star;
     var sc = scale || 1;
-    var n = Math.round(115 * sc);
+    var n = Math.round(135 * sc);
     var outline = shapePoints(kind, n);
     sfxBoom(sc > 1.25);
-    skyFlash = Math.min(0.45, 0.18 * sc);
+    spawnVectorAnimalBurst(x, y, kind);
 
-    /* Outer shaped constellation particles */
+    /* Shaped outer neon constellation particles with history trails */
     outline.forEach(function(pt, i){
-      var speed = (3.4 + Math.random() * 0.9) * sc;
+      var speed = (3.8 + Math.random() * 1.1) * sc;
       sparks.push({
-        x: x, y: y,
-        vx: pt.dx * speed + (Math.random() - 0.5) * 0.4,
-        vy: pt.dy * speed + (Math.random() - 0.5) * 0.4,
+        x: x, y: y, px: x, py: y,
+        vx: pt.dx * speed + (Math.random() - 0.5) * 0.45,
+        vy: pt.dy * speed + (Math.random() - 0.5) * 0.45,
         c: cfg.colors[i % cfg.colors.length],
-        r: (2.8 + Math.random() * 2.2) * Math.min(1.4, sc),
+        r: (3.2 + Math.random() * 2.4) * Math.min(1.4, sc),
         life: 1.0,
         decay: 0.011 + Math.random() * 0.006,
-        gravity: 0.025
+        gravity: 0.028
       });
     });
 
-    /* Inner gold glitter core */
-    for(var k = 0; k < Math.round(45 * sc); k++){
+    /* Golden willow inner core */
+    for(var k = 0; k < Math.round(55 * sc); k++){
       var a = Math.random() * Math.PI * 2;
-      var sp = Math.random() * 2.6 * sc;
+      var sp = (0.8 + Math.random() * 3.2) * sc;
       sparks.push({
-        x: x, y: y,
+        x: x, y: y, px: x, py: y,
         vx: Math.cos(a) * sp,
         vy: Math.sin(a) * sp,
         c: cfg.colors[k % cfg.colors.length],
-        r: 2 + Math.random() * 2,
+        r: 2.2 + Math.random() * 2.2,
         life: 1.0,
-        decay: 0.016 + Math.random() * 0.01,
-        gravity: 0.04
+        decay: 0.014 + Math.random() * 0.009,
+        gravity: 0.045
       });
     }
 
-    rings.push({ x: x, y: y, r: 8, maxR: 120 * sc, c: cfg.colors[0], life: 1.0 });
-    badges.push({ x: x, y: y, emo: cfg.emo, name: cfg.name, c: cfg.colors[0], life: 1.0, scale: sc });
+    rings.push({ x: x, y: y, r: 10, maxR: 145 * sc, c: cfg.colors[0], life: 1.0 });
   }
 
   function launchRocket(tx, ty, kind, scale, silentVoice){
     var k = kind || ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
-    var cfg = ANIMALS[k];
+    var cfg = ANIMALS[k] || ANIMALS.star;
     sfxWhistle();
     rockets.push({
       x: W * (0.25 + Math.random() * 0.5),
       y: H * 0.78,
       tx: tx,
-      ty: Math.max(H * 0.16, Math.min(H * 0.56, ty)),
+      ty: Math.max(H * 0.16, Math.min(H * 0.54, ty)),
       p: 0,
       kind: k,
-      scale: scale || 1,
+      scale: scale || 1.15,
       c: cfg.colors[0]
     });
     if(!silentVoice){
-      bubble.innerHTML = "🎆 <b>" + cfg.emo + " " + cfg.name + " FIREWORK!</b> Tap or hold the sky for more!";
+      bubble.innerHTML = "🎆 <b>" + cfg.name + " FIREWORK!</b> Tap a glowing bubble or hold for a <b>MEGA FINALE</b>!";
       playVoice([cfg.clip]);
     }
   }
 
-  function launchGrandFinale(cx, cy, count){
+  function launchGrandFinale(count){
     var n = count || 5;
-    bubble.innerHTML = "🎇 <b>MEGA ANIMAL FINALE!</b> Look at all the animals in the sky!";
+    bubble.innerHTML = "🎇 <b>MEGA CARNIVAL FINALE!</b> Look at all the animals lighting up the night!";
     playVoice(["owl-excited"]);
     for(var i = 0; i < n; i++){
       (function(idx){
         setTimeout(function(){
           var k = ANIMAL_KEYS[idx % ANIMAL_KEYS.length];
-          var fx = W * (0.16 + (idx / Math.max(1, n - 1)) * 0.68) + (Math.random() - 0.5) * 40;
-          var fy = H * (0.20 + (idx % 2) * 0.14) + (Math.random() - 0.5) * 30;
-          launchRocket(fx, fy, k, 1.35, true);
-        }, idx * 140);
+          var fx = W * (0.15 + (idx / Math.max(1, n - 1)) * 0.7) + (Math.random() - 0.5) * 35;
+          var fy = H * (0.20 + (idx % 2) * 0.14);
+          launchRocket(fx, fy, k, 1.38, true);
+        }, idx * 135);
       })(i);
     }
     recordLaunch();
   }
 
-  /* Pointer Hold-to-Charge & Tap-to-Launch on Sky Canvas */
+  /* Hold-to-charge Finale & Drag Sparkler Trail on Sky Canvas */
   canvas.addEventListener("pointerdown", function(e){
     e.preventDefault();
     holding = true;
     holdX = e.clientX;
-    holdY = Math.min(e.clientY, H * 0.6);
+    holdY = Math.min(e.clientY, H * 0.58);
     holdStart = Date.now();
-    holdPower = 0;
   });
   window.addEventListener("pointermove", function(e){
     if(!holding) return;
     holdX = e.clientX;
-    holdY = Math.min(e.clientY, H * 0.6);
+    holdY = Math.min(e.clientY, H * 0.58);
+    /* Paint live neon sparkler trail as you drag across the sky */
+    for(var i = 0; i < 3; i++){
+      sparks.push({
+        x: e.clientX, y: e.clientY, px: e.clientX, py: e.clientY,
+        vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4,
+        c: ["#fde047", "#ff4d8d", "#38bdf8", "#e879f9"][(tick + i) % 4],
+        r: 3, life: 0.75, decay: 0.04, gravity: 0.03
+      });
+    }
   });
   window.addEventListener("pointerup", function(){
     if(!holding) return;
     var heldMs = Date.now() - holdStart;
     holding = false;
-    if(heldMs >= 480){
-      var count = Math.min(6, 3 + Math.floor(heldMs / 400));
-      launchGrandFinale(holdX, holdY, count);
+    if(heldMs >= 460){
+      launchGrandFinale(Math.min(6, 4 + Math.floor(heldMs / 400)));
     } else {
       var k = ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
-      launchRocket(holdX, holdY, k, 1.1, false);
+      launchRocket(holdX, holdY, k, 1.2, false);
       recordLaunch();
     }
   });
 
-  /* Bottom Animal Launch Pad Buttons */
   padBtns.forEach(function(b){
     var a = b.getAttribute("data-a");
     var fire = function(e){
       if(e){ e.preventDefault(); e.stopPropagation(); }
       if(a === "finale"){
-        launchGrandFinale(W * 0.5, H * 0.3, 5);
+        launchGrandFinale(5);
       } else {
-        var tx = W * (0.22 + Math.random() * 0.56);
-        var ty = H * (0.22 + Math.random() * 0.24);
-        launchRocket(tx, ty, a, 1.2, false);
+        var tx = W * (0.2 + Math.random() * 0.6);
+        var ty = H * (0.2 + Math.random() * 0.22);
+        launchRocket(tx, ty, a, 1.28, false);
         recordLaunch();
       }
     };
@@ -519,83 +644,62 @@
   });
 
   function startGame(){
-    won = false;
-    stars = 0;
-    winOverlay.hidden = true;
-    updateStars();
-    bubble.innerHTML = "Tap the night sky for <b>Animal Fireworks</b> — or <b>HOLD</b> your finger down for a <b>BIG FINALE</b>!";
+    won = false; stars = 0; winOverlay.hidden = true;
+    starEls.forEach(function(el){ el.classList.remove("on"); });
+    spawnSkyTargets();
+    bubble.innerHTML = "Tap the <b>glowing sky bubbles</b> or <b>HOLD</b> your finger down for a <b>MEGA FINALE</b>!";
     playVoice(["hoot-game-hello"]);
-    /* Launch a welcome firework right away so the sky is alive on open! */
     setTimeout(function(){
-      launchRocket(W * 0.5, H * 0.3, "cat", 1.15, true);
-    }, 220);
+      launchRocket(W * 0.5, H * 0.28, "cat", 1.25, true);
+    }, 180);
   }
-
   document.getElementById("againBtn").addEventListener("click", startGame);
   document.getElementById("playBtn").addEventListener("click", startGame);
-  document.getElementById("hootBtn").addEventListener("click", function(){
-    playVoice(["hoot-giggle"]);
-  });
+  document.getElementById("hootBtn").addEventListener("click", function(){ playVoice(["hoot-giggle"]); });
 
-  /* ---------- 60fps Night Sky, Harbor Reflections & Firework Particle Loop ---------- */
+  /* ---------- 60fps Additive HDR Neon Particle Loop (Never Muddy Gray!) ---------- */
   function render(){
     tick++;
-    var waterY = H * 0.68;
+    var waterY = H * 0.72;
+    ctx.clearRect(0, 0, W, H);
 
-    /* Velvet night sky with motion trail fade */
-    ctx.fillStyle = "rgba(7, 11, 30, 0.26)";
-    ctx.fillRect(0, 0, W, H);
-
-    if(skyFlash > 0.01){
-      ctx.fillStyle = "rgba(255, 240, 200, " + skyFlash + ")";
-      ctx.fillRect(0, 0, W, H);
-      skyFlash *= 0.86;
-    }
-
-    /* Twinkling background stars & Crescent Moon */
+    /* Twinkling Night Stars */
     bgStars.forEach(function(s){
-      var a = 0.35 + 0.65 * Math.abs(Math.sin(tick * 0.03 + s.p));
-      ctx.fillStyle = "rgba(255, 249, 219, " + a + ")";
+      var a = 0.35 + 0.65 * Math.abs(Math.sin(tick * 0.035 + s.p));
+      ctx.fillStyle = "rgba(254, 249, 195, " + a + ")";
       ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
     });
-    ctx.fillStyle = "#fff9db";
-    ctx.beginPath(); ctx.arc(W * 0.88, H * 0.16, 28, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#070b1e";
-    ctx.beginPath(); ctx.arc(W * 0.88 - 10, H * 0.16 - 6, 24, 0, Math.PI * 2); ctx.fill();
 
-    /* Hold-to-charge Rainbow Finale Ring */
+    /* Switch to ADDITIVE ('lighter') blending so overlapping sparks glow white-hot neon! */
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+
+    /* Hold-to-charge Rainbow Power Ring */
     if(holding){
       var held = Date.now() - holdStart;
-      holdPower = Math.min(1, held / 1200);
-      var rad = 28 + holdPower * 75;
-      ctx.save();
-      ctx.strokeStyle = ["#ffd43b", "#ff4d6d", "#4dabf7", "#da77f2"][Math.floor(tick / 4) % 4];
-      ctx.lineWidth = 6;
-      ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 18;
+      var pwr = Math.min(1, held / 1100);
+      var rad = 32 + pwr * 78;
+      ctx.strokeStyle = ["#fde047", "#ff4d8d", "#38bdf8", "#e879f9"][Math.floor(tick / 3) % 4];
+      ctx.lineWidth = 7;
       ctx.beginPath(); ctx.arc(holdX, holdY, rad, 0, Math.PI * 2); ctx.stroke();
       ctx.fillStyle = "#fff";
-      ctx.font = "900 18px Fredoka, sans-serif";
+      ctx.font = "900 19px Fredoka, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(held >= 480 ? "🎆 RELEASE FOR FINALE!" : "⚡ CHARGING…", holdX, holdY - rad - 12);
-      ctx.restore();
+      ctx.fillText(held >= 460 ? "🎆 RELEASE FOR MEGA FINALE!" : "⚡ CHARGING FINALE…", holdX, holdY - rad - 14);
     }
 
     /* Ascending Rockets */
     for(var r = rockets.length - 1; r >= 0; r--){
       var rk = rockets[r];
-      rk.p += 0.065;
+      rk.p += 0.068;
       var cx = rk.x + (rk.tx - rk.x) * rk.p;
       var cy = rk.y + (rk.ty - rk.y) * (1 - Math.pow(1 - rk.p, 2));
-      ctx.fillStyle = "#ffd43b";
-      ctx.shadowColor = "#ffd43b"; ctx.shadowBlur = 12;
-      ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0;
-      /* Gold tail sparks */
+      ctx.fillStyle = "#fde047";
+      ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
       sparks.push({
-        x: cx, y: cy,
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: 1.2 + Math.random() * 1.2,
-        c: "#ffd43b", r: 2.2, life: 0.55, decay: 0.05, gravity: 0.02
+        x: cx, y: cy, px: cx, py: cy,
+        vx: (Math.random() - 0.5) * 1.1, vy: 1.4 + Math.random() * 1.5,
+        c: "#fde047", r: 2.6, life: 0.6, decay: 0.055, gravity: 0.02
       });
       if(rk.p >= 1){
         explode(rk.tx, rk.ty, rk.kind, rk.scale);
@@ -603,76 +707,58 @@
       }
     }
 
-    /* Expanding Shockwave Rings */
+    /* Shockwave Rings */
     for(var g = rings.length - 1; g >= 0; g--){
       var rg = rings[g];
-      rg.r += (rg.maxR - rg.r) * 0.12;
-      rg.life -= 0.035;
+      rg.r += (rg.maxR - rg.r) * 0.13;
+      rg.life -= 0.036;
       if(rg.life <= 0){ rings.splice(g, 1); continue; }
       ctx.strokeStyle = rg.c;
-      ctx.globalAlpha = rg.life * 0.55;
-      ctx.lineWidth = 3.5;
+      ctx.globalAlpha = rg.life * 0.7;
+      ctx.lineWidth = 4;
       ctx.beginPath(); ctx.arc(rg.x, rg.y, rg.r, 0, Math.PI * 2); ctx.stroke();
       ctx.globalAlpha = 1;
     }
 
-    /* Glowing Animal Firework Particles + Water Reflections */
+    /* Dual-Pass HDR Neon Particles + Streak Trails + Harbor Water Shimmer */
     for(var i = sparks.length - 1; i >= 0; i--){
       var sp = sparks[i];
-      sp.x += sp.vx;
-      sp.y += sp.vy;
+      sp.px = sp.x; sp.py = sp.y;
+      sp.x += sp.vx; sp.y += sp.vy;
       sp.vy += sp.gravity;
-      sp.vx *= 0.985;
-      sp.vy *= 0.985;
+      sp.vx *= 0.984; sp.vy *= 0.984;
       sp.life -= sp.decay;
       if(sp.life <= 0){ sparks.splice(i, 1); continue; }
 
-      ctx.globalAlpha = Math.max(0, sp.life);
+      var alpha = Math.max(0, sp.life);
+      /* Outer soft neon halo */
+      ctx.globalAlpha = alpha * 0.38;
       ctx.fillStyle = sp.c;
-      ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r * 2.4, 0, Math.PI * 2); ctx.fill();
 
-      /* Harbor water shimmer reflection */
+      /* Crisp streak & bright core */
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = sp.c;
+      ctx.lineWidth = sp.r * 1.5;
+      ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(sp.px, sp.py); ctx.lineTo(sp.x, sp.y); ctx.stroke();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r * 0.55, 0, Math.PI * 2); ctx.fill();
+
+      /* Harbor water reflection shimmer */
       if(sp.y < waterY && i % 3 === 0){
-        var ry = waterY + (waterY - sp.y) * 0.35;
+        var ry = waterY + (waterY - sp.y) * 0.32;
         if(ry < H){
-          ctx.globalAlpha = Math.max(0, sp.life * 0.25);
-          ctx.fillRect(sp.x - sp.r * 1.6, ry, sp.r * 3.2, 2.2);
+          ctx.globalAlpha = alpha * 0.32;
+          ctx.fillStyle = sp.c;
+          ctx.fillRect(sp.x - sp.r * 2.2, ry, sp.r * 4.4, 2.5);
         }
       }
       ctx.globalAlpha = 1;
     }
 
-    /* Glowing Animal Constellation Emblem at Center of Burst */
-    for(var b = badges.length - 1; b >= 0; b--){
-      var bd = badges[b];
-      bd.life -= 0.015;
-      if(bd.life <= 0){ badges.splice(b, 1); continue; }
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, bd.life * 1.3);
-      var s = (1 + (1 - bd.life) * 0.35) * bd.scale;
-      ctx.translate(bd.x, bd.y);
-      ctx.scale(s, s);
-      ctx.font = "54px system-ui, Apple Color Emoji, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.shadowColor = bd.c; ctx.shadowBlur = 22;
-      ctx.fillText(bd.emo, 0, 0);
-      ctx.restore();
-    }
-
-    /* Cozy Harbor Town Silhouette & Water Horizon */
-    ctx.fillStyle = "#0b132b";
-    ctx.fillRect(0, waterY - 12, W, 14);
-    for(var h = 0; h < 14; h++){
-      var hx = (h / 14) * W;
-      var hw = W / 14 + 4;
-      var hh = 22 + (h * 17) % 34;
-      ctx.fillStyle = "#111a3a";
-      ctx.fillRect(hx, waterY - hh, hw, hh);
-      ctx.fillStyle = "#ffd43b";
-      if(h % 2 === 0) ctx.fillRect(hx + 8, waterY - hh + 8, 6, 8);
-    }
-
+    ctx.restore();
     requestAnimationFrame(render);
   }
 
@@ -680,6 +766,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e85"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e86"></script>
 </body>
 </html>

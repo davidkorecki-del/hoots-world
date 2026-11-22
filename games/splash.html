@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e85"></script>
+<script src="js/hoot-game-head.js?v=llprev3e86"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -12,268 +12,361 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --ink:#17263b;
-    --gold:#ffd43b;
-  }
+  :root{--ink:#141e30}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
   [hidden]{display:none !important}
-  html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Fredoka","Nunito",system-ui,sans-serif;background:#1e293b;touch-action:manipulation}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Fredoka","Nunito",system-ui,sans-serif;background:#0f172a;touch-action:none}
   #stage{
     position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden;
     display:flex;flex-direction:column;justify-content:space-between;
+    transition:background .45s ease;
   }
+  #stage[data-mode="storm"]{background:linear-gradient(180deg,#0f102e 0%,#1e1b4b 45%,#4c1d95 100%)}
+  #stage[data-mode="snow"]{background:linear-gradient(180deg,#1d4ed8 0%,#60a5fa 52%,#e0f2fe 100%)}
+  #stage[data-mode="wind"]{background:linear-gradient(180deg,#0284c7 0%,#38bdf8 52%,#fef08a 100%)}
+  #stage[data-mode="sun"]{background:linear-gradient(180deg,#0284c7 0%,#7dd3fc 48%,#fef9c3 100%)}
+
+  /* Crisp Pinkfong-Style Vector SVG Town Panorama */
+  #townSvg{
+    position:absolute;inset:0;width:100%;height:100%;
+    z-index:1;pointer-events:none;display:block;
+  }
+  #windmillSails{
+    transform-box:fill-box;transform-origin:center;
+    animation:spinMill 7s linear infinite;
+  }
+  #stage[data-mode="wind"] #windmillSails{animation-duration:1.6s}
+  #stage[data-mode="storm"] #windmillSails{animation-duration:3s}
+  @keyframes spinMill{to{transform:rotate(360deg)}}
+
+  #svgRainbow{opacity:0;transition:opacity .45s ease}
+  #stage[data-mode="sun"] #svgRainbow{opacity:.92}
+  .snow-cap{opacity:0;transition:opacity .45s ease}
+  #stage[data-mode="snow"] .snow-cap{opacity:1}
+  #pondFill{transition:fill .45s ease}
+  #stage[data-mode="snow"] #pondFill{fill:#bae6fd}
+
+  /* 60fps Particle & Lightning FX Canvas */
   #weatherCanvas{
-    position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;
-    cursor:pointer;
+    position:absolute;inset:0;width:100%;height:100%;
+    z-index:2;display:block;cursor:pointer;touch-action:none;
   }
   #flashOverlay{
-    position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:#fff;opacity:0;transition:opacity .12s ease;
+    position:absolute;inset:0;z-index:4;pointer-events:none;
+    background:radial-gradient(circle,#fff 0%,#fef08a 65%,transparent 100%);
+    opacity:0;transition:opacity .08s ease;
   }
 
-  /* Top HUD: Hoot Medallion + Speech Banner + 5 Weather Stars */
-  #hud{
-    position:relative;z-index:5;
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:max(8px,env(safe-area-inset-top)) clamp(10px,2.5vw,24px) 0;
+  /* Interactive Pinkfong Kawaii SVG Characters & Sky Targets */
+  #interactiveLayer{
+    position:absolute;left:0;right:0;top:76px;bottom:168px;
+    z-index:5;pointer-events:none;overflow:visible;
+  }
+  .town-actor{
+    position:absolute;pointer-events:auto;
+    transform:translate(-50%,-50%);
+    width:clamp(102px,15vw,146px);height:clamp(102px,15vw,146px);
+    border:0;background:none;padding:0;cursor:pointer;font-family:inherit;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    filter:drop-shadow(0 8px 14px rgba(10,15,40,.35));
+    animation:actorEntrance .42s cubic-bezier(.2,1.55,.4,1) both,actorBob 2.4s ease-in-out infinite;
+    transition:transform .16s cubic-bezier(.2,1.6,.4,1);
+  }
+  .town-actor:active,.town-actor.bouncing{transform:translate(-50%,-62%) scale(1.24) !important}
+  .town-actor svg{width:86%;height:86%;display:block;overflow:visible;pointer-events:none}
+  .actor-tag{
+    margin-top:-4px;background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
+    border:3px solid var(--ink);border-radius:999px;
+    padding:2px 12px;font-size:clamp(.82rem,1.5vw,1.02rem);font-weight:900;
+    color:var(--ink);white-space:nowrap;box-shadow:0 4px 0 var(--ink);
     pointer-events:none;
   }
-  .hud-host{
-    display:flex;align-items:center;gap:10px;flex:1;min-width:0;pointer-events:auto;
+
+  /* Giant Sky Boss Character (Top-Right) */
+  #skyBossBtn{
+    position:absolute;right:4%;top:82px;z-index:5;pointer-events:auto;
+    width:clamp(112px,16vw,156px);height:clamp(112px,16vw,156px);
+    border:0;background:none;padding:0;cursor:pointer;
+    filter:drop-shadow(0 10px 20px rgba(10,15,45,.38));
+    animation:bossFloat 3s ease-in-out infinite;
+    transition:transform .16s ease;
   }
+  #skyBossBtn:active{transform:scale(1.18)}
+  #skyBossBtn svg{width:100%;height:100%;display:block;overflow:visible}
+
+  /* Top HUD */
+  #hud{
+    position:relative;z-index:6;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:max(6px,env(safe-area-inset-top)) clamp(10px,2.2vw,22px) 0;
+    pointer-events:none;
+  }
+  .hud-left{display:flex;align-items:center;gap:10px;pointer-events:auto;min-width:0;flex:1}
   #hootBtn{
-    flex:none;width:clamp(64px,10vw,82px);height:clamp(64px,10vw,82px);
-    border-radius:50%;border:4px solid var(--ink);
-    background:radial-gradient(circle at 35% 30%,#fffdf0 0%,#ffe066 65%,#ffb703 100%);
-    box-shadow:0 6px 0 var(--ink),0 0 0 5px rgba(255,255,255,.45),0 12px 22px rgba(10,20,50,.35);
-    padding:6px;cursor:pointer;display:grid;place-items:center;
-    animation:hootFloat 2.8s ease-in-out infinite;
+    flex:none;width:clamp(58px,8.5vw,76px);height:clamp(58px,8.5vw,76px);
+    border-radius:50%;border:3.5px solid var(--ink);
+    background:radial-gradient(circle at 35% 30%,#fffdf0 0%,#ffe066 65%,#f59f00 100%);
+    box-shadow:0 6px 0 var(--ink),0 0 18px rgba(255,212,59,.65);
+    padding:5px;cursor:pointer;display:grid;place-items:center;
+    animation:bossFloat 2.6s ease-in-out infinite;
   }
   #hootBtn svg{width:100%;height:100%;display:block}
   #bubble{
     background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
-    border:4px solid var(--ink);border-radius:24px;
-    padding:10px 16px;font-size:clamp(1rem,2.2vw,1.38rem);font-weight:800;
-    color:var(--ink);line-height:1.25;
-    box-shadow:0 7px 0 var(--ink),0 14px 26px rgba(10,20,50,.28);
-    max-width:640px;
+    border:3.5px solid var(--ink);border-radius:22px;
+    padding:8px 16px;font-size:clamp(.95rem,2vw,1.26rem);font-weight:800;
+    color:var(--ink);line-height:1.22;
+    box-shadow:0 6px 0 var(--ink),0 12px 24px rgba(10,20,50,.32);
+    max-width:580px;
   }
-  #bubble b{color:#d9480f}
+  #bubble b{color:#e8590c}
   #starBar{
     flex:none;pointer-events:auto;
-    display:flex;align-items:center;gap:6px;
-    background:rgba(255,255,255,.92);border:3.5px solid var(--ink);
-    border-radius:999px;padding:6px 14px;
-    box-shadow:0 6px 0 var(--ink);font-weight:900;font-size:1.15rem;color:var(--ink);
+    display:flex;align-items:center;gap:5px;
+    background:rgba(255,255,255,.94);border:3.5px solid var(--ink);
+    border-radius:999px;padding:5px 14px;
+    box-shadow:0 6px 0 var(--ink);font-weight:900;
   }
-  .wstar{font-size:1.45rem;filter:grayscale(1) opacity(.35);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
-  .wstar.on{filter:none;transform:scale(1.18)}
+  .wstar{font-size:1.35rem;filter:grayscale(1) opacity(.3);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
+  .wstar.on{filter:none;transform:scale(1.22)}
 
-  /* Interactive Town Actor Hotspots */
-  #townActors{
-    position:relative;z-index:4;flex:1;width:100%;pointer-events:none;
-  }
-  .actor-chip{
-    position:absolute;pointer-events:auto;
-    border:3.5px solid var(--ink);border-radius:999px;
-    background:linear-gradient(180deg,#ffffff 0%,#fff3bf 100%);
-    box-shadow:0 6px 0 var(--ink),0 12px 24px rgba(10,20,50,.32);
-    padding:6px 14px;font-family:inherit;font-weight:900;font-size:clamp(.95rem,1.9vw,1.2rem);
-    color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;
-    animation:actorPop .45s cubic-bezier(.2,1.6,.4,1) both,hootFloat 2.4s ease-in-out infinite;
-  }
-  .actor-chip span{font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1}
-  .actor-chip:active{translate:0 4px;box-shadow:0 2px 0 var(--ink)}
-
-  /* Bottom Pinkfong-Style 3D Weather Machine Lever Console */
-  #machineConsole{
+  /* Bottom 3D Pinkfong Toy Weather Contraption Console */
+  #machineDeck{
     position:relative;z-index:6;
-    margin:0 auto max(10px,env(safe-area-inset-bottom));
-    width:min(96vw,960px);
-    background:linear-gradient(180deg,#4cc9f0 0%,#4361ee 55%,#3a0ca3 100%);
+    margin:0 auto max(8px,env(safe-area-inset-bottom));
+    width:min(96vw,920px);
+    background:linear-gradient(180deg,#38bdf8 0%,#2563eb 52%,#1e3a8a 100%);
     border:4.5px solid var(--ink);border-radius:34px;
-    padding:12px clamp(10px,2.2vw,22px) 16px;
+    padding:10px clamp(10px,2vw,20px) 14px;
     box-shadow:
-      inset 0 6px 0 rgba(255,255,255,.55),
-      0 10px 0 #1d1145,
-      0 18px 36px rgba(5,10,35,.48);
+      inset 0 6px 0 rgba(255,255,255,.65),
+      inset 0 -6px 0 rgba(0,0,0,.35),
+      0 10px 0 #0f172a,
+      0 20px 40px rgba(0,0,0,.55);
   }
-  .console-lights{
-    display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:8px;padding:0 10px;color:#fff;font-weight:900;font-size:clamp(.88rem,1.7vw,1.08rem);
-    letter-spacing:.04em;text-shadow:0 2px 0 var(--ink);
+  .deck-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 6px}
+  .gauge-pill{
+    display:flex;align-items:center;gap:8px;
+    background:#0f172a;border:3px solid var(--ink);border-radius:999px;
+    padding:3px 16px;color:#ffd43b;font-weight:900;font-size:clamp(.82rem,1.5vw,1rem);
   }
-  .bulb-row{display:flex;gap:8px}
-  .bulb{
-    width:14px;height:14px;border-radius:50%;border:2.5px solid var(--ink);
-    background:#ffd43b;box-shadow:0 0 10px #ffd43b;
-    animation:bulbBlink 1.2s ease-in-out infinite alternate;
-  }
-  .bulb:nth-child(2){background:#ff6b6b;box-shadow:0 0 10px #ff6b6b;animation-delay:.3s}
-  .bulb:nth-child(3){background:#51cf66;box-shadow:0 0 10px #51cf66;animation-delay:.6s}
-  .bulb:nth-child(4){background:#f06595;box-shadow:0 0 10px #f06595;animation-delay:.9s}
+  .led-row{display:flex;gap:7px}
+  .led{width:13px;height:13px;border-radius:50%;border:2px solid var(--ink);background:#ffd43b;box-shadow:0 0 10px #ffd43b;animation:ledPulse .9s ease-in-out infinite alternate}
+  .led:nth-child(2){background:#ff4d6d;box-shadow:0 0 10px #ff4d6d;animation-delay:.25s}
+  .led:nth-child(3){background:#4ade80;box-shadow:0 0 10px #4ade80;animation-delay:.5s}
+  .led:nth-child(4){background:#c084fc;box-shadow:0 0 10px #c084fc;animation-delay:.75s}
 
-  #leverGrid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.8vw,18px);
-  }
-  .lever-btn{
+  #consoleRow{display:grid;grid-template-columns:1fr 1fr 1.15fr 1fr 1fr;gap:clamp(6px,1.5vw,14px);align-items:stretch}
+  .lever-bay{
     position:relative;
-    min-height:clamp(108px,18vh,148px);
-    border:4px solid var(--ink);border-radius:26px;
-    background:linear-gradient(180deg,#ffffff 0%,var(--c1) 52%,var(--c2) 100%);
-    box-shadow:
-      inset 0 5px 0 rgba(255,255,255,.92),
-      0 9px 0 var(--ped),
-      0 13px 0 var(--ink),
-      0 18px 26px rgba(10,15,45,.32);
-    padding:10px 6px 12px;cursor:pointer;font-family:inherit;color:var(--ink);
+    min-height:clamp(104px,16.5vh,142px);
+    border:4px solid var(--ink);border-radius:24px;
+    background:linear-gradient(180deg,#ffffff 0%,var(--c1) 48%,var(--c2) 100%);
+    box-shadow:inset 0 5px 0 rgba(255,255,255,.95),0 8px 0 var(--ped),0 12px 0 var(--ink);
+    padding:6px 4px 8px;cursor:pointer;font-family:inherit;color:var(--ink);
     display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-    transition:translate .14s cubic-bezier(.2,1.5,.4,1),box-shadow .14s ease;
-    touch-action:manipulation;
+    touch-action:none;transition:translate .14s ease,box-shadow .14s ease;
   }
-  .lever-btn[data-w="sun"]{--c1:#fff3bf;--c2:#fcc419;--ped:#e67700}
-  .lever-btn[data-w="wind"]{--c1:#d0ebff;--c2:#4dabf7;--ped:#1864ab}
-  .lever-btn[data-w="snow"]{--c1:#e5dbff;--c2:#9775fa;--ped:#5f3dc4}
-  .lever-btn[data-w="storm"]{--c1:#ffe3e3;--c2:#ff6b6b;--ped:#c92a2a}
+  .lever-bay[data-w="storm"]{--c1:#e0e7ff;--c2:#818cf8;--ped:#4338ca}
+  .lever-bay[data-w="snow"]{--c1:#e0f2fe;--c2:#38bdf8;--ped:#0369a1}
+  .lever-bay[data-w="wind"]{--c1:#dcfce7;--c2:#4ade80;--ped:#15803d}
+  .lever-bay[data-w="sun"]{--c1:#fef9c3;--c2:#facc15;--ped:#ca8a04}
 
-  /* Physical Lever Slot + Sliding Ball Handle */
-  .lever-track{
-    position:relative;width:18px;height:42px;border-radius:999px;
-    background:#1e293b;border:3px solid var(--ink);
-    box-shadow:inset 0 3px 6px rgba(0,0,0,.6);
-    margin:2px 0;
+  .lever-head{display:flex;align-items:center;gap:4px;font-weight:900;font-size:clamp(.82rem,1.6vw,1.05rem)}
+  .lever-head span{font-size:clamp(1.35rem,2.6vw,1.8rem);line-height:1}
+  .slot-rail{
+    position:relative;width:24px;height:clamp(50px,8.5vh,72px);
+    border-radius:999px;background:#0f172a;border:3.5px solid var(--ink);
+    box-shadow:inset 0 4px 8px rgba(0,0,0,.85);margin:2px 0;
   }
-  .lever-knob{
-    position:absolute;left:50%;top:-6px;transform:translateX(-50%);
-    width:32px;height:24px;border-radius:999px;
-    background:radial-gradient(circle at 35% 30%,#fff,#ff4d6d 55%,#a4133c);
-    border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);
-    transition:top .22s cubic-bezier(.2,1.6,.4,1),background .2s;
+  .slot-fill{
+    position:absolute;left:0;right:0;top:0;height:20%;border-radius:999px;
+    background:linear-gradient(180deg,#4ade80,#16a34a);transition:height .18s ease;
   }
-  .lever-btn.pulled{
-    translate:0 6px;
-    box-shadow:
-      inset 0 5px 0 #fff,
-      0 3px 0 var(--ped),
-      0 6px 0 var(--ink),
-      0 0 0 6px #ffd43b,
-      0 0 28px 8px rgba(255,212,59,.75);
+  .tbar-handle{
+    position:absolute;left:50%;top:0%;transform:translate(-50%,-20%);
+    width:clamp(54px,8.5vw,76px);height:26px;border-radius:999px;
+    background:linear-gradient(180deg,#ff758f 0%,#ff4d6d 50%,#c9184a 100%);
+    border:3.5px solid var(--ink);
+    box-shadow:inset 0 4px 0 rgba(255,255,255,.75),0 5px 0 var(--ink),0 8px 14px rgba(0,0,0,.4);
+    transition:top .18s cubic-bezier(.2,1.55,.4,1),background .2s;
+    display:flex;align-items:center;justify-content:center;
   }
-  .lever-btn.pulled .lever-knob{
-    top:16px;
-    background:radial-gradient(circle at 35% 30%,#fff,#51cf66 55%,#2b8a3e);
+  .tbar-handle::after{content:"";width:55%;height:5px;border-radius:99px;background:rgba(255,255,255,.75)}
+  .lever-bay.pulled{
+    translate:0 5px;
+    box-shadow:inset 0 5px 0 #fff,0 3px 0 var(--ped),0 6px 0 var(--ink),0 0 0 5px #ffd43b,0 0 22px rgba(255,212,59,.85);
   }
-  .lever-btn.target-glow:not(.pulled){
-    box-shadow:
-      inset 0 5px 0 #fff,
-      0 9px 0 var(--ped),
-      0 13px 0 var(--ink),
-      0 0 0 6px rgba(255,224,51,.9),
-      0 0 26px 8px rgba(255,224,51,.65);
-    animation:targetPulse 1.3s ease-in-out infinite;
-  }
-  .lever-emo{
-    font-size:clamp(2.2rem,5.2vw,3.1rem);line-height:1;
-    filter:drop-shadow(0 4px 6px rgba(15,25,60,.22));
-  }
-  .lever-lbl{
-    font-size:clamp(.92rem,2vw,1.2rem);font-weight:900;
-    background:rgba(255,255,255,.88);padding:2px 12px;border-radius:999px;
-    border:2.5px solid var(--ink);line-height:1.15;
-  }
+  .lever-bay.pulled .tbar-handle{top:76%;background:linear-gradient(180deg,#86efac 0%,#22c55e 52%,#15803d 100%)}
+  .lever-bay.pulled .slot-fill{height:85%}
+  .lever-hint{font-size:.74rem;font-weight:900;opacity:.82}
 
-  /* Win Celebration Overlay */
+  #turboBtn{
+    min-height:clamp(104px,16.5vh,142px);
+    border:4.5px solid var(--ink);border-radius:30px;
+    background:radial-gradient(circle at 38% 28%,#fff0f3 0%,#ff4d6d 38%,#c9184a 78%,#800f2f 100%);
+    box-shadow:inset 0 7px 0 rgba(255,255,255,.7),0 10px 0 #590d22,0 14px 0 var(--ink),0 0 26px rgba(255,77,109,.75);
+    color:#fff;font-family:inherit;font-weight:900;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    padding:8px 6px;text-shadow:0 2px 0 var(--ink);
+    animation:turboPulse 1.4s ease-in-out infinite;touch-action:manipulation;
+  }
+  #turboBtn:active{translate:0 8px;box-shadow:0 2px 0 #590d22,0 5px 0 var(--ink)}
+  #turboBtn .tb-ico{font-size:clamp(2.1rem,4.5vw,2.9rem);line-height:1}
+  #turboBtn .tb-txt{font-size:clamp(.85rem,1.7vw,1.1rem);line-height:1.1;text-align:center}
+
   #winOverlay{
     position:fixed;inset:0;z-index:20;
-    background:rgba(15,23,42,.58);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    background:rgba(15,23,42,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
     display:flex;align-items:center;justify-content:center;padding:16px;
   }
   .win-card{
     width:min(92vw,480px);background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
     border:5px solid var(--ink);border-radius:36px;padding:24px 20px;text-align:center;
     box-shadow:0 12px 0 var(--ink),0 24px 48px rgba(0,0,0,.45);
-    animation:actorPop .5s cubic-bezier(.2,1.5,.4,1) both;
   }
-  .win-trophy{font-size:5.2rem;line-height:1;margin:0 0 8px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.2))}
+  .win-trophy{font-size:5rem;line-height:1;margin:0 0 8px}
   .win-card h2{margin:0 0 6px;font-size:2rem;color:var(--ink)}
-  .win-card p{margin:0 0 16px;font-size:1.15rem;font-weight:800;color:#334155}
-  .win-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .win-card p{margin:0 0 16px;font-size:1.12rem;font-weight:800;color:#334155}
   .big-play{
-    min-height:68px;min-width:200px;padding:12px 28px;border-radius:999px;
+    min-height:66px;min-width:200px;padding:12px 28px;border-radius:999px;
     border:4px solid var(--ink);background:linear-gradient(180deg,#ffe066 0%,#fab005 100%);
-    color:var(--ink);font-family:inherit;font-size:1.35rem;font-weight:900;
+    color:var(--ink);font-family:inherit;font-size:1.32rem;font-weight:900;
     box-shadow:0 7px 0 var(--ink);cursor:pointer;
   }
-  .big-play:active{translate:0 5px;box-shadow:0 2px 0 var(--ink)}
 
-  @keyframes hootFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-  @keyframes actorPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
-  @keyframes bulbBlink{from{opacity:.45;transform:scale(.9)}to{opacity:1;transform:scale(1.1)}}
-  @keyframes targetPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  @keyframes bossFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes actorBob{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-8px)}}
+  @keyframes actorEntrance{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  @keyframes ledPulse{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}
+  @keyframes turboPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e85" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e86" />
 </head>
 <body>
-<div id="stage">
+<div id="stage" data-mode="storm">
+  <!-- Crisp Pinkfong-Style Vector Illustrated Town Scene -->
+  <svg id="townSvg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <!-- 7-Band Glowing Rainbow Bridge (Sunshine Mode) -->
+    <g id="svgRainbow" transform="translate(720,580)" fill="none" stroke-linecap="round">
+      <path d="M-560,0 A560,520 0 0,1 560,0" stroke="#ff4d6d" stroke-width="24"/>
+      <path d="M-536,0 A536,496 0 0,1 536,0" stroke="#fb923c" stroke-width="24"/>
+      <path d="M-512,0 A512,472 0 0,1 512,0" stroke="#facc15" stroke-width="24"/>
+      <path d="M-488,0 A488,448 0 0,1 488,0" stroke="#4ade80" stroke-width="24"/>
+      <path d="M-464,0 A464,424 0 0,1 464,0" stroke="#38bdf8" stroke-width="24"/>
+      <path d="M-440,0 A440,400 0 0,1 440,0" stroke="#818cf8" stroke-width="24"/>
+      <path d="M-416,0 A416,376 0 0,1 416,0" stroke="#e879f9" stroke-width="24"/>
+    </g>
+
+    <!-- Rolling Hills -->
+    <path d="M0 555 Q340 465 720 535 T1440 520 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <path class="snow-cap" d="M0 555 Q340 465 720 535 T1440 520 L1440 900 L0 900 Z" fill="#e2e8f0" stroke="#141e30" stroke-width="6"/>
+    <path d="M0 600 Q520 535 1440 585 L1440 900 L0 900 Z" fill="#22c55e" stroke="#141e30" stroke-width="6"/>
+    <path class="snow-cap" d="M0 600 Q520 535 1440 585 L1440 900 L0 900 Z" fill="#f8fafc" stroke="#141e30" stroke-width="6"/>
+
+    <!-- Town Pond / Frozen Ice Rink (Right) -->
+    <ellipse id="pondFill" cx="1080" cy="615" rx="210" ry="44" fill="#0284c7" stroke="#141e30" stroke-width="6"/>
+    <path d="M950 606 Q1040 598 1160 608" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+
+    <!-- Illustrated Red Barn & Silo (Left) -->
+    <g transform="translate(150,415)">
+      <rect x="-46" y="30" width="44" height="125" rx="6" fill="#e2e8f0" stroke="#141e30" stroke-width="6"/>
+      <path d="M-48 34 A24 24 0 0 1 -2 34 Z" fill="#ef4444" stroke="#141e30" stroke-width="6"/>
+      <rect x="0" y="45" width="136" height="110" rx="8" fill="#ef4444" stroke="#141e30" stroke-width="6"/>
+      <polygon points="-16,48 22,2 68,-18 114,2 152,48" fill="#b91c1c" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/>
+      <polygon class="snow-cap" points="-16,48 22,2 68,-18 114,2 152,48" fill="#ffffff" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/>
+      <rect x="48" y="12" width="40" height="28" rx="6" fill="#fde047" stroke="#141e30" stroke-width="5"/>
+      <rect x="36" y="82" width="64" height="73" rx="6" fill="#7f1d1d" stroke="#141e30" stroke-width="5"/>
+      <line x1="36" y1="82" x2="100" y2="155" stroke="#fff" stroke-width="5"/>
+      <line x1="100" y1="82" x2="36" y2="155" stroke="#fff" stroke-width="5"/>
+    </g>
+
+    <!-- Cozy Storybook Bakery Cottage (Center-Left) -->
+    <g transform="translate(510,435)">
+      <rect x="108" y="-36" width="26" height="58" rx="4" fill="#ea580c" stroke="#141e30" stroke-width="6"/>
+      <rect x="0" y="25" width="144" height="110" rx="10" fill="#fef3c7" stroke="#141e30" stroke-width="6"/>
+      <polygon points="-18,28 72,-34 162,28" fill="#8b5cf6" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/>
+      <polygon class="snow-cap" points="-18,28 72,-34 162,28" fill="#ffffff" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/>
+      <rect x="18" y="48" width="32" height="32" rx="6" fill="#fde047" stroke="#141e30" stroke-width="5"/>
+      <rect x="94" y="48" width="32" height="32" rx="6" fill="#fde047" stroke="#141e30" stroke-width="5"/>
+      <path d="M56 135 L56 86 A16 16 0 0 1 88 86 L88 135 Z" fill="#f43f5e" stroke="#141e30" stroke-width="5"/>
+    </g>
+
+    <!-- 3D Lattice Windmill (Center-Right) -->
+    <g transform="translate(830,410)">
+      <polygon points="-42,165 -22,25 22,25 42,165" fill="#f43f5e" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M-26 28 A26 26 0 0 1 26 28 Z" fill="#fde047" stroke="#141e30" stroke-width="6"/>
+      <g transform="translate(0,36)">
+        <g id="windmillSails">
+          <rect x="-10" y="-92" width="20" height="82" rx="6" fill="#fef08a" stroke="#141e30" stroke-width="5"/>
+          <rect x="-10" y="10" width="20" height="82" rx="6" fill="#fef08a" stroke="#141e30" stroke-width="5"/>
+          <rect x="-92" y="-10" width="82" height="20" rx="6" fill="#fef08a" stroke="#141e30" stroke-width="5"/>
+          <rect x="10" y="-10" width="82" height="20" rx="6" fill="#fef08a" stroke="#141e30" stroke-width="5"/>
+          <circle cx="0" cy="0" r="15" fill="#fb923c" stroke="#141e30" stroke-width="5"/>
+        </g>
+      </g>
+    </g>
+  </svg>
+
   <canvas id="weatherCanvas"></canvas>
   <div id="flashOverlay"></div>
+  <button id="skyBossBtn" type="button" aria-label="Tap Sky Weather Boss"></button>
+  <div id="interactiveLayer"></div>
 
   <div id="hud">
-    <div class="hud-host">
+    <div class="hud-left">
       <button id="hootBtn" type="button" aria-label="Hoot the Owl">
         <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <div id="bubble" aria-live="polite">Pull a lever on the <b>Weather Machine</b>!</div>
+      <div id="bubble" aria-live="polite">Pull a lever down — then <b>tap the characters & sky</b>!</div>
     </div>
     <div id="starBar" aria-label="Weather stars">
       <span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span>
     </div>
   </div>
 
-  <div id="townActors"></div>
-
-  <!-- Hidden start button kept for automated test harness compatibility; game starts immediately -->
   <button id="playBtn" type="button" hidden>▶ Play</button>
 
-  <div id="machineConsole" role="group" aria-label="Weather Machine Levers">
-    <div class="console-lights">
-      <div class="bulb-row"><i class="bulb"></i><i class="bulb"></i></div>
-      <span>⚡ THUNDER WEATHER MACHINE ⚡</span>
-      <div class="bulb-row"><i class="bulb"></i><i class="bulb"></i></div>
+  <div id="machineDeck" role="group" aria-label="Thunder Weather Machine">
+    <div class="deck-top">
+      <div class="led-row"><i class="led"></i><i class="led"></i><i class="led"></i><i class="led"></i></div>
+      <div class="gauge-pill"><span id="gaugeTxt">⛈️ THUNDER STORM</span></div>
+      <div class="led-row"><i class="led"></i><i class="led"></i><i class="led"></i><i class="led"></i></div>
     </div>
-    <div id="leverGrid">
-      <button type="button" class="lever-btn" data-w="storm" aria-label="Thunder Storm lever">
-        <span class="lever-emo" aria-hidden="true">⛈️</span>
-        <span class="lever-track" aria-hidden="true"><i class="lever-knob"></i></span>
-        <span class="lever-lbl">Storm</span>
+    <div id="consoleRow">
+      <button type="button" class="lever-bay lever-btn" data-w="storm" aria-label="Thunder Storm lever">
+        <div class="lever-head"><span aria-hidden="true">⛈️</span>Storm</div>
+        <div class="slot-rail"><div class="slot-fill"></div><div class="tbar-handle"></div></div>
+        <div class="lever-hint">PULL DOWN</div>
       </button>
-      <button type="button" class="lever-btn" data-w="snow" aria-label="Snowfall lever">
-        <span class="lever-emo" aria-hidden="true">❄️</span>
-        <span class="lever-track" aria-hidden="true"><i class="lever-knob"></i></span>
-        <span class="lever-lbl">Snow</span>
+      <button type="button" class="lever-bay lever-btn" data-w="snow" aria-label="Snow blizzard lever">
+        <div class="lever-head"><span aria-hidden="true">❄️</span>Snow</div>
+        <div class="slot-rail"><div class="slot-fill"></div><div class="tbar-handle"></div></div>
+        <div class="lever-hint">PULL DOWN</div>
       </button>
-      <button type="button" class="lever-btn" data-w="wind" aria-label="Windy Kites lever">
-        <span class="lever-emo" aria-hidden="true">🪁</span>
-        <span class="lever-track" aria-hidden="true"><i class="lever-knob"></i></span>
-        <span class="lever-lbl">Wind</span>
+      <button type="button" id="turboBtn" aria-label="Turbo Weather Blast">
+        <span class="tb-ico" aria-hidden="true">⚡</span>
+        <span class="tb-txt">MEGA<br>BLAST!</span>
       </button>
-      <button type="button" class="lever-btn" data-w="sun" aria-label="Sunshine Rainbow lever">
-        <span class="lever-emo" aria-hidden="true">☀️</span>
-        <span class="lever-track" aria-hidden="true"><i class="lever-knob"></i></span>
-        <span class="lever-lbl">Sunshine</span>
+      <button type="button" class="lever-bay lever-btn" data-w="wind" aria-label="Windy Kites lever">
+        <div class="lever-head"><span aria-hidden="true">🪁</span>Wind</div>
+        <div class="slot-rail"><div class="slot-fill"></div><div class="tbar-handle"></div></div>
+        <div class="lever-hint">PULL DOWN</div>
+      </button>
+      <button type="button" class="lever-bay lever-btn" data-w="sun" aria-label="Sunshine Rainbow lever">
+        <div class="lever-head"><span aria-hidden="true">☀️</span>Sun</div>
+        <div class="slot-rail"><div class="slot-fill"></div><div class="tbar-handle"></div></div>
+        <div class="lever-hint">PULL DOWN</div>
       </button>
     </div>
   </div>
 
   <div id="winOverlay" hidden>
     <div class="win-card">
-      <div class="win-trophy" aria-hidden="true">🌈⛈️⛄</div>
+      <div class="win-trophy" aria-hidden="true">⛈️⛄🪁🌈</div>
       <h2>Weather Master!</h2>
-      <p id="winRecap">You made thunder storms, snowmen, flying kites, and rainbow sunshine over the town!</p>
-      <div class="win-btns">
-        <button id="againBtn" class="big-play" type="button">↻ Play Again</button>
-      </div>
+      <p id="winRecap">You powered the Thunder Weather Machine and brought the whole town to life!</p>
+      <button id="againBtn" class="big-play" type="button">↻ Play Again</button>
     </div>
   </div>
 </div>
@@ -281,14 +374,18 @@
 <script>
 (function(){
   "use strict";
+  var stage = document.getElementById("stage");
   var canvas = document.getElementById("weatherCanvas");
   var ctx = canvas.getContext("2d");
   var bubble = document.getElementById("bubble");
-  var actorsBox = document.getElementById("townActors");
+  var gaugeTxt = document.getElementById("gaugeTxt");
   var flashEl = document.getElementById("flashOverlay");
+  var skyBossBtn = document.getElementById("skyBossBtn");
+  var interactiveLayer = document.getElementById("interactiveLayer");
   var winOverlay = document.getElementById("winOverlay");
   var starEls = Array.prototype.slice.call(document.querySelectorAll(".wstar"));
-  var leverBtns = Array.prototype.slice.call(document.querySelectorAll(".lever-btn"));
+  var leverBtns = Array.prototype.slice.call(document.querySelectorAll(".lever-bay"));
+  var turboBtn = document.getElementById("turboBtn");
 
   var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function resize(){
@@ -299,520 +396,377 @@
   window.addEventListener("resize", resize);
   resize();
 
-  /* ---------- Recorded Voice Clips + WebAudio Weather Synth ---------- */
+  /* ---------- Kawaii Pinkfong-Style SVG Sprites ---------- */
+  var SPRITES = {
+    boss_storm: '<svg viewBox="0 0 160 140"><path d="M36 96 A28 28 0 0 1 32 42 A38 38 0 0 1 102 32 A32 32 0 0 1 138 66 A26 26 0 0 1 124 96 Z" fill="#312e81" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><polygon points="78,86 60,118 78,118 68,138 102,106 84,106 94,86" fill="#fde047" stroke="#141e30" stroke-width="4"/><circle cx="62" cy="64" r="9" fill="#fde047"/><circle cx="98" cy="64" r="9" fill="#fde047"/><circle cx="60" cy="62" r="3.5" fill="#fff"/><circle cx="96" cy="62" r="3.5" fill="#fff"/><path d="M68 80 Q80 88 92 80" fill="none" stroke="#fde047" stroke-width="5" stroke-linecap="round"/></svg>',
+    boss_snow: '<svg viewBox="0 0 160 140"><path d="M36 96 A28 28 0 0 1 32 42 A38 38 0 0 1 102 32 A32 32 0 0 1 138 66 A26 26 0 0 1 124 96 Z" fill="#ffffff" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><circle cx="62" cy="64" r="8" fill="#141e30"/><circle cx="98" cy="64" r="8" fill="#141e30"/><circle cx="60" cy="62" r="3" fill="#fff"/><circle cx="96" cy="62" r="3" fill="#fff"/><ellipse cx="46" cy="74" rx="7" ry="4" fill="#f472b6"/><ellipse cx="114" cy="74" rx="7" ry="4" fill="#f472b6"/><path d="M68 78 Q80 88 92 78" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    boss_wind: '<svg viewBox="0 0 160 140"><path d="M36 96 A28 28 0 0 1 32 42 A38 38 0 0 1 102 32 A32 32 0 0 1 138 66 A26 26 0 0 1 124 96 Z" fill="#bae6fd" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><circle cx="62" cy="62" r="8" fill="#141e30"/><circle cx="98" cy="62" r="8" fill="#141e30"/><circle cx="48" cy="74" r="11" fill="#f472b6"/><circle cx="112" cy="74" r="11" fill="#f472b6"/><circle cx="80" cy="76" r="7" fill="#141e30"/></svg>',
+    boss_sun: '<svg viewBox="0 0 160 160"><g stroke="#141e30" stroke-width="5" fill="#fb923c"><polygon points="80,4 92,28 68,28"/><polygon points="80,156 92,132 68,132"/><polygon points="4,80 28,92 28,68"/><polygon points="156,80 132,92 132,68"/><polygon points="24,24 46,34 34,46"/><polygon points="136,24 114,34 126,46"/><polygon points="24,136 46,126 34,114"/><polygon points="136,136 114,126 126,114"/></g><circle cx="80" cy="80" r="48" fill="#facc15" stroke="#141e30" stroke-width="6"/><circle cx="62" cy="72" r="9" fill="#141e30"/><circle cx="98" cy="72" r="9" fill="#141e30"/><circle cx="59" cy="69" r="3.5" fill="#fff"/><circle cx="95" cy="69" r="3.5" fill="#fff"/><ellipse cx="46" cy="84" rx="8" ry="5" fill="#f43f5e" opacity=".75"/><ellipse cx="114" cy="84" rx="8" ry="5" fill="#f43f5e" opacity=".75"/><path d="M64 92 Q80 106 96 92" fill="none" stroke="#141e30" stroke-width="5.5" stroke-linecap="round"/></svg>',
+    frog: '<svg viewBox="0 0 130 130"><ellipse cx="65" cy="108" rx="54" ry="14" fill="#38bdf8" stroke="#141e30" stroke-width="5"/><circle cx="44" cy="40" r="16" fill="#4ade80" stroke="#141e30" stroke-width="5.5"/><circle cx="86" cy="40" r="16" fill="#4ade80" stroke="#141e30" stroke-width="5.5"/><circle cx="44" cy="40" r="8" fill="#141e30"/><circle cx="86" cy="40" r="8" fill="#141e30"/><circle cx="41" cy="37" r="3" fill="#fff"/><circle cx="83" cy="37" r="3" fill="#fff"/><ellipse cx="65" cy="74" rx="42" ry="32" fill="#4ade80" stroke="#141e30" stroke-width="6"/><ellipse cx="65" cy="82" rx="26" ry="18" fill="#bbf7d0"/><ellipse cx="36" cy="68" rx="7" ry="4" fill="#f472b6"/><ellipse cx="94" cy="68" rx="7" ry="4" fill="#f472b6"/><path d="M48 68 Q65 82 82 68" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    duck: '<svg viewBox="0 0 130 130"><ellipse cx="65" cy="84" rx="38" ry="28" fill="#facc15" stroke="#141e30" stroke-width="6"/><circle cx="65" cy="46" r="26" fill="#fde047" stroke="#141e30" stroke-width="6"/><circle cx="54" cy="42" r="7" fill="#141e30"/><circle cx="76" cy="42" r="7" fill="#141e30"/><circle cx="52" cy="40" r="2.5" fill="#fff"/><circle cx="74" cy="40" r="2.5" fill="#fff"/><ellipse cx="65" cy="54" rx="14" ry="7" fill="#fb923c" stroke="#141e30" stroke-width="4"/></svg>',
+    snowman: '<svg viewBox="0 0 130 140"><circle cx="65" cy="98" r="34" fill="#ffffff" stroke="#141e30" stroke-width="6"/><circle cx="65" cy="52" r="24" fill="#ffffff" stroke="#141e30" stroke-width="6"/><rect x="42" y="68" width="46" height="12" rx="6" fill="#ef4444" stroke="#141e30" stroke-width="4.5"/><rect x="70" y="74" width="12" height="22" rx="5" fill="#ef4444" stroke="#141e30" stroke-width="4"/><circle cx="56" cy="46" r="5" fill="#141e30"/><circle cx="74" cy="46" r="5" fill="#141e30"/><polygon points="64,50 86,55 64,59" fill="#fb923c" stroke="#141e30" stroke-width="3.5"/><rect x="42" y="22" width="46" height="8" rx="4" fill="#1e293b" stroke="#141e30" stroke-width="4"/><rect x="50" y="4" width="30" height="20" rx="4" fill="#334155" stroke="#141e30" stroke-width="4"/></svg>',
+    penguin: '<svg viewBox="0 0 130 130"><ellipse cx="65" cy="72" rx="34" ry="42" fill="#1e293b" stroke="#141e30" stroke-width="6"/><ellipse cx="65" cy="78" rx="22" ry="30" fill="#ffffff"/><circle cx="53" cy="52" r="6.5" fill="#fff"/><circle cx="77" cy="52" r="6.5" fill="#fff"/><circle cx="53" cy="52" r="3.5" fill="#141e30"/><circle cx="77" cy="52" r="3.5" fill="#141e30"/><polygon points="57,60 73,60 65,70" fill="#facc15" stroke="#141e30" stroke-width="3.5"/><ellipse cx="48" cy="112" rx="12" ry="6" fill="#fb923c" stroke="#141e30" stroke-width="4"/><ellipse cx="82" cy="112" rx="12" ry="6" fill="#fb923c" stroke="#141e30" stroke-width="4"/></svg>',
+    kite1: '<svg viewBox="0 0 130 140"><path d="M65 110 Q45 126 70 138" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/><polygon points="65,8 112,56 65,112 18,56" fill="#ff4d6d" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><polygon points="65,8 112,56 65,56" fill="#fde047"/><circle cx="50" cy="52" r="7" fill="#141e30"/><circle cx="80" cy="52" r="7" fill="#141e30"/><circle cx="48" cy="50" r="2.5" fill="#fff"/><circle cx="78" cy="50" r="2.5" fill="#fff"/><path d="M53 68 Q65 78 77 68" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    kite2: '<svg viewBox="0 0 130 140"><path d="M65 110 Q85 126 60 138" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/><polygon points="65,8 112,56 65,112 18,56" fill="#38bdf8" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><polygon points="65,8 112,56 65,56" fill="#4ade80"/><circle cx="50" cy="52" r="7" fill="#141e30"/><circle cx="80" cy="52" r="7" fill="#141e30"/><circle cx="48" cy="50" r="2.5" fill="#fff"/><circle cx="78" cy="50" r="2.5" fill="#fff"/><path d="M53 68 Q65 78 77 68" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    butterfly: '<svg viewBox="0 0 120 120"><ellipse cx="34" cy="44" rx="28" ry="24" transform="rotate(-20 34 44)" fill="#e879f9" stroke="#141e30" stroke-width="6"/><ellipse cx="86" cy="44" rx="28" ry="24" transform="rotate(20 86 44)" fill="#e879f9" stroke="#141e30" stroke-width="6"/><ellipse cx="38" cy="82" rx="22" ry="18" transform="rotate(16 38 82)" fill="#38bdf8" stroke="#141e30" stroke-width="6"/><ellipse cx="82" cy="82" rx="22" ry="18" transform="rotate(-16 82 82)" fill="#38bdf8" stroke="#141e30" stroke-width="6"/><rect x="53" y="34" width="14" height="60" rx="7" fill="#fde047" stroke="#141e30" stroke-width="5"/><circle cx="60" cy="30" r="12" fill="#facc15" stroke="#141e30" stroke-width="5"/></svg>',
+    flower: '<svg viewBox="0 0 130 130"><g fill="#ff4d8d" stroke="#141e30" stroke-width="5"><circle cx="65" cy="22" r="18"/><circle cx="96" cy="34" r="18"/><circle cx="108" cy="65" r="18"/><circle cx="96" cy="96" r="18"/><circle cx="65" cy="108" r="18"/><circle cx="34" cy="96" r="18"/><circle cx="22" cy="65" r="18"/><circle cx="34" cy="34" r="18"/></g><circle cx="65" cy="65" r="28" fill="#fde047" stroke="#141e30" stroke-width="6"/><circle cx="54" cy="60" r="6" fill="#141e30"/><circle cx="76" cy="60" r="6" fill="#141e30"/><path d="M54 74 Q65 84 76 74" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>'
+  };
+
+  /* ---------- Voice & Sound Engine ---------- */
   var voiceA = new Audio();
   function playVoice(clips){
     if(!clips || !clips.length) return;
-    var idx = 0;
+    var i = 0;
     function step(){
-      if(idx >= clips.length) return;
-      var c = clips[idx++];
-      voiceA.src = "assets/voice/" + c + ".mp3";
-      voiceA.onended = step;
-      voiceA.onerror = step;
-      var p = voiceA.play();
-      if(p && p.catch) p.catch(function(){});
+      if(i >= clips.length) return;
+      voiceA.src = "assets/voice/" + clips[i++] + ".mp3";
+      voiceA.onended = step; voiceA.onerror = step;
+      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
     }
     step();
   }
-
   var actx = null;
-  function ensureAudio(){
-    if(!actx){
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if(AC) actx = new AC();
-    }
+  function ac(){
+    if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
     if(actx && actx.state === "suspended") actx.resume();
     return actx;
   }
-  function sfxLever(){
+  function sfxClunk(){
     try{
-      var ac = ensureAudio(); if(!ac) return;
-      var t = ac.currentTime;
-      var o = ac.createOscillator(), g = ac.createGain();
-      o.type = "triangle";
-      o.frequency.setValueAtTime(220, t);
-      o.frequency.exponentialRampToValueAtTime(660, t + 0.16);
-      g.gain.setValueAtTime(0.22, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-      o.connect(g); g.connect(ac.destination);
-      o.start(t); o.stop(t + 0.23);
+      var c = ac(); if(!c) return; var t = c.currentTime;
+      var o = c.createOscillator(), g = ac.createGain();
+      o.type = "sawtooth"; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(520, t + 0.18);
+      g.gain.setValueAtTime(0.24, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.23);
     }catch(e){}
   }
   function sfxThunder(){
     try{
-      var ac = ensureAudio(); if(!ac) return;
-      var t = ac.currentTime;
-      var buf = ac.createBuffer(1, ac.sampleRate * 0.9, ac.sampleRate);
-      var d = buf.getChannelData(0);
-      for(var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.32));
-      var src = ac.createBufferSource(); src.buffer = buf;
-      var flt = ac.createBiquadFilter(); flt.type = "lowpass"; flt.frequency.value = 190;
-      var g = ac.createGain(); g.gain.setValueAtTime(0.55, t); g.gain.exponentialRampToValueAtTime(0.01, t + 0.88);
-      src.connect(flt); flt.connect(g); g.connect(ac.destination);
-      src.start(t);
+      var c = ac(); if(!c) return; var t = c.currentTime;
+      var b = c.createBuffer(1, c.sampleRate * 0.95, c.sampleRate), d = b.getChannelData(0);
+      for(var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (c.sampleRate * 0.34));
+      var s = c.createBufferSource(); s.buffer = b;
+      var f = c.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 180;
+      var g = ac.createGain(); g.gain.setValueAtTime(0.65, t); g.gain.exponentialRampToValueAtTime(0.008, t + 0.92);
+      s.connect(f); f.connect(g); g.connect(c.destination); s.start(t);
     }catch(e){}
   }
-  function sfxChime(notes){
+  function sfxNotes(arr){
     try{
-      var ac = ensureAudio(); if(!ac) return;
-      (notes || [523, 659, 784, 1046]).forEach(function(freq, i){
-        var t = ac.currentTime + i * 0.08;
-        var o = ac.createOscillator(), g = ac.createGain();
-        o.type = "sine"; o.frequency.value = freq;
-        g.gain.setValueAtTime(0.16, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-        o.connect(g); g.connect(ac.destination);
-        o.start(t); o.stop(t + 0.3);
+      var c = ac(); if(!c) return;
+      (arr || [523, 659, 784, 1046]).forEach(function(fr, i){
+        var t = c.currentTime + i * 0.07;
+        var o = c.createOscillator(), g = ac.createGain();
+        o.type = "triangle"; o.frequency.value = fr;
+        g.gain.setValueAtTime(0.18, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
+        o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.28);
       });
     }catch(e){}
   }
-  function sfxWind(){
-    try{
-      var ac = ensureAudio(); if(!ac) return;
-      var t = ac.currentTime;
-      var buf = ac.createBuffer(1, ac.sampleRate * 0.7, ac.sampleRate);
-      var d = buf.getChannelData(0);
-      for(var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.sin((i / d.length) * Math.PI);
-      var src = ac.createBufferSource(); src.buffer = buf;
-      var flt = ac.createBiquadFilter(); flt.type = "bandpass";
-      flt.frequency.setValueAtTime(420, t); flt.frequency.linearRampToValueAtTime(780, t + 0.5);
-      var g = ac.createGain(); g.gain.setValueAtTime(0.24, t); g.gain.exponentialRampToValueAtTime(0.01, t + 0.68);
-      src.connect(flt); flt.connect(g); g.connect(ac.destination);
-      src.start(t);
-    }catch(e){}
-  }
 
-  /* ---------- Weather Configurations ---------- */
   var WEATHERS = {
     storm: {
-      title: "THUNDER STORM",
-      sky: ["#1a1b4b", "#312e81", "#4c1d95"],
-      hill1: "#1e3a2f", hill2: "#14532d",
-      msg: "⚡ <b>CRASH! BOOM!</b> Lightning lights up the town! Tap the sky for more lightning!",
-      ask: "Pull the <b>⛈️ Storm</b> lever to make lightning and rain!",
+      gauge: "⛈️ THUNDER STORM",
+      boss: "boss_storm",
+      msg: "⚡ <b>CRASH! BOOM!</b> Tap the <b>Storm Cloud</b>, <b>Puddle Frog</b>, or <b>Rain Duck</b>!",
       clips: ["word-frog", "hoot-amazing"],
       actors: [
-        { emo: "🐸", label: "Puddle Frog!", left: "18%", top: "48%", clip: "word-frog" },
-        { emo: "⚡", label: "Zap Lightning!", left: "58%", top: "24%", clip: "owl-excited" }
+        { sp: "frog", label: "Puddle Frog!", x: "30%", y: "74%", clip: "word-frog", lightning: false },
+        { sp: "duck", label: "Rain Duck!", x: "74%", y: "76%", clip: "word-duck", lightning: false },
+        { sp: "boss_storm", label: "Zap Cloud!", x: "48%", y: "28%", clip: "owl-excited", lightning: true }
       ]
     },
     snow: {
-      title: "SNOWY WINTER",
-      sky: ["#3b82f6", "#93c5fd", "#e0f2fe"],
-      hill1: "#f8fafc", hill2: "#e2e8f0",
-      msg: "⛄ <b>BRRR!</b> Look — a Snowman and a Penguin popped up in the snow! Tap them!",
-      ask: "Pull the <b>❄️ Snow</b> lever to build a snowman!",
+      gauge: "❄️ SNOW BLIZZARD",
+      boss: "boss_snow",
+      msg: "⛄ <b>SNOW DAY!</b> Tap the <b>Bouncy Snowman</b> and skating <b>Penguin</b>!",
       clips: ["word-penguin", "hoot-super"],
       actors: [
-        { emo: "⛄", label: "Bouncy Snowman!", left: "22%", top: "46%", clip: "hoot-giggle" },
-        { emo: "🐧", label: "Snow Penguin!", left: "62%", top: "48%", clip: "word-penguin" }
+        { sp: "snowman", label: "Snowman!", x: "28%", y: "72%", clip: "hoot-giggle", snowSplat: true },
+        { sp: "penguin", label: "Ice Penguin!", x: "74%", y: "74%", clip: "word-penguin", snowSplat: true }
       ]
     },
     wind: {
-      title: "WINDY KITES",
-      sky: ["#0284c7", "#38bdf8", "#bae6fd"],
-      hill1: "#4ade80", hill2: "#22c55e",
-      msg: "🪁 <b>WHOOSH!</b> The kites are flying high over the roofs! Tap a kite to loop-de-loop!",
-      ask: "Pull the <b>🪁 Wind</b> lever to fly the kites!",
+      gauge: "🪁 SUPER WINDY KITES",
+      boss: "boss_wind",
+      msg: "🪁 <b>WHOOSH!</b> Tap the soaring <b>Dragon Kites</b> to make them loop-de-loop!",
       clips: ["word-kite", "hoot-yay-2"],
       actors: [
-        { emo: "🪁", label: "Red Kite!", left: "20%", top: "22%", clip: "word-kite" },
-        { emo: "🪁", label: "Rainbow Kite!", left: "60%", top: "18%", clip: "word-kite" }
+        { sp: "kite1", label: "Red Kite!", x: "28%", y: "34%", clip: "word-kite" },
+        { sp: "kite2", label: "Blue Kite!", x: "56%", y: "26%", clip: "word-kite" },
+        { sp: "butterfly", label: "Wind Butterfly!", x: "76%", y: "48%", clip: "word-butterfly" }
       ]
     },
     sun: {
-      title: "SUNSHINE & RAINBOW",
-      sky: ["#2563eb", "#60a5fa", "#fef08a"],
-      hill1: "#84cc16", hill2: "#4d7c0f",
-      msg: "🌈 <b>HOORAY!</b> Giant rainbow sunshine! Butterflies and flowers are dancing!",
-      ask: "Pull the <b>☀️ Sunshine</b> lever to bring out the rainbow!",
+      gauge: "☀️ RAINBOW SUNSHINE",
+      boss: "boss_sun",
+      msg: "🌈 <b>SUNSHINE!</b> Tap the <b>Singing Flowers</b>, <b>Butterfly</b>, or <b>Rainbow</b>!",
       clips: ["word-butterfly", "hoot-great-job"],
       actors: [
-        { emo: "🦋", label: "Sunny Butterfly!", left: "24%", top: "30%", clip: "word-butterfly" },
-        { emo: "🌻", label: "Dancing Flowers!", left: "60%", top: "50%", clip: "word-flower" }
+        { sp: "flower", label: "Singing Flower!", x: "28%", y: "74%", clip: "word-flower" },
+        { sp: "butterfly", label: "Sunny Butterfly!", x: "52%", y: "34%", clip: "word-butterfly" },
+        { sp: "flower", label: "Rainbow Bloom!", x: "76%", y: "74%", clip: "word-flower" }
       ]
     }
   };
 
-  var ORDER = ["storm", "snow", "wind", "sun", "storm"];
-  var curWeather = "sun";
-  var stars = 0;
-  var roundIdx = 0;
-  var won = false;
-  var bolts = [];
-  var particles = [];
-  var bursts = [];
-  var windmillAngle = 0;
-  var snowCover = 0;
-  var tick = 0;
+  var curW = "storm", stars = 0, won = false, tick = 0;
+  var bolts = [], weatherParts = [], popSparks = [], screenSplats = [];
 
-  function spawnParticles(mode){
-    particles = [];
-    var count = mode === "storm" ? 130 : mode === "snow" ? 110 : mode === "wind" ? 55 : 35;
-    for(var i = 0; i < count; i++){
-      particles.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: mode === "wind" ? (5 + Math.random() * 6) : mode === "storm" ? -2.5 : (Math.random() - 0.5) * 1.5,
-        vy: mode === "storm" ? (12 + Math.random() * 8) : mode === "snow" ? (1.8 + Math.random() * 2.4) : (Math.random() - 0.5) * 1.2,
-        r: mode === "snow" ? (3 + Math.random() * 4.5) : (2 + Math.random() * 3),
-        a: Math.random() * Math.PI * 2,
-        c: ["#ffd43b", "#ff6b6b", "#4dabf7", "#69db7c", "#f783ac"][i % 5]
+  function resetParticles(mode){
+    weatherParts = [];
+    var n = mode === "storm" ? 150 : mode === "snow" ? 130 : mode === "wind" ? 65 : 40;
+    for(var i = 0; i < n; i++){
+      weatherParts.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: mode === "wind" ? (7 + Math.random() * 7) : mode === "storm" ? -3.5 : (Math.random() - 0.5) * 1.8,
+        vy: mode === "storm" ? (15 + Math.random() * 9) : mode === "snow" ? (2.2 + Math.random() * 2.8) : (Math.random() - 0.5) * 1.4,
+        r: mode === "snow" ? (3.5 + Math.random() * 5.5) : (2.5 + Math.random() * 3.5),
+        p: Math.random() * 6.28,
+        c: ["#ffd43b", "#ff4d6d", "#38bdf8", "#4ade80", "#e879f9"][i % 5]
       });
     }
   }
 
-  function triggerLightning(tx, ty){
-    var x0 = tx || (W * (0.2 + Math.random() * 0.6));
-    var pts = [{ x: x0, y: 0 }];
-    var cx = x0, cy = 0, limit = ty || (H * 0.58);
-    while(cy < limit){
-      cy += 24 + Math.random() * 28;
-      cx += (Math.random() - 0.5) * 64;
-      pts.push({ x: cx, y: cy });
+  function strikeLightning(tx, ty){
+    var sx = W * 0.5 + (Math.random() - 0.5) * W * 0.4;
+    var sy = H * 0.12;
+    var ex = tx != null ? tx : W * (0.2 + Math.random() * 0.6);
+    var ey = ty != null ? Math.min(ty, H * 0.64) : H * 0.58;
+    var pts = [{ x: sx, y: sy }];
+    for(var i = 1; i < 8; i++){
+      var u = i / 8;
+      pts.push({ x: sx + (ex - sx) * u + (Math.random() - 0.5) * 65, y: sy + (ey - sy) * u });
     }
+    pts.push({ x: ex, y: ey });
     bolts.push({ pts: pts, life: 1.0 });
-    flashEl.style.opacity = "0.65";
-    setTimeout(function(){ flashEl.style.opacity = "0"; }, 110);
+    spawnSparks(ex, ey, "#fde047", 28);
+    flashEl.style.opacity = "0.75";
+    setTimeout(function(){ flashEl.style.opacity = "0"; }, 95);
     sfxThunder();
   }
 
-  function spawnPopBurst(x, y){
-    for(var i = 0; i < 22; i++){
-      var ang = (Math.PI * 2 * i) / 22;
-      var sp = 2.5 + Math.random() * 5.5;
-      bursts.push({
+  function spawnSparks(x, y, col, count){
+    for(var i = 0; i < (count || 24); i++){
+      var a = (Math.PI * 2 * i) / (count || 24) + Math.random() * 0.3;
+      var sp = 3 + Math.random() * 7;
+      popSparks.push({
         x: x, y: y,
-        vx: Math.cos(ang) * sp,
-        vy: Math.sin(ang) * sp - 2,
-        r: 4 + Math.random() * 4,
-        c: ["#ffd43b", "#ff6b6b", "#51cf66", "#4dabf7", "#f783ac"][i % 5],
-        life: 1
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2.5,
+        r: 4 + Math.random() * 4.5,
+        c: col || ["#ffd43b", "#ff4d6d", "#38bdf8", "#4ade80", "#f472b6"][i % 5],
+        life: 1.0
       });
     }
   }
 
-  function updateStars(){
-    starEls.forEach(function(el, i){
-      el.classList.toggle("on", i < stars);
-    });
-  }
-
-  function highlightNextLever(){
-    var targetKey = ORDER[roundIdx % ORDER.length];
-    leverBtns.forEach(function(b){
-      b.classList.toggle("target-glow", b.getAttribute("data-w") === targetKey && !won);
-    });
-  }
-
-  function renderActors(key){
-    var cfg = WEATHERS[key];
-    actorsBox.innerHTML = "";
-    (cfg.actors || []).forEach(function(a){
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "actor-chip";
-      btn.style.left = a.left;
-      btn.style.top = a.top;
-      btn.innerHTML = '<span aria-hidden="true">' + a.emo + "</span>" + a.label;
-      btn.addEventListener("pointerdown", function(e){
-        e.preventDefault(); e.stopPropagation();
-        var r = btn.getBoundingClientRect();
-        spawnPopBurst(r.left + r.width / 2, r.top + r.height / 2);
-        if(curWeather === "storm") triggerLightning(r.left + r.width / 2, r.top);
-        else sfxChime([587, 784, 987, 1174]);
-        playVoice([a.clip]);
-        btn.style.transform = "scale(1.22)";
-        setTimeout(function(){ btn.style.transform = ""; }, 240);
-      });
-      actorsBox.appendChild(btn);
-    });
-  }
-
-  function pullLever(key){
+  function awardStar(){
     if(won) return;
-    curWeather = key;
-    sfxLever();
-    leverBtns.forEach(function(b){
-      b.classList.toggle("pulled", b.getAttribute("data-w") === key);
-    });
-    spawnParticles(key);
-    renderActors(key);
-    if(key === "storm") setTimeout(function(){ triggerLightning(); }, 120);
-    else if(key === "wind") sfxWind();
-    else if(key === "snow") sfxChime([659, 784, 1046, 1318]);
-    else sfxChime([523, 659, 784, 1046]);
-
-    var cfg = WEATHERS[key];
-    bubble.innerHTML = cfg.msg;
-    playVoice(cfg.clips);
-
     stars = Math.min(5, stars + 1);
-    roundIdx++;
-    updateStars();
-    highlightNextLever();
-
+    starEls.forEach(function(el, i){ el.classList.toggle("on", i < stars); });
     if(stars >= 5){
       won = true;
       setTimeout(function(){
         winOverlay.hidden = false;
-        sfxChime([523, 659, 784, 1046, 1318]);
+        sfxNotes([523, 659, 784, 1046, 1318]);
         playVoice(["hoot-win-yay"]);
-      }, 1100);
+      }, 1200);
     }
   }
 
+  function renderInteractiveActors(key){
+    var cfg = WEATHERS[key];
+    skyBossBtn.innerHTML = SPRITES[cfg.boss] || SPRITES.boss_sun;
+    interactiveLayer.innerHTML = "";
+    (cfg.actors || []).forEach(function(a, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "town-actor";
+      b.style.left = a.x;
+      b.style.top = a.y;
+      b.style.animationDelay = "0s, " + (-i * 0.7) + "s";
+      b.innerHTML = (SPRITES[a.sp] || SPRITES.flower) + '<span class="actor-tag">' + a.label + "</span>";
+      var hit = function(e){
+        if(e){ e.preventDefault(); e.stopPropagation(); }
+        var r = b.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        b.classList.add("bouncing");
+        setTimeout(function(){ b.classList.remove("bouncing"); }, 260);
+        spawnSparks(cx, cy, null, 28);
+        if(a.lightning || curW === "storm") strikeLightning(cx, cy);
+        else if(a.snowSplat){
+          screenSplats.push({ x: cx, y: cy - 40, r: 36, life: 1.0 });
+          sfxNotes([659, 880, 1174]);
+        } else {
+          sfxNotes([523, 659, 784, 1046]);
+        }
+        playVoice([a.clip]);
+        awardStar();
+      };
+      b.addEventListener("pointerdown", hit);
+      b.addEventListener("click", function(e){ if(e.detail === 0) hit(e); });
+      interactiveLayer.appendChild(b);
+    });
+  }
+
+  function activateWeather(key, countStar){
+    curW = key;
+    stage.setAttribute("data-mode", key);
+    sfxClunk();
+    leverBtns.forEach(function(b){ b.classList.toggle("pulled", b.getAttribute("data-w") === key); });
+    var cfg = WEATHERS[key];
+    gaugeTxt.textContent = cfg.gauge;
+    bubble.innerHTML = cfg.msg;
+    resetParticles(key);
+    renderInteractiveActors(key);
+
+    if(key === "storm") strikeLightning(W * 0.48, H * 0.54);
+    else if(key === "snow") sfxNotes([659, 784, 1046, 1318]);
+    else if(key === "wind") sfxNotes([587, 740, 880, 1174]);
+    else sfxNotes([523, 659, 784, 1046, 1318]);
+
+    if(countStar){
+      playVoice(cfg.clips);
+      awardStar();
+    }
+  }
+
+  /* Instant pointerdown response on all 4 Levers */
   leverBtns.forEach(function(b){
     var key = b.getAttribute("data-w");
-    var fire = function(e){
+    var pull = function(e){
       if(e) e.preventDefault();
-      pullLever(key);
+      activateWeather(key, true);
     };
-    b.addEventListener("pointerdown", fire);
-    b.addEventListener("click", function(e){
-      if(e.detail === 0) fire(e);
-    });
+    b.addEventListener("pointerdown", pull);
+    b.addEventListener("click", function(e){ if(e.detail === 0) pull(e); });
+  });
+
+  var fireTurbo = function(e){
+    if(e) e.preventDefault();
+    activateWeather(curW, true);
+    if(curW === "storm"){
+      strikeLightning(W * 0.25, H * 0.52);
+      setTimeout(function(){ strikeLightning(W * 0.72, H * 0.54); }, 150);
+    } else if(curW === "snow"){
+      for(var s = 0; s < 3; s++){
+        screenSplats.push({ x: W * (0.25 + s * 0.25), y: H * (0.28 + (s % 2) * 0.14), r: 38, life: 1.0 });
+      }
+    } else {
+      spawnSparks(W * 0.5, H * 0.35, null, 42);
+    }
+  };
+  turboBtn.addEventListener("pointerdown", fireTurbo);
+  turboBtn.addEventListener("click", function(e){ if(e.detail === 0) fireTurbo(e); });
+
+  skyBossBtn.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    var r = skyBossBtn.getBoundingClientRect();
+    spawnSparks(r.left + r.width / 2, r.top + r.height / 2, "#fde047", 30);
+    if(curW === "storm") strikeLightning(W * 0.5, H * 0.55);
+    else sfxNotes([659, 784, 1046, 1318]);
+    playVoice(["owl-excited"]);
+    awardStar();
   });
 
   canvas.addEventListener("pointerdown", function(e){
     var x = e.clientX, y = e.clientY;
-    spawnPopBurst(x, y);
-    if(curWeather === "storm") triggerLightning(x, y);
-    else if(curWeather === "wind") sfxWind();
-    else sfxChime([659, 880, 1046]);
+    spawnSparks(x, y, null, 24);
+    if(curW === "storm") strikeLightning(x, y);
+    else if(curW === "snow"){
+      screenSplats.push({ x: x, y: y, r: 34, life: 1.0 });
+      sfxNotes([784, 1046]);
+    } else {
+      var scale = [523, 587, 659, 698, 784, 880, 987, 1046];
+      sfxNotes([scale[Math.floor((x / Math.max(1, W)) * scale.length) % scale.length]]);
+    }
   });
 
   function startGame(){
-    won = false;
-    stars = 0;
-    roundIdx = 0;
-    winOverlay.hidden = true;
-    updateStars();
-    curWeather = "sun";
-    spawnParticles("sun");
-    renderActors("sun");
-    leverBtns.forEach(function(b){ b.classList.remove("pulled"); });
-    highlightNextLever();
-    bubble.innerHTML = WEATHERS[ORDER[0]].ask;
+    won = false; stars = 0; winOverlay.hidden = true;
+    starEls.forEach(function(el){ el.classList.remove("on"); });
+    activateWeather("storm", false);
     playVoice(["hoot-game-hello"]);
   }
-
   document.getElementById("againBtn").addEventListener("click", startGame);
   document.getElementById("playBtn").addEventListener("click", startGame);
-  document.getElementById("hootBtn").addEventListener("click", function(){
-    playVoice(["hoot-giggle"]);
-  });
+  document.getElementById("hootBtn").addEventListener("click", function(){ playVoice(["hoot-giggle"]); });
 
-  /* ---------- 60fps Living Town & Weather Canvas Renderer ---------- */
-  function drawTown(){
+  /* ---------- 60fps Particle, Lightning & Snowball Splat Canvas Loop ---------- */
+  function render(){
     tick++;
-    var cfg = WEATHERS[curWeather];
-    snowCover += ((curWeather === "snow" ? 1 : 0) - snowCover) * 0.05;
+    ctx.clearRect(0, 0, W, H);
 
-    /* 1. Sky Gradient */
-    var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, cfg.sky[0]);
-    g.addColorStop(0.55, cfg.sky[1]);
-    g.addColorStop(1, cfg.sky[2]);
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-
-    var groundY = H * 0.64;
-
-    /* 2. Sun & Rainbow (Sunshine mode) */
-    if(curWeather === "sun"){
-      var rg = ctx.createRadialGradient(W * 0.5, groundY, W * 0.18, W * 0.5, groundY, W * 0.48);
-      rg.addColorStop(0, "rgba(255,255,255,0)");
-      rg.addColorStop(0.62, "rgba(255,77,77,0.42)");
-      rg.addColorStop(0.68, "rgba(255,169,77,0.42)");
-      rg.addColorStop(0.74, "rgba(255,224,102,0.42)");
-      rg.addColorStop(0.80, "rgba(105,219,124,0.42)");
-      rg.addColorStop(0.86, "rgba(77,171,247,0.42)");
-      rg.addColorStop(0.92, "rgba(151,117,250,0.42)");
-      rg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = rg;
-      ctx.beginPath(); ctx.arc(W * 0.5, groundY, W * 0.48, Math.PI, 0); ctx.fill();
-
-      var sx = W * 0.84, sy = H * 0.2;
-      ctx.save();
-      ctx.translate(sx, sy);
-      ctx.rotate(tick * 0.01);
-      ctx.fillStyle = "rgba(255, 224, 51, 0.35)";
-      for(var r = 0; r < 12; r++){
-        ctx.rotate(Math.PI / 6);
-        ctx.beginPath(); ctx.moveTo(0, -52); ctx.lineTo(14, -84); ctx.lineTo(-14, -84); ctx.closePath(); ctx.fill();
-      }
-      ctx.fillStyle = "#ffd43b";
-      ctx.beginPath(); ctx.arc(0, 0, 52, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-    }
-
-    /* 3. Storm Clouds */
-    if(curWeather === "storm" || curWeather === "snow"){
-      ctx.fillStyle = curWeather === "storm" ? "rgba(30, 27, 75, 0.86)" : "rgba(255, 255, 255, 0.78)";
-      for(var c = 0; c < 6; c++){
-        var cx = ((c * 240 + tick * (curWeather === "storm" ? 1.1 : 0.5)) % (W + 260)) - 130;
-        var cy = H * 0.14 + (c % 2) * 26;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 48, 0, Math.PI * 2);
-        ctx.arc(cx + 38, cy - 12, 56, 0, Math.PI * 2);
-        ctx.arc(cx + 80, cy, 46, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    /* 4. Flying Kites in Wind Mode */
-    if(curWeather === "wind"){
-      var kites = [
-        { x: W * 0.28, y: H * 0.26, col: "#ff4d6d", tail: "#ffd43b" },
-        { x: W * 0.68, y: H * 0.22, col: "#4dabf7", tail: "#69db7c" },
-        { x: W * 0.48, y: H * 0.31, col: "#ffd43b", tail: "#f783ac" }
-      ];
-      kites.forEach(function(kt, i){
-        var kx = kt.x + Math.sin(tick * 0.05 + i) * 26;
-        var ky = kt.y + Math.cos(tick * 0.06 + i) * 18;
-        ctx.strokeStyle = "rgba(255,255,255,0.7)";
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(kx, ky + 28); ctx.quadraticCurveTo(kx - 40, ky + 110, kx - 90, groundY); ctx.stroke();
-        ctx.save();
-        ctx.translate(kx, ky);
-        ctx.rotate(Math.sin(tick * 0.05 + i) * 0.22);
-        ctx.fillStyle = kt.col;
-        ctx.strokeStyle = "#17263b"; ctx.lineWidth = 3.5;
-        ctx.beginPath(); ctx.moveTo(0, -32); ctx.lineTo(26, 0); ctx.lineTo(0, 36); ctx.lineTo(-26, 0); ctx.closePath();
-        ctx.fill(); ctx.stroke();
-        ctx.restore();
-      });
-    }
-
-    /* 5. Rolling Hills & Cozy Town Houses */
-    ctx.fillStyle = cfg.hill1;
-    ctx.beginPath();
-    ctx.moveTo(0, groundY);
-    ctx.quadraticCurveTo(W * 0.28, groundY - 65, W * 0.56, groundY - 15);
-    ctx.quadraticCurveTo(W * 0.8, groundY + 25, W, groundY - 35);
-    ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
-
-    ctx.fillStyle = cfg.hill2;
-    ctx.beginPath();
-    ctx.moveTo(0, groundY + 28);
-    ctx.quadraticCurveTo(W * 0.45, groundY - 25, W, groundY + 22);
-    ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
-
-    /* Houses */
-    var houses = [
-      { x: W * 0.14, w: 74, h: 62, body: "#fff3bf", roof: "#f03e3e" },
-      { x: W * 0.36, w: 86, h: 72, body: "#d0ebff", roof: "#7048e8" },
-      { x: W * 0.72, w: 78, h: 66, body: "#ffe3e3", roof: "#e67700" }
-    ];
-    houses.forEach(function(hs){
-      var hy = groundY - hs.h + 14;
-      ctx.fillStyle = hs.body;
-      ctx.strokeStyle = "#17263b"; ctx.lineWidth = 3.5;
-      ctx.fillRect(hs.x, hy, hs.w, hs.h);
-      ctx.strokeRect(hs.x, hy, hs.w, hs.h);
-      ctx.fillStyle = snowCover > 0.4 ? "#f8fafc" : hs.roof;
-      ctx.beginPath();
-      ctx.moveTo(hs.x - 10, hy);
-      ctx.lineTo(hs.x + hs.w / 2, hy - 38);
-      ctx.lineTo(hs.x + hs.w + 10, hy);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
-      /* Glowing windows */
-      ctx.fillStyle = (curWeather === "storm" || curWeather === "snow") ? "#ffd43b" : "#74c0fc";
-      ctx.fillRect(hs.x + 14, hy + 16, 18, 18);
-      ctx.strokeRect(hs.x + 14, hy + 16, 18, 18);
-      ctx.fillRect(hs.x + hs.w - 32, hy + 16, 18, 18);
-      ctx.strokeRect(hs.x + hs.w - 32, hy + 16, 18, 18);
-    });
-
-    /* Spinning Town Windmill */
-    var wx = W * 0.55, wy = groundY + 8;
-    ctx.fillStyle = "#f06595"; ctx.strokeStyle = "#17263b"; ctx.lineWidth = 3.5;
-    ctx.beginPath();
-    ctx.moveTo(wx - 24, wy); ctx.lineTo(wx - 14, wy - 82); ctx.lineTo(wx + 14, wy - 82); ctx.lineTo(wx + 24, wy);
-    ctx.closePath(); ctx.fill(); ctx.stroke();
-    windmillAngle += curWeather === "wind" ? 0.14 : curWeather === "storm" ? 0.08 : 0.025;
-    ctx.save();
-    ctx.translate(wx, wy - 72);
-    ctx.rotate(windmillAngle);
-    ctx.fillStyle = "#fff9db";
-    for(var b = 0; b < 4; b++){
-      ctx.rotate(Math.PI / 2);
-      ctx.fillRect(-5, -52, 10, 46);
-      ctx.strokeRect(-5, -52, 10, 46);
-    }
-    ctx.restore();
-
-    /* Snowman on the hill when Snowing */
-    if(snowCover > 0.25){
-      var smx = W * 0.28, smy = groundY + 14;
-      ctx.save();
-      ctx.translate(smx, smy - Math.abs(Math.sin(tick * 0.07)) * 8);
-      ctx.fillStyle = "#fff"; ctx.strokeStyle = "#17263b"; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.arc(0, -30, 16, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = "#ff922b";
-      ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(14, -27); ctx.lineTo(0, -24); ctx.closePath(); ctx.fill();
-      ctx.restore();
-    }
-
-    /* 6. Weather Particles (Rain / Snow / Wind Ribbons / Sun Sparkles) */
-    particles.forEach(function(p){
+    /* Weather Particles */
+    weatherParts.forEach(function(p){
       p.x += p.vx; p.y += p.vy;
       if(p.y > H) p.y = -10;
       if(p.x > W) p.x = -10;
       if(p.x < -10) p.x = W + 10;
 
-      if(curWeather === "storm"){
-        ctx.strokeStyle = "rgba(186, 230, 253, 0.82)";
-        ctx.lineWidth = 2.2;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - 5, p.y + 18); ctx.stroke();
-      } else if(curWeather === "snow"){
+      if(curW === "storm"){
+        ctx.strokeStyle = "rgba(186, 230, 253, 0.88)"; ctx.lineWidth = 2.6;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - 6, p.y + 22); ctx.stroke();
+      } else if(curW === "snow"){
         ctx.fillStyle = "#ffffff";
-        ctx.beginPath(); ctx.arc(p.x + Math.sin(tick * 0.04 + p.a) * 1.4, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-      } else if(curWeather === "wind"){
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.65)";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo(p.x + 24, p.y - 8, p.x + 48, p.y); ctx.stroke();
+        ctx.beginPath(); ctx.arc(p.x + Math.sin(tick * 0.04 + p.p) * 1.8, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      } else if(curW === "wind"){
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.8)"; ctx.lineWidth = 3.2;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo(p.x + 28, p.y - 10, p.x + 56, p.y); ctx.stroke();
       } else {
         ctx.fillStyle = p.c;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
       }
     });
 
-    /* 7. Lightning Bolts */
+    /* Forked Neon Lightning Bolts */
     for(var i = bolts.length - 1; i >= 0; i--){
       var bl = bolts[i];
-      ctx.strokeStyle = "rgba(255, 249, 196, " + bl.life + ")";
-      ctx.lineWidth = 6;
-      ctx.shadowColor = "#ffd43b"; ctx.shadowBlur = 18;
+      ctx.save();
+      ctx.strokeStyle = "rgba(254, 240, 138, " + bl.life + ")";
+      ctx.lineWidth = 9;
+      ctx.shadowColor = "#facc15"; ctx.shadowBlur = 26;
       ctx.beginPath();
       bl.pts.forEach(function(pt, j){ if(j === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y); });
       ctx.stroke();
-      ctx.shadowBlur = 0;
-      bl.life -= 0.07;
+      ctx.restore();
+      bl.life -= 0.065;
       if(bl.life <= 0) bolts.splice(i, 1);
     }
 
-    /* 8. Tap Pop Bursts */
-    for(var k = bursts.length - 1; k >= 0; k--){
-      var b0 = bursts[k];
-      b0.x += b0.vx; b0.y += b0.vy; b0.vy += 0.18; b0.life -= 0.035;
-      if(b0.life <= 0){ bursts.splice(k, 1); continue; }
-      ctx.fillStyle = b0.c;
-      ctx.globalAlpha = b0.life;
-      ctx.beginPath(); ctx.arc(b0.x, b0.y, b0.r, 0, Math.PI * 2); ctx.fill();
+    /* Screen Snowball Splats */
+    for(var s = screenSplats.length - 1; s >= 0; s--){
+      var sp = screenSplats[s];
+      sp.life -= 0.016;
+      if(sp.life <= 0){ screenSplats.splice(s, 1); continue; }
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, sp.life * 1.4);
+      ctx.fillStyle = "#ffffff"; ctx.strokeStyle = "#bae6fd"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      for(var d = 0; d < 7; d++){
+        var da = (d / 7) * Math.PI * 2;
+        ctx.beginPath(); ctx.arc(sp.x + Math.cos(da) * sp.r * 0.92, sp.y + Math.sin(da) * sp.r * 0.92, sp.r * 0.35, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    /* Pop Sparks */
+    for(var k = popSparks.length - 1; k >= 0; k--){
+      var pk = popSparks[k];
+      pk.x += pk.vx; pk.y += pk.vy; pk.vy += 0.22; pk.life -= 0.035;
+      if(pk.life <= 0){ popSparks.splice(k, 1); continue; }
+      ctx.fillStyle = pk.c; ctx.globalAlpha = pk.life;
+      ctx.beginPath(); ctx.arc(pk.x, pk.y, pk.r, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 1;
     }
 
-    requestAnimationFrame(drawTown);
+    requestAnimationFrame(render);
   }
 
   startGame();
-  requestAnimationFrame(drawTown);
+  requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e85"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e86"></script>
 </body>
 </html>
