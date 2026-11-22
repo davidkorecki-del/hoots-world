@@ -2539,6 +2539,15 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var btn = card.querySelector(".lsn-replay, .tutor-replay");
     var gen = ++teachGen;
     try { window.__startTeach = { hasCard: !!card, hasBtn: !!btn, disabled: !!(btn && btn.disabled), text: btn && btn.textContent, gen: gen }; } catch (e) {}
+    /* Little Explorers lessons: ask Round 1 immediately on open (no multi-second intro/teach wait);
+       "Show me again, Hoot!" remains available for the full walkthrough. */
+    if (card._cfg && typeof window.__hwStartLittleAsk === "function") {
+      setTimeout(function () {
+        if (gen !== teachGen) return;
+        try { window.__hwStartLittleAsk(card); } catch (e) {}
+      }, 20);
+      return;
+    }
     /* Nested click during Play now is swallowed by Muse's capture-phase
        listener. Start teaching once that turn has finished. teachGen
        makes a pending click a no-op after closeOverlay or a new open. */

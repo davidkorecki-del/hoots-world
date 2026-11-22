@@ -7877,7 +7877,7 @@
         function profileIs(id){ return document.body.getAttribute("data-profile") === id; }
         function pauseFor(text){
           var words = String(text || "").replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length;
-          return Math.min(2600, Math.max(850, 500 + words * 175));
+          return Math.min(1150, Math.max(550, 350 + words * 85));
         }
 
         /* ---------- the spoken-tutor clip channel ----------
@@ -8041,7 +8041,7 @@
               beatTimer = setTimeout(function(){ if(gen === clipGen) next(); }, beat.pause || pauseFor(beat.t));
             }
           }
-          beatTimer = setTimeout(next, 250);
+          beatTimer = setTimeout(next, opts.immediate ? 0 : 80);
         }
 
         /* ---------- per-lesson tutor scripts ----------
@@ -8360,6 +8360,25 @@
           var cfg = card && card._cfg;
           if(!cfg || !cfg.rounds || !card._origOpts) return;
           if((card._round || 0) >= cfg.rounds.length) setRound(card, 0);
+        };
+        /* Instant start on Learn lesson open: ask Round 1's question immediately instead of
+           waiting through owl-hello + multi-second teach beats. "Show me again, Hoot!" still
+           runs the full teach walkthrough on tap. */
+        window.__hwStartLittleAsk = function(card){
+          var cfg = card && card._cfg;
+          if(!cfg) return false;
+          if(card.classList.contains("done") && !card._again){
+            stopTutor();
+            card._again = true; card._wrongN = 0;
+            var opts = card.querySelectorAll(".lsn-opt");
+            for(var i = 0; i < opts.length; i++){ opts[i].disabled = false; opts[i].classList.remove("right", "wrong", "lt-gold", "lsn-idle-nudge"); }
+            var fb = card.querySelector(".lsn-fb"); if(fb) fb.textContent = "";
+            var an = card.querySelector(".lsn-autonote"); if(an) an.hidden = true;
+            card.classList.remove("lsn-finished");
+            if(cfg.rounds) setRound(card, 0);
+          }
+          runBeats(card, [{ t: askText(card), clips: card._roundAsk || cfg.askClips || [], sound: cfg.askSound || null, pause: 650 }], { armIdle:true, immediate:true });
+          return true;
         };
         function endBar(card){
           if(card.querySelector(".lsn-end")) return;
@@ -13521,14 +13540,14 @@
   }
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e72"></script>
+  <script src="js/hoot-lessons.js?v=llprev3e81"></script>
   <script src="js/hoot-study.js?v=llprev3e66"></script>
   <script src="js/hoot-ela7.js?v=llprev3e66"></script>
   <script src="js/hoot-sci7.js?v=llprev3e66"></script>
   <script src="js/hoot-ss7.js?v=llprev3e66"></script>
   <script src="js/hoot-games.js?v=llprev3e79"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e79"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e81"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>
   /* Device Report #5 (PWA Freshness & Nightly Bedtime Book Auto-Update):
@@ -13541,11 +13560,11 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e80', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e81', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
-    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e79';
+    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e81';
     var SIG_KEY = 'hw.pwa.sig.v1', RELOAD_KEY = 'hw.pwa.reloadAt.v1';
     var baseSig = null, lastChk = 0, pendingReload = false;
     function safeToReload(){

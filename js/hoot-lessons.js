@@ -459,15 +459,15 @@
       show.hidden = false;
       setBubble(lesson.intro);
       var i = 0, items = show.querySelectorAll(".hl-item");
-      say(["owl-hello"], function step() {
+      (function step() {
         if (!alive()) return;
         items.forEach(function (x) { x.classList.remove("on"); });
         if (i >= teach.length) { R.teaching = false; startRound(); return; }
         var it = teach[i], el = items[i++];
         el.classList.add("on");
         setBubble(it.text || (it.kind === "letter" ? "This is " + it.name + ". " + it.name + " says its sound — listen!" : "This is " + it.name + "!"));
-        say(teachClips(it), function () { setTimeout(step, 350); });
-      });
+        say(teachClips(it), function () { setTimeout(step, 180); });
+      })();
     }
     function paintDots() {
       var n = lesson.rounds.length, h = "";
@@ -650,7 +650,7 @@
     }
     var songB = end.querySelector(".hl-song");
     if (songB) songB.addEventListener("click", function () { if (!alive()) return; clearIdle(); stopAudio(); g.sing(set.key, songB); });
-    end.querySelector(".hl-again").addEventListener("click", function () { if (!alive()) return; clearIdle(); stopAudio(); if (songB && songB.classList.contains("pg-singing")) g.stopSing(); R.round = 0; R.wrong = 0; R.t0 = Date.now(); teachAll(); });
+    end.querySelector(".hl-again").addEventListener("click", function () { if (!alive()) return; clearIdle(); stopAudio(); if (songB && songB.classList.contains("pg-singing")) g.stopSing(); R.round = 0; R.wrong = 0; R.t0 = Date.now(); end.hidden = true; startRound(); });
     end.querySelector(".hl-next").addEventListener("click", function () {
       clearIdle();
       stopAudio();
@@ -663,7 +663,9 @@
       play(nxt.id, body);
       try { body.scrollTop = 0; } catch (e) {}
     });
-    teachAll();
+    /* Instant start: jump straight into Round 1 with Hoot asking immediately (zero preamble wait).
+       "Watch Hoot teach again" remains available on the end screen if desired. */
+    startRound();
     return true;
   }
   function nextLesson(lesson) {
