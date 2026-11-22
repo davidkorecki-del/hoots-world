@@ -186,7 +186,18 @@
   @media (prefers-reduced-motion:reduce){
     #hootFig,.bigtree,.firefly,.leaf-fall{ animation:none !important; }
   }
-.spot .peek-part{position:absolute;z-index:0;left:50%;bottom:78%;transform:translateX(-50%);font-size:clamp(46px,13.5vw,66px);line-height:1;height:.62em;overflow:hidden;pointer-events:none;animation:pkW 2.4s ease-in-out infinite;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 3px 1px rgba(23,50,79,.25))}.spot[data-kind="pine"] .peek-part,.spot[data-kind="tree"] .peek-part,.spot[data-kind="bush"] .peek-part{bottom:46%;z-index:3}.spot[data-kind="log"] .peek-part,.spot[data-kind="shroom"] .peek-part{bottom:60%}.spot.revealed .peek-part{display:none}.spot .peek-part.pk-hint{animation:pkHint .55s ease-in-out 3}@keyframes pkW{0%,68%,100%{transform:translateX(-50%) translateY(0) rotate(0)}78%{transform:translateX(-50%) translateY(-8px) rotate(-7deg)}88%{transform:translateX(-50%) translateY(-8px) rotate(7deg)}}@keyframes pkHint{50%{transform:translateX(-50%) translateY(-18px) scale(1.25)}}@media (prefers-reduced-motion:reduce){.spot .peek-part{animation:none}}@media (max-height:560px){.spot .peek-part{font-size:34px}}</style>
+.spot .peek-part{position:absolute;z-index:0;left:50%;bottom:78%;transform:translateX(-50%);font-size:clamp(46px,13.5vw,66px);line-height:1;height:.62em;overflow:hidden;pointer-events:none;animation:pkW 2.4s ease-in-out infinite;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 3px 1px rgba(23,50,79,.25))}.spot[data-kind="pine"] .peek-part,.spot[data-kind="tree"] .peek-part,.spot[data-kind="bush"] .peek-part{bottom:46%;z-index:3}.spot[data-kind="log"] .peek-part,.spot[data-kind="shroom"] .peek-part{bottom:60%}.spot.revealed .peek-part{display:none}.spot .peek-part.pk-hint{animation:pkHint .55s ease-in-out 3}@keyframes pkW{0%,68%,100%{transform:translateX(-50%) translateY(0) rotate(0)}78%{transform:translateX(-50%) translateY(-8px) rotate(-7deg)}88%{transform:translateX(-50%) translateY(-8px) rotate(7deg)}}@keyframes pkHint{50%{transform:translateX(-50%) translateY(-18px) scale(1.25)}}@media (prefers-reduced-motion:reduce){.spot .peek-part{animation:none}}@media (max-height:560px){.spot .peek-part{font-size:34px}}
+  /* Wave 5C-3 (Big & Physical): lush oversized hiding bushes/trees/logs & large picnic blanket */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    .spot{ width:clamp(150px,22vh,188px) !important; }
+    .spot .cover{ filter:drop-shadow(0 10px 12px rgba(20,60,20,.34)) !important; }
+    .spot .peeker{ font-size:clamp(60px,9vh,76px) !important; }
+    #blanket{ width:clamp(184px,24vw,224px) !important; height:clamp(108px,15vh,130px) !important; border-width:4px !important; }
+    #blanket .guest{ font-size:38px !important; }
+    #blanketLabel{ font-size:15px !important; padding:4px 12px !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(20,60,20,.18) !important; padding:8px 18px !important; }
+  }
+</style>
 </head>
 <body>
 <div id="stage">

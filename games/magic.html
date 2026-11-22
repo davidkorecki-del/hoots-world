@@ -130,6 +130,23 @@
   #againBtn{ background:var(--leaf); color:#fff; } #winHomeBtn{ background:var(--paper); color:var(--ink); }
   @media (max-height:700px){ #popZone{ height:84px; } #popArt{ width:84px; height:84px; } #hatBtn{ width:132px; height:88px; } #hootFig{ width:72px; height:80px; } }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
+  /* Wave 5C-3 (Big & Physical): grand magic hat, glowing 94px star wand & chunky 3D surprise choices */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #hatBtn{ width:228px !important; height:152px !important; }
+    #wandBtn{
+      width:92px !important; height:92px !important; border:4px solid #fff !important;
+      box-shadow:0 8px 0 #3a2378, 0 14px 24px rgba(87,58,168,.38) !important; font-size:38px !important;
+    }
+    #popZone{ height:136px !important; }
+    #popArt{ width:136px !important; height:136px !important; }
+    #panel{ max-width:940px; margin:0 auto; width:100%; padding:8px 18px max(12px,env(safe-area-inset-bottom)) !important; }
+    .choice-btn{
+      min-height:94px !important; border:4px solid #fff !important; border-radius:22px !important;
+      padding:10px 8px !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; font-size:17px !important;
+    }
+    .choice-btn svg{ width:62px !important; height:54px !important; }
+    .choice-btn small{ font-size:14.5px !important; }
+  }
 </style>
 </head>
 <body>

@@ -196,12 +196,18 @@
   @media (prefers-reduced-motion:reduce){
     .cloud,#hootFig,.flower,#sun .rays,.bfly{ animation:none !important; }
   }
-  /* Wave 5A: iPad landscape bigger hero friend & wider garland */
+  /* Wave 5A + 5C-3 (Big & Physical): hero animal medallion, chunky 72px selector row & bright heart garland */
   @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #garland{ max-width:720px !important; padding:6px 18px !important; }
-    #bigFriend .patch{ width:clamp(160px,26vh,220px) !important; height:clamp(160px,26vh,220px) !important; }
-    #bigFriend .face{ font-size:clamp(90px,15vh,126px) !important; }
-    #miniRow{ gap:12px !important; padding:4px 16px !important; }
+    #garland{ max-width:760px !important; padding:8px 22px !important; border:4px solid #fff !important; box-shadow:0 6px 0 rgba(23,50,79,.14) !important; }
+    #garland .heart{ width:30px !important; height:30px !important; }
+    #bigFriend .patch{
+      width:clamp(210px,31vh,256px) !important; height:clamp(210px,31vh,256px) !important;
+      border:5px solid #fff !important; box-shadow:0 12px 0 rgba(23,50,79,.18), 0 18px 34px rgba(23,50,79,.16) !important;
+    }
+    #bigFriend .face{ font-size:clamp(118px,18vh,148px) !important; }
+    #bigFriend .nameplate{ font-size:22px !important; padding:6px 24px !important; border-width:4px !important; }
+    #miniRow{ gap:14px !important; padding:6px 18px !important; }
+    .mini{ width:72px !important; height:72px !important; font-size:38px !important; border:4px solid #fff !important; box-shadow:0 6px 0 rgba(23,50,79,.16) !important; }
   }
 </style>
 </head>
