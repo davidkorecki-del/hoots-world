@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -551,7 +551,7 @@
     if(stars>=GOAL&&state==="playing"){
       busy=true;
       var seq=roundSeq;
-      setTimeout(function(){ if(!dead&&state==="playing"&&seq===roundSeq) winGame(); },900);
+      (window.__hwFastWin||setTimeout)(function(){ if(!dead&&state==="playing"&&seq===roundSeq) winGame(); },350);
       return true;
     }
     return false;
@@ -791,7 +791,7 @@
       starEls[i].classList.remove("lit");
       (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],150+i*90);
     }
-    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },300);
   }
   function resetToStart(){
     clearPending(); roundSeq++;

@@ -4,10 +4,31 @@
 window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0-9]+)\.mp3$/.exec(String(f||""));if(!m)return f;if(/^(callout|songcall|hint)$/.test(String(k||"")))return f;var N=null;try{N=window.parent&&window.parent.HOOT_NAMES;}catch(e){}var key=m[1]+"-"+m[2];return N&&N[key]?"name-"+key+".mp3":null;};
 (function(){
   if(window.__hootFix) return; window.__hootFix=1;
-  /* 1. The same Hoot line never plays twice within 15 s (letters, numbers,
-        phonics and other teaching words are allowed to repeat). A skipped
-        line still fires "ended" so the game's voice queue carries on. */
+  /* 1. Wave 5B Voice Discipline (Device Reports #2 & #3):
+        - Rotate praise & try-again clips across small variant decks so the exact same
+          Hoot line NEVER repeats back-to-back in a session.
+        - Cap win/recap voice to ONE short cheer line (drop stacked 2nd/3rd recap clips).
+        - Keep 15s dedup for repeated identical non-teaching lines; skipped lines still
+          fire "ended" so game voice queues never stall. */
   var recent={}, P=HTMLMediaElement.prototype, LINE=new RegExp("(hoot-[a-z-]+|owl-[a-z-]+|lily-[a-z-]+|coach/[a-z]+-(intro|idle|praise|wrong))[.]mp3");
+  var PRAISE_DECK=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  var WRONG_DECK=["hoot-try-again.mp3","hoot-look-closely.mp3","hoot-keep-going.mp3"];
+  var lastPraise="", lastWrong="", winCheerAt=0;
+  function swapBase(url, nextFile){ return String(url||"").replace(/[^\/]+$/, nextFile); }
+  function pickRot(deck, curFile, lastFile){
+    var avail=deck;
+    try{
+      var H=window.parent&&window.parent.HOOT_HAVE;
+      if(H){
+        var f=deck.filter(function(x){ return !!H[x.replace(/\.mp3$/,"")]; });
+        if(f.length) avail=f;
+      }
+    }catch(e){}
+    if(avail.length<=1) return avail[0]||curFile;
+    var idx=avail.indexOf(lastFile);
+    if(curFile!==lastFile && avail.indexOf(curFile)>=0) return curFile;
+    return avail[(idx+1)%avail.length];
+  }
   var mine=null;
   function install(){
     if(P.play===mine) return;
@@ -19,8 +40,45 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       var s=String(this.currentSrc||this.src||(this.getAttribute&&this.getAttribute("src"))||"");
       var m=s.match(LINE);
       if(m && s.indexOf("giggle")<0){
-        var k=m[1], now=Date.now();
-        if(recent[k] && now-recent[k]<15000){
+        var k=m[1], fn=k+".mp3", now=Date.now();
+        /* Win/recap anti-stacking: allow ONE short cheer on win, drop stacked 2nd/3rd clips within 4.5s */
+        var winEl=document.getElementById("winOverlay");
+        var onWin=!!(winEl && winVisible(winEl)) || k==="hoot-you-learned";
+        if(onWin && (k==="hoot-you-learned" || PRAISE_DECK.indexOf(fn)>=0)){
+          if(winCheerAt && now-winCheerAt<4500){
+            var selfSkip=this;
+            setTimeout(function(){ try{ selfSkip.dispatchEvent(new Event("ended")); }catch(e){} },30);
+            return Promise.resolve();
+          }
+          winCheerAt=now;
+          /* On win, prefer a crisp rotated praise cheer instead of repeating hoot-you-learned */
+          if(k==="hoot-you-learned"){
+            var rotW=pickRot(PRAISE_DECK, PRAISE_DECK[0], lastPraise);
+            lastPraise=rotW;
+            this.setAttribute("src", swapBase(s, rotW));
+            s=this.getAttribute("src")||s;
+            k=rotW.replace(/\.mp3$/,"");
+          }
+        }
+        /* Rotate praise deck so identical praise never repeats back-to-back */
+        if(PRAISE_DECK.indexOf(fn)>=0){
+          var rotP=pickRot(PRAISE_DECK, fn, lastPraise);
+          lastPraise=rotP;
+          if(rotP!==fn){
+            this.setAttribute("src", swapBase(s, rotP));
+            s=this.getAttribute("src")||s;
+            k=rotP.replace(/\.mp3$/,"");
+          }
+        } else if(WRONG_DECK.indexOf(fn)>=0){
+          /* Rotate try-again deck across try-again / look-closely / keep-going */
+          var rotN=pickRot(WRONG_DECK, fn, lastWrong);
+          lastWrong=rotN;
+          if(rotN!==fn){
+            this.setAttribute("src", swapBase(s, rotN));
+            s=this.getAttribute("src")||s;
+            k=rotN.replace(/\.mp3$/,"");
+          }
+        } else if(recent[k] && now-recent[k]<15000){
           var self=this;
           setTimeout(function(){ try{ self.dispatchEvent(new Event("ended")); }catch(e){} },30);
           return Promise.resolve();
@@ -108,14 +166,30 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
   }
   var st=document.createElement("style");
   st.textContent=".hoot-go{animation:hootGo 1.35s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 6px #ffd93b,0 0 22px rgba(255,217,59,.75)!important}@keyframes hootGo{50%{transform:scale(1.06)}}.hoot-nudge{animation:hootNudge 1.1s ease-in-out 3!important;box-shadow:0 0 0 5px #ffd93b!important}@keyframes hootNudge{50%{transform:scale(1.08)}}";
-  /* 3e59: a win screen ignores taps for its first 0.8 s. It pops up while a fast little one is
-     still tapping the board, and that tap used to land on its Home button and skip the celebration. */
+  /* Wave 5B (Device Report #2): keep a tiny 220ms stray-tap debounce on win popup
+     (down from 800ms) so Play Again is tappable immediately, AND stop celebration voice
+     instantly when the child taps Play Again / Home. Also support tap-to-skip celebration. */
   function winVisible(el){ return !el.hidden && getComputedStyle(el).display!=='none' && getComputedStyle(el).visibility!=='hidden'; }
   function watchWins(){ if(!window.MutationObserver||!document.body||window.__hfWinObs) return; window.__hfWinObs=1;
-    new MutationObserver(function(list){ list.forEach(function(m){ var el=m.target; if(el.nodeType===1&&/^win/i.test(el.id||'')){ var v=winVisible(el); if(v&&!el.__hfVis) el.__hfShown=Date.now(); el.__hfVis=v; } }); })
+    new MutationObserver(function(list){ list.forEach(function(m){ var el=m.target; if(el.nodeType===1&&/^win/i.test(el.id||'')){ var v=winVisible(el); if(v&&!el.__hfVis){ el.__hfShown=Date.now(); window.__hwWinSkipFn=null; } el.__hfVis=v; } }); })
       .observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','class','style']}); }
-  function guardWin(e){ var w=e.target, hit=false; while(w&&w.nodeType===1){ if(w.__hfShown&&Date.now()-w.__hfShown<800){ hit=true; break; } w=w.parentElement; } if(hit){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); } }
+  function guardWin(e){ var w=e.target, hit=false; while(w&&w.nodeType===1){ if(w.__hfShown&&Date.now()-w.__hfShown<220){ hit=true; break; } w=w.parentElement; } if(hit){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); } }
   ['pointerdown','pointerup','mousedown','mouseup','touchstart','touchend','click'].forEach(function(ev){ window.addEventListener(ev,guardWin,true); });
+  window.addEventListener('pointerdown', function(e){
+    if(typeof window.__hwWinSkipFn==='function'){
+      var fn=window.__hwWinSkipFn; window.__hwWinSkipFn=null;
+      try{ fn(); }catch(err){}
+      return;
+    }
+    var b=e.target&&e.target.closest?e.target.closest('#againBtn,#winHomeBtn'):null;
+    if(b){ winCheerAt=0; try{ if(window.__govStopAll) window.__govStopAll(); }catch(err){} }
+  }, true);
+  window.__hwFastWin=function(fn, ms){
+    var done=false;
+    var run=function(){ if(done) return; done=true; window.__hwWinSkipFn=null; try{ fn(); }catch(err){} };
+    window.__hwWinSkipFn=run;
+    return setTimeout(run, ms);
+  };
   document.addEventListener('DOMContentLoaded', watchWins); setTimeout(watchWins,0);
   function tick(){ try{ install(); bellies(); bigPlay(); }catch(e){} }
   document.addEventListener("DOMContentLoaded", function(){ (document.head||document.documentElement).appendChild(st); tick(); });
@@ -199,6 +273,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     logVoice("bubble-only", plain, "no-clip");
   }
   function speak(kind, extras){ if(kind==="praise"||kind==="wrong") return false; /* 3e43: the game already praises and corrects; the coach saying it too doubled every reaction and pushed back the next question */
+    if(kind==="intro" && lastByKind.intro) return false; /* Wave 5B: instructions spoken ONCE per game start, never repeated */
     var pack=LINES[KEY]||{};
     var text=(pack[kind]||"");
     var letter="";
@@ -388,10 +463,38 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       }
     }
   }
+  /* Wave 5B (Device Report #3): Idle nudges rotate through variants and STOP after 2
+     (silence is better than a 3rd repeat). Visual glow stays gentle without nagging audio. */
+  var idleSpokenCount=0;
+  function speakIdleVariant(step){
+    if(step===1){
+      var hasTry=false;
+      try{ hasTry=!!(window.parent&&window.parent.HOOT_HAVE&&window.parent.HOOT_HAVE["hoot-try-this-one"]); }catch(e){}
+      if(hasTry){
+        playCoachFiles(["assets/voice/hoot-try-this-one.mp3"], "idle", "Try this one!");
+        return;
+      }
+    }
+    speak("idle");
+  }
+  function scheduleIdleStep(delayMs){
+    if(window.__hootIdleTimer) clearTimeout(window.__hootIdleTimer);
+    window.__hootIdleTimer=setTimeout(function idleTry(){
+      var winEl=document.getElementById("winOverlay");
+      if(winEl && !winEl.hidden && getComputedStyle(winEl).display!=="none") return;
+      if(Date.now()-(window.__hootLastVoice||0)<7000){ window.__hootIdleTimer=setTimeout(idleTry,2000); return; }
+      nudgeVisual();
+      if(idleSpokenCount<2){
+        speakIdleVariant(idleSpokenCount);
+        idleSpokenCount++;
+        if(idleSpokenCount<2) scheduleIdleStep(12000);
+      }
+    }, delayMs);
+  }
   function bumpIdle(){
     clearNudge();
-    if(window.__hootIdleTimer) clearTimeout(window.__hootIdleTimer);
-    window.__hootIdleTimer=setTimeout(function idleTry(){ if(Date.now()-(window.__hootLastVoice||0)<7000){ window.__hootIdleTimer=setTimeout(idleTry,2000); return; } nudgeVisual(); speak("idle"); }, 10000); /* Wave 3 Riley floor: 10s visual + spoken nudge, never while Hoot is talking */
+    idleSpokenCount=0;
+    scheduleIdleStep(10000);
   }
 
   wrapMedia();

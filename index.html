@@ -5890,6 +5890,7 @@
         }
         return hootClipEl;
       }
+      var __welcomePlayedOnce = false, __greetedProfileOnce = {};
       function playHootClip(key, chained){
         if(key==="giggle" && !window.__bellyArmed) return false;
         if(currentVoice === "off") return false;
@@ -5899,6 +5900,11 @@
            (Hoot's voice) never plays — her greeting is her tutor's alone
            (kidc-greet), so hoot-welcome must not sound before it. */
         if(key === "welcome" && document.body && (document.body.classList.contains("ll-teen") || document.body.getAttribute("data-profile") === "kidc")) return false;
+        /* Wave 5B (Device Report #3 Case #1): generic welcome plays EXACTLY ONCE per app open. */
+        if(key === "welcome"){
+          if(__welcomePlayedOnce) return false;
+          __welcomePlayedOnce = true;
+        }
         /* Fix pass 10: named-key celebrations on the teen profile also use
            the tutor twin (hoot-great-job -> tut-hoot-great-job). */
         try {
@@ -5961,20 +5967,38 @@
         return k;
       }
       function hootGreetFor(id){
-        stopHootClip();
         /* Profile C's greeting is her tutor voice, and hers alone — Hoot's
            welcome clip does not fire on her pick (one voice at a time). */
-        if(id === "kidc") return;
-        playHootClip(greetKeyFor(id));
-        if(id === "kidb") queueHootClip("lily-greet");
+        if(id === "kidc"){ stopHootClip(); return; }
+        var k = greetKeyFor(id);
+        var f = HOOT_CLIPS[k];
+        /* Wave 5B (Device Report #3 Case #1): Welcome greeting plays EXACTLY ONCE per app open
+           (one short line, never duplicated across gate tap + profile pick, never stacking lily-greet). */
+        if(__greetedProfileOnce[id]) return;
+        if(f === "hoot-welcome.mp3" && __welcomePlayedOnce) return;
+        stopHootClip();
+        __greetedProfileOnce[id] = true;
+        if(f === "hoot-welcome.mp3") __welcomePlayedOnce = true;
+        window.__hwLastGreetAt = Date.now();
+        playHootClip(k);
       }
       function hootHootTap(id){
         stopHootClip();
-        playHootClip("hoot-hello");
         /* For Profile C the tap earns the owl hoot only — no Hoot spoken
            greeting queues behind it in her tutor context. */
-        if(id !== "kidc") queueHootClip(greetKeyFor(id));
-        if(id === "kidb") queueHootClip("lily-play");
+        if(id === "kidc"){ playHootClip("hoot-hello"); return; }
+        /* Wave 5B: ONE short clip on tap (welcome once if not yet greeted, else a short owl hoot). */
+        var k = greetKeyFor(id);
+        var f = HOOT_CLIPS[k];
+        var already = (id && __greetedProfileOnce[id]) || (f === "hoot-welcome.mp3" && __welcomePlayedOnce);
+        if(!already){
+          if(id) __greetedProfileOnce[id] = true;
+          if(f === "hoot-welcome.mp3") __welcomePlayedOnce = true;
+          window.__hwLastGreetAt = Date.now();
+          playHootClip(k);
+        } else {
+          playHootClip("hoot-hello");
+        }
       }
       window.__hootPlayClip = playHootClip;
       window.__hootGreet = hootGreetFor;
@@ -6726,7 +6750,7 @@
     (function gamePlayer(){
       /* Wave 3: 20 embedded games extracted to static same-origin games/<key>.html files
          with shared runtime js/hoot-game-head.js, js/hoot-game-tail.css, js/hoot-game-tail.js. */
-      var GAME_VER = "llprev3e70";
+      var GAME_VER = "llprev3e71";
       var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Real-World Adventures", rocket: "Rocket Count-Up", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Color Splash", shapes: "Shape Hunt", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat" };
       var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band" };
       var overlay = document.getElementById("game-overlay");
@@ -13497,14 +13521,14 @@
   }
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e66"></script>
+  <script src="js/hoot-lessons.js?v=llprev3e71"></script>
   <script src="js/hoot-study.js?v=llprev3e66"></script>
   <script src="js/hoot-ela7.js?v=llprev3e66"></script>
   <script src="js/hoot-sci7.js?v=llprev3e66"></script>
   <script src="js/hoot-ss7.js?v=llprev3e66"></script>
-  <script src="js/hoot-games.js?v=llprev3e66"></script>
+  <script src="js/hoot-games.js?v=llprev3e71"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e69"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e71"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e66');}</script>
 </body>

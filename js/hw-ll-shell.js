@@ -1040,7 +1040,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     else if (ps && ps.gained && ps.s.egg) clip = ps.s.egg.warm >= HATCH * 0.8 ? "egg-almost" : "egg-warm";
     if (!clip && gardenJustGrew) clip = "garden-new";
     if (!clip && ps && ps.firstEgg) clip = "egg-hello";
-    if (!clip && hasNext && !state._saidTapBig && window.HOOT_HAVE && window.HOOT_HAVE["hoot-tap-big-btn"]) {
+    if (!clip && hasNext && !state._saidTapBig && !(window.__hwLastGreetAt && Date.now() - window.__hwLastGreetAt < 8000) && window.HOOT_HAVE && window.HOOT_HAVE["hoot-tap-big-btn"]) {
       state._saidTapBig = true;
       clip = "hoot-tap-big-btn";
     }
@@ -2334,8 +2334,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     document.body.scrollTop = (document.body.scrollTop || 0) + delta;
   }
 
-  function setProfile(id) {
-    stopAllVoices();
+  function setProfile(id, opts) {
+    stopAllVoices(opts && opts.keepGreet ? { keepGreet: true } : undefined);
     var p = PROFILES.filter(function (x) { return x.id === id; })[0];
     if (!p) return;
     state.profile = p;
@@ -2966,8 +2966,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   /* Wave 1 (Exit rule §6.2): leaving ANY lesson/player silences EVERY voice channel
      AND clears the Voice Governor's pending queue immediately, mid-sentence. */
   function stopAllVoices(opts) {
-    try { if (window.__govStopAll) window.__govStopAll(); } catch (e) {}
-    try { if (window.__hwStop) window.__hwStop(); } catch (e) {}
+    if (!(opts && opts.keepGreet)) {
+      try { if (window.__govStopAll) window.__govStopAll(); } catch (e) {}
+      try { if (window.__hwStop) window.__hwStop(); } catch (e) {}
+    }
     try { if (window.__hwStopIntro) window.__hwStopIntro(); } catch (e) {}
     try { if (window.__hwStopLittleTutor) window.__hwStopLittleTutor(); } catch (e) {}
     try { if (window.__hwStopOlderTutor) window.__hwStopOlderTutor(); } catch (e) {}
@@ -3383,9 +3385,11 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       btn.id = "sayHiLl";
       btn.textContent = "Tap to say hi to Hoot";
       btn.addEventListener("click", function () {
+        /* Wave 5B (Device Report #3 Case #1): trigger ONE greeting via #gate-hoot
+           instead of also calling playRead("hi"), which queued a duplicate hoot-welcome.mp3. */
         var h = $("#gate-hoot");
         if (h) h.click();
-        playRead("hi");
+        else playRead("hi");
       });
       var cards = panel.querySelector(".prof-cards") || panel.querySelector("[class*='prof']");
       if (cards) panel.insertBefore(btn, cards);
@@ -3396,7 +3400,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       if (b._ll) return;
       b.addEventListener("click", function () {
         var id = b.getAttribute("data-profile-pick");
-        setTimeout(function () { setProfile(id); }, 0);
+        setTimeout(function () { setProfile(id, { keepGreet: true }); }, 0);
       });
       b._ll = true;
     });

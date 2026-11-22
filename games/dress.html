@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="dress";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -546,7 +546,7 @@ function winGame(){
   say("You found <span class='b-big'>five</span> things Hoot called out! Fashion Star!");
   enqueue("hoot-you-learned.mp3","recap");
   fanfareSound();
-  setTimeout(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },600);
+  (window.__hwFastWin||setTimeout)(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },400);
 }
 function setMode(m){
   if(busy) return;

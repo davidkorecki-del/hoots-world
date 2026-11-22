@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="twinkle";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -692,7 +692,7 @@
       starEls[i].classList.remove("lit");
       (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
     }
-    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },1500);
+    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },500);
   }
   function resetToStart(){
     clearPending(); roundToken++;

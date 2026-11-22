@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="rocket";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -731,10 +731,10 @@
       ],{duration:2400,easing:"cubic-bezier(.5,0,.8,.4)",fill:"forwards",delay:250});
     }
     var tk=++roundToken;
-    setTimeout(function(){
+    (window.__hwFastWin||setTimeout)(function(){
       if(dead||tk!==roundToken) return;
       winRound();
-    },4300);
+    },650);
   }
 
   /* ================= START / WIN ================= */
@@ -787,7 +787,7 @@
       starEls[i2].classList.remove("lit");
       (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i2],200+i2*180);
     }
-    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },250);
   }
   function resetToStart(){
     clearPending(); roundToken++;

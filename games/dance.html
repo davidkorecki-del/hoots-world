@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="dance";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -343,7 +343,7 @@ function winGame(){
   state="won"; phase="idle"; clearPending(); cancelFreezeTimer();
   say("You filled the Party Meter &mdash; GRAND FINALE!");
   enqueue("hoot-you-learned.mp3","recap"); fanfareSound(); sparkleBurst();
-  later(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },700);
+  (window.__hwFastWin||later)(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },400);
 }
 function setMode(m){
   if(state!=="playing") return;

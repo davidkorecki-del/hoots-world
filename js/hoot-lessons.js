@@ -402,7 +402,8 @@
         if (!alive() || !R.cur || R.cur.rd !== rd) return;
         var tb = findTargetBtn(tgt.key);
         if (tb && !tb.disabled) tb.classList.add("hint");
-        say((hasClip("hoot-try-this-one") ? ["hoot-try-this-one"] : []).concat(askClips(rd, tgt)));
+        /* Wave 5B: ONE short rotated nudge (no stacking) and stop after 2 idle nudges. */
+        say(hasClip("hoot-try-this-one") ? ["hoot-try-this-one"] : askClips(rd, tgt));
       }, 14000));
     }
     var teach = lesson.teachItems ? lesson.teachItems.map(function (t) { var it = item(t.kind, t.key); it.say = t.say; it.text = t.text; return it; })
@@ -531,15 +532,30 @@
         setBubble("⭐ YES! " + yes);
         burst(b);
         R.cur = null;
-        /* right answer: the item's NAME (never the question again, never the sound
-           Hoot just played to ask) and then praise */
-        say((rd.ask === "name" || rd.ask === "sound" ? sayName(tgt).filter(function (c) { return !/^coach\/phonics-/.test(c); }) : []).concat([pr]), function () {
+        var isLastRound = (R.round + 1 >= lesson.rounds.length);
+        if (isLastRound) {
+          /* Wave 5B (Device Report #2 — Colour Names confirmed offender):
+             Never gate the end screen behind multi-clip voice playback. Show the
+             ready buttons within ~450ms (and skip straight on any tap), with ONE
+             short Hoot cheer playing ALONGSIDE the ready buttons. */
+          R.round += 1;
+          var finDone = false;
+          var goFin = function () {
+            if (finDone || !alive()) return;
+            finDone = true;
+            root.removeEventListener("pointerdown", skipToFin, true);
+            finish();
+          };
+          var skipToFin = function () { goFin(); };
+          root.addEventListener("pointerdown", skipToFin, true);
+          R.idleT.push(setTimeout(goFin, 450));
+          return;
+        }
+        /* Mid-lesson right answer: ONE short rotated praise line, crisp 450ms breath into next round */
+        say([pr], function () {
           if (!alive()) return;
           R.round += 1;
-          if (R.round >= lesson.rounds.length) { finish(); return; }
-          /* 3e41: a short breath after the praise, so the next question is
-             clearly a NEW one and not the last one said again */
-          setTimeout(function () { if (alive()) startRound(); }, 800);
+          setTimeout(function () { if (alive()) startRound(); }, 450);
         });
       } else {
         R.wrong += 1; R.cur.wrongHere += 1;
@@ -552,7 +568,9 @@
         var target = findTargetBtn(tgt.key);
         if (R.cur.wrongHere >= 2 && target) target.classList.add("hint");
         var nudge = pickFresh(NUDGE);
-        say([nudge].concat(tapped.kind === "pair" ? [] : sayName(tapped)).concat(askClips(rd, tgt)), function () {
+        /* Wave 5B: ONE short line per wrong tap (nudge on 1st miss, ask clip on 2nd+ miss — never 3 stacked clips) */
+        var wrongClips = R.cur.wrongHere >= 2 ? askClips(rd, tgt) : [nudge];
+        say(wrongClips, function () {
           if (alive() && R.cur && R.cur.rd === rd) armIdle(rd, tgt);
         });
       }
@@ -574,7 +592,7 @@
         nb.disabled = false;
         nb.textContent = "Next up ▶";
         nb.classList.add("hw-next-pulse");
-        if (note) { note.hidden = false; note.textContent = "✨ Moving to the next stop…"; }
+        if (note) { note.hidden = false; note.textContent = "✨ Tap Next up anytime!"; }
       } else if (nxt) {
         nb.disabled = false;
         nb.textContent = "Next lesson ▶";
@@ -591,33 +609,26 @@
       var bigDay = sg && !wasAll && setDone(set);
       setBubble("🦉 " + (bigDay ? "🏆 " + set.all : lesson.recap + " You earned a sticker!"));
       var nk = ""; try { nk = window.__llNameKey ? window.__llNameKey() || "" : ""; } catch (e) {}
-      var recapNames = [];
-      teach.slice(0, 4).forEach(function (t) { teachClips(t).forEach(function (c) { if (c) recapNames.push(c); }); });
       var advanced = false;
       function doTodayAdvance() {
         if (advanced || !alive()) return;
         advanced = true;
         clearIdle();
-        if (hasClip("hoot-next-one")) {
-          say(["hoot-next-one"], function () { if (alive() && typeof window.__llAdvanceTodayPath === "function") window.__llAdvanceTodayPath(); });
-        } else if (typeof window.__llAdvanceTodayPath === "function") {
+        stopAudio();
+        if (typeof window.__llAdvanceTodayPath === "function") {
           window.__llAdvanceTodayPath();
         }
       }
-      function scheduleTodayAdvance() {
-        if (!fromToday || advanced || !alive()) return;
-        if (R.autoT) clearTimeout(R.autoT);
-        R.autoT = setTimeout(doTodayAdvance, 1500);
-      }
       if (fromToday && !bigDay) {
-        R.ceilT = setTimeout(doTodayAdvance, 12000);
+        /* Gentle 2.4s auto-advance ALONGSIDE the already-tappable Next up button */
+        R.autoT = setTimeout(doTodayAdvance, 2400);
       }
-      say((nk ? ["great-job-" + nk] : []).concat(["hoot-you-learned"]).concat(recapNames), function () {
+      /* Wave 5B: ONE short Hoot cheer playing ALONGSIDE the ready buttons (never a 6-clip speech) */
+      var cheerClip = nk && hasClip("great-job-" + nk) ? "great-job-" + nk : pickFresh(PRAISE);
+      say([cheerClip], function () {
         if (!alive()) return;
         var sb = end.querySelector(".hl-song");
         if (bigDay && sb && !sb.classList.contains("pg-singing")) { g.sing(set.key, sb); return; }
-        if (fromToday) { scheduleTodayAdvance(); return; }
-        if (nxt && hasClip("hoot-tap-big-btn")) say(["hoot-tap-big-btn"]);
       });
       try {
         var sc = body; var r = end.getBoundingClientRect(), sr = sc.getBoundingClientRect();
@@ -626,9 +637,10 @@
     }
     var songB = end.querySelector(".hl-song");
     if (songB) songB.addEventListener("click", function () { if (!alive()) return; clearIdle(); stopAudio(); g.sing(set.key, songB); });
-    end.querySelector(".hl-again").addEventListener("click", function () { if (!alive()) return; clearIdle(); if (songB && songB.classList.contains("pg-singing")) g.stopSing(); R.round = 0; R.wrong = 0; R.t0 = Date.now(); teachAll(); });
+    end.querySelector(".hl-again").addEventListener("click", function () { if (!alive()) return; clearIdle(); stopAudio(); if (songB && songB.classList.contains("pg-singing")) g.stopSing(); R.round = 0; R.wrong = 0; R.t0 = Date.now(); teachAll(); });
     end.querySelector(".hl-next").addEventListener("click", function () {
       clearIdle();
+      stopAudio();
       if (window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function") {
         window.__llAdvanceTodayPath();
         return;

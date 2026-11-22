@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="feed";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -689,13 +689,13 @@
     starSound(); hootReact("celebrate",1600);
     say("My tummy is FULL of colours! What a rainbow snack!");
     var tk=++roundToken;
-    setTimeout(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },1400);
+    (window.__hwFastWin||setTimeout)(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },400);
   }
   function snackComplete(){
     starSound(); hootReact("celebrate",1600);
     say("BURP! Excuse me! My tummy is completely full!");
     var tk=++roundToken;
-    setTimeout(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },1400);
+    (window.__hwFastWin||setTimeout)(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },400);
   }
 
   /* ================= START / WIN ================= */
@@ -740,7 +740,7 @@
       starEls[i].classList.remove("lit");
       (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
     }
-    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },350);
   }
   function resetToStart(){
     clearPending(); roundToken++;

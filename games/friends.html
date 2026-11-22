@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="friends";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -701,7 +701,7 @@
       heartEls2[i].classList.remove("lit");
       (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(heartEls2[i],200+i*150);
     }
-    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(32); sparkleSound(); } },1900);
+    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(32); sparkleSound(); } },550);
   }
 
   /* ================= FLOW ================= */

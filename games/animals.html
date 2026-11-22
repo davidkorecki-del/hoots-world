@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="animals";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -707,7 +707,7 @@
           setDots(PAIRS.length,Object.keys(met).length);
           if(Object.keys(met).length>=PAIRS.length){
             var tk=++roundToken;
-            setTimeout(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },1500);
+            (window.__hwFastWin||setTimeout)(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },400);
           }
         } else {
           if(window.__hootSpeak) window.__hootSpeak("idle");
@@ -823,7 +823,7 @@
       starEls[i].classList.remove("lit");
       (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
     }
-    setTimeout(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },650);
+    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },350);
   }
   function resetToStart(){
     clearPending(); roundToken++;

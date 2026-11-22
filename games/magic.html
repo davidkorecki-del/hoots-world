@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="magic";</script>
-<script src="js/hoot-game-head.js?v=llprev3e66"></script>
+<script src="js/hoot-game-head.js?v=llprev3e71"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -532,7 +532,7 @@ function winGame(){
   state="won"; clearPending();
   say("You filled all 5 magic stars &mdash; you are a real Magic Star!");
   enqueue("hoot-you-learned.mp3","recap"); fanfareSound(); sparkleBurst();
-  later(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },650);
+  (window.__hwFastWin||later)(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },400);
 }
 function setMode(m){
   if(state!=="playing"||busy) return;

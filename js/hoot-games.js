@@ -273,7 +273,10 @@
           var targets = hintFn() || [];
           targets.forEach(function (el) { if (el && !el.disabled) el.classList.add("pg-hint"); });
         }
-        if (clips && clips.length) say(clips, null, true);
+        /* Wave 5B: rotate 2nd idle nudge to hoot-try-this-one instead of repeating the same clip, then stay silent */
+        var tryClip = opt("hoot-try-this-one");
+        if (tryClip) say([tryClip], null, true);
+        else if (clips && clips.length) say(clips, null, true);
       }, 14000));
     }
     function roundDone() {
@@ -282,17 +285,28 @@
       S.advanced = true;
       S.round++; paint();
       if (S.round >= G.rounds) return finish();
-      setTimeout(function () { if (alive()) { S.advanced = false; S.won = false; next(); } }, 500);
+      setTimeout(function () { if (alive()) { S.advanced = false; S.won = false; next(); } }, 450);
     }
-    /* a won round always moves on: by Hoot's praise ending, or by this backup timer */
-    function wonRound() { clearIdle(); S.won = true; var r = S.round; setTimeout(function () { if (alive() && S.round === r && S.won) roundDone(); }, 4500); return roundDone; }
+    /* Wave 5B: final round transitions to ready end screen within ~450ms (voice plays alongside, never blocking!) */
+    function wonRound() {
+      clearIdle();
+      S.won = true;
+      var r = S.round;
+      if (S.round + 1 >= G.rounds) {
+        setTimeout(function () { if (alive() && S.round === r && S.won) roundDone(); }, 450);
+        return function () {};
+      }
+      setTimeout(function () { if (alive() && S.round === r && S.won) roundDone(); }, 2800);
+      return roundDone;
+    }
     function wrongTap(btn, text, clips) {
       if (S.won) return;
       clearIdle();
       S.wrong++; sfx("boing");
       if (btn) { btn.classList.remove("pg-no"); void btn.offsetWidth; btn.classList.add("pg-no"); }
       setB(text);
-      say([fresh(NUDGE)].concat(clips || []));
+      /* Wave 5B: ONE short rotated nudge on miss (no stacked clips) */
+      say([fresh(NUDGE)]);
     }
     function finish() {
       clearIdle();
@@ -302,7 +316,8 @@
       root.querySelector(".pg-sticker").textContent = st;
       root.querySelector(".pg-end").hidden = false;
       setB("🎉 You did it! " + G.title + " — all " + G.rounds + " rounds! Here's your sticker!");
-      say([opt("hoot-party-done") || "hoot-you-learned", fresh(PRAISE)]);
+      /* Wave 5B: ONE short cheer line alongside the immediately tappable Replay button */
+      say([fresh(PRAISE)]);
       try { document.dispatchEvent(new CustomEvent("hoot-party-done", { detail: { key: key, title: G.title, wrong: S.wrong, ms: Date.now() - S.t0 } })); } catch (e) {}
     }
     var next = { bubbles: bubblesRound, garden: gardenRound, train: trainRound, dance: danceRound, helpers: helpersRound, sayit: sayitRound }[key];
