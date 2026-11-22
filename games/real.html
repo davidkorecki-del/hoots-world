@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="real";</script>
-<script src="js/hoot-game-head.js?v=llprev3e99"></script>
+<script src="js/hoot-game-head.js?v=llprev3e100"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Town Rescue Patrol</title>
@@ -408,6 +408,114 @@
   #friendStage.on-roof{ left:63% !important; right:auto !important; top:20% !important; bottom:auto !important; }
   #friendStage{ transition:left .9s ease, top .9s ease; }
 
+
+  /* ---------- Spectacular Upgrades CSS ---------- */
+  #badgeRibbon{
+    display:flex; align-items:center; gap:5px;
+    background:rgba(20,30,48,.88); border:3.5px solid #fde047;
+    border-radius:999px; padding:4px 10px;
+    box-shadow:0 5px 0 #141e30;
+  }
+  .rbadge{
+    width:36px; height:36px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.35); background:rgba(255,255,255,.12);
+    display:grid; place-items:center; font-size:19px; cursor:pointer; padding:0;
+    filter:grayscale(1) opacity(.38); transition:transform .35s cubic-bezier(.34,1.8,.5,1), filter .3s;
+  }
+  .rbadge.earned{
+    filter:none; border-color:#141e30;
+    background:radial-gradient(circle at 32% 28%, #fef08a, #facc15 65%, #d97706 100%);
+    box-shadow:0 0 12px rgba(250,204,21,.9);
+    animation:badgePop .55s cubic-bezier(.34,1.8,.5,1);
+  }
+  @keyframes badgePop{ 0%{ transform:scale(.4) rotate(-20deg); } 65%{ transform:scale(1.32) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
+
+  /* Live Emergency Dispatch Radio Popup */
+  #dispatchOverlay{
+    position:fixed; inset:0; z-index:35; pointer-events:none;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  #dispatchCard{
+    pointer-events:auto;
+    background:linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border:6px solid #fde047; border-radius:32px;
+    padding:18px 24px 20px; max-width:440px; width:92vw; text-align:center;
+    box-shadow:0 12px 0 #141e30, 0 0 44px rgba(253,224,71,.55);
+    color:#fff; animation:dispatchIn .42s cubic-bezier(.34,1.6,.5,1);
+  }
+  @keyframes dispatchIn{ from{ transform:scale(.72) translateY(24px); opacity:0; } to{ transform:scale(1) translateY(0); opacity:1; } }
+  .disp-top{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#ef4444; color:#fff; border:3px solid #fff; border-radius:999px;
+    padding:4px 16px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px;
+    letter-spacing:.06em; margin-bottom:10px;
+    animation:beaconBlink .6s ease-in-out infinite alternate;
+  }
+  @keyframes beaconBlink{ from{ background:#ef4444; } to{ background:#2563eb; } }
+  #dispAvatar{ width:116px; height:116px; margin:0 auto 6px; filter:drop-shadow(0 6px 0 rgba(0,0,0,.35)); }
+  #dispAvatar svg{ width:100%; height:100%; display:block; }
+  #dispTitle{ margin:0 0 4px; font-family:"Fredoka",sans-serif; font-size:26px; color:#fde047; }
+  #dispMsg{ margin:0 0 14px; font-weight:800; font-size:16px; color:#e2e8f0; line-height:1.3; }
+  #dispGoBtn{
+    border:4px solid #141e30; border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:21px;
+    padding:11px 28px; cursor:pointer; box-shadow:0 6px 0 #141e30;
+    text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+  #dispGoBtn:active{ transform:translateY(4px); box-shadow:0 2px 0 #141e30; }
+
+  .bay-btn.dispatch-pulse{
+    animation:dispBayPulse .55s ease-in-out infinite alternate;
+  }
+  @keyframes dispBayPulse{
+    from{ box-shadow:0 0 0 4px #ef4444, 0 7px 0 #141e30; transform:translateY(0); }
+    to{ box-shadow:0 0 0 7px #fde047, 0 7px 0 #141e30, 0 0 32px rgba(253,224,71,1); transform:translateY(-7px); }
+  }
+
+  /* Doctor Interactive X-Ray Scanner Lens */
+  #xrayWindow{
+    position:absolute; left:50%; top:66%; transform:translate(-50%,-50%) scale(0);
+    width:112px; height:112px; border-radius:50%;
+    background:radial-gradient(circle, #083344 0%, #0e7490 70%, #22d3ee 100%);
+    border:5px solid #67e8f9; box-shadow:0 0 28px rgba(34,211,238,.95), inset 0 0 18px rgba(103,232,249,.6);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    pointer-events:none; z-index:4; transition:transform .35s cubic-bezier(.34,1.6,.5,1);
+  }
+  #xrayWindow.show{ transform:translate(-50%,-50%) scale(1); }
+  #xrayItem{ font-size:48px; line-height:1; filter:drop-shadow(0 0 10px #67e8f9); }
+  #xrayLabel{ font-family:"Fredoka",sans-serif; font-weight:800; font-size:12px; color:#cffafe; margin-top:2px; }
+
+  /* Police Waving Crossing Officer beside Crosswalk */
+  #crossingOfficer{
+    position:absolute; left:36%; top:31%; transform:translate(-50%,-50%);
+    width:96px; height:112px; pointer-events:none; z-index:4;
+    filter:drop-shadow(0 7px 0 rgba(20,30,48,.3));
+    transition:transform .25s;
+  }
+  #crossingOfficer.stopping{ animation:officerWave .45s ease-in-out infinite alternate; }
+  @keyframes officerWave{ from{ transform:translate(-50%,-50%) rotate(-5deg); } to{ transform:translate(-50%,-50%) rotate(6deg) translateY(-5px); } }
+
+  /* School Bus Learning Mode Switcher (ABC / 123 / Colors) */
+  #busModeRow{
+    display:none; align-items:center; gap:5px; flex:0 0 auto;
+  }
+  .bmode-btn{
+    border:3px solid #141e30; border-radius:999px;
+    background:#fff; color:#141e30; font-family:"Fredoka",sans-serif; font-weight:800; font-size:13px;
+    padding:4px 10px; cursor:pointer; box-shadow:0 3px 0 #141e30; white-space:nowrap;
+  }
+  .bmode-btn.on{ background:#fde047; }
+  .color-dot{ width:38px; height:38px; border-radius:50%; border:4px solid #141e30; display:inline-block; }
+
+  /* Bus Folding Door Swing */
+  #busDoor{ transform-origin:310px 135px; transition:transform .4s cubic-bezier(.34,1.5,.5,1); }
+  #busDoor.open{ transform:scaleX(0.18); }
+
+  @media (max-width: 680px){
+    #badgeRibbon{ display:none; }
+  }
+
   @media (max-width: 620px){
     #vehicleStage{ left:2%; bottom:24.5%; width:190px; height:120px; }
     #vehicleStage.giant-bus{ left:3%; bottom:25%; width:255px; height:160px; }
@@ -580,6 +688,7 @@
       <div id="bubble" aria-live="polite">🚒 <b>FIREFIGHTER!</b> Hold or drag your finger across the <b>burning windows &amp; roof</b> to spray the <b>Water Hose</b> and put out the fire!</div>
     </div>
     <div class="hud-right">
+      <div id="badgeRibbon" aria-label="Rescue badges"><button type="button" class="rbadge" data-badge="firefighter" title="Fire Chief Badge">🔥</button><button type="button" class="rbadge" data-badge="doctor" title="Super Doctor Badge">🩺</button><button type="button" class="rbadge" data-badge="police" title="Safety Officer Badge">⭐</button><button type="button" class="rbadge" data-badge="teacher" title="Bus Captain Badge">🚌</button></div>
       <div id="starBar" aria-label="Rescue stars">
         <span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span>
       </div>
@@ -592,6 +701,7 @@
     <div class="deck-header">
       <span class="siren-pill" id="missionPill">💦 HOLD &amp; AIM THE FIRE TRUCK WATER HOSE ON THE FLAMES!</span>
       <div id="tankWrap"><span class="tank-ic">💧</span><div id="tankBar"><i id="tankFill"></i></div></div>
+      <div id="busModeRow" role="group" aria-label="School bus topic"><button type="button" class="bmode-btn on" data-bm="abc">🔤 ABC</button><button type="button" class="bmode-btn" data-bm="num">🔢 123</button><button type="button" class="bmode-btn" data-bm="col">🎨 Colors</button></div>
       <div class="deck-actions">
         <button id="hoseBtn" class="action-pill-btn" type="button">💦 Spray Water Hose!</button>
         <button id="sirenBtn" class="action-pill-btn" type="button">🚨 Siren!</button>
@@ -617,6 +727,18 @@
         <svg class="bay-svg" viewBox="0 0 120 90"><rect x="12" y="24" width="84" height="46" rx="10" fill="#facc15" stroke="#141e30" stroke-width="5"/><rect x="88" y="38" width="20" height="32" rx="6" fill="#eab308" stroke="#141e30" stroke-width="5"/><rect x="20" y="32" width="16" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><rect x="42" y="32" width="16" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><rect x="64" y="32" width="16" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><circle cx="32" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/><circle cx="84" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/></svg>
         <span class="bay-title">🚌 School Bus</span>
       </button>
+    </div>
+  </div>
+
+
+  <!-- Live Emergency Dispatch Radio Popup -->
+  <div id="dispatchOverlay" hidden>
+    <div id="dispatchCard">
+      <div class="disp-top">🚨 EMERGENCY DISPATCH CALL</div>
+      <div id="dispAvatar"></div>
+      <h3 id="dispTitle">Kitten Needs Help!</h3>
+      <p id="dispMsg">Tap the Fire Truck below or press Roll Out!</p>
+      <button id="dispGoBtn" type="button">🚨 Roll Out!</button>
     </div>
   </div>
 
@@ -770,7 +892,7 @@
   var VEHICLE_SVGS = {
     firefighter: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="20" y="58" width="190" height="96" rx="16" fill="#ef4444"/><rect x="195" y="76" width="90" height="78" rx="16" fill="#dc2626"/><rect x="212" y="88" width="54" height="36" rx="8" fill="#bae6fd"/><rect x="34" y="34" width="140" height="18" rx="8" fill="#fde047"/><line x1="55" y1="34" x2="55" y2="52"/><line x1="90" y1="34" x2="90" y2="52"/><line x1="125" y1="34" x2="125" y2="52"/><circle cx="192" cy="40" r="16" fill="#94a3b8"/><rect x="186" y="18" width="32" height="16" rx="6" fill="#38bdf8"/><circle cx="222" cy="60" r="13" fill="#38bdf8"/><circle cx="246" cy="60" r="13" fill="#fde047"/><rect x="44" y="92" width="130" height="16" rx="6" fill="#fde047"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#fde047"/><circle cx="232" cy="158" r="28" fill="#1e293b"/><circle cx="232" cy="158" r="12" fill="#fde047"/></g></svg>',
     police: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><path d="M24 102 L60 54 L205 54 L245 100 L292 106 L292 154 L20 154 L20 102 Z" fill="#1d4ed8"/><rect x="85" y="102" width="115" height="48" fill="#ffffff"/><path d="M72 64 L194 64 L222 98 L54 98 Z" fill="#bae6fd"/><circle cx="122" cy="38" r="14" fill="#ef4444"/><circle cx="152" cy="38" r="14" fill="#38bdf8"/><polygon points="142,110 148,122 160,124 151,132 153,144 142,138 131,144 133,132 124,124 136,122" fill="#fde047" stroke-width="4"/><circle cx="78" cy="158" r="28" fill="#1e293b"/><circle cx="78" cy="158" r="12" fill="#94a3b8"/><circle cx="236" cy="158" r="28" fill="#1e293b"/><circle cx="236" cy="158" r="12" fill="#94a3b8"/></g></svg>',
-    teacher: '<svg viewBox="0 0 420 240"><g stroke="#141e30" stroke-width="7.5" stroke-linejoin="round"><rect x="18" y="34" width="308" height="148" rx="26" fill="#facc15"/><rect x="312" y="84" width="76" height="98" rx="18" fill="#eab308"/><rect x="330" y="96" width="46" height="42" rx="8" fill="#bae6fd"/><rect x="38" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><rect x="132" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><rect x="226" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><g id="busWin1" opacity="0" transform="translate(44,58) scale(0.5)"><ellipse cx="46" cy="24" rx="11" ry="22" fill="#fff"/><ellipse cx="84" cy="24" rx="11" ry="22" fill="#fff"/><circle cx="65" cy="72" r="38" fill="#fff"/><circle cx="50" cy="66" r="8" fill="#141e30"/><circle cx="80" cy="66" r="8" fill="#141e30"/><path d="M54 84 Q65 94 76 84" fill="none" stroke="#141e30" stroke-width="6" stroke-linecap="round"/></g><g id="busWin2" opacity="0" transform="translate(138,58) scale(0.5)"><polygon points="24,52 18,14 54,32" fill="#ff4d8d"/><polygon points="106,52 112,14 76,32" fill="#ff4d8d"/><circle cx="65" cy="72" r="38" fill="#ff85a1"/><circle cx="50" cy="66" r="8" fill="#141e30"/><circle cx="80" cy="66" r="8" fill="#141e30"/><path d="M54 84 Q65 94 76 84" fill="none" stroke="#141e30" stroke-width="6" stroke-linecap="round"/></g><g id="busWin3" opacity="0" transform="translate(232,58) scale(0.5)"><circle cx="65" cy="72" r="38" fill="#facc15"/><circle cx="50" cy="66" r="8" fill="#141e30"/><circle cx="80" cy="66" r="8" fill="#141e30"/><path d="M54 84 Q65 94 76 84" fill="none" stroke="#141e30" stroke-width="6" stroke-linecap="round"/></g><rect x="18" y="136" width="308" height="16" fill="#1e293b"/><circle cx="96" cy="186" r="34" fill="#1e293b"/><circle cx="96" cy="186" r="14" fill="#fde047"/><circle cx="308" cy="186" r="34" fill="#1e293b"/><circle cx="308" cy="186" r="14" fill="#fde047"/></g></svg>'
+    teacher: '<svg viewBox="0 0 420 240"><g stroke="#141e30" stroke-width="7.5" stroke-linejoin="round"><rect x="18" y="34" width="308" height="148" rx="26" fill="#facc15"/><rect x="312" y="84" width="76" height="98" rx="18" fill="#eab308"/><rect x="330" y="96" width="46" height="42" rx="8" fill="#bae6fd"/><rect x="38" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><rect x="132" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><rect x="226" y="54" width="76" height="66" rx="12" fill="#bae6fd"/><g id="busWin1" opacity="0" transform="translate(44,58) scale(0.5)"></g><g id="busWin2" opacity="0" transform="translate(138,58) scale(0.5)"></g><g id="busWin3" opacity="0" transform="translate(232,58) scale(0.5)"></g><rect x="284" y="128" width="34" height="50" rx="6" fill="#334155"/><rect id="busDoor" x="284" y="128" width="34" height="50" rx="6" fill="#fde047"/><rect x="18" y="136" width="264" height="16" fill="#1e293b"/><g id="busW1" transform="translate(96,186)"><circle r="34" fill="#1e293b"/><circle r="15" fill="#fde047"/><line x1="-14" y1="0" x2="14" y2="0" stroke-width="5"/><line x1="0" y1="-14" x2="0" y2="14" stroke-width="5"/></g><g id="busW2" transform="translate(308,186)"><circle r="34" fill="#1e293b"/><circle r="15" fill="#fde047"/><line x1="-14" y1="0" x2="14" y2="0" stroke-width="5"/><line x1="0" y1="-14" x2="0" y2="14" stroke-width="5"/></g></g></svg>'
   };
 
   var FRIEND_SVGS = {
@@ -835,7 +957,7 @@
   var hoseDrops = [], smokePuffs = [], flameSparks = [], popSparks = [];
   var activeZones = [];
   var ladderProgress = 0, waveDone = false;
-  var tank = 100, refilling = false, ladderPhase = false;
+  var tank = 100, refilling = false, ladderPhase = false, ladderSlide = null;
 
   function awardStar(){
     if(won) return;
@@ -872,20 +994,77 @@
     }
   }
 
+  var earnedBadges = {};
+  var dispatchOverlay = document.getElementById("dispatchOverlay");
+  var dispAvatar = document.getElementById("dispAvatar");
+  var dispTitle = document.getElementById("dispTitle");
+  var dispMsg = document.getElementById("dispMsg");
+  var dispGoBtn = document.getElementById("dispGoBtn");
+  var pendingDispatchRole = null, dispatchTimer = null;
+
+  var DISPATCH_CALLS = {
+    firefighter: { friend: "kitten", title: "🔥 Fire at the Bakery!", msg: "Kitten is on the roof! Roll out the 🚒 Fire Truck!", btn: "🚒 Roll Out Fire Truck!" },
+    doctor:      { friend: "bear",   title: "🤒 Clinic Checkup Call!", msg: "A friend has a fever & boo-boo! Open the 🚑 Ambulance Clinic!", btn: "🚑 Open Doctor Clinic!" },
+    police:      { friend: "puppy",  title: "🚦 Busy Road Alert!", msg: "Puppy, Kitten & Bunny need help crossing! Roll out the 🚓 Police Car!", btn: "🚓 Roll Out Police Car!" },
+    teacher:     { friend: "bunny",  title: "🎒 School Bus Route!", msg: "Students are waiting at the Bus Stop! Drive the 🚌 School Bus!", btn: "🚌 Drive School Bus!" }
+  };
+
+  function hideDispatch(){
+    if(dispatchTimer){ clearTimeout(dispatchTimer); dispatchTimer = null; }
+    dispatchOverlay.hidden = true;
+    pendingDispatchRole = null;
+    bayBtns.forEach(function(b){ b.classList.remove("dispatch-pulse"); });
+  }
+  dispGoBtn.addEventListener("click", function(){
+    var target = pendingDispatchRole || "firefighter";
+    hideDispatch();
+    selectRole(target, true);
+  });
+  document.querySelectorAll(".rbadge").forEach(function(b){
+    b.addEventListener("click", function(){
+      hideDispatch();
+      selectRole(b.getAttribute("data-badge"), true);
+    });
+  });
+
+  function showDispatchCall(nextRole){
+    if(won) return;
+    pendingDispatchRole = nextRole;
+    var dc = DISPATCH_CALLS[nextRole] || DISPATCH_CALLS.firefighter;
+    dispAvatar.innerHTML = FRIEND_SVGS[dc.friend] || FRIEND_SVGS.kitten;
+    dispTitle.textContent = dc.title;
+    dispMsg.textContent = dc.msg;
+    dispGoBtn.textContent = dc.btn;
+    dispatchOverlay.hidden = false;
+    sfxSiren();
+    bayBtns.forEach(function(b){
+      b.classList.toggle("dispatch-pulse", b.getAttribute("data-role") === nextRole);
+    });
+  }
+
+  function earnBadge(role){
+    if(earnedBadges[role]) return;
+    earnedBadges[role] = true;
+    var el = document.querySelector('.rbadge[data-badge="' + role + '"]');
+    if(el) el.classList.add("earned");
+  }
+
   function finishMissionWave(msg, clip){
     if(waveDone) return;
     waveDone = true;
     spraying = false;
     awardStar();
+    earnBadge(currentRole);
     sfxSiren();
     bubble.innerHTML = msg;
     playVoice([clip, "hoot-rescue-praise"]);
-    setTimeout(function(){
+    if(dispatchTimer) clearTimeout(dispatchTimer);
+    dispatchTimer = setTimeout(function(){
       if(!won){
         var nextIdx = (ROLE_KEYS.indexOf(currentRole) + 1) % ROLE_KEYS.length;
-        selectRole(ROLE_KEYS[nextIdx], true);
+        showDispatchCall(ROLE_KEYS[nextIdx]);
       }
-    }, 2600);
+    }, 2200);
   }
 
   /* =========================================================================
@@ -993,12 +1172,38 @@
     lb.type = "button"; lb.id = "ladderBtn"; lb.className = "choice-btn";
     lb.innerHTML = '<span class="d-ic">🪜</span><span>Drag me to Kitten!</span>';
     function rescueKitten(x, y){
-      if(waveDone) return;
+      if(waveDone || ladderSlide) return;
       lb.remove();
-      friendStage.classList.remove("on-roof");
-      friendBadge.textContent = "Kitten!";
-      spawnCelebration(x, y);
-      finishMissionWave("🚒 <b>KITTEN IS SAFE!</b> You put out every fire and rescued Kitten with the ladder!", "word-kitten");
+      sfxChime();
+      bubble.innerHTML = "🪜 <b>HOLD ON KITTEN!</b> Watch Kitten slide down the yellow extension ladder!";
+      var fr = friendStage.getBoundingClientRect();
+      var orig = getNozzleOrigin();
+      ladderSlide = {
+        sx: fr.left + fr.width / 2, sy: fr.top + fr.height / 2,
+        ex: orig.x + 85, ey: orig.y + 85,
+        t: 0
+      };
+      friendStage.style.transition = "none";
+      missionTick = function(dt){
+        if(!ladderSlide) return;
+        ladderSlide.t = Math.min(1, ladderSlide.t + dt * 1.15);
+        var u = ladderSlide.t;
+        var cx = ladderSlide.sx + (ladderSlide.ex - ladderSlide.sx) * u;
+        var cy = ladderSlide.sy + (ladderSlide.ey - ladderSlide.sy) * u;
+        friendStage.style.left = (cx - fr.width / 2) + "px";
+        friendStage.style.top = (cy - fr.height / 2) + "px";
+        if(tick % 5 === 0) spawnCelebration(cx, cy);
+        if(u >= 1){
+          ladderSlide = null;
+          missionTick = null;
+          friendStage.style.transition = "";
+          friendStage.style.left = "";
+          friendStage.style.top = "";
+          friendStage.classList.remove("on-roof");
+          friendBadge.textContent = "Kitten!";
+          finishMissionWave("🚒 <b>KITTEN IS SAFE!</b> You put out every fire and rescued Kitten down the ladder!", "word-kitten");
+        }
+      };
     }
     lb.addEventListener("pointerdown", function(e){
       startToolDrag(e, "🪜", {
@@ -1112,7 +1317,15 @@
        4. Drag the Band-Aid onto his knee
        5. Drag the Medicine Spoon to his mouth
      ========================================================================= */
+  var doctorPatientIdx = 0;
+  var DOC_PATIENTS = [
+    { name: "Teddy Bear", clip: "word-teddy-bear", body: "#d97706", ear: "#b45309", tummy: "#fde68a", xray: "🍪", xrayTxt: "Cookie!" },
+    { name: "Puppy",      clip: "word-dog",        body: "#facc15", ear: "#b45309", tummy: "#fef9c3", xray: "⭐", xrayTxt: "Gold Star!" },
+    { name: "Kitten",     clip: "word-kitten",     body: "#ff85a1", ear: "#ff4d8d", tummy: "#ffe4e6", xray: "🐟", xrayTxt: "Yummy Fish!" },
+    { name: "Bunny",      clip: "word-bunny",      body: "#f8fafc", ear: "#e2e8f0", tummy: "#fce7f3", xray: "🍎", xrayTxt: "Red Apple!" }
+  ];
   function setupDoctorMission(){
+    var pat = DOC_PATIENTS[(doctorPatientIdx++) % DOC_PATIENTS.length];
     rescueLayer.innerHTML = "";
     activeZones = [];
     spraying = false;
@@ -1122,24 +1335,25 @@
     wrap.innerHTML =
       '<div id="giantTeddyWrap">' +
         '<svg viewBox="0 0 260 300">' +
-          '<circle cx="62" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="62" cy="48" r="18" fill="#fde68a"/>' +
-          '<circle cx="198" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="198" cy="48" r="18" fill="#fde68a"/>' +
-          '<ellipse cx="44" cy="180" rx="28" ry="44" transform="rotate(24 44 180)" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
-          '<ellipse cx="216" cy="180" rx="28" ry="44" transform="rotate(-24 216 180)" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
-          '<ellipse cx="130" cy="198" rx="76" ry="80" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
-          '<ellipse cx="130" cy="202" rx="50" ry="54" fill="#fde68a"/>' +
-          '<circle cx="72" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="72" cy="264" r="16" fill="#fde68a"/>' +
-          '<circle cx="188" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="188" cy="264" r="16" fill="#fde68a"/>' +
+          '<circle cx="62" cy="48" r="34" fill="' + pat.ear + '" stroke="#141e30" stroke-width="7"/><circle cx="62" cy="48" r="18" fill="' + pat.tummy + '"/>' +
+          '<circle cx="198" cy="48" r="34" fill="' + pat.ear + '" stroke="#141e30" stroke-width="7"/><circle cx="198" cy="48" r="18" fill="' + pat.tummy + '"/>' +
+          '<ellipse cx="44" cy="180" rx="28" ry="44" transform="rotate(24 44 180)" fill="' + pat.body + '" stroke="#141e30" stroke-width="7"/>' +
+          '<ellipse cx="216" cy="180" rx="28" ry="44" transform="rotate(-24 216 180)" fill="' + pat.body + '" stroke="#141e30" stroke-width="7"/>' +
+          '<ellipse cx="130" cy="198" rx="76" ry="80" fill="' + pat.body + '" stroke="#141e30" stroke-width="7"/>' +
+          '<ellipse cx="130" cy="202" rx="50" ry="54" fill="' + pat.tummy + '"/>' +
+          '<circle cx="72" cy="262" r="30" fill="' + pat.ear + '" stroke="#141e30" stroke-width="7"/><circle cx="72" cy="264" r="16" fill="' + pat.tummy + '"/>' +
+          '<circle cx="188" cy="262" r="30" fill="' + pat.ear + '" stroke="#141e30" stroke-width="7"/><circle cx="188" cy="264" r="16" fill="' + pat.tummy + '"/>' +
           '<g id="kneeScrape"><ellipse cx="66" cy="252" rx="22" ry="13" fill="#f87171" stroke="#991b1b" stroke-width="4"/><path d="M50 250 L82 258 M52 259 L80 246" stroke="#7f1d1d" stroke-width="3.5" stroke-linecap="round"/></g>' +
           '<g id="kneeBandaid" opacity="0"><rect x="38" y="238" width="58" height="26" rx="13" transform="rotate(-20 67 251)" fill="#fda4af" stroke="#141e30" stroke-width="5"/><rect x="55" y="240" width="22" height="22" rx="4" transform="rotate(-20 67 251)" fill="#fff1f2"/></g>' +
-          '<circle cx="130" cy="98" r="68" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
+          '<circle cx="130" cy="98" r="68" fill="' + pat.body + '" stroke="#141e30" stroke-width="7"/>' +
           '<ellipse id="feverGlow" cx="130" cy="56" rx="38" ry="16" fill="#ef4444" opacity="0.6"/>' +
-          '<ellipse cx="130" cy="112" rx="32" ry="24" fill="#fde68a"/>' +
+          '<ellipse cx="130" cy="112" rx="32" ry="24" fill="' + pat.tummy + '"/>' +
           '<circle cx="104" cy="88" r="10.5" fill="#141e30"/><circle cx="156" cy="88" r="10.5" fill="#141e30"/>' +
           '<circle cx="101" cy="84" r="3.8" fill="#fff"/><circle cx="153" cy="84" r="3.8" fill="#fff"/>' +
           '<ellipse cx="130" cy="105" rx="12" ry="8.5" fill="#141e30"/>' +
           '<path id="teddyMouth" d="M112 128 Q130 116 148 128" fill="#141e30" fill-opacity="0" stroke="#141e30" stroke-width="6.5" stroke-linecap="round"/>' +
         '</svg>' +
+        '<div id="xrayWindow"><span id="xrayItem">' + pat.xray + '</span><span id="xrayLabel">' + pat.xrayTxt + '</span></div>' +
         '<div id="targetRing" class="teddy-spot"></div>' +
         '<button type="button" id="beatBtn" class="beat-btn" hidden><span class="beat-ring" id="beatRing"></span><span class="beat-heart">💓</span></button>' +
       '</div>' +
@@ -1159,7 +1373,7 @@
     var STEPS = [
       { k: "ice", icon: "🧊", label: "Ice Pack", zone: "head", mode: "rub", need: 700, msg: "🧊 <b>Rub the Ice Pack</b> back and forth on Teddy's hot forehead to cool his fever!" },
       { k: "heart", icon: "🩺", label: "Stethoscope", zone: "chest", mode: "drop", msg: "🩺 <b>Drag the Stethoscope</b> onto Teddy's chest to listen to his heart!" },
-      { k: "sponge", icon: "🧽", label: "Soapy Sponge", zone: "knee", mode: "rub", need: 600, msg: "🧽 <b>Scrub the scraped knee</b> clean with the soapy sponge!" },
+      { k: "xray", icon: "🩻", label: "X-Ray Scan", zone: "chest", mode: "drop", msg: "🩻 <b>Slide the X-Ray Scanner</b> onto " + pat.name + "'s tummy to find a silly surprise!" },
       { k: "bandaid", icon: "🩹", label: "Band-Aid", zone: "knee", mode: "drop", msg: "🩹 <b>Drag the Band-Aid</b> onto the clean knee!" },
       { k: "spoon", icon: "🥄", label: "Medicine", zone: "mouth", mode: "drop", msg: "🥄 <b>Drag the Medicine Spoon</b> to Teddy's mouth — open wide!" }
     ];
@@ -1219,7 +1433,7 @@
       spawnCelebration(zc.x, zc.y);
       sfxChime();
       if(st.k === "ice") fever.setAttribute("opacity", "0");
-      if(st.k === "sponge") scrape.setAttribute("opacity", "0.25");
+      if(st.k === "xray"){ var xw = document.getElementById("xrayWindow"); if(xw){ xw.classList.add("show"); setTimeout(function(){ xw.classList.remove("show"); }, 1400); } }
       if(st.k === "bandaid"){ scrape.setAttribute("opacity", "0"); bandaid.setAttribute("opacity", "1"); }
       if(st.k === "spoon"){
         mouth.setAttribute("d", "M114 124 Q130 150 146 124 Q130 114 114 124");
@@ -1231,7 +1445,7 @@
         ring.style.display = "none";
         Array.prototype.forEach.call(tray.children, function(b){ b.classList.add("done"); b.classList.remove("active"); });
         teddy.classList.add("jump");
-        finishMissionWave("🚑 <b>TEDDY BEAR IS ALL BETTER!</b> Fever gone, heart strong, knee fixed and medicine taken — he gives you a big hug!", "word-teddy-bear");
+        finishMissionWave("🚑 <b>" + pat.name.toUpperCase() + " IS ALL BETTER!</b> Fever gone, heart strong, X-Ray checked, knee bandaged &amp; medicine taken!", pat.clip);
       } else {
         refreshUI();
       }
@@ -1339,6 +1553,11 @@
       };
     }
 
+    var officer = document.createElement("div");
+    officer.id = "crossingOfficer";
+    officer.innerHTML = '<svg viewBox="0 0 100 120"><g stroke="#141e30" stroke-width="5" stroke-linejoin="round"><rect x="28" y="64" width="44" height="48" rx="14" fill="#1d4ed8"/><circle cx="50" cy="40" r="24" fill="#fde68a"/><path d="M24 28 Q50 10 76 28 Z" fill="#1e3a8a"/><rect x="22" y="24" width="56" height="9" rx="4" fill="#1e293b"/><circle cx="42" cy="39" r="4" fill="#141e30"/><circle cx="58" cy="39" r="4" fill="#141e30"/><path d="M43 49 Q50 55 57 49" fill="none"/><polygon points="50,74 53,80 59,81 55,85 56,91 50,88 44,91 45,85 41,81 47,80" fill="#fde047" stroke-width="2.5"/><g transform="translate(82,42)"><line x1="0" y1="14" x2="0" y2="54" stroke="#78350f" stroke-width="6"/><polygon points="-14,-8 14,-8 22,6 14,20 -14,20 -22,6" fill="#ef4444"/><text x="0" y="10" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="800" font-size="11" fill="#fff" stroke="none">STOP</text></g></g></svg>';
+    rescueLayer.appendChild(officer);
+
     var stopBtn = document.createElement("button");
     stopBtn.type = "button"; stopBtn.id = "stopBtn"; stopBtn.className = "choice-btn";
     stopBtn.innerHTML = '<span class="stop-hand">✋</span><span class="stop-word">STOP</span><span class="stop-bar"><i id="stopFill"></i></span>';
@@ -1402,7 +1621,17 @@
       var col = COLORS[Math.floor(Math.random() * COLORS.length)];
       var el = document.createElement("div");
       el.className = "traffic-car";
-      el.innerHTML = '<svg viewBox="0 0 150 76"><g stroke="#141e30" stroke-width="5" stroke-linejoin="round"><path d="M10 44 L26 18 L96 18 L120 40 L142 44 L142 60 L10 60 Z" fill="' + col + '"/><path d="M32 22 L92 22 L110 40 L28 40 Z" fill="#bae6fd"/><circle cx="38" cy="62" r="13" fill="#1e293b"/><circle cx="110" cy="62" r="13" fill="#1e293b"/><circle cx="38" cy="62" r="5" fill="#e2e8f0" stroke="none"/><circle cx="110" cy="62" r="5" fill="#e2e8f0" stroke="none"/></g></svg>';
+      var vtype = Math.floor(Math.random() * 3);
+      if(vtype === 0){
+        /* Ice Cream Truck */
+        el.innerHTML = '<svg viewBox="0 0 150 82"><g stroke="#141e30" stroke-width="4.5" stroke-linejoin="round"><rect x="12" y="24" width="124" height="42" rx="10" fill="#fce7f3"/><rect x="12" y="48" width="124" height="16" fill="#38bdf8"/><rect x="86" y="30" width="40" height="20" rx="5" fill="#bae6fd"/><circle cx="56" cy="14" r="11" fill="#ff85a1"/><polygon points="48,20 64,20 56,34" fill="#fbbf24"/><circle cx="38" cy="68" r="12" fill="#1e293b"/><circle cx="110" cy="68" r="12" fill="#1e293b"/></g></svg>';
+      } else if(vtype === 1){
+        /* Yellow Dump Truck */
+        el.innerHTML = '<svg viewBox="0 0 150 82"><g stroke="#141e30" stroke-width="4.5" stroke-linejoin="round"><polygon points="10,24 88,24 80,60 14,60" fill="#facc15"/><rect x="88" y="34" width="48" height="30" rx="8" fill="#fb923c"/><rect x="104" y="40" width="24" height="14" rx="4" fill="#bae6fd"/><circle cx="38" cy="66" r="13" fill="#1e293b"/><circle cx="112" cy="66" r="13" fill="#1e293b"/></g></svg>';
+      } else {
+        /* Sports Car */
+        el.innerHTML = '<svg viewBox="0 0 150 76"><g stroke="#141e30" stroke-width="5" stroke-linejoin="round"><path d="M10 44 L26 18 L96 18 L120 40 L142 44 L142 60 L10 60 Z" fill="' + col + '"/><path d="M32 22 L92 22 L110 40 L28 40 Z" fill="#bae6fd"/><circle cx="38" cy="62" r="13" fill="#1e293b"/><circle cx="110" cy="62" r="13" fill="#1e293b"/><circle cx="38" cy="62" r="5" fill="#e2e8f0" stroke="none"/><circle cx="110" cy="62" r="5" fill="#e2e8f0" stroke="none"/></g></svg>';
+      }
       if(dir === -1) el.firstChild.style.transform = "scaleX(-1)";
       rescueLayer.insertBefore(el, rescueLayer.firstChild);
       cars.push({ el: el, x: x, y: y, dir: dir, vx: dir * 60, max: 190 + Math.random() * 110 });
@@ -1413,6 +1642,7 @@
       if(stopLeft > 0) stopLeft = Math.max(0, stopLeft - dt);
       stopFill.style.width = (stopLeft / STOP_TIME * 100) + "%";
       stopBtn.classList.toggle("on", stopLeft > 0);
+      officer.classList.toggle("stopping", stopLeft > 0);
       if(polRed){ polRed.setAttribute("opacity", stopLeft > 0 ? "1" : "0.3"); polGreen.setAttribute("opacity", stopLeft > 0 ? "0.3" : "1"); }
 
       spawnT -= dt;
@@ -1490,6 +1720,16 @@
      a letter from Hoot and pick up the kid holding THAT letter. Then drive to
      school and drop everybody off!
      ========================================================================= */
+  var busTopic = "abc";
+  var BUS_NUMS = ["1","2","3","4","5","6","7","8","9","10"];
+  var BUS_COLS = [{k:"red",h:"#ef4444",n:"Red"},{k:"blue",h:"#3b82f6",n:"Blue"},{k:"yellow",h:"#facc15",n:"Yellow"},{k:"green",h:"#22c55e",n:"Green"},{k:"orange",h:"#fb923c",n:"Orange"},{k:"purple",h:"#a855f7",n:"Purple"},{k:"pink",h:"#f472b6",n:"Pink"}];
+  document.querySelectorAll(".bmode-btn").forEach(function(b){
+    b.addEventListener("click", function(){
+      busTopic = b.getAttribute("data-bm");
+      document.querySelectorAll(".bmode-btn").forEach(function(x){ x.classList.toggle("on", x === b); });
+      if(currentRole === "teacher") selectRole("teacher", false);
+    });
+  });
   function setupTeacherMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
@@ -1541,45 +1781,60 @@
       sign.style.top = roadY() + "px";
     }
 
+    var targetItem = null;
+    function busItemClip(it){
+      if(busTopic === "num") return "name-number-" + it.k;
+      if(busTopic === "col") return "name-color-" + it.k;
+      return "name-letter-" + it.k;
+    }
     function startStop(){
-      /* bus is parked at the stop — show 3 kids, each holding a letter */
+      /* bus is parked at the stop — swing folding doors OPEN & show 3 kids holding Letters, Numbers, or Colors! */
       phase = "pick";
-      var letters = [];
-      while(letters.length < 3){
-        var l = LETTERS[Math.floor(Math.random() * LETTERS.length)];
-        if(letters.indexOf(l) < 0 && usedLetters.indexOf(l) < 0) letters.push(l);
+      var door = document.getElementById("busDoor");
+      if(door) door.classList.add("open");
+      var pool = busTopic === "num"
+        ? BUS_NUMS.map(function(n){ return { k: n, label: n, html: n }; })
+        : busTopic === "col"
+          ? BUS_COLS.map(function(c){ return { k: c.k, label: c.n, html: '<span class="color-dot" style="background:' + c.h + '"></span>' }; })
+          : LETTERS.map(function(l){ return { k: l, label: l.toUpperCase(), html: l.toUpperCase() }; });
+      var picks = [];
+      while(picks.length < 3){
+        var cand = pool[Math.floor(Math.random() * pool.length)];
+        if(!picks.some(function(x){ return x.k === cand.k; }) && usedLetters.indexOf(cand.k) < 0) picks.push(cand);
       }
-      targetLetter = letters[Math.floor(Math.random() * 3)];
-      usedLetters.push(targetLetter);
+      targetItem = picks[Math.floor(Math.random() * 3)];
+      targetLetter = targetItem.k;
+      usedLetters.push(targetItem.k);
       var order = KINDS.slice().sort(function(){ return Math.random() - 0.5; });
       var r = vr();
       kids = [];
-      letters.forEach(function(l, i){
+      picks.forEach(function(it, i){
         var kind = order[i];
         var b = document.createElement("button");
         b.type = "button"; b.className = "bus-kid choice-btn";
-        b.innerHTML = FRIEND_SVGS[kind] + '<span class="letter-badge">' + l.toUpperCase() + '</span>';
+        b.innerHTML = FRIEND_SVGS[kind] + '<span class="letter-badge">' + it.html + '</span>';
         b.style.left = (W * (0.56 + i * 0.17)) + "px";
         b.style.top = (r.top + r.height * 0.44) + "px";
         b.style.animationDelay = (-i * 0.3) + "s";
-        b.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); pickKid(b, l, kind); });
+        b.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); pickKid(b, it, kind); });
         rescueLayer.appendChild(b);
         kids.push(b);
       });
-      bubble.innerHTML = "🎒 <b>Bus Stop " + (stopNo + 1) + "!</b> Listen to Hoot — pick up the kid holding the letter <b>" + targetLetter.toUpperCase() + "</b>!";
-      playVoice(["name-letter-" + targetLetter]);
-      missionAction = function(){ playVoice(["name-letter-" + targetLetter]); bubble.innerHTML = "👂 Find the kid holding the letter <b>" + targetLetter.toUpperCase() + "</b>!"; };
+      var wordKind = busTopic === "num" ? "number" : busTopic === "col" ? "color" : "letter";
+      bubble.innerHTML = "🎒 <b>Bus Stop " + (stopNo + 1) + "!</b> Pick up the kid holding the " + wordKind + " <b>" + targetItem.label + "</b>!";
+      playVoice([busItemClip(targetItem)]);
+      missionAction = function(){ playVoice([busItemClip(targetItem)]); bubble.innerHTML = "👂 Find the kid holding <b>" + targetItem.label + "</b>!"; };
       driveBtn.style.display = "none";
       hoseBtn.textContent = "👂 Say it again";
     }
 
-    function pickKid(b, l, kind){
+    function pickKid(b, it, kind){
       if(phase !== "pick") return;
-      if(l !== targetLetter){
+      if(it.k !== targetItem.k){
         b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
         sfxHonk();
-        bubble.innerHTML = "🙂 That kid has the letter <b>" + l.toUpperCase() + "</b>. Hoot asked for <b>" + targetLetter.toUpperCase() + "</b> — try again!";
-        playVoice(["name-letter-" + l, "name-letter-" + targetLetter]);
+        bubble.innerHTML = "🙂 That kid has <b>" + it.label + "</b>. Hoot asked for <b>" + targetItem.label + "</b> — try again!";
+        playVoice([busItemClip(it), busItemClip(targetItem)]);
         return;
       }
       phase = "boarding";
@@ -1606,7 +1861,7 @@
         if(boarded >= 3){
           bubble.innerHTML = "🏫 <b>Everyone is aboard!</b> Press <b>GO</b> and drive to school!";
         } else {
-          bubble.innerHTML = "✅ <b>Letter " + targetLetter.toUpperCase() + " is on the bus!</b> Press <b>GO</b> to drive to the next stop!";
+          bubble.innerHTML = "✅ <b>" + targetItem.label + " is on the bus!</b> Press <b>GO</b> to drive to the next stop!";
         }
         phase = "waitGo";
         setBtn("go"); driveBtn.style.display = "flex";
@@ -1616,6 +1871,7 @@
 
     function goDrive(){
       if(phase !== "waitGo") return;
+      var door = document.getElementById("busDoor"); if(door) door.classList.remove("open");
       sfxEngine();
       v = 40;
       phase = "drive";
@@ -1693,6 +1949,10 @@
         if(laneMarks) laneMarks.setAttribute("transform", "translate(" + (-(offset / Math.max(0.5, svgToScreen(0, 0).s)) % 220) + ",0)");
         var bob = Math.sin(offset * 0.05) * 2.2;
         vehicleStage.style.transform = "translateY(" + bob + "px)";
+        var deg = (offset * 1.4) % 360;
+        var w1 = document.getElementById("busW1"), w2 = document.getElementById("busW2");
+        if(w1) w1.setAttribute("transform", "translate(96,186) rotate(" + deg + ")");
+        if(w2) w2.setAttribute("transform", "translate(308,186) rotate(" + deg + ")");
       }
       if(phase === "drive" && signX < -200) makeSign(boarded >= 3);
     };
@@ -1718,6 +1978,7 @@
   function selectRole(role, speakIntro){
     currentRole = ROLES[role] ? role : "firefighter";
     var cfg = ROLES[currentRole];
+    hideDispatch();
     endMission();
     smokePuffs = []; flameSparks = []; hoseDrops = []; popSparks = [];
     waveDone = false;
@@ -1727,6 +1988,7 @@
     vehicleStage.classList.remove("curb-car");
     vehicleStage.style.transform = "";
     document.getElementById("tankWrap").style.display = currentRole === "firefighter" ? "flex" : "none";
+    document.getElementById("busModeRow").style.display = currentRole === "teacher" ? "flex" : "none";
     hydrantBtn.style.display = currentRole === "firefighter" ? "flex" : "none";
     bayBtns.forEach(function(b){
       b.classList.toggle("active", b.getAttribute("data-role") === currentRole);
@@ -2001,17 +2263,54 @@
         ctx.restore();
       }
 
-      /* Live Stretching Yellow Ladder while dragging Ladder to Kitten! */
-      if(ladderPhase && dragState && !waveDone){
+      /* Alternating Flashing Red/Blue Siren Light Cones from Fire Truck Roof! */
+      (function(){
+        var vr = vehicleStage.getBoundingClientRect();
+        if(vr.width > 0){
+          var lx = vr.left + vr.width * 0.72, ly = vr.top + vr.height * 0.28;
+          var redPhase = (Math.floor(tick / 12) % 2) === 0;
+          var ang = Math.sin(tick * 0.08) * 0.35;
+          ctx.save();
+          ctx.translate(lx, ly);
+          ctx.rotate(ang);
+          var g = ctx.createRadialGradient(0, 0, 8, 0, 0, 120);
+          g.addColorStop(0, redPhase ? "rgba(239,68,68,0.62)" : "rgba(56,189,248,0.62)");
+          g.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(0, 0, 120, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }
+      })();
+
+      /* Hydrant-to-Fire-Truck Animated Blue Supply Pipe when Refilling! */
+      if(refilling){
+        var hr = hydrantBtn.getBoundingClientRect();
+        var vr2 = vehicleStage.getBoundingClientRect();
+        var hx = hr.left + hr.width * 0.45, hy = hr.top + hr.height * 0.52;
+        var tx2 = vr2.left + vr2.width * 0.82, ty2 = vr2.top + vr2.height * 0.65;
+        ctx.save();
+        ctx.strokeStyle = "#141e30"; ctx.lineWidth = 18; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(hx, hy); ctx.quadraticCurveTo((hx+tx2)/2, Math.max(hy,ty2)+32, tx2, ty2); ctx.stroke();
+        ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 11;
+        ctx.beginPath(); ctx.moveTo(hx, hy); ctx.quadraticCurveTo((hx+tx2)/2, Math.max(hy,ty2)+32, tx2, ty2); ctx.stroke();
+        ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 5; ctx.setLineDash([12, 14]); ctx.lineDashOffset = tick * 3;
+        ctx.beginPath(); ctx.moveTo(hx, hy); ctx.quadraticCurveTo((hx+tx2)/2, Math.max(hy,ty2)+32, tx2, ty2); ctx.stroke();
+        ctx.restore();
+      }
+
+      /* Live Stretching Yellow Ladder with Rungs while dragging or sliding Kitten down! */
+      var ladEnd = (ladderPhase && dragState && !waveDone) ? { x: dragState.x, y: dragState.y }
+                 : ladderSlide ? { x: ladderSlide.sx, y: ladderSlide.sy }
+                 : null;
+      if(ladEnd){
         var origD = getNozzleOrigin();
         ctx.save();
-        ctx.strokeStyle = "#141e30";
-        ctx.lineWidth = 16;
-        ctx.lineCap = "round";
-        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(dragState.x, dragState.y); ctx.stroke();
-        ctx.strokeStyle = "#fde047";
-        ctx.lineWidth = 10;
-        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(dragState.x, dragState.y); ctx.stroke();
+        ctx.strokeStyle = "#141e30"; ctx.lineWidth = 22; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(ladEnd.x, ladEnd.y); ctx.stroke();
+        ctx.strokeStyle = "#fde047"; ctx.lineWidth = 14;
+        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(ladEnd.x, ladEnd.y); ctx.stroke();
+        ctx.strokeStyle = "#141e30"; ctx.lineWidth = 5; ctx.setLineDash([4, 18]);
+        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(ladEnd.x, ladEnd.y); ctx.stroke();
         ctx.restore();
       }
 
@@ -2030,6 +2329,19 @@
         ctx.lineWidth = 10;
         ctx.beginPath(); ctx.moveTo(origL.x, origL.y); ctx.lineTo(ex, ey); ctx.stroke();
         ctx.restore();
+      }
+    }
+
+    if(currentRole === "police"){
+      var pvr = vehicleStage.getBoundingClientRect();
+      if(pvr.width > 0){
+        var plx = pvr.left + pvr.width * 0.44, ply = pvr.top + pvr.height * 0.2;
+        var pRed = (Math.floor(tick / 9) % 2) === 0;
+        var pg = ctx.createRadialGradient(plx, ply, 6, plx, ply, 115);
+        pg.addColorStop(0, pRed ? "rgba(239,68,68,0.65)" : "rgba(56,189,248,0.65)");
+        pg.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = pg;
+        ctx.beginPath(); ctx.arc(plx, ply, 115, 0, Math.PI * 2); ctx.fill();
       }
     }
 
@@ -2090,6 +2402,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e99"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e100"></script>
 </body>
 </html>
