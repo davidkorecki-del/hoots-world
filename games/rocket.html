@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="rocket";</script>
-<script src="js/hoot-game-head.js?v=llprev3e104"></script>
+<script src="js/hoot-game-head.js?v=llprev3e105"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>3D Rocket Count-Up</title>
@@ -26,7 +26,7 @@
     padding:max(10px, env(safe-area-inset-top)) 14px 0 64px;
     pointer-events:none;
   }
-  .hud-left{ display:flex; align-items:center; gap:10px; pointer-events:auto; max-width:min(68vw, 600px); }
+  .hud-left{ display:flex; align-items:center; gap:10px; pointer-events:auto; max-width:min(64vw, 560px); }
   #hootBtn{
     width:68px; height:68px; flex:0 0 68px; border-radius:50%;
     border:4px solid #fff;
@@ -41,23 +41,24 @@
     background:rgba(255,254,248,.96); color:var(--ink);
     border:4px solid var(--outline); border-radius:22px;
     padding:10px 16px; font-family:"Fredoka",sans-serif; font-weight:700;
-    font-size:clamp(14px, 2.2vw, 18.5px); line-height:1.22;
+    font-size:clamp(14px, 2.1vw, 18px); line-height:1.22;
     box-shadow:0 6px 0 var(--outline), 0 12px 26px rgba(0,0,0,.42);
   }
   #promptBubble b{ color:#e11d48; }
 
   .hud-right{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
   #passportBar{
-    display:flex; align-items:center; gap:6px;
-    background:rgba(15,23,42,.86); border:3.5px solid #fde047;
-    border-radius:999px; padding:4px 10px; box-shadow:0 5px 0 var(--outline);
+    display:flex; align-items:center; gap:5px;
+    background:rgba(15,23,42,.88); border:3.5px solid #fde047;
+    border-radius:999px; padding:4px 9px; box-shadow:0 5px 0 var(--outline);
   }
   .pbadge{
-    width:38px; height:38px; border-radius:50%;
+    width:36px; height:36px; border-radius:50%;
     border:3px solid rgba(255,255,255,.35); background:rgba(255,255,255,.12);
-    display:grid; place-items:center; font-size:20px; cursor:pointer; padding:0;
-    filter:grayscale(1) opacity(.4); transition:transform .35s cubic-bezier(.34,1.8,.5,1), filter .3s;
+    display:grid; place-items:center; font-size:19px; cursor:pointer; padding:0;
+    filter:grayscale(1) opacity(.42); transition:transform .35s cubic-bezier(.34,1.8,.5,1), filter .3s;
   }
+  .pbadge.active-dest{ border-color:#38bdf8; box-shadow:0 0 12px rgba(56,189,248,.9); }
   .pbadge.earned{
     filter:none; border-color:#131d36;
     background:radial-gradient(circle at 32% 28%, #fef08a, #facc15 65%, #d97706 100%);
@@ -83,7 +84,7 @@
 
   /* Giant Center Countdown Banner */
   #countdownBanner{
-    position:absolute; left:50%; top:34%; transform:translate(-50%, -50%) scale(.4);
+    position:absolute; left:50%; top:33%; transform:translate(-50%, -50%) scale(.4);
     z-index:15; pointer-events:none; opacity:0;
     font-family:"Fredoka",sans-serif; font-weight:800;
     font-size:clamp(76px, 16vw, 140px); color:#fde047;
@@ -99,7 +100,7 @@
     z-index:14; pointer-events:none;
     background:rgba(15,23,42,.86); border:3.5px solid #38bdf8; border-radius:999px;
     padding:8px 22px; color:#fff; font-family:"Fredoka",sans-serif; font-weight:800;
-    font-size:clamp(15px, 2.3vw, 20px); box-shadow:0 6px 22px rgba(0,0,0,.5);
+    font-size:clamp(14.5px, 2.2vw, 19px); box-shadow:0 6px 22px rgba(0,0,0,.5);
     white-space:nowrap;
   }
 
@@ -171,37 +172,39 @@
   }
   @keyframes fingerHop{ from{ transform:translateY(0); } to{ transform:translateY(-8px) scale(1.15); } }
 
-  /* Bottom Space Command Console */
+  /* Bottom Space Upgrade Lab & Command Console */
   #commandBar{
     position:absolute; left:50%; bottom:max(10px, env(safe-area-inset-bottom));
     transform:translateX(-50%); z-index:11;
-    width:min(96vw, 760px);
-    background:linear-gradient(180deg, rgba(24,35,76,.92) 0%, rgba(12,18,44,.95) 100%);
+    width:min(97vw, 880px);
+    background:linear-gradient(180deg, rgba(24,35,76,.93) 0%, rgba(12,18,44,.96) 100%);
     backdrop-filter:blur(10px);
     border:4px solid #38bdf8; border-radius:26px;
-    padding:8px 14px;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 12px;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
     box-shadow:0 8px 0 #090d24, 0 14px 32px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.28);
   }
-  .paint-row{ display:flex; align-items:center; gap:8px; }
-  .paint-lbl{ font-family:"Fredoka",sans-serif; font-weight:800; font-size:14px; color:#bae6fd; white-space:nowrap; }
+  .paint-row{ display:flex; align-items:center; gap:7px; }
+  .paint-lbl{ font-family:"Fredoka",sans-serif; font-weight:800; font-size:13.5px; color:#bae6fd; white-space:nowrap; }
   .paint-dot{
-    width:44px; height:44px; border-radius:50%;
-    border:4px solid #fff; cursor:pointer; padding:0;
+    width:40px; height:40px; border-radius:50%;
+    border:3.5px solid #fff; cursor:pointer; padding:0;
     box-shadow:0 4px 0 #090d24, inset 0 4px 6px rgba(255,255,255,.48);
     transition:transform .16s cubic-bezier(.34,1.8,.5,1);
   }
   .paint-dot:active{ transform:scale(.88); }
   .paint-dot.on{ transform:scale(1.16); border-color:#fde047; box-shadow:0 0 0 3px #fde047, 0 4px 0 #090d24; }
-  .console-right{ display:flex; align-items:center; gap:8px; }
+  .console-right{ display:flex; align-items:center; gap:7px; flex-wrap:nowrap; }
   .ctrl-pill{
     border:3.5px solid #131d36; border-radius:999px;
     background:linear-gradient(180deg, #fde047 0%, #f59e0b 100%);
-    color:#131d36; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px;
-    padding:8px 14px; cursor:pointer; white-space:nowrap;
+    color:#131d36; font-family:"Fredoka",sans-serif; font-weight:800; font-size:14.5px;
+    padding:7px 12px; cursor:pointer; white-space:nowrap;
     box-shadow:0 4px 0 #131d36;
   }
   .ctrl-pill:active{ transform:translateY(3px); box-shadow:0 1px 0 #131d36; }
+  #trailBtn{ background:linear-gradient(180deg, #f9a8d4 0%, #ec4899 100%); color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.3); }
+  #hatBtn{ background:linear-gradient(180deg, #c4b5fd 0%, #8b5cf6 100%); color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.3); }
   #rangeBtn{ background:linear-gradient(180deg, #e0f2fe 0%, #7dd3fc 100%); }
 
   /* Win Overlay */
@@ -226,10 +229,11 @@
     padding:12px 32px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
   }
 
-  @media (max-width: 680px){
+  @media (max-width: 740px){
     #passportBar{ display:none; }
     .paint-lbl{ display:none; }
-    .paint-dot{ width:38px; height:38px; }
+    .paint-dot{ width:34px; height:34px; }
+    .ctrl-pill{ font-size:13px; padding:6px 9px; }
     #actionStage{ bottom:86px; }
   }
 </style>
@@ -244,13 +248,14 @@
       <button id="hootBtn" type="button" aria-label="Tap Hoot to hear again">
         <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <div id="promptBubble" aria-live="polite">🚀 <b>3D ROCKET!</b> Tap the glowing <b>Golden Stars</b> to fuel Hoot's rocket ship!</div>
+      <div id="promptBubble" aria-live="polite">🚀 <b>3D ROCKET!</b> Tap or drag the smiling <b>Golden Stars</b> to fuel Hoot's rocket!</div>
     </div>
     <div class="hud-right">
       <div id="passportBar" aria-label="Visited planets">
-        <button type="button" class="pbadge" data-pl="0" title="Cheese Moon">🌕</button>
+        <button type="button" class="pbadge active-dest" data-pl="0" title="Cheese Moon">🌕</button>
         <button type="button" class="pbadge" data-pl="1" title="Rainbow Saturn">🪐</button>
         <button type="button" class="pbadge" data-pl="2" title="Candy Star">🍬</button>
+        <button type="button" class="pbadge" data-pl="3" title="Rainbow Volcano World">🌋</button>
       </div>
       <div id="starPill">⭐ <span id="starCount">0</span></div>
       <button id="doneBtn" type="button">🏆 Done</button>
@@ -261,7 +266,7 @@
   <div id="countdownBanner" aria-live="assertive">3</div>
 
   <!-- Interactive Space Flight Banner -->
-  <div id="flightBanner" hidden>✨ Slide your finger left or right through the Rainbow Hoops! ✨</div>
+  <div id="flightBanner" hidden>✨ Slide through Rainbow Hoops &amp; tap Space Crystals + UFOs! ✨</div>
 
   <!-- Phase Action Controls (Number Pods / BLAST OFF / Next Planet) -->
   <div id="actionStage">
@@ -270,8 +275,8 @@
     <button id="nextPlanetBtn" type="button" hidden><span>🚀 Next Planet!</span><span class="tap-finger" aria-hidden="true">👆</span></button>
   </div>
 
-  <!-- Bottom Space Command Console -->
-  <div id="commandBar" role="group" aria-label="Rocket paint and controls">
+  <!-- Bottom Space Upgrade Lab & Command Console -->
+  <div id="commandBar" role="group" aria-label="Rocket customizer and controls">
     <div class="paint-row">
       <span class="paint-lbl">🎨 Paint:</span>
       <button type="button" class="paint-dot on" data-col="red" style="background:linear-gradient(180deg,#ff6b6b,#dc2626)" aria-label="Red rocket"></button>
@@ -281,6 +286,8 @@
       <button type="button" class="paint-dot" data-col="green" style="background:linear-gradient(180deg,#4ade80,#16a34a)" aria-label="Green rocket"></button>
     </div>
     <div class="console-right">
+      <button type="button" id="trailBtn" class="ctrl-pill">🌈 Rainbow</button>
+      <button type="button" id="hatBtn" class="ctrl-pill">👑 Crown</button>
       <button type="button" id="rangeBtn" class="ctrl-pill">⭐ 1–5</button>
       <button type="button" id="boostBtn" class="ctrl-pill">🔥 Boost!</button>
     </div>
@@ -289,9 +296,9 @@
   <!-- Win Overlay -->
   <div id="winOverlay" hidden>
     <div class="win-card">
-      <div class="win-trophy" aria-hidden="true">🚀🪐🌕🍬</div>
-      <h2>Space Captain!</h2>
-      <p>You fueled Hoot's rocket, flew through the Rainbow Space Hoops, and danced with our Space Friends!</p>
+      <div class="win-trophy" aria-hidden="true">🚀🪐🌕🍬🌋</div>
+      <h2>Super Space Captain!</h2>
+      <p>You customized Hoot's rocket, zoomed through Rainbow Hoops &amp; UFOs, cracked open Space Treasure, and explored 4 magical worlds!</p>
       <button id="againBtn" class="big-play" type="button">↻ Keep Flying</button>
     </div>
   </div>
@@ -408,7 +415,7 @@
       var src = c.createBufferSource(); src.buffer = buf;
       var flt = c.createBiquadFilter(); flt.type = "lowpass";
       flt.frequency.setValueAtTime(220, t);
-      flt.frequency.linearRampToValueAtTime(720, t + dur * 0.38);
+      flt.frequency.linearRampToValueAtTime(760, t + dur * 0.38);
       flt.frequency.exponentialRampToValueAtTime(140, t + dur);
       var g = c.createGain();
       g.gain.setValueAtTime(0.01, t);
@@ -424,7 +431,7 @@
       var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
       o.type = "sine";
       o.frequency.setValueAtTime(260, t);
-      o.frequency.exponentialRampToValueAtTime(720, t + 0.14);
+      o.frequency.exponentialRampToValueAtTime(740, t + 0.14);
       o.frequency.exponentialRampToValueAtTime(440, t + 0.26);
       g.gain.setValueAtTime(0.14, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
@@ -432,17 +439,46 @@
       o.start(t); o.stop(t + 0.3);
     }catch(e){}
   }
+  function sfxSonar(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [880, 1320].forEach(function(f, i){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.12, t + i * 0.14);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.48 + i * 0.14);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + i * 0.14); o.stop(t + 0.5 + i * 0.14);
+      });
+    }catch(e){}
+  }
+  function sfxUfoChirp(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(620, t);
+      o.frequency.linearRampToValueAtTime(1280, t + 0.12);
+      o.frequency.linearRampToValueAtTime(740, t + 0.24);
+      o.frequency.linearRampToValueAtTime(1480, t + 0.36);
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.44);
+    }catch(e){}
+  }
   function sfxRingBoost(n){
     try{
       var c = ac(); if(!c) return;
       var t = c.currentTime, base = PENTA[(n || 0) % PENTA.length];
-      [base, base * 1.25, base * 1.5].forEach(function(freq, i){
+      [base, base * 1.25, base * 1.5, base * 2].forEach(function(freq, i){
         var o = c.createOscillator(), g = c.createGain();
         o.type = "sine"; o.frequency.value = freq;
-        g.gain.setValueAtTime(0.11, t + i * 0.05);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35 + i * 0.05);
+        g.gain.setValueAtTime(0.11, t + i * 0.045);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.38 + i * 0.045);
         o.connect(g); g.connect(c.destination);
-        o.start(t + i * 0.05); o.stop(t + 0.4 + i * 0.05);
+        o.start(t + i * 0.045); o.stop(t + 0.42 + i * 0.045);
       });
     }catch(e){}
   }
@@ -450,21 +486,21 @@
     try{
       var c = ac(); if(!c) return;
       var t = c.currentTime;
-      [660, 880, 1175, 1397].forEach(function(f, i){
+      [587, 784, 987, 1175, 1568].forEach(function(f, i){
         var o = c.createOscillator(), g = c.createGain();
         o.type = "triangle"; o.frequency.value = f;
         g.gain.setValueAtTime(0.09, t + i * 0.045);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3 + i * 0.045);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.34 + i * 0.045);
         o.connect(g); g.connect(c.destination);
-        o.start(t + i * 0.045); o.stop(t + 0.33 + i * 0.045);
+        o.start(t + i * 0.045); o.stop(t + 0.38 + i * 0.045);
       });
     }catch(e){}
   }
 
   /* =========================================================================
-     3. PIXAR 3D STUDIO ASSET LOADER & SELECTIVE METALLIC ROCKET REPAINT
+     3. PIXAR 3D STUDIO ASSETS & SELECTIVE METALLIC PAINT SHOP
      ========================================================================= */
-  var VER = "?v=llprev3e104";
+  var VER = "?v=llprev3e105";
   var ART = {};
   var ASSET_LIST = {
     launchpad: "assets/rocket3d/bg_launchpad.jpg",
@@ -472,6 +508,7 @@
     moon:      "assets/rocket3d/bg_moon.jpg",
     saturn:    "assets/rocket3d/bg_saturn.jpg",
     candy:     "assets/rocket3d/bg_candy.jpg",
+    dino:      "assets/rocket3d/bg_dino.jpg",
     rocket:    "assets/rocket3d/sprite_rocket.png",
     star:      "assets/rocket3d/sprite_star.png",
     alien:     "assets/rocket3d/sprite_alien.png",
@@ -479,14 +516,27 @@
     puppy:     "assets/rocket3d/sprite_puppy.png"
   };
 
-  /* Selective metallic nose & fin paint shop (keeps fluffy 3D Hoot Owl 100% natural warm brown!) */
   var ROCKET_PAINTS = {
-    red:    { clip: "name-color-red",    nose: null,              fin: null,              glow: "#ef4444" },
-    blue:   { clip: "name-color-blue",   nose: [37, 132, 245],    fin: [250, 204, 21],    glow: "#38bdf8" },
-    yellow: { clip: "name-color-yellow", nose: [248, 198, 22],    fin: [239, 68, 68],     glow: "#fde047" },
-    pink:   { clip: "name-color-pink",   nose: [244, 72, 168],    fin: [56, 189, 248],    glow: "#f472b6" },
-    green:  { clip: "name-color-green",  nose: [34, 197, 94],     fin: [245, 158, 11],    glow: "#4ade80" }
+    red:    { clip: "name-color-red",    nose: null,           fin: null,           glow: "#ef4444" },
+    blue:   { clip: "name-color-blue",   nose: [37, 132, 245], fin: [250, 204, 21], glow: "#38bdf8" },
+    yellow: { clip: "name-color-yellow", nose: [248, 198, 22], fin: [239, 68, 68],  glow: "#fde047" },
+    pink:   { clip: "name-color-pink",   nose: [244, 72, 168], fin: [56, 189, 248], glow: "#f472b6" },
+    green:  { clip: "name-color-green",  nose: [34, 197, 94],  fin: [245, 158, 11], glow: "#4ade80" }
   };
+  var TRAILS = [
+    { key: "rainbow", label: "🌈 Rainbow" },
+    { key: "fire",    label: "🔥 Fire" },
+    { key: "stars",   label: "⭐ Galaxy" },
+    { key: "bubbles", label: "🫧 Bubbles" }
+  ];
+  var HATS = [
+    { key: "crown",   label: "👑 Crown" },
+    { key: "unicorn", label: "🦄 Unicorn" },
+    { key: "party",   label: "🎉 Party" },
+    { key: "none",    label: "🚀 Classic" }
+  ];
+  var trailIdx = 0, hatIdx = 0;
+
   var paintedRocketCache = {};
   var currentPaint = "red";
 
@@ -508,16 +558,13 @@
           var i = (y * w + x) * 4;
           if(d[i + 3] < 20) continue;
           var r = d[i], gr = d[i + 1], b = d[i + 2];
-          /* Upper nose cone glossy crimson band (y < 0.34*h) — completely outside Hoot's porthole! */
           if(y < h * 0.33 && r > 90 && (r - Math.max(gr, b)) > 36){
             var lum = Math.min(1.45, (r * 0.65 + gr * 0.25 + b * 0.1) / 145);
             var spec = Math.max(0, Math.min(gr, b) - 22) * 0.85;
             d[i]     = Math.min(255, Math.round(cfg.nose[0] * lum + spec));
             d[i + 1] = Math.min(255, Math.round(cfg.nose[1] * lum + spec));
             d[i + 2] = Math.min(255, Math.round(cfg.nose[2] * lum + spec));
-          }
-          /* Lower side swept cobalt-blue fins (y > 0.56*h) */
-          else if(y > h * 0.56 && b > 95 && (b - Math.max(r, gr)) > 32){
+          } else if(y > h * 0.56 && b > 95 && (b - Math.max(r, gr)) > 32){
             var lumF = Math.min(1.45, (b * 0.65 + gr * 0.25 + r * 0.1) / 155);
             var specF = Math.max(0, Math.min(r, gr) - 18) * 0.7;
             d[i]     = Math.min(255, Math.round(cfg.fin[0] * lumF + specF));
@@ -529,9 +576,7 @@
       g.putImageData(id, 0, 0);
       paintedRocketCache[colKey] = cv;
       return cv;
-    }catch(e){
-      return baseImg;
-    }
+    }catch(e){ return baseImg; }
   }
 
   Object.keys(ASSET_LIST).forEach(function(k){
@@ -568,7 +613,7 @@
   }
 
   /* =========================================================================
-     5. GAME STATE & PLANET WORLDS
+     5. GAME STATE, 4 WORLDS, INTERACTIVE TOYS, METEORS, UFO & TREASURE CHEST
      ========================================================================= */
   var bubble = document.getElementById("promptBubble");
   var podRow = document.getElementById("podRow");
@@ -580,50 +625,63 @@
   var winOverlay = document.getElementById("winOverlay");
 
   var PLANETS = [
-    { key: "moon",   name: "Cheese Moon",    emo: "🌕", badge: 0 },
-    { key: "saturn", name: "Rainbow Saturn", emo: "🪐", badge: 1 },
-    { key: "candy",  name: "Candy Star",     emo: "🍬", badge: 2 }
+    { key: "moon",   name: "Cheese Moon",           emo: "🌕", badge: 0 },
+    { key: "saturn", name: "Rainbow Saturn",        emo: "🪐", badge: 1 },
+    { key: "candy",  name: "Candy Star",            emo: "🍬", badge: 2 },
+    { key: "dino",   name: "Rainbow Volcano World", emo: "🌋", badge: 3 }
   ];
   var planetIdx = 0, earnedPlanets = {};
   var maxCount = 5;
-  var phase = "collect"; /* collect -> match -> ready -> countdown -> flight -> landing -> landed */
+  var phase = "collect";
   var targetCount = 3, collectedCount = 0, totalStarsEarned = 0;
 
-  var stars = [], flyingStars = [], particles = [], smoke = [], warpStars = [], hoops = [];
+  var stars = [], flyingStars = [], particles = [], smoke = [], bubblesFX = [], warpStars = [], hoops = [], meteors = [];
+  var shockwaves = [], shootingStars = [], floatTexts = [], rainbowTrailPts = [];
   var fuelDisplay = 0;
-  var rocket = { x: 0.5, y: 0.54, vx: 0, vy: 0, tilt: 0, bounce: 0, flame: 0, rumble: 0, targetX: 0.5 };
-  var plasmaBeamT = 0, phaseT = 0, spaceScroll = 0, boostFlashT = 0, fireworkT = 0, screenShake = 0;
+  var rocket = { x: 0.5, y: 0.52, tilt: 0, bounce: 0, flame: 0, rumble: 0, targetX: 0.5 };
+  var plasmaBeamT = 0, phaseT = 0, spaceScroll = 0, boostFlashT = 0, fireworkT = 0, screenShake = 0, hyperWarpT = 0;
   var sceneFade = { from: "launchpad", to: "launchpad", t: 1 };
-  var draggingFlight = false;
+  var draggingFlight = false, draggedStar = null;
 
-  /* 3 Adorable Pixar 3D Space Friends cheering cleanly on landed planets (zero overlap with Next Planet button!) */
+  /* Cruising Interactive Toy UFO (appears on Launchpad & in Space Flight!) */
+  var ufo = { x: -120, y: 0.22, dir: 1, spinT: 0, beamT: 0, active: true };
+
+  /* 3-Tap Exploding Cosmic Treasure Chest on Landed Planets! */
+  var chest = { xPct: 0.64, yPct: 0.70, taps: 0, opened: false, shakeT: 0, bounceT: 0 };
+
+  /* 3 Adorable Pixar 3D Space Friends cheering cleanly on every landed planet! */
   var buddies = [
-    { key: "bunny", xPct: 0.20, yPct: 0.64, phase: 0.0, flipT: 0, hopAmp: 18 },
-    { key: "puppy", xPct: 0.34, yPct: 0.67, phase: 3.6, flipT: 0, hopAmp: 16 },
-    { key: "alien", xPct: 0.78, yPct: 0.65, phase: 1.9, flipT: 0, hopAmp: 22 }
+    { key: "bunny", clip: "word-bunny", xPct: 0.19, yPct: 0.65, phase: 0.0, flipT: 0, hopAmp: 18 },
+    { key: "puppy", clip: "word-dog",   xPct: 0.33, yPct: 0.68, phase: 3.6, flipT: 0, hopAmp: 16 },
+    { key: "alien", clip: "word-star",  xPct: 0.81, yPct: 0.65, phase: 1.9, flipT: 0, hopAmp: 22 }
   ];
 
-  /* Ambient twinkling sky stardust + warp-speed stars */
   var ambientDust = [];
-  for(var ai = 0; ai < 55; ai++){
-    ambientDust.push({ x: Math.random(), y: Math.random() * 0.75, r: 1.2 + Math.random() * 2.4, ph: Math.random() * 6.28, sp: 1.5 + Math.random() * 2.5 });
+  for(var ai = 0; ai < 60; ai++){
+    ambientDust.push({ x: Math.random(), y: Math.random() * 0.78, r: 1.2 + Math.random() * 2.5, ph: Math.random() * 6.28, sp: 1.5 + Math.random() * 2.6 });
   }
-  for(var wi = 0; wi < 80; wi++){
-    warpStars.push({ x: Math.random() * W, y: Math.random() * H, len: 18 + Math.random() * 48, sp: 420 + Math.random() * 650, col: wi % 3 === 0 ? "#7dd3fc" : wi % 3 === 1 ? "#fde047" : "#ffffff" });
+  for(var wi = 0; wi < 85; wi++){
+    warpStars.push({ x: Math.random() * W, y: Math.random() * H, len: 18 + Math.random() * 52, sp: 440 + Math.random() * 680, col: wi % 3 === 0 ? "#7dd3fc" : wi % 3 === 1 ? "#fde047" : "#ffffff" });
   }
 
   function transitionBg(toKey){
     sceneFade = { from: sceneFade.to, to: toKey, t: 0 };
   }
+  function updatePassportUI(){
+    document.querySelectorAll(".pbadge").forEach(function(b){
+      var idx = parseInt(b.getAttribute("data-pl"), 10);
+      b.classList.toggle("active-dest", idx === (planetIdx % PLANETS.length));
+      b.classList.toggle("earned", !!earnedPlanets[idx]);
+    });
+  }
 
   function getFuelTubeRect(){
     var w = Math.max(46, Math.min(64, W * 0.055));
-    var h = Math.max(155, Math.min(225, H * 0.29));
-    var x = Math.min(W - w - 26, W * 0.67);
+    var h = Math.max(155, Math.min(220, H * 0.28));
+    var x = Math.min(W - w - 26, W * 0.665);
     var y = H * 0.41;
     return { x: x, y: y, w: w, h: h, cx: x + w / 2, topY: y + 10 };
   }
-
   function getRocketMetrics(){
     var rh = Math.min(H * 0.39, W * 0.36, 315);
     var rw = rh * (363 / 560);
@@ -634,37 +692,55 @@
     var pal = cols || ["#fde047", "#38bdf8", "#f472b6", "#4ade80", "#ffffff"];
     for(var i = 0; i < count; i++){
       var a = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.45;
-      var spd = (speed || 220) * (0.4 + Math.random() * 0.85);
+      var spd = (speed || 230) * (0.4 + Math.random() * 0.85);
       particles.push({
-        x: x, y: y,
-        vx: Math.cos(a) * spd, vy: Math.sin(a) * spd - 65,
-        r: 4 + Math.random() * 6,
-        col: pal[i % pal.length],
-        life: 1.0,
-        decay: 0.9 + Math.random() * 0.65,
-        star: i % 2 === 0
+        x: x, y: y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd - 65,
+        r: 4 + Math.random() * 6.5, col: pal[i % pal.length],
+        life: 1.0, decay: 0.88 + Math.random() * 0.6, star: i % 2 === 0
       });
     }
   }
   function spawnSmoke(x, y, count, spreadX, upVy){
+    var trKey = TRAILS[trailIdx].key;
+    if(trKey === "bubbles"){
+      for(var b = 0; b < count; b++){
+        bubblesFX.push({
+          x: x + (Math.random() - 0.5) * (spreadX || 48), y: y,
+          vx: (Math.random() - 0.5) * 90, vy: (upVy || 60) * 0.75 + Math.random() * 50,
+          r: 10 + Math.random() * 18, hue: Math.random() * 360, life: 1.0, decay: 0.75 + Math.random() * 0.4
+        });
+      }
+      return;
+    }
+    var cols = trKey === "rainbow" ? ["#ef4444","#fb923c","#fde047","#4ade80","#38bdf8","#c084fc"]
+             : trKey === "stars"   ? ["#fde047","#7dd3fc","#f9a8d4","#ffffff"]
+             : ["#fde68a","#ffffff","#fb923c"];
     for(var i = 0; i < count; i++){
       smoke.push({
-        x: x + (Math.random() - 0.5) * (spreadX || 44),
-        y: y + (Math.random() - 0.5) * 18,
-        vx: (Math.random() - 0.5) * 180,
-        vy: (upVy !== undefined ? upVy : 45) + Math.random() * 60,
-        r: 18 + Math.random() * 26,
-        grow: 42 + Math.random() * 28,
-        col: i % 3 === 0 ? "#fde68a" : "#ffffff",
-        life: 1.0,
-        decay: 0.85 + Math.random() * 0.55
+        x: x + (Math.random() - 0.5) * (spreadX || 44), y: y + (Math.random() - 0.5) * 18,
+        vx: (Math.random() - 0.5) * 170, vy: (upVy !== undefined ? upVy : 45) + Math.random() * 60,
+        r: 18 + Math.random() * 26, grow: 40 + Math.random() * 28,
+        col: cols[i % cols.length], life: 1.0, decay: 0.85 + Math.random() * 0.5
       });
     }
+    if(trKey === "stars") spawnSparkles(x, y, Math.min(4, count + 1), ["#fde047","#38bdf8","#ffffff"], 150);
+  }
+  function spawnShockwave(x, y, col, maxR){
+    shockwaves.push({ x: x, y: y, r: 12, maxR: maxR || 150, col: col || "#38bdf8", life: 1.0 });
+  }
+  function spawnShootingStar(sx, sy){
+    shootingStars.push({
+      x: sx !== undefined ? sx : W * (0.1 + Math.random() * 0.7),
+      y: sy !== undefined ? sy : H * (0.08 + Math.random() * 0.25),
+      vx: 460 + Math.random() * 320, vy: 120 + Math.random() * 160, life: 1.0
+    });
+  }
+  function spawnFloatText(x, y, txt, col){
+    floatTexts.push({ x: x, y: y, txt: txt, col: col || "#fde047", life: 1.0, scale: 0.4 });
   }
 
-  /* Clear, generously spaced front-facing star positions framing Left & Right of the Rocket! */
   var STAR_POSITIONS = [
-    [0.19, 0.40], [0.81, 0.40],
+    [0.18, 0.40], [0.82, 0.40],
     [0.24, 0.60], [0.76, 0.60],
     [0.32, 0.30], [0.68, 0.30],
     [0.14, 0.54], [0.86, 0.54]
@@ -673,44 +749,44 @@
   function startRound(speakNow){
     phase = "collect";
     phaseT = 0;
-    stars = []; flyingStars = []; hoops = [];
-    fuelDisplay = 0;
-    plasmaBeamT = 0;
+    stars = []; flyingStars = []; hoops = []; meteors = []; rainbowTrailPts = [];
+    fuelDisplay = 0; plasmaBeamT = 0; hyperWarpT = 0; draggedStar = null;
     podRow.hidden = true; podRow.innerHTML = "";
     launchBtn.hidden = true;
     nextPlanetBtn.hidden = true;
     flightBanner.hidden = true;
     countdownBanner.classList.remove("show");
     transitionBg("launchpad");
+    updatePassportUI();
 
     rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = 0.52;
-    rocket.tilt = 0; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 0.6;
+    rocket.tilt = 0; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 0.65;
+
+    ufo.x = -90; ufo.dir = 1; ufo.y = 0.22; ufo.spinT = 0; ufo.beamT = 0; ufo.active = true;
 
     targetCount = 2 + Math.floor(Math.random() * Math.max(1, maxCount - 1));
     collectedCount = 0;
     for(var i = 0; i < targetCount; i++){
       var pt = STAR_POSITIONS[i % STAR_POSITIONS.length];
-      stars.push({
-        xPct: pt[0], yPct: pt[1],
-        phase: i * 1.15,
-        collected: false,
-        popIn: 0
-      });
+      stars.push({ xPct: pt[0], yPct: pt[1], dragX: null, dragY: null, phase: i * 1.15, collected: false, popIn: 0 });
     }
 
     var dest = PLANETS[planetIdx % PLANETS.length];
-    bubble.innerHTML = "⭐ <b>FUEL HOOT'S ROCKET!</b> Tap the smiling <b>Golden Stars</b> to fly to <b>" + dest.emo + " " + dest.name + "</b>!";
+    bubble.innerHTML = "⭐ <b>FUEL HOOT'S ROCKET!</b> Tap or drag the smiling <b>Golden Stars</b> to fly to <b>" + dest.emo + " " + dest.name + "</b>!";
     setStepVoice("hoot-r3d-tap-stars", ["ask-how-many-stars", "hoot-tap-big-btn"], speakNow !== false);
   }
 
-  function collectStar(st){
+  function collectStar(st, fromX, fromY){
     if(st.collected || phase !== "collect") return;
     st.collected = true;
+    st.dragX = null; st.dragY = null;
+    if(draggedStar === st) draggedStar = null;
     collectedCount++;
     totalStarsEarned++;
     starCountEl.textContent = String(totalStarsEarned);
 
-    var sx = st.xPct * W, sy = st.yPct * H;
+    var sx = fromX !== undefined ? fromX : st.xPct * W;
+    var sy = fromY !== undefined ? fromY : st.yPct * H;
     var tube = getFuelTubeRect();
     sfxStarCollect(collectedCount - 1);
     playVoice(["name-number-" + collectedCount]);
@@ -718,17 +794,13 @@
     rocket.bounce = 0.9;
 
     flyingStars.push({
-      x0: sx, y0: sy,
-      cx: (sx + tube.cx) * 0.5, cy: Math.min(sy, tube.topY) - 110,
-      x1: tube.cx, y1: tube.topY + 12,
-      t: 0
+      x0: sx, y0: sy, cx: (sx + tube.cx) * 0.5, cy: Math.min(sy, tube.topY) - 110,
+      x1: tube.cx, y1: tube.topY + 12, t: 0, num: collectedCount
     });
 
-    bubble.innerHTML = "⭐ <b>" + collectedCount + "!</b> " + (collectedCount < targetCount ? "Tap the next smiling <b>Golden Star</b>!" : "All stars loaded!");
+    bubble.innerHTML = "⭐ <b>" + collectedCount + "!</b> " + (collectedCount < targetCount ? "Tap or drag the next smiling <b>Golden Star</b>!" : "All stars loaded!");
     if(collectedCount >= targetCount){
-      setTimeout(function(){
-        if(phase === "collect") enterNumberMatchPhase();
-      }, 820);
+      setTimeout(function(){ if(phase === "collect") enterNumberMatchPhase(); }, 820);
     }
   }
 
@@ -744,8 +816,7 @@
 
     choices.forEach(function(n){
       var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "num-pod choice-btn";
+      btn.type = "button"; btn.className = "num-pod choice-btn";
       btn.setAttribute("data-num", String(n));
       var dots = "";
       for(var k = 0; k < n; k++) dots += "⭐";
@@ -756,9 +827,11 @@
         if(n === targetCount){
           sfxStarCollect(6);
           plasmaBeamT = 1.0;
-          rocket.bounce = 1.15;
+          rocket.bounce = 1.2;
           var rm = getRocketMetrics();
-          spawnSparkles(rm.x, rm.y, 28, ["#38bdf8", "#fde047", "#4ade80", "#ffffff"], 280);
+          spawnSparkles(rm.x, rm.y, 32, ["#38bdf8", "#fde047", "#4ade80", "#ffffff"], 300);
+          spawnShockwave(rm.x, rm.y, "#4ade80", 220);
+          spawnFloatText(rm.x, rm.y - rm.h * 0.55, "⚡ FULL POWER!", "#4ade80");
           podRow.hidden = true;
           enterReadyLaunchPhase();
         } else {
@@ -779,7 +852,7 @@
   function enterReadyLaunchPhase(){
     phase = "ready";
     launchBtn.hidden = false;
-    rocket.flame = 0.55;
+    rocket.flame = 0.6;
     rocket.rumble = 0.25;
     bubble.innerHTML = "🚀 <b>ENGINES FULL!</b> Slam the big red <b>BLAST OFF</b> button!";
     setStepVoice("hoot-r3d-press-launch", ["hoot-ready-go", "hoot-tap-big-btn"], true);
@@ -788,11 +861,9 @@
   function triggerCountdownLaunch(){
     if(phase !== "ready") return;
     phase = "countdown";
-    phaseT = 0;
-    clearIdleHelp();
+    phaseT = 0; clearIdleHelp();
     launchBtn.hidden = true;
-    rocket.flame = 1.15;
-    rocket.rumble = 1.0;
+    rocket.flame = 1.2; rocket.rumble = 1.0;
     sfxRocketRoar(2.8);
 
     var steps = [
@@ -805,8 +876,7 @@
       setTimeout(function(){
         if(phase !== "countdown" && !s.fin) return;
         countdownBanner.textContent = s.txt;
-        countdownBanner.classList.remove("show");
-        void countdownBanner.offsetWidth;
+        countdownBanner.classList.remove("show"); void countdownBanner.offsetWidth;
         countdownBanner.classList.add("show");
         sfxCountdownBeep(s.fin);
         if(s.clip) playVoice([s.clip]);
@@ -820,42 +890,48 @@
 
   function startLiftoff(){
     phase = "liftoff";
-    phaseT = 0;
-    screenShake = 1.0;
-    sfxRocketRoar(5.6);
+    phaseT = 0; screenShake = 1.0;
+    sfxRocketRoar(5.8);
     playVoice(resolveCmd("hoot-r3d-blastoff", ["hoot-super"]));
-    bubble.innerHTML = "🚀 <b>BLAST OFF!</b> Hold on tight — zooming into outer space!";
+    bubble.innerHTML = "🚀 <b>BLAST OFF!</b> Zooming into outer space!";
   }
 
   function startSpaceFlight(){
     phase = "flight";
-    phaseT = 0;
+    phaseT = 0; hyperWarpT = 0; rainbowTrailPts = [];
     transitionBg("space");
     flightBanner.hidden = false;
-    rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = 0.68; rocket.flame = 1.35; rocket.rumble = 0.35;
+    rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = 0.68; rocket.flame = 1.4; rocket.rumble = 0.35;
 
     var cols = ["#ef4444", "#fb923c", "#fde047", "#4ade80", "#38bdf8", "#c084fc"];
     hoops = [];
     for(var i = 0; i < 6; i++){
       hoops.push({
         xPct: 0.25 + ((i % 2 === 0) ? 0.08 + (i % 3) * 0.1 : 0.42 - (i % 3) * 0.08),
-        y: -140 - i * 245,
-        col: cols[i % cols.length],
-        hit: false,
-        idx: i
+        y: -140 - i * 255, col: cols[i % cols.length], hit: false, idx: i
       });
     }
-    bubble.innerHTML = "🌌 <b>FLYING IN SPACE!</b> Slide left or right through the glowing <b>Rainbow Hoops</b>!";
+    /* Piñata Crystal Space Meteors to tap & shatter for bonus stars! */
+    meteors = [];
+    for(var m = 0; m < 5; m++){
+      meteors.push({
+        xPct: 0.2 + (m * 0.16), y: -260 - m * 290,
+        r: 34 + (m % 2) * 8, rot: m, hit: false,
+        col: m % 2 === 0 ? "#c084fc" : "#38bdf8"
+      });
+    }
+    ufo.x = -80; ufo.dir = 1; ufo.y = 0.32; ufo.spinT = 0; ufo.beamT = 0; ufo.active = true;
+    bubble.innerHTML = "🌌 <b>HYPER-WARP SPACE FLIGHT!</b> Slide through <b>Rainbow Hoops</b> &amp; tap <b>Crystals</b>!";
   }
 
   function startPlanetLanding(){
     phase = "landing";
-    phaseT = 0;
+    phaseT = 0; hyperWarpT = 0; rainbowTrailPts = [];
     flightBanner.hidden = true;
     var pl = PLANETS[planetIdx % PLANETS.length];
     transitionBg(pl.key);
     rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = -0.15; rocket.tilt = 0;
-    rocket.flame = 0.9; rocket.rumble = 0.3;
+    rocket.flame = 0.95; rocket.rumble = 0.3;
     sfxRocketRoar(1.3);
     bubble.innerHTML = pl.emo + " <b>LANDING ON " + pl.name.toUpperCase() + "!</b>";
   }
@@ -863,29 +939,27 @@
   function enterLandedParty(){
     phase = "landed";
     phaseT = 0;
-    rocket.y = 0.56; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 1.35;
+    rocket.y = 0.55; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 1.35;
+    chest.taps = 0; chest.opened = false; chest.shakeT = 0; chest.bounceT = 1.0;
+
     var rm = getRocketMetrics();
     spawnSmoke(rm.x, rm.y + rm.h * 0.46, 16, 110, -25);
-    spawnSparkles(rm.x, rm.y, 34, ["#fde047", "#38bdf8", "#f472b6", "#4ade80", "#ffffff"], 310);
+    spawnSparkles(rm.x, rm.y, 36, ["#fde047", "#38bdf8", "#f472b6", "#4ade80", "#ffffff"], 310);
     sfxFireworkPop();
 
     var pl = PLANETS[planetIdx % PLANETS.length];
     earnedPlanets[pl.badge] = true;
-    var bEl = document.querySelector('.pbadge[data-pl="' + pl.badge + '"]');
-    if(bEl) bEl.classList.add("earned");
+    updatePassportUI();
 
     nextPlanetBtn.hidden = false;
-    bubble.innerHTML = pl.emo + " <b>WE LANDED ON " + pl.name.toUpperCase() + "!</b> Tap our <b>Space Friends</b> to flip them or press <b>Next Planet</b>!";
+    bubble.innerHTML = pl.emo + " <b>WELCOME TO " + pl.name.toUpperCase() + "!</b> Open the <b>🎁 Space Chest</b>, flip our <b>Space Friends</b>, or tap the sky for fireworks!";
     setStepVoice("hoot-r3d-landed", ["hoot-win-star"], true);
   }
 
   /* =========================================================================
-     6. EFFORTLESS 1-FINGER CONTROLS & BUTTON EVENTS
+     6. INTERACTIVE BUTTONS, UPGRADE LAB & EFFORTLESS 1-FINGER CONTROLS
      ========================================================================= */
-  launchBtn.addEventListener("pointerdown", function(e){
-    e.preventDefault(); e.stopPropagation();
-    triggerCountdownLaunch();
-  });
+  launchBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); triggerCountdownLaunch(); });
   nextPlanetBtn.addEventListener("pointerdown", function(e){
     e.preventDefault(); e.stopPropagation();
     planetIdx = (planetIdx + 1) % PLANETS.length;
@@ -899,12 +973,31 @@
       var cfg = ROCKET_PAINTS[col]; if(!cfg) return;
       currentPaint = col;
       document.querySelectorAll(".paint-dot").forEach(function(d){ d.classList.toggle("on", d === dot); });
-      rocket.bounce = 0.95;
-      sfxBoing();
+      rocket.bounce = 0.95; sfxBoing();
       var rm = getRocketMetrics();
       spawnSparkles(rm.x, rm.y, 26, [cfg.glow, "#fde047", "#ffffff"], 260);
       playVoice([cfg.clip]);
     });
+  });
+
+  var trailBtn = document.getElementById("trailBtn");
+  trailBtn.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    trailIdx = (trailIdx + 1) % TRAILS.length;
+    trailBtn.textContent = TRAILS[trailIdx].label;
+    rocket.bounce = 0.85; boostFlashT = 0.55; sfxStarCollect(trailIdx + 2);
+    var rm = getRocketMetrics();
+    spawnSmoke(rm.x, rm.y + rm.h * 0.48, 12, 56, 70);
+  });
+
+  var hatBtn = document.getElementById("hatBtn");
+  hatBtn.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    hatIdx = (hatIdx + 1) % HATS.length;
+    hatBtn.textContent = HATS[hatIdx].label;
+    rocket.bounce = 0.95; sfxBoing();
+    var rm = getRocketMetrics();
+    spawnSparkles(rm.x, rm.y - rm.h * 0.48, 18, ["#fde047", "#f472b6", "#38bdf8", "#ffffff"], 210);
   });
 
   var rangeBtn = document.getElementById("rangeBtn");
@@ -917,12 +1010,10 @@
 
   document.getElementById("boostBtn").addEventListener("pointerdown", function(e){
     e.preventDefault(); e.stopPropagation();
-    rocket.bounce = 1.1;
-    boostFlashT = 0.55;
-    sfxRocketRoar(0.65);
+    rocket.bounce = 1.1; boostFlashT = 0.65; sfxRocketRoar(0.65);
     var rm = getRocketMetrics();
-    spawnSmoke(rm.x, rm.y + rm.h * 0.48, 12, 56, 70);
-    spawnSparkles(rm.x, rm.y + rm.h * 0.45, 16, ["#fde047", "#fb923c", "#ffffff"], 210);
+    spawnSmoke(rm.x, rm.y + rm.h * 0.48, 14, 60, 75);
+    spawnSparkles(rm.x, rm.y + rm.h * 0.45, 18, ["#fde047", "#fb923c", "#ffffff"], 220);
   });
 
   document.getElementById("hootBtn").addEventListener("click", function(){
@@ -932,23 +1023,79 @@
   document.querySelectorAll(".pbadge").forEach(function(b){
     b.addEventListener("click", function(){
       planetIdx = parseInt(b.getAttribute("data-pl"), 10) || 0;
-      sfxBoing();
+      sfxBoing(); updatePassportUI();
       if(phase === "collect") startRound(true);
     });
   });
 
   document.getElementById("doneBtn").addEventListener("click", function(){
-    won = true; clearIdleHelp();
-    winOverlay.hidden = false;
-    playVoice(["hoot-win-star"]);
+    won = true; clearIdleHelp(); winOverlay.hidden = false; playVoice(["hoot-win-star"]);
   });
   document.getElementById("againBtn").addEventListener("click", function(){
-    won = false; winOverlay.hidden = true;
-    startRound(true);
+    won = false; winOverlay.hidden = true; startRound(true);
   });
 
-  function handleTapAt(cx, cy){
-    /* 1. Huge effortless Star Gem hit test (90px radius!) */
+  function shatterMeteor(m){
+    if(m.hit) return;
+    m.hit = true;
+    totalStarsEarned += 2;
+    starCountEl.textContent = String(totalStarsEarned);
+    sfxStarCollect(5);
+    spawnSparkles(m.xPct * W, m.y, 26, [m.col, "#fde047", "#ffffff", "#f472b6"], 290);
+    spawnShockwave(m.xPct * W, m.y, m.col, 130);
+    spawnFloatText(m.xPct * W, m.y - 16, "+2 ⭐!", "#fde047");
+  }
+
+  function tapTreasureChest(){
+    var cx = chest.xPct * W, cy = chest.yPct * H;
+    floatTexts = floatTexts.filter(function(ft){ return Math.abs(ft.x - cx) > 60; });
+    if(chest.opened){
+      chest.bounceT = 0.9; sfxStarCollect(6);
+      spawnSparkles(cx, cy - 20, 26, ["#fde047", "#f472b6", "#38bdf8", "#4ade80"], 260);
+      return;
+    }
+    chest.taps++;
+    chest.shakeT = 1.0;
+    if(chest.taps < 3){
+      sfxBoing();
+      spawnSparkles(cx, cy - 15, 14, ["#fde047", "#ffffff"], 180);
+      spawnFloatText(cx, cy - 58, chest.taps === 1 ? "Tap again! 🎁" : "Almost open! ✨", "#fde047");
+    } else {
+      chest.opened = true;
+      chest.bounceT = 1.2;
+      totalStarsEarned += 5;
+      starCountEl.textContent = String(totalStarsEarned);
+      sfxFireworkPop();
+      playVoice(["hoot-super"]);
+      spawnSparkles(cx, cy - 25, 50, ["#fde047", "#f472b6", "#38bdf8", "#4ade80", "#fb923c", "#ffffff"], 360);
+      spawnShockwave(cx, cy - 15, "#fde047", 240);
+      spawnFloatText(cx, cy - 68, "🎉 TREASURE! +5 ⭐", "#fde047");
+    }
+  }
+
+  function handlePointerDown(cx, cy){
+    /* 1. Flight Mode: tap crystal meteors or UFO OR slide to steer! */
+    if(phase === "flight"){
+      for(var mi = 0; mi < meteors.length; mi++){
+        var m = meteors[mi];
+        if(!m.hit && Math.hypot(cx - m.xPct * W, cy - m.y) < m.r + 48){
+          shatterMeteor(m); return;
+        }
+      }
+      if(ufo.active && Math.hypot(cx - ufo.x, cy - ufo.y * H) < 76){
+        ufo.spinT = 1.2; ufo.beamT = 1.2;
+        totalStarsEarned += 2; starCountEl.textContent = String(totalStarsEarned);
+        sfxUfoChirp();
+        spawnSparkles(ufo.x, ufo.y * H, 26, ["#38bdf8", "#f472b6", "#fde047", "#4ade80"], 280);
+        spawnFloatText(ufo.x, ufo.y * H - 40, "🛸 +2 ⭐!", "#7dd3fc");
+        return;
+      }
+      draggingFlight = true;
+      rocket.targetX = Math.max(0.14, Math.min(0.86, cx / W));
+      return;
+    }
+
+    /* 2. Collect Mode: grab or tap any smiling Golden Star! */
     if(phase === "collect"){
       var best = null, bestD = 96;
       stars.forEach(function(st){
@@ -957,63 +1104,123 @@
         var d = Math.hypot(cx - sx, cy - sy);
         if(d < bestD){ bestD = d; best = st; }
       });
-      if(best){ collectStar(best); return; }
-    }
-
-    /* 2. Tap Dancing Space Friends on Landed Planet to do a 360° Backflip! */
-    if(phase === "landed"){
-      var bh = Math.min(H * 0.25, 190);
-      for(var bi = 0; bi < buddies.length; bi++){
-        var b = buddies[bi];
-        var bx = b.xPct * W, by = b.yPct * H;
-        if(Math.hypot(cx - bx, cy - by) < bh * 0.58){
-          b.flipT = 1.0;
-          sfxBoing();
-          spawnSparkles(bx, by - 20, 22, ["#fde047", "#f472b6", "#38bdf8", "#4ade80"], 240);
-          return;
-        }
+      if(best){
+        draggedStar = best;
+        best.dragX = cx; best.dragY = cy;
+        best.downX = cx; best.downY = cy; best.downT = performance.now();
+        return;
       }
     }
 
-    /* 3. Tap the Rocket anytime for a playful bounce + booster puff! */
-    var rm = getRocketMetrics();
-    if(Math.abs(cx - rm.x) < rm.w * 0.6 && Math.abs(cy - rm.y) < rm.h * 0.55){
-      rocket.bounce = 1.05;
-      boostFlashT = 0.42;
-      sfxBoing();
-      spawnSparkles(rm.x, rm.y, 18, ["#fde047", "#38bdf8", "#ffffff"], 210);
+    /* 3. Cruising Disco UFO on Launchpad! */
+    if((phase === "collect" || phase === "match" || phase === "ready") && ufo.active && Math.hypot(cx - ufo.x, cy - ufo.y * H) < 72){
+      ufo.spinT = 1.3; ufo.beamT = 1.3; sfxUfoChirp();
+      spawnSparkles(ufo.x, ufo.y * H, 24, ["#38bdf8", "#f472b6", "#fde047", "#4ade80"], 240);
+      spawnFloatText(ufo.x, ufo.y * H - 42, "🛸 Hi Alien!", "#7dd3fc");
       return;
     }
 
-    /* 4. Tap anywhere in the sky for magical twinkling stardust! */
-    spawnSparkles(cx, cy, 10, ["#fde047", "#7dd3fc", "#f9a8d4"], 140);
+    /* 4. Landed Planet Playground: 3-Tap Treasure Chest + Flipping Space Friends + Sky Fireworks! */
+    if(phase === "landed"){
+      if(Math.hypot(cx - chest.xPct * W, cy - chest.yPct * H) < 78){
+        tapTreasureChest(); return;
+      }
+      var bh = Math.min(H * 0.27, 205);
+      for(var bi = 0; bi < buddies.length; bi++){
+        var b = buddies[bi];
+        var bx = b.xPct * W, by = b.yPct * H;
+        if(Math.hypot(cx - bx, cy - by) < bh * 0.56){
+          b.flipT = 1.0; sfxBoing();
+          playVoice([b.clip]);
+          spawnSparkles(bx, by - 20, 26, ["#fde047", "#f472b6", "#38bdf8", "#4ade80"], 260);
+          spawnFloatText(bx, by - bh * 0.52, "✨ Wheee!", "#fde047");
+          return;
+        }
+      }
+      /* Tap anywhere in the planet sky for custom HDR Fireworks! */
+      sfxFireworkPop();
+      spawnSparkles(cx, cy, 32, ["#fde047", "#f472b6", "#38bdf8", "#4ade80", "#fb923c", "#ffffff"], 310);
+      spawnShockwave(cx, cy, "#fde047", 150);
+      return;
+    }
+
+    /* 5. Tap Rocket anytime for joyful bounce + booster puff */
+    var rm = getRocketMetrics();
+    if(Math.abs(cx - rm.x) < rm.w * 0.58 && Math.abs(cy - rm.y) < rm.h * 0.55){
+      rocket.bounce = 1.1; boostFlashT = 0.5; sfxBoing();
+      spawnSparkles(rm.x, rm.y, 20, ["#fde047", "#38bdf8", "#ffffff"], 220);
+      spawnSmoke(rm.x, rm.y + rm.h * 0.48, 8, 44, 65);
+      return;
+    }
+
+    /* 6. Living Launchpad Landmarks: Moon (upper-left), Saturn (upper-right), Radar Tower (mid-left)! */
+    if(phase === "collect" || phase === "match" || phase === "ready"){
+      /* Smiling Moon upper-left */
+      if(cx < W * 0.20 && cy < H * 0.34){
+        sfxStarCollect(4);
+        spawnShockwave(W * 0.10, H * 0.20, "#fde047", 170);
+        spawnSparkles(W * 0.10, H * 0.20, 20, ["#fde047", "#ffffff"], 210);
+        spawnShootingStar(W * 0.14, H * 0.18);
+        spawnFloatText(W * 0.12, H * 0.16, "🌙 Twinkle!", "#fde047");
+        return;
+      }
+      /* Ringed Saturn upper-right */
+      if(cx > W * 0.74 && cy < H * 0.34){
+        sfxRingBoost(3);
+        spawnShockwave(W * 0.85, H * 0.21, "#fb923c", 190);
+        spawnSparkles(W * 0.85, H * 0.21, 24, ["#fb923c", "#fde047", "#38bdf8"], 230);
+        spawnFloatText(W * 0.84, H * 0.17, "🪐 Ring Spin!", "#fb923c");
+        return;
+      }
+      /* Launch Tower Radar Dish */
+      if(cx > W * 0.22 && cx < W * 0.38 && cy > H * 0.12 && cy < H * 0.52){
+        sfxSonar();
+        spawnShockwave(W * 0.31, H * 0.20, "#38bdf8", 210);
+        setTimeout(function(){ spawnShockwave(W * 0.31, H * 0.20, "#7dd3fc", 250); }, 180);
+        spawnShootingStar(W * 0.34, H * 0.14);
+        spawnFloatText(W * 0.31, H * 0.16, "📡 Beep Boop!", "#7dd3fc");
+        return;
+      }
+    }
+
+    /* Tap anywhere else in sky for twinkling stardust + shooting star */
+    spawnSparkles(cx, cy, 12, ["#fde047", "#7dd3fc", "#f9a8d4"], 150);
+    if(Math.random() < 0.45) spawnShootingStar(cx, cy);
   }
 
-  canvas.addEventListener("pointerdown", function(e){
-    e.preventDefault();
-    if(phase === "flight"){
-      draggingFlight = true;
-      rocket.targetX = Math.max(0.14, Math.min(0.86, e.clientX / W));
-      return;
-    }
-    handleTapAt(e.clientX, e.clientY);
-  });
+  canvas.addEventListener("pointerdown", function(e){ e.preventDefault(); handlePointerDown(e.clientX, e.clientY); });
   window.addEventListener("pointermove", function(e){
     if(phase === "flight" && draggingFlight){
       rocket.targetX = Math.max(0.14, Math.min(0.86, e.clientX / W));
+    } else if(draggedStar && phase === "collect"){
+      draggedStar.dragX = e.clientX; draggedStar.dragY = e.clientY;
+      if(Math.random() < 0.65) spawnSparkles(e.clientX, e.clientY, 1, ["#fde047", "#ffffff"], 60);
+      var tube = getFuelTubeRect(), rm = getRocketMetrics();
+      if(Math.hypot(e.clientX - tube.cx, e.clientY - (tube.y + tube.h * 0.4)) < 95 || Math.hypot(e.clientX - rm.x, e.clientY - rm.y) < 110){
+        collectStar(draggedStar, e.clientX, e.clientY);
+      }
     }
   });
-  window.addEventListener("pointerup", function(){ draggingFlight = false; });
+  window.addEventListener("pointerup", function(e){
+    draggingFlight = false;
+    if(draggedStar && phase === "collect"){
+      var st = draggedStar; draggedStar = null;
+      var moved = Math.hypot((e.clientX || st.downX) - st.downX, (e.clientY || st.downY) - st.downY);
+      /* Quick 1-tap OR dragged close enough -> collect effortlessly! */
+      if(moved < 36 || (performance.now() - st.downT) < 320){
+        collectStar(st, st.dragX || st.xPct * W, st.dragY || st.yPct * H);
+      } else {
+        /* Spring smoothly back if released far away */
+        st.dragX = null; st.dragY = null;
+      }
+    }
+  });
 
   /* =========================================================================
-     7. 60FPS PIXAR RENDERING ENGINE
+     7. CUSTOM GLOSSY PIXAR PROP RENDERERS (UFO, HATS, METEORS, CHEST, PIPE)
      ========================================================================= */
-  var lastTime = performance.now(), tAcc = 0;
-
   function drawStarShape(x, y, r, col){
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.fillStyle = col;
+    ctx.save(); ctx.translate(x, y); ctx.fillStyle = col;
     ctx.beginPath();
     for(var i = 0; i < 10; i++){
       var a = (i / 10) * Math.PI * 2 - Math.PI / 2;
@@ -1021,83 +1228,208 @@
       if(i === 0) ctx.moveTo(Math.cos(a) * rad, Math.sin(a) * rad);
       else ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
     }
-    ctx.closePath(); ctx.fill();
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+
+  function drawRocketHat(topY, w){
+    var key = HATS[hatIdx].key;
+    if(key === "none") return;
+    ctx.save();
+    ctx.translate(0, topY);
+    if(key === "crown"){
+      var g = ctx.createLinearGradient(-34, -36, 34, 8);
+      g.addColorStop(0, "#fef08a"); g.addColorStop(0.5, "#facc15"); g.addColorStop(1, "#d97706");
+      ctx.fillStyle = g; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 4; ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(-30, 6); ctx.lineTo(-36, -28); ctx.lineTo(-14, -10);
+      ctx.lineTo(0, -38); ctx.lineTo(14, -10); ctx.lineTo(36, -28); ctx.lineTo(30, 6);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      [["#ef4444", 0, -10], ["#38bdf8", -18, -5], ["#ec4899", 18, -5]].forEach(function(j){
+        ctx.fillStyle = j[0]; ctx.beginPath(); ctx.arc(j[1], j[2], 5.5, 0, Math.PI * 2); ctx.fill();
+      });
+    } else if(key === "unicorn"){
+      var ug = ctx.createLinearGradient(0, -56, 0, 8);
+      ug.addColorStop(0, "#fef08a"); ug.addColorStop(0.5, "#f472b6"); ug.addColorStop(1, "#38bdf8");
+      ctx.fillStyle = ug; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 4; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(-16, 6); ctx.lineTo(0, -58); ctx.lineTo(16, 6); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,0.75)"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(-10, -8); ctx.lineTo(10, -16); ctx.moveTo(-7, -26); ctx.lineTo(7, -32); ctx.stroke();
+    } else if(key === "party"){
+      var pg = ctx.createLinearGradient(-26, -48, 26, 6);
+      pg.addColorStop(0, "#38bdf8"); pg.addColorStop(0.5, "#a855f7"); pg.addColorStop(1, "#ec4899");
+      ctx.fillStyle = pg; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 4; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(-26, 6); ctx.lineTo(0, -52); ctx.lineTo(26, 6); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#fde047"; ctx.beginPath(); ctx.arc(0, -54, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawDiscoUFO(){
+    if(!ufo.active || (phase !== "collect" && phase !== "match" && phase !== "ready" && phase !== "flight")) return;
+    var ux = ufo.x, uy = ufo.y * H + Math.sin(tAcc * 3.8) * 10;
+    ctx.save();
+    ctx.translate(ux, uy);
+    if(ufo.beamT > 0){
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var bg = ctx.createLinearGradient(0, 16, 0, 165);
+      bg.addColorStop(0, "rgba(56,189,248," + (ufo.beamT * 0.7).toFixed(2) + ")");
+      bg.addColorStop(0.5, "rgba(244,114,182," + (ufo.beamT * 0.45).toFixed(2) + ")");
+      bg.addColorStop(1, "rgba(253,224,71,0)");
+      ctx.fillStyle = bg;
+      ctx.beginPath(); ctx.moveTo(-18, 12); ctx.lineTo(18, 12); ctx.lineTo(58, 165); ctx.lineTo(-58, 165); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    ctx.rotate(ufo.spinT > 0 ? Math.sin(ufo.spinT * 20) * 0.35 : Math.sin(tAcc * 2.5) * 0.08);
+    /* Clear glossy glass dome */
+    var dg = ctx.createRadialGradient(-8, -20, 4, 0, -10, 30);
+    dg.addColorStop(0, "rgba(255,255,255,0.92)"); dg.addColorStop(0.6, "rgba(125,211,252,0.55)"); dg.addColorStop(1, "rgba(56,189,248,0.28)");
+    ctx.fillStyle = dg; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 3.5;
+    ctx.beginPath(); ctx.arc(0, -4, 24, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    /* Cute mini blue alien head inside dome */
+    ctx.fillStyle = "#60a5fa"; ctx.beginPath(); ctx.arc(0, -10, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#0f172a"; ctx.beginPath(); ctx.arc(-4, -11, 2.4, 0, Math.PI * 2); ctx.arc(4, -11, 2.4, 0, Math.PI * 2); ctx.fill();
+    /* Metallic saucer hull */
+    var hg = ctx.createLinearGradient(-44, -6, 44, 16);
+    hg.addColorStop(0, "#c084fc"); hg.addColorStop(0.5, "#f8fafc"); hg.addColorStop(1, "#6366f1");
+    ctx.fillStyle = hg;
+    ctx.beginPath(); ctx.ellipse(0, 4, 44, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    /* Pulsing rainbow rim lights */
+    var rCols = ["#fde047","#f472b6","#4ade80","#38bdf8","#fb923c"];
+    for(var l = -2; l <= 2; l++){
+      var lx = l * 15, ly = 5 + Math.abs(l) * 1.2;
+      ctx.fillStyle = rCols[(l + 2 + Math.floor(tAcc * 8)) % rCols.length];
+      ctx.beginPath(); ctx.arc(lx, ly, 4.5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawTreasureChest(){
+    if(phase !== "landed") return;
+    var cx = chest.xPct * W, cy = chest.yPct * H;
+    var shk = chest.shakeT > 0 ? Math.sin(chest.shakeT * 38) * 10 * chest.shakeT : 0;
+    var hop = chest.bounceT > 0 ? Math.sin(chest.bounceT * Math.PI) * 28 : 0;
+    ctx.save();
+    /* Ground shadow */
+    ctx.fillStyle = "rgba(9,13,36,0.42)";
+    ctx.beginPath(); ctx.ellipse(cx, cy + 44, 48, 12, 0, 0, Math.PI * 2); ctx.fill();
+
+    ctx.translate(cx + shk, cy - hop);
+    /* Glowing aura behind unopened chest so toddlers immediately tap it! */
+    if(!chest.opened){
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var ag = ctx.createRadialGradient(0, 0, 10, 0, 0, 74 + Math.sin(tAcc * 5) * 8);
+      ag.addColorStop(0, "rgba(253,224,71,0.75)"); ag.addColorStop(1, "rgba(253,224,71,0)");
+      ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(0, 0, 82, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    /* Chest base box */
+    var cg = ctx.createLinearGradient(-44, -20, 44, 42);
+    cg.addColorStop(0, "#fbbf24"); cg.addColorStop(0.45, "#b45309"); cg.addColorStop(1, "#78350f");
+    ctx.fillStyle = cg; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 4.5;
+    ctx.beginPath(); ctx.roundRect(-42, -6, 84, 48, 12); ctx.fill(); ctx.stroke();
+    /* Gold straps */
+    ctx.fillStyle = "#fde047";
+    ctx.fillRect(-30, -6, 10, 48); ctx.fillRect(20, -6, 10, 48);
+    /* Chest lid (flips open on 3rd tap!) */
+    ctx.save();
+    if(chest.opened) ctx.translate(0, -18), ctx.rotate(-0.55);
+    var lg = ctx.createLinearGradient(-44, -36, 44, -4);
+    lg.addColorStop(0, "#fef08a"); lg.addColorStop(0.5, "#f59e0b"); lg.addColorStop(1, "#92400e");
+    ctx.fillStyle = lg;
+    ctx.beginPath(); ctx.roundRect(-44, -32, 88, 28, [18, 18, 6, 6]); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    /* Glowing Gems peeking out when opened */
+    if(chest.opened){
+      [["#38bdf8",-18,-14],["#f472b6",0,-22],["#4ade80",18,-14],["#fde047",0,-10]].forEach(function(gm){
+        drawStarShape(gm[1], gm[2], 12, gm[0]);
+      });
+    } else {
+      /* Big gold star clasp + tap cue */
+      drawStarShape(0, 4, 15, "#fde047");
+      ctx.fillStyle = "#fff"; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 3;
+      ctx.font = '800 22px "Fredoka", sans-serif'; ctx.textAlign = "center";
+      ctx.fillText("👆", 0, -44 + Math.sin(tAcc * 6) * 6);
+    }
     ctx.restore();
   }
 
   function drawVolumetricFlame(x, y, scale, intensity){
     if(intensity <= 0.02) return;
+    var trKey = TRAILS[trailIdx].key;
     var flk = 0.88 + Math.sin(tAcc * 52) * 0.16;
-    var h = 95 * scale * intensity * flk;
-    var w = 42 * scale * (0.85 + intensity * 0.25);
+    var h = 100 * scale * intensity * flk;
+    var w = 44 * scale * (0.85 + intensity * 0.25);
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
-    /* Soft volumetric fire bloom halo */
-    var bloom = ctx.createRadialGradient(x, y + h * 0.3, 6, x, y + h * 0.35, h * 1.15);
-    bloom.addColorStop(0, "rgba(255,220,110,0.85)");
-    bloom.addColorStop(0.45, "rgba(249,115,22,0.48)");
+    var bloom = ctx.createRadialGradient(x, y + h * 0.3, 6, x, y + h * 0.35, h * 1.18);
+    bloom.addColorStop(0, trKey === "rainbow" ? "rgba(244,114,182,0.85)" : trKey === "stars" ? "rgba(56,189,248,0.85)" : "rgba(255,220,110,0.85)");
+    bloom.addColorStop(0.45, trKey === "rainbow" ? "rgba(56,189,248,0.45)" : "rgba(249,115,22,0.48)");
     bloom.addColorStop(1, "rgba(249,115,22,0)");
     ctx.fillStyle = bloom;
-    ctx.beginPath(); ctx.arc(x, y + h * 0.35, h * 1.15, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y + h * 0.35, h * 1.18, 0, Math.PI * 2); ctx.fill();
 
-    /* Outer fiery tongue */
     var og = ctx.createLinearGradient(x, y, x, y + h);
-    og.addColorStop(0, "#ffffff");
-    og.addColorStop(0.28, "#fde047");
-    og.addColorStop(0.68, "#f97316");
-    og.addColorStop(1, "rgba(239,68,68,0)");
+    if(trKey === "rainbow"){
+      og.addColorStop(0, "#ffffff"); og.addColorStop(0.25, "#fde047"); og.addColorStop(0.55, "#f472b6"); og.addColorStop(0.8, "#38bdf8"); og.addColorStop(1, "rgba(192,132,252,0)");
+    } else if(trKey === "stars"){
+      og.addColorStop(0, "#ffffff"); og.addColorStop(0.35, "#7dd3fc"); og.addColorStop(0.7, "#a855f7"); og.addColorStop(1, "rgba(56,189,248,0)");
+    } else {
+      og.addColorStop(0, "#ffffff"); og.addColorStop(0.28, "#fde047"); og.addColorStop(0.68, "#f97316"); og.addColorStop(1, "rgba(239,68,68,0)");
+    }
     ctx.fillStyle = og;
     ctx.beginPath();
     ctx.moveTo(x - w * 0.55, y);
     ctx.quadraticCurveTo(x - w * 0.72, y + h * 0.52, x, y + h);
     ctx.quadraticCurveTo(x + w * 0.72, y + h * 0.52, x + w * 0.55, y);
-    ctx.closePath();
-    ctx.fill();
+    ctx.closePath(); ctx.fill();
 
-    /* Inner white-hot plasma core */
     ctx.fillStyle = "#fffef0";
     ctx.beginPath();
     ctx.moveTo(x - w * 0.28, y);
     ctx.quadraticCurveTo(x - w * 0.32, y + h * 0.35, x, y + h * 0.62);
     ctx.quadraticCurveTo(x + w * 0.32, y + h * 0.35, x + w * 0.28, y);
-    ctx.closePath();
-    ctx.fill();
+    ctx.closePath(); ctx.fill();
     ctx.restore();
   }
 
   function drawGlassFuelTube(){
     if(phase !== "collect" && phase !== "match" && phase !== "ready" && phase !== "countdown") return;
-    var r = getFuelTubeRect();
+    var r = getFuelTubeRect(), rm = getRocketMetrics();
     var targetPct = targetCount > 0 ? Math.min(1, collectedCount / targetCount) : 0;
     fuelDisplay += (targetPct - fuelDisplay) * 0.1;
 
     ctx.save();
-    /* Ground shadow */
+    /* Animated Glowing Energy Conduit Pipe connecting Fuel Tube -> Rocket Base! */
+    var p0x = r.x + 2, p0y = r.y + r.h - 22;
+    var p1x = rm.x + rm.w * 0.25, p1y = rm.y + rm.h * 0.36;
+    ctx.strokeStyle = "#131d36"; ctx.lineWidth = 14; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(p0x, p0y); ctx.quadraticCurveTo((p0x + p1x) / 2, p0y + 24, p1x, p1y); ctx.stroke();
+    ctx.strokeStyle = fuelDisplay > 0.96 ? "#4ade80" : "#38bdf8"; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(p0x, p0y); ctx.quadraticCurveTo((p0x + p1x) / 2, p0y + 24, p1x, p1y); ctx.stroke();
+    if(fuelDisplay > 0.05){
+      ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 4; ctx.setLineDash([10, 14]); ctx.lineDashOffset = tAcc * 65;
+      ctx.beginPath(); ctx.moveTo(p0x, p0y); ctx.quadraticCurveTo((p0x + p1x) / 2, p0y + 24, p1x, p1y); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
     ctx.fillStyle = "rgba(9,13,36,0.42)";
     ctx.beginPath(); ctx.ellipse(r.cx, r.y + r.h + 10, r.w * 0.78, 12, 0, 0, Math.PI * 2); ctx.fill();
 
-    /* Tube back dark glass */
-    ctx.fillStyle = "rgba(15,23,54,0.68)";
-    ctx.strokeStyle = "#7dd3fc";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.roundRect(r.x, r.y, r.w, r.h, r.w * 0.45);
-    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "rgba(15,23,54,0.68)"; ctx.strokeStyle = "#7dd3fc"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.roundRect(r.x, r.y, r.w, r.h, r.w * 0.45); ctx.fill(); ctx.stroke();
 
-    /* Glowing rising liquid star-fuel plasma */
     var fh = Math.max(0, (r.h - 14) * fuelDisplay);
     if(fh > 4){
       ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(r.x + 6, r.y + 7, r.w - 12, r.h - 14, r.w * 0.35);
-      ctx.clip();
+      ctx.beginPath(); ctx.roundRect(r.x + 6, r.y + 7, r.w - 12, r.h - 14, r.w * 0.35); ctx.clip();
       var lg = ctx.createLinearGradient(0, r.y + r.h, 0, r.y);
-      lg.addColorStop(0, "#0ea5e9");
-      lg.addColorStop(0.5, "#4ade80");
-      lg.addColorStop(1, "#fde047");
+      lg.addColorStop(0, "#0ea5e9"); lg.addColorStop(0.5, "#4ade80"); lg.addColorStop(1, "#fde047");
       ctx.fillStyle = lg;
       ctx.fillRect(r.x + 6, r.y + r.h - 7 - fh, r.w - 12, fh + 4);
-      /* Rising energy bubbles inside fuel */
       ctx.fillStyle = "rgba(255,255,255,0.55)";
       for(var b = 0; b < 4; b++){
         var by = r.y + r.h - 12 - ((tAcc * 55 + b * 48) % Math.max(18, fh));
@@ -1107,41 +1439,68 @@
       ctx.restore();
     }
 
-    /* Crisp vertical glass specular highlight */
     ctx.fillStyle = "rgba(255,255,255,0.34)";
-    ctx.beginPath();
-    ctx.roundRect(r.x + 10, r.y + 14, 9, r.h - 28, 5);
-    ctx.fill();
+    ctx.beginPath(); ctx.roundRect(r.x + 10, r.y + 14, 9, r.h - 28, 5); ctx.fill();
 
-    /* Metallic top & bottom caps + star counter badge */
     var capG = ctx.createLinearGradient(r.x, 0, r.x + r.w, 0);
     capG.addColorStop(0, "#475569"); capG.addColorStop(0.5, "#e2e8f0"); capG.addColorStop(1, "#334155");
     ctx.fillStyle = capG; ctx.strokeStyle = "#131d36"; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.roundRect(r.x - 5, r.y - 6, r.w + 10, 18, 9); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.roundRect(r.x - 6, r.y + r.h - 10, r.w + 12, 20, 9); ctx.fill(); ctx.stroke();
 
-    /* Counter pill underneath */
     ctx.fillStyle = fuelDisplay > 0.96 ? "#4ade80" : "#fde047";
     ctx.strokeStyle = "#131d36"; ctx.lineWidth = 3.5;
     ctx.beginPath(); ctx.roundRect(r.cx - 34, r.y + r.h + 14, 68, 30, 15); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#131d36";
-    ctx.font = '800 17px "Fredoka", sans-serif';
+    ctx.fillStyle = "#131d36"; ctx.font = '800 17px "Fredoka", sans-serif';
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(collectedCount + " / " + targetCount, r.cx, r.y + r.h + 29);
     ctx.restore();
   }
+
+  function drawFlightProgressTracker(){
+    if(phase !== "flight") return;
+    var pl = PLANETS[planetIdx % PLANETS.length];
+    var pct = Math.min(1, phaseT / 5.8);
+    var tx = 34, topY = H * 0.24, botY = H * 0.72;
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.35)"; ctx.lineWidth = 10; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(tx, botY); ctx.lineTo(tx, topY); ctx.stroke();
+    ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(tx, botY); ctx.lineTo(tx, botY - (botY - topY) * pct); ctx.stroke();
+    ctx.font = '26px "Fredoka", sans-serif'; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(pl.emo, tx, topY - 22);
+    ctx.fillText("🌍", tx, botY + 22);
+    ctx.fillText("🚀", tx, botY - (botY - topY) * pct);
+    ctx.restore();
+  }
+
+  /* =========================================================================
+     8. MAIN 60FPS PIXAR RENDER LOOP
+     ========================================================================= */
+  var lastTime = performance.now(), tAcc = 0;
 
   function render(now){
     requestAnimationFrame(render);
     var dt = Math.min(0.05, (now - lastTime) / 1000);
     lastTime = now; tAcc += dt;
 
-    /* Update Phase Physics */
     if(sceneFade.t < 1) sceneFade.t = Math.min(1, sceneFade.t + dt * 2.2);
     if(boostFlashT > 0) boostFlashT = Math.max(0, boostFlashT - dt);
     if(plasmaBeamT > 0) plasmaBeamT = Math.max(0, plasmaBeamT - dt * 1.4);
     if(screenShake > 0) screenShake = Math.max(0, screenShake - dt * 1.6);
+    if(hyperWarpT > 0) hyperWarpT = Math.max(0, hyperWarpT - dt * 0.85);
     if(rocket.bounce > 0) rocket.bounce = Math.max(0, rocket.bounce - dt * 2.4);
+    if(chest.shakeT > 0) chest.shakeT = Math.max(0, chest.shakeT - dt * 2.2);
+    if(chest.bounceT > 0) chest.bounceT = Math.max(0, chest.bounceT - dt * 2.4);
+
+    /* Cruising Disco UFO movement */
+    if(ufo.active && (phase === "collect" || phase === "match" || phase === "ready" || phase === "flight")){
+      ufo.x += ufo.dir * (phase === "flight" ? 190 : 95) * dt;
+      if(ufo.spinT > 0) ufo.spinT = Math.max(0, ufo.spinT - dt);
+      if(ufo.beamT > 0) ufo.beamT = Math.max(0, ufo.beamT - dt);
+      if(ufo.x > W + 160){ ufo.dir = -1; ufo.y = 0.2 + Math.random() * 0.14; }
+      if(ufo.x < -160){ ufo.dir = 1; ufo.y = 0.2 + Math.random() * 0.14; }
+    }
 
     if(phase === "countdown"){
       phaseT += dt;
@@ -1155,28 +1514,40 @@
       if(rocket.y < -0.22 || phaseT > 1.35) startSpaceFlight();
     } else if(phase === "flight"){
       phaseT += dt;
-      spaceScroll += dt * 210;
-      /* Gentle toddler auto-assist if not actively dragging */
+      var speedMult = 1 + hyperWarpT * 1.15;
+      spaceScroll += dt * 220 * speedMult;
       if(!draggingFlight){
         var nextH = hoops.find(function(h){ return !h.hit && h.y < rocket.y * H + 40; });
-        if(nextH) rocket.targetX += (nextH.xPct - rocket.targetX) * Math.min(1, dt * 2.1);
+        if(nextH) rocket.targetX += (nextH.xPct - rocket.targetX) * Math.min(1, dt * 2.2);
       }
       var prevX = rocket.x;
       rocket.x += (rocket.targetX - rocket.x) * Math.min(1, dt * 8.5);
       rocket.tilt = Math.max(-0.32, Math.min(0.32, (rocket.x - prevX) * 28));
 
       var rmF = getRocketMetrics();
-      if(Math.random() < 0.85) spawnSmoke(rmF.x, rmF.y + rmF.h * 0.48, 1, 22, 240);
+      if(Math.random() < 0.85) spawnSmoke(rmF.x, rmF.y + rmF.h * 0.48, 1, 24, 260);
+      rainbowTrailPts.push({ x: rmF.x, y: rmF.y + rmF.h * 0.44 });
+      if(rainbowTrailPts.length > 26) rainbowTrailPts.shift();
+      rainbowTrailPts.forEach(function(pt){ pt.y += dt * 360 * speedMult; });
 
       hoops.forEach(function(h){
-        h.y += dt * 310;
-        if(!h.hit && Math.abs(h.y - rmF.y) < 62 && Math.abs(h.xPct * W - rmF.x) < 135){
+        h.y += dt * 310 * speedMult;
+        if(!h.hit && Math.abs(h.y - rmF.y) < 65 && Math.abs(h.xPct * W - rmF.x) < 138){
           h.hit = true;
           totalStarsEarned++;
           starCountEl.textContent = String(totalStarsEarned);
-          rocket.bounce = 0.85;
+          rocket.bounce = 0.9; hyperWarpT = 1.0;
           sfxRingBoost(h.idx);
-          spawnSparkles(h.xPct * W, h.y, 28, [h.col, "#fde047", "#ffffff", "#38bdf8"], 320);
+          spawnSparkles(h.xPct * W, h.y, 30, [h.col, "#fde047", "#ffffff", "#38bdf8"], 340);
+          spawnShockwave(h.xPct * W, h.y, h.col, 190);
+          spawnFloatText(h.xPct * W, h.y - 30, "⚡ TURBO +1 ⭐!", "#fde047");
+        }
+      });
+      meteors.forEach(function(m){
+        m.y += dt * 240 * speedMult;
+        m.rot += dt * 1.8;
+        if(!m.hit && Math.hypot(m.xPct * W - rmF.x, m.y - rmF.y) < m.r + 74){
+          shatterMeteor(m);
         }
       });
       if(phaseT > 5.8 || hoops.every(function(h){ return h.y > H + 120; })){
@@ -1184,30 +1555,44 @@
       }
     } else if(phase === "landing"){
       phaseT += dt;
-      rocket.y += (0.56 - rocket.y) * Math.min(1, dt * 3.1);
+      rocket.y += (0.55 - rocket.y) * Math.min(1, dt * 3.1);
       var rmD = getRocketMetrics();
       if(Math.random() < 0.7) spawnSmoke(rmD.x, rmD.y + rmD.h * 0.48, 1, 34, 90);
-      if(Math.abs(rocket.y - 0.56) < 0.015){
-        enterLandedParty();
-      }
+      if(Math.abs(rocket.y - 0.55) < 0.015) enterLandedParty();
     } else if(phase === "landed"){
       phaseT += dt;
       buddies.forEach(function(b){ if(b.flipT > 0) b.flipT = Math.max(0, b.flipT - dt * 1.45); });
       fireworkT += dt;
-      if(fireworkT > 1.25){
+      if(fireworkT > 1.35){
         fireworkT = 0;
         spawnSparkles(W * (0.18 + Math.random() * 0.64), H * (0.16 + Math.random() * 0.24), 26, ["#fde047", "#f472b6", "#38bdf8", "#4ade80", "#fb923c"], 270);
       }
     }
 
-    /* Update flying stars & particles */
+    /* Update flying stars, shockwaves, shooting stars, bubbles, smoke, particles & float text */
     for(var fsi = flyingStars.length - 1; fsi >= 0; fsi--){
       var fs = flyingStars[fsi];
       fs.t = Math.min(1, fs.t + dt * 1.9);
       if(fs.t >= 1){
-        spawnSparkles(fs.x1, fs.y1, 16, ["#38bdf8", "#fde047", "#ffffff"], 180);
+        spawnSparkles(fs.x1, fs.y1, 18, ["#38bdf8", "#fde047", "#ffffff"], 190);
+        spawnFloatText(fs.x1, fs.y1 - 24, fs.num + "!", "#fde047");
         flyingStars.splice(fsi, 1);
       }
+    }
+    for(var swi = shockwaves.length - 1; swi >= 0; swi--){
+      var sw = shockwaves[swi];
+      sw.life -= dt * 1.8; sw.r += (sw.maxR - sw.r) * Math.min(1, dt * 6);
+      if(sw.life <= 0) shockwaves.splice(swi, 1);
+    }
+    for(var ssi = shootingStars.length - 1; ssi >= 0; ssi--){
+      var ss = shootingStars[ssi];
+      ss.x += ss.vx * dt; ss.y += ss.vy * dt; ss.life -= dt * 1.25;
+      if(ss.life <= 0) shootingStars.splice(ssi, 1);
+    }
+    for(var bi = bubblesFX.length - 1; bi >= 0; bi--){
+      var bb = bubblesFX[bi];
+      bb.x += bb.vx * dt; bb.y += bb.vy * dt; bb.life -= bb.decay * dt;
+      if(bb.life <= 0) bubblesFX.splice(bi, 1);
     }
     for(var si = smoke.length - 1; si >= 0; si--){
       var sm = smoke[si];
@@ -1221,6 +1606,12 @@
       if(p.life <= 0){ particles.splice(pi, 1); continue; }
       p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt;
     }
+    for(var fi = floatTexts.length - 1; fi >= 0; fi--){
+      var ft = floatTexts[fi];
+      ft.life -= dt * 0.95; ft.y -= dt * 52;
+      ft.scale += (1 - ft.scale) * Math.min(1, dt * 10);
+      if(ft.life <= 0) floatTexts.splice(fi, 1);
+    }
 
     /* ==================== DRAW FRAME ==================== */
     ctx.save();
@@ -1229,42 +1620,33 @@
       ctx.translate((Math.random() - 0.5) * shk, (Math.random() - 0.5) * shk);
     }
 
-    /* 1. Lush Pixar 3D Backdrop with Smooth Crossfade & Seamless Mirrored Flight Scrolling */
+    /* 1. Lush Pixar 3D Backdrop */
     if(phase === "flight"){
       var spImg = ART.space;
       if(spImg && spImg.complete && spImg.naturalWidth){
-        /* Crop to pure starry cosmic nebula (top 72%) and mirror-tile vertically so there is ZERO horizontal seam! */
         var srcH = Math.floor(spImg.naturalHeight * 0.72);
-        var sc = Math.max(W / spImg.naturalWidth, H / srcH) * 1.04;
+        var sc = Math.max(W / spImg.naturalWidth, H / srcH) * (1.04 + hyperWarpT * 0.05);
         var dw = spImg.naturalWidth * sc, dh = srcH * sc;
-        var dx = (W - dw) * 0.5;
-        var cycle = dh * 2;
-        var off = spaceScroll % cycle;
+        var dx = (W - dw) * 0.5, cycle = dh * 2, off = spaceScroll % cycle;
         for(var k = -1; k <= 2; k++){
           var ty = off + k * dh - dh;
           if(ty > H + 10 || ty + dh < -10) continue;
           var flip = ((k % 2) + 2) % 2 === 1;
           ctx.save();
-          if(flip){
-            ctx.translate(0, ty + dh);
-            ctx.scale(1, -1);
-            ctx.drawImage(spImg, 0, 0, spImg.naturalWidth, srcH, dx, 0, dw, dh);
-          } else {
-            ctx.drawImage(spImg, 0, 0, spImg.naturalWidth, srcH, dx, ty, dw, dh);
-          }
+          if(flip){ ctx.translate(0, ty + dh); ctx.scale(1, -1); ctx.drawImage(spImg, 0, 0, spImg.naturalWidth, srcH, dx, 0, dw, dh); }
+          else { ctx.drawImage(spImg, 0, 0, spImg.naturalWidth, srcH, dx, ty, dw, dh); }
           ctx.restore();
         }
       }
-      /* Warp-speed cosmic streaks */
-      ctx.save();
-      ctx.lineCap = "round";
+      ctx.save(); ctx.lineCap = "round";
+      var wMult = 1 + hyperWarpT * 2.2;
       warpStars.forEach(function(ws){
-        ws.y += ws.sp * dt;
-        if(ws.y > H + 60){ ws.y = -60; ws.x = Math.random() * W; }
-        ctx.strokeStyle = ws.col;
-        ctx.globalAlpha = 0.55;
-        ctx.lineWidth = 2.6;
-        ctx.beginPath(); ctx.moveTo(ws.x, ws.y); ctx.lineTo(ws.x, ws.y + ws.len); ctx.stroke();
+        ws.y += ws.sp * wMult * dt;
+        if(ws.y > H + 80){ ws.y = -80; ws.x = Math.random() * W; }
+        ctx.strokeStyle = hyperWarpT > 0.25 ? (ws.col === "#ffffff" ? "#7dd3fc" : ws.col) : ws.col;
+        ctx.globalAlpha = 0.55 + hyperWarpT * 0.35;
+        ctx.lineWidth = 2.6 + hyperWarpT * 2;
+        ctx.beginPath(); ctx.moveTo(ws.x, ws.y); ctx.lineTo(ws.x, ws.y + ws.len * wMult); ctx.stroke();
       });
       ctx.restore();
     } else {
@@ -1273,42 +1655,53 @@
       drawCover(ART[sceneFade.to], sceneFade.t, 0, breathe);
     }
 
-    /* Ambient Twinkling Stardust */
+    /* Twinkling Stardust & Shooting Stars */
     ctx.save();
     ambientDust.forEach(function(ad){
-      var al = 0.25 + 0.65 * Math.abs(Math.sin(tAcc * ad.sp + ad.ph));
-      ctx.globalAlpha = al;
+      ctx.globalAlpha = 0.25 + 0.65 * Math.abs(Math.sin(tAcc * ad.sp + ad.ph));
       ctx.fillStyle = "#fffef0";
       ctx.beginPath(); ctx.arc(ad.x * W, ad.y * H, ad.r, 0, Math.PI * 2); ctx.fill();
     });
+    shootingStars.forEach(function(ss){
+      ctx.globalAlpha = Math.max(0, ss.life);
+      ctx.strokeStyle = "#fef08a"; ctx.lineWidth = 4; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(ss.x, ss.y); ctx.lineTo(ss.x - ss.vx * 0.14, ss.y - ss.vy * 0.14); ctx.stroke();
+      drawStarShape(ss.x, ss.y, 8, "#ffffff");
+    });
     ctx.restore();
 
-    /* Glowing Launchpad Energy Ring on Pad */
+    /* Cruising Disco UFO */
+    drawDiscoUFO();
+
+    /* Expanding Radar & Planet Shockwaves */
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    shockwaves.forEach(function(sw){
+      ctx.globalAlpha = Math.max(0, sw.life);
+      ctx.strokeStyle = sw.col; ctx.lineWidth = 6 * sw.life;
+      ctx.beginPath(); ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); ctx.stroke();
+    });
+    ctx.restore();
+
+    /* Launchpad Energy Ring */
     if(phase === "collect" || phase === "match" || phase === "ready" || phase === "countdown"){
       var rmPad = getRocketMetrics();
       var padY = rmPad.y + rmPad.h * 0.47;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
       var ringCol = (phase === "ready" || phase === "countdown") ? "rgba(74,222,128," : "rgba(56,189,248,";
-      var pR = 0.55 + Math.sin(tAcc * 4) * 0.25;
-      ctx.strokeStyle = ringCol + pR.toFixed(2) + ")";
+      ctx.strokeStyle = ringCol + (0.55 + Math.sin(tAcc * 4) * 0.25).toFixed(2) + ")";
       ctx.lineWidth = 6;
       ctx.beginPath(); ctx.ellipse(W * 0.5, padY, rmPad.w * 0.88, rmPad.w * 0.24, 0, 0, Math.PI * 2); ctx.stroke();
       ctx.restore();
     }
 
-    /* 2. Glowing 3D Perspective Rainbow Boost Hoops in Space Flight */
+    /* Flight Rainbow Hoops + Piñata Crystal Space Meteors */
     if(phase === "flight"){
       hoops.forEach(function(h){
         if(h.y < -160 || h.y > H + 160) return;
         var hx = h.xPct * W, hy = h.y;
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        ctx.strokeStyle = h.col;
-        ctx.shadowColor = h.col;
-        ctx.shadowBlur = 24;
-        ctx.lineWidth = h.hit ? 4 : 15;
-        ctx.globalAlpha = h.hit ? 0.25 : 0.92;
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = h.col; ctx.shadowColor = h.col; ctx.shadowBlur = 24;
+        ctx.lineWidth = h.hit ? 4 : 15; ctx.globalAlpha = h.hit ? 0.25 : 0.94;
         ctx.beginPath(); ctx.ellipse(hx, hy, 96, 36, 0, 0, Math.PI * 2); ctx.stroke();
         ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 4;
         ctx.beginPath(); ctx.ellipse(hx, hy, 96, 36, 0, 0, Math.PI * 2); ctx.stroke();
@@ -1318,48 +1711,80 @@
           ctx.drawImage(ART.star, hx - stSz / 2, hy - stSz / 2, stSz, stSz);
         }
       });
+      meteors.forEach(function(m){
+        if(m.hit || m.y < -100 || m.y > H + 100) return;
+        var mx = m.xPct * W, my = m.y;
+        ctx.save(); ctx.translate(mx, my); ctx.rotate(m.rot);
+        var mg = ctx.createRadialGradient(-8, -8, 4, 0, 0, m.r);
+        mg.addColorStop(0, "#ffffff"); mg.addColorStop(0.45, m.col); mg.addColorStop(1, "#312e81");
+        ctx.fillStyle = mg; ctx.strokeStyle = "#fde047"; ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        for(var v = 0; v < 7; v++){
+          var a = (v / 7) * Math.PI * 2;
+          var rr = m.r * (v % 2 === 0 ? 1.05 : 0.78);
+          if(v === 0) ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+          else ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+        }
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        drawStarShape(0, 0, 12, "#fde047");
+        ctx.restore();
+      });
+      /* Flowing 6-color Rainbow Plasma Ribbon in Flight when Rainbow trail active! */
+      if(TRAILS[trailIdx].key === "rainbow" && rainbowTrailPts.length > 2){
+        var rbCols = ["#ef4444","#fb923c","#fde047","#4ade80","#38bdf8","#c084fc"];
+        ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round";
+        rbCols.forEach(function(rc, idx){
+          ctx.strokeStyle = rc; ctx.lineWidth = 8; ctx.globalAlpha = 0.65;
+          var offX = (idx - 2.5) * 8;
+          ctx.beginPath();
+          rainbowTrailPts.forEach(function(pt, j){
+            if(j === 0) ctx.moveTo(pt.x + offX, pt.y);
+            else ctx.lineTo(pt.x + offX, pt.y);
+          });
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
     }
 
-    /* 3. Transparent Glass Fuel Reactor Tube */
     drawGlassFuelTube();
 
-    /* Electric Plasma Charge Beam when matching the number pod! */
     if(plasmaBeamT > 0){
       var tr = getFuelTubeRect(), rmB = getRocketMetrics();
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = "rgba(56,189,248," + plasmaBeamT.toFixed(2) + ")";
-      ctx.lineWidth = 20 * plasmaBeamT; ctx.lineCap = "round";
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(56,189,248," + plasmaBeamT.toFixed(2) + ")"; ctx.lineWidth = 22 * plasmaBeamT; ctx.lineCap = "round";
       ctx.beginPath(); ctx.moveTo(tr.cx, tr.y + tr.h * 0.4); ctx.lineTo(rmB.x, rmB.y); ctx.stroke();
-      ctx.strokeStyle = "rgba(255,255,255," + plasmaBeamT.toFixed(2) + ")";
-      ctx.lineWidth = 7 * plasmaBeamT;
+      ctx.strokeStyle = "rgba(255,255,255," + plasmaBeamT.toFixed(2) + ")"; ctx.lineWidth = 8 * plasmaBeamT;
       ctx.beginPath(); ctx.moveTo(tr.cx, tr.y + tr.h * 0.4); ctx.lineTo(rmB.x, rmB.y); ctx.stroke();
       ctx.restore();
     }
 
-    /* 4. Billowing Smoke Clouds behind/below Rocket */
+    /* Smoke & Cosmic Soap Bubbles */
     smoke.forEach(function(sm){
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, sm.life * 0.72);
+      ctx.save(); ctx.globalAlpha = Math.max(0, sm.life * 0.72);
       var sg = ctx.createRadialGradient(sm.x, sm.y, 2, sm.x, sm.y, sm.r);
-      sg.addColorStop(0, sm.col);
-      sg.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = sg;
-      ctx.beginPath(); ctx.arc(sm.x, sm.y, sm.r, 0, Math.PI * 2); ctx.fill();
+      sg.addColorStop(0, sm.col); sg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sm.x, sm.y, sm.r, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    });
+    bubblesFX.forEach(function(bb){
+      ctx.save(); ctx.globalAlpha = Math.max(0, bb.life * 0.85);
+      ctx.strokeStyle = "hsl(" + bb.hue + ",95%,75%)"; ctx.lineWidth = 3;
+      ctx.fillStyle = "hsla(" + bb.hue + ",95%,85%,0.22)";
+      ctx.beginPath(); ctx.arc(bb.x, bb.y, bb.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(bb.x - bb.r * 0.3, bb.y - bb.r * 0.3, bb.r * 0.22, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     });
 
-    /* 5. Hero Pixar 3D Rocket with Ground Shadow, Volumetric Flame & Squash-and-Stretch! */
+    /* Hero Pixar 3D Rocket + Hat Topper + Ground Shadow + Flame */
     var rm = getRocketMetrics();
     if(phase !== "flight" && phase !== "liftoff"){
-      ctx.save();
-      ctx.fillStyle = "rgba(9,13,36,0.44)";
-      var shScale = phase === "landing" ? Math.max(0.25, 1 - Math.abs(0.56 - rocket.y) * 1.4) : 1;
-      ctx.beginPath(); ctx.ellipse(rm.x, (phase === "landed" ? 0.56 * H : 0.52 * H) + rm.h * 0.47, rm.w * 0.54 * shScale, 16 * shScale, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.save(); ctx.fillStyle = "rgba(9,13,36,0.44)";
+      var shScale = phase === "landing" ? Math.max(0.25, 1 - Math.abs(0.55 - rocket.y) * 1.4) : 1;
+      ctx.beginPath(); ctx.ellipse(rm.x, (phase === "landed" ? 0.55 * H : 0.52 * H) + rm.h * 0.47, rm.w * 0.54 * shScale, 16 * shScale, 0, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
 
-    var activeFlame = Math.max(rocket.flame, boostFlashT > 0 ? 1.15 : 0);
+    var activeFlame = Math.max(rocket.flame, boostFlashT > 0 ? 1.2 : 0);
     var sWave = rocket.bounce > 0 ? Math.sin(rocket.bounce * Math.PI * 2.5) * rocket.bounce * 0.14 : 0;
     var breatheY = (phase === "collect" || phase === "match" || phase === "ready") ? Math.sin(tAcc * 2.6) * 4 : 0;
     var rX = rm.x + (rocket.rumble > 0 ? (Math.random() - 0.5) * 7 * rocket.rumble : 0);
@@ -1369,104 +1794,94 @@
     ctx.translate(rX, rY);
     ctx.rotate(rocket.tilt);
     ctx.scale(1 - sWave * 0.65, 1 + sWave);
-    if(activeFlame > 0){
-      drawVolumetricFlame(0, rm.h * 0.44, rm.h / 260, activeFlame);
-    }
+    if(activeFlame > 0) drawVolumetricFlame(0, rm.h * 0.44, rm.h / 260, activeFlame);
     var rImg = getPaintedRocket(currentPaint);
-    if(rImg){
-      ctx.drawImage(rImg, -rm.w / 2, -rm.h / 2, rm.w, rm.h);
-    }
+    if(rImg) ctx.drawImage(rImg, -rm.w / 2, -rm.h / 2, rm.w, rm.h);
+    drawRocketHat(-rm.h * 0.46, rm.w);
     ctx.restore();
 
-    /* 6. Floating Smiling Pixar Golden Star Gems (ALWAYS Front-Facing & Effortless to Tap!) */
+    /* Smiling Pixar Golden Star Gems (Drag OR Tap!) */
     if(phase === "collect" && ART.star && ART.star.complete){
       var starSz = Math.max(88, Math.min(124, W * 0.105));
       stars.forEach(function(st){
         if(st.collected) return;
         st.popIn = Math.min(1, st.popIn + dt * 3.8);
-        var sx = st.xPct * W;
-        var sy = st.yPct * H + Math.sin(tAcc * 3.0 + st.phase) * 10;
-        var scPop = st.popIn < 1 ? (st.popIn * (1 + Math.sin(st.popIn * Math.PI) * 0.22)) : (1 + Math.sin(tAcc * 4 + st.phase) * 0.05);
+        var sx = st.dragX !== null ? st.dragX : st.xPct * W;
+        var sy = st.dragY !== null ? st.dragY : (st.yPct * H + Math.sin(tAcc * 3.0 + st.phase) * 10);
+        var scPop = st.dragX !== null ? 1.18 : (st.popIn < 1 ? (st.popIn * (1 + Math.sin(st.popIn * Math.PI) * 0.22)) : (1 + Math.sin(tAcc * 4 + st.phase) * 0.05));
         var sz = starSz * scPop;
 
-        /* Warm golden halo ring behind smiling star */
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
         var hg = ctx.createRadialGradient(sx, sy, sz * 0.15, sx, sy, sz * 0.78);
-        hg.addColorStop(0, "rgba(253,224,71,0.72)");
-        hg.addColorStop(0.6, "rgba(56,189,248,0.28)");
-        hg.addColorStop(1, "rgba(253,224,71,0)");
-        ctx.fillStyle = hg;
-        ctx.beginPath(); ctx.arc(sx, sy, sz * 0.78, 0, Math.PI * 2); ctx.fill();
+        hg.addColorStop(0, "rgba(253,224,71,0.72)"); hg.addColorStop(0.6, "rgba(56,189,248,0.28)"); hg.addColorStop(1, "rgba(253,224,71,0)");
+        ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(sx, sy, sz * 0.78, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
 
-        ctx.save();
-        ctx.translate(sx, sy);
-        ctx.rotate(Math.sin(tAcc * 2.2 + st.phase) * 0.12);
-        ctx.drawImage(ART.star, -sz / 2, -sz / 2, sz, sz);
-        ctx.restore();
+        ctx.save(); ctx.translate(sx, sy); ctx.rotate(Math.sin(tAcc * 2.2 + st.phase) * 0.12);
+        ctx.drawImage(ART.star, -sz / 2, -sz / 2, sz, sz); ctx.restore();
       });
     }
 
-    /* 7. Flying Stars Arcing into the Fuel Tube */
     if(ART.star && ART.star.complete){
       flyingStars.forEach(function(fs){
         var u = fs.t, mu = 1 - u;
         var fx = mu * mu * fs.x0 + 2 * mu * u * fs.cx + u * u * fs.x1;
         var fy = mu * mu * fs.y0 + 2 * mu * u * fs.cy + u * u * fs.y1;
-        var fsz = 82 * (1 - u * 0.55);
-        ctx.save();
-        ctx.translate(fx, fy);
-        ctx.rotate(u * Math.PI * 2);
-        ctx.drawImage(ART.star, -fsz / 2, -fsz / 2, fsz, fsz);
-        ctx.restore();
+        var fsz = 84 * (1 - u * 0.52);
+        ctx.save(); ctx.translate(fx, fy); ctx.rotate(u * Math.PI * 2);
+        ctx.drawImage(ART.star, -fsz / 2, -fsz / 2, fsz, fsz); ctx.restore();
       });
     }
 
-    /* 8. Dancing Pixar 3D Space Friends on Landed Planet! */
+    /* Landed Planet Playground: Dancing Pixar Space Friends + 3-Tap Cosmic Treasure Chest */
     if(phase === "landed"){
       var bh = Math.min(H * 0.27, W * 0.22, 205);
       buddies.forEach(function(b){
-        var img = ART[b.key];
-        if(!img || !img.complete || !img.naturalWidth) return;
+        var img = ART[b.key]; if(!img || !img.complete || !img.naturalWidth) return;
         var bw = bh * (img.naturalWidth / img.naturalHeight);
-        var bx = b.xPct * W;
-        var baseY = b.yPct * H;
+        var bx = b.xPct * W, baseY = b.yPct * H;
         var hop = Math.abs(Math.sin(tAcc * 5.2 + b.phase)) * b.hopAmp;
         var flipLift = b.flipT > 0 ? Math.sin(b.flipT * Math.PI) * 95 : 0;
         var by = baseY - hop - flipLift;
         var rot = b.flipT > 0 ? (1 - b.flipT) * Math.PI * 2 : Math.sin(tAcc * 5.2 + b.phase) * 0.08;
         var sq = hop < 4 ? 0.08 : -0.04;
 
-        /* Ground shadow */
-        ctx.save();
-        ctx.fillStyle = "rgba(9,13,36,0.4)";
+        ctx.save(); ctx.fillStyle = "rgba(9,13,36,0.4)";
         var sh = Math.max(0.4, 1 - (hop + flipLift) / 160);
-        ctx.beginPath(); ctx.ellipse(bx, baseY + bh * 0.44, bw * 0.42 * sh, 11 * sh, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
+        ctx.beginPath(); ctx.ellipse(bx, baseY + bh * 0.44, bw * 0.42 * sh, 11 * sh, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 
-        ctx.save();
-        ctx.translate(bx, by);
-        ctx.rotate(rot);
-        ctx.scale(1 + sq, 1 - sq);
-        ctx.drawImage(img, -bw / 2, -bh / 2, bw, bh);
-        ctx.restore();
+        ctx.save(); ctx.translate(bx, by); ctx.rotate(rot); ctx.scale(1 + sq, 1 - sq);
+        ctx.drawImage(img, -bw / 2, -bh / 2, bw, bh); ctx.restore();
       });
+      drawTreasureChest();
     }
 
-    /* 9. Additive HDR Sparkles & Fireworks */
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
+    /* Flight Progress Tracker */
+    drawFlightProgressTracker();
+
+    /* Additive HDR Sparkles & Fireworks */
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
     particles.forEach(function(p){
       ctx.globalAlpha = Math.max(0, p.life);
-      if(p.star){
-        drawStarShape(p.x, p.y, p.r * 1.45, p.col);
-      } else {
-        ctx.fillStyle = p.col;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-      }
+      if(p.star) drawStarShape(p.x, p.y, p.r * 1.45, p.col);
+      else { ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
     });
     ctx.restore();
+
+    /* Bouncy Floating Number / Treasure Pop-Up Texts */
+    floatTexts.forEach(function(ft){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, ft.life * 1.4));
+      ctx.translate(ft.x, ft.y);
+      ctx.scale(ft.scale, ft.scale);
+      ctx.font = '800 34px "Fredoka", sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 7; ctx.strokeStyle = "#131d36";
+      ctx.strokeText(ft.txt, 0, 0);
+      ctx.fillStyle = ft.col;
+      ctx.fillText(ft.txt, 0, 0);
+      ctx.restore();
+    });
 
     ctx.restore();
   }
@@ -1475,6 +1890,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e104"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e105"></script>
 </body>
 </html>
