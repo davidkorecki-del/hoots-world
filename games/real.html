@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="real";</script>
-<script src="js/hoot-game-head.js?v=llprev3e97"></script>
+<script src="js/hoot-game-head.js?v=llprev3e98"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Town Rescue Patrol</title>
@@ -30,7 +30,7 @@
   /* 60fps Interactive Physics Canvas (Firefighter Water Hose & Roaring Flames + Celebration Confetti) */
   #fxCanvas{
     position:absolute; inset:0; width:100%; height:100%;
-    z-index:6; touch-action:none;
+    z-index:8; touch-action:none;
   }
 
   /* Interactive Mission Layer */
@@ -107,16 +107,16 @@
     to{ transform:translate(-50%, -50%) scale(1.12); }
   }
   .doc-tool-tray{
-    display:flex; flex-direction:column; gap:12px; pointer-events:auto;
+    display:flex; flex-direction:column; gap:8px; pointer-events:auto;
   }
   .doc-tool-btn{
-    display:flex; align-items:center; gap:12px;
-    min-width:clamp(190px, 28vw, 265px); min-height:78px;
+    display:flex; align-items:center; gap:10px;
+    min-width:clamp(185px, 26vw, 255px); min-height:58px;
     background:linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
-    border:4.5px solid #141e30; border-radius:24px;
-    padding:8px 18px; cursor:pointer;
-    font-family:"Fredoka",sans-serif; font-weight:800; font-size:clamp(16px, 2.2vw, 21px); color:#141e30;
-    box-shadow:0 7px 0 #141e30, 0 12px 24px rgba(0,0,0,.22);
+    border:4px solid #141e30; border-radius:20px;
+    padding:5px 14px; cursor:pointer;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:clamp(15px, 2vw, 19px); color:#141e30;
+    box-shadow:0 5px 0 #141e30, 0 10px 20px rgba(0,0,0,.2);
     transition:transform .16s cubic-bezier(.34,1.8,.5,1), background .2s;
   }
   .doc-tool-btn:active{ transform:translateY(5px); box-shadow:0 2px 0 #141e30; }
@@ -125,7 +125,7 @@
     border-color:#141e30; color:#141e30;
     pointer-events:none;
   }
-  .doc-tool-ic{ font-size:40px; line-height:1; filter:drop-shadow(0 3px 0 rgba(0,0,0,.18)); }
+  .doc-tool-ic{ font-size:32px; line-height:1; filter:drop-shadow(0 3px 0 rgba(0,0,0,.18)); }
 
   /* =========================================================
      3. POLICE SCENE — Giant Crosswalk & Big Animal Walkers
@@ -347,6 +347,67 @@
     padding:12px 32px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
   }
 
+  /* ---------- Expanded gameplay UI ---------- */
+  .drag-ghost{ position:fixed; z-index:60; font-size:84px; line-height:1; transform:translate(-50%,-50%) rotate(-8deg); pointer-events:none; filter:drop-shadow(0 10px 0 rgba(0,0,0,.28)); }
+  .doc-tool-btn:not(.active):not(.done){ opacity:.5; }
+  .doc-tool-btn.active{ border-color:#fde047; box-shadow:0 0 0 5px #fde047, 0 7px 0 #141e30, 0 0 26px rgba(253,224,71,.9); transform:translateX(-6px); animation:toolNudge .9s ease-in-out infinite alternate; touch-action:none; }
+  @keyframes toolNudge{ from{ transform:translateX(-4px); } to{ transform:translateX(-14px); } }
+  #targetRing{ z-index:3; pointer-events:auto; cursor:pointer; font-size:40px; display:grid; touch-action:none; }
+  #targetRing.flash{ animation:ringFlash .8s ease-out; }
+  @keyframes ringFlash{ 0%{ transform:translate(-50%,-50%) scale(1); } 40%{ transform:translate(-50%,-50%) scale(1.6); } 100%{ transform:translate(-50%,-50%) scale(1); } }
+  #giantTeddyWrap.jump{ animation:teddyJump .7s ease-in-out 3; }
+  @keyframes teddyJump{ 0%,100%{ transform:translateY(0) scale(1); } 45%{ transform:translateY(-34px) scale(1.05) rotate(-3deg); } }
+  .beat-btn{ position:absolute; transform:translate(-50%,-50%); width:112px; height:112px; border-radius:50%; border:5px solid #141e30; background:radial-gradient(circle at 35% 30%, #fff1f2, #fda4af 65%, #fb7185 100%); box-shadow:0 7px 0 #141e30; cursor:pointer; z-index:5; pointer-events:auto; display:grid; place-items:center; padding:0; touch-action:none; }
+  .beat-btn[hidden]{ display:none !important; }
+  .beat-heart{ font-size:50px; position:relative; z-index:2; }
+  .beat-ring{ position:absolute; left:50%; top:50%; width:112px; height:112px; border-radius:50%; border:7px solid #e11d48; pointer-events:none; transform:translate(-50%,-50%) scale(2); }
+
+  /* police */
+  #stopBtn{ position:absolute; right:3%; top:44%; width:118px; height:118px; border-radius:50%; border:6px solid #141e30; background:radial-gradient(circle at 35% 30%, #fecaca, #ef4444 65%, #b91c1c 100%); box-shadow:0 8px 0 #141e30, 0 14px 24px rgba(0,0,0,.35); cursor:pointer; pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0; color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; touch-action:none; }
+  #stopBtn.on{ box-shadow:0 0 0 7px #fde047, 0 8px 0 #141e30, 0 0 30px rgba(253,224,71,.9); }
+  #stopBtn .stop-hand{ font-size:40px; line-height:1; } #stopBtn .stop-word{ font-size:24px; text-shadow:0 2px 0 rgba(0,0,0,.4); }
+  #stopBtn .stop-bar{ width:76px; height:10px; border-radius:99px; background:#141e30; overflow:hidden; margin-top:3px; }
+  #stopBtn .stop-bar i{ display:block; height:100%; width:0; background:#4ade80; }
+  .traffic-car{ position:absolute; left:0; top:0; width:150px; height:76px; pointer-events:none; filter:drop-shadow(0 6px 0 rgba(20,30,48,.3)); will-change:transform; }
+  .traffic-car svg{ width:100%; height:100%; display:block; }
+  .pet-walker{ position:absolute; transform:translate(-50%,-50%); width:128px; border:none; background:transparent; cursor:pointer; pointer-events:auto; display:flex; flex-direction:column-reverse; align-items:center; filter:drop-shadow(0 8px 0 rgba(20,30,48,.3)); animation:walkerBob 1.1s ease-in-out infinite alternate; padding:0; touch-action:none; }
+  .pet-walker svg{ width:92px; height:92px; display:block; overflow:visible; }
+  .pet-walker.walking{ animation:walkerBob .3s ease-in-out infinite alternate; }
+  .pet-walker.crossed .walker-tag{ background:#4ade80; }
+  .pet-walker.crossed{ animation:none; }
+  .pet-walker .walker-tag{ margin:0 0 -6px; font-size:13px; padding:2px 10px; }
+  .shake{ animation:shakeX .4s ease-in-out !important; }
+  @keyframes shakeX{ 0%,100%{ transform:translate(-50%,-50%); } 20%{ transform:translate(calc(-50% - 12px),-50%); } 40%{ transform:translate(calc(-50% + 12px),-50%); } 60%{ transform:translate(calc(-50% - 8px),-50%); } 80%{ transform:translate(calc(-50% + 8px),-50%); } }
+  #vehicleStage.curb-car{ left:2%; bottom:23%; width:clamp(150px, 20vw, 200px); height:clamp(96px, 13vw, 128px); }
+
+  /* school bus */
+  #stopZone{ position:absolute; transform:translate(-50%,-100%); width:150px; height:46px; border:5px dashed #fde047; border-radius:16px; background:rgba(253,224,71,.28); display:none; pointer-events:none; animation:zonePulse .8s ease-in-out infinite alternate; text-align:center; font-family:"Fredoka",sans-serif; font-weight:800; font-size:13px; color:#141e30; line-height:36px; }
+  @keyframes zonePulse{ from{ opacity:.55; } to{ opacity:1; } }
+  #driveBtn{ position:absolute; right:3%; top:44%; width:122px; height:122px; border-radius:50%; border:6px solid #141e30; cursor:pointer; pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:"Fredoka",sans-serif; font-weight:800; font-size:23px; color:#fff; box-shadow:0 8px 0 #141e30, 0 14px 24px rgba(0,0,0,.35); text-shadow:0 2px 0 rgba(0,0,0,.4); padding:0; touch-action:none; }
+  #driveBtn.brake{ background:radial-gradient(circle at 35% 30%, #fecaca, #ef4444 65%, #b91c1c 100%); }
+  #driveBtn.go{ background:radial-gradient(circle at 35% 30%, #bbf7d0, #22c55e 65%, #15803d 100%); animation:zonePulse .7s ease-in-out infinite alternate; }
+  .d-ic{ font-size:40px; line-height:1; }
+  .bus-sign{ position:absolute; transform:translate(-50%,-100%); width:104px; height:164px; pointer-events:none; filter:drop-shadow(0 8px 0 rgba(20,30,48,.28)); }
+  .bus-sign svg, .school-bldg svg{ width:100%; height:100%; display:block; }
+  .school-bldg{ position:absolute; transform:translate(-50%,-100%); width:min(300px, 40vw); height:min(250px, 33vw); pointer-events:none; filter:drop-shadow(0 8px 0 rgba(20,30,48,.28)); }
+  .bus-kid{ position:absolute; transform:translate(-50%,-50%); width:128px; border:none; background:transparent; cursor:pointer; pointer-events:auto; display:flex; flex-direction:column; align-items:center; filter:drop-shadow(0 8px 0 rgba(20,30,48,.3)); animation:walkerBob 1.1s ease-in-out infinite alternate; padding:0; touch-action:none; }
+  .bus-kid svg{ width:108px; height:108px; display:block; overflow:visible; }
+  .bus-kid.boarding, .bus-kid.out{ animation:none !important; pointer-events:none; }
+  .bus-kid.out{ width:100px; }
+  .letter-badge{ margin-top:-12px; min-width:62px; height:62px; border-radius:18px; background:#fff; border:5px solid #141e30; box-shadow:0 5px 0 #141e30; display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:800; font-size:42px; color:#e11d48; line-height:1; }
+
+  /* firefighter tank, hydrant, ladder */
+  #tankWrap{ display:flex; align-items:center; gap:6px; flex:0 0 auto; }
+  .tank-ic{ font-size:22px; }
+  #tankBar{ width:clamp(70px, 14vw, 130px); height:18px; border-radius:99px; background:#141e30; border:3px solid #fff; overflow:hidden; }
+  #tankFill{ display:block; height:100%; width:100%; background:linear-gradient(90deg, #0284c7, #38bdf8); transition:width .08s linear; }
+  #hydrantBtn{ position:absolute; left:33%; bottom:35%; z-index:5; width:108px; border:none; background:transparent; cursor:pointer; display:flex; flex-direction:column; align-items:center; padding:0; filter:drop-shadow(0 8px 0 rgba(20,30,48,.3)); touch-action:none; animation:truckIdle .8s ease-in-out infinite alternate; }
+  #hydrantBtn svg{ width:78px; height:94px; display:block; }
+  #hydrantBtn span{ background:#fff; border:3px solid #141e30; border-radius:99px; padding:1px 8px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:11.5px; color:#141e30; margin-top:-4px; white-space:nowrap; }
+  #ladderBtn{ position:absolute; left:6%; top:44%; width:150px; min-height:116px; border-radius:26px; border:5px solid #141e30; background:linear-gradient(180deg, #fde68a, #f59e0b); box-shadow:0 8px 0 #141e30, 0 0 26px rgba(253,224,71,.9); cursor:pointer; pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px; color:#141e30; padding:8px; animation:zonePulse .8s ease-in-out infinite alternate; touch-action:none; }
+  #friendStage.on-roof{ left:63% !important; right:auto !important; top:20% !important; bottom:auto !important; }
+  #friendStage{ transition:left .9s ease, top .9s ease; }
+
   @media (max-width: 620px){
     #vehicleStage{ left:2%; bottom:24.5%; width:190px; height:120px; }
     #vehicleStage.giant-bus{ left:3%; bottom:25%; width:255px; height:160px; }
@@ -448,36 +509,29 @@
       </linearGradient>
     </defs>
     <rect width="1440" height="900" fill="url(#skyPol)"/>
-    <!-- Sunny Park Hills, Trees & Pond on the Safe Side (Right) -->
-    <path d="M0 430 Q420 350 920 410 T1440 390 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
-    <!-- Big Park Trees -->
-    <g transform="translate(1150,275)" stroke="#141e30" stroke-width="6">
-      <rect x="-18" y="45" width="36" height="95" rx="6" fill="#b45309"/>
-      <circle cx="0" cy="0" r="64" fill="#22c55e"/>
-      <circle cx="-42" cy="24" r="46" fill="#16a34a"/>
-      <circle cx="42" cy="24" r="46" fill="#16a34a"/>
+    <path d="M0 230 Q420 170 920 220 T1440 200 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <g transform="translate(1210,120)" stroke="#141e30" stroke-width="6">
+      <rect x="-16" y="40" width="32" height="90" rx="6" fill="#b45309"/>
+      <circle cx="0" cy="0" r="58" fill="#22c55e"/><circle cx="-38" cy="22" r="42" fill="#16a34a"/><circle cx="38" cy="22" r="42" fill="#16a34a"/>
     </g>
-    <!-- Giant Working Traffic Light Post in Center-Left -->
-    <g transform="translate(490,260)" stroke="#141e30" stroke-width="6">
-      <rect x="-12" y="65" width="24" height="175" fill="#475569"/>
-      <rect x="-44" y="-75" width="88" height="150" rx="22" fill="#1e293b"/>
-      <circle cx="0" cy="-35" r="24" fill="#ef4444" opacity=".35"/>
-      <circle cx="0" cy="30" r="28" fill="#4ade80"/>
+    <g transform="translate(1010,190)" stroke="#141e30" stroke-width="5.5">
+      <rect x="-8" y="10" width="16" height="60" fill="#78350f"/>
+      <rect x="-92" y="-36" width="184" height="52" rx="16" fill="#4ade80"/>
+      <text x="0" y="-2" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="22" fill="#141e30" stroke="none">SAFE PARK</text>
     </g>
-    <!-- Wide Town Road & Giant Center Zebra Crosswalk -->
-    <rect x="0" y="470" width="1440" height="245" fill="#334155" stroke="#141e30" stroke-width="7"/>
-    <g fill="#ffffff" stroke="#141e30" stroke-width="4.5">
-      <rect x="590" y="485" width="340" height="34" rx="10"/>
-      <rect x="590" y="535" width="340" height="34" rx="10"/>
-      <rect x="590" y="585" width="340" height="34" rx="10"/>
-      <rect x="590" y="635" width="340" height="34" rx="10"/>
+    <g transform="translate(470,196)" stroke="#141e30" stroke-width="6">
+      <rect x="-10" y="84" width="20" height="60" fill="#475569"/>
+      <rect x="-36" y="-52" width="72" height="140" rx="20" fill="#1e293b"/>
+      <circle id="polRed" cx="0" cy="-14" r="22" fill="#ef4444" opacity="0.3"/>
+      <circle id="polGreen" cx="0" cy="46" r="22" fill="#4ade80"/>
     </g>
-    <!-- Safe Park Goal Sign on Right Side of Crosswalk -->
-    <g transform="translate(1060,415)" stroke="#141e30" stroke-width="5.5">
-      <rect x="-8" y="20" width="16" height="70" fill="#78350f"/>
-      <rect x="-95" y="-32" width="190" height="56" rx="16" fill="#4ade80"/>
-      <text x="0" y="3" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="23" fill="#141e30">🌳 SAFE PARK</text>
+    <rect x="0" y="330" width="1440" height="230" fill="#334155" stroke="#141e30" stroke-width="7"/>
+    <g fill="#facc15"><rect x="40" y="441" width="100" height="12" rx="6"/><rect x="220" y="441" width="100" height="12" rx="6"/><rect x="400" y="441" width="100" height="12" rx="6"/><rect x="980" y="441" width="100" height="12" rx="6"/><rect x="1160" y="441" width="100" height="12" rx="6"/><rect x="1340" y="441" width="100" height="12" rx="6"/></g>
+    <g fill="#ffffff" stroke="#141e30" stroke-width="4">
+      <rect x="590" y="345" width="340" height="36" rx="9"/><rect x="590" y="394" width="340" height="36" rx="9"/>
+      <rect x="590" y="443" width="340" height="36" rx="9"/><rect x="590" y="492" width="340" height="36" rx="9"/>
     </g>
+    <rect x="0" y="560" width="1440" height="14" fill="#cbd5e1" stroke="#141e30" stroke-width="5"/>
   </svg>
 
   <!-- ===================================================================
@@ -490,23 +544,20 @@
       </linearGradient>
     </defs>
     <rect width="1440" height="900" fill="url(#skyBus)"/>
+    <g transform="translate(1180,130)"><circle r="62" fill="#fde047" opacity=".4"/><circle r="42" fill="#facc15" stroke="#141e30" stroke-width="6"/></g>
     <path d="M0 460 Q450 380 950 440 T1440 420 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
-    <!-- Bus Stop Sign on Right -->
-    <g transform="translate(1150,350)" stroke="#141e30" stroke-width="6">
-      <rect x="-10" y="30" width="20" height="160" fill="#475569"/>
-      <rect x="-95" y="-35" width="190" height="68" rx="18" fill="#facc15"/>
-      <text x="0" y="8" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="25" fill="#141e30">🚌 BUS STOP</text>
-    </g>
     <rect x="0" y="510" width="1440" height="205" fill="#334155" stroke="#141e30" stroke-width="7"/>
-    <g fill="#facc15">
-      <rect x="80" y="605" width="110" height="16" rx="8"/><rect x="300" y="605" width="110" height="16" rx="8"/>
-      <rect x="520" y="605" width="110" height="16" rx="8"/><rect x="740" y="605" width="110" height="16" rx="8"/>
-      <rect x="960" y="605" width="110" height="16" rx="8"/><rect x="1180" y="605" width="110" height="16" rx="8"/>
+    <g id="laneMarks" fill="#facc15">
+      <rect x="-220" y="605" width="110" height="16" rx="8"/><rect x="0" y="605" width="110" height="16" rx="8"/><rect x="220" y="605" width="110" height="16" rx="8"/>
+      <rect x="440" y="605" width="110" height="16" rx="8"/><rect x="660" y="605" width="110" height="16" rx="8"/><rect x="880" y="605" width="110" height="16" rx="8"/>
+      <rect x="1100" y="605" width="110" height="16" rx="8"/><rect x="1320" y="605" width="110" height="16" rx="8"/><rect x="1540" y="605" width="110" height="16" rx="8"/>
     </g>
   </svg>
 
   <!-- Active Rescue Vehicle on the Road -->
   <div id="vehicleStage" role="button" tabindex="0" aria-label="Rescue vehicle"></div>
+
+  <button id="hydrantBtn" type="button" aria-label="Fire hydrant refill"><svg viewBox="0 0 90 110"><g stroke="#141e30" stroke-width="5" stroke-linejoin="round"><rect x="22" y="40" width="46" height="60" rx="8" fill="#ef4444"/><path d="M16 42 A29 29 0 0 1 74 42 Z" fill="#dc2626"/><rect x="10" y="52" width="70" height="14" rx="5" fill="#fde047"/><rect x="14" y="92" width="62" height="12" rx="5" fill="#b91c1c"/><circle cx="45" cy="18" r="8" fill="#94a3b8"/></g></svg><span>HOLD to refill 💧</span></button>
 
   <!-- Town Animal Friend (Shown in Firefighter mode) -->
   <div id="friendStage" role="button" tabindex="0" aria-label="Animal friend">
@@ -540,6 +591,7 @@
   <div id="rescueDeck" role="group" aria-label="Town Rescue Patrol Vehicles">
     <div class="deck-header">
       <span class="siren-pill" id="missionPill">💦 HOLD &amp; AIM THE FIRE TRUCK WATER HOSE ON THE FLAMES!</span>
+      <div id="tankWrap"><span class="tank-ic">💧</span><div id="tankBar"><i id="tankFill"></i></div></div>
       <div class="deck-actions">
         <button id="hoseBtn" class="action-pill-btn" type="button">💦 Spray Water Hose!</button>
         <button id="sirenBtn" class="action-pill-btn" type="button">🚨 Siren!</button>
@@ -737,7 +789,7 @@
       friendName: "Kitten!",
       friendClip: "word-kitten",
       btnText: "💦 Spray Water Hose!",
-      pill: "💦 HOLD OR DRAG ON THE FLAMES TO SPRAY THE FIRE TRUCK WATER HOSE!",
+      pill: "💦 SPRAY THE FLAMES (WATCH YOUR TANK!) · REFILL AT THE HYDRANT · RESCUE KITTEN!",
       prompt: "🚒 <b>FIREFIGHTER!</b> The Town Bakery is on fire! <b>Hold or drag your finger on the flames</b> to spray the <b>Water Hose</b> and put out every fire!"
     },
     doctor: {
@@ -747,8 +799,8 @@
       friend: "bear",
       friendName: "Teddy Bear!",
       friendClip: "word-teddy-bear",
-      btnText: "🩺 Use Doctor Tool!",
-      pill: "🩺 TAP THE ICE PACK, STETHOSCOPE & BAND-AID ON GIANT TEDDY BEAR!",
+      btnText: "💡 Show Me!",
+      pill: "🩺 DRAG EACH TOOL ONTO TEDDY: ICE · HEARTBEAT · SCRUB · BAND-AID · MEDICINE!",
       prompt: "🚑 <b>DOCTOR'S CLINIC!</b> Help Giant <b>Teddy Bear</b> feel better! Tap the <b>🧊 Ice Pack</b>, <b>🩺 Stethoscope</b>, and <b>🩹 Band-Aid</b>!"
     },
     police: {
@@ -758,8 +810,8 @@
       friend: "puppy",
       friendName: "Puppy!",
       friendClip: "word-dog",
-      btnText: "🛑 Walk Next Pet!",
-      pill: "🚓 TAP PUPPY, KITTEN & BUNNY TO WALK THEM ACROSS THE GIANT CROSSWALK!",
+      btnText: "✋ STOP Cars!",
+      pill: "🚓 PRESS STOP · WAIT FOR CARS TO CLEAR · WALK PETS ACROSS!",
       prompt: "🚓 <b>POLICE OFFICER!</b> The Walk light is green! Tap <b>Puppy</b>, <b>Kitten</b>, and <b>Bunny</b> to walk them across the <b>Crosswalk</b> to the park!"
     },
     teacher: {
@@ -769,8 +821,8 @@
       friend: "bunny",
       friendName: "Bunny!",
       friendClip: "word-bunny",
-      btnText: "🚌 Board Next Student!",
-      pill: "🚌 TAP BUNNY, KITTEN & PUPPY TO HOP INTO THE GIANT YELLOW SCHOOL BUS!",
+      btnText: "🛑 Brake!",
+      pill: "🚌 BRAKE AT THE BUS STOP · PICK THE KID WITH HOOT'S LETTER · DRIVE TO SCHOOL!",
       prompt: "🚌 <b>SCHOOL BUS STOP!</b> Tap <b>Bunny</b>, <b>Kitten</b>, and <b>Puppy</b> so they hop aboard the <b>Giant Yellow School Bus</b>!"
     }
   };
@@ -783,6 +835,7 @@
   var hoseDrops = [], smokePuffs = [], flameSparks = [], popSparks = [];
   var activeZones = [];
   var ladderProgress = 0, waveDone = false;
+  var tank = 100, refilling = false, ladderPhase = false;
 
   function awardStar(){
     if(won) return;
@@ -844,6 +897,9 @@
     winLeft.setAttribute("fill", "#7f1d1d");
     winRight.setAttribute("fill", "#7f1d1d");
     winTop.setAttribute("fill", "#ef4444");
+    tank = 100; ladderPhase = false; refilling = false;
+    friendStage.classList.add("on-roof");
+    friendBadge.textContent = "Help!";
 
     var spots = [
       { id: "left", xPct: 43, yPct: 37, label: "🔥 Window Fire!" },
@@ -895,6 +951,8 @@
 
   function applyWaterToFire(z, amount){
     if(z.hp <= 0 || currentRole !== "firefighter") return;
+    if(tank <= 0){ if(tick % 50 === 0) bubble.innerHTML = "💧 <b>Out of water!</b> HOLD the 🚰 fire hydrant to refill the tank!"; return; }
+    z.hit = tick;
     var r = z.el.getBoundingClientRect();
     var zx = r.left + r.width / 2, zy = r.top + r.height / 2;
     z.hp = Math.max(0, z.hp - amount);
@@ -914,13 +972,128 @@
       setTimeout(function(){ z.el.style.opacity = "0"; }, 350);
       var alive = activeZones.filter(function(item){ return item.hp > 0; }).length;
       if(alive === 0){
-        finishMissionWave("🚒 <b>ALL FIRES OUT!</b> The Fire Truck ladder rescued <b>Kitten</b>!", "word-kitten");
+        startLadderPhase();
       }
     }
   }
 
+
+  function startLadderPhase(){
+    if(ladderPhase) return;
+    ladderPhase = true;
+    spraying = false;
+    sfxSiren();
+    bubble.innerHTML = "🪜 <b>ALL FIRES OUT!</b> But Kitten is stuck on the roof! <b>Drag the Ladder</b> up to Kitten!";
+    friendBadge.textContent = "Help!";
+    var lb = document.createElement("button");
+    lb.type = "button"; lb.id = "ladderBtn"; lb.className = "choice-btn";
+    lb.innerHTML = '<span class="d-ic">🪜</span><span>Drag me to Kitten!</span>';
+    lb.addEventListener("pointerdown", function(e){
+      startToolDrag(e, "🪜", {
+        drop: function(x, y){
+          if(hitEl(friendStage, x, y, 130)){
+            lb.remove();
+            friendStage.classList.remove("on-roof");
+            friendBadge.textContent = "Kitten!";
+            spawnCelebration(x, y);
+            finishMissionWave("🚒 <b>KITTEN IS SAFE!</b> You put out every fire and rescued Kitten with the ladder!", "word-kitten");
+          } else {
+            bubble.innerHTML = "🪜 Drag the ladder right up to <b>Kitten on the roof</b>!";
+          }
+        }
+      });
+    });
+    rescueLayer.appendChild(lb);
+    missionAction = function(){ bubble.innerHTML = "🪜 Drag the ladder up to <b>Kitten</b>!"; };
+  }
+
   /* =========================================================================
-     MISSION 2: DOCTOR — Full-Stage GIANT Teddy Bear & Big Doctor Tools!
+     SHARED MISSION HELPERS: svg->screen mapping, drag-a-tool engine, per-frame tick
+     ========================================================================= */
+  function svgToScreen(x, y){
+    var sc = Math.max(W / 1440, H / 900);
+    return { x: (W - 1440 * sc) / 2 + x * sc, y: (H - 900 * sc) / 2 + y * sc, s: sc };
+  }
+  var missionTick = null, missionCleanup = null, missionAction = null, lastT = performance.now();
+  function endMission(){
+    if(missionCleanup){ try{ missionCleanup(); }catch(e){} }
+    missionCleanup = null; missionTick = null; missionAction = null;
+    if(dragState){ try{ dragState.g.remove(); }catch(e){} dragState = null; }
+  }
+  function sfxTick(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "sine"; o.frequency.value = 660;
+      g.gain.setValueAtTime(0.05, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.08);
+    }catch(e){}
+  }
+  function sfxHonk(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [220, 277].forEach(function(f){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "sawtooth"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+        o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.3);
+      });
+    }catch(e){}
+  }
+  function sfxEngine(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "square";
+      o.frequency.setValueAtTime(70, t); o.frequency.linearRampToValueAtTime(130, t + 0.4);
+      g.gain.setValueAtTime(0.04, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.46);
+    }catch(e){}
+  }
+
+  var dragState = null;
+  function startToolDrag(e, icon, cbs){
+    e.preventDefault(); e.stopPropagation();
+    if(dragState){ try{ dragState.g.remove(); }catch(_){} }
+    var g = document.createElement("div");
+    g.className = "drag-ghost";
+    g.textContent = icon;
+    document.body.appendChild(g);
+    dragState = { g: g, cbs: cbs, x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY };
+    moveDrag(e.clientX, e.clientY);
+  }
+  function moveDrag(x, y){
+    if(!dragState) return;
+    dragState.g.style.left = x + "px";
+    dragState.g.style.top = y + "px";
+    var dx = x - dragState.lx, dy = y - dragState.ly;
+    dragState.lx = x; dragState.ly = y; dragState.x = x; dragState.y = y;
+    if(dragState.cbs.move) dragState.cbs.move(x, y, Math.hypot(dx, dy));
+  }
+  function endDrag(){
+    if(!dragState) return;
+    var d = dragState; dragState = null;
+    try{ d.g.remove(); }catch(e){}
+    if(d.cbs.drop) d.cbs.drop(d.x, d.y);
+  }
+  window.addEventListener("pointermove", function(e){ moveDrag(e.clientX, e.clientY); });
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  function rectOf(el){ return el.getBoundingClientRect(); }
+  function hitEl(el, x, y, pad){
+    var r = rectOf(el); pad = pad || 0;
+    return x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+  }
+
+  /* =========================================================================
+     MISSION 2: DOCTOR — 5-step clinic checkup on GIANT Teddy Bear
+       1. Drag the Ice Pack onto his forehead and RUB until the fever is gone
+       2. Drag the Stethoscope to his chest, then TAP IN RHYTHM with his heartbeat
+       3. Drag the Sponge to his scraped knee and SCRUB the knee clean
+       4. Drag the Band-Aid onto his knee
+       5. Drag the Medicine Spoon to his mouth
      ========================================================================= */
   function setupDoctorMission(){
     rescueLayer.innerHTML = "";
@@ -932,192 +1105,612 @@
     wrap.innerHTML =
       '<div id="giantTeddyWrap">' +
         '<svg viewBox="0 0 260 300">' +
-          '<!-- Big Ears -->' +
-          '<circle cx="62" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
-          '<circle cx="62" cy="48" r="18" fill="#fde68a"/>' +
-          '<circle cx="198" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
-          '<circle cx="198" cy="48" r="18" fill="#fde68a"/>' +
-          '<!-- Arms -->' +
+          '<circle cx="62" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="62" cy="48" r="18" fill="#fde68a"/>' +
+          '<circle cx="198" cy="48" r="34" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="198" cy="48" r="18" fill="#fde68a"/>' +
           '<ellipse cx="44" cy="180" rx="28" ry="44" transform="rotate(24 44 180)" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
           '<ellipse cx="216" cy="180" rx="28" ry="44" transform="rotate(-24 216 180)" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
-          '<!-- Chubby Body & Tummy -->' +
           '<ellipse cx="130" cy="198" rx="76" ry="80" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
           '<ellipse cx="130" cy="202" rx="50" ry="54" fill="#fde68a"/>' +
-          '<!-- Big Paws / Feet -->' +
-          '<circle cx="72" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
-          '<circle cx="72" cy="264" r="16" fill="#fde68a"/>' +
-          '<circle cx="188" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/>' +
-          '<circle cx="188" cy="264" r="16" fill="#fde68a"/>' +
-          '<!-- Giant Head -->' +
+          '<circle cx="72" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="72" cy="264" r="16" fill="#fde68a"/>' +
+          '<circle cx="188" cy="262" r="30" fill="#b45309" stroke="#141e30" stroke-width="7"/><circle cx="188" cy="264" r="16" fill="#fde68a"/>' +
+          '<g id="kneeScrape"><ellipse cx="66" cy="252" rx="22" ry="13" fill="#f87171" stroke="#991b1b" stroke-width="4"/><path d="M50 250 L82 258 M52 259 L80 246" stroke="#7f1d1d" stroke-width="3.5" stroke-linecap="round"/></g>' +
+          '<g id="kneeBandaid" opacity="0"><rect x="38" y="238" width="58" height="26" rx="13" transform="rotate(-20 67 251)" fill="#fda4af" stroke="#141e30" stroke-width="5"/><rect x="55" y="240" width="22" height="22" rx="4" transform="rotate(-20 67 251)" fill="#fff1f2"/></g>' +
           '<circle cx="130" cy="98" r="68" fill="#d97706" stroke="#141e30" stroke-width="7"/>' +
-          '<!-- Fever Blush on Forehead (fades when cooled!) -->' +
-          '<ellipse id="feverGlow" cx="130" cy="56" rx="38" ry="16" fill="#ef4444" opacity="0.55"/>' +
+          '<ellipse id="feverGlow" cx="130" cy="56" rx="38" ry="16" fill="#ef4444" opacity="0.6"/>' +
           '<ellipse cx="130" cy="112" rx="32" ry="24" fill="#fde68a"/>' +
           '<circle cx="104" cy="88" r="10.5" fill="#141e30"/><circle cx="156" cy="88" r="10.5" fill="#141e30"/>' +
           '<circle cx="101" cy="84" r="3.8" fill="#fff"/><circle cx="153" cy="84" r="3.8" fill="#fff"/>' +
           '<ellipse cx="130" cy="105" rx="12" ry="8.5" fill="#141e30"/>' +
-          '<path id="teddyMouth" d="M112 128 Q130 116 148 128" fill="none" stroke="#141e30" stroke-width="6.5" stroke-linecap="round"/>' +
+          '<path id="teddyMouth" d="M112 128 Q130 116 148 128" fill="#141e30" fill-opacity="0" stroke="#141e30" stroke-width="6.5" stroke-linecap="round"/>' +
         '</svg>' +
-        '<button type="button" class="teddy-spot choice-btn" data-doc="ice" style="left:50%;top:18%" aria-label="Cool fever with ice pack">🤒</button>' +
-        '<button type="button" class="teddy-spot choice-btn" data-doc="heart" style="left:50%;top:62%" aria-label="Listen to heartbeat with stethoscope">💓</button>' +
-        '<button type="button" class="teddy-spot choice-btn" data-doc="bandaid" style="left:73%;top:85%" aria-label="Put band-aid on knee">🩹</button>' +
+        '<div id="targetRing" class="teddy-spot"></div>' +
+        '<button type="button" id="beatBtn" class="beat-btn" hidden><span class="beat-ring" id="beatRing"></span><span class="beat-heart">💓</span></button>' +
       '</div>' +
-      '<div class="doc-tool-tray">' +
-        '<button type="button" class="doc-tool-btn choice-btn" data-doc="ice"><span class="doc-tool-ic">🧊</span><span>1. Ice Pack</span></button>' +
-        '<button type="button" class="doc-tool-btn choice-btn" data-doc="heart"><span class="doc-tool-ic">🩺</span><span>2. Stethoscope</span></button>' +
-        '<button type="button" class="doc-tool-btn choice-btn" data-doc="bandaid"><span class="doc-tool-ic">🩹</span><span>3. Band-Aid</span></button>' +
-      '</div>';
-
+      '<div class="doc-tool-tray" id="docTray"></div>';
     rescueLayer.appendChild(wrap);
 
-    var doneSteps = {};
-    function applyDoctorStep(stepKey){
-      if(doneSteps[stepKey]) return;
-      doneSteps[stepKey] = true;
-      var spot = wrap.querySelector('.teddy-spot[data-doc="' + stepKey + '"]');
-      var btn = wrap.querySelector('.doc-tool-btn[data-doc="' + stepKey + '"]');
-      if(stepKey === "ice"){
-        var fg = document.getElementById("feverGlow");
-        if(fg) fg.setAttribute("opacity", "0");
-      }
-      if(spot){
-        spot.classList.add("healed");
-        spot.textContent = stepKey === "ice" ? "❄️" : stepKey === "heart" ? "❤️" : "🩹";
-        var r = spot.getBoundingClientRect();
-        spawnCelebration(r.left + r.width / 2, r.top + r.height / 2);
-      }
-      if(btn) btn.classList.add("done");
+    var teddy = document.getElementById("giantTeddyWrap");
+    var ring = document.getElementById("targetRing");
+    var tray = document.getElementById("docTray");
+    var beatBtn = document.getElementById("beatBtn");
+    var beatRing = document.getElementById("beatRing");
+    var fever = document.getElementById("feverGlow");
+    var scrape = document.getElementById("kneeScrape");
+    var bandaid = document.getElementById("kneeBandaid");
+    var mouth = document.getElementById("teddyMouth");
 
-      if(stepKey === "heart") sfxHeartbeat();
-      else sfxChime();
+    var STEPS = [
+      { k: "ice", icon: "🧊", label: "Ice Pack", zone: "head", mode: "rub", need: 700, msg: "🧊 <b>Rub the Ice Pack</b> back and forth on Teddy's hot forehead to cool his fever!" },
+      { k: "heart", icon: "🩺", label: "Stethoscope", zone: "chest", mode: "drop", msg: "🩺 <b>Drag the Stethoscope</b> onto Teddy's chest to listen to his heart!" },
+      { k: "sponge", icon: "🧽", label: "Soapy Sponge", zone: "knee", mode: "rub", need: 600, msg: "🧽 <b>Scrub the scraped knee</b> clean with the soapy sponge!" },
+      { k: "bandaid", icon: "🩹", label: "Band-Aid", zone: "knee", mode: "drop", msg: "🩹 <b>Drag the Band-Aid</b> onto the clean knee!" },
+      { k: "spoon", icon: "🥄", label: "Medicine", zone: "mouth", mode: "drop", msg: "🥄 <b>Drag the Medicine Spoon</b> to Teddy's mouth — open wide!" }
+    ];
+    var ZONES = { head: [0.5, 0.2], chest: [0.5, 0.66], knee: [0.27, 0.86], mouth: [0.5, 0.43] };
+    var idx = 0, progress = 0, inRhythm = false, beatCount = 0, beatT = 0, lastPhase = 0, lastRubOK = false;
 
-      if(Object.keys(doneSteps).length >= 3){
-        var mouth = document.getElementById("teddyMouth");
-        if(mouth) mouth.setAttribute("d", "M108 122 Q130 144 152 122");
-        finishMissionWave("🚑 <b>TEDDY BEAR IS ALL BETTER!</b> You cooled his fever, checked his heartbeat, and bandaged his knee!", "word-teddy-bear");
+    STEPS.forEach(function(st, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "doc-tool-btn choice-btn";
+      b.setAttribute("data-i", String(i));
+      b.innerHTML = '<span class="doc-tool-ic">' + st.icon + '</span><span>' + (i + 1) + '. ' + st.label + '</span>';
+      b.addEventListener("pointerdown", function(e){
+        if(i !== idx || inRhythm) return;
+        beginDrag(e);
+      });
+      tray.appendChild(b);
+    });
+    ring.addEventListener("pointerdown", function(e){
+      if(inRhythm || idx >= STEPS.length) return;
+      var st = STEPS[idx];
+      if(st.mode === "rub"){
+        beginDrag(e);
+        progress = Math.min(1, progress + 0.34);
+        if(st.k === "ice") fever.setAttribute("opacity", String(0.6 * (1 - progress)));
+        if(st.k === "sponge"){ scrape.setAttribute("opacity", String(1 - 0.75 * progress)); spawnSteam(e.clientX, e.clientY, 3); }
+        sfxWaterSpray();
+        bubble.innerHTML = st.msg + " <b>" + Math.round(progress * 100) + "%</b>";
+        if(progress >= 1){ endDrag(); completeStep(); }
       } else {
-        bubble.innerHTML = stepKey === "ice"
-          ? "🧊 <b>Fever cooled!</b> Now tap the <b>🩺 Stethoscope</b> or <b>🩹 Band-Aid</b> on Giant Teddy Bear!"
-          : stepKey === "heart"
-            ? "🩺 <b>Lub-dub! Strong heartbeat!</b> Tap the remaining tool to finish Teddy's checkup!"
-            : "🩹 <b>Band-Aid on!</b> Tap the remaining tool to finish Teddy's checkup!";
+        e.preventDefault(); e.stopPropagation();
+        if(st.k === "heart") beginRhythm(); else completeStep();
+      }
+    });
+
+    function zoneCenter(name){
+      var r = rectOf(teddy), z = ZONES[name];
+      return { x: r.left + r.width * z[0], y: r.top + r.height * z[1], rad: Math.max(52, r.width * 0.2) };
+    }
+    function refreshUI(){
+      Array.prototype.forEach.call(tray.children, function(b, i){
+        b.classList.toggle("done", i < idx);
+        b.classList.toggle("active", i === idx && !inRhythm);
+      });
+      if(idx < STEPS.length){
+        var z = ZONES[STEPS[idx].zone];
+        ring.style.left = (z[0] * 100) + "%";
+        ring.style.top = (z[1] * 100) + "%";
+        ring.style.display = inRhythm ? "none" : "grid";
+        ring.textContent = STEPS[idx].icon;
+        bubble.innerHTML = STEPS[idx].msg;
       }
     }
+    function completeStep(){
+      var st = STEPS[idx];
+      var zc = zoneCenter(st.zone);
+      spawnCelebration(zc.x, zc.y);
+      sfxChime();
+      if(st.k === "ice") fever.setAttribute("opacity", "0");
+      if(st.k === "sponge") scrape.setAttribute("opacity", "0.25");
+      if(st.k === "bandaid"){ scrape.setAttribute("opacity", "0"); bandaid.setAttribute("opacity", "1"); }
+      if(st.k === "spoon"){
+        mouth.setAttribute("d", "M114 124 Q130 150 146 124 Q130 114 114 124");
+        mouth.setAttribute("fill-opacity", "1");
+        setTimeout(function(){ mouth.setAttribute("fill-opacity", "0"); mouth.setAttribute("d", "M108 122 Q130 146 152 122"); }, 700);
+      }
+      idx++; progress = 0; lastRubOK = false;
+      if(idx >= STEPS.length){
+        ring.style.display = "none";
+        Array.prototype.forEach.call(tray.children, function(b){ b.classList.add("done"); b.classList.remove("active"); });
+        teddy.classList.add("jump");
+        finishMissionWave("🚑 <b>TEDDY BEAR IS ALL BETTER!</b> Fever gone, heart strong, knee fixed and medicine taken — he gives you a big hug!", "word-teddy-bear");
+      } else {
+        refreshUI();
+      }
+    }
+    function beginDrag(e){
+      var st = STEPS[idx];
+      progress = 0; lastRubOK = false;
+      startToolDrag(e, st.icon, {
+        move: function(x, y, dist){
+          if(st.mode !== "rub") return;
+          var zc = zoneCenter(st.zone);
+          var inside = Math.hypot(x - zc.x, y - zc.y) < zc.rad;
+          if(inside){
+            progress = Math.min(1, progress + dist / st.need);
+            if(st.k === "ice") fever.setAttribute("opacity", String(0.6 * (1 - progress)));
+            if(st.k === "sponge"){
+              scrape.setAttribute("opacity", String(1 - 0.75 * progress));
+              if(dist > 3) spawnSteam(x, y, 1);
+            }
+            if(dist > 3) sfxWaterSpray();
+            bubble.innerHTML = st.msg + " <b>" + Math.round(progress * 100) + "%</b>";
+            if(progress >= 1){ endDrag(); completeStep(); }
+          }
+        },
+        drop: function(x, y){
+          var zc = zoneCenter(st.zone);
+          var inside = Math.hypot(x - zc.x, y - zc.y) < zc.rad * 1.15;
+          if(st.mode === "rub"){
+            if(progress < 1) bubble.innerHTML = "💪 Keep rubbing on the glowing spot! " + st.msg;
+            return;
+          }
+          if(!inside){ bubble.innerHTML = "👆 Drag it right onto the <b>glowing spot</b> on Teddy! " + st.msg; return; }
+          if(st.k === "heart"){ beginRhythm(); }
+          else completeStep();
+        }
+      });
+    }
 
-    wrap.querySelectorAll("[data-doc]").forEach(function(el){
-      var k = el.getAttribute("data-doc");
-      el.addEventListener("pointerdown", function(e){
-        e.preventDefault(); e.stopPropagation();
-        applyDoctorStep(k);
-      });
-      el.addEventListener("click", function(e){
-        if(e.detail === 0) applyDoctorStep(k);
-      });
+    function beginRhythm(){
+      inRhythm = true; beatCount = 0; beatT = 0; lastPhase = 0;
+      var zc = zoneCenter("chest");
+      var tr = rectOf(teddy);
+      beatBtn.style.left = ((zc.x - tr.left) / tr.width * 100) + "%";
+      beatBtn.style.top = ((zc.y - tr.top) / tr.height * 100) + "%";
+      beatBtn.hidden = false;
+      refreshUI();
+      bubble.innerHTML = "💓 <b>Listen to the heartbeat!</b> Tap the heart <b>when the ring shrinks onto it</b>! (0/4)";
+      missionTick = function(dt){
+        beatT += dt;
+        var phase = (beatT % 1.05) / 1.05;
+        if(phase < lastPhase) sfxTick();
+        lastPhase = phase;
+        var sc = 2.1 - 1.1 * phase;
+        beatRing.style.transform = "translate(-50%,-50%) scale(" + sc.toFixed(3) + ")";
+        beatRing.style.opacity = String(0.35 + 0.65 * phase);
+        beatBtn.setAttribute("data-ok", (phase > 0.68 || phase < 0.1) ? "1" : "0");
+        beatRing.style.borderColor = (phase > 0.68 || phase < 0.1) ? "#4ade80" : "#e11d48";
+      };
+    }
+    beatBtn.addEventListener("pointerdown", function(e){
+      e.preventDefault(); e.stopPropagation();
+      if(!inRhythm) return;
+      if(beatBtn.getAttribute("data-ok") === "1"){
+        beatCount++;
+        sfxHeartbeat();
+        var zc = zoneCenter("chest"); spawnCelebration(zc.x, zc.y);
+        bubble.innerHTML = "💓 <b>Lub-dub!</b> Great timing! (" + beatCount + "/4)";
+        if(beatCount >= 4){
+          inRhythm = false; missionTick = null; beatBtn.hidden = true;
+          completeStep();
+        }
+      } else {
+        bubble.innerHTML = "💓 Wait for it… tap when the <b>ring shrinks onto the heart</b>! (" + beatCount + "/4)";
+      }
     });
+
+    missionAction = function(){ refreshUI(); ring.classList.remove("flash"); void ring.offsetWidth; ring.classList.add("flash"); };
+    missionCleanup = function(){ missionTick = null; };
+    refreshUI();
   }
 
   /* =========================================================================
-     MISSION 3: POLICE CAR — Walk Big Pets Across the Open Park Crosswalk!
+     MISSION 3: POLICE — Real Traffic Control!
+       Cars keep driving along the road. Press STOP to halt traffic (the stop
+       lasts only ~8 seconds), WAIT for any car already on the crosswalk to
+       clear, then walk each pet across the road. Don't let the STOP run out!
      ========================================================================= */
   function setupPoliceMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
     spraying = false;
 
-    var walkers = [
-      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy, startX: 42, startY: 57, endX: 78, endY: 62 },
-      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten, startX: 52, startY: 64, endX: 86, endY: 68 },
-      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny, startX: 62, startY: 57, endX: 93, endY: 62 }
-    ];
-    var crossedCount = 0;
+    var COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#a855f7", "#f97316", "#ec4899"];
+    var cars = [], pets = [], spawnT = 0.4, stopLeft = 0, STOP_TIME = 8.5, crossedCount = 0, hurt = 0;
+    var polRed = document.getElementById("polRed"), polGreen = document.getElementById("polGreen");
 
-    walkers.forEach(function(w){
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "crosswalk-walker choice-btn";
-      b.style.left = w.startX + "%";
-      b.style.top = w.startY + "%";
-      b.innerHTML = w.svg + '<span class="walker-tag">🚶 Walk ' + w.name + '!</span>';
-
-      var cross = function(e){
-        if(e){ e.preventDefault(); e.stopPropagation(); }
-        if(b.classList.contains("crossed")) return;
-        b.classList.add("crossed");
-        b.style.left = w.endX + "%";
-        b.style.top = w.endY + "%";
-        b.querySelector(".walker-tag").textContent = "✅ " + w.name + " Safe!";
-        var r = b.getBoundingClientRect();
-        spawnCelebration(r.left + r.width / 2, r.top + r.height / 2);
-        sfxChime();
-        playVoice([w.clip]);
-        crossedCount++;
-        if(crossedCount >= 3){
-          finishMissionWave("🚓 <b>SAFE CROSSING!</b> The Police Officer helped Puppy, Kitten, and Bunny walk across to the park!", "word-dog");
-        }
+    function geo(){
+      var a = svgToScreen(590, 0), b = svgToScreen(930, 0);
+      return {
+        l: a.x, r: b.x,
+        laneA: svgToScreen(0, 398).y, laneB: svgToScreen(0, 500).y,
+        startY: svgToScreen(0, 588).y, goalY: svgToScreen(0, 245).y,
+        roadT: svgToScreen(0, 335).y, roadB: svgToScreen(0, 555).y,
+        slots: [655, 760, 865].map(function(x){ return svgToScreen(x, 0).x; })
       };
-      b.addEventListener("pointerdown", cross);
-      b.addEventListener("click", function(e){ if(e.detail === 0) cross(e); });
+    }
+
+    var stopBtn = document.createElement("button");
+    stopBtn.type = "button"; stopBtn.id = "stopBtn"; stopBtn.className = "choice-btn";
+    stopBtn.innerHTML = '<span class="stop-hand">✋</span><span class="stop-word">STOP</span><span class="stop-bar"><i id="stopFill"></i></span>';
+    rescueLayer.appendChild(stopBtn);
+    var stopFill = document.getElementById("stopFill");
+
+    function pressStop(){
+      stopLeft = STOP_TIME;
+      sfxSiren();
+      bubble.innerHTML = "✋ <b>Traffic is stopping!</b> Wait for cars on the crosswalk to clear, then tap a pet to walk it across!";
+    }
+    stopBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); pressStop(); });
+    missionAction = function(){
+      if(stopLeft <= 0){ pressStop(); return; }
+      var p = pets.find(function(x){ return x.state === "wait"; });
+      if(p) tryWalk(p);
+    };
+
+    var g0 = geo();
+    var names = [
+      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy },
+      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten },
+      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny }
+    ];
+    names.forEach(function(n, i){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "pet-walker choice-btn";
+      b.innerHTML = n.svg + '<span class="walker-tag">🚶 ' + n.name + '</span>';
       rescueLayer.appendChild(b);
+      var p = { el: b, tag: b.querySelector(".walker-tag"), n: n, x: g0.slots[i], y: g0.startY, state: "wait" };
+      b.style.left = p.x + "px"; b.style.top = p.y + "px";
+      b.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); tryWalk(p); });
+      pets.push(p);
     });
+
+    function carBox(c){ return { l: c.x, r: c.x + 150, t: c.y - 34, b: c.y + 34 }; }
+    function crosswalkBusy(){
+      var g = geo();
+      return cars.some(function(c){ return c.x + 150 > g.l - 6 && c.x < g.r + 6 && Math.abs(c.vx) > 20; })
+          || cars.some(function(c){ return c.x + 150 > g.l && c.x < g.r; });
+    }
+    function tryWalk(p){
+      if(p.state !== "wait") return;
+      if(stopLeft <= 0){ sfxHonk(); bubble.innerHTML = "🚫 Cars are still driving! Press the big red <b>✋ STOP</b> button first!"; shake(p.el); return; }
+      if(stopLeft < 3.2){ bubble.innerHTML = "⏱️ The STOP is almost over! Press <b>✋ STOP</b> again to keep cars waiting!"; shake(p.el); return; }
+      if(crosswalkBusy()){ sfxHonk(); bubble.innerHTML = "⚠️ <b>Wait!</b> A car is still on the crosswalk. Let it pass first!"; shake(p.el); return; }
+      p.state = "walk";
+      p.el.classList.add("walking");
+      p.tag.textContent = "🚶 Walking…";
+      playVoice([p.n.clip]);
+    }
+    function shake(el){ el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+
+    function spawnCar(){
+      var g = geo();
+      var dir = Math.random() < 0.5 ? 1 : -1;
+      var y = dir === 1 ? g.laneA : g.laneB;
+      var x = dir === 1 ? -170 : W + 20;
+      var clear = !cars.some(function(c){ return c.dir === dir && Math.abs(c.x - x) < 260; });
+      if(!clear) return;
+      var col = COLORS[Math.floor(Math.random() * COLORS.length)];
+      var el = document.createElement("div");
+      el.className = "traffic-car";
+      el.innerHTML = '<svg viewBox="0 0 150 76"><g stroke="#141e30" stroke-width="5" stroke-linejoin="round"><path d="M10 44 L26 18 L96 18 L120 40 L142 44 L142 60 L10 60 Z" fill="' + col + '"/><path d="M32 22 L92 22 L110 40 L28 40 Z" fill="#bae6fd"/><circle cx="38" cy="62" r="13" fill="#1e293b"/><circle cx="110" cy="62" r="13" fill="#1e293b"/><circle cx="38" cy="62" r="5" fill="#e2e8f0" stroke="none"/><circle cx="110" cy="62" r="5" fill="#e2e8f0" stroke="none"/></g></svg>';
+      if(dir === -1) el.firstChild.style.transform = "scaleX(-1)";
+      rescueLayer.insertBefore(el, rescueLayer.firstChild);
+      cars.push({ el: el, x: x, y: y, dir: dir, vx: dir * 60, max: 190 + Math.random() * 110 });
+    }
+
+    missionTick = function(dt){
+      var g = geo();
+      if(stopLeft > 0) stopLeft = Math.max(0, stopLeft - dt);
+      stopFill.style.width = (stopLeft / STOP_TIME * 100) + "%";
+      stopBtn.classList.toggle("on", stopLeft > 0);
+      if(polRed){ polRed.setAttribute("opacity", stopLeft > 0 ? "1" : "0.3"); polGreen.setAttribute("opacity", stopLeft > 0 ? "0.3" : "1"); }
+
+      spawnT -= dt;
+      if(spawnT <= 0 && cars.length < 9){ spawnCar(); spawnT = 1.0 + Math.random() * 1.4; }
+
+      cars.forEach(function(c){
+        var want = c.dir * c.max;
+        var mustStop = false;
+        if(stopLeft > 0){
+          if(c.dir === 1 && c.x + 150 <= g.l - 4) mustStop = true;
+          if(c.dir === -1 && c.x >= g.r + 4) mustStop = true;
+        }
+        /* keep a gap behind the car in front */
+        cars.forEach(function(o){
+          if(o === c || o.dir !== c.dir) return;
+          var gap = c.dir === 1 ? (o.x - (c.x + 150)) : (c.x - (o.x + 150));
+          if(gap > -10 && gap < 46) mustStop = true;
+        });
+        if(mustStop) want = 0;
+        c.vx += (want - c.vx) * Math.min(1, dt * 3.2);
+        if(Math.abs(c.vx) < 6 && mustStop) c.vx = 0;
+        c.x += c.vx * dt;
+        if(stopLeft > 0){
+          if(c.dir === 1 && c.vx !== undefined && c.x + 150 > g.l - 4 && c.x + 150 < g.l + 40 && mustStop) c.x = Math.min(c.x, g.l - 154);
+          if(c.dir === -1 && c.x < g.r + 4 && c.x > g.r - 40 && mustStop) c.x = Math.max(c.x, g.r + 4);
+        }
+        c.el.style.transform = "translate(" + c.x + "px," + (c.y - 38) + "px)";
+      });
+      for(var i = cars.length - 1; i >= 0; i--){
+        var c2 = cars[i];
+        if(c2.x > W + 200 || c2.x < -260){ c2.el.remove(); cars.splice(i, 1); }
+      }
+
+      pets.forEach(function(p){
+        if(p.state === "walk"){
+          p.y -= 150 * dt;
+          if(p.y <= g.goalY){
+            p.y = g.goalY; p.state = "safe";
+            p.el.classList.remove("walking"); p.el.classList.add("crossed");
+            p.tag.textContent = "✅ " + p.n.name + " Safe!";
+            spawnCelebration(p.x, p.y); sfxChime();
+            crossedCount++;
+            if(crossedCount >= 3){
+              finishMissionWave("🚓 <b>SAFE CROSSING!</b> You controlled the traffic and got Puppy, Kitten and Bunny to the park safely!", "word-dog");
+            } else {
+              bubble.innerHTML = "✅ <b>" + p.n.name + " is safe!</b> Keep the traffic stopped (or press STOP again) and walk the next pet!";
+            }
+          } else {
+            /* if a car is on the crosswalk while a pet walks — oops, pet hops back */
+            var pb = { l: p.x - 36, r: p.x + 36, t: p.y - 40, b: p.y + 40 };
+            cars.forEach(function(c){
+              var cb = carBox(c);
+              if(p.state === "walk" && pb.l < cb.r && pb.r > cb.l && pb.t < cb.b && pb.b > cb.t){
+                p.state = "wait"; p.y = g.startY; p.el.classList.remove("walking");
+                p.tag.textContent = "🚶 " + p.n.name;
+                sfxHonk(); shake(p.el);
+                bubble.innerHTML = "😮 <b>Beep beep!</b> " + p.n.name + " got scared and hopped back! Press <b>✋ STOP</b> and wait for cars to stop.";
+              }
+            });
+          }
+        } else if(p.state === "wait"){
+          p.x = g.slots[pets.indexOf(p)];
+          p.y = g.startY;
+        }
+        p.el.style.left = p.x + "px"; p.el.style.top = p.y + "px";
+      });
+    };
+
+    missionCleanup = function(){ cars.forEach(function(c){ c.el.remove(); }); cars = []; };
+    bubble.innerHTML = "🚓 <b>POLICE OFFICER!</b> Cars keep driving! Press the big red <b>✋ STOP</b> button, wait for the road to clear, then walk the pets across to the park!";
   }
 
   /* =========================================================================
-     MISSION 4: TEACHER & GIANT SCHOOL BUS — Board Students into Giant Bus!
+     MISSION 4: SCHOOL BUS — Drive the route, brake at each Bus Stop, listen for
+     a letter from Hoot and pick up the kid holding THAT letter. Then drive to
+     school and drop everybody off!
      ========================================================================= */
   function setupTeacherMission(){
     rescueLayer.innerHTML = "";
     activeZones = [];
     spraying = false;
 
-    var students = [
-      { id: "bunny", name: "Bunny", clip: "word-bunny", svg: FRIEND_SVGS.bunny, x: 58, y: 58, winId: "busWin1" },
-      { id: "kitten", name: "Kitten", clip: "word-kitten", svg: FRIEND_SVGS.kitten, x: 73, y: 61, winId: "busWin2" },
-      { id: "puppy", name: "Puppy", clip: "word-dog", svg: FRIEND_SVGS.puppy, x: 88, y: 58, winId: "busWin3" }
-    ];
-    var boardedCount = 0;
+    var KINDS = ["bunny", "kitten", "puppy"];
+    var LETTERS = "abcdefghijklmnoprstuvwy".split("");
+    var phase = "drive", v = 0, offset = 0, boarded = 0, stopNo = 0, targetLetter = "", usedLetters = [];
+    var sign = null, signX = 0, kids = [], schoolEl = null, boardedKinds = [];
+    var laneMarks = document.getElementById("laneMarks");
+    var zoneEl = document.createElement("div");
+    zoneEl.id = "stopZone"; zoneEl.innerHTML = "<span>STOP HERE</span>";
+    rescueLayer.appendChild(zoneEl);
+    var driveBtn = document.createElement("button");
+    driveBtn.type = "button"; driveBtn.id = "driveBtn"; driveBtn.className = "choice-btn brake";
+    rescueLayer.appendChild(driveBtn);
 
-    students.forEach(function(st){
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "bus-student choice-btn";
-      b.style.left = st.x + "%";
-      b.style.top = st.y + "%";
-      b.innerHTML = st.svg + '<span class="walker-tag">🎒 Board ' + st.name + '!</span>';
+    function vr(){ return vehicleStage.getBoundingClientRect(); }
+    function targetX(){ var r = vr(); return Math.min(W * 0.62, r.right + 40); }
+    function roadY(){ return svgToScreen(0, 520).y; }
 
-      var board = function(e){
-        if(e){ e.preventDefault(); e.stopPropagation(); }
-        if(b.getAttribute("data-boarded")) return;
-        b.setAttribute("data-boarded", "1");
-        b.style.left = "28%";
-        b.style.top = "55%";
-        b.style.transform = "translate(-50%, -50%) scale(0.2)";
-        sfxSchoolBell();
-        playVoice([st.clip]);
-        setTimeout(function(){
-          b.remove();
-          var winG = document.getElementById(st.winId);
-          if(winG) winG.setAttribute("opacity", "1");
-          var vr = vehicleStage.getBoundingClientRect();
-          spawnCelebration(vr.left + vr.width * 0.5, vr.top + vr.height * 0.4);
-        }, 420);
-        boardedCount++;
-        if(boardedCount >= 3){
-          setTimeout(function(){
-            finishMissionWave("🚌 <b>ALL ABOARD!</b> Bunny, Kitten, and Puppy are seated on the Giant School Bus!", "word-bunny");
-          }, 550);
+    function setBtn(mode){
+      driveBtn.className = "choice-btn " + (mode === "go" ? "go" : "brake");
+      driveBtn.innerHTML = mode === "go" ? '<span class="d-ic">🚌</span><span>GO!</span>' : '<span class="d-ic">🛑</span><span>BRAKE</span>';
+      hoseBtn.textContent = mode === "go" ? "🚌 Go!" : "🛑 Brake!";
+    }
+    function placeZone(){
+      var tx = targetX();
+      zoneEl.style.left = tx + "px";
+      zoneEl.style.top = (roadY() - 8) + "px";
+      zoneEl.style.display = (phase === "drive" || phase === "braking") ? "block" : "none";
+    }
+
+    function makeSign(isSchool){
+      if(sign){ sign.remove(); sign = null; }
+      sign = document.createElement("div");
+      sign.className = isSchool ? "school-bldg" : "bus-sign";
+      sign.innerHTML = isSchool
+        ? '<svg viewBox="0 0 300 250"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="20" y="70" width="260" height="170" rx="14" fill="#fef9c3"/><polygon points="6,76 150,2 294,76" fill="#f59e0b"/><circle cx="150" cy="52" r="16" fill="#fff"/><rect x="40" y="100" width="64" height="56" rx="8" fill="#bae6fd"/><rect x="196" y="100" width="64" height="56" rx="8" fill="#bae6fd"/><path d="M118 240 L118 176 A32 32 0 0 1 182 176 L182 240 Z" fill="#fb923c"/></g><text x="150" y="40" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="800" font-size="22" fill="#141e30">SCHOOL</text></svg>'
+        : '<svg viewBox="0 0 150 230"><g stroke="#141e30" stroke-width="6" stroke-linejoin="round"><rect x="64" y="60" width="22" height="168" fill="#64748b"/><rect x="8" y="6" width="134" height="66" rx="16" fill="#facc15"/></g><text x="75" y="48" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="800" font-size="24" fill="#141e30">BUS STOP</text></svg>';
+      rescueLayer.appendChild(sign);
+      signX = W + 120;
+      phase = "drive";
+      placeSign();
+    }
+    function placeSign(){
+      if(!sign) return;
+      sign.style.left = signX + "px";
+      sign.style.top = roadY() + "px";
+    }
+
+    function startStop(){
+      /* bus is parked at the stop — show 3 kids, each holding a letter */
+      phase = "pick";
+      var letters = [];
+      while(letters.length < 3){
+        var l = LETTERS[Math.floor(Math.random() * LETTERS.length)];
+        if(letters.indexOf(l) < 0 && usedLetters.indexOf(l) < 0) letters.push(l);
+      }
+      targetLetter = letters[Math.floor(Math.random() * 3)];
+      usedLetters.push(targetLetter);
+      var order = KINDS.slice().sort(function(){ return Math.random() - 0.5; });
+      var r = vr();
+      kids = [];
+      letters.forEach(function(l, i){
+        var kind = order[i];
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "bus-kid choice-btn";
+        b.innerHTML = FRIEND_SVGS[kind] + '<span class="letter-badge">' + l.toUpperCase() + '</span>';
+        b.style.left = (W * (0.56 + i * 0.17)) + "px";
+        b.style.top = (r.top + r.height * 0.44) + "px";
+        b.style.animationDelay = (-i * 0.3) + "s";
+        b.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); pickKid(b, l, kind); });
+        rescueLayer.appendChild(b);
+        kids.push(b);
+      });
+      bubble.innerHTML = "🎒 <b>Bus Stop " + (stopNo + 1) + "!</b> Listen to Hoot — pick up the kid holding the letter <b>" + targetLetter.toUpperCase() + "</b>!";
+      playVoice(["name-letter-" + targetLetter]);
+      missionAction = function(){ playVoice(["name-letter-" + targetLetter]); bubble.innerHTML = "👂 Find the kid holding the letter <b>" + targetLetter.toUpperCase() + "</b>!"; };
+      driveBtn.style.display = "none";
+      hoseBtn.textContent = "👂 Say it again";
+    }
+
+    function pickKid(b, l, kind){
+      if(phase !== "pick") return;
+      if(l !== targetLetter){
+        b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+        sfxHonk();
+        bubble.innerHTML = "🙂 That kid has the letter <b>" + l.toUpperCase() + "</b>. Hoot asked for <b>" + targetLetter.toUpperCase() + "</b> — try again!";
+        playVoice(["name-letter-" + l, "name-letter-" + targetLetter]);
+        return;
+      }
+      phase = "boarding";
+      var r = vr();
+      var winXs = [0.18, 0.40, 0.63];
+      var wx = r.left + r.width * winXs[Math.min(boarded, 2)];
+      var wy = r.top + r.height * 0.36;
+      b.style.transition = "left .7s cubic-bezier(.34,1.3,.5,1), top .7s cubic-bezier(.34,1.3,.5,1), transform .7s";
+      b.style.left = wx + "px"; b.style.top = wy + "px";
+      b.style.transform = "translate(-50%,-50%) scale(0.3)";
+      sfxSchoolBell();
+      playVoice(["hoot-super"]);
+      kids.forEach(function(o){ if(o !== b){ o.style.transition = "opacity .5s"; o.style.opacity = "0"; } });
+      setTimeout(function(){
+        var winG = document.getElementById("busWin" + (boarded + 1));
+        if(winG){
+          var inner = FRIEND_SVGS[kind].replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
+          winG.innerHTML = '<g transform="translate(-6,-4)">' + inner + '</g>';
+          winG.setAttribute("opacity", "1");
         }
-      };
-      b.addEventListener("pointerdown", board);
-      b.addEventListener("click", function(e){ if(e.detail === 0) board(e); });
-      rescueLayer.appendChild(b);
+        spawnCelebration(wx, wy);
+        kids.forEach(function(o){ o.remove(); }); kids = [];
+        boarded++; stopNo++;
+        if(boarded >= 3){
+          bubble.innerHTML = "🏫 <b>Everyone is aboard!</b> Press <b>GO</b> and drive to school!";
+        } else {
+          bubble.innerHTML = "✅ <b>Letter " + targetLetter.toUpperCase() + " is on the bus!</b> Press <b>GO</b> to drive to the next stop!";
+        }
+        phase = "waitGo";
+        setBtn("go"); driveBtn.style.display = "flex";
+        missionAction = goDrive;
+      }, 760);
+    }
+
+    function goDrive(){
+      if(phase !== "waitGo") return;
+      sfxEngine();
+      v = 40;
+      phase = "drive";
+      setBtn("brake"); driveBtn.style.display = "flex";
+      makeSign(boarded >= 3);
+      bubble.innerHTML = boarded >= 3
+        ? "🏫 Drive to <b>School</b>! Press <b>BRAKE</b> when the school reaches the <b>STOP HERE</b> spot!"
+        : "🚌 Driving to the next stop… press <b>BRAKE</b> when the <b>Bus Stop sign</b> reaches the <b>STOP HERE</b> spot!";
+      missionAction = brake;
+    }
+
+    function brake(){
+      if(phase !== "drive") return;
+      var d = signX - targetX();
+      if(d > 560){ bubble.innerHTML = "⏳ Not yet! Wait until the sign gets close to the <b>STOP HERE</b> spot!"; sfxHonk(); return; }
+      if(d < -220){ bubble.innerHTML = "💨 Too late — we passed it! Watch for the next sign."; sfxHonk(); makeSign(boarded >= 3); return; }
+      phase = "braking";
+      sfxSiren();
+    }
+    driveBtn.addEventListener("pointerdown", function(e){
+      e.preventDefault(); e.stopPropagation();
+      if(phase === "waitGo") goDrive(); else brake();
     });
+    vehicleStage.onclick = function(){ if(currentRole === "teacher"){ sfxEngine(); if(phase === "waitGo") goDrive(); else brake(); } };
+
+    function dropOff(){
+      phase = "school";
+      driveBtn.style.display = "none";
+      bubble.innerHTML = "🏫 <b>We made it to school!</b> Everybody hops out…";
+      var r = vr();
+      var kindsOut = [];
+      [1, 2, 3].forEach(function(n){
+        var g = document.getElementById("busWin" + n);
+        if(g) g.setAttribute("opacity", "0");
+      });
+      ["bunny", "kitten", "puppy"].forEach(function(kind, i){
+        var b = document.createElement("div");
+        b.className = "bus-kid out";
+        b.innerHTML = FRIEND_SVGS[kind];
+        b.style.left = (r.left + r.width * (0.18 + i * 0.22)) + "px";
+        b.style.top = (r.top + r.height * 0.36) + "px";
+        rescueLayer.appendChild(b);
+        setTimeout(function(){
+          b.style.transition = "left .8s cubic-bezier(.34,1.4,.5,1), top .8s cubic-bezier(.34,1.4,.5,1), transform .6s";
+          b.style.left = (signX - 80 + i * 80) + "px";
+          b.style.top = (roadY() + 10) + "px";
+          b.style.transform = "translate(-50%,-50%) scale(1)";
+          sfxSchoolBell();
+          spawnCelebration(signX - 80 + i * 80, roadY() - 30);
+        }, 300 + i * 420);
+      });
+      setTimeout(function(){
+        finishMissionWave("🚌 <b>SCHOOL TIME!</b> You picked up Bunny, Kitten and Puppy using their letters and drove them all to school!", "word-bunny");
+      }, 2200);
+    }
+
+    missionTick = function(dt){
+      placeZone();
+      var moving = (phase === "drive" || phase === "braking");
+      if(moving){
+        var tx = targetX();
+        if(phase === "drive"){
+          v += (300 - v) * Math.min(1, dt * 1.4);
+        } else {
+          var d = signX - tx;
+          v = Math.max(95, Math.abs(d) * 3.8) * (d >= 0 ? 1 : -1);
+          if(Math.abs(d) <= 12){
+            v = 0; signX = tx; phase = boarded >= 3 ? "school" : "stopped";
+            if(boarded >= 3) dropOff(); else startStop();
+          }
+        }
+        signX -= v * dt;
+        offset += v * dt;
+        placeSign();
+        if(laneMarks) laneMarks.setAttribute("transform", "translate(" + (-(offset / Math.max(0.5, svgToScreen(0, 0).s)) % 220) + ",0)");
+        var bob = Math.sin(offset * 0.05) * 2.2;
+        vehicleStage.style.transform = "translateY(" + bob + "px)";
+      }
+      if(phase === "drive" && signX < -200) makeSign(boarded >= 3);
+    };
+
+    missionCleanup = function(){
+      missionTick = null; vehicleStage.onclick = null;
+      vehicleStage.style.transform = "";
+      var lm = document.getElementById("laneMarks"); if(lm) lm.setAttribute("transform", "translate(0,0)");
+      [1, 2, 3].forEach(function(n){
+        var g = document.getElementById("busWin" + n);
+        if(g){ g.setAttribute("opacity", "0"); }
+      });
+    };
+
+    setBtn("brake");
+    makeSign(false);
+    missionAction = brake;
+    v = 120;
+    sfxEngine();
+    bubble.innerHTML = "🚌 <b>DRIVE THE ROUTE!</b> The bus is rolling. Press <b>🛑 BRAKE</b> when the <b>Bus Stop sign</b> reaches the <b>STOP HERE</b> spot!";
   }
 
   function selectRole(role, speakIntro){
     currentRole = ROLES[role] ? role : "firefighter";
     var cfg = ROLES[currentRole];
+    endMission();
+    smokePuffs = []; flameSparks = []; hoseDrops = []; popSparks = [];
     waveDone = false;
     ladderProgress = 0;
+    ladderPhase = false;
+    friendStage.classList.remove("on-roof");
+    vehicleStage.classList.remove("curb-car");
+    vehicleStage.style.transform = "";
+    document.getElementById("tankWrap").style.display = currentRole === "firefighter" ? "flex" : "none";
+    hydrantBtn.style.display = currentRole === "firefighter" ? "flex" : "none";
     bayBtns.forEach(function(b){
       b.classList.toggle("active", b.getAttribute("data-role") === currentRole);
     });
@@ -1138,6 +1731,7 @@
     } else {
       vehicleStage.hidden = false;
       vehicleStage.classList.toggle("giant-bus", currentRole === "teacher");
+      vehicleStage.classList.toggle("curb-car", currentRole === "police");
       vehicleStage.innerHTML = VEHICLE_SVGS[currentRole];
       vehicleStage.classList.remove("drive-in");
       void vehicleStage.offsetWidth;
@@ -1206,7 +1800,11 @@
     spraying = false;
   });
 
+  var hydrantBtn = document.getElementById("hydrantBtn");
+  hydrantBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); refilling = true; sfxWaterSpray(); });
+  window.addEventListener("pointerup", function(){ refilling = false; });
   hoseBtn.addEventListener("click", function(){
+    if(currentRole !== "firefighter"){ if(missionAction) missionAction(); return; }
     if(currentRole === "firefighter"){
       var target = activeZones.find(function(z){ return z.hp > 0; });
       if(!target) return;
@@ -1332,6 +1930,13 @@
 
   function render(){
     tick++;
+    var nowT = performance.now(); var dtF = Math.min(0.05, (nowT - lastT) / 1000); lastT = nowT;
+    if(missionTick) missionTick(dtF);
+    if(currentRole === "firefighter"){
+      if(spraying && tank > 0 && !ladderPhase) tank = Math.max(0, tank - 0.32);
+      if(refilling) tank = Math.min(100, tank + 1.5);
+      var tf = document.getElementById("tankFill"); if(tf) tf.style.width = tank + "%";
+    }
     ctx.clearRect(0, 0, W, H);
 
     for(var s = smokePuffs.length - 1; s >= 0; s--){
@@ -1351,13 +1956,14 @@
         if(z.hp <= 0) return;
         var r = z.el.getBoundingClientRect();
         var zx = r.left + r.width / 2, zy = r.top + r.height / 2;
+        if(tick - (z.hit || 0) > 45 && z.hp < 100){ z.hp = Math.min(100, z.hp + 0.07); z.fillEl.style.width = Math.round(z.hp) + "%"; }
         drawRoaringFire(zx, zy, Math.max(0.28, z.hp / 100), idx);
         if(spraying && Math.hypot(aimX - zx, aimY - zy) < 98){
           applyWaterToFire(z, 0.95);
         }
       });
 
-      if(spraying){
+      if(spraying && tank > 0){
         emitHoseStream(aimX, aimY);
         var orig = getNozzleOrigin();
         ctx.save();
@@ -1453,6 +2059,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e97"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e98"></script>
 </body>
 </html>
