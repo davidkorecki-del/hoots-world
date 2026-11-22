@@ -170,6 +170,18 @@
   @media (prefers-reduced-motion:reduce){
     .bg-star,.shooting,.firefly{ animation:none !important; }
   }
+  /* Wave 5C-2 (Big & Physical): big glowing 2yo-catchable falling stars & lush star jar in iPad landscape */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    .fall-star{
+      width:92px !important; height:92px !important; margin-left:-46px !important; margin-top:-46px !important;
+      filter:drop-shadow(0 0 12px rgba(255,220,100,.65));
+    }
+    .fall-star .star-letter{ font-size:36px !important; font-weight:800 !important; text-shadow:0 2px 0 rgba(255,255,255,.7); }
+    .fall-star.golden{ width:108px !important; height:108px !important; margin-left:-54px !important; margin-top:-54px !important; filter:drop-shadow(0 0 24px rgba(255,200,40,1)) !important; }
+    #jarZone{ width:clamp(176px,25vh,220px) !important; right:4% !important; bottom:5% !important; }
+    #jarLabel{ font-size:16px !important; padding:4px 14px !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(12,24,52,.28) !important; padding:8px 18px !important; }
+  }
 </style>
 </head>
 <body>

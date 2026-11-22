@@ -224,6 +224,14 @@
   @media (prefers-reduced-motion:reduce){
     .cloud,#hootFig,.fishwrap .swim,.reed,#duckBtn{ animation:none !important; }
   }
+  /* Wave 5C-2 (Big & Physical): large colourful swimming fish, chunky golden reel & bold Reel In CTA */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    .fishwrap{ width:clamp(152px,22vh,194px) !important; }
+    .fishwrap svg{ filter:drop-shadow(0 10px 12px rgba(8,45,80,.36)) !important; }
+    #reelBtn{ width:84px !important; height:84px !important; border-width:4px !important; box-shadow:0 6px 0 #70461e, 0 12px 22px rgba(0,0,0,.28) !important; }
+    #reelInBtn{ min-height:76px !important; padding:12px 30px !important; font-size:24px !important; border-width:4px !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(8,45,80,.2) !important; padding:8px 18px !important; }
+  }
 </style>
 </head>
 <body>

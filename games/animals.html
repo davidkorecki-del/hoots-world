@@ -212,6 +212,21 @@
   @media (prefers-reduced-motion:reduce){
     .cloud,.bfly,#perchArt,.animal-choice svg{ animation:none !important; }
   }
+  /* Wave 5C-2 (Big & Physical): hero perched animal, giant animal choices & tactile illustrated home cards */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #perch{ width:clamp(146px,21vh,180px) !important; }
+    #perchName{ font-size:18px !important; padding:5px 16px !important; }
+    .animal-choice{ width:clamp(132px,19vh,164px) !important; }
+    .animal-choice .spot-name{ font-size:17px !important; padding:4px 12px !important; }
+    #meetGrid{ inset:10px 24px 78px !important; gap:12px 18px !important; }
+    .meet-home{
+      background:rgba(255,253,246,.92) !important; border:4px solid #fff !important; border-radius:22px !important;
+      padding:8px 10px !important; box-shadow:0 6px 0 rgba(23,50,79,.15) !important;
+    }
+    .meet-home svg{ max-height:106px !important; }
+    .meet-home .mh-name{ font-size:15.5px !important; font-weight:700 !important; margin-top:4px; background:transparent !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; padding:8px 18px !important; }
+  }
 </style>
 </head>
 <body>

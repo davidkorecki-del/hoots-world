@@ -187,6 +187,19 @@
   @media (prefers-reduced-motion:reduce){
     .firefly,.bg-star{ animation:none !important; }
   }
+  /* Wave 5C-2 (Big & Physical): hero rocket ship & giant glossy 3D fuel pods in iPad landscape */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #rocketWrap{ width:clamp(168px,24vh,214px) !important; right:7% !important; bottom:16% !important; }
+    #rocketWrap svg{ filter:drop-shadow(0 14px 22px rgba(0,0,0,.45)) !important; }
+    .pod{
+      width:clamp(88px,13vh,108px) !important; height:clamp(88px,13vh,108px) !important;
+      font-size:clamp(36px,5.2vh,46px) !important; border:4px solid #fff !important;
+      box-shadow:0 8px 0 rgba(12,24,52,.38), 0 14px 24px rgba(0,0,0,.28), inset 0 6px 12px rgba(255,255,255,.45) !important;
+    }
+    #fuelGauge{ gap:5px !important; }
+    #fuelGauge i{ width:22px !important; height:15px !important; border-radius:6px !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(12,24,52,.28) !important; padding:8px 18px !important; }
+  }
 </style>
 </head>
 <body>
