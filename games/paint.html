@@ -245,6 +245,139 @@
     .tool{ min-width:64px; min-height:64px; padding:4px 8px; }
     #moreDrawer{ position:absolute; top:72px; left:10px; right:10px; max-height:calc(100vh - 84px); overflow-y:auto; z-index:25; }
   }
+
+  /* ===== Wave 5A (Dawid iPad Landscape Side-Rail Direction):
+     Move colours palette + tool tabs onto a chunky vertical side rail so the painting canvas
+     fills nearly the entire height & width of the landscape screen with >=64px targets. ===== */
+  @media (orientation:landscape) and (min-width:640px){
+    #stage{
+      display:grid !important;
+      grid-template-columns:238px minmax(0,1fr);
+      grid-template-rows:auto auto minmax(0,1fr);
+      align-items:stretch;
+    }
+    #tray{
+      grid-column:1;
+      grid-row:1 / -1;
+      display:flex !important;
+      flex-direction:column !important;
+      align-items:stretch !important;
+      justify-content:flex-start;
+      gap:10px;
+      padding:10px 10px max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left)) !important;
+      border-top:none !important;
+      border-right:3px solid rgba(23,38,59,.14) !important;
+      background:rgba(255,246,224,.98) !important;
+      overflow-y:auto;
+      overflow-x:hidden;
+      -webkit-overflow-scrolling:touch;
+    }
+    #pots{
+      display:grid !important;
+      grid-template-columns:repeat(3,66px) !important;
+      gap:8px !important;
+      justify-content:center;
+      padding:4px 2px !important;
+      overflow:visible !important;
+      flex:0 0 auto !important;
+    }
+    .pot{
+      width:66px !important;
+      height:66px !important;
+      min-width:66px !important;
+      min-height:66px !important;
+    }
+    #toolRow{
+      display:grid !important;
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:8px !important;
+      margin-top:0 !important;
+      padding:10px 2px 4px !important;
+      border-top:3px solid rgba(23,38,59,.12);
+      border-left:none !important;
+      overflow:visible !important;
+      flex:0 0 auto !important;
+    }
+    .tool{
+      min-width:0 !important;
+      width:100% !important;
+      min-height:68px !important;
+      padding:6px 4px !important;
+      border-radius:16px;
+    }
+    .tool .tool-lab{
+      font-size:12px !important;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:100%;
+    }
+    #topbar{
+      grid-column:2;
+      grid-row:1;
+      padding:6px max(12px,env(safe-area-inset-right)) 4px 10px !important;
+      gap:8px;
+    }
+    #undoBtn{
+      width:64px !important;
+      height:64px !important;
+      min-width:64px !important;
+      min-height:64px !important;
+      font-size:28px !important;
+    }
+    #moreBtn{
+      min-height:64px !important;
+      height:64px !important;
+      padding:0 16px !important;
+      font-size:16px !important;
+    }
+    #clearBtn{
+      min-width:132px !important;
+      min-height:64px !important;
+      height:64px !important;
+      padding:0 18px !important;
+      font-size:18px !important;
+    }
+    #clearBtn .act-lab{ font-size:18px !important; }
+    #starBank{ min-height:48px !important; font-size:18px !important; }
+    #strip{
+      grid-column:2;
+      grid-row:2;
+      padding:2px 10px 0 !important;
+    }
+    #chooserRow{
+      grid-column:2;
+      grid-row:3;
+      min-height:0;
+      height:100%;
+      padding:0 max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) 10px !important;
+    }
+    #canvasWrap{
+      margin:4px 0 0 !important;
+      flex:1 1 auto !important;
+      min-height:0 !important;
+      height:100%;
+    }
+    #moreDrawer{
+      position:absolute !important;
+      top:76px !important;
+      left:248px !important;
+      right:max(12px,env(safe-area-inset-right)) !important;
+      margin:0 !important;
+      max-height:calc(100% - 88px);
+      overflow-y:auto;
+      z-index:25;
+    }
+    #hootDock{ right:10px; bottom:10px; }
+    #bubble{ max-width:210px; }
+  }
+  @media (orientation:landscape) and (min-width:640px) and (max-height:540px){
+    #stage{ grid-template-columns:218px minmax(0,1fr); }
+    #pots{ grid-template-columns:repeat(3,64px) !important; gap:6px !important; }
+    .pot{ width:64px !important; height:64px !important; min-width:64px !important; min-height:64px !important; }
+    .tool{ min-height:64px !important; }
+    #moreDrawer{ left:226px !important; top:70px !important; }
+  }
 </style>
 </head>
 <body>
@@ -432,6 +565,7 @@ function fitCanvases(keep){
   drawGuide();
 }
 window.addEventListener("resize",function(){ fitCanvases(true); });
+window.addEventListener("orientationchange",function(){ setTimeout(function(){ fitCanvases(true); }, 140); });
 
 /* ================= UNDO / REDO ================= */
 var undoStack=[], redoStack=[];
@@ -790,7 +924,7 @@ window.__paintGame={
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>

@@ -127,6 +127,16 @@
     #figureWrap{ width:210px; height:240px; }
   }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
+  /* Wave 5A: iPad landscape compact top bars so #scene + #wardrobe fill full height */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #hud{ padding:4px 10px 0 !important; }
+    #guideRow{ padding:2px 10px 0 !important; }
+    #guideHoot{ width:56px !important; height:58px !important; }
+    #charRow{ padding:4px 10px 0 !important; gap:8px !important; }
+    #main{ padding:4px 10px 0 !important; gap:12px !important; }
+    #albumRow{ padding:4px 10px max(6px,env(safe-area-inset-bottom)) !important; }
+    #figureWrap{ width:260px !important; height:300px !important; }
+  }
 </style>
 <style>@media (max-width:759px),(max-aspect-ratio:1/1){#stage{overflow-y:auto!important;-webkit-overflow-scrolling:touch}#main{flex:1 0 auto!important;min-height:auto!important}}</style></head>
 <body>
@@ -650,7 +660,7 @@ window.__dressGame={
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>

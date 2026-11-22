@@ -170,7 +170,15 @@
   @media (prefers-reduced-motion:reduce){
     .cloud,.bfly{ animation:none !important; }
   }
-#hearts.food-row{max-width:250px;gap:4px}#hearts.food-row .fd{display:inline-block;width:34px;height:34px}#hearts.food-row svg{width:34px;height:34px}#hearts.food-row .fd-off{filter:saturate(.55);opacity:.45}#hearts.food-row .fd-pop{animation:heartPop .45s cubic-bezier(.34,1.8,.5,1)}@media (max-width:420px){#hearts.food-row .fd,#hearts.food-row svg{width:28px;height:28px}}</style>
+#hearts.food-row{max-width:250px;gap:4px}#hearts.food-row .fd{display:inline-block;width:34px;height:34px}#hearts.food-row svg{width:34px;height:34px}#hearts.food-row .fd-off{filter:saturate(.55);opacity:.45}#hearts.food-row .fd-pop{animation:heartPop .45s cubic-bezier(.34,1.8,.5,1)}@media (max-width:420px){#hearts.food-row .fd,#hearts.food-row svg{width:28px;height:28px}}
+  /* Wave 5A: iPad landscape full-width picnic blanket & scaled stage */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #targetCard{ margin-top:4px !important; padding:6px 14px !important; }
+    #blanket{ max-width:min(92vw,900px) !important; padding:12px 18px !important; gap:14px !important; }
+    #blanket .food{ min-width:86px !important; min-height:86px !important; }
+    #bubbleRow{ padding-top:4px !important; }
+  }
+</style>
 </head>
 <body>
 <div id="stage">
@@ -830,7 +838,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>

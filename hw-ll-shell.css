@@ -2846,3 +2846,111 @@ body.ll-shell-on #game-close, #ll-oclose { min-height: 52px; }
 .ll-actm-rm { width: 44px; height: 44px; font-size: 22px; }
 .lib-homedel { width: 44px; height: 44px; font-size: 1.05rem; }
 body.ll-tab-days #rm-marker .rm-token { width: 48px; height: 48px; }
+
+/* ===== Wave 5A (Device Report #1 — Dawid iPad Landscape Blocker):
+   Fix live iPad PWA safe-area bleed-through (html.hw-is-live sets --banner:0px and hides
+   #preview-banner, so overlays & headers MUST start at top:0 and absorb env(safe-area-inset-top)
+   inside their own opaque bars, never leaving an uncovered strip behind the status bar). ===== */
+html.hw-is-live .ll-shell-header {
+  top: 0 !important;
+  padding-top: calc(10px + env(safe-area-inset-top, 0px)) !important;
+}
+html.hw-is-live #ll-overlay,
+html.hw-is-live #game-overlay,
+html.hw-is-live body.ll-shell-on #game-overlay,
+html.hw-is-live body.game-open #game-overlay {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
+}
+html.hw-is-live #game-overlay,
+html.hw-is-live body.ll-shell-on #game-overlay,
+html.hw-is-live body.game-open #game-overlay {
+  --go-bar-h: 52px;
+  padding-top: calc(var(--go-bar-h) + env(safe-area-inset-top, 0px)) !important;
+  background: #1F2133 !important;
+}
+html.hw-is-live body.ll-shell-on #game-overlay .go-bar,
+html.hw-is-live body.game-open #game-overlay .go-bar {
+  top: 0 !important;
+  height: calc(var(--go-bar-h) + env(safe-area-inset-top, 0px)) !important;
+  min-height: calc(var(--go-bar-h) + env(safe-area-inset-top, 0px)) !important;
+  padding: calc(4px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 4px max(12px, env(safe-area-inset-left, 0px)) !important;
+  background: #1F2133 !important;
+}
+html.hw-is-live body:not(.lib-book-open) #ll-overlay {
+  background: #1F2133;
+}
+html.hw-is-live body:not(.lib-book-open) #ll-overlay .ll-obar {
+  padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+  padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
+  min-height: calc(52px + env(safe-area-inset-top, 0px)) !important;
+}
+html.hw-is-live body.lib-book-open #ll-overlay {
+  background: #201203 !important;
+}
+/* Defense-in-depth: while any game overlay is open, hide background shell layers so
+   zero pixels from Home / Hoot's Games cards can ever bleed through in landscape or safe areas. */
+body.game-open {
+  background: #1F2133 !important;
+}
+body.game-open #ll-app,
+body.game-open .ll-shell-header,
+body.game-open #ll-tabs {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+body.ll-shell-on #game-frame,
+body.game-open #game-frame {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: block !important;
+  border: 0 !important;
+}
+/* Landscape iPad: sleek 48px Close bar with >=44px Back target so games get maximum full-screen height */
+@media (orientation: landscape) and (min-width: 700px) and (max-height: 900px) {
+  body.ll-shell-on #game-overlay,
+  body.game-open #game-overlay {
+    --go-bar-h: 48px;
+    padding-top: 48px !important;
+  }
+  body.ll-shell-on #game-overlay .go-bar,
+  body.game-open #game-overlay .go-bar {
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 2px max(12px, env(safe-area-inset-right, 0px)) 2px max(12px, env(safe-area-inset-left, 0px)) !important;
+  }
+  html.hw-is-live body.ll-shell-on #game-overlay,
+  html.hw-is-live body.game-open #game-overlay {
+    --go-bar-h: 48px;
+    padding-top: calc(48px + env(safe-area-inset-top, 0px)) !important;
+  }
+  html.hw-is-live body.ll-shell-on #game-overlay .go-bar,
+  html.hw-is-live body.game-open #game-overlay .go-bar {
+    height: calc(48px + env(safe-area-inset-top, 0px)) !important;
+    min-height: calc(48px + env(safe-area-inset-top, 0px)) !important;
+    padding: calc(2px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 2px max(12px, env(safe-area-inset-left, 0px)) !important;
+  }
+  body.ll-shell-on #game-close {
+    min-height: 44px;
+    padding: 6px 16px;
+  }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  html.hw-is-live body.ll-shell-on #game-overlay,
+  html.hw-is-live body.game-open #game-overlay {
+    --go-bar-h: 44px;
+    padding-top: calc(44px + env(safe-area-inset-top, 0px)) !important;
+  }
+  html.hw-is-live body.ll-shell-on #game-overlay .go-bar,
+  html.hw-is-live body.game-open #game-overlay .go-bar {
+    height: calc(44px + env(safe-area-inset-top, 0px)) !important;
+    min-height: calc(44px + env(safe-area-inset-top, 0px)) !important;
+    padding: calc(2px + env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) 2px max(10px, env(safe-area-inset-left, 0px)) !important;
+  }
+}

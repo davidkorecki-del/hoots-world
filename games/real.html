@@ -132,6 +132,33 @@
   .card p{ font-weight:800; font-size:15px; line-height:1.4; color:var(--ink-soft); margin:0 0 13px; }
   @media (max-height:730px){ #island{ height:62px; } .quest p{ display:none; } }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
+  /* Wave 5A: iPad landscape side-rail tabs + Hoot guide so adventure panels fill full height */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #stage{
+      display:grid !important;
+      grid-template-columns:248px minmax(0,1fr);
+      grid-template-rows:auto minmax(0,1fr);
+      align-items:stretch;
+    }
+    #tabBar{
+      grid-column:1; grid-row:1 / 3;
+      flex-direction:column !important;
+      justify-content:flex-start;
+      gap:10px !important;
+      padding:12px 10px 10px !important;
+      align-self:start;
+    }
+    #tabBar .tab-btn{ width:100% !important; min-height:66px !important; justify-content:flex-start; padding:10px 14px !important; font-size:16px !important; }
+    #guideRow{
+      grid-column:1; grid-row:2;
+      align-self:end;
+      flex-direction:column; align-items:flex-start;
+      padding:8px 10px max(12px,env(safe-area-inset-bottom)) !important;
+    }
+    #island{ display:none !important; }
+    #hud{ grid-column:2; grid-row:1; padding:8px 14px 4px !important; }
+    #panels{ grid-column:2; grid-row:2; padding:6px 14px max(10px,env(safe-area-inset-bottom)) !important; }
+  }
 </style>
 </head>
 <body>
@@ -605,7 +632,7 @@ window.__realGame={
 })();
 </script>
 <style id="hw-realnophoto">#photoZone{display:none!important}</style><style id="hw-realfit">#panels{overflow-y:auto!important;overscroll-behavior:contain}</style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>

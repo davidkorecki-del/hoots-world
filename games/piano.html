@@ -171,6 +171,13 @@
   @media (prefers-reduced-motion:reduce){
     .cloud,#hootFig,.flower{ animation:none !important; }
   }
+  /* Wave 5A: iPad landscape wider instrument picker & taller piano keyboard */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #instrumentRow{ gap:14px !important; }
+    #instrumentRow .inst-chip{ min-width:118px !important; min-height:64px !important; padding:8px 16px !important; }
+    #keys{ height:clamp(180px,30vh,240px) !important; padding:6px 14px 4px !important; gap:8px !important; }
+    #hootFig{ width:104px !important; }
+  }
 </style>
 </head>
 <body>
@@ -746,7 +753,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>

@@ -167,6 +167,13 @@
   @media (prefers-reduced-motion:reduce){
     .note-decor{ animation:none !important; }
   }
+  /* Wave 5A: iPad landscape wide stageFloor & chunky instrument pads */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #stageFloor{ max-width:min(92vw,920px) !important; gap:18px !important; }
+    .pad{ max-width:200px !important; min-height:110px !important; }
+    #actionRow{ max-width:740px !important; gap:14px !important; }
+    #targetCard{ margin-top:4px !important; }
+  }
 </style>
 </head>
 <body>
@@ -711,7 +718,7 @@
 })();
 </script>
 <style id="hw-bandfit">@media (max-height:800px){#hootFig{width:clamp(78px,13.5vh,124px)!important}#hootStage{margin-top:0!important}#podium{height:14px!important}.row-label{margin-top:3px!important}#actionRow{margin-top:6px!important}}@media (max-width:480px){#actionRow{flex-wrap:nowrap!important;gap:6px!important;padding:0 6px}#playTuneBtn,#listenBtn{font-size:14.5px!important;padding:10px 11px!important;white-space:nowrap}}@media (max-height:680px){.row-label{display:none!important}#hootFig{width:clamp(60px,11vh,90px)!important}.pad svg{max-height:52px!important}}@media (max-height:600px){#hootStage{display:none!important}}#scene{overflow-y:auto}</style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>

@@ -196,6 +196,13 @@
   @media (prefers-reduced-motion:reduce){
     .cloud,#hootFig,.flower,#sun .rays,.bfly{ animation:none !important; }
   }
+  /* Wave 5A: iPad landscape bigger hero friend & wider garland */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    #garland{ max-width:720px !important; padding:6px 18px !important; }
+    #bigFriend .patch{ width:clamp(160px,26vh,220px) !important; height:clamp(160px,26vh,220px) !important; }
+    #bigFriend .face{ font-size:clamp(90px,15vh,126px) !important; }
+    #miniRow{ gap:12px !important; padding:4px 16px !important; }
+  }
 </style>
 </head>
 <body>
@@ -819,7 +826,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e66">
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
 <script src="js/hoot-game-tail.js?v=llprev3e66"></script>
 </body>
 </html>
