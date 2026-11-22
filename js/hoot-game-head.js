@@ -186,7 +186,38 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     if(best) best.classList.add("hoot-go");
   }
   var st=document.createElement("style");
-  st.textContent=".hoot-go{animation:hootGo 1.35s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 6px #ffd93b,0 0 22px rgba(255,217,59,.75)!important}@keyframes hootGo{50%{transform:scale(1.06)}}.hoot-nudge{animation:hootNudge 1.1s ease-in-out 3!important;box-shadow:0 0 0 5px #ffd93b!important}@keyframes hootNudge{50%{transform:scale(1.08)}}";
+  st.textContent=".hoot-go{animation:hootGo 1.35s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 6px #ffd93b,0 0 22px rgba(255,217,59,.75)!important}@keyframes hootGo{50%{transform:scale(1.06)}}.hoot-nudge{animation:hootNudge 1.1s ease-in-out 3!important;box-shadow:0 0 0 5px #ffd93b!important}@keyframes hootNudge{50%{transform:scale(1.08)}}#hwWinExitBtn{background:#1c7ed6!important;color:#fff!important;border:3px solid #fff!important;box-shadow:0 5px 0 #145ea0,0 10px 20px rgba(28,126,214,.3)!important}#hwWinExitBtn.hw-next{background:#40c057!important;box-shadow:0 5px 0 #2b8a3e,0 10px 20px rgba(64,192,87,.35)!important}";
+  /* Device Report #7: ensure every iframe game win screen also has a clear one-tap Exit / Next Up
+     button right beside Play Again (so children & parents never feel trapped on a win overlay). */
+  function ensureWinExit(){
+    try{
+      if(!window.parent || window.parent===window) return;
+      var win=document.getElementById("winOverlay"); if(!win) return;
+      var row=win.querySelector(".win-btns"); if(!row) return;
+      var fromToday=false;
+      try{ fromToday=!!(window.parent.__hwFromTodayPath && typeof window.parent.__llAdvanceTodayPath==="function"); }catch(e){}
+      var btn=document.getElementById("hwWinExitBtn");
+      if(!btn){
+        btn=document.createElement("button");
+        btn.id="hwWinExitBtn"; btn.type="button"; btn.className="win-btn";
+        btn.addEventListener("click", function(){
+          winCheerAt=0;
+          try{ if(window.__govStopAll) window.__govStopAll(); }catch(e){}
+          try{ if(window.__hootStopCoach) window.__hootStopCoach(); }catch(e){}
+          try{
+            if(window.parent.__hwFromTodayPath && typeof window.parent.__llAdvanceTodayPath==="function"){
+              window.parent.__llAdvanceTodayPath();
+              return;
+            }
+          }catch(e){}
+          try{ window.parent.postMessage({hootGameNav:"homeschooling-app-mockup"},"*"); }catch(e){}
+        });
+        row.appendChild(btn);
+      }
+      btn.textContent=fromToday ? "Next up ▶" : "✓ Done";
+      btn.classList.toggle("hw-next", fromToday);
+    }catch(e){}
+  }
   /* Wave 5B (Device Report #2): keep a tiny 220ms stray-tap debounce on win popup
      (down from 800ms) so Play Again is tappable immediately, AND stop celebration voice
      instantly when the child taps Play Again / Home. Also support tap-to-skip celebration. */
@@ -218,7 +249,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     return setTimeout(run, ms);
   };
   document.addEventListener('DOMContentLoaded', watchWins); setTimeout(watchWins,0);
-  function tick(){ try{ install(); bellies(); bigPlay(); }catch(e){} }
+  function tick(){ try{ install(); bellies(); ensureWinExit(); bigPlay(); }catch(e){} }
   document.addEventListener("DOMContentLoaded", function(){ (document.head||document.documentElement).appendChild(st); tick(); });
   var n=0, iv=setInterval(function(){ tick(); if(++n>600) clearInterval(iv); }, 500);
   document.addEventListener("click", function(){ setTimeout(tick,250); }, true);
@@ -258,6 +289,16 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
   /* Muse recorded these lines in Hoot's own voice. Play the clip and keep the bubble.
      Never play the robotic or generic fallback voice. */
   var coachQueue=[], coachBusy=false, coachEl=null;
+  window.__hootStopCoach=function(){
+    coachQueue.length=0; coachBusy=false;
+    if(coachEl){
+      coachEl.__govWait=false; coachEl.__govNext=null;
+      try{ coachEl.pause(); }catch(e){}
+    }
+  };
+  window.__hootCoachBusy=function(){
+    return !!(coachBusy || coachQueue.length || (coachEl && !coachEl.paused && !coachEl.ended));
+  };
   function phonicsSrc(letter){ return "assets/voice/coach/phonics-"+String(letter||"").toLowerCase()+".mp3"; }
   function playCoachFiles(files, kind, plain){
     if(!files||!files.length) return;
@@ -514,6 +555,13 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     window.__hootIdleTimer=setTimeout(function idleTry(){
       var winEl=document.getElementById("winOverlay");
       if(winEl && !winEl.hidden && getComputedStyle(winEl).display!=="none") return;
+      /* Never interrupt an active caught-letter teach card or mid-reel interaction with an idle prompt */
+      var tc=document.getElementById("teachCard");
+      var rl=document.getElementById("reelInBtn");
+      if((tc && !tc.hidden && getComputedStyle(tc).display!=="none") || (rl && rl.classList.contains("ready"))){
+        window.__hootIdleTimer=setTimeout(idleTry,2500);
+        return;
+      }
       if(Date.now()-(window.__hootLastVoice||0)<7000){ window.__hootIdleTimer=setTimeout(idleTry,2000); return; }
       nudgeVisual();
       if(idleSpokenCount<2){

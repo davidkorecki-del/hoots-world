@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="fishing";</script>
-<script src="js/hoot-game-head.js?v=llprev3e76"></script>
+<script src="js/hoot-game-head.js?v=llprev3e78"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -818,6 +818,7 @@
   }
   function hookFish(b,L,golden){
     inputLock=true; state="casting";
+    if(window.__hootStopCoach) window.__hootStopCoach();
     b.dataset.done="1";
     hookedEl=b; hookedData={L:L,golden:golden};
     var c=elCenter(b), r=sceneRect();
@@ -839,7 +840,6 @@
       bubbleStrip.classList.add("mini");
       if(golden){ goldenSound(); say("✨ <span class='b-letter'>GOLDEN FISH</span> ON THE LINE! ✨ Crank that reel — tap REEL IT IN again and again!"); }
       else say("SPLASH! You hooked the <span class='b-letter'>"+L+"</span> fish! 🎣 Now crank the reel — tap <span class='b-letter'>REEL IT IN</span> again and again!");
-      if(window.__hootSpeak) window.__hootSpeak("idle");
       inputLock=false;
     },650);
   }
@@ -879,6 +879,7 @@
     if(golden){ bonusStars++; stars++; goldenSound(); confetti(16); }
     stars++; caught.push(L); bumpStars(); updateHUD();
     clearPending();
+    if(window.__hootStopCoach) window.__hootStopCoach();
     flyFishToBasket(L,golden,fr,function(){
       if(dead) return;
       addChip(L);
@@ -887,26 +888,26 @@
       teachSay.innerHTML="You caught <b>"+L+"</b>! "+L+" says \u201C"+DATA[L].s+"\u201D \u2014 like "+DATA[L].w+" "+DATA[L].emoji+"!";
       teachCard.hidden=false;
       showSplashWord(L,fr.left+fr.width/2,fr.top);
-      enqueueTeach(L,golden);__hwAuto(function(){return state==="teach"&&!teachCard.hidden;},nextAfterTeach,1000);
-      /* Auto-advance (owner standard): the teach card celebrates briefly,
-         then the game moves on by itself — Next Fish stays as a shortcut,
-         never a required step. */
       teachLetter=L;
-      armTeachTimer();
+      enqueueTeach(L,golden);
+      /* Wait until Hoot finishes explaining the caught letter + short breath before auto-advancing;
+         never cut off the explanation with a blind 3s timeout. Next Fish stays immediately tappable. */
+      armTeachAuto();
       if(mode==="free"){
         freeCaught++;
         say("Free Fishing catch! The <span class='b-letter'>"+L+"</span> fish is in the basket — here comes the next fish!");
       }
     });
   }
-  var TEACH_MS=3000;
-  function armTeachTimer(){
-    if(teachTimer) clearTimeout(teachTimer);
-    teachTimer=setTimeout(function(){ teachTimer=null; nextAfterTeach(); },TEACH_MS);
+  var teachGen=0;
+  function armTeachAuto(){
+    var g=++teachGen;
+    __hwAuto(function(){return g===teachGen&&state==="teach"&&!teachCard.hidden;},nextAfterTeach,650);
   }
-  function __hwAuto(ok,go,pause){var t0=Date.now(),q=0;function w(){if(dead||!ok())return;var now=Date.now(),b=vPlaying||vQueue.length;if(b&&now-t0<12000){q=0;setTimeout(w,200);return;}if(!q)q=now;if(now-q>=pause||now-t0>=12000){go();return;}setTimeout(w,200);}setTimeout(w,300);}
+  function __hwAuto(ok,go,pause){var t0=Date.now(),q=0;function w(){if(dead||!ok())return;var now=Date.now(),cb=!!(window.__hootCoachBusy&&window.__hootCoachBusy()),b=vPlaying||vQueue.length||cb;if(b&&now-t0<14000){q=0;setTimeout(w,200);return;}if(!q)q=now;if(now-q>=pause||now-t0>=14000){go();return;}setTimeout(w,200);}setTimeout(w,350);}
   function nextAfterTeach(){
     if(state!=="teach"||dead) return;
+    teachGen++;
     if(teachTimer){ clearTimeout(teachTimer); teachTimer=null; }
     teachCard.hidden=true;
     if(mode==="free"){ state="aim"; presentFree(); return; }
@@ -929,7 +930,7 @@
     var tPlaying=vCurrent&&vCurrent.kind==="teach"&&vCurrent.target===L;
     var tPending=vQueue.some(function(q){ return q.kind==="teach"&&q.target===L; });
     if(!tPlaying&&!tPending) enqueue(("ABCDE".indexOf(L)>-1?"fish-teach-"+L.toLowerCase():"coach/phonics-"+L.toLowerCase())+".mp3","teach",L,null);
-    armTeachTimer();
+    armTeachAuto();
   });
   teachCard.addEventListener("click",function(e){ if(e.target!==$("nextFishBtn")&&e.target!==$("teachHearBtn")) nextAfterTeach(); });
 

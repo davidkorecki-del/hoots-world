@@ -23,7 +23,7 @@
     "say-pop-sound", "say-plant", "say-load", "say-show-me", "say-where-work", "hoot-party-done",
     "song-hoot-party", "song-hoot-party-inst", "song-abc", "song-counting", "song-dance-party", "song-goodbye"];
   var have = {}; HAVE.forEach(function (k) { have[k] = true; });
-  function opt(k) { return have[k] ? k : null; }
+  function opt(k) { return (have[k] || (window.HOOT_HAVE && window.HOOT_HAVE[k])) ? k : null; }
 
   /* ---------- voice: clips only, one queue; never repeat a line within 15 s ---------- */
   /* The app's voice governor (index.html) holds a clip that is asked to play while
@@ -228,21 +228,28 @@
   /* ---------- runner ---------- */
   var R = null;
   function clearIdleTimers(s) {
-    if (!s || !s.idleT) return;
-    s.idleT.forEach(function (t) { clearTimeout(t); });
-    s.idleT = [];
+    if (!s) return;
+    if (s.idleT) {
+      s.idleT.forEach(function (t) { clearTimeout(t); });
+      s.idleT = [];
+    }
+    if (s.autoT) { clearTimeout(s.autoT); s.autoT = null; }
   }
   function stop() { stopVoice(); stopMusic(); stopSing(); sayitCleanup(); if (R) { clearIdleTimers(R); R.dead = true; clearInterval(R.iv); R = null; } }
   function play(key, body) {
     var G = GAMES[key]; if (!G || !body) return false;
     stop();
-    var S = R = { key: key, round: 0, wrong: 0, dead: false, t0: Date.now(), iv: null, idleT: [] };
+    var S = R = { key: key, round: 0, wrong: 0, dead: false, t0: Date.now(), iv: null, idleT: [], autoT: null };
     body.innerHTML = '<div class="pg" style="--bg:' + G.bg + '">' +
       '<div class="pg-top"><div class="pg-hoot">' + hootSvg() + '</div><p class="pg-bubble" aria-live="polite"></p>' +
       '<button type="button" class="pg-music" aria-pressed="' + musicOn + '" aria-label="Music on or off">' + (musicOn ? "🎵" : "🔇") + "</button></div>" +
       '<div class="pg-dots" aria-hidden="true"></div><div class="pg-stage"></div>' +
       '<div class="pg-start"><button type="button" class="pg-play">▶ Play</button></div>' +
-      '<div class="pg-end" hidden><p class="pg-sticker"></p><div class="pg-endbtns"><button type="button" class="pg-again">↻ Play again</button>' + (function () { var sg = SONGS.filter(function (x) { return x.key === END_SONG[key]; })[0]; return sg ? songBtn(sg, "pg-sing") : ""; })() + '</div></div></div>';
+      '<div class="pg-end" hidden><p class="pg-sticker"></p><p class="pg-autonote" hidden></p><div class="pg-endbtns">' +
+      '<button type="button" class="pg-next" hidden>Next up ▶</button>' +
+      '<button type="button" class="pg-again">↻ Play again</button>' +
+      '<button type="button" class="pg-done">✓ Done</button>' +
+      (function () { var sg = SONGS.filter(function (x) { return x.key === END_SONG[key]; })[0]; return sg ? songBtn(sg, "pg-sing") : ""; })() + '</div></div></div>';
     var root = body.querySelector(".pg"), bubble = root.querySelector(".pg-bubble"), stage = root.querySelector(".pg-stage"), dots = root.querySelector(".pg-dots");
     function alive() { return R === S && !S.dead; }
     function setB(t) { bubble.textContent = t; }
@@ -257,8 +264,19 @@
       startMusic();
       say([opt("game-" + key + "-intro") || "owl-excited"], function () { if (alive()) next(); });
     });
-    root.querySelector(".pg-again").addEventListener("click", function () { play(key, body); });
-    var singB = root.querySelector(".pg-sing"); if (singB) singB.addEventListener("click", function () { sing(singB.getAttribute("data-song"), singB); });
+    root.querySelector(".pg-again").addEventListener("click", function () { clearIdle(); play(key, body); });
+    root.querySelector(".pg-done").addEventListener("click", function () {
+      stop();
+      if (typeof window.__llGoBack === "function") window.__llGoBack();
+      else if (typeof window.__llCloseOverlay === "function") window.__llCloseOverlay();
+      else { var cl = document.getElementById("ll-oclose"); if (cl) cl.click(); }
+    });
+    root.querySelector(".pg-next").addEventListener("click", function () {
+      stop();
+      if (typeof window.__llAdvanceTodayPath === "function") window.__llAdvanceTodayPath();
+      else if (typeof window.__llCloseOverlay === "function") window.__llCloseOverlay();
+    });
+    var singB = root.querySelector(".pg-sing"); if (singB) singB.addEventListener("click", function () { clearIdle(); sing(singB.getAttribute("data-song"), singB); });
     function win(btn) {
       sfx("pop"); if (btn) { btn.classList.add("pg-yay"); var s = document.createElement("span"); s.className = "pg-burst"; s.textContent = "⭐"; btn.appendChild(s); }
     }
@@ -317,15 +335,46 @@
     }
     function finish() {
       clearIdle();
-      stage.innerHTML = '<div class="pg-confetti" aria-hidden="true">' + Array.apply(null, Array(24)).map(function (_, i) { return '<i style="--x:' + ri(2, 96) + "%;--d:" + (ri(0, 8) / 10) + "s;--c:" + pick(["#F06595", "#FFD43B", "#1C7ED6", "#2F9E44", "#7048E8", "#FD7E14"]) + '"></i>'; }).join("") + "</div>";
+      /* Device Report #7: collapse the 340px stage so .pg-end and its buttons sit front-and-center
+         right beneath Hoot's bubble with zero off-screen clipping at any viewport. */
+      stage.innerHTML = "";
+      stage.hidden = true;
+      root.classList.add("pg-finished");
+      var oldConf = root.querySelector(".pg-confetti");
+      if (oldConf) oldConf.remove();
+      var conf = document.createElement("div");
+      conf.className = "pg-confetti";
+      conf.setAttribute("aria-hidden", "true");
+      conf.innerHTML = Array.apply(null, Array(24)).map(function (_, i) { return '<i style="--x:' + ri(2, 96) + "%;--d:" + (ri(0, 8) / 10) + "s;--c:" + pick(["#F06595", "#FFD43B", "#1C7ED6", "#2F9E44", "#7048E8", "#FD7E14"]) + '"></i>'; }).join("");
+      root.appendChild(conf);
       stopMusic(); sfx("win");
       var st = STICKERS[ORDER.indexOf(key) * 2 % STICKERS.length];
       root.querySelector(".pg-sticker").textContent = st;
-      root.querySelector(".pg-end").hidden = false;
-      setB("🎉 You did it! " + G.title + " — all " + G.rounds + " rounds! Here's your sticker!");
-      /* Wave 5B+5C: ONE short 1s win cheer alongside the immediately tappable Replay button */
-      say([fresh(liveList(PRAISE_BASE, WIN_EXTRA))]);
       try { document.dispatchEvent(new CustomEvent("hoot-party-done", { detail: { key: key, title: G.title, wrong: S.wrong, ms: Date.now() - S.t0 } })); } catch (e) {}
+      var fromToday = !!window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function";
+      var nextBtn = root.querySelector(".pg-next");
+      var doneBtn = root.querySelector(".pg-done");
+      var noteEl = root.querySelector(".pg-autonote");
+      root.classList.toggle("pg-today", fromToday);
+      if (fromToday) {
+        if (nextBtn) nextBtn.hidden = false;
+        if (doneBtn) doneBtn.textContent = "🏠 Home";
+        if (noteEl) { noteEl.hidden = false; noteEl.textContent = "✨ Tap Next up anytime!"; }
+        S.autoT = setTimeout(function () {
+          if (!alive()) return;
+          stop();
+          if (typeof window.__llAdvanceTodayPath === "function") window.__llAdvanceTodayPath();
+        }, 3200);
+      } else {
+        if (nextBtn) nextBtn.hidden = true;
+        if (doneBtn) doneBtn.textContent = "✓ Done";
+        if (noteEl) noteEl.hidden = true;
+      }
+      root.querySelector(".pg-end").hidden = false;
+      try { body.scrollTop = 0; } catch (e) {}
+      setB("🎉 You did it! " + G.title + " — all " + G.rounds + " rounds! Here's your sticker!");
+      /* Wave 5B+5C: ONE short 1s win cheer alongside the immediately tappable Exit / Replay buttons */
+      say([fresh(liveList(PRAISE_BASE, WIN_EXTRA))]);
     }
     var next = { bubbles: bubblesRound, garden: gardenRound, train: trainRound, dance: danceRound, helpers: helpersRound, sayit: sayitRound }[key];
 

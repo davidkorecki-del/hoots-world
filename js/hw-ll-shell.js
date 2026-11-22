@@ -2401,10 +2401,14 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   function openGame(key) {
     var g = GAMES.filter(function (x) { return x.key === key; })[0];
     state.gameOpen = { title: g ? g.title : key, t0: Date.now() };
+    var keepToday = !!window.__hwFromTodayPath;
+    var keepStone = state.pendingStone;
     /* A lesson overlay left open would cover the game. closeOverlay
        also cancels any pending startTeach from the lesson just closed. */
     if (document.body.classList.contains("ll-overlay-open") || document.body.classList.contains("ll-tutor-open") || document.body.classList.contains("ll-muse-card-open")) {
       closeOverlay();
+      if (keepToday) window.__hwFromTodayPath = true;
+      if (keepStone) state.pendingStone = keepStone;
     } else {
       stopAllVoices();
     }
@@ -2754,6 +2758,11 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
      return to Kid Home to celebrate & warm the pet egg when all stones are done). */
   window.__llAdvanceTodayPath = function () {
     if (!state.profile || !isLittleBand()) { window.__hwFromTodayPath = false; closeOverlay(); return; }
+    if (document.body.classList.contains("game-open")) {
+      var cg = $("#game-close");
+      if (cg) cg.click();
+    }
+    if (state.pendingStone) finishPendingStone();
     var plan = currentPlan(), nxt = null;
     for (var i = 0; i < plan.length; i++) {
       if (isRequiredStop(plan[i]) && !stoneDone(plan[i])) { nxt = plan[i]; break; }
@@ -2767,8 +2776,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     state.pendingStone = nxt.title;
     if (nxt.kind === "custom") { window.__hwFromTodayPath = false; openCustomStop(nxt.title); return; }
     if (nxt.kind === "story") { window.__hwFromTodayPath = false; state.pendingStone = STORY_STOP; openStory(); return; }
-    if (nxt.kind === "game" && nxt.key) { window.__hwFromTodayPath = false; openGame(nxt.key); return; }
-    if (nxt.kind === "pgame" && nxt.key) { window.__hwFromTodayPath = false; openPartyGame(nxt.key); return; }
+    if (nxt.kind === "game" && nxt.key) { window.__hwFromTodayPath = true; openGame(nxt.key); return; }
+    if (nxt.kind === "pgame" && nxt.key) { window.__hwFromTodayPath = true; openPartyGame(nxt.key); return; }
     if (nxt.kind === "shelf") {
       window.__hwFromTodayPath = false;
       var sh = findShelfNode(nxt.title);
@@ -2952,7 +2961,11 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   function openPartyGame(key) {
     var G = window.HootGames; if (!G) return;
     var g = G.list.filter(function (x) { return x.key === key; })[0]; if (!g) return;
+    var keepToday = !!window.__hwFromTodayPath;
+    var keepStone = state.pendingStone;
     if (document.body.classList.contains("ll-overlay-open")) closeOverlay();
+    if (keepToday) window.__hwFromTodayPath = true;
+    if (keepStone) state.pendingStone = keepStone;
     nextView = { kind: "party", key: key, title: g.title };
     openShellOverlay(g.title, "");
     document.body.classList.add("ll-tutor-open");
@@ -2962,6 +2975,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   document.addEventListener("hoot-party-done", function (e) {
     var d = e.detail || {}; if (state.profile) logAdd(state.profile.id, { type: "game", title: d.title, ms: d.ms });
     state.partyOpen = null;
+    if (state.pendingStone) finishPendingStone();
   });
   /* Wave 1 (Exit rule §6.2): leaving ANY lesson/player silences EVERY voice channel
      AND clears the Voice Governor's pending queue immediately, mid-sentence. */
@@ -2993,7 +3007,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (!navRestoring) { viewStack.length = 0; curView = null; nextView = null; libState = null; libFind = null; window.__hwFromTodayPath = false; }
     stopAllVoices();
     if (state.partyOpen && state.profile) { logAdd(state.profile.id, { type: "game", title: state.partyOpen.title, ms: Date.now() - state.partyOpen.t0 }); state.partyOpen = null; }
-    setTimeout(finishPendingStone, 0);
+    var stoneToFinish = state.pendingStone;
+    if (stoneToFinish) setTimeout(function () { if (state.pendingStone === stoneToFinish) finishPendingStone(); }, 0);
     /* Return parked Muse nodes, then wipe leftover overlay HTML so the next
        open (lesson, game, work, outdoor) cannot show the previous card's text. */
     teachGen++;
@@ -3063,6 +3078,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
     restoreView(e);
   }
+  window.__llCloseOverlay = closeOverlay;
+  window.__llGoBack = goBack;
   function goHome() {
     window.__hwFromTodayPath = false;
     viewStack.length = 0; curView = null; nextView = null;
