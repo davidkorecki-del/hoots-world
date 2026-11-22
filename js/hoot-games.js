@@ -240,11 +240,11 @@
     var G = GAMES[key]; if (!G || !body) return false;
     stop();
     var S = R = { key: key, round: 0, wrong: 0, dead: false, t0: Date.now(), iv: null, idleT: [], autoT: null };
-    body.innerHTML = '<div class="pg" style="--bg:' + G.bg + '">' +
+    body.innerHTML = '<div class="pg" data-pg="' + key + '" style="--bg:' + G.bg + '">' +
       '<div class="pg-top"><div class="pg-hoot">' + hootSvg() + '</div><p class="pg-bubble" aria-live="polite"></p>' +
       '<button type="button" class="pg-music" aria-pressed="' + musicOn + '" aria-label="Music on or off">' + (musicOn ? "🎵" : "🔇") + "</button></div>" +
       '<div class="pg-dots" aria-hidden="true"></div><div class="pg-stage"></div>' +
-      '<div class="pg-start"><button type="button" class="pg-play">▶ Play</button></div>' +
+      '<div class="pg-start" hidden><button type="button" class="pg-play">▶ Play</button></div>' +
       '<div class="pg-end" hidden><p class="pg-sticker"></p><p class="pg-autonote" hidden></p><div class="pg-endbtns">' +
       '<button type="button" class="pg-next" hidden>Next up ▶</button>' +
       '<button type="button" class="pg-again">↻ Play again</button>' +
@@ -260,9 +260,11 @@
       if (musicOn && !root.querySelector(".pg-start:not([hidden])")) startMusic(); else stopMusic();
     });
     root.querySelector(".pg-play").addEventListener("click", function () {
-      root.querySelector(".pg-start").hidden = true;
+      var st = root.querySelector(".pg-start");
+      if (st && st.hidden && stage.children.length) return;
+      if (st) st.hidden = true;
       startMusic();
-      say([opt("game-" + key + "-intro") || "owl-excited"], function () { if (alive()) next(); });
+      next();
     });
     root.querySelector(".pg-again").addEventListener("click", function () { clearIdle(); play(key, body); });
     root.querySelector(".pg-done").addEventListener("click", function () {
@@ -562,6 +564,8 @@
       });
     }
     paint();
+    startMusic();
+    next();
     return true;
 
     /* ----- 6. Say It with Hoot -----

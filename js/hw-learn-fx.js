@@ -1,9 +1,8 @@
-/* Hoot's World — Learn FX: animated scenes, bouncy cards and confetti for
-   little-kid Learn lessons. Visual-only; never touches lesson logic, audio,
-   progress or family data. Active only when window.__llIsLittleKid() is true
-   AND a Little Explorers (.lsn in #panel-little) or HootLessons (.hl) view is
-   open in #ll-overlay. Kaitlyn (kidc), .ny-lsn, Hoot Study (.hs), books and
-   games never get it. */
+/* Hoot's World — Learn & Party Games FX v2:
+   Full-screen animated worlds, giant 3D arcade cards, and star/confetti bursts
+   for little-kid Learn lessons (.lsn, .hl) AND Hoot's Party Games (.pg).
+   Visual-only; never alters lesson/game logic, audio, progress, or family data.
+   Never active on Kaitlyn (kidc), .ny-lsn, Hoot Study (.hs), or books. */
 (function () {
   "use strict";
   if (window.__hwLearnFx) return;
@@ -21,6 +20,12 @@
 
   function themeFor(txt) {
     var t = (txt || "").toLowerCase();
+    if (/pg-bubbles/.test(t)) return "rainbow";
+    if (/pg-garden/.test(t)) return "orchard";
+    if (/pg-train/.test(t)) return "storybook";
+    if (/pg-dance/.test(t)) return "candy";
+    if (/pg-helpers/.test(t)) return "breezy";
+    if (/pg-sayit/.test(t)) return "sunset";
     if (/animal|farm|moo|quack/.test(t)) return "meadow";
     if (/colou?r/.test(t)) return "rainbow";
     if (/feeling|face|kind|share|manner|friend|happy|sad/.test(t)) return "sunset";
@@ -50,11 +55,11 @@
     s.setAttribute("aria-hidden", "true");
     var parts = "";
     if (!REDUCED) {
-      for (var i = 0; i < 9; i++) {
+      for (var i = 0; i < 11; i++) {
         var spark = i % 3 === 2;
-        var size = spark ? 0 : 14 + Math.round(Math.random() * 26);
+        var size = spark ? 0 : 16 + Math.round(Math.random() * 28);
         var left = Math.round(4 + Math.random() * 92);
-        var dur = (14 + Math.random() * 12).toFixed(1);
+        var dur = (13 + Math.random() * 11).toFixed(1);
         var delay = (-Math.random() * 24).toFixed(1);
         parts += '<span class="lfx-p' + (spark ? " spark" : "") + '" style="left:' + left + "%;" +
           (size ? "width:" + size + "px;height:" + size + "px;" : "") +
@@ -74,10 +79,14 @@
     if (!fx || !fx.isConnected) { fx = document.createElement("div"); fx.className = "lfx-fx"; fx.setAttribute("aria-hidden", "true"); ov.appendChild(fx); }
   }
 
+  function titleText() { var t = document.getElementById("ll-otitle"); return t ? t.textContent : ""; }
+
   function lessonContext() {
     if (!body) return null;
     if (document.body.classList.contains("lib-book-open") || document.body.classList.contains("game-open")) return null;
     if (body.querySelector(".hs, .ny-lsn.ll-lesson-focus")) return null;
+    var pg = body.querySelector(".pg");
+    if (pg) return { key: "pg-" + (pg.getAttribute("data-pg") || "") + " " + titleText(), focus: true, isPg: true };
     var hl = body.querySelector(".hl:not(.hs)");
     if (hl) return { key: (hl.getAttribute("data-hl") || "") + " " + titleText(), focus: !hl.classList.contains("hl-pathview") };
     var pl = body.querySelector("#panel-little, #panel-early, #panel-quest");
@@ -87,7 +96,14 @@
     }
     return null;
   }
-  function titleText() { var t = document.getElementById("ll-otitle"); return t ? t.textContent : ""; }
+
+  function syncTeachingFlag() {
+    if (!body) return;
+    var f = body.querySelector("#panel-little .lsn.ll-lesson-focus");
+    if (!f) return;
+    var rb = f.querySelector(".lsn-replay");
+    f.classList.toggle("lfx-teaching", !!(rb && rb.disabled));
+  }
 
   function evaluate() {
     raf = 0;
@@ -99,9 +115,10 @@
       return;
     }
     ensureLayers();
+    syncTeachingFlag();
     var th = ctx.focus ? themeFor(ctx.key) : "meadow";
     if (ov.getAttribute("data-lfx") !== th) ov.setAttribute("data-lfx", th);
-    ov.classList.toggle("lfx-plain", th === "rainbow");
+    ov.classList.toggle("lfx-plain", th === "rainbow" && !ctx.isPg);
     if (!ov.classList.contains("lfx-on")) ov.classList.add("lfx-on");
   }
   function schedule() { if (!raf) raf = requestAnimationFrame(evaluate); }
@@ -111,15 +128,15 @@
     if (REDUCED || !fx || !ov.classList.contains("lfx-on")) return;
     var r = el.getBoundingClientRect(), o = ov.getBoundingClientRect();
     var cx = r.left + r.width / 2 - o.left, cy = r.top + r.height / 2 - o.top;
-    for (var i = 0; i < 18; i++) {
+    for (var i = 0; i < 20; i++) {
       var c = document.createElement("span");
       var star = i % 4 === 0;
       c.className = "lfx-c" + (star ? " star" : "");
-      var ang = (Math.PI * 2 * i) / 18 + Math.random() * 0.4;
-      var dist = 70 + Math.random() * 90;
+      var ang = (Math.PI * 2 * i) / 20 + Math.random() * 0.35;
+      var dist = 75 + Math.random() * 95;
       c.style.left = cx + "px"; c.style.top = cy + "px";
       c.style.setProperty("--dx", Math.round(Math.cos(ang) * dist) + "px");
-      c.style.setProperty("--dy", Math.round(Math.sin(ang) * dist - 40) + "px");
+      c.style.setProperty("--dy", Math.round(Math.sin(ang) * dist - 44) + "px");
       c.style.setProperty("--rot", Math.round(Math.random() * 540 - 270) + "deg");
       if (!star) c.style.background = COLORS[i % COLORS.length];
       fx.appendChild(c);
@@ -129,7 +146,7 @@
   function rain() {
     if (REDUCED || !fx || !ov.classList.contains("lfx-on")) return;
     var w = ov.clientWidth || window.innerWidth;
-    for (var i = 0; i < 42; i++) {
+    for (var i = 0; i < 44; i++) {
       var c = document.createElement("span");
       c.className = "lfx-r";
       c.style.left = Math.round(Math.random() * w) + "px";
@@ -163,19 +180,28 @@
       var m = list[i], t = m.target;
       if (t.nodeType === 3) t = t.parentNode;
       if (!t || t.nodeType !== 1) continue;
-      if (m.type === "attributes" && m.attributeName === "class") {
+      if (m.type === "attributes" && m.attributeName === "disabled") {
+        if (t.classList && t.classList.contains("lsn-replay")) syncTeachingFlag();
+      } else if (m.type === "attributes" && m.attributeName === "class") {
         var cl = t.classList;
         if ((cl.contains("lsn-opt") || cl.contains("hl-opt")) && cl.contains("right") && !t._lfxRight) {
           t._lfxRight = true; burstAt(t);
         } else if ((cl.contains("lsn-opt") || cl.contains("hl-opt")) && !cl.contains("right")) {
           t._lfxRight = false;
         }
-        if (cl.contains("lsn") && cl.contains("lsn-finished") && !t._lfxFin) { t._lfxFin = true; if (cl.contains("ll-lesson-focus")) rain(); }
-        else if (cl.contains("lsn") && !cl.contains("lsn-finished")) t._lfxFin = false;
+        /* Party games right tap celebration */
+        if ((cl.contains("pg-yay") || cl.contains("pg-popped") || cl.contains("pg-bloomed")) && !t._lfxPgHit) {
+          t._lfxPgHit = true; burstAt(t);
+        }
+        if (cl.contains("lsn") && cl.contains("lsn-finished") && !t._lfxFin) {
+          t._lfxFin = true; if (cl.contains("ll-lesson-focus")) rain();
+        } else if (cl.contains("lsn") && !cl.contains("lsn-finished")) {
+          t._lfxFin = false;
+        }
       } else if (m.type === "attributes" && m.attributeName === "hidden") {
-        if (t.classList.contains("hl-end") && !t.hidden) rain();
+        if ((t.classList.contains("hl-end") || t.classList.contains("pg-end")) && !t.hidden) rain();
       } else if (m.type === "childList" || m.type === "characterData") {
-        var bub = t.closest && t.closest(".hl-bubble, .lt-bubble, .lsn-q");
+        var bub = t.closest && t.closest(".hl-bubble, .lt-bubble, .lsn-q, .pg-bubble");
         if (bub && bub.closest("#ll-obody")) {
           pop(bub);
           if (bub.classList.contains("lsn-q")) {
@@ -192,7 +218,7 @@
     body = document.getElementById("ll-obody");
     if (!ov || !body) return false;
     var mo = new MutationObserver(onMutations);
-    mo.observe(ov, { attributes: true, attributeFilter: ["class", "hidden"], childList: true, subtree: true, characterData: true });
+    mo.observe(ov, { attributes: true, attributeFilter: ["class", "hidden", "disabled"], childList: true, subtree: true, characterData: true });
     new MutationObserver(schedule).observe(document.body, { attributes: true, attributeFilter: ["class"] });
     schedule();
     return true;
