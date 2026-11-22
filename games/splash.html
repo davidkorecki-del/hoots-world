@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e89"></script>
+<script src="js/hoot-game-head.js?v=llprev3e90"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -237,7 +237,7 @@
   @keyframes actorBob{0%,100%{transform:translate(-50%,-50%) scale(1) translateY(0)}50%{transform:translate(-50%,-50%) scale(1) translateY(-8px)}}
   @keyframes ledPulse{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e89" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e90" />
 </head>
 <body>
 <div id="stage">
@@ -253,22 +253,21 @@
     </defs>
     <rect width="1440" height="900" fill="url(#skyGrad)"/>
 
-    <!-- 7-Band Glowing Rainbow Bridge (Appears at high Sun or Sun + Rain!) -->
-    <g id="svgRainbow" transform="translate(720,560)" fill="none" stroke-linecap="round" opacity="0.55">
-      <path d="M-460,0 A460,420 0 0,1 460,0" stroke="#ff4d6d" stroke-width="22"/>
-      <path d="M-438,0 A438,398 0 0,1 438,0" stroke="#fb923c" stroke-width="22"/>
-      <path d="M-416,0 A416,376 0 0,1 416,0" stroke="#facc15" stroke-width="22"/>
-      <path d="M-394,0 A394,354 0 0,1 394,0" stroke="#4ade80" stroke-width="22"/>
-      <path d="M-372,0 A372,332 0 0,1 372,0" stroke="#38bdf8" stroke-width="22"/>
-      <path d="M-350,0 A350,310 0 0,1 350,0" stroke="#818cf8" stroke-width="22"/>
-      <path d="M-328,0 A328,288 0 0,1 328,0" stroke="#e879f9" stroke-width="22"/>
+    <!-- Night Stars & Crescent Moon (Appear when Sun lever is pulled DOWN to dark!) -->
+    <g id="svgRainbow" opacity="0">
+      <circle cx="240" cy="110" r="4" fill="#fef08a"/><circle cx="380" cy="80" r="3" fill="#fff"/>
+      <circle cx="540" cy="125" r="4.5" fill="#fef08a"/><circle cx="640" cy="70" r="3.5" fill="#fff"/>
+      <circle cx="810" cy="95" r="4" fill="#fef08a"/><circle cx="920" cy="68" r="3" fill="#fff"/>
+      <circle cx="1060" cy="115" r="4.5" fill="#fef08a"/><circle cx="1220" cy="85" r="3.5" fill="#fff"/>
+      <path d="M590 110 A34 34 0 1 0 628 158 A26 26 0 1 1 590 110 Z" fill="#fef08a" stroke="#141e30" stroke-width="4"/>
     </g>
 
-    <!-- Giant Smiling Kawaii Sun in the Center Sky (always visible on portrait phones & tablets!) -->
+    <!-- Giant Smiling Kawaii Sun in the Center Sky (Rises & lights up the whole screen from dark to bright!) -->
     <g id="svgSun" transform="translate(720,165)">
-      <!-- Long Golden Sunbeams -->
-      <circle cx="0" cy="0" r="145" fill="#fde047" opacity="0.22"/>
-      <circle cx="0" cy="0" r="108" fill="#facc15" opacity="0.32"/>
+      <!-- Huge Warm Golden Sunshine Halo -->
+      <circle cx="0" cy="0" r="240" fill="#fde047" opacity="0.16"/>
+      <circle cx="0" cy="0" r="165" fill="#fde047" opacity="0.26"/>
+      <circle cx="0" cy="0" r="115" fill="#facc15" opacity="0.36"/>
       <g id="sunRays" stroke="#141e30" stroke-width="5.5" fill="#fb923c">
         <polygon points="0,-106 18,-68 -18,-68"/><polygon points="0,106 18,68 -18,68"/>
         <polygon points="-106,0 -68,18 -68,-18"/><polygon points="106,0 68,18 68,-18"/>
@@ -347,6 +346,8 @@
         </g>
       </g>
     </g>
+    <!-- Full-Town Dark-to-Light Night Shade (Controlled by Sun lever!) -->
+    <rect id="nightShade" width="1440" height="900" fill="#050818" opacity="0" pointer-events="none"/>
   </svg>
 
   <canvas id="weatherCanvas"></canvas>
@@ -641,15 +642,21 @@
       if(lbl) lbl.textContent = v < 0.08 ? "OFF" : v > 0.88 ? "MAX!" : pct + "%";
     });
 
-    /* 2. Blend Sky Colors, Sun, Rainbow, Storm Clouds, Snow Blanket & Pond Ice */
+    /* 2. Blend Sky Colors (Dark Night at 0% Sun -> Bright Golden Daylight at 100% Sun), Sun Elevation, Storm Clouds, Snow Blanket & Pond Ice */
     var st = levels.storm, sn = levels.snow, wi = levels.wind, su = levels.sun;
-    skyStop1.setAttribute("stop-color", lerpHex("#0284c7", "#0f102e", st * 0.85));
-    skyStop2.setAttribute("stop-color", lerpHex("#7dd3fc", "#312e81", st * 0.85));
-    skyStop3.setAttribute("stop-color", lerpHex(su > 0.3 ? "#fef08a" : "#e0f2fe", "#4c1d95", st * 0.8));
+    var light = Math.max(0, Math.min(1, su * (1 - st * 0.55)));
+    skyStop1.setAttribute("stop-color", lerpHex("#050816", "#0284c7", light));
+    skyStop2.setAttribute("stop-color", lerpHex("#0f172a", "#38bdf8", light));
+    skyStop3.setAttribute("stop-color", lerpHex("#1e1b4b", "#fde047", light));
 
-    svgRainbow.setAttribute("opacity", String(Math.max(0, (su - 0.55) * 2.1 * (1 - st * 0.35))));
-    var sunY = 410 - su * 245;
-    svgSun.setAttribute("transform", "translate(720," + Math.round(sunY) + ") scale(" + (0.55 + su * 0.65) + ")");
+    /* Night stars & crescent moon appear when Sun lever is low (dark night!) */
+    svgRainbow.setAttribute("opacity", String(Math.max(0, (1 - su * 1.45) * (1 - st * 0.6))));
+    var nightShade = document.getElementById("nightShade");
+    if(nightShade) nightShade.setAttribute("opacity", String(Math.max(0, (1 - light) * 0.62)));
+
+    /* Giant Sun rises from behind the hills (sunY=530 at 0% -> sunY=160 at 100%) */
+    var sunY = 530 - su * 370;
+    svgSun.setAttribute("transform", "translate(720," + Math.round(sunY) + ") scale(" + (0.45 + su * 0.78) + ")");
     svgSun.setAttribute("opacity", String(Math.min(1, su * 1.45)));
     svgStormClouds.setAttribute("opacity", String(Math.min(1, st * 1.25)));
 
@@ -667,8 +674,8 @@
     if(st >= 0.2) active.push(st >= 0.75 ? "⛈️ THUNDER MAX" : "🌧️ RAIN " + Math.round(st * 100) + "%");
     if(sn >= 0.2) active.push(sn >= 0.75 ? "❄️ BLIZZARD MAX" : "🌨️ SNOW " + Math.round(sn * 100) + "%");
     if(wi >= 0.2) active.push(wi >= 0.75 ? "🪁 SUPER GALE" : "💨 WIND " + Math.round(wi * 100) + "%");
-    if(su >= 0.2) active.push(su >= 0.75 ? "🌈 RAINBOW SUN" : "☀️ SUN " + Math.round(su * 100) + "%");
-    gaugeTxt.textContent = active.length ? active.join(" + ") : "ALL LEVERS OFF — SLIDE A LEVER UP!";
+    active.push(su < 0.15 ? "🌙 DARK NIGHT" : su >= 0.75 ? "☀️ BRIGHT SUN MAX" : "☀️ SUN " + Math.round(su * 100) + "%");
+    gaugeTxt.textContent = active.join(" + ");
 
     if(changedKey){
       var v = levels[changedKey];
@@ -684,10 +691,12 @@
         bubble.innerHTML = v >= 0.75
           ? "🪁 <b>SUPER WINDY!</b> Look at the windmill spin and the <b>Kites</b> fly high!"
           : "💨 <b>Breezy wind (" + Math.round(v * 100) + "%)!</b> Slide higher to launch more kites!";
-      } else if(changedKey === "sun" && v >= 0.25){
-        bubble.innerHTML = v >= 0.75
-          ? "🌈 <b>FULL RAINBOW SUNSHINE!</b> Tap the <b>Singing Flowers</b> and <b>Butterfly</b>!"
-          : "☀️ <b>Warm sunshine (" + Math.round(v * 100) + "%)!</b> Slide to the top for a giant Rainbow!";
+      } else if(changedKey === "sun"){
+        bubble.innerHTML = v < 0.2
+          ? "🌙 <b>Dark night time!</b> Slide the <b>Sun lever UP</b> to make the Sun rise and light up the town!"
+          : v >= 0.75
+            ? "☀️ <b>BRIGHT SUNSHINE!</b> The giant Sun lit up the whole town! Tap the <b>Flower</b> & <b>Butterfly</b>!"
+            : "🌤️ <b>Sunrise (" + Math.round(v * 100) + "%)!</b> Keep sliding the Sun lever UP for full bright daylight!";
       }
     }
   }
@@ -908,6 +917,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e89"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e90"></script>
 </body>
 </html>
