@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="memory";</script>
-<script src="js/hoot-game-head.js?v=llprev3e71"></script>
+<script src="js/hoot-game-head.js?v=llprev3e72"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -180,7 +180,15 @@
     #bubble{ max-width:248px !important; }
     #hud{ grid-column:2; grid-row:1; padding:8px 14px 4px !important; }
     #playArea{ grid-column:2; grid-row:2; padding:8px 20px max(14px,env(safe-area-inset-bottom)) !important; }
-    #grid{ max-width:min(860px,100%) !important; max-height:min(640px,100%) !important; gap:14px !important; }
+    #grid{ max-width:min(860px,100%) !important; max-height:min(640px,100%) !important; gap:16px !important; }
+    /* Wave 5C-1 (Big & Physical): glossy 3D tactile memory cards with saturated backs & huge art */
+    .card .face{
+      border:5px solid #fff !important; border-radius:26px !important;
+      box-shadow:0 8px 0 rgba(23,50,79,.18), 0 14px 24px rgba(23,50,79,.12) !important;
+    }
+    .card .face.front svg{ width:76% !important; height:76% !important; max-width:136px !important; max-height:136px !important; filter:drop-shadow(0 5px 6px rgba(23,50,79,.16)); }
+    .card .face.front .cname{ font-size:18px !important; font-weight:700 !important; }
+    .card.matched .face.front{ box-shadow:0 0 0 5px #ffd93b, 0 8px 0 #c98a00, 0 0 26px rgba(255,217,59,.6) !important; }
   }
 </style>
 </head>

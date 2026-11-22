@@ -10,10 +10,16 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
         - Cap win/recap voice to ONE short cheer line (drop stacked 2nd/3rd recap clips).
         - Keep 15s dedup for repeated identical non-teaching lines; skipped lines still
           fire "ended" so game voice queues never stall. */
-  var recent={}, P=HTMLMediaElement.prototype, LINE=new RegExp("(hoot-[a-z-]+|owl-[a-z-]+|lily-[a-z-]+|coach/[a-z]+-(intro|idle|praise|wrong))[.]mp3");
-  var PRAISE_DECK=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
-  var WRONG_DECK=["hoot-try-again.mp3","hoot-look-closely.mp3","hoot-keep-going.mp3"];
-  var lastPraise="", lastWrong="", winCheerAt=0;
+  var recent={}, P=HTMLMediaElement.prototype, LINE=new RegExp("(hoot-[a-z0-9-]+|owl-[a-z0-9-]+|lily-[a-z0-9-]+|coach/[a-z]+-(intro|idle|praise|wrong))[.]mp3");
+  /* Wave 5C (Muse): full 8-clip praise deck, 5-clip try-again deck, 6-clip 1s win cheer deck
+     — all gated through window.parent.HOOT_HAVE so only verified clips ever play. */
+  var PRAISE_DECK=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3","hoot-yay-2.mp3","hoot-nice-2.mp3","hoot-got-it.mp3","hoot-super.mp3"];
+  var WRONG_DECK=["hoot-try-again.mp3","hoot-look-closely.mp3","hoot-keep-going.mp3","hoot-almost.mp3","hoot-close.mp3"];
+  var WIN_DECK=["hoot-win-yay.mp3","hoot-win-star.mp3","hoot-yay-2.mp3","hoot-super.mp3","hoot-amazing.mp3","hoot-great-job.mp3"];
+  var lastPraise="", lastWrong="", lastWin="", winCheerAt=0;
+  function hasVoice(base){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[base]); }catch(e){ return false; }
+  }
   function swapBase(url, nextFile){ return String(url||"").replace(/[^\/]+$/, nextFile); }
   function pickRot(deck, curFile, lastFile){
     var avail=deck;
@@ -44,24 +50,24 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
         /* Win/recap anti-stacking: allow ONE short cheer on win, drop stacked 2nd/3rd clips within 4.5s */
         var winEl=document.getElementById("winOverlay");
         var onWin=!!(winEl && winVisible(winEl)) || k==="hoot-you-learned";
-        if(onWin && (k==="hoot-you-learned" || PRAISE_DECK.indexOf(fn)>=0)){
+        if(onWin && (k==="hoot-you-learned" || PRAISE_DECK.indexOf(fn)>=0 || WIN_DECK.indexOf(fn)>=0)){
           if(winCheerAt && now-winCheerAt<4500){
             var selfSkip=this;
             setTimeout(function(){ try{ selfSkip.dispatchEvent(new Event("ended")); }catch(e){} },30);
             return Promise.resolve();
           }
           winCheerAt=now;
-          /* On win, prefer a crisp rotated praise cheer instead of repeating hoot-you-learned */
-          if(k==="hoot-you-learned"){
-            var rotW=pickRot(PRAISE_DECK, PRAISE_DECK[0], lastPraise);
-            lastPraise=rotW;
+          /* On win, pick a snappy 1s cheer from WIN_DECK (hoot-win-yay / hoot-win-star / hoot-yay-2 / hoot-super...) */
+          var rotW=pickRot(WIN_DECK, WIN_DECK[0], lastWin);
+          lastWin=rotW; lastPraise=rotW;
+          if(rotW!==fn){
             this.setAttribute("src", swapBase(s, rotW));
             s=this.getAttribute("src")||s;
             k=rotW.replace(/\.mp3$/,"");
+            fn=rotW;
           }
-        }
-        /* Rotate praise deck so identical praise never repeats back-to-back */
-        if(PRAISE_DECK.indexOf(fn)>=0){
+        } else if(PRAISE_DECK.indexOf(fn)>=0){
+          /* Rotate 8-clip praise deck so identical praise never repeats back-to-back */
           var rotP=pickRot(PRAISE_DECK, fn, lastPraise);
           lastPraise=rotP;
           if(rotP!==fn){
@@ -70,7 +76,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
             k=rotP.replace(/\.mp3$/,"");
           }
         } else if(WRONG_DECK.indexOf(fn)>=0){
-          /* Rotate try-again deck across try-again / look-closely / keep-going */
+          /* Rotate 5-clip gentle try-again deck (try-again / look-closely / keep-going / almost / close) */
           var rotN=pickRot(WRONG_DECK, fn, lastWrong);
           lastWrong=rotN;
           if(rotN!==fn){
@@ -182,7 +188,13 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       return;
     }
     var b=e.target&&e.target.closest?e.target.closest('#againBtn,#winHomeBtn'):null;
-    if(b){ winCheerAt=0; try{ if(window.__govStopAll) window.__govStopAll(); }catch(err){} }
+    if(b){
+      winCheerAt=0;
+      try{ if(window.__govStopAll) window.__govStopAll(); }catch(err){}
+      if(b.id==='againBtn' && hasVoice('hoot-ready-go')){
+        try{ var rg=new Audio('assets/voice/hoot-ready-go.mp3'); var pr=rg.play(); if(pr&&pr.catch) pr.catch(function(){}); }catch(err){}
+      }
+    }
   }, true);
   window.__hwFastWin=function(fn, ms){
     var done=false;
@@ -465,13 +477,18 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
   }
   /* Wave 5B (Device Report #3): Idle nudges rotate through variants and STOP after 2
      (silence is better than a 3rd repeat). Visual glow stays gentle without nagging audio. */
-  var idleSpokenCount=0;
+  var idleSpokenCount=0, idleVarIdx=0;
   function speakIdleVariant(step){
     if(step===1){
-      var hasTry=false;
-      try{ hasTry=!!(window.parent&&window.parent.HOOT_HAVE&&window.parent.HOOT_HAVE["hoot-try-this-one"]); }catch(e){}
-      if(hasTry){
-        playCoachFiles(["assets/voice/hoot-try-this-one.mp3"], "idle", "Try this one!");
+      var cands=[];
+      try{
+        var H=window.parent&&window.parent.HOOT_HAVE;
+        if(H&&H["hoot-idle-tap"]) cands.push(["assets/voice/hoot-idle-tap.mp3","Your turn! Tap one!"]);
+        if(H&&H["hoot-try-this-one"]) cands.push(["assets/voice/hoot-try-this-one.mp3","Try this one!"]);
+      }catch(e){}
+      if(cands.length){
+        var pick=cands[(idleVarIdx++)%cands.length];
+        playCoachFiles([pick[0]], "idle", pick[1]);
         return;
       }
     }

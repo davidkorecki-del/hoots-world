@@ -26,8 +26,17 @@
   };
   var SHAPES = ["circle", "square", "triangle", "star", "heart", "rectangle", "oval", "diamond"];
   var BODY = { eyes: "👀", ears: "👂", nose: "👃", mouth: "👄", hands: "🙌", feet: "🦶" };
-  var PRAISE = ["hoot-great-job", "hoot-amazing", "hoot-star", "hoot-great-thinking"];
-  var NUDGE = ["hoot-try-again", "hoot-look-closely", "hoot-keep-going"];
+  var PRAISE_BASE = ["hoot-great-job", "hoot-amazing", "hoot-star", "hoot-great-thinking"];
+  var PRAISE_EXTRA = ["hoot-yay-2", "hoot-nice-2", "hoot-got-it", "hoot-super"];
+  var NUDGE_BASE = ["hoot-try-again", "hoot-look-closely", "hoot-keep-going"];
+  var NUDGE_EXTRA = ["hoot-almost", "hoot-close"];
+  var WIN_EXTRA = ["hoot-win-yay", "hoot-win-star", "hoot-yay-2", "hoot-super"];
+  function liveDeck(base, extra) {
+    var H = window.HOOT_HAVE || {};
+    return base.concat((extra || []).filter(function (k) { return !!H[k]; }));
+  }
+  var PRAISE = PRAISE_BASE;
+  var NUDGE = NUDGE_BASE;
 
   var POS_SVG = function (k) {
     var box = '<rect x="18" y="52" width="64" height="38" rx="4" fill="#C2410C" stroke="#17263b" stroke-width="4"/>';
@@ -404,8 +413,9 @@
         if (!alive() || !R.cur || R.cur.rd !== rd) return;
         var tb = findTargetBtn(tgt.key);
         if (tb && !tb.disabled) tb.classList.add("hint");
-        /* Wave 5B: ONE short rotated nudge (no stacking) and stop after 2 idle nudges. */
-        say(hasClip("hoot-try-this-one") ? ["hoot-try-this-one"] : askClips(rd, tgt));
+        /* Wave 5B+5C: ONE short rotated nudge (hoot-idle-tap / hoot-try-this-one) and stop after 2 idle nudges. */
+        var idlePool = ["hoot-idle-tap", "hoot-try-this-one"].filter(hasClip);
+        say(idlePool.length ? [pickFresh(idlePool)] : askClips(rd, tgt));
       }, 14000));
     }
     var teach = lesson.teachItems ? lesson.teachItems.map(function (t) { var it = item(t.kind, t.key); it.say = t.say; it.text = t.text; return it; })
@@ -529,7 +539,7 @@
         b.classList.add("right");
         try { if (window.__oopsAnswer) window.__oopsAnswer({ pid: kidId(), lessonId: lesson.id, title: lesson.title, item: "r" + R.round, right: true }); } catch (e) {} /* Wave E2: Oops Garden */
         choices.querySelectorAll(".hl-opt").forEach(function (o) { o.disabled = true; });
-        var pr = pickFresh(PRAISE);
+        var pr = pickFresh(liveDeck(PRAISE_BASE, PRAISE_EXTRA));
         var yes = rd.ask === "sound" ? tgt.name + " makes that sound!" : rd.ask === "more" ? "That group has MORE!" : rd.ask === "less" ? "That group has LESS!" : rd.ask === "same" ? "Those two are the SAME!" : rd.ask === "different" ? "Those two are DIFFERENT!" : "That's " + tgt.name + "!";
         setBubble("⭐ YES! " + yes);
         burst(b);
@@ -569,7 +579,7 @@
         setBubble(cmpT || ("That one is " + tapped.name + ". " + (rd.ask === "sound" ? "Listen again — which letter makes this sound?" : "Look for " + tgt.name + "!")));
         var target = findTargetBtn(tgt.key);
         if (R.cur.wrongHere >= 2 && target) target.classList.add("hint");
-        var nudge = pickFresh(NUDGE);
+        var nudge = pickFresh(liveDeck(NUDGE_BASE, NUDGE_EXTRA));
         /* Wave 5B: ONE short line per wrong tap (nudge on 1st miss, ask clip on 2nd+ miss — never 3 stacked clips) */
         var wrongClips = R.cur.wrongHere >= 2 ? askClips(rd, tgt) : [nudge];
         say(wrongClips, function () {
@@ -625,8 +635,9 @@
         /* Gentle 2.4s auto-advance ALONGSIDE the already-tappable Next up button */
         R.autoT = setTimeout(doTodayAdvance, 2400);
       }
-      /* Wave 5B: ONE short Hoot cheer playing ALONGSIDE the ready buttons (never a 6-clip speech) */
-      var cheerClip = nk && hasClip("great-job-" + nk) ? "great-job-" + nk : pickFresh(PRAISE);
+      /* Wave 5B+5C: ONE short Hoot cheer playing ALONGSIDE the ready buttons (using new 1s win variants behind HOOT_HAVE) */
+      var winPool = liveDeck(PRAISE_BASE, WIN_EXTRA);
+      var cheerClip = nk && hasClip("great-job-" + nk) ? "great-job-" + nk : pickFresh(winPool);
       say([cheerClip], function () {
         if (!alive()) return;
         var sb = end.querySelector(".hl-song");

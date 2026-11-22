@@ -54,9 +54,16 @@
       var p = a.play(); if (p && p.catch) p.catch(function () { setTimeout(fin, 700); });
     })();
   }
-  var PRAISE = ["hoot-great-job", "hoot-amazing", "hoot-star", "hoot-great-thinking"], NUDGE = ["hoot-try-again", "hoot-look-closely", "hoot-keep-going"];
+  var PRAISE_BASE = ["hoot-great-job", "hoot-amazing", "hoot-star", "hoot-great-thinking"], NUDGE_BASE = ["hoot-try-again", "hoot-look-closely", "hoot-keep-going"];
+  var PRAISE_EXTRA = ["hoot-yay-2", "hoot-nice-2", "hoot-got-it", "hoot-super"], NUDGE_EXTRA = ["hoot-almost", "hoot-close"], WIN_EXTRA = ["hoot-win-yay", "hoot-win-star", "hoot-yay-2", "hoot-super"];
+  function liveList(base, extra) { return base.concat((extra || []).filter(function (k) { return !!opt(k); })); }
+  var PRAISE = PRAISE_BASE, NUDGE = NUDGE_BASE;
   var pn = 0;
-  function fresh(list) { for (var i = 0; i < list.length; i++) { var k = list[(pn++) % list.length]; if (!said[k] || Date.now() - said[k] > 15000) return k; } return null; }
+  function fresh(list) {
+    var deck = list === PRAISE ? liveList(PRAISE_BASE, PRAISE_EXTRA) : list === NUDGE ? liveList(NUDGE_BASE, NUDGE_EXTRA) : list;
+    for (var i = 0; i < deck.length; i++) { var k = deck[(pn++) % deck.length]; if (!said[k] || Date.now() - said[k] > 15000) return k; }
+    return deck[0] || null;
+  }
 
   /* ---------- music: an original, gentle loop (pentatonic, 112 bpm) ---------- */
   var AC = null, master = null, musicOn = true, loopT = null, ducked = false;
@@ -273,9 +280,9 @@
           var targets = hintFn() || [];
           targets.forEach(function (el) { if (el && !el.disabled) el.classList.add("pg-hint"); });
         }
-        /* Wave 5B: rotate 2nd idle nudge to hoot-try-this-one instead of repeating the same clip, then stay silent */
-        var tryClip = opt("hoot-try-this-one");
-        if (tryClip) say([tryClip], null, true);
+        /* Wave 5B+5C: rotate 2nd idle nudge across hoot-idle-tap / hoot-try-this-one, then stay silent */
+        var idlePool = ["hoot-idle-tap", "hoot-try-this-one"].filter(function (k) { return !!opt(k); });
+        if (idlePool.length) say([fresh(idlePool)], null, true);
         else if (clips && clips.length) say(clips, null, true);
       }, 14000));
     }
@@ -316,8 +323,8 @@
       root.querySelector(".pg-sticker").textContent = st;
       root.querySelector(".pg-end").hidden = false;
       setB("🎉 You did it! " + G.title + " — all " + G.rounds + " rounds! Here's your sticker!");
-      /* Wave 5B: ONE short cheer line alongside the immediately tappable Replay button */
-      say([fresh(PRAISE)]);
+      /* Wave 5B+5C: ONE short 1s win cheer alongside the immediately tappable Replay button */
+      say([fresh(liveList(PRAISE_BASE, WIN_EXTRA))]);
       try { document.dispatchEvent(new CustomEvent("hoot-party-done", { detail: { key: key, title: G.title, wrong: S.wrong, ms: Date.now() - S.t0 } })); } catch (e) {}
     }
     var next = { bubbles: bubblesRound, garden: gardenRound, train: trainRound, dance: danceRound, helpers: helpersRound, sayit: sayitRound }[key];

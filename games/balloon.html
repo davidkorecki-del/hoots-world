@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="balloon";</script>
-<script src="js/hoot-game-head.js?v=llprev3e71"></script>
+<script src="js/hoot-game-head.js?v=llprev3e72"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -194,6 +194,13 @@
   }
   @media (prefers-reduced-motion:reduce){
     .cloud,.bird,#hootFig,.balloon,.flower,#sun .rays{ animation:none !important; }
+  }
+  /* Wave 5C-1 (Big & Physical): plump oversized glossy 3D party balloons in iPad landscape */
+  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
+    .balloon{ width:clamp(116px,16vh,142px) !important; }
+    .balloon svg{ filter:drop-shadow(0 12px 14px rgba(23,50,79,.22)) !important; }
+    .balloon .b-letter{ font-size:clamp(46px,6.8vh,58px) !important; text-shadow:0 3px 0 rgba(0,0,0,.22) !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; padding:8px 18px !important; }
   }
 </style>
 </head>

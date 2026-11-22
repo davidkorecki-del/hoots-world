@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e71"></script>
+<script src="js/hoot-game-head.js?v=llprev3e72"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -229,7 +229,19 @@
     #hud{ grid-column:2; grid-row:1; padding:8px 14px 4px !important; }
     #playArea{ grid-column:2; grid-row:2 / 5; padding:8px 20px 14px !important; align-items:center; justify-content:center; }
     #modeStage{ max-width:840px !important; width:100% !important; gap:14px !important; }
-    .pot-grid{ max-width:820px !important; gap:14px !important; }
+    .pot-grid{ max-width:820px !important; gap:16px !important; }
+    /* Wave 5C-1 (Big & Physical): giant glossy paint-pot tiles filling the landscape stage */
+    .splat-btn{
+      min-height:132px !important; width:auto !important; padding:14px 10px 10px !important;
+      border:4px solid #fff !important; border-radius:26px !important;
+      background:linear-gradient(180deg,#ffffff 0%,#fff8e8 100%) !important;
+      box-shadow:0 7px 0 rgba(23,50,79,.16), 0 12px 22px rgba(23,50,79,.1) !important;
+      gap:6px !important; transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .16s ease;
+    }
+    .splat-btn svg{ width:88px !important; height:88px !important; filter:drop-shadow(0 5px 6px rgba(23,50,79,.18)); }
+    .splat-btn .slab{ font-size:18px !important; font-weight:700 !important; }
+    .splat-btn.correct{ box-shadow:0 0 0 5px #ffd93b, 0 7px 0 #1b7a34 !important; }
+    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; }
   }
 </style>
 </head>
