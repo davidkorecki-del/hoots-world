@@ -3,653 +3,772 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="real";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
-
+<script src="js/hoot-game-head.js?v=llprev3e93"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="color-scheme" content="light" />
-
-<title>Real-World Adventures</title>
+<title>Town Rescue Patrol</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
-  :root{ --ink:#123646; --ink-soft:#466674; --paper:#fffdf6; --paper2:#fff7e8; --sun:#ffc93c; --coral:#ff6b4a; --coral-dark:#e04a2e; --teal:#3aa7e0; --leaf:#23a26d; --line:#cfe6ef; }
-  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#dff4ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column; background:linear-gradient(180deg,#bfe9ff 0%,#e6f7ff 46%,#fdf3e0 100%); }
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(6px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:46px; height:46px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); display:grid; place-items:center; box-shadow:0 4px 0 rgba(18,54,70,.16); cursor:pointer; }
-  .round-btn:active{ transform:scale(.9); } .round-btn svg{ width:23px; height:23px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:5px 15px 5px 10px; box-shadow:0 4px 0 rgba(18,54,70,.13); font-family:"Fredoka",sans-serif; font-weight:700; font-size:21px; }
-  #starBank .star-ic{ width:24px; height:24px; } #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
-  /* guide + island */
-  #guideRow{ display:flex; align-items:flex-end; gap:8px; padding:4px 10px 0; position:relative; z-index:5; }
-  #guideHoot{ flex:0 0 auto; width:60px; height:64px; border:none; background:none; padding:0; cursor:pointer; }
-  #guideHoot svg{ width:100%; height:100%; display:block; }
-  #guideHoot.talking svg{ animation:talkBob .38s ease-in-out infinite alternate; }
-  #guideHoot.celebrate svg{ animation:celebrate .8s cubic-bezier(.34,1.6,.5,1); }
-  @keyframes talkBob{ from{ transform:translateY(0) rotate(-1.5deg);} to{ transform:translateY(-4px) rotate(1.5deg);} }
-  @keyframes celebrate{ 0%{transform:translateY(0)} 35%{transform:translateY(-13px) rotate(-5deg)} 70%{transform:translateY(-4px) rotate(4deg)} 100%{transform:translateY(0)} }
-  #bubbleCol{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding-bottom:2px; }
-  #bubble{ background:var(--paper); border:3px solid #fff; border-radius:16px; border-bottom-left-radius:4px; box-shadow:0 4px 0 rgba(18,54,70,.12); padding:7px 12px; font-weight:800; font-size:clamp(13.5px,3.7vw,17px); line-height:1.28; }
-  #bubble .b-big{ font-family:"Fredoka",sans-serif; color:var(--coral-dark); }
-  #hootName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.14em; color:#fff; background:var(--leaf); border-radius:999px; padding:2px 10px; margin-left:8px; }
-  #island{ position:relative; margin:6px 10px 0; height:84px; border-radius:18px; overflow:hidden; border:3px solid #fff; box-shadow:0 4px 0 rgba(18,54,70,.1); flex:0 0 auto; }
-  #island svg{ width:100%; height:100%; display:block; }
-  .pin{ animation:pinBob 2.6s ease-in-out infinite alternate; transform-box:fill-box; transform-origin:center bottom; }
-  @keyframes pinBob{ from{ transform:translateY(0);} to{ transform:translateY(-3.5px);} }
-  .pin.done .pin-dot{ fill:#ffc93c; stroke:#e8a90c; }
-  /* tabs */
-  #tabBar{ display:flex; gap:6px; padding:7px 10px 0; position:relative; z-index:5; }
-  .tab-btn{ flex:1 1 0; border:3px solid #fff; background:rgba(255,253,246,.88); border-radius:13px; padding:7px 2px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:13.5px; color:var(--ink-soft); cursor:pointer; box-shadow:0 3px 0 rgba(18,54,70,.1); }
-  .tab-btn.sel{ background:var(--sun); color:var(--ink); }
-  .tab-btn:active{ transform:scale(.94); }
-  /* panels */
-  #panels{ flex:1 1 auto; min-height:0; position:relative; padding:7px 10px max(8px,env(safe-area-inset-bottom)); }
-  .panel{ position:absolute; inset:7px 10px 8px; display:none; flex-direction:column; }
-  .panel.on{ display:flex; }
-  /* quests */
-  #questGrid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; flex:1 1 auto; align-content:start; }
-  .quest{ border:3px solid #fff; border-radius:16px; padding:8px 10px; background:var(--paper); box-shadow:0 4px 0 rgba(18,54,70,.1); display:flex; flex-direction:column; gap:3px; text-align:left; font-family:inherit; }
-  .quest h3{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:16px; margin:0; color:var(--ink); }
-  .quest p{ margin:0; font-weight:700; color:var(--ink-soft); font-size:11.5px; line-height:1.3; }
-  .quest .meta{ display:flex; gap:4px; flex-wrap:wrap; margin-top:2px; }
-  .quest .meta span{ background:#e3f2fa; border-radius:999px; padding:2px 8px; font-size:10.5px; font-weight:900; color:var(--ink); }
-  .quest .go{ margin-top:auto; font-family:"Fredoka",sans-serif; font-weight:600; font-size:13px; color:var(--coral-dark); }
-  .quest.stamped{ border-color:var(--sun); background:#fff8dc; }
-  .quest:active{ transform:scale(.97); }
-  #activeQuest{ display:none; flex-direction:column; flex:1 1 auto; min-height:0; }
-  #activeQuest.on{ display:flex; }
-  #aqHead{ display:flex; align-items:center; gap:8px; }
-  #backBtn{ border:3px solid #fff; background:var(--paper); border-radius:999px; padding:6px 14px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; cursor:pointer; box-shadow:0 3px 0 rgba(18,54,70,.14); color:var(--ink); }
-  #aqTitle{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px; margin:0; }
-  #aqIntro{ font-weight:800; font-size:13.5px; color:var(--ink-soft); margin:5px 0 0; line-height:1.35; }
-  .progress{ height:15px; background:#dceef5; border-radius:999px; overflow:hidden; border:2px solid #bcd9e8; margin-top:7px; flex:0 0 auto; }
-  .progress i{ display:block; height:100%; width:0; background:repeating-linear-gradient(45deg,#23a26d 0 14px,#2fbf82 14px 28px); transition:width .35s; }
-  #aqSteps{ list-style:none; margin:8px 0 0; padding:0; display:grid; gap:7px; }
-  #aqSteps li{ display:flex; gap:10px; align-items:center; background:var(--paper); border:2px solid var(--line); border-radius:14px; padding:8px 10px; cursor:pointer; }
-  #aqSteps li .step-num{ flex:0 0 32px; width:32px; height:32px; border-radius:50%; background:#3aa7e0; color:#fff; display:flex; align-items:center; justify-content:center; font-family:"Fredoka",sans-serif; font-weight:700; }
-  #aqSteps li p{ margin:0; font-weight:800; font-size:13.5px; flex:1; line-height:1.3; }
-  #aqSteps li.done{ border-color:var(--leaf); background:#e9f9f0; }
-  #aqSteps li.done .step-num{ background:var(--leaf); }
-  #aqSteps li:active{ transform:scale(.98); }
-  #photoZone{ margin-top:8px; border:3px dashed #8aa8b5; border-radius:16px; padding:9px 12px; text-align:center; background:var(--paper); }
-  #photoZone p{ margin:0 0 6px; font-weight:800; font-size:12.5px; }
-  #photoZone img{ max-width:100%; max-height:120px; border-radius:12px; margin-top:7px; object-fit:cover; }
-  #photoInput{ max-width:100%; font-weight:800; font-size:13px; }
-  #celebrateBtn{ margin-top:8px; border:3px solid #fff; background:var(--coral); color:#fff; border-radius:999px; padding:11px 18px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:17px; cursor:pointer; box-shadow:0 5px 0 var(--coral-dark); display:none; }
-  #celebrateBtn.on{ display:block; }
-  #celebrateBtn:active{ transform:scale(.95); }
-  /* storybook */
-  .ctl-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.08em; color:var(--ink-soft); margin:6px 0 3px; }
-  .ctl-lab:first-child{ margin-top:0; }
-  .chips{ display:flex; gap:5px; flex-wrap:wrap; }
-  .chip{ border:3px solid #fff; background:var(--paper); border-radius:999px; padding:5px 12px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:13px; color:var(--ink-soft); cursor:pointer; box-shadow:0 3px 0 rgba(18,54,70,.1); }
-  .chip.on{ background:var(--ink); color:#fff; }
-  .chip:active{ transform:scale(.93); }
-  .swatch{ width:32px; height:32px; border-radius:50%; border:3px solid #fff; box-shadow:0 3px 0 rgba(18,54,70,.15); cursor:pointer; padding:0; }
-  .swatch.on{ border-color:var(--ink); transform:scale(1.15); }
-  #heroName{ border:3px solid var(--line); border-radius:12px; padding:8px 12px; font-family:"Nunito",sans-serif; font-weight:800; font-size:15px; width:100%; background:#fff; color:var(--ink); }
-  .big-btn{ border:3px solid #fff; border-radius:999px; padding:10px 20px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 4px 0 rgba(18,54,70,.18); }
-  .big-btn.sun{ background:var(--sun); color:var(--ink); } .big-btn.coral{ background:var(--coral); color:#fff; }
-  .big-btn:active{ transform:scale(.95); }
-  #storyBook{ margin-top:8px; border:3px solid #fff; border-radius:16px; background:var(--paper); box-shadow:0 4px 0 rgba(18,54,70,.1); padding:10px 12px; display:none; flex-direction:column; gap:6px; }
-  #storyBook.on{ display:flex; }
-  #storyTitle{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:17px; margin:0; }
-  #storyScene{ border-radius:11px; padding:8px 10px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; color:var(--ink); }
-  #storyText{ font-weight:700; font-size:13.5px; line-height:1.45; margin:0; color:#33566b; }
-  #storyChoices{ display:flex; gap:7px; flex-wrap:wrap; }
-  #storyNav{ display:flex; align-items:center; gap:8px; }
-  #storyDots{ display:flex; gap:4px; margin:0 auto; }
-  #storyDots i{ width:10px; height:10px; border-radius:50%; background:#dceef5; }
-  #storyDots i.on{ background:var(--coral); }
-  /* toy lab */
-  #toyStage{ display:flex; gap:10px; align-items:flex-start; }
-  #toyPreview{ flex:0 0 148px; width:148px; height:148px; background:var(--paper); border:3px solid #fff; border-radius:16px; box-shadow:0 4px 0 rgba(18,54,70,.1); }
-  #toyPreview svg{ width:100%; height:100%; display:block; }
-  #toyControls{ flex:1 1 auto; min-width:0; }
-  #toyNameLine{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; margin-top:7px; }
-  /* passport */
-  #passportGrid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; align-content:start; }
-  .badge{ border:3px dashed #bcd9e8; border-radius:16px; padding:9px 10px; background:rgba(255,253,246,.7); display:flex; align-items:center; gap:9px; }
-  .badge .b-ic{ width:38px; height:38px; border-radius:50%; background:#e3f2fa; display:grid; place-items:center; font-size:19px; flex:0 0 auto; }
-  .badge h4{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:14px; margin:0; }
-  .badge p{ margin:0; font-weight:800; font-size:11px; color:var(--ink-soft); }
-  .badge.got{ border:3px solid var(--sun); background:#fff8dc; }
-  .badge.got .b-ic{ background:var(--sun); }
-  #passportNote{ font-weight:800; font-size:13px; color:var(--ink-soft); margin:8px 0 0; text-align:center; }
-  .burst-star{ position:absolute; font-size:20px; pointer-events:none; z-index:8; animation:burstFly .8s ease-out forwards; }
-  @keyframes burstFly{ from{ transform:translate(0,0) scale(.6); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(40deg); opacity:0;} }
-  .overlay{ position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; background:rgba(18,54,70,.42); padding:16px; }
-  .overlay[hidden]{ display:none; }
-  .card{ background:var(--paper); border:3px solid #fff; border-radius:24px; box-shadow:0 10px 0 rgba(18,54,70,.18),0 24px 48px rgba(18,54,70,.25); padding:20px; max-width:430px; width:100%; text-align:center; }
-  .card h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.8vw,34px); margin:0 0 6px; line-height:1.1; }
-  .card h1 .t1{ color:var(--coral-dark); } .card h1 .t2{ color:var(--leaf); }
-  .card p{ font-weight:800; font-size:15px; line-height:1.4; color:var(--ink-soft); margin:0 0 13px; }
-  @media (max-height:730px){ #island{ height:62px; } .quest p{ display:none; } }
-  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
-  /* Wave 5A: iPad landscape side-rail tabs + Hoot guide so adventure panels fill full height */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #stage{
-      display:grid !important;
-      grid-template-columns:248px minmax(0,1fr);
-      grid-template-rows:auto minmax(0,1fr);
-      align-items:stretch;
-    }
-    #tabBar{
-      grid-column:1; grid-row:1 / 3;
-      flex-direction:column !important;
-      justify-content:flex-start;
-      gap:10px !important;
-      padding:12px 10px 10px !important;
-      align-self:start;
-    }
-    #tabBar .tab-btn{
-      width:100% !important; min-height:68px !important; justify-content:flex-start;
-      padding:10px 16px !important; font-size:17px !important; border:4px solid #fff !important;
-      border-radius:18px !important; box-shadow:0 6px 0 rgba(18,54,70,.14) !important;
-    }
-    #tabBar .tab-btn.sel{ box-shadow:0 0 0 4px #ffd93b, 0 6px 0 #c98a00 !important; }
-    #guideRow{
-      grid-column:1; grid-row:2;
-      align-self:end;
-      flex-direction:column; align-items:flex-start;
-      padding:8px 10px max(12px,env(safe-area-inset-bottom)) !important;
-    }
-    #island{ display:none !important; }
-    #hud{ grid-column:2; grid-row:1; padding:8px 14px 4px !important; }
-    #panels{ grid-column:2; grid-row:2; padding:6px 18px max(12px,env(safe-area-inset-bottom)) !important; }
-    /* Wave 5C-4 (Big & Physical): bold tactile adventure quest cards & passport medallions */
-    #questGrid{ gap:14px !important; }
-    .quest{
-      padding:16px 18px !important; border:4px solid #fff !important; border-radius:22px !important;
-      box-shadow:0 7px 0 rgba(18,54,70,.14), 0 12px 20px rgba(18,54,70,.08) !important; gap:6px !important;
-    }
-    .quest h3{ font-size:20px !important; }
-    .quest p{ display:block !important; font-size:14px !important; }
-    .quest .go{ font-size:16px !important; font-weight:700 !important; }
-    .badge{ padding:14px 16px !important; border-width:4px !important; border-radius:20px !important; }
-    .badge .b-ic{ width:52px !important; height:52px !important; font-size:26px !important; }
-    .badge h4{ font-size:17px !important; }
+  :root{ --ink:#141e30; --gold:#ffd43b; --outline:#141e30; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  [hidden]{ display:none !important; }
+  html,body{ margin:0; width:100%; height:100%; overflow:hidden; font-family:"Nunito",system-ui,sans-serif; background:#38bdf8; touch-action:none; }
+
+  #stage{
+    position:fixed; inset:0; width:100%; height:100dvh; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+
+  /* Full-Screen Illustrated Cartoon Town SVG Backdrop */
+  #townSvg{
+    position:absolute; inset:0; width:100%; height:100%;
+    z-index:1; pointer-events:none;
+  }
+
+  /* 60fps Water Hose, Foam, Confetti & Siren Light FX Canvas */
+  #fxCanvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    z-index:5; cursor:pointer;
+  }
+
+  /* Interactive Rescue Targets Layer (Flames to extinguish, Boo-boos to heal, Crosswalk pets, School students) */
+  #rescueLayer{
+    position:absolute; inset:0; z-index:6; pointer-events:none;
+  }
+  .rescue-target{
+    position:absolute; transform:translate(-50%, -50%);
+    min-width:96px; min-height:96px; padding:4px;
+    border:none; background:transparent; cursor:pointer;
+    pointer-events:auto; display:flex; flex-direction:column; align-items:center;
+    filter:drop-shadow(0 8px 0 rgba(20,30,48,.32));
+    animation:targetBob 1.3s ease-in-out infinite alternate;
+    transition:transform .18s cubic-bezier(.34,1.8,.5,1), opacity .25s;
+  }
+  .rescue-target svg{ width:96px; height:96px; overflow:visible; display:block; }
+  .rescue-target:active{ transform:translate(-50%, -50%) scale(1.22); }
+  .rescue-target .r-tag{
+    margin-top:-6px; background:#fff; color:#141e30;
+    border:3.5px solid #141e30; border-radius:999px;
+    padding:2px 11px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:13.5px;
+    box-shadow:0 4px 0 #141e30; white-space:nowrap;
+  }
+  @keyframes targetBob{
+    from{ transform:translate(-50%, -50%) translateY(0) scale(1); }
+    to{ transform:translate(-50%, -50%) translateY(-10px) scale(1.06); }
+  }
+
+  /* Animated Hero Rescue Vehicle on the Town Road */
+  #vehicleStage{
+    position:absolute; left:18%; bottom:24.5%; z-index:4;
+    width:clamp(220px, 34vw, 340px); height:clamp(140px, 21vw, 210px);
+    pointer-events:auto; cursor:pointer;
+    filter:drop-shadow(0 12px 0 rgba(20,30,48,.35));
+    transition:transform .45s cubic-bezier(.34,1.5,.5,1);
+    animation:truckIdle .7s ease-in-out infinite alternate;
+  }
+  #vehicleStage.drive-in{
+    animation:driveBounce .55s cubic-bezier(.34,1.6,.5,1);
+  }
+  #vehicleStage svg{ width:100%; height:100%; overflow:visible; display:block; }
+  @keyframes truckIdle{
+    from{ transform:translateY(0); }
+    to{ transform:translateY(-4px); }
+  }
+  @keyframes driveBounce{
+    0%{ transform:translateX(-220px) scale(.85); }
+    65%{ transform:translateX(18px) scale(1.06); }
+    100%{ transform:translateX(0) scale(1); }
+  }
+
+  /* Helper Friend standing in Town (Kitten, Puppy, Bunny, Teddy Bear) */
+  #friendStage{
+    position:absolute; right:14%; bottom:27%; z-index:4;
+    width:clamp(115px, 18vw, 165px); height:clamp(125px, 19vw, 175px);
+    pointer-events:auto; cursor:pointer;
+    filter:drop-shadow(0 9px 0 rgba(20,30,48,.3));
+    animation:friendWave 1.4s ease-in-out infinite alternate;
+  }
+  #friendStage svg{ width:100%; height:100%; overflow:visible; display:block; }
+  #friendBadge{
+    position:absolute; left:50%; bottom:-10px; transform:translateX(-50%);
+    background:#fde047; color:#141e30; border:3.5px solid #141e30; border-radius:999px;
+    padding:2px 12px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:14px;
+    box-shadow:0 4px 0 #141e30; white-space:nowrap;
+  }
+  @keyframes friendWave{
+    from{ transform:translateY(0) rotate(-3deg); }
+    to{ transform:translateY(-9px) rotate(3deg); }
+  }
+
+  /* Top HUD */
+  #hud{
+    position:relative; z-index:10;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) 14px 0 64px;
+    pointer-events:none;
+  }
+  .hud-left{
+    display:flex; align-items:center; gap:10px; pointer-events:auto;
+    max-width:min(70vw, 650px);
+  }
+  #hootBtn{
+    width:70px; height:70px; flex:0 0 70px;
+    border-radius:50%; border:4px solid var(--outline);
+    background:radial-gradient(circle at 35% 30%, #fff4b8, #ffc93c 65%, #f09800 100%);
+    box-shadow:0 6px 0 var(--outline), 0 10px 20px rgba(0,0,0,.3);
+    padding:4px; cursor:pointer;
+    animation:hootFloat 2.4s ease-in-out infinite alternate;
+  }
+  #hootBtn:active{ transform:scale(.92); }
+  @keyframes hootFloat{ from{ transform:translateY(0); } to{ transform:translateY(-5px); } }
+  #bubble{
+    background:#fffef8; color:var(--ink);
+    border:4px solid var(--outline); border-radius:22px;
+    padding:10px 16px; font-family:"Fredoka",sans-serif; font-weight:700;
+    font-size:clamp(14.5px, 2.3vw, 19px); line-height:1.22;
+    box-shadow:0 6px 0 var(--outline), 0 10px 20px rgba(0,0,0,.22);
+  }
+  #bubble b{ color:#e11d48; }
+
+  .hud-right{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
+  #starBar{
+    display:flex; align-items:center; gap:5px;
+    background:#fffef8; border:4px solid var(--outline);
+    border-radius:999px; padding:6px 14px;
+    box-shadow:0 6px 0 var(--outline);
+  }
+  .wstar{ font-size:24px; filter:grayscale(1) opacity(.28); transition:transform .3s cubic-bezier(.34,1.8,.5,1), filter .3s; }
+  .wstar.on{ filter:none; transform:scale(1.22); }
+  #doneBtn{
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:17px;
+    padding:8px 16px; cursor:pointer; white-space:nowrap;
+    box-shadow:0 6px 0 var(--outline); text-shadow:0 2px 0 rgba(0,0,0,.35);
+  }
+  #doneBtn:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--outline); }
+
+  /* Bottom 3D Rescue Garage Console */
+  #rescueDeck{
+    position:relative; z-index:10;
+    margin:0 auto max(10px, env(safe-area-inset-bottom));
+    width:min(96vw, 920px);
+    background:linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+    border:5px solid var(--outline); border-radius:30px;
+    padding:10px 14px 14px;
+    box-shadow:0 10px 0 var(--outline), 0 18px 34px rgba(0,0,0,.45), inset 0 4px 0 rgba(255,255,255,.45);
+  }
+  .deck-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:8px; padding:0 6px;
+  }
+  .siren-pill{
+    background:#141e30; color:#fde047;
+    border:3px solid #fde047; border-radius:999px;
+    padding:4px 16px; font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:clamp(12px, 1.9vw, 15px); letter-spacing:.04em;
+  }
+  #sirenBtn{
+    border:3.5px solid #141e30; border-radius:999px;
+    background:linear-gradient(180deg, #fde047 0%, #f59e0b 100%);
+    color:#141e30; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px;
+    padding:5px 16px; cursor:pointer; box-shadow:0 4px 0 #141e30;
+  }
+  #sirenBtn:active{ transform:translateY(3px); box-shadow:0 1px 0 #141e30; }
+
+  #garageRow{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;
+  }
+  .bay-btn{
+    position:relative; min-height:110px;
+    border:4px solid var(--outline); border-radius:22px;
+    background:var(--bay-bg);
+    box-shadow:0 7px 0 var(--outline), inset 0 4px 0 rgba(255,255,255,.7);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    padding:8px 6px; cursor:pointer;
+    transition:transform .16s cubic-bezier(.34,1.8,.5,1), box-shadow .16s;
+  }
+  .bay-btn:active{ transform:translateY(5px); box-shadow:0 2px 0 var(--outline); }
+  .bay-btn.active{
+    border-color:#fde047;
+    box-shadow:0 0 0 4px #fde047, 0 7px 0 var(--outline), 0 0 22px rgba(253,224,71,.85);
+    transform:translateY(-4px);
+  }
+  .bay-btn[data-role="firefighter"]{ --bay-bg:linear-gradient(180deg, #fee2e2 0%, #fca5a5 100%); }
+  .bay-btn[data-role="doctor"]{ --bay-bg:linear-gradient(180deg, #e0f2fe 0%, #7dd3fc 100%); }
+  .bay-btn[data-role="police"]{ --bay-bg:linear-gradient(180deg, #e0e7ff 0%, #818cf8 100%); }
+  .bay-btn[data-role="teacher"]{ --bay-bg:linear-gradient(180deg, #fef9c3 0%, #fde047 100%); }
+
+  .bay-svg{ width:64px; height:52px; display:block; overflow:visible; filter:drop-shadow(0 3px 0 rgba(20,30,48,.22)); }
+  .bay-title{
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:clamp(13px, 2vw, 17px);
+    color:#141e30; background:#fff; border:3px solid #141e30; border-radius:999px;
+    padding:2px 10px; box-shadow:0 3px 0 #141e30; white-space:nowrap;
+  }
+
+  /* Win Overlay */
+  #winOverlay{
+    position:fixed; inset:0; z-index:40;
+    background:rgba(15,23,42,.72); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .win-card{
+    background:linear-gradient(180deg, #fffef8 0%, #fef3c7 100%);
+    border:6px solid var(--outline); border-radius:34px;
+    padding:26px 24px; text-align:center; max-width:440px; width:100%;
+    box-shadow:0 14px 0 var(--outline), 0 26px 50px rgba(0,0,0,.5);
+  }
+  .win-trophy{ font-size:74px; line-height:1; margin-bottom:8px; }
+  .win-card h2{ margin:0 0 8px; font-family:"Fredoka",sans-serif; font-size:34px; color:#141e30; }
+  .win-card p{ margin:0 0 18px; font-weight:800; font-size:18px; color:#334155; }
+  .big-play{
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:22px;
+    padding:12px 32px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
+  }
+
+  @media (max-width: 620px){
+    #vehicleStage{ left:6%; bottom:26%; width:200px; height:130px; }
+    #friendStage{ right:6%; bottom:27%; width:105px; height:115px; }
+    .bay-btn{ min-height:96px; }
+    .bay-svg{ width:52px; height:42px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <!-- Full-Screen Cartoon Rescue Town SVG -->
+  <svg id="townSvg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+        <stop id="skyTop" offset="0%" stop-color="#0284c7"/>
+        <stop id="skyBot" offset="100%" stop-color="#bae6fd"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#skyG)"/>
+
+    <!-- Smiling Sun & Fluffy Clouds -->
+    <g transform="translate(230,130)">
+      <circle cx="0" cy="0" r="68" fill="#fde047" opacity=".35"/>
+      <circle cx="0" cy="0" r="48" fill="#facc15" stroke="#141e30" stroke-width="6"/>
+      <circle cx="-15" cy="-6" r="7" fill="#141e30"/><circle cx="15" cy="-6" r="7" fill="#141e30"/>
+      <path d="M-14 12 Q0 24 14 12" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <g fill="#ffffff" stroke="#141e30" stroke-width="5.5">
+      <path d="M980 145 A32 32 0 0 1 1010 95 A44 44 0 0 1 1095 90 A34 34 0 0 1 1135 145 Z"/>
+      <path d="M460 120 A26 26 0 0 1 485 80 A36 36 0 0 1 555 78 A28 28 0 0 1 585 120 Z"/>
+    </g>
+
+    <!-- Green Town Hills -->
+    <path d="M0 510 Q380 430 760 495 T1440 480 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+
+    <!-- Main Town Building (Transforms per Rescue Mission: Bakery / Animal Clinic / Park Station / Little Schoolhouse!) -->
+    <g id="townBuilding" transform="translate(690,260)">
+      <!-- Building Base -->
+      <rect x="-150" y="40" width="300" height="220" rx="14" id="bldgWall" fill="#fef3c7" stroke="#141e30" stroke-width="7"/>
+      <!-- Roof -->
+      <polygon points="-175,46 0,-60 175,46" id="bldgRoof" fill="#ef4444" stroke="#141e30" stroke-width="7" stroke-linejoin="round"/>
+      <!-- Signboard -->
+      <rect x="-110" y="-10" width="220" height="44" rx="12" fill="#ffffff" stroke="#141e30" stroke-width="5.5"/>
+      <text id="bldgSign" x="0" y="20" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="24" fill="#141e30">FIRE RESCUE</text>
+      <!-- Windows -->
+      <rect x="-115" y="72" width="68" height="64" rx="10" fill="#bae6fd" stroke="#141e30" stroke-width="5.5"/>
+      <rect x="47" y="72" width="68" height="64" rx="10" fill="#bae6fd" stroke="#141e30" stroke-width="5.5"/>
+      <!-- Double Doors -->
+      <path d="M-36 260 L-36 162 A36 36 0 0 1 36 162 L36 260 Z" fill="#fb923c" stroke="#141e30" stroke-width="6"/>
+    </g>
+
+    <!-- Town Road & White Crosswalk Stripes -->
+    <rect x="0" y="545" width="1440" height="175" fill="#334155" stroke="#141e30" stroke-width="6"/>
+    <g fill="#facc15">
+      <rect x="80" y="626" width="90" height="14" rx="7"/>
+      <rect x="260" y="626" width="90" height="14" rx="7"/>
+      <rect x="440" y="626" width="90" height="14" rx="7"/>
+      <rect x="620" y="626" width="90" height="14" rx="7"/>
+      <rect x="800" y="626" width="90" height="14" rx="7"/>
+    </g>
+    <!-- Zebra Crosswalk on Right -->
+    <g fill="#ffffff" stroke="#141e30" stroke-width="3">
+      <rect x="1000" y="560" width="140" height="22" rx="6"/>
+      <rect x="1000" y="594" width="140" height="22" rx="6"/>
+      <rect x="1000" y="628" width="140" height="22" rx="6"/>
+      <rect x="1000" y="662" width="140" height="22" rx="6"/>
+    </g>
+  </svg>
+
+  <!-- Active Rescue Vehicle on the Road -->
+  <div id="vehicleStage" role="button" tabindex="0" aria-label="Honk rescue vehicle"></div>
+
+  <!-- Town Animal Friend Being Helped -->
+  <div id="friendStage" role="button" tabindex="0" aria-label="Animal friend">
+    <div id="friendSvgWrap"></div>
+    <div id="friendBadge">Kitten!</div>
+  </div>
+
+  <!-- 60fps Interactive Water Hose / Heart Sparkle / Searchlight Canvas -->
+  <canvas id="fxCanvas"></canvas>
+
+  <!-- Interactive Pop/Spray Targets Layer -->
+  <div id="rescueLayer"></div>
+
+  <!-- Top HUD -->
   <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#123646" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#123646"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#123646" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#123646"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+    <div class="hud-left">
+      <button id="hootBtn" type="button" aria-label="Hoot the Owl">
+        <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#123646" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#bfe9ff"/></svg>
+      <div id="bubble" aria-live="polite">🚒 <b>FIREFIGHTER!</b> Drag or tap the flames to spray the <b>Fire Hose</b> and save <b>Kitten</b>!</div>
+    </div>
+    <div class="hud-right">
+      <div id="starBar" aria-label="Rescue stars">
+        <span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span>
+      </div>
+      <button id="doneBtn" type="button">🏆 Done</button>
+    </div>
+  </div>
+
+  <!-- Bottom 4-Vehicle Rescue Patrol Console -->
+  <div id="rescueDeck" role="group" aria-label="Town Rescue Patrol Vehicles">
+    <div class="deck-header">
+      <span class="siren-pill" id="missionPill">🚒 FIREFIGHTER — SPRAY WATER HOSE ON FLAMES!</span>
+      <button id="sirenBtn" type="button">🚨 Honk &amp; Siren!</button>
+    </div>
+    <div id="garageRow">
+      <button class="bay-btn active choice-btn" type="button" data-role="firefighter" aria-label="Firefighter and Fire Truck">
+        <svg class="bay-svg" viewBox="0 0 120 90"><rect x="12" y="28" width="72" height="42" rx="8" fill="#ef4444" stroke="#141e30" stroke-width="5"/><rect x="74" y="38" width="32" height="32" rx="7" fill="#dc2626" stroke="#141e30" stroke-width="5"/><rect x="80" y="43" width="18" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><rect x="18" y="18" width="54" height="8" rx="4" fill="#fde047" stroke="#141e30" stroke-width="4"/><circle cx="78" cy="22" r="7" fill="#38bdf8" stroke="#141e30" stroke-width="4"/><circle cx="34" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/><circle cx="34" cy="72" r="5" fill="#fde047"/><circle cx="86" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/><circle cx="86" cy="72" r="5" fill="#fde047"/></svg>
+        <span class="bay-title">🚒 Firefighter</span>
+      </button>
+
+      <button class="bay-btn choice-btn" type="button" data-role="doctor" aria-label="Doctor and Ambulance">
+        <svg class="bay-svg" viewBox="0 0 120 90"><rect x="14" y="24" width="70" height="46" rx="10" fill="#ffffff" stroke="#141e30" stroke-width="5"/><rect x="76" y="36" width="28" height="34" rx="7" fill="#f8fafc" stroke="#141e30" stroke-width="5"/><rect x="80" y="42" width="16" height="13" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><rect x="42" y="34" width="12" height="26" rx="3" fill="#ef4444"/><rect x="35" y="41" width="26" height="12" rx="3" fill="#ef4444"/><circle cx="50" cy="18" r="7" fill="#ef4444" stroke="#141e30" stroke-width="4"/><circle cx="34" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/><circle cx="86" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/></svg>
+        <span class="bay-title">🚑 Doctor</span>
+      </button>
+
+      <button class="bay-btn choice-btn" type="button" data-role="police" aria-label="Police Officer and Police Car">
+        <svg class="bay-svg" viewBox="0 0 120 90"><path d="M16 46 L28 28 L78 28 L94 46 L106 48 L106 68 L12 68 L12 46 Z" fill="#1d4ed8" stroke="#141e30" stroke-width="5" stroke-linejoin="round"/><rect x="34" y="48" width="44" height="18" fill="#ffffff" stroke="#141e30" stroke-width="4"/><rect x="32" y="33" width="42" height="13" rx="4" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><circle cx="48" cy="22" r="6" fill="#ef4444" stroke="#141e30" stroke-width="3.5"/><circle cx="60" cy="22" r="6" fill="#38bdf8" stroke="#141e30" stroke-width="3.5"/><circle cx="32" cy="70" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/><circle cx="86" cy="70" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/></svg>
+        <span class="bay-title">🚓 Police</span>
+      </button>
+
+      <button class="bay-btn choice-btn" type="button" data-role="teacher" aria-label="Teacher and School Bus">
+        <svg class="bay-svg" viewBox="0 0 120 90"><rect x="12" y="24" width="84" height="46" rx="10" fill="#facc15" stroke="#141e30" stroke-width="5"/><rect x="88" y="38" width="20" height="32" rx="6" fill="#eab308" stroke="#141e30" stroke-width="5"/><rect x="20" y="32" width="16" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><rect x="42" y="32" width="16" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><rect x="64" y="32" width="16" height="14" rx="3" fill="#bae6fd" stroke="#141e30" stroke-width="4"/><circle cx="32" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/><circle cx="84" cy="72" r="13" fill="#1e293b" stroke="#141e30" stroke-width="5"/></svg>
+        <span class="bay-title">🚌 Teacher</span>
       </button>
     </div>
-    <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      <span id="starCount">0</span>
-    </div>
   </div>
 
-  <div id="guideRow">
-    <button id="guideHoot" type="button" aria-label="Hoot your quest guide — tap to hear him giggle"></button>
-    <div id="bubbleCol">
-      <div id="bubble" aria-live="polite">Hoo-hoo! I&rsquo;m Hoot, your quest guide! Pick a real-world adventure below!</div>
-      <span id="hootName">HOOT &bull; QUEST GUIDE</span>
-    </div>
-  </div>
-
-  <div id="island" aria-hidden="true">
-    <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice">
-      <rect width="400" height="96" fill="#7ed3f7"/>
-      <path d="M0 66 Q60 44 130 58 Q210 74 290 56 Q350 44 400 60 L400 96 L0 96Z" fill="#ffe1a8"/>
-      <path d="M0 76 Q90 58 200 70 Q310 80 400 68 L400 96 L0 96Z" fill="#8ed492"/>
-      <path d="M30 62 Q120 30 200 52 Q290 74 372 50" stroke="#fff" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" fill="none" opacity=".85"/>
-      <g class="pin" data-pin="beach"><circle class="pin-dot" cx="52" cy="52" r="10" fill="#3aa7e0" stroke="#fff" stroke-width="3"/><path d="M46 52 a6 6 0 0 1 12 0Z" fill="#ff6b4a"/><line x1="52" y1="52" x2="52" y2="58" stroke="#fff" stroke-width="2.4"/></g>
-      <g class="pin" data-pin="forest" style="animation-delay:-.7s"><circle class="pin-dot" cx="152" cy="40" r="10" fill="#23a26d" stroke="#fff" stroke-width="3"/><path d="M152 30 l6 10 h-4 l6 8 h-16 l6 -8 h-4Z" fill="#fff"/></g>
-      <g class="pin" data-pin="kitchen" style="animation-delay:-1.3s"><circle class="pin-dot" cx="252" cy="48" r="10" fill="#ff6b4a" stroke="#fff" stroke-width="3"/><path d="M246 44 h12 l-1.6 9 h-8.8Z" fill="#fff"/><path d="M248 44 q4 -5 8 0" stroke="#fff" stroke-width="2.2" fill="none"/></g>
-      <g class="pin" data-pin="garden" style="animation-delay:-1.9s"><circle class="pin-dot" cx="348" cy="42" r="10" fill="#e8a90c" stroke="#fff" stroke-width="3"/><circle cx="348" cy="42" r="3.4" fill="#fff"/><circle cx="348" cy="35" r="2.6" fill="#fff"/><circle cx="348" cy="49" r="2.6" fill="#fff"/><circle cx="341" cy="42" r="2.6" fill="#fff"/><circle cx="355" cy="42" r="2.6" fill="#fff"/></g>
-      <text x="52" y="82" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="11" fill="#123646">Beach</text>
-      <text x="152" y="66" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="11" fill="#123646">Forest</text>
-      <text x="252" y="74" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="11" fill="#123646">Kitchen</text>
-      <text x="348" y="68" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="11" fill="#123646">Garden</text>
-    </svg>
-  </div>
-
-  <div id="tabBar" role="group" aria-label="Adventure areas">
-    <button class="tab-btn sel" type="button" data-tab="quests">Quests</button>
-    <button class="tab-btn" type="button" data-tab="story">Living Storybook</button>
-    <button class="tab-btn" type="button" data-tab="toy">Toy Lab</button>
-    <button class="tab-btn" type="button" data-tab="passport">Passport</button>
-  </div>
-
-  <div id="panels">
-    <section class="panel on" id="panel-quests" aria-label="Adventure quests">
-      <div id="questGrid"></div>
-      <div id="activeQuest">
-        <div id="aqHead"><button id="backBtn" type="button">&larr; All Quests</button><h2 id="aqTitle"></h2></div>
-        <p id="aqIntro"></p>
-        <div class="progress"><i id="aqBar"></i></div>
-        <ol id="aqSteps"></ol>
-        <div id="photoZone" hidden>
-          <p>Grown-ups: snap or pick a photo of the finished quest. Hoot celebrates it right here &mdash; the photo stays on this device, in this tab only.</p>
-          <input type="file" id="photoInput" accept="image/*" capture="environment" aria-label="Choose a photo of your finished quest" />
-          <div id="photoPreview"></div>
-        </div>
-        <button id="celebrateBtn" type="button">We Did It, Hoot!</button>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-story" aria-label="Living Storybook">
-      <p class="ctl-lab">YOUR HERO&rsquo;S NAME</p>
-      <input id="heroName" type="text" placeholder="Type the hero's name…" autocomplete="off" />
-      <p class="ctl-lab">CAPE COLOUR (HOOT WEARS IT TOO)</p>
-      <div class="chips" id="colorSwatches"></div>
-      <p class="ctl-lab">ANIMAL FRIEND</p>
-      <div class="chips" id="animalChips"></div>
-      <p class="ctl-lab">MAGICAL PLACE</p>
-      <div class="chips" id="placeChips"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-        <button class="big-btn sun" id="makeStory" type="button">Make My Story!</button>
-        <button class="big-btn coral" id="surpriseStory" type="button">Surprise Me!</button>
-      </div>
-      <div id="storyBook">
-        <h3 id="storyTitle"></h3>
-        <div id="storyScene"></div>
-        <p id="storyText"></p>
-        <div id="storyChoices"></div>
-        <div id="storyNav">
-          <button class="big-btn sun" id="storyPrev" type="button">&larr; Back</button>
-          <div id="storyDots"></div>
-          <button class="big-btn sun" id="storyNext" type="button">Next &rarr;</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-toy" aria-label="Toy Lab">
-      <div id="toyStage">
-        <div id="toyPreview" aria-label="Your toy design"></div>
-        <div id="toyControls">
-          <p class="ctl-lab">SHAPE</p><div class="chips" id="shapeChips"></div>
-          <p class="ctl-lab">COLOUR</p><div class="chips" id="toyColors"></div>
-          <p class="ctl-lab">FACE</p><div class="chips" id="faceChips"></div>
-          <p class="ctl-lab">EXTRAS (TAP TO ADD OR TAKE AWAY)</p><div class="chips" id="extraChips"></div>
-        </div>
-      </div>
-      <p id="toyNameLine"></p>
-      <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
-        <button class="big-btn coral" id="toyDone" type="button">My Toy Is Finished!</button>
-        <button class="big-btn sun" id="toyRandom" type="button">Surprise Toy!</button>
-        <button class="big-btn sun" id="toyDownload" type="button">Download Design Sheet</button>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-passport" aria-label="Hoot's Explorer Passport">
-      <div id="passportGrid"></div>
-      <p id="passportNote">Every finished quest stamps a badge here. Collect all six, explorer!</p>
-    </section>
-  </div>
-
-  <div class="overlay" id="startOverlay">
-    <div class="card">
-      <h1><span class="t1">Real-World</span> <span class="t2">Adventures</span></h1>
-      <p>Hoot gives the mission, you do it in REAL life &mdash; in the garden, the kitchen or the living room. Come back, show Hoot, and stamp your Explorer Passport!</p>
-      <button class="big-btn coral" id="playBtn" type="button">&#9654; Start Adventuring!</button>
+  <!-- Win Overlay -->
+  <div id="winOverlay" hidden>
+    <div class="win-card">
+      <div class="win-trophy" aria-hidden="true">🚒🚑🚓🚌</div>
+      <h2>Rescue Hero!</h2>
+      <p>You helped the Firefighter, Doctor, Police Officer, and Teacher save the town!</p>
+      <button id="againBtn" class="big-play" type="button">↻ Keep Playing</button>
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-"use strict";
-/* ================= DATA ================= */
-var QUESTS=[
-  {id:"leaf",title:"Leaf Detective",place:"garden",time:"15 min",where:"Garden / park",need:"A bag",intro:"Somewhere outside, leaves are hiding in amazing colours. Your job: find them all!",steps:["Find a RED leaf and hold it up high","Find a leaf BIGGER than your hand","Find a leaf that feels bumpy or smooth \u2014 tell Hoot which","Put your favourite leaf in your bag to show Hoot"]},
-  {id:"tower",title:"Tower Builder",place:"kitchen",time:"10 min",where:"Living room",need:"Blocks / cushions",intro:"Can you build a tower taller than a teddy? Hoot is counting!",steps:["Stack 3 blocks \u2014 count them out loud: 1, 2, 3!","Add 3 more. Is it wobbling yet?","Put a soft toy on top \u2014 very, very gently","Knock it down with a big TAAA-DAAA! (That\u2019s the best bit)"]},
-  {id:"cook",title:"Little Chef Helper",place:"kitchen",time:"20 min",where:"Kitchen \u00B7 with a grown-up",need:"Fruit + a bowl",intro:"Real chefs wash, count and stir. Today, that\u2019s you!",steps:["Wash the fruit with a grown-up \u2014 splash, splash!","Count 5 pieces into the bowl, one at a time","Stir or shake your snack 10 times \u2014 count with Hoot","Taste it! Give Hoot a thumbs up or a silly face"]},
-  {id:"sound",title:"Sound Safari",place:"forest",time:"10 min",where:"Anywhere quiet",need:"Just your ears",intro:"Shhh\u2026 the world is full of tiny sounds. Hunt for them with your super ears.",steps:["Sit very still and close your eyes for 10 seconds","Point to the FURTHEST sound you can hear","Find a sound that goes tap, buzz or whoosh","Copy a sound you heard \u2014 can Hoot guess it?"]},
-  {id:"colour",title:"Colour Treasure Hunt",place:"beach",time:"15 min",where:"Whole house",need:"A treasure box",intro:"Hoot has lost the rainbow! Find one treasure of every colour.",steps:["Find something BLUE and put it in the treasure box","Find something YELLOW \u2014 like the sun!","Find something GREEN that used to grow","Show Hoot your rainbow box and name every colour"]},
-  {id:"kind",title:"Kindness Quest",place:"garden",time:"15 min",where:"Table",need:"Paper + crayons",intro:"The bravest quest of all: make someone smile today.",steps:["Think of someone you love \u2014 picture their face","Draw them a picture with your biggest, brightest colours","Write or scribble your name on it, all by yourself","Give it to them and watch their face light up"]}
-];
-var QUEST_ICONS={ leaf:"\uD83C\uDF42", tower:"\uD83E\uDDF1", cook:"\uD83C\uDF53", sound:"\uD83D\uDC42", colour:"\uD83C\uDF08", kind:"\uD83D\uDC8C" };
-var CAPE_COLORS=[["sunshine yellow","#ffc93c"],["berry red","#ff6b4a"],["leaf green","#23a26d"],["sky blue","#3aa7e0"],["grape purple","#8b6fd8"],["bubblegum pink","#ff7aa8"]];
-var ANIMALS=["Fox","Bunny","Bear Cub","Duckling","Kitten"];
-var PLACES=["the Whispering Woods","Pirate Cove","the Moonlit Garden","Dinosaur Valley"];
-var HOOT_SVG='<svg viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#123646"/><circle cx="122" cy="72" r="11" fill="#123646"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/><path id="hootScarf" d="M62 108 q38 16 76 0 l-4 15 q-34 12 -68 0Z" fill="#ffc93c"/><path d="M76 190 q-8 8 -14 6 M124 190 q8 8 14 6" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
+  "use strict";
+  var canvas = document.getElementById("fxCanvas");
+  var ctx = canvas.getContext("2d");
+  var rescueLayer = document.getElementById("rescueLayer");
+  var vehicleStage = document.getElementById("vehicleStage");
+  var friendStage = document.getElementById("friendStage");
+  var friendSvgWrap = document.getElementById("friendSvgWrap");
+  var friendBadge = document.getElementById("friendBadge");
+  var bubble = document.getElementById("bubble");
+  var missionPill = document.getElementById("missionPill");
+  var bldgWall = document.getElementById("bldgWall");
+  var bldgRoof = document.getElementById("bldgRoof");
+  var bldgSign = document.getElementById("bldgSign");
+  var winOverlay = document.getElementById("winOverlay");
+  var starEls = Array.prototype.slice.call(document.querySelectorAll(".wstar"));
+  var bayBtns = Array.prototype.slice.call(document.querySelectorAll(".bay-btn"));
 
-/* ================= STATE ================= */
-var state="start"; /* start | playing */
-var stars=0, dead=false, soundOn=true, praiseIdx=0;
-var activeQuest=null, doneSteps={}, stamped={}, lastQuestDone="";
-var storyState={ name:"", color:CAPE_COLORS[0], animal:ANIMALS[0], place:PLACES[0], pages:[], page:0, choice1:null };
-var toyState={ shape:"owl", color:"#ff6b4a", colorName:"berry red", face:"happy", extras:{} , starredSig:"" };
-var timers=[];
-function later(fn,ms){ var id=setTimeout(function(){ timers=timers.filter(function(x){return x!==id;}); fn(); },ms); timers.push(id); return id; }
-function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+  var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
 
-/* ================= ELMS ================= */
-function $(id){ return document.getElementById(id); }
-var bubble=$("bubble"), guideHoot=$("guideHoot"), starCount=$("starCount"), starBank=$("starBank"),
-    questGrid=$("questGrid"), activeQuestEl=$("activeQuest"), startOverlay=$("startOverlay");
-guideHoot.innerHTML=HOOT_SVG;
+  /* ---------- Voice Engine (Strictly Verified Real Hoot Clips Only!) ---------- */
+  var voiceA = new Audio();
+  function playVoice(clips){
+    if(!clips || !clips.length) return;
+    var i = 0;
+    function step(){
+      if(i >= clips.length) return;
+      voiceA.src = "assets/voice/" + clips[i++] + ".mp3";
+      voiceA.onended = step; voiceA.onerror = step;
+      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
+    }
+    step();
+  }
 
-/* ================= SOUND FX ================= */
-var AC=null;
-function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-function tone(f0,f1,dur,type,vol,delay){ if(!soundOn) return; var ac=audio(); if(!ac) return; var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain(); o.type=type||"sine"; o.frequency.setValueAtTime(f0,t); if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.12,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05); }
-function popSound(){ tone(520,180,0.11,"square",0.11); }
-function chimeSound(){ [523,659,784].forEach(function(f,i){ tone(f,f,0.3,"triangle",0.15,i*0.07); }); }
-function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
-function fanfareSound(){ [523,659,784,1047,784,1047,1319].forEach(function(f,i){ tone(f,f,0.32,"triangle",0.15,i*0.1); }); }
+  /* ---------- WebAudio Siren, Horn, Water Spray & Chime FX ---------- */
+  var actx = null;
+  function ac(){
+    if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
+    if(actx && actx.state === "suspended") actx.resume();
+    return actx;
+  }
+  function sfxSiren(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(520, t);
+      o.frequency.linearRampToValueAtTime(840, t + 0.22);
+      o.frequency.linearRampToValueAtTime(520, t + 0.44);
+      o.frequency.linearRampToValueAtTime(840, t + 0.66);
+      g.gain.setValueAtTime(0.11, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.72);
+    }catch(e){}
+  }
+  function sfxChime(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [587, 784, 987, 1174].forEach(function(f, i){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.09, t + i * 0.055);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.28 + i * 0.055);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + i * 0.055); o.stop(t + 0.3 + i * 0.055);
+      });
+    }catch(e){}
+  }
 
-/* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-   Quest words live in Hoot's bubble (big and simple, as specified); the recorded
-   hoot-adventures / praise / recap clips carry his voice. No device TTS. */
-var VBASE="assets/voice/";
-var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-function getVoice(){ if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();}); voiceEl.addEventListener("error",vNext); } return voiceEl; }
-function hubQuiet(){ try{ var d=window.parent&&window.parent.document; if(!d||d===document) return false; var b=d.querySelector('.voice-btn[data-voice="off"]'); return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true")); }catch(e){ return false; } }
-function silenced(){ return !soundOn||hubQuiet(); }
-function hootTalking(on){ guideHoot.classList.toggle("talking",!!on); }
-function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice(); }
-function pumpVoice(){ if(vPlaying||dead) return; var item=vQueue.shift(); if(!item) return; if(item.onStart){ try{ item.onStart(); }catch(e){} } if(silenced()){ pumpVoice(); return; } var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true); el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file; var p=el.play(); if(p&&p.catch) p.catch(function(){ vNext(); }); }
-function enqueue(file,kind){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){return;} vQueue.push({file:file,kind:kind||""}); pumpVoice(); }
-function clearPending(){ vQueue.length=0; }
-var PRAISE=["hoot-amazing.mp3","hoot-great-job.mp3","hoot-star.mp3"];
-function enqueuePraise(){ var f=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++; enqueue(f,"praise"); }
+  /* ---------- Rich Kawaii Vector SVG Illustrations for Vehicles, Friends & Targets ---------- */
+  var VEHICLE_SVGS = {
+    firefighter: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="20" y="58" width="190" height="96" rx="16" fill="#ef4444"/><rect x="195" y="76" width="90" height="78" rx="16" fill="#dc2626"/><rect x="212" y="88" width="54" height="36" rx="8" fill="#bae6fd"/><rect x="34" y="34" width="150" height="18" rx="8" fill="#fde047"/><line x1="55" y1="34" x2="55" y2="52"/><line x1="90" y1="34" x2="90" y2="52"/><line x1="125" y1="34" x2="125" y2="52"/><line x1="160" y1="34" x2="160" y2="52"/><circle cx="218" cy="60" r="14" fill="#38bdf8"/><circle cx="242" cy="60" r="14" fill="#fde047"/><rect x="44" y="92" width="130" height="16" rx="6" fill="#fde047"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#fde047"/><circle cx="232" cy="158" r="28" fill="#1e293b"/><circle cx="232" cy="158" r="12" fill="#fde047"/></g></svg>',
+    doctor: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="24" y="50" width="186" height="104" rx="20" fill="#ffffff"/><rect x="196" y="74" width="88" height="80" rx="16" fill="#f8fafc"/><rect x="212" y="86" width="52" height="36" rx="8" fill="#bae6fd"/><rect x="24" y="114" width="260" height="18" fill="#ef4444"/><rect x="98" y="66" width="24" height="62" rx="6" fill="#ef4444"/><rect x="79" y="85" width="62" height="24" rx="6" fill="#ef4444"/><circle cx="115" cy="36" r="14" fill="#ef4444"/><circle cx="142" cy="36" r="14" fill="#38bdf8"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#e2e8f0"/><circle cx="232" cy="158" r="28" fill="#1e293b"/><circle cx="232" cy="158" r="12" fill="#e2e8f0"/></g></svg>',
+    police: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><path d="M24 102 L60 54 L205 54 L245 100 L292 106 L292 154 L20 154 L20 102 Z" fill="#1d4ed8"/><rect x="85" y="102" width="115" height="48" fill="#ffffff"/><path d="M72 64 L194 64 L222 98 L54 98 Z" fill="#bae6fd"/><circle cx="122" cy="38" r="14" fill="#ef4444"/><circle cx="152" cy="38" r="14" fill="#38bdf8"/><polygon points="142,110 148,122 160,124 151,132 153,144 142,138 131,144 133,132 124,124 136,122" fill="#fde047" stroke-width="4"/><circle cx="78" cy="158" r="28" fill="#1e293b"/><circle cx="78" cy="158" r="12" fill="#94a3b8"/><circle cx="236" cy="158" r="28" fill="#1e293b"/><circle cx="236" cy="158" r="12" fill="#94a3b8"/></g></svg>',
+    teacher: '<svg viewBox="0 0 320 200"><g stroke="#141e30" stroke-width="7" stroke-linejoin="round"><rect x="20" y="48" width="224" height="106" rx="20" fill="#facc15"/><rect x="234" y="82" width="56" height="72" rx="14" fill="#eab308"/><rect x="38" y="66" width="42" height="36" rx="7" fill="#bae6fd"/><rect x="92" y="66" width="42" height="36" rx="7" fill="#bae6fd"/><rect x="146" y="66" width="42" height="36" rx="7" fill="#bae6fd"/><rect x="200" y="66" width="32" height="36" rx="7" fill="#bae6fd"/><rect x="20" y="116" width="224" height="14" fill="#1e293b"/><circle cx="80" cy="158" r="28" fill="#1e293b"/><circle cx="80" cy="158" r="12" fill="#fde047"/><circle cx="234" cy="158" r="28" fill="#1e293b"/><circle cx="234" cy="158" r="12" fill="#fde047"/></g></svg>'
+  };
 
-function say(html){ bubble.innerHTML=html; }
-function hootReact(){ guideHoot.classList.remove("celebrate"); void guideHoot.offsetWidth; guideHoot.classList.add("celebrate"); setTimeout(function(){ guideHoot.classList.remove("celebrate"); },850); }
-function addStar(){ stars++; starCount.textContent=stars; starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); starSound(); }
-function sparkleBurst(){
-  var r=guideHoot.getBoundingClientRect();
-  for(var i=0;i<8;i++){ var s=document.createElement("span"); s.className="burst-star"; s.textContent=i%2?"\u2726":"\u2605"; s.style.color=i%2?"#23a26d":"#e8a90c"; s.style.left=(r.left+r.width*(0.25+Math.random()*0.5))+"px"; s.style.top=(r.top+4)+"px"; s.style.position="fixed"; s.style.setProperty("--dx",((Math.random()*110)-55)+"px"); s.style.setProperty("--dy",(-(24+Math.random()*60))+"px"); document.body.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },850); })(s); }
-}
-function questById(id){ for(var i=0;i<QUESTS.length;i++) if(QUESTS[i].id===id) return QUESTS[i]; return QUESTS[0]; }
+  var FRIEND_SVGS = {
+    kitten: '<svg viewBox="0 0 130 130"><polygon points="24,54 18,14 54,32" fill="#ff4d8d" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><polygon points="106,54 112,14 76,32" fill="#ff4d8d" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><circle cx="65" cy="72" r="44" fill="#ff85a1" stroke="#141e30" stroke-width="6"/><circle cx="48" cy="66" r="8" fill="#141e30"/><circle cx="82" cy="66" r="8" fill="#141e30"/><circle cx="45" cy="63" r="3" fill="#fff"/><circle cx="79" cy="63" r="3" fill="#fff"/><polygon points="59,76 71,76 65,84" fill="#e11d48"/><path d="M53 90 Q65 100 77 90" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    puppy: '<svg viewBox="0 0 130 130"><ellipse cx="22" cy="68" rx="14" ry="28" transform="rotate(14 22 68)" fill="#b45309" stroke="#141e30" stroke-width="6"/><ellipse cx="108" cy="68" rx="14" ry="28" transform="rotate(-14 108 68)" fill="#b45309" stroke="#141e30" stroke-width="6"/><circle cx="65" cy="68" r="43" fill="#facc15" stroke="#141e30" stroke-width="6"/><ellipse cx="65" cy="80" rx="22" ry="17" fill="#fef08a"/><circle cx="48" cy="58" r="8" fill="#141e30"/><circle cx="82" cy="58" r="8" fill="#141e30"/><ellipse cx="65" cy="73" rx="9" ry="6.5" fill="#141e30"/><path d="M55 86 Q65 96 75 86" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    bunny: '<svg viewBox="0 0 130 130"><ellipse cx="46" cy="28" rx="12" ry="26" fill="#fff" stroke="#141e30" stroke-width="6"/><ellipse cx="84" cy="28" rx="12" ry="26" fill="#fff" stroke="#141e30" stroke-width="6"/><ellipse cx="46" cy="28" rx="6" ry="17" fill="#f472b6"/><ellipse cx="84" cy="28" rx="6" ry="17" fill="#f472b6"/><circle cx="65" cy="78" r="40" fill="#fff" stroke="#141e30" stroke-width="6"/><circle cx="50" cy="72" r="7.5" fill="#141e30"/><circle cx="80" cy="72" r="7.5" fill="#141e30"/><ellipse cx="65" cy="82" rx="6" ry="4.5" fill="#f472b6"/><path d="M55 92 Q65 100 75 92" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>',
+    bear: '<svg viewBox="0 0 130 130"><circle cx="32" cy="34" r="16" fill="#b45309" stroke="#141e30" stroke-width="6"/><circle cx="98" cy="34" r="16" fill="#b45309" stroke="#141e30" stroke-width="6"/><circle cx="65" cy="72" r="44" fill="#d97706" stroke="#141e30" stroke-width="6"/><ellipse cx="65" cy="82" rx="20" ry="16" fill="#fde68a"/><circle cx="48" cy="64" r="8" fill="#141e30"/><circle cx="82" cy="64" r="8" fill="#141e30"/><ellipse cx="65" cy="76" rx="8" ry="6" fill="#141e30"/><path d="M55 88 Q65 98 75 88" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>'
+  };
 
-/* ================= TABS ================= */
-function showTab(name){
-  Array.prototype.forEach.call(document.querySelectorAll(".tab-btn"),function(b){ b.classList.toggle("sel",b.getAttribute("data-tab")===name); });
-  ["quests","story","toy","passport"].forEach(function(t){ $("panel-"+t).classList.toggle("on",t===name); });
-  popSound();
-}
-Array.prototype.forEach.call(document.querySelectorAll(".tab-btn"),function(b){ b.addEventListener("click",function(){ if(state==="playing") showTab(b.getAttribute("data-tab")); }); });
+  var TARGET_SVGS = {
+    flame: '<svg viewBox="0 0 110 110"><path d="M55 10 C82 38 96 60 86 86 C78 102 32 102 24 86 C14 60 28 38 55 10 Z" fill="#ff4d4d" stroke="#141e30" stroke-width="6" stroke-linejoin="round"/><path d="M55 34 C72 52 78 68 70 86 C64 96 46 96 40 86 C32 68 38 52 55 34 Z" fill="#fde047"/><circle cx="44" cy="70" r="5.5" fill="#141e30"/><circle cx="66" cy="70" r="5.5" fill="#141e30"/><path d="M46 82 Q55 75 64 82" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>',
+    booboo: '<svg viewBox="0 0 110 110"><rect x="18" y="36" width="74" height="38" rx="18" transform="rotate(-18 55 55)" fill="#fda4af" stroke="#141e30" stroke-width="6"/><rect x="40" y="38" width="30" height="34" rx="8" transform="rotate(-18 55 55)" fill="#fff1f2" stroke="#141e30" stroke-width="4"/><path d="M55 44 C51 38 42 40 42 48 C42 56 55 64 55 64 C55 64 68 56 68 48 C68 40 59 38 55 44 Z" fill="#e11d48"/></svg>',
+    crosswalk: '<svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="42" fill="#fde047" stroke="#141e30" stroke-width="6"/><polygon points="55,18 66,42 92,45 73,63 78,89 55,76 32,89 37,63 18,45 44,42" fill="#4ade80" stroke="#141e30" stroke-width="5" stroke-linejoin="round"/></svg>',
+    school: '<svg viewBox="0 0 110 110"><circle cx="55" cy="58" r="38" fill="#ef4444" stroke="#141e30" stroke-width="6"/><path d="M55 20 Q68 8 76 18 Q64 28 55 20 Z" fill="#4ade80" stroke="#141e30" stroke-width="5"/><circle cx="42" cy="54" r="6" fill="#141e30"/><circle cx="68" cy="54" r="6" fill="#141e30"/><path d="M44 70 Q55 80 66 70" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/></svg>'
+  };
 
-/* ================= QUESTS ================= */
-function renderQuestGrid(){
-  questGrid.innerHTML="";
-  QUESTS.forEach(function(q,i){
-    var b=document.createElement("button"); b.type="button"; b.className="quest"+(stamped[q.id]?" stamped":"");
-    b.innerHTML="<h3>"+QUEST_ICONS[q.id]+" "+q.title+"</h3><p>"+q.intro+"</p>"
-      +'<div class="meta"><span>'+q.time+'</span><span>'+q.where+'</span><span>Needs: '+q.need+'</span></div>'
-      +'<span class="go">'+(stamped[q.id]?"\u2605 Stamped in your Passport! \u00B7 Play again \u2192":"Start this quest \u2192")+'</span>';
-    b.addEventListener("click",function(){ openQuest(q); });
-    questGrid.appendChild(b);
+  var ROLES = {
+    firefighter: {
+      title: "FIREFIGHTER",
+      nameClip: "name-firefighter",
+      teachClip: "teach-firefighter",
+      friend: "kitten",
+      friendName: "Kitten!",
+      friendClip: "word-kitten",
+      sign: "FIRE RESCUE",
+      wall: "#fef3c7",
+      roof: "#ef4444",
+      targetKind: "flame",
+      targetLabel: "Spray Fire!",
+      pill: "🚒 FIREFIGHTER — SPRAY OR TAP THE FLAMES TO SAVE KITTEN!",
+      prompt: "🚒 <b>FIREFIGHTER!</b> A firefighter helps put out fires! Drag or tap the flames to spray the <b>Fire Hose</b>!"
+    },
+    doctor: {
+      title: "DOCTOR",
+      nameClip: "name-doctor",
+      teachClip: "teach-doctor",
+      friend: "bear",
+      friendName: "Teddy Bear!",
+      friendClip: "word-teddy-bear",
+      sign: "TOWN CLINIC",
+      wall: "#e0f2fe",
+      roof: "#0284c7",
+      targetKind: "booboo",
+      targetLabel: "Heal Boo-Boo!",
+      pill: "🚑 DOCTOR — TAP THE BANDAGES TO HEAL TEDDY BEAR!",
+      prompt: "🚑 <b>DOCTOR!</b> A doctor helps us when we are sick! Tap the glowing bandages to heal <b>Teddy Bear</b>!"
+    },
+    police: {
+      title: "POLICE OFFICER",
+      nameClip: "name-police-officer",
+      teachClip: "teach-police-officer",
+      friend: "puppy",
+      friendName: "Puppy!",
+      friendClip: "word-dog",
+      sign: "SAFE CROSSING",
+      wall: "#e0e7ff",
+      roof: "#1d4ed8",
+      targetKind: "crosswalk",
+      targetLabel: "Safe Cross!",
+      pill: "🚓 POLICE OFFICER — TAP THE GREEN STARS TO HELP PUPPY CROSS SAFELY!",
+      prompt: "🚓 <b>POLICE OFFICER!</b> A police officer helps keep us safe! Tap the stars to guide <b>Puppy</b> home!"
+    },
+    teacher: {
+      title: "TEACHER",
+      nameClip: "name-teacher",
+      teachClip: "teach-teacher",
+      friend: "bunny",
+      friendName: "Bunny!",
+      friendClip: "word-bunny",
+      sign: "LITTLE SCHOOL",
+      wall: "#fef9c3",
+      roof: "#f59e0b",
+      targetKind: "school",
+      targetLabel: "School Apple!",
+      pill: "🚌 TEACHER — TAP THE HAPPY APPLES TO HELP BUNNY LEARN!",
+      prompt: "🚌 <b>TEACHER!</b> A teacher helps us learn! Tap the happy apples with <b>Bunny</b>!"
+    }
+  };
+  var ROLE_KEYS = ["firefighter", "doctor", "police", "teacher"];
+
+  var currentRole = "firefighter";
+  var stars = 0, won = false, tick = 0;
+  var spraying = false, aimX = W * 0.5, aimY = H * 0.35;
+  var waterDrops = [], particles = [];
+
+  function awardStar(){
+    if(won) return;
+    stars = Math.min(5, stars + 1);
+    starEls.forEach(function(el, i){ el.classList.toggle("on", i < stars); });
+  }
+
+  function spawnBurst(x, y, colors){
+    var cols = colors || ["#38bdf8", "#fde047", "#4ade80", "#ff4d8d", "#ffffff"];
+    for(var i = 0; i < 26; i++){
+      var a = (Math.PI * 2 * i) / 26 + Math.random() * 0.25;
+      var sp = 3 + Math.random() * 6.5;
+      particles.push({
+        x: x, y: y,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2,
+        r: 4 + Math.random() * 4.5,
+        c: cols[i % cols.length],
+        life: 1.0
+      });
+    }
+  }
+
+  function spawnRescueTargets(){
+    rescueLayer.innerHTML = "";
+    var cfg = ROLES[currentRole];
+    var coords = [
+      { x: 40, y: 28 },
+      { x: 54, y: 23 },
+      { x: 67, y: 31 }
+    ];
+    coords.forEach(function(pt, idx){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "rescue-target";
+      b.style.left = pt.x + "%";
+      b.style.top = pt.y + "%";
+      b.style.animationDelay = (-idx * 0.4) + "s";
+      b.innerHTML = TARGET_SVGS[cfg.targetKind] + '<span class="r-tag">' + cfg.targetLabel + "</span>";
+      var clearTarget = function(e){
+        if(e){ e.preventDefault(); e.stopPropagation(); }
+        if(b.getAttribute("data-cleared")) return;
+        b.setAttribute("data-cleared", "1");
+        var r = b.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        aimX = cx; aimY = cy;
+        /* Shoot water stream if firefighter */
+        if(currentRole === "firefighter"){
+          for(var k = 0; k < 22; k++) shootWaterTowards(cx, cy);
+        }
+        spawnBurst(cx, cy);
+        sfxChime();
+        b.style.transform = "translate(-50%, -50%) scale(0)";
+        b.style.opacity = "0";
+        setTimeout(function(){ b.remove(); checkWaveCleared(); }, 220);
+      };
+      b.addEventListener("pointerdown", clearTarget);
+      b.addEventListener("click", function(e){ if(e.detail === 0) clearTarget(e); });
+      rescueLayer.appendChild(b);
+    });
+  }
+
+  function checkWaveCleared(){
+    var rem = rescueLayer.querySelectorAll(".rescue-target:not([data-cleared])").length;
+    if(rem === 0){
+      var cfg = ROLES[currentRole];
+      awardStar();
+      sfxSiren();
+      bubble.innerHTML = "⭐ <b>GREAT RESCUE!</b> You helped <b>" + cfg.friendName + "</b>! Pick another rescue truck or keep playing!";
+      playVoice([cfg.friendClip, "hoot-amazing"]);
+      setTimeout(function(){
+        if(!won){
+          /* Auto-cycle to the next rescue helper so kids experience all 4 helpers seamlessly! */
+          var nextIdx = (ROLE_KEYS.indexOf(currentRole) + 1) % ROLE_KEYS.length;
+          selectRole(ROLE_KEYS[nextIdx], true);
+        }
+      }, 2100);
+    }
+  }
+
+  function selectRole(role, speakIntro){
+    currentRole = ROLES[role] ? role : "firefighter";
+    var cfg = ROLES[currentRole];
+    bayBtns.forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-role") === currentRole);
+    });
+    bldgWall.setAttribute("fill", cfg.wall);
+    bldgRoof.setAttribute("fill", cfg.roof);
+    bldgSign.textContent = cfg.sign;
+
+    vehicleStage.innerHTML = VEHICLE_SVGS[currentRole];
+    vehicleStage.classList.remove("drive-in");
+    void vehicleStage.offsetWidth;
+    vehicleStage.classList.add("drive-in");
+
+    friendSvgWrap.innerHTML = FRIEND_SVGS[cfg.friend];
+    friendBadge.textContent = cfg.friendName;
+
+    missionPill.textContent = cfg.pill;
+    bubble.innerHTML = cfg.prompt;
+    sfxSiren();
+    spawnRescueTargets();
+    if(speakIntro !== false){
+      playVoice([cfg.nameClip, cfg.teachClip]);
+    }
+  }
+
+  function shootWaterTowards(tx, ty){
+    var vr = vehicleStage.getBoundingClientRect();
+    var sx = vr.left + vr.width * 0.78;
+    var sy = vr.top + vr.height * 0.38;
+    var dx = tx - sx, dy = ty - sy;
+    waterDrops.push({
+      x: sx, y: sy,
+      vx: dx * 0.085 + (Math.random() - 0.5) * 3.2,
+      vy: dy * 0.085 - 3.5 + (Math.random() - 0.5) * 3.2,
+      r: 6 + Math.random() * 5,
+      c: Math.random() < 0.35 ? "#ffffff" : "#38bdf8",
+      life: 1.0
+    });
+  }
+
+  /* Dragging across the sky sprays the Fire Hose / Magic Rescue Beam and hits targets automatically! */
+  canvas.addEventListener("pointerdown", function(e){
+    spraying = true;
+    aimX = e.clientX; aimY = e.clientY;
+    checkPointerHitTargets(e.clientX, e.clientY);
   });
-}
-function openQuest(q){
-  activeQuest=q; doneSteps={};
-  questGrid.style.display="none"; activeQuestEl.classList.add("on");
-  $("aqTitle").textContent=q.title;
-  $("aqIntro").textContent=q.intro;
-  $("photoZone").hidden=true; $("photoPreview").innerHTML=""; $("photoInput").value="";
-  $("celebrateBtn").classList.remove("on");
-  renderSteps(); updateBar();
-  say("Your quest: <span class='b-big'>"+q.title.toUpperCase()+"</span>! "+q.intro+" Tap each step when you&rsquo;ve done it in real life!");
-  enqueue("hoot-adventures.mp3","callout");
-}
-function closeQuest(){
-  activeQuest=null; activeQuestEl.classList.remove("on"); questGrid.style.display="";
-  renderQuestGrid();
-}
-function renderSteps(){
-  var ol=$("aqSteps"); ol.innerHTML="";
-  activeQuest.steps.forEach(function(step,i){
-    var li=document.createElement("li"); if(doneSteps[i]) li.className="done";
-    li.innerHTML='<span class="step-num">'+(doneSteps[i]?"\u2713":(i+1))+'</span><p>'+step+'</p>';
-    li.addEventListener("click",function(){
-      doneSteps[i]=!doneSteps[i]; audio(); popSound(); renderSteps(); updateBar();
-      var done=Object.keys(doneSteps).filter(function(k){ return doneSteps[k]; }).length;
-      if(done===activeQuest.steps.length){
-        $("photoZone").hidden=false; $("celebrateBtn").classList.add("on");
-        say("Hoo-hoo-HOO! You finished every step of <span class='b-big'>"+activeQuest.title+"</span>! Tap <span class='b-big'>We Did It</span> for your star and stamp!");
-        chimeSound(); enqueuePraise();
-      } else {
-        say("Step "+(i+1)+" "+(doneSteps[i]?"done":"back on the list")+"! "+done+" of "+activeQuest.steps.length+" steps finished. Keep going, explorer!");
+  window.addEventListener("pointermove", function(e){
+    if(!spraying) return;
+    aimX = e.clientX; aimY = e.clientY;
+    checkPointerHitTargets(e.clientX, e.clientY);
+  });
+  window.addEventListener("pointerup", function(){ spraying = false; });
+
+  function checkPointerHitTargets(px, py){
+    var targets = rescueLayer.querySelectorAll(".rescue-target:not([data-cleared])");
+    targets.forEach(function(t){
+      var r = t.getBoundingClientRect();
+      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      if(Math.hypot(px - cx, py - cy) < 72){
+        t.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
       }
     });
-    ol.appendChild(li);
-  });
-}
-function updateBar(){
-  if(!activeQuest) return;
-  var done=Object.keys(doneSteps).filter(function(k){ return doneSteps[k]; }).length;
-  $("aqBar").style.width=(done/activeQuest.steps.length*100)+"%";
-}
-$("backBtn").addEventListener("click",function(){ closeQuest(); say("Pick another adventure, explorer! Your finished quests are stamped in your Passport!"); });
-$("photoInput").addEventListener("change",function(e){
-  var f=e.target.files&&e.target.files[0]; if(!f) return;
-  var img=document.createElement("img"); img.alt="Photo of the finished quest"; img.src=URL.createObjectURL(f);
-  $("photoPreview").innerHTML=""; $("photoPreview").appendChild(img); popSound();
-  say("What a photo! Hoot can see your adventure! Now tap <span class='b-big'>We Did It</span> for your star and stamp!");
-});
-$("celebrateBtn").addEventListener("click",function(){
-  if(!activeQuest) return; audio();
-  var q=activeQuest; lastQuestDone=q.title;
-  var firstTime=!stamped[q.id];
-  stamped[q.id]=true;
-  var pin=document.querySelector('[data-pin="'+q.place+'"]'); if(pin) pin.classList.add("done");
-  if(firstTime) addStar();
-  fanfareSound(); sparkleBurst(); hootReact();
-  say("QUEST COMPLETE! <span class='b-big'>"+q.title+"</span> is stamped in your Explorer Passport"+(firstTime?" with a star":"")+"! Real-life hero!");
-  enqueue(firstTime?"hoot-star.mp3":"hoot-giggle.mp3","praise");
-  renderPassport(); closeQuest(); showTab("passport");
-});
-
-/* ================= PASSPORT ================= */
-function renderPassport(){
-  var grid=$("passportGrid"); grid.innerHTML="";
-  QUESTS.forEach(function(q){
-    var got=!!stamped[q.id];
-    var d=document.createElement("div"); d.className="badge"+(got?" got":"");
-    d.innerHTML='<div class="b-ic">'+(got?"\u2605":QUEST_ICONS[q.id])+'</div><div><h4>'+q.title+'</h4><p>'+(got?"Stamped! Quest complete.":"Not stamped yet \u00B7 "+q.where)+'</p></div>';
-    grid.appendChild(d);
-  });
-  var n=Object.keys(stamped).length;
-  $("passportNote").textContent=n>=QUESTS.length?"ALL SIX BADGES! You are a Master Explorer of Hoot\u2019s Island!":("Every finished quest stamps a badge here. "+n+" of "+QUESTS.length+" collected \u2014 keep exploring!");
-}
-
-/* ================= LIVING STORYBOOK ================= */
-function buildChips(elId,items,cb,firstOn){
-  var el=$(elId); el.innerHTML="";
-  items.forEach(function(it,i){
-    var b=document.createElement("button"); b.type="button"; b.className="chip"+((firstOn&&i===0)?" on":""); b.textContent=it;
-    b.addEventListener("click",function(){ Array.prototype.forEach.call(el.children,function(c){ c.classList.remove("on"); }); b.classList.add("on"); cb(it); popSound(); });
-    el.appendChild(b);
-  });
-}
-(function(){
-  var sw=$("colorSwatches");
-  CAPE_COLORS.forEach(function(c,i){
-    var b=document.createElement("button"); b.type="button"; b.className="swatch"+(i===0?" on":""); b.style.background=c[1]; b.title=c[0]; b.setAttribute("aria-label",c[0]);
-    b.addEventListener("click",function(){ Array.prototype.forEach.call(sw.children,function(s){ s.classList.remove("on"); }); b.classList.add("on"); storyState.color={name:c[0],hex:c[1]}; var scarf=guideHoot.querySelector("#hootScarf"); if(scarf) scarf.setAttribute("fill",c[1]); popSound(); });
-    sw.appendChild(b);
-  });
-  storyState.color={name:CAPE_COLORS[0][0],hex:CAPE_COLORS[0][1]};
-  buildChips("animalChips",ANIMALS,function(v){ storyState.animal=v; },true);
-  buildChips("placeChips",PLACES,function(v){ storyState.place=v; },true);
-  $("heroName").addEventListener("input",function(e){ storyState.name=e.target.value.trim(); });
-})();
-function hero(){ return storyState.name||"the little explorer"; }
-function buildStory(){
-  var n=hero(), col=storyState.color, a=storyState.animal, pl=storyState.place;
-  var questBit=lastQuestDone?(" And Hoot still had the star from the "+lastQuestDone+" quest tucked safely under one wing."):"";
-  storyState.pages=[
-    { scene:"\uD83C\uDF1F "+n+" & the "+col.name+" cape", bg:col.hex, text:"Once upon a morning, "+n+" tied on a magic cape the colour of "+col.name+". Hoot flapped down from his branch. \u201CHoo-hoo! Today, YOU are the hero,\u201D he giggled."+questBit+" \u201CWe are going to "+pl+" \u2014 and your friend the "+a+" is waiting!\u201D" },
-    { scene:"\uD83D\uDDFA\uFE0F Two paths in "+pl, bg:"#7ee0b8", text:"Deep in "+pl+", the path split in two. One way sparkled with tiny lights. The other way smelled like warm pancakes. The "+a+" looked at "+n+". \u201CHero\u2026 which way do we go?\u201D", choices:[["Follow the sparkly lights","lights"],["Follow the pancake smell","pancakes"]] },
-    { scene:"\u2728 Something wonderful\u2026", bg:"#ffb3c7", text:"", dynamic:true },
-    { scene:"\uD83C\uDFE1 Home again, hero", bg:"#8ed8f2", text:"" }
-  ];
-  storyState.page=0; storyState.choice1=null;
-  $("storyBook").classList.add("on"); $("storyTitle").textContent="The Adventures of "+n;
-  renderPage();
-  say("Your story is ready, <span class='b-big'>"+n+"</span>! You&rsquo;re the hero &mdash; and YOU choose what happens next!");
-  enqueue("hoot-adventures.mp3","callout");
-}
-function dynamicText(idx){
-  var n=hero(), a=storyState.animal;
-  if(idx===2){
-    if(storyState.choice1==="pancakes") return "Behind a curtain of leaves sat the Pancake Picnic! The "+a+" did a happy dance, and "+n+" shared warm pancakes with every animal in "+storyState.place+". Sharing, Hoot whispered, is a hero superpower.";
-    return "The sparkly lights were fireflies \u2014 hundreds of them! They swirled around "+n+"\u2019s "+storyState.color.name+" cape and lit the whole path like stars that had come down to play. \u201CYou\u2019re brave AND curious,\u201D Hoot hooted proudly.";
   }
-  var end="When "+n+" got home, Hoot hung the "+storyState.color.name+" cape by the door. \u201CSame time tomorrow, hero?\u201D he giggled. And "+n+" \u2014 with the "+a+" waving goodbye \u2014 already knew the answer. THE END \u2B50";
-  if(lastQuestDone) end="Best of all, "+n+" told everyone about the real "+lastQuestDone+" adventure from earlier \u2014 because the best heroes don\u2019t just read stories. They LIVE them. "+end;
-  return end;
-}
-function renderPage(){
-  var p=storyState.pages[storyState.page]; if(!p) return;
-  $("storyScene").style.background=p.bg; $("storyScene").textContent=p.scene;
-  $("storyText").textContent=p.dynamic?dynamicText(storyState.page):(storyState.page===3?dynamicText(3):p.text);
-  var ch=$("storyChoices"); ch.innerHTML="";
-  if(p.choices){ p.choices.forEach(function(c){ var b=document.createElement("button"); b.className="big-btn sun"; b.textContent=c[0]; b.addEventListener("click",function(){ storyState.choice1=c[1]; chimeSound(); storyState.page++; renderPage(); say("Ooh, good choice, hero! Let&rsquo;s see what happens&hellip;"); }); ch.appendChild(b); }); }
-  var dots=$("storyDots"); dots.innerHTML="";
-  storyState.pages.forEach(function(_,i){ var d=document.createElement("i"); if(i===storyState.page) d.className="on"; dots.appendChild(d); });
-  $("storyPrev").style.opacity=storyState.page===0?".45":"1";
-  $("storyNext").style.opacity=storyState.page>=storyState.pages.length-1?".45":"1";
-}
-$("makeStory").addEventListener("click",function(){ audio(); buildStory(); });
-$("surpriseStory").addEventListener("click",function(){
-  audio();
-  storyState.animal=ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
-  storyState.place=PLACES[Math.floor(Math.random()*PLACES.length)];
-  var c=CAPE_COLORS[Math.floor(Math.random()*CAPE_COLORS.length)]; storyState.color={name:c[0],hex:c[1]};
-  buildStory();
-});
-$("storyPrev").addEventListener("click",function(){ if(storyState.page>0){ storyState.page--; renderPage(); popSound(); } });
-$("storyNext").addEventListener("click",function(){ if(storyState.page<storyState.pages.length-1){ if(storyState.pages[storyState.page].choices&&!storyState.choice1){ say("Choose a path first, hero &mdash; the story is waiting for YOU!"); return; } storyState.page++; renderPage(); popSound(); } });
 
-/* ================= TOY LAB ================= */
-var TOY_SHAPES=[["owl","Owl"],["rocket","Rocket"],["truck","Truck"],["dino","Dino"],["cat","Cat"]];
-var TOY_COLORS=[["berry red","#ff6b4a"],["sunshine yellow","#ffc93c"],["leaf green","#23a26d"],["sky blue","#3aa7e0"],["grape purple","#8b6fd8"],["bubblegum pink","#ff7aa8"]];
-var TOY_FACES=[["happy","Happy"],["sleepy","Sleepy"],["silly","Silly"],["brave","Brave"]];
-var TOY_EXTRAS=[["wings","Wings"],["crown","Crown"],["bow","Bow"],["star","Star"]];
-function toyFaceSVG(face){
-  if(face==="sleepy") return '<path d="M118 96 q10 6 20 0 M162 96 q10 6 20 0" stroke="#123646" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="M140 122 q10 6 20 0" stroke="#123646" stroke-width="4" fill="none" stroke-linecap="round"/>';
-  if(face==="silly") return '<circle cx="128" cy="94" r="5" fill="#123646"/><circle cx="172" cy="94" r="5" fill="#123646"/><path d="M132 116 Q150 128 168 116 Q166 136 150 136 Q134 136 132 116Z" fill="#ff8fab" stroke="#123646" stroke-width="3"/>';
-  if(face==="brave") return '<path d="M114 84 l26 6 M186 84 l-26 6" stroke="#123646" stroke-width="4.6" stroke-linecap="round"/><circle cx="128" cy="98" r="5" fill="#123646"/><circle cx="172" cy="98" r="5" fill="#123646"/><path d="M136 126 h28" stroke="#123646" stroke-width="4.4" stroke-linecap="round"/>';
-  return '<circle cx="128" cy="94" r="5.4" fill="#123646"/><circle cx="172" cy="94" r="5.4" fill="#123646"/><path d="M134 114 Q150 128 166 114" stroke="#123646" stroke-width="4.2" fill="none" stroke-linecap="round"/><circle cx="112" cy="110" r="6" fill="#ffb59d" opacity=".8"/><circle cx="188" cy="110" r="6" fill="#ffb59d" opacity=".8"/>';
-}
-function toySVG(){
-  var c=toyState.color, s="";
-  if(toyState.shape==="owl") s='<ellipse cx="150" cy="168" rx="72" ry="66" fill="'+c+'"/><ellipse cx="150" cy="182" rx="44" ry="42" fill="#fff" opacity=".55"/><circle cx="150" cy="96" r="52" fill="'+c+'"/><ellipse cx="130" cy="98" rx="21" ry="23" fill="#fff"/><ellipse cx="170" cy="98" rx="21" ry="23" fill="#fff"/>';
-  else if(toyState.shape==="rocket") s='<path d="M118 44 Q150 14 182 44 L188 168 Q150 186 112 168Z" fill="'+c+'"/><circle cx="150" cy="102" r="24" fill="#bfe9ff" stroke="#fff" stroke-width="5"/><path d="M112 140 L76 196 L116 182Z" fill="#e04a2e"/><path d="M188 140 L224 196 L184 182Z" fill="#e04a2e"/><path d="M134 184 Q150 226 166 184 Q150 196 134 184Z" fill="#ffc93c"/>';
-  else if(toyState.shape==="truck") s='<rect x="34" y="96" width="130" height="78" rx="10" fill="'+c+'"/><path d="M164 122 L204 122 Q216 122 224 134 L246 162 Q252 170 252 174 L164 174Z" fill="'+c+'"/><rect x="176" y="132" width="34" height="26" rx="4" fill="#bfe9ff"/><circle cx="86" cy="182" r="24" fill="#2b2b33"/><circle cx="86" cy="182" r="10" fill="#dbe7f2"/><circle cx="206" cy="182" r="24" fill="#2b2b33"/><circle cx="206" cy="182" r="10" fill="#dbe7f2"/>';
-  else if(toyState.shape==="dino") s='<path d="M58 190 Q30 150 52 118 Q62 190 84 200Z" fill="'+c+'"/><ellipse cx="140" cy="168" rx="76" ry="52" fill="'+c+'"/><path d="M196 150 Q224 128 218 96 Q214 66 190 62 Q168 60 164 84 Q162 112 178 132Z" fill="'+c+'"/><path d="M110 118 l8 -16 8 14 M146 112 l8 -16 8 14 M182 116 l10 -13 6 15" fill="#e8a90c"/><ellipse cx="146" cy="182" rx="36" ry="30" fill="#fff" opacity=".5"/><rect x="104" y="196" width="17" height="26" rx="7" fill="'+c+'"/><rect x="168" y="196" width="17" height="26" rx="7" fill="'+c+'"/>';
-  else s='<circle cx="104" cy="66" r="17" fill="'+c+'"/><circle cx="196" cy="66" r="17" fill="'+c+'"/><path d="M92 76 L84 40 L118 56Z" fill="'+c+'"/><path d="M208 76 L216 40 L182 56Z" fill="'+c+'"/><ellipse cx="150" cy="176" rx="62" ry="48" fill="'+c+'"/><circle cx="150" cy="102" r="56" fill="'+c+'"/><path d="M214 168 q34 -6 30 -34" stroke="'+c+'" stroke-width="13" fill="none" stroke-linecap="round"/>';
-  var extras="";
-  if(toyState.extras.wings) extras+='<ellipse cx="52" cy="150" rx="17" ry="36" fill="#aee7ff" transform="rotate(18 52 150)"/><ellipse cx="248" cy="150" rx="17" ry="36" fill="#aee7ff" transform="rotate(-18 248 150)"/>';
-  if(toyState.extras.star) extras+='<path d="M150 138 l6.4 13 14.3 2.1 -10.4 10.1 2.5 14.2 L150 170.6 137.2 177.4 139.7 163.2 129.3 153.1 143.6 151Z" fill="#ffc93c" stroke="#e8a90c" stroke-width="2"/>';
-  if(toyState.extras.crown) extras+='<path d="M112 44 L118 18 L136 32 L150 12 L164 32 L182 18 L188 44Z" fill="#ffc93c" stroke="#e8a90c" stroke-width="2.4" stroke-linejoin="round"/>';
-  if(toyState.extras.bow) extras+='<path d="M196 44 l20 -11 v22Z" fill="#ff7aa8"/><path d="M196 44 l-20 -11 v22Z" fill="#ff7aa8"/><circle cx="196" cy="44" r="6" fill="#e56b8c"/>';
-  var faceT={ owl:"", rocket:"translate(0,-6)", truck:"translate(-48,32)", dino:"translate(42,-4)", cat:"" }[toyState.shape]||"";
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" aria-hidden="true">'+extras+s+'<g transform="'+faceT+'">'+toyFaceSVG(toyState.face)+'</g></svg>';
-}
-function toyName(){
-  var ex=Object.keys(toyState.extras).filter(function(k){ return toyState.extras[k]; });
-  var shapeName=(TOY_SHAPES.filter(function(x){ return x[0]===toyState.shape; })[0]||[])[1]||"Toy";
-  return "The "+toyState.colorName+" "+shapeName+" with a "+toyState.face+" face"+(ex.length?(" and "+ex.join(", ")):"")+"!";
-}
-function renderToy(){
-  $("toyPreview").innerHTML=toySVG();
-  $("toyNameLine").textContent=toyName();
-}
-function chipGroup(elId,items,cb,isColor){
-  var el=$(elId); el.innerHTML="";
-  items.forEach(function(it,i){
-    var b=document.createElement("button"); b.type="button";
-    if(isColor){ b.className="swatch"+(i===0?" on":""); b.style.background=it[1]; b.title=it[0]; b.setAttribute("aria-label",it[0]); }
-    else { b.className="chip"+(i===0?" on":""); b.textContent=it[1]; }
-    b.addEventListener("click",function(){ Array.prototype.forEach.call(el.children,function(c){ c.classList.remove("on"); }); b.classList.add("on"); cb(it); popSound(); renderToy(); });
-    el.appendChild(b);
+  bayBtns.forEach(function(b){
+    var r = b.getAttribute("data-role");
+    var pick = function(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      selectRole(r, true);
+    };
+    b.addEventListener("pointerdown", pick);
+    b.addEventListener("click", function(e){ if(e.detail === 0) pick(e); });
   });
-}
-function extraChips(){
-  var el=$("extraChips"); el.innerHTML="";
-  TOY_EXTRAS.forEach(function(it){
-    var b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=it[1];
-    b.addEventListener("click",function(){ toyState.extras[it[0]]=!toyState.extras[it[0]]; b.classList.toggle("on",!!toyState.extras[it[0]]); popSound(); renderToy(); });
-    el.appendChild(b);
+
+  document.getElementById("sirenBtn").addEventListener("click", function(){
+    sfxSiren();
+    var cfg = ROLES[currentRole];
+    playVoice([cfg.nameClip]);
   });
-}
-chipGroup("shapeChips",TOY_SHAPES,function(it){ toyState.shape=it[0]; });
-chipGroup("toyColors",TOY_COLORS,function(it){ toyState.color=it[1]; toyState.colorName=it[0]; },true);
-chipGroup("faceChips",TOY_FACES,function(it){ toyState.face=it[0]; });
-extraChips();
-$("toyRandom").addEventListener("click",function(){
-  audio();
-  var sh=TOY_SHAPES[Math.floor(Math.random()*TOY_SHAPES.length)], co=TOY_COLORS[Math.floor(Math.random()*TOY_COLORS.length)], fa=TOY_FACES[Math.floor(Math.random()*TOY_FACES.length)];
-  toyState.shape=sh[0]; toyState.color=co[1]; toyState.colorName=co[0]; toyState.face=fa[0];
-  toyState.extras={}; if(Math.random()<0.7) toyState.extras[TOY_EXTRAS[Math.floor(Math.random()*TOY_EXTRAS.length)][0]]=true;
-  renderToy(); popSound(); say("Surprise toy! Hoot loves this design!");
-});
-$("toyDone").addEventListener("click",function(){
-  audio();
-  var sig=toyName();
-  if(sig!==toyState.starredSig){ toyState.starredSig=sig; addStar(); }
-  chimeSound(); hootReact();
-  say("Your toy design is FINISHED: <span class='b-big'>"+sig+"</span> Download the design sheet and build it for real with a grown-up!");
-  enqueuePraise();
-});
-$("toyDownload").addEventListener("click",function(){
-  audio();
-  var svg=toySVG(); var url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
-  var img=new Image();
-  img.onload=function(){ try{ var cv=document.createElement("canvas"); cv.width=600; cv.height=640; var cx=cv.getContext("2d"); cx.fillStyle="#123646"; cx.fillRect(0,0,600,640); cx.fillStyle="#fffdf6"; cx.fillRect(20,20,560,560); cx.drawImage(img,40,40,520,416); cx.fillStyle="#fff"; cx.font="700 25px sans-serif"; cx.textAlign="center"; cx.fillText(toyName().slice(0,52),300,622); var a=document.createElement("a"); a.download="my-toy-design.png"; a.href=cv.toDataURL("image/png"); a.click(); say("Your design sheet is downloading \u2014 show a grown-up for printing!"); }catch(e){} };
-  img.src=url;
-});
+  vehicleStage.addEventListener("click", function(){
+    sfxSiren();
+    var cfg = ROLES[currentRole];
+    playVoice([cfg.nameClip, cfg.teachClip]);
+  });
+  friendStage.addEventListener("click", function(){
+    var cfg = ROLES[currentRole];
+    sfxChime();
+    playVoice([cfg.friendClip]);
+  });
+  document.getElementById("hootBtn").addEventListener("click", function(){
+    var cfg = ROLES[currentRole];
+    playVoice([cfg.nameClip, cfg.teachClip]);
+  });
+  document.getElementById("doneBtn").addEventListener("click", function(){
+    won = true;
+    winOverlay.hidden = false;
+    playVoice(["hoot-win-star"]);
+  });
+  document.getElementById("againBtn").addEventListener("click", function(){
+    won = false; stars = 0; winOverlay.hidden = true;
+    starEls.forEach(function(el){ el.classList.remove("on"); });
+    selectRole("firefighter", true);
+  });
 
-/* ================= FLOW ================= */
-function startGame(){
-  state="playing"; startOverlay.hidden=true;
-  say("Hoo-hoo! I&rsquo;m Hoot, your quest guide! Pick a real-world adventure \u2014 do it in real life, then come back for your stamp!");
-  enqueue("hoot-adventures.mp3","hello");
-}
-$("playBtn").addEventListener("click",function(){ audio(); startGame(); });
-$("homeBtn").addEventListener("click",function(){ clearPending(); clearTimers(); state="start"; startOverlay.hidden=false; });
-guideHoot.addEventListener("click",function(){ audio(); if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact(); });
-$("soundBtn").addEventListener("click",function(){
-  soundOn=!soundOn;
-  $("soundOnIc").style.display=soundOn?"":"none"; $("soundOffIc").style.display=soundOn?"none":"";
-  this.setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-  if(!soundOn){ clearPending(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} vPlaying=false; vCurrent=null; hootTalking(false); } }
-  else audio();
-});
+  function render(){
+    tick++;
+    ctx.clearRect(0, 0, W, H);
 
-/* teardown: no stale timers or ghost audio when the hub closes the game */
-function teardown(){ dead=true; clearPending(); clearTimers(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} } }
-window.addEventListener("pagehide",teardown);
-document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+    if(spraying){
+      shootWaterTowards(aimX, aimY);
+      shootWaterTowards(aimX, aimY);
+    }
 
-renderQuestGrid(); renderPassport(); renderToy();
+    /* Water Hose Stream Droplets */
+    for(var w = waterDrops.length - 1; w >= 0; w--){
+      var d = waterDrops[w];
+      d.x += d.vx; d.y += d.vy;
+      d.vy += 0.25;
+      d.life -= 0.032;
+      if(d.life <= 0){ waterDrops.splice(w, 1); continue; }
+      ctx.globalAlpha = Math.max(0, d.life);
+      ctx.fillStyle = d.c;
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
 
-/* Probe/debug handle: read-only snapshot of the game state. */
-window.__realGame={
-  snapshot:function(){
-    return { state:state, stars:stars, activeQuest:activeQuest?activeQuest.id:null,
-      doneSteps:Object.assign({},doneSteps), stamped:Object.assign({},stamped), lastQuestDone:lastQuestDone,
-      storyPage:storyState.page, storyPages:storyState.pages.length, toy:toyName(),
-      voicePlaying:vPlaying, voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    /* Celebration Sparkles */
+    for(var i = particles.length - 1; i >= 0; i--){
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.16;
+      p.life -= 0.026;
+      if(p.life <= 0){ particles.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#141e30";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    requestAnimationFrame(render);
   }
-};
+
+  selectRole("firefighter", true);
+  requestAnimationFrame(render);
 })();
 </script>
-<style id="hw-realnophoto">#photoZone{display:none!important}</style><style id="hw-realfit">#panels{overflow-y:auto!important;overscroll-behavior:contain}</style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e93"></script>
 </body>
 </html>
