@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="shapes";</script>
-<script src="js/hoot-game-head.js?v=llprev3e86"></script>
+<script src="js/hoot-game-head.js?v=llprev3e88"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -109,15 +109,26 @@
     max-width:600px;
   }
   #bubble b{color:#d946ef}
+  .hud-right{display:flex;align-items:center;gap:8px;pointer-events:auto;flex:none}
   #starBar{
-    flex:none;pointer-events:auto;
     display:flex;align-items:center;gap:5px;
     background:rgba(15,23,42,.92);border:3.5px solid #fde047;
-    border-radius:999px;padding:5px 14px;
+    border-radius:999px;padding:5px 12px;
     box-shadow:0 0 20px rgba(253,224,71,.5);font-weight:900;
   }
-  .fstar{font-size:1.35rem;filter:grayscale(1) opacity(.3);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
+  .fstar{font-size:1.3rem;filter:grayscale(1) opacity(.3);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
   .fstar.on{filter:none;transform:scale(1.22)}
+  #doneBtn{
+    min-height:46px;padding:6px 16px;border-radius:999px;
+    border:3.5px solid var(--ink);
+    background:linear-gradient(180deg,#fde047 0%,#f59f00 100%);
+    color:var(--ink);font-family:inherit;font-weight:900;font-size:1rem;
+    box-shadow:0 6px 0 var(--ink);cursor:pointer;
+  }
+  #doneBtn:active{translate:0 4px;box-shadow:0 2px 0 var(--ink)}
+  .sky-target.called-target,.cannon-btn.called-target{
+    box-shadow:0 0 0 6px #fde047,0 0 32px 10px rgba(253,224,71,.85) !important;
+  }
 
   /* Bottom 3D Pinkfong Rocket Cannon Battery */
   #cannonDock{
@@ -198,7 +209,7 @@
   @keyframes targetFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   @keyframes finaleBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e86" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e88" />
 </head>
 <body>
 <div id="stage">
@@ -258,8 +269,11 @@
       </button>
       <div id="bubble" aria-live="polite">Tap the <b>glowing sky bubbles</b> or <b>HOLD</b> your finger down for a <b>MEGA FINALE</b>!</div>
     </div>
-    <div id="starBar" aria-label="Firework stars">
-      <span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span>
+    <div class="hud-right">
+      <div id="starBar" aria-label="Firework stars">
+        <span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span><span class="fstar">⭐</span>
+      </div>
+      <button id="doneBtn" type="button">🏆 Done</button>
     </div>
   </div>
 
@@ -449,20 +463,63 @@
   var rockets = [], sparks = [], rings = [];
   var stars = 0, won = false, tick = 0;
   var holding = false, holdX = 0, holdY = 0, holdStart = 0;
+  var targetIdx = 0;
+  var targetAnimal = ANIMAL_KEYS[0];
+  var nextCallTimer = null;
+
+  function highlightCalledTarget(){
+    padBtns.forEach(function(b){
+      b.classList.toggle("called-target", b.getAttribute("data-a") === targetAnimal);
+    });
+    var skyBtns = skyTargets.querySelectorAll(".sky-target");
+    var hasTargetInSky = false;
+    skyBtns.forEach(function(b){
+      var match = b.getAttribute("data-kind") === targetAnimal;
+      if(match) hasTargetInSky = true;
+      b.classList.toggle("called-target", match);
+    });
+    if(!hasTargetInSky && skyBtns.length > 0){
+      var slotBtn = skyBtns[0];
+      var slot = Number(slotBtn.getAttribute("data-slot") || 0);
+      slotBtn.remove();
+      createOneTarget(targetAnimal, slot);
+    }
+  }
+
+  function callNextAnimal(announceVoice){
+    targetAnimal = ANIMAL_KEYS[targetIdx % ANIMAL_KEYS.length];
+    targetIdx++;
+    var cfg = ANIMALS[targetAnimal] || ANIMALS.cat;
+    highlightCalledTarget();
+    bubble.innerHTML = "🎆 Find &amp; tap the <b>" + cfg.name + "</b> firework — or hold the sky for a <b>MEGA FINALE</b>!";
+    if(announceVoice !== false){
+      playVoice([cfg.clip]);
+    }
+  }
+
+  function scheduleNextAnimalCall(){
+    if(nextCallTimer) clearTimeout(nextCallTimer);
+    nextCallTimer = setTimeout(function(){
+      if(!won) callNextAnimal(true);
+    }, 1500);
+  }
 
   /* ---------- Interactive Floating Sky Bubble Targets ---------- */
   function spawnSkyTargets(){
     skyTargets.innerHTML = "";
-    var picks = ["cat", "dog", "bunny", "butterfly", "lion"];
+    var picks = [targetAnimal, ANIMAL_KEYS[(targetIdx) % ANIMAL_KEYS.length], ANIMAL_KEYS[(targetIdx + 1) % ANIMAL_KEYS.length]];
     for(var i = 0; i < 3; i++){
       createOneTarget(picks[i % picks.length], i);
     }
+    highlightCalledTarget();
   }
   function createOneTarget(kind, slot){
     var cfg = ANIMALS[kind] || ANIMALS.cat;
     var b = document.createElement("button");
     b.type = "button";
-    b.className = "sky-target";
+    b.className = "sky-target" + (kind === targetAnimal ? " called-target" : "");
+    b.setAttribute("data-kind", kind);
+    b.setAttribute("data-slot", String(slot));
     b.style.setProperty("--glow", cfg.colors[0]);
     b.style.left = (14 + slot * 31 + Math.round(Math.random() * 8)) + "%";
     b.style.top = (12 + (slot % 2) * 28 + Math.round(Math.random() * 10)) + "%";
@@ -475,12 +532,16 @@
       var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       b.remove();
       explode(cx, cy, kind, 1.35);
-      bubble.innerHTML = "🎆 <b>" + cfg.name + " SUPER BURST!</b> Pop another glowing sky bubble!";
-      playVoice([cfg.clip]);
+      bubble.innerHTML = "🎆 <b>" + cfg.name + " SUPER BURST!</b> Watch it sparkle!";
+      playVoice([cfg.clip, "hoot-yay"]);
       recordLaunch();
+      scheduleNextAnimalCall();
       setTimeout(function(){
-        if(!won) createOneTarget(ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)], slot);
-      }, 900);
+        if(!won){
+          createOneTarget( targetAnimal, slot );
+          highlightCalledTarget();
+        }
+      }, 850);
     };
     b.addEventListener("pointerdown", popTarget);
     b.addEventListener("click", function(e){ if(e.detail === 0) popTarget(e); });
@@ -491,13 +552,6 @@
     if(won) return;
     stars = Math.min(6, stars + 1);
     starEls.forEach(function(el, i){ el.classList.toggle("on", i < stars); });
-    if(stars >= 6){
-      won = true;
-      setTimeout(function(){
-        winOverlay.hidden = false;
-        playVoice(["hoot-win-star"]);
-      }, 1500);
-    }
   }
 
   function spawnVectorAnimalBurst(x, y, kind){
@@ -555,7 +609,7 @@
   }
 
   function launchRocket(tx, ty, kind, scale, silentVoice){
-    var k = kind || ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
+    var k = kind || targetAnimal || ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
     var cfg = ANIMALS[k] || ANIMALS.star;
     sfxWhistle();
     rockets.push({
@@ -569,8 +623,9 @@
       c: cfg.colors[0]
     });
     if(!silentVoice){
-      bubble.innerHTML = "🎆 <b>" + cfg.name + " FIREWORK!</b> Tap a glowing bubble or hold for a <b>MEGA FINALE</b>!";
-      playVoice([cfg.clip]);
+      bubble.innerHTML = "🎆 <b>" + cfg.name + " FIREWORK!</b> Watch it burst in the sky!";
+      playVoice([cfg.clip, "hoot-yay"]);
+      scheduleNextAnimalCall();
     }
   }
 
@@ -589,6 +644,7 @@
       })(i);
     }
     recordLaunch();
+    scheduleNextAnimalCall();
   }
 
   /* Hold-to-charge Finale & Drag Sparkler Trail on Sky Canvas */
@@ -620,7 +676,7 @@
     if(heldMs >= 460){
       launchGrandFinale(Math.min(6, 4 + Math.floor(heldMs / 400)));
     } else {
-      var k = ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
+      var k = targetAnimal || ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
       launchRocket(holdX, holdY, k, 1.2, false);
       recordLaunch();
     }
@@ -645,17 +701,33 @@
 
   function startGame(){
     won = false; stars = 0; winOverlay.hidden = true;
+    if(nextCallTimer) clearTimeout(nextCallTimer);
     starEls.forEach(function(el){ el.classList.remove("on"); });
+    targetIdx = 0;
+    callNextAnimal(false);
     spawnSkyTargets();
-    bubble.innerHTML = "Tap the <b>glowing sky bubbles</b> or <b>HOLD</b> your finger down for a <b>MEGA FINALE</b>!";
-    playVoice(["hoot-game-hello"]);
+    var firstCfg = ANIMALS[targetAnimal] || ANIMALS.cat;
+    playVoice(["hoot-game-hello", firstCfg.clip]);
     setTimeout(function(){
-      launchRocket(W * 0.5, H * 0.28, "cat", 1.25, true);
+      if(!won) playVoice([firstCfg.clip]);
+    }, 1150);
+    setTimeout(function(){
+      launchRocket(W * 0.5, H * 0.28, targetAnimal, 1.25, true);
     }, 180);
   }
   document.getElementById("againBtn").addEventListener("click", startGame);
   document.getElementById("playBtn").addEventListener("click", startGame);
-  document.getElementById("hootBtn").addEventListener("click", function(){ playVoice(["hoot-giggle"]); });
+  document.getElementById("doneBtn").addEventListener("click", function(){
+    won = true;
+    if(nextCallTimer) clearTimeout(nextCallTimer);
+    winOverlay.hidden = false;
+    playVoice(["hoot-win-star"]);
+  });
+  document.getElementById("hootBtn").addEventListener("click", function(){
+    var cfg = ANIMALS[targetAnimal] || ANIMALS.cat;
+    bubble.innerHTML = "🎆 Find &amp; tap the <b>" + cfg.name + "</b> firework — or hold the sky for a <b>MEGA FINALE</b>!";
+    playVoice([cfg.clip]);
+  });
 
   /* ---------- 60fps Additive HDR Neon Particle Loop (Never Muddy Gray!) ---------- */
   function render(){
@@ -766,6 +838,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e86"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e88"></script>
 </body>
 </html>

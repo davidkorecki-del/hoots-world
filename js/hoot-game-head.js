@@ -399,7 +399,9 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     if(kind!=="intro" && lastByKind[kind] && now-lastByKind[kind]<COOLDOWN_SPEAK) return false;
     lastSpeakAt=now; lastSpeakText=plain; lastKind=kind; lastByKind[kind]=now; lastByText[plain]=now;
     showBubble(text);
-    var files=["assets/voice/coach/"+KEY+"-"+kind+".mp3"];
+    var files=(KEY==="splash"||KEY==="shapes")
+      ?[kind==="praise"?"assets/voice/hoot-amazing.mp3":kind==="idle"?"assets/voice/hoot-idle-tap.mp3":"assets/voice/hoot-ready-go.mp3"]
+      :["assets/voice/coach/"+KEY+"-"+kind+".mp3"];
     if(kind==="praise" && letter) files.push(phonicsSrc(letter));
     playCoachFiles(files, kind, plain);
     logVoice("speak", plain, kind);
