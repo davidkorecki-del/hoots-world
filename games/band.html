@@ -167,12 +167,21 @@
   @media (prefers-reduced-motion:reduce){
     .note-decor{ animation:none !important; }
   }
-  /* Wave 5A: iPad landscape wide stageFloor & chunky instrument pads */
+  /* Wave 5A + 5C-4 (Big & Physical): giant 3D tactile instrument pads & wide stage floor */
   @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #stageFloor{ max-width:min(92vw,920px) !important; gap:18px !important; }
-    .pad{ max-width:200px !important; min-height:110px !important; }
-    #actionRow{ max-width:740px !important; gap:14px !important; }
-    #targetCard{ margin-top:4px !important; }
+    #stageFloor{
+      max-width:min(92vw,940px) !important; gap:18px !important; padding:14px 18px !important;
+      border-width:4px !important; border-radius:26px !important;
+    }
+    .pad{
+      max-width:210px !important; min-height:132px !important; padding:12px 8px 8px !important;
+      border:4px solid rgba(255,255,255,.92) !important; border-radius:24px !important;
+      box-shadow:0 8px 0 rgba(23,38,59,.28), 0 14px 22px rgba(0,0,0,.18), inset 0 6px 12px rgba(255,255,255,.28) !important;
+    }
+    .pad svg{ max-height:90px !important; filter:drop-shadow(0 5px 6px rgba(0,0,0,.22)); }
+    .pad .pad-name{ font-size:18px !important; font-weight:700 !important; margin-top:4px !important; }
+    #actionRow{ max-width:760px !important; gap:16px !important; }
+    #targetCard{ margin-top:4px !important; border:4px solid #fff !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; }
   }
 </style>
 </head>
