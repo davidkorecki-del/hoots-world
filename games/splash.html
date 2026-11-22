@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e90"></script>
+<script src="js/hoot-game-head.js?v=llprev3e91"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -237,7 +237,7 @@
   @keyframes actorBob{0%,100%{transform:translate(-50%,-50%) scale(1) translateY(0)}50%{transform:translate(-50%,-50%) scale(1) translateY(-8px)}}
   @keyframes ledPulse{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e90" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e91" />
 </head>
 <body>
 <div id="stage">
@@ -538,7 +538,7 @@
 
   /* Build persistent Town Actors whose visibility & position react to the 4 lever levels! */
   var ACTORS_DEF = [
-    { id: " snowman", sp: "snowman", label: "Snowman!", x: "17%", y: "72%", clip: "hoot-giggle", need: function(){ return levels.snow >= 0.22; }, snow: true },
+    { id: "snowman", sp: "snowman", label: "Snowman!", x: "17%", y: "72%", clip: "word-snowman", need: function(){ return levels.snow >= 0.22; }, snow: true },
     { id: "frog", sp: "frog", label: "Puddle Frog!", x: "31%", y: "74%", clip: "word-frog", need: function(){ return levels.storm >= 0.22; } },
     { id: "flower1", sp: "flower", label: "Singing Flower!", x: "45%", y: "74%", clip: "word-flower", need: function(){ return levels.sun >= 0.25; } },
     { id: "duck", sp: "duck", label: "Rain Duck!", x: "66%", y: "76%", clip: "word-duck", need: function(){ return levels.storm >= 0.55; } },
@@ -725,10 +725,10 @@
       if(announce && Math.abs(val - startVal) >= 0.12){
         awardStar();
         if(val >= 0.25){
-          if(key === "storm") playVoice(["word-frog"]);
-          else if(key === "snow") playVoice(["word-penguin"]);
+          if(key === "storm") playVoice([val >= 0.55 ? "word-duck" : "word-frog"]);
+          else if(key === "snow") playVoice([val >= 0.55 ? "word-penguin" : "word-snowman"]);
           else if(key === "wind") playVoice(["word-kite"]);
-          else playVoice(["word-butterfly"]);
+          else playVoice([val >= 0.55 ? "word-butterfly" : "word-flower"]);
         }
       }
       if(announce && key === "storm" && val >= 0.65){
@@ -917,6 +917,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e90"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e91"></script>
 </body>
 </html>
