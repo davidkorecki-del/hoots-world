@@ -8155,9 +8155,9 @@
             recap:"GREEN is grass, ORANGE is an orange, and PURPLE is grapes!", recapClips:["name-color-green"] },
           { scene:"farm", fx:"animal", animals:["moo","quack","woof"], answer:0, decor:[["🚜","5%","70%"],["🌾","88%","10%"],["🐔","84%","74%"]],
             intro:"🦉 Every animal has its own sound. Make them with me — as loud as you like!", introClips:["owl-hello"],
-            teach:[ { t:"🐮 MOO! The cow says “moo!” Say it with me: moo!", clips:[] },
-                    { t:"🦆 QUACK! The duck says “quack!” Say it: quack!", clips:[] },
-                    { t:"🐶 WOOF! The dog says “woof!” Say it: woof!", clips:[] } ],
+            teach:[ { t:"🐮 MOO! The cow says “moo!” Say it with me: moo!", clips:["word-cow","sound-moo"] },
+                    { t:"🦆 QUACK! The duck says “quack!” Say it: quack!", clips:["word-duck","sound-quack"] },
+                    { t:"🐶 WOOF! The dog says “woof!” Say it: woof!", clips:["word-dog","sound-woof"] } ],
             askClips:["ask-who-says-moo"],
             rounds:[{ opt:0, item:1, q:"Your turn! Who says “quack”?", askClips:["ask-who-says-quack"], praise:"⭐ YES! The DUCK says quack! Next one…", praiseClips:["word-duck","sound-quack","hoot-great-job"], hints:{ 1:"The COW says moo. Who says quack?", 2:"The DOG says woof. Who says quack?" } },
               { opt:2, item:2, q:"Who says “woof”?", askClips:["ask-who-says-woof"], praise:"⭐ YES! The DOG says woof! One more…", praiseClips:["word-dog","sound-woof","hoot-amazing"], hints:{ 0:"The DUCK says quack. Who says woof?", 1:"The COW says moo. Who says woof?" } },
@@ -13560,7 +13560,7 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e81', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e82', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
