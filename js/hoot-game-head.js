@@ -10,18 +10,28 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
         - Cap win/recap voice to ONE short cheer line (drop stacked 2nd/3rd recap clips).
         - Keep 15s dedup for repeated identical non-teaching lines; skipped lines still
           fire "ended" so game voice queues never stall. */
-  var recent={}, P=HTMLMediaElement.prototype, LINE=new RegExp("(hoot-[a-z0-9-]+|owl-[a-z0-9-]+|lily-[a-z0-9-]+|coach/[a-z]+-(intro|idle|praise|wrong))[.]mp3");
+  var recent={}, P=HTMLMediaElement.prototype, LINE=new RegExp("(?:^|/)(hoot-[a-z0-9-]+|owl-[a-z0-9-]+|lily-[a-z0-9-]+|coach/[a-z]+-(?:intro|idle|praise|wrong))[.]mp3(?:$|\\?)","i");
+  /* Device Report #4 (Blocker fix): per-round teaching / target callouts & prompts MUST NEVER be
+     deduped, rotated, or suppressed — every round speaks its target callout cleanly. */
+  var PROMPT_ALLOW=/^(?:call-|fish-|name-|ask-|teach-|peek-|homes-|feed-|food-|sound-|word-|phonics-|song-|lib-|story-|sayit-|tut-|kidc-|m7-|e7-|s7-|ss7-)/i;
   /* Wave 5C (Muse): full 8-clip praise deck, 5-clip try-again deck, 6-clip 1s win cheer deck
      — all gated through window.parent.HOOT_HAVE so only verified clips ever play. */
   var PRAISE_DECK=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3","hoot-yay-2.mp3","hoot-nice-2.mp3","hoot-got-it.mp3","hoot-super.mp3"];
   var WRONG_DECK=["hoot-try-again.mp3","hoot-look-closely.mp3","hoot-keep-going.mp3","hoot-almost.mp3","hoot-close.mp3"];
   var WIN_DECK=["hoot-win-yay.mp3","hoot-win-star.mp3","hoot-yay-2.mp3","hoot-super.mp3","hoot-amazing.mp3","hoot-great-job.mp3"];
   var lastPraise="", lastWrong="", lastWin="", winCheerAt=0;
+  var rotIdx={p:0, w:0, win:0};
   function hasVoice(base){
     try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[base]); }catch(e){ return false; }
   }
   function swapBase(url, nextFile){ return String(url||"").replace(/[^\/]+$/, nextFile); }
-  function pickRot(deck, curFile, lastFile){
+  function skipCleanly(el){
+    /* Clear game's <400ms stale-Safari-ended retry guard so vNext() ALWAYS advances and never stalls vPlaying */
+    el.__hwT=0; el.__hwRetry=1;
+    setTimeout(function(){ try{ el.dispatchEvent(new Event("ended")); }catch(e){} },30);
+    return Promise.resolve();
+  }
+  function pickRot(deck, curFile, lastFile, slot){
     var avail=deck;
     try{
       var H=window.parent&&window.parent.HOOT_HAVE;
@@ -31,9 +41,12 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       }
     }catch(e){}
     if(avail.length<=1) return avail[0]||curFile;
-    var idx=avail.indexOf(lastFile);
-    if(curFile!==lastFile && avail.indexOf(curFile)>=0) return curFile;
-    return avail[(idx+1)%avail.length];
+    /* Advance cleanly through the ENTIRE deck so games that hardcode one clip (e.g. hoot-try-again
+       or hoot-amazing) hear all 8 praise / 5 try-again / 6 win variants instead of ping-ponging 2 clips! */
+    var k=slot||"p";
+    var pick=avail[(rotIdx[k]++)%avail.length];
+    if(pick===lastFile && avail.length>1) pick=avail[(rotIdx[k]++)%avail.length];
+    return pick;
   }
   var mine=null;
   function install(){
@@ -43,22 +56,26 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       /* already decided for this exact play call by an outer copy of this guard */
       if(this.__hfT && Date.now()-this.__hfT<200) return op.apply(this,arguments);
       this.__hfT=Date.now();
-      var s=String(this.currentSrc||this.src||(this.getAttribute&&this.getAttribute("src"))||"");
-      var m=s.match(LINE);
+      /* CRITICAL (Device Report #4): ALWAYS read the freshly assigned getAttribute("src") / this.src
+         BEFORE this.currentSrc! On a reused Audio element, currentSrc still holds the PREVIOUS round's
+         clip (e.g. hoot-amazing.mp3) synchronously during play(), which caused Round 2+ call-letter-*
+         prompts to be mistaken for repeated praise and clobbered. */
+      var s=String((this.getAttribute&&this.getAttribute("src"))||this.src||this.currentSrc||"");
+      var baseFn=s.replace(/.*\//,"").split("?")[0].toLowerCase();
+      var isPrompt=PROMPT_ALLOW.test(baseFn) || /\/coach\/phonics-/i.test(s);
+      var m=isPrompt ? null : s.match(LINE);
       if(m && s.indexOf("giggle")<0){
-        var k=m[1], fn=k+".mp3", now=Date.now();
+        var k=m[1].toLowerCase(), fn=k+".mp3", now=Date.now();
         /* Win/recap anti-stacking: allow ONE short cheer on win, drop stacked 2nd/3rd clips within 4.5s */
         var winEl=document.getElementById("winOverlay");
         var onWin=!!(winEl && winVisible(winEl)) || k==="hoot-you-learned";
         if(onWin && (k==="hoot-you-learned" || PRAISE_DECK.indexOf(fn)>=0 || WIN_DECK.indexOf(fn)>=0)){
           if(winCheerAt && now-winCheerAt<4500){
-            var selfSkip=this;
-            setTimeout(function(){ try{ selfSkip.dispatchEvent(new Event("ended")); }catch(e){} },30);
-            return Promise.resolve();
+            return skipCleanly(this);
           }
           winCheerAt=now;
           /* On win, pick a snappy 1s cheer from WIN_DECK (hoot-win-yay / hoot-win-star / hoot-yay-2 / hoot-super...) */
-          var rotW=pickRot(WIN_DECK, WIN_DECK[0], lastWin);
+          var rotW=pickRot(WIN_DECK, WIN_DECK[0], lastWin, "win");
           lastWin=rotW; lastPraise=rotW;
           if(rotW!==fn){
             this.setAttribute("src", swapBase(s, rotW));
@@ -68,7 +85,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
           }
         } else if(PRAISE_DECK.indexOf(fn)>=0){
           /* Rotate 8-clip praise deck so identical praise never repeats back-to-back */
-          var rotP=pickRot(PRAISE_DECK, fn, lastPraise);
+          var rotP=pickRot(PRAISE_DECK, fn, lastPraise, "p");
           lastPraise=rotP;
           if(rotP!==fn){
             this.setAttribute("src", swapBase(s, rotP));
@@ -77,7 +94,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
           }
         } else if(WRONG_DECK.indexOf(fn)>=0){
           /* Rotate 5-clip gentle try-again deck (try-again / look-closely / keep-going / almost / close) */
-          var rotN=pickRot(WRONG_DECK, fn, lastWrong);
+          var rotN=pickRot(WRONG_DECK, fn, lastWrong, "w");
           lastWrong=rotN;
           if(rotN!==fn){
             this.setAttribute("src", swapBase(s, rotN));
@@ -85,9 +102,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
             k=rotN.replace(/\.mp3$/,"");
           }
         } else if(recent[k] && now-recent[k]<15000){
-          var self=this;
-          setTimeout(function(){ try{ self.dispatchEvent(new Event("ended")); }catch(e){} },30);
-          return Promise.resolve();
+          return skipCleanly(this);
         }
         recent[k]=now;
       }
@@ -208,7 +223,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
   var n=0, iv=setInterval(function(){ tick(); if(++n>600) clearInterval(iv); }, 500);
   document.addEventListener("click", function(){ setTimeout(tick,250); }, true);
 })();
-(function(){if(window.__voiceGov)return;window.__voiceGov=1;try{var proto=window.HTMLMediaElement&&HTMLMediaElement.prototype;if(!proto)return;var desc=Object.getOwnPropertyDescriptor(proto,"src");if(!desc||!desc.set||!desc.get)return;var origSet=desc.set,origGet=desc.get,origPlay=proto.play;var cur=null,waiters=[];function isV(s){return !!s&&(s.indexOf("voice/")>-1||s.indexOf(".mp3")>-1);}function hook(el){if(el.__govHook)return;el.__govHook=1;el.addEventListener("ended",function(){onEnd(el);});el.addEventListener("error",function(){onEnd(el);});}function onEnd(el){var nxt=el.__govNext;if(nxt){if(el.__govFor===el.currentSrc){el.__govNext=null;origSet.call(el,nxt);cur=el;var p=origPlay.call(el);if(p&&p.catch)p.catch(function(){});return;}el.__govFor=el.currentSrc;if(!el.paused&&!el.ended){cur=el;return;}}if(cur===el&&(el.paused||el.ended)){cur=null;flush();}}window.__govStopAll=function(){if(cur){cur.__govNext=null;cur.__govWait=false;try{cur.pause();}catch(e){}cur=null;}for(var i=0;i<waiters.length;i++){waiters[i].__govWait=false;waiters[i].__govNext=null;try{waiters[i].pause();}catch(e){}}waiters.length=0;};function flush(){if(cur&&!cur.paused&&!cur.ended)return;cur=null;while(waiters.length){var w=waiters.shift();if(w.__govWait){w.__govWait=false;cur=w;var p=origPlay.call(w);if(p&&p.catch)p.catch(function(){if(cur===w&&(w.paused||w.ended)){cur=null;flush();}});return;}}}Object.defineProperty(proto,"src",{configurable:true,enumerable:desc.enumerable,get:function(){return origGet.call(this);},set:function(v){var el=this;if(isV(v)&&!el.paused&&!el.ended&&isV(el.currentSrc)){el.__govVoice=1;el.__govNext=v;el.__govFor=el.currentSrc;hook(el);if(!cur)cur=el;return;}origSet.call(el,v);}});proto.play=function(){var el=this;var s=el.currentSrc||el.getAttribute("src")||"";if(!(el.__govVoice||isV(s)))return origPlay.apply(el,arguments);el.__govVoice=1;hook(el);if(cur&&cur!==el&&!cur.paused&&!cur.ended){if(!el.__govWait){el.__govWait=true;waiters.push(el);setTimeout(flush,1100);}return Promise.resolve();}cur=el;var r=origPlay.apply(el,arguments);if(r&&r.catch)r.catch(function(){if(cur===el&&(el.paused||el.ended)){cur=null;flush();}});return r;};}catch(e){}})();
+(function(){if(window.__voiceGov)return;window.__voiceGov=1;try{var proto=window.HTMLMediaElement&&HTMLMediaElement.prototype;if(!proto)return;var desc=Object.getOwnPropertyDescriptor(proto,"src");if(!desc||!desc.set||!desc.get)return;var origSet=desc.set,origGet=desc.get,origPlay=proto.play;var cur=null,waiters=[];function isV(s){return !!s&&(s.indexOf("voice/")>-1||s.indexOf(".mp3")>-1);}function hook(el){if(el.__govHook)return;el.__govHook=1;el.addEventListener("ended",function(){onEnd(el);});el.addEventListener("error",function(){onEnd(el);});}function onEnd(el){var nxt=el.__govNext;if(nxt){if(el.__govFor===el.currentSrc){el.__govNext=null;origSet.call(el,nxt);cur=el;var p=origPlay.call(el);if(p&&p.catch)p.catch(function(){});return;}el.__govFor=el.currentSrc;if(!el.paused&&!el.ended){cur=el;return;}}if(cur===el&&(el.paused||el.ended)){cur=null;flush();}}window.__govStopAll=function(){if(cur){cur.__govNext=null;cur.__govWait=false;try{cur.pause();}catch(e){}cur=null;}for(var i=0;i<waiters.length;i++){waiters[i].__govWait=false;waiters[i].__govNext=null;try{waiters[i].pause();}catch(e){}}waiters.length=0;};function flush(){if(cur&&!cur.paused&&!cur.ended)return;cur=null;while(waiters.length){var w=waiters.shift();if(w.__govWait){w.__govWait=false;cur=w;var p=origPlay.call(w);if(p&&p.catch)p.catch(function(){if(cur===w&&(w.paused||w.ended)){cur=null;flush();}});return;}}}Object.defineProperty(proto,"src",{configurable:true,enumerable:desc.enumerable,get:function(){return origGet.call(this);},set:function(v){var el=this;if(isV(v)&&!el.paused&&!el.ended&&isV(el.currentSrc)){el.__govVoice=1;el.__govNext=v;el.__govFor=el.currentSrc;hook(el);if(!cur)cur=el;return;}origSet.call(el,v);}});proto.play=function(){var el=this;var s=(el.getAttribute&&el.getAttribute("src"))||el.src||el.currentSrc||"";if(!(el.__govVoice||isV(s)))return origPlay.apply(el,arguments);el.__govVoice=1;hook(el);if(cur&&cur!==el&&!cur.paused&&!cur.ended){if(!el.__govWait){el.__govWait=true;waiters.push(el);setTimeout(flush,1100);}return Promise.resolve();}cur=el;var r=origPlay.apply(el,arguments);if(r&&r.catch)r.catch(function(){if(cur===el&&(el.paused||el.ended)){cur=null;flush();}});return r;};}catch(e){}})();
 (function(){
   if(window.__hootCoach) return; window.__hootCoach=1;
   var KEY=String(window.__HOOT_GAME_KEY__||"");
