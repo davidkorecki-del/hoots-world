@@ -377,6 +377,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     logVoice("bubble-only", plain, "no-clip");
   }
   function speak(kind, extras){ if(kind==="praise"||kind==="wrong") return false; /* 3e43: the game already praises and corrects; the coach saying it too doubled every reaction and pushed back the next question */
+    if(window.__HOOT_SELF_COACH__) return false; /* Self-voiced flagship games own their studio Hoot prompts & idle reminders */
     if(kind==="intro" && lastByKind.intro) return false; /* Wave 5B: instructions spoken ONCE per game start, never repeated */
     var pack=LINES[KEY]||{};
     var text=(pack[kind]||"");
@@ -399,9 +400,9 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     if(kind!=="intro" && lastByKind[kind] && now-lastByKind[kind]<COOLDOWN_SPEAK) return false;
     lastSpeakAt=now; lastSpeakText=plain; lastKind=kind; lastByKind[kind]=now; lastByText[plain]=now;
     showBubble(text);
-    var NEW_COACH={splash:"hoot-weather-",shapes:"hoot-fireworks-",real:"hoot-rescue-"};
+    var NEW_COACH={splash:"hoot-weather-",shapes:"hoot-fireworks-",real:"hoot-rescue-",rocket:"hoot-r3d-"};
     var ncPrefix=NEW_COACH[KEY]||"";
-    var ncId=ncPrefix?(ncPrefix+kind):"";
+    var ncId=ncPrefix?(KEY==="rocket"?"hoot-r3d-tap-stars":(ncPrefix+kind)):"";
     var hasNc=false;
     try{ hasNc=!!(ncId&&window.parent&&window.parent.HOOT_HAVE&&window.parent.HOOT_HAVE[ncId]); }catch(e){}
     var files=ncPrefix
@@ -578,6 +579,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
      (silence is better than a 3rd repeat). Visual glow stays gentle without nagging audio. */
   var idleSpokenCount=0, idleVarIdx=0;
   function speakIdleVariant(step){
+    if(window.__HOOT_SELF_COACH__) return;
     if(step===1){
       var cands=[];
       try{

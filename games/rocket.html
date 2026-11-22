@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="rocket";</script>
-<script src="js/hoot-game-head.js?v=llprev3e106"></script>
+<script>window.__HOOT_GAME_KEY__="rocket";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e107"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>3D Rocket Count-Up</title>
@@ -23,10 +23,10 @@
   #hud{
     position:absolute; top:0; left:0; right:0; z-index:10;
     display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    padding:max(10px, env(safe-area-inset-top)) 14px 0 64px;
+    padding:max(10px, env(safe-area-inset-top)) 14px 0 14px;
     pointer-events:none;
   }
-  .hud-left{ display:flex; align-items:center; gap:10px; pointer-events:auto; max-width:min(64vw, 560px); }
+  .hud-left{ display:flex; align-items:center; gap:10px; pointer-events:auto; max-width:min(62vw, 560px); }
   #hootBtn{
     width:68px; height:68px; flex:0 0 68px; border-radius:50%;
     border:4px solid #fff;
@@ -46,7 +46,7 @@
   }
   #promptBubble b{ color:#e11d48; }
 
-  .hud-right{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
+  .hud-right{ display:flex; align-items:center; gap:8px; pointer-events:auto; flex-shrink:0; }
   #passportBar{
     display:flex; align-items:center; gap:5px;
     background:rgba(15,23,42,.88); border:3.5px solid #fde047;
@@ -96,12 +96,12 @@
 
   /* Flight Steer Hint Pill */
   #flightBanner{
-    position:absolute; left:50%; bottom:108px; transform:translateX(-50%);
+    position:absolute; left:50%; bottom:92px; transform:translateX(-50%);
     z-index:14; pointer-events:none;
-    background:rgba(15,23,42,.86); border:3.5px solid #38bdf8; border-radius:999px;
-    padding:8px 22px; color:#fff; font-family:"Fredoka",sans-serif; font-weight:800;
-    font-size:clamp(14.5px, 2.2vw, 19px); box-shadow:0 6px 22px rgba(0,0,0,.5);
-    white-space:nowrap;
+    max-width:92vw; text-align:center;
+    background:rgba(15,23,42,.88); border:3.5px solid #38bdf8; border-radius:999px;
+    padding:7px 20px; color:#fff; font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:clamp(13px, 2.2vw, 18px); line-height:1.2; box-shadow:0 6px 22px rgba(0,0,0,.5);
   }
 
   /* Center Action Stage (Number Pods / BLAST OFF / Next Planet) */
@@ -111,15 +111,16 @@
     pointer-events:none; padding:0 12px;
   }
   #podRow{
-    display:flex; align-items:center; justify-content:center; gap:clamp(14px, 3vw, 26px);
+    display:flex; align-items:stretch; justify-content:center; gap:clamp(8px, 2.6vw, 24px);
+    width:min(94vw, 480px);
     pointer-events:auto;
   }
   .num-pod{
-    position:relative; min-width:clamp(104px, 20vw, 144px); min-height:clamp(106px, 18vh, 134px);
-    border-radius:28px; border:5px solid #fff;
+    position:relative; flex:1 1 0; min-width:0; max-width:146px; min-height:clamp(104px, 17vh, 134px);
+    border-radius:26px; border:5px solid #fff; overflow:hidden;
     background:linear-gradient(180deg, #38bdf8 0%, #2563eb 100%);
     box-shadow:0 10px 0 #131d36, 0 18px 34px rgba(0,0,0,.5), inset 0 6px 0 rgba(255,255,255,.48);
-    color:#fff; cursor:pointer; padding:8px 12px;
+    color:#fff; cursor:pointer; padding:8px 6px;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     transition:transform .16s cubic-bezier(.34,1.8,.5,1), box-shadow .16s;
   }
@@ -136,12 +137,13 @@
   @keyframes podShake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-11px); } 75%{ transform:translateX(11px); } }
   .pod-num{
     font-family:"Fredoka",sans-serif; font-weight:800;
-    font-size:clamp(42px, 7vw, 58px); line-height:1;
+    font-size:clamp(38px, 6.8vw, 56px); line-height:1;
     text-shadow:0 4px 0 rgba(19,29,54,.45);
   }
   .pod-dots{
-    font-size:clamp(14px, 2.2vw, 18px); line-height:1.08; letter-spacing:1px;
-    filter:drop-shadow(0 2px 0 rgba(0,0,0,.35)); max-width:118px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:1px;
+    font-size:clamp(13px, 2.1vw, 17px); line-height:1.05;
+    filter:drop-shadow(0 2px 0 rgba(0,0,0,.35)); max-width:96px;
   }
 
   #launchBtn, #nextPlanetBtn{
@@ -222,19 +224,47 @@
   .win-trophy{ font-size:74px; line-height:1; margin-bottom:8px; }
   .win-card h2{ margin:0 0 8px; font-family:"Fredoka",sans-serif; font-size:34px; color:#131d36; }
   .win-card p{ margin:0 0 18px; font-weight:800; font-size:18px; color:#334155; }
-  .big-play{
+  .win-btns{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+  .big-play, .win-btn{
     border:4px solid var(--outline); border-radius:999px;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
-    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:22px;
-    padding:12px 32px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:20px;
+    padding:12px 26px; cursor:pointer; box-shadow:0 6px 0 var(--outline);
   }
 
   @media (max-width: 740px){
+    #hud{
+      flex-wrap:wrap; align-items:center; gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 10px 0 10px;
+    }
+    .hud-left{ display:contents; }
+    #hootBtn{ width:52px; height:52px; flex:0 0 52px; order:1; border-width:3px; }
+    .hud-right{ order:2; margin-left:auto; gap:6px; }
     #passportBar{ display:none; }
+    #starPill{ font-size:17px; padding:5px 11px; border-width:3px; }
+    #doneBtn{ font-size:15px; padding:6px 12px; border-width:3px; }
+    #promptBubble{
+      order:3; flex:1 0 100%; width:100%;
+      padding:7px 12px; border-width:3px; border-radius:16px;
+      font-size:13.5px; line-height:1.2; text-align:center;
+    }
+    #commandBar{
+      width:min(96vw, 440px); padding:7px 10px; border-radius:22px; border-width:3.5px;
+      flex-direction:column; align-items:stretch; gap:6px;
+    }
+    .paint-row{ justify-content:center; gap:10px; }
     .paint-lbl{ display:none; }
-    .paint-dot{ width:34px; height:34px; }
-    .ctrl-pill{ font-size:13px; padding:6px 9px; }
-    #actionStage{ bottom:86px; }
+    .paint-dot{ width:34px; height:34px; border-width:3px; }
+    .console-right{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:5px; width:100%; }
+    .ctrl-pill{
+      font-size:12px; padding:7px 3px; border-width:3px;
+      text-align:center; overflow:hidden; text-overflow:ellipsis;
+    }
+    #actionStage{ bottom:116px; }
+    #flightBanner{ bottom:114px; font-size:13px; padding:6px 14px; }
+    #launchBtn, #nextPlanetBtn{ padding:12px 26px; font-size:23px; border-width:5px; }
+    .pod-dots{ max-width:80px; font-size:13px; }
+    .num-pod{ border-radius:22px; border-width:4px; min-height:98px; }
   }
 </style>
 </head>
@@ -299,7 +329,9 @@
       <div class="win-trophy" aria-hidden="true">🚀🪐🌕🍬🌋</div>
       <h2>Super Space Captain!</h2>
       <p>You customized Hoot's rocket, zoomed through Rainbow Hoops &amp; UFOs, cracked open Space Treasure, and explored 4 magical worlds!</p>
-      <button id="againBtn" class="big-play" type="button">↻ Keep Flying</button>
+      <div class="win-btns">
+        <button id="againBtn" class="big-play" type="button">↻ Keep Flying</button>
+      </div>
     </div>
   </div>
 </div>
@@ -500,7 +532,7 @@
   /* =========================================================================
      3. PIXAR 3D STUDIO ASSETS & SELECTIVE METALLIC PAINT SHOP
      ========================================================================= */
-  var VER = "?v=llprev3e106";
+  var VER = "?v=llprev3e107";
   var ART = {};
   var ASSET_LIST = {
     launchpad: "assets/rocket3d/bg_launchpad.jpg",
@@ -591,10 +623,29 @@
   var canvas = document.getElementById("gameCanvas");
   var ctx = canvas.getContext("2d");
   var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function isPortrait(){ return W < 640; }
   function resize(){
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * DPR; canvas.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    if(typeof warpStars !== "undefined" && warpStars.length){
+      for(var i = 0; i < warpStars.length; i++){
+        warpStars[i].x = Math.random() * W;
+        warpStars[i].y = Math.random() * H;
+      }
+    }
+    if(typeof stars !== "undefined" && stars.length && typeof getStarLayout === "function"){
+      var pts = getStarLayout();
+      for(var si = 0; si < stars.length; si++){
+        var pt = pts[si % pts.length];
+        stars[si].xPct = pt[0]; stars[si].yPct = pt[1];
+      }
+    }
+    if(typeof phase !== "undefined"){
+      if(phase === "collect" || phase === "match" || phase === "ready") rocket.y = isPortrait() ? 0.48 : 0.50;
+      else if(phase === "flight") rocket.y = 0.56;
+      else if(phase === "landed") rocket.y = isPortrait() ? 0.45 : 0.52;
+    }
   }
   window.addEventListener("resize", resize);
   resize();
@@ -633,6 +684,7 @@
   var planetIdx = 0, earnedPlanets = {};
   var maxCount = 5;
   var phase = "collect";
+  var roundGen = 0;
   var targetCount = 3, collectedCount = 0, totalStarsEarned = 0;
 
   var stars = [], flyingStars = [], particles = [], smoke = [], bubblesFX = [], warpStars = [], hoops = [], meteors = [];
@@ -647,14 +699,23 @@
   var ufo = { x: -120, y: 0.22, dir: 1, spinT: 0, beamT: 0, active: true };
 
   /* 3-Tap Exploding Cosmic Treasure Chest on Landed Planets! */
-  var chest = { xPct: 0.64, yPct: 0.70, taps: 0, opened: false, shakeT: 0, bounceT: 0 };
+  var chest = { xPct: 0.64, yPct: 0.68, taps: 0, opened: false, shakeT: 0, bounceT: 0 };
+  function getChestPos(){
+    return isPortrait() ? { x: 0.64 * W, y: 0.65 * H } : { x: chest.xPct * W, y: chest.yPct * H };
+  }
 
   /* 3 Adorable Pixar 3D Space Friends cheering cleanly on every landed planet! */
   var buddies = [
-    { key: "bunny", clip: "word-bunny", xPct: 0.19, yPct: 0.65, phase: 0.0, flipT: 0, hopAmp: 18 },
-    { key: "puppy", clip: "word-dog",   xPct: 0.33, yPct: 0.68, phase: 3.6, flipT: 0, hopAmp: 16 },
-    { key: "alien", clip: "word-star",  xPct: 0.81, yPct: 0.65, phase: 1.9, flipT: 0, hopAmp: 22 }
+    { key: "bunny", clip: "word-bunny", xPct: 0.19, yPct: 0.63, pxPct: 0.15, pyPct: 0.63, phase: 0.0, flipT: 0, hopAmp: 18 },
+    { key: "puppy", clip: "word-dog",   xPct: 0.33, yPct: 0.66, pxPct: 0.37, pyPct: 0.65, phase: 3.6, flipT: 0, hopAmp: 16 },
+    { key: "alien", clip: "word-star",  xPct: 0.81, yPct: 0.63, pxPct: 0.86, pyPct: 0.63, phase: 1.9, flipT: 0, hopAmp: 22 }
   ];
+  function getBuddyHeight(){
+    return isPortrait() ? Math.min(H * 0.19, W * 0.25, 138) : Math.min(H * 0.27, W * 0.22, 205);
+  }
+  function getBuddyPos(b){
+    return isPortrait() ? { x: b.pxPct * W, y: b.pyPct * H } : { x: b.xPct * W, y: b.yPct * H };
+  }
 
   var ambientDust = [];
   for(var ai = 0; ai < 60; ai++){
@@ -676,14 +737,19 @@
   }
 
   function getFuelTubeRect(){
-    var w = Math.max(46, Math.min(64, W * 0.055));
-    var h = Math.max(155, Math.min(220, H * 0.28));
-    var x = Math.min(W - w - 26, W * 0.665);
-    var y = H * 0.41;
+    if(isPortrait()){
+      var pw = 42, ph = Math.max(122, Math.min(162, H * 0.205));
+      var px = W - pw - 16, py = H * 0.36;
+      return { x: px, y: py, w: pw, h: ph, cx: px + pw / 2, topY: py + 10 };
+    }
+    var w = Math.max(44, Math.min(58, W * 0.05));
+    var h = Math.max(140, Math.min(195, H * 0.245));
+    var x = Math.min(W - w - 24, W * 0.715);
+    var y = H * 0.32;
     return { x: x, y: y, w: w, h: h, cx: x + w / 2, topY: y + 10 };
   }
   function getRocketMetrics(){
-    var rh = Math.min(H * 0.39, W * 0.36, 315);
+    var rh = isPortrait() ? Math.min(H * 0.30, W * 0.50, 230) : Math.min(H * 0.38, W * 0.35, 305);
     var rw = rh * (363 / 560);
     return { x: rocket.x * W, y: rocket.y * H, w: rw, h: rh };
   }
@@ -739,18 +805,26 @@
     floatTexts.push({ x: x, y: y, txt: txt, col: col || "#fde047", life: 1.0, scale: 0.4 });
   }
 
-  var STAR_POSITIONS = [
-    [0.18, 0.40], [0.82, 0.40],
-    [0.24, 0.60], [0.76, 0.60],
-    [0.32, 0.30], [0.68, 0.30],
-    [0.14, 0.54], [0.86, 0.54]
+  var STAR_POS_LANDSCAPE = [
+    [0.16, 0.37], [0.87, 0.37],
+    [0.22, 0.58], [0.87, 0.58],
+    [0.33, 0.28], [0.64, 0.24],
+    [0.11, 0.50], [0.35, 0.65]
   ];
+  var STAR_POS_PORTRAIT = [
+    [0.17, 0.32], [0.83, 0.27],
+    [0.17, 0.51], [0.17, 0.69],
+    [0.39, 0.26], [0.61, 0.26],
+    [0.42, 0.69], [0.68, 0.69]
+  ];
+  function getStarLayout(){ return isPortrait() ? STAR_POS_PORTRAIT : STAR_POS_LANDSCAPE; }
 
   function startRound(speakNow){
+    roundGen++;
     phase = "collect";
     phaseT = 0;
     stars = []; flyingStars = []; hoops = []; meteors = []; rainbowTrailPts = [];
-    fuelDisplay = 0; plasmaBeamT = 0; hyperWarpT = 0; draggedStar = null;
+    fuelDisplay = 0; plasmaBeamT = 0; hyperWarpT = 0; draggedStar = null; draggingFlight = false;
     podRow.hidden = true; podRow.innerHTML = "";
     launchBtn.hidden = true;
     nextPlanetBtn.hidden = true;
@@ -759,15 +833,16 @@
     transitionBg("launchpad");
     updatePassportUI();
 
-    rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = 0.52;
+    rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = isPortrait() ? 0.48 : 0.50;
     rocket.tilt = 0; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 0.65;
 
     ufo.x = -90; ufo.dir = 1; ufo.y = 0.22; ufo.spinT = 0; ufo.beamT = 0; ufo.active = true;
 
     targetCount = 2 + Math.floor(Math.random() * Math.max(1, maxCount - 1));
     collectedCount = 0;
+    var layout = getStarLayout();
     for(var i = 0; i < targetCount; i++){
-      var pt = STAR_POSITIONS[i % STAR_POSITIONS.length];
+      var pt = layout[i % layout.length];
       stars.push({ xPct: pt[0], yPct: pt[1], dragX: null, dragY: null, phase: i * 1.15, collected: false, popIn: 0 });
     }
 
@@ -800,7 +875,8 @@
 
     bubble.innerHTML = "⭐ <b>" + collectedCount + "!</b> " + (collectedCount < targetCount ? "Tap or drag the next smiling <b>Golden Star</b>!" : "All stars loaded!");
     if(collectedCount >= targetCount){
-      setTimeout(function(){ if(phase === "collect") enterNumberMatchPhase(); }, 820);
+      var myGen = roundGen;
+      setTimeout(function(){ if(myGen === roundGen && phase === "collect" && !won) enterNumberMatchPhase(); }, 820);
     }
   }
 
@@ -819,7 +895,7 @@
       btn.type = "button"; btn.className = "num-pod choice-btn";
       btn.setAttribute("data-num", String(n));
       var dots = "";
-      for(var k = 0; k < n; k++) dots += "⭐";
+      for(var k = 0; k < n; k++) dots += "<span>⭐</span>";
       btn.innerHTML = '<span class="pod-num">' + n + '</span><span class="pod-dots">' + dots + '</span>';
       btn.addEventListener("pointerdown", function(e){
         e.preventDefault(); e.stopPropagation();
@@ -860,6 +936,7 @@
 
   function triggerCountdownLaunch(){
     if(phase !== "ready") return;
+    var myGen = roundGen;
     phase = "countdown";
     phaseT = 0; clearIdleHelp();
     launchBtn.hidden = true;
@@ -874,7 +951,7 @@
     ];
     steps.forEach(function(s){
       setTimeout(function(){
-        if(phase !== "countdown" && !s.fin) return;
+        if(myGen !== roundGen || won || phase !== "countdown") return;
         countdownBanner.textContent = s.txt;
         countdownBanner.classList.remove("show"); void countdownBanner.offsetWidth;
         countdownBanner.classList.add("show");
@@ -901,7 +978,7 @@
     phaseT = 0; hyperWarpT = 0; rainbowTrailPts = [];
     transitionBg("space");
     flightBanner.hidden = false;
-    rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = 0.68; rocket.flame = 1.4; rocket.rumble = 0.35;
+    rocket.x = 0.5; rocket.targetX = 0.5; rocket.y = 0.56; rocket.flame = 1.4; rocket.rumble = 0.35;
 
     var cols = ["#ef4444", "#fb923c", "#fde047", "#4ade80", "#38bdf8", "#c084fc"];
     hoops = [];
@@ -939,7 +1016,7 @@
   function enterLandedParty(){
     phase = "landed";
     phaseT = 0;
-    rocket.y = 0.55; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 1.35;
+    rocket.y = isPortrait() ? 0.45 : 0.52; rocket.flame = 0; rocket.rumble = 0; rocket.bounce = 1.35;
     chest.taps = 0; chest.opened = false; chest.shakeT = 0; chest.bounceT = 1.0;
 
     var rm = getRocketMetrics();
@@ -1029,7 +1106,7 @@
   });
 
   document.getElementById("doneBtn").addEventListener("click", function(){
-    won = true; clearIdleHelp(); winOverlay.hidden = false; playVoice(["hoot-win-star"]);
+    roundGen++; won = true; clearIdleHelp(); countdownBanner.classList.remove("show"); winOverlay.hidden = false; playVoice(["hoot-win-star"]);
   });
   document.getElementById("againBtn").addEventListener("click", function(){
     won = false; winOverlay.hidden = true; startRound(true);
@@ -1047,7 +1124,7 @@
   }
 
   function tapTreasureChest(){
-    var cx = chest.xPct * W, cy = chest.yPct * H;
+    var cp = getChestPos(), cx = cp.x, cy = cp.y;
     floatTexts = floatTexts.filter(function(ft){ return Math.abs(ft.x - cx) > 60; });
     if(chest.opened){
       chest.bounceT = 0.9; sfxStarCollect(6);
@@ -1122,14 +1199,15 @@
 
     /* 4. Landed Planet Playground: 3-Tap Treasure Chest + Flipping Space Friends + Sky Fireworks! */
     if(phase === "landed"){
-      if(Math.hypot(cx - chest.xPct * W, cy - chest.yPct * H) < 78){
+      var cpHit = getChestPos();
+      if(Math.hypot(cx - cpHit.x, cy - cpHit.y) < 74){
         tapTreasureChest(); return;
       }
-      var bh = Math.min(H * 0.27, 205);
+      var bh = getBuddyHeight();
       for(var bi = 0; bi < buddies.length; bi++){
         var b = buddies[bi];
-        var bx = b.xPct * W, by = b.yPct * H;
-        if(Math.hypot(cx - bx, cy - by) < bh * 0.56){
+        var bp = getBuddyPos(b), bx = bp.x, by = bp.y;
+        if(Math.hypot(cx - bx, cy - by) < bh * 0.58){
           b.flipT = 1.0; sfxBoing();
           playVoice([b.clip]);
           spawnSparkles(bx, by - 20, 26, ["#fde047", "#f472b6", "#38bdf8", "#4ade80"], 260);
@@ -1214,6 +1292,10 @@
         st.dragX = null; st.dragY = null;
       }
     }
+  });
+  window.addEventListener("pointercancel", function(){
+    draggingFlight = false;
+    if(draggedStar){ draggedStar.dragX = null; draggedStar.dragY = null; draggedStar = null; }
   });
 
   /* =========================================================================
@@ -1308,15 +1390,17 @@
 
   function drawTreasureChest(){
     if(phase !== "landed") return;
-    var cx = chest.xPct * W, cy = chest.yPct * H;
+    var cp = getChestPos(), cx = cp.x, cy = cp.y;
+    var sc = isPortrait() ? 0.82 : 1.0;
     var shk = chest.shakeT > 0 ? Math.sin(chest.shakeT * 38) * 10 * chest.shakeT : 0;
     var hop = chest.bounceT > 0 ? Math.sin(chest.bounceT * Math.PI) * 28 : 0;
     ctx.save();
     /* Ground shadow */
     ctx.fillStyle = "rgba(9,13,36,0.42)";
-    ctx.beginPath(); ctx.ellipse(cx, cy + 44, 48, 12, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, cy + 44 * sc, 48 * sc, 12 * sc, 0, 0, Math.PI * 2); ctx.fill();
 
     ctx.translate(cx + shk, cy - hop);
+    ctx.scale(sc, sc);
     /* Glowing aura behind unopened chest so toddlers immediately tap it! */
     if(!chest.opened){
       ctx.save();
@@ -1555,10 +1639,11 @@
       }
     } else if(phase === "landing"){
       phaseT += dt;
-      rocket.y += (0.55 - rocket.y) * Math.min(1, dt * 3.1);
+      var landY = isPortrait() ? 0.45 : 0.52;
+      rocket.y += (landY - rocket.y) * Math.min(1, dt * 3.1);
       var rmD = getRocketMetrics();
       if(Math.random() < 0.7) spawnSmoke(rmD.x, rmD.y + rmD.h * 0.48, 1, 34, 90);
-      if(Math.abs(rocket.y - 0.55) < 0.015) enterLandedParty();
+      if(Math.abs(rocket.y - landY) < 0.015) enterLandedParty();
     } else if(phase === "landed"){
       phaseT += dt;
       buddies.forEach(function(b){ if(b.flipT > 0) b.flipT = Math.max(0, b.flipT - dt * 1.45); });
@@ -1779,8 +1864,9 @@
     var rm = getRocketMetrics();
     if(phase !== "flight" && phase !== "liftoff"){
       ctx.save(); ctx.fillStyle = "rgba(9,13,36,0.44)";
-      var shScale = phase === "landing" ? Math.max(0.25, 1 - Math.abs(0.55 - rocket.y) * 1.4) : 1;
-      ctx.beginPath(); ctx.ellipse(rm.x, (phase === "landed" ? 0.55 * H : 0.52 * H) + rm.h * 0.47, rm.w * 0.54 * shScale, 16 * shScale, 0, 0, Math.PI * 2); ctx.fill();
+      var groundY = phase === "landed" || phase === "landing" ? (isPortrait() ? 0.45 : 0.52) : (isPortrait() ? 0.48 : 0.50);
+      var shScale = phase === "landing" ? Math.max(0.25, 1 - Math.abs(groundY - rocket.y) * 1.4) : 1;
+      ctx.beginPath(); ctx.ellipse(rm.x, groundY * H + rm.h * 0.47, rm.w * 0.54 * shScale, 16 * shScale, 0, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
 
@@ -1802,7 +1888,7 @@
 
     /* Smiling Pixar Golden Star Gems (Drag OR Tap!) */
     if(phase === "collect" && ART.star && ART.star.complete){
-      var starSz = Math.max(88, Math.min(124, W * 0.105));
+      var starSz = isPortrait() ? Math.max(66, Math.min(82, W * 0.19)) : Math.max(88, Math.min(120, W * 0.102));
       stars.forEach(function(st){
         if(st.collected) return;
         st.popIn = Math.min(1, st.popIn + dt * 3.8);
@@ -1835,11 +1921,11 @@
 
     /* Landed Planet Playground: Dancing Pixar Space Friends + 3-Tap Cosmic Treasure Chest */
     if(phase === "landed"){
-      var bh = Math.min(H * 0.27, W * 0.22, 205);
+      var bh = getBuddyHeight();
       buddies.forEach(function(b){
         var img = ART[b.key]; if(!img || !img.complete || !img.naturalWidth) return;
         var bw = bh * (img.naturalWidth / img.naturalHeight);
-        var bx = b.xPct * W, baseY = b.yPct * H;
+        var bp = getBuddyPos(b), bx = bp.x, baseY = bp.y;
         var hop = Math.abs(Math.sin(tAcc * 5.2 + b.phase)) * b.hopAmp;
         var flipLift = b.flipT > 0 ? Math.sin(b.flipT * Math.PI) * 95 : 0;
         var by = baseY - hop - flipLift;
@@ -1890,6 +1976,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e106"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e107"></script>
 </body>
 </html>
