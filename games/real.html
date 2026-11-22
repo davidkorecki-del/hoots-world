@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="real";</script>
-<script src="js/hoot-game-head.js?v=llprev3e98"></script>
+<script src="js/hoot-game-head.js?v=llprev3e99"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Town Rescue Patrol</title>
@@ -30,10 +30,10 @@
   /* 60fps Interactive Physics Canvas (Firefighter Water Hose & Roaring Flames + Celebration Confetti) */
   #fxCanvas{
     position:absolute; inset:0; width:100%; height:100%;
-    z-index:8; touch-action:none;
+    z-index:5; touch-action:none;
   }
 
-  /* Interactive Mission Layer */
+  /* Interactive Mission Layer (Always above fxCanvas so Ladder, Fire Zones, Doctor Tools, Police & Bus are never blocked!) */
   #rescueLayer{
     position:absolute; inset:0; z-index:7; pointer-events:none;
   }
@@ -401,7 +401,7 @@
   .tank-ic{ font-size:22px; }
   #tankBar{ width:clamp(70px, 14vw, 130px); height:18px; border-radius:99px; background:#141e30; border:3px solid #fff; overflow:hidden; }
   #tankFill{ display:block; height:100%; width:100%; background:linear-gradient(90deg, #0284c7, #38bdf8); transition:width .08s linear; }
-  #hydrantBtn{ position:absolute; left:33%; bottom:35%; z-index:5; width:108px; border:none; background:transparent; cursor:pointer; display:flex; flex-direction:column; align-items:center; padding:0; filter:drop-shadow(0 8px 0 rgba(20,30,48,.3)); touch-action:none; animation:truckIdle .8s ease-in-out infinite alternate; }
+  #hydrantBtn{ position:absolute; left:33%; bottom:35%; z-index:8; width:108px; border:none; background:transparent; cursor:pointer; display:flex; flex-direction:column; align-items:center; padding:0; filter:drop-shadow(0 8px 0 rgba(20,30,48,.3)); touch-action:none; animation:truckIdle .8s ease-in-out infinite alternate; }
   #hydrantBtn svg{ width:78px; height:94px; display:block; }
   #hydrantBtn span{ background:#fff; border:3px solid #141e30; border-radius:99px; padding:1px 8px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:11.5px; color:#141e30; margin-top:-4px; white-space:nowrap; }
   #ladderBtn{ position:absolute; left:6%; top:44%; width:150px; min-height:116px; border-radius:26px; border:5px solid #141e30; background:linear-gradient(180deg, #fde68a, #f59e0b); box-shadow:0 8px 0 #141e30, 0 0 26px rgba(253,224,71,.9); cursor:pointer; pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:"Fredoka",sans-serif; font-weight:800; font-size:15px; color:#141e30; padding:8px; animation:zonePulse .8s ease-in-out infinite alternate; touch-action:none; }
@@ -982,21 +982,35 @@
     if(ladderPhase) return;
     ladderPhase = true;
     spraying = false;
+    if(autoSprayTimer){ clearTimeout(autoSprayTimer); autoSprayTimer = null; }
+    canvas.style.pointerEvents = "none";
+    hoseDrops = [];
     sfxSiren();
-    bubble.innerHTML = "🪜 <b>ALL FIRES OUT!</b> But Kitten is stuck on the roof! <b>Drag the Ladder</b> up to Kitten!";
+    hoseBtn.textContent = "🪜 Rescue Kitten!";
+    bubble.innerHTML = "🪜 <b>ALL FIRES OUT!</b> Kitten is stuck on the roof! <b>Drag the Ladder</b> up to Kitten!";
     friendBadge.textContent = "Help!";
     var lb = document.createElement("button");
     lb.type = "button"; lb.id = "ladderBtn"; lb.className = "choice-btn";
     lb.innerHTML = '<span class="d-ic">🪜</span><span>Drag me to Kitten!</span>';
+    function rescueKitten(x, y){
+      if(waveDone) return;
+      lb.remove();
+      friendStage.classList.remove("on-roof");
+      friendBadge.textContent = "Kitten!";
+      spawnCelebration(x, y);
+      finishMissionWave("🚒 <b>KITTEN IS SAFE!</b> You put out every fire and rescued Kitten with the ladder!", "word-kitten");
+    }
     lb.addEventListener("pointerdown", function(e){
       startToolDrag(e, "🪜", {
+        move: function(x, y){
+          if(hitEl(friendStage, x, y, 70)){
+            endDrag();
+            rescueKitten(x, y);
+          }
+        },
         drop: function(x, y){
-          if(hitEl(friendStage, x, y, 130)){
-            lb.remove();
-            friendStage.classList.remove("on-roof");
-            friendBadge.textContent = "Kitten!";
-            spawnCelebration(x, y);
-            finishMissionWave("🚒 <b>KITTEN IS SAFE!</b> You put out every fire and rescued Kitten with the ladder!", "word-kitten");
+          if(hitEl(friendStage, x, y, 140)){
+            rescueKitten(x, y);
           } else {
             bubble.innerHTML = "🪜 Drag the ladder right up to <b>Kitten on the roof</b>!";
           }
@@ -1004,7 +1018,10 @@
       });
     });
     rescueLayer.appendChild(lb);
-    missionAction = function(){ bubble.innerHTML = "🪜 Drag the ladder up to <b>Kitten</b>!"; };
+    missionAction = function(){
+      var fr = friendStage.getBoundingClientRect();
+      rescueKitten(fr.left + fr.width / 2, fr.top + fr.height / 2);
+    };
   }
 
   /* =========================================================================
@@ -1787,13 +1804,13 @@
   }
 
   canvas.addEventListener("pointerdown", function(e){
-    if(currentRole !== "firefighter") return;
+    if(currentRole !== "firefighter" || ladderPhase || waveDone) return;
     e.preventDefault();
     spraying = true;
     aimX = e.clientX; aimY = e.clientY;
   });
   window.addEventListener("pointermove", function(e){
-    if(!spraying || currentRole !== "firefighter") return;
+    if(!spraying || currentRole !== "firefighter" || ladderPhase || waveDone) return;
     aimX = e.clientX; aimY = e.clientY;
   });
   window.addEventListener("pointerup", function(){
@@ -1804,7 +1821,7 @@
   hydrantBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); refilling = true; sfxWaterSpray(); });
   window.addEventListener("pointerup", function(){ refilling = false; });
   hoseBtn.addEventListener("click", function(){
-    if(currentRole !== "firefighter"){ if(missionAction) missionAction(); return; }
+    if(currentRole !== "firefighter" || ladderPhase){ if(missionAction) missionAction(); return; }
     if(currentRole === "firefighter"){
       var target = activeZones.find(function(z){ return z.hp > 0; });
       if(!target) return;
@@ -1963,7 +1980,7 @@
         }
       });
 
-      if(spraying && tank > 0){
+      if(spraying && tank > 0 && !ladderPhase && !waveDone){
         emitHoseStream(aimX, aimY);
         var orig = getNozzleOrigin();
         ctx.save();
@@ -1981,6 +1998,20 @@
         ctx.moveTo(orig.x, orig.y);
         ctx.quadraticCurveTo((orig.x + aimX) * 0.5, Math.min(orig.y, aimY) - 65, aimX, aimY);
         ctx.stroke();
+        ctx.restore();
+      }
+
+      /* Live Stretching Yellow Ladder while dragging Ladder to Kitten! */
+      if(ladderPhase && dragState && !waveDone){
+        var origD = getNozzleOrigin();
+        ctx.save();
+        ctx.strokeStyle = "#141e30";
+        ctx.lineWidth = 16;
+        ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(dragState.x, dragState.y); ctx.stroke();
+        ctx.strokeStyle = "#fde047";
+        ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.moveTo(origD.x, origD.y); ctx.lineTo(dragState.x, dragState.y); ctx.stroke();
         ctx.restore();
       }
 
@@ -2059,6 +2090,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e98"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e99"></script>
 </body>
 </html>
