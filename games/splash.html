@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e91"></script>
+<script src="js/hoot-game-head.js?v=llprev3e92"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -237,7 +237,7 @@
   @keyframes actorBob{0%,100%{transform:translate(-50%,-50%) scale(1) translateY(0)}50%{transform:translate(-50%,-50%) scale(1) translateY(-8px)}}
   @keyframes ledPulse{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e91" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e92" />
 </head>
 <body>
 <div id="stage">
@@ -471,14 +471,23 @@
     flower: '<svg viewBox="0 0 130 130"><g fill="#ff4d8d" stroke="#141e30" stroke-width="5"><circle cx="65" cy="22" r="18"/><circle cx="96" cy="34" r="18"/><circle cx="108" cy="65" r="18"/><circle cx="96" cy="96" r="18"/><circle cx="65" cy="108" r="18"/><circle cx="34" cy="96" r="18"/><circle cx="22" cy="65" r="18"/><circle cx="34" cy="34" r="18"/></g><circle cx="65" cy="65" r="28" fill="#fde047" stroke="#141e30" stroke-width="6"/><circle cx="54" cy="60" r="6" fill="#141e30"/><circle cx="76" cy="60" r="6" fill="#141e30"/><path d="M54 74 Q65 84 76 74" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>'
   };
 
-  /* ---------- Voice & Sound Engine ---------- */
+  /* ---------- Voice & Sound Engine (Strictly gated through HOOT_HAVE so only real Hoot voice clips play) ---------- */
   var voiceA = new Audio();
+  function hasClip(c){
+    try{
+      var H = window.parent && window.parent.HOOT_HAVE;
+      if(H) return !!H[c];
+    }catch(e){}
+    return c !== "word-snowman" && c !== "word-thunder" && c !== "word-snow" && c !== "word-wind" && c !== "word-sunshine";
+  }
   function playVoice(clips){
     if(!clips || !clips.length) return;
+    var valid = clips.filter(hasClip);
+    if(!valid.length) return;
     var i = 0;
     function step(){
-      if(i >= clips.length) return;
-      voiceA.src = "assets/voice/" + clips[i++] + ".mp3";
+      if(i >= valid.length) return;
+      voiceA.src = "assets/voice/" + valid[i++] + ".mp3";
       voiceA.onended = step; voiceA.onerror = step;
       var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
     }
@@ -725,10 +734,10 @@
       if(announce && Math.abs(val - startVal) >= 0.12){
         awardStar();
         if(val >= 0.25){
-          if(key === "storm") playVoice([val >= 0.55 ? "word-duck" : "word-frog"]);
-          else if(key === "snow") playVoice([val >= 0.55 ? "word-penguin" : "word-snowman"]);
-          else if(key === "wind") playVoice(["word-kite"]);
-          else playVoice([val >= 0.55 ? "word-butterfly" : "word-flower"]);
+          if(key === "storm") playVoice([hasClip("word-thunder") && val >= 0.7 ? "word-thunder" : (val >= 0.55 ? "word-duck" : "word-frog")]);
+          else if(key === "snow") playVoice([val >= 0.55 ? "word-penguin" : (hasClip("word-snowman") ? "word-snowman" : "word-snow")]);
+          else if(key === "wind") playVoice([hasClip("word-wind") && val >= 0.7 ? "word-wind" : "word-kite"]);
+          else playVoice([hasClip("word-sunshine") && val >= 0.75 ? "word-sunshine" : (val >= 0.55 ? "word-butterfly" : "word-flower")]);
         }
       }
       if(announce && key === "storm" && val >= 0.65){
@@ -917,6 +926,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e91"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e92"></script>
 </body>
 </html>
