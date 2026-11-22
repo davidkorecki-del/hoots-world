@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="twinkle";</script>
-<script src="js/hoot-game-head.js?v=llprev3e78"></script>
+<script src="js/hoot-game-head.js?v=llprev3e79"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -536,6 +536,7 @@
     scene.appendChild(el);
     var star={ el:el, color:color, letter:letter, golden:golden, isTarget:isTarget, done:false, anim:null };
     alive.push(star);
+    el.addEventListener("pointerdown",function(e){ e.preventDefault(); onStarTap(star); });
     el.addEventListener("click",function(){ onStarTap(star); });
     var sr=scene.getBoundingClientRect();
     var dx=(Math.random()*70-35), dy=sr.height*(0.24+Math.random()*0.16);
@@ -799,7 +800,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
-<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
+<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
 </body>
 </html>

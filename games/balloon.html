@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="balloon";</script>
-<script src="js/hoot-game-head.js?v=llprev3e78"></script>
+<script src="js/hoot-game-head.js?v=llprev3e79"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -81,8 +81,9 @@
   /* ---------- play area / balloons ---------- */
   #playArea{ position:relative; z-index:3; flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; padding:4px 8px; }
   #balloonRow{ position:absolute; inset:0; }
-  .balloon{ position:absolute; left:0; top:0; border:none; background:none; padding:0; cursor:pointer; width:clamp(76px,21vw,112px); aspect-ratio:0.82; transform-origin:50% 90%; font-family:"Fredoka",sans-serif; will-change:transform; touch-action:manipulation; }
-  .balloon svg{ position:absolute; inset:0; width:100%; height:100%; display:block; filter:drop-shadow(0 8px 10px rgba(23,50,79,.18)); }
+  .balloon{ position:absolute; left:0; top:0; border:none; background:none; padding:0; cursor:pointer; width:clamp(76px,21vw,112px); aspect-ratio:0.82; transform-origin:50% 90%; font-family:"Fredoka",sans-serif; will-change:transform; touch-action:manipulation; outline:none; -webkit-tap-highlight-color:transparent; }
+  .balloon:focus,.balloon:focus-visible,.balloon:active{ outline:none !important; box-shadow:none !important; }
+  .balloon svg{ position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; filter:drop-shadow(0 8px 10px rgba(23,50,79,.18)); }
   .balloon .b-letter{ position:absolute; left:0; right:0; top:16%; font-weight:700; font-size:clamp(30px,8.5vw,44px); color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.18); pointer-events:none; }
   .balloon:active{ filter:brightness(1.1); }
   .balloon.popped{ animation:popBurst .28s ease-in forwards; pointer-events:none; }
@@ -480,7 +481,10 @@
     b.setAttribute("aria-label","Balloon letter "+L);
     var col=BCOLORS[Math.floor(Math.random()*BCOLORS.length)];
     b.innerHTML=balloonSVG(col)+"<span class='b-letter'>"+L+"</span>";
-    if(!deco) b.addEventListener("click",function(){ onBalloonTap(b); });
+    if(!deco){
+      b.addEventListener("pointerdown",function(e){ e.preventDefault(); onBalloonTap(b); });
+      b.addEventListener("click",function(){ onBalloonTap(b); });
+    }
     return b;
   }
   /* ================= BALLOON FLIGHT =================
@@ -878,7 +882,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e70">
-<script src="js/hoot-game-tail.js?v=llprev3e66"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
+<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
 </body>
 </html>

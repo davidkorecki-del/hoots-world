@@ -8,10 +8,11 @@
 .cat-btn,.tab-btn,.inst-chip{font-size:15px!important}
 .k-note{font-size:14px!important}
 
-/* Universal instant tactile press + zero double-tap zoom across all 20 games */
+/* Universal instant touch response + zero double-tap zoom + zero square press/focus artifacts (Device Report #8) */
 button,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-button:not(:disabled):not(.decor):not(.hoot-belly-hit):active{transform:scale(.93)!important;transition:transform .08s ease!important}
-.hw-tap-pop{outline:4px solid rgba(255,217,59,.9)!important;outline-offset:2px!important}
+button:focus:not(:focus-visible),[role=button]:focus:not(:focus-visible){outline:none}
+.balloon,.bub,.fall-star,.fishwrap,.food,.animal-choice,.find-friend,#hootFig,#basketBtn{outline:none!important}
+.balloon:active,.balloon:focus,.balloon:focus-visible,.fall-star:active,.fall-star:focus,.fall-star:focus-visible,.fishwrap:active,.fishwrap:focus,.fishwrap:focus-visible{outline:none!important;box-shadow:none!important}
 
 /* Primary CTAs & Win-screen hierarchy: #againBtn is the ONE obvious glowing replay tap; #winHomeBtn is secondary */
 html:not(.hw-paint-v2) #playBtn,html:not(.hw-paint-v2) .big-play,html:not(.hw-paint-v2) .play-btn,html:not(.hw-paint-v2) #againBtn,html:not(.hw-paint-v2) #playTuneBtn,html:not(.hw-paint-v2) #reelInBtn,html:not(.hw-paint-v2) #celebrateBtn,html:not(.hw-paint-v2) #makeStory,html:not(.hw-paint-v2) #toyDone{min-height:68px!important;min-width:160px!important;font-size:max(1.15em,20px)!important}

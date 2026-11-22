@@ -352,6 +352,7 @@
       root.querySelector(".pg-sticker").textContent = st;
       try { document.dispatchEvent(new CustomEvent("hoot-party-done", { detail: { key: key, title: G.title, wrong: S.wrong, ms: Date.now() - S.t0 } })); } catch (e) {}
       var fromToday = !!window.__hwFromTodayPath && typeof window.__llAdvanceTodayPath === "function";
+      var isLittle = typeof window.__llIsLittleKid === "function" && window.__llIsLittleKid();
       var nextBtn = root.querySelector(".pg-next");
       var doneBtn = root.querySelector(".pg-done");
       var noteEl = root.querySelector(".pg-autonote");
@@ -359,11 +360,25 @@
       if (fromToday) {
         if (nextBtn) nextBtn.hidden = false;
         if (doneBtn) doneBtn.textContent = "🏠 Home";
-        if (noteEl) { noteEl.hidden = false; noteEl.textContent = "✨ Tap Next up anytime!"; }
+        if (noteEl) { noteEl.hidden = false; noteEl.textContent = "✨ Moving to Next up — or tap Play again!"; }
         S.autoT = setTimeout(function () {
           if (!alive()) return;
           stop();
           if (typeof window.__llAdvanceTodayPath === "function") window.__llAdvanceTodayPath();
+        }, 3000);
+      } else if (isLittle) {
+        /* Device Report #9 (Dawid ruling): for little kids (Zane/Riley), end state is a brief
+           celebration doorway, not a decision trap — auto-return to the games chooser after ~3.2s
+           unless they tap Play again or a song. */
+        if (nextBtn) nextBtn.hidden = true;
+        if (doneBtn) doneBtn.textContent = "✓ Done";
+        if (noteEl) { noteEl.hidden = false; noteEl.textContent = "✨ Back to games in a moment — or tap Play again!"; }
+        S.autoT = setTimeout(function () {
+          if (!alive()) return;
+          stop();
+          if (typeof window.__llGoBack === "function") window.__llGoBack();
+          else if (typeof window.__llCloseOverlay === "function") window.__llCloseOverlay();
+          else { var cl = document.getElementById("ll-oclose"); if (cl) cl.click(); }
         }, 3200);
       } else {
         if (nextBtn) nextBtn.hidden = true;
@@ -409,7 +424,7 @@
       say(askBub, function () { armIdle(askBub, ".pg-bub", hintBub); }, true);
       stage.querySelectorAll(".pg-bub").forEach(function (b) {
         b.addEventListener("animationiteration", function () { /* floated off the top: comes back, never lost */ });
-        b.addEventListener("click", function () {
+        var popBub = function () {
           if (b.disabled || !alive()) return;
           clearIdle();
           if (b.getAttribute("data-l") === target) {
@@ -417,7 +432,9 @@
             if (left === 0) { stage.querySelectorAll(".pg-bub").forEach(function (x) { x.disabled = true; }); setB("⭐ POP! Those say “" + target.toUpperCase() + "”!"); var lName = (window.__hootNameClip && window.__hootNameClip("letter", target)) || ("name-letter-" + target); say([lName, fresh(PRAISE)], wonRound()); }
             else { setB("POP! One more " + target.toUpperCase() + "!"); armIdle(askBub, ".pg-bub", hintBub); }
           } else { wrongTap(b, "That bubble is " + b.getAttribute("data-l").toUpperCase() + ". Listen again for the sound!", ["coach/phonics-" + target]); armIdle(askBub, ".pg-bub", hintBub); }
-        });
+        };
+        b.addEventListener("pointerdown", function (e) { e.preventDefault(); popBub(); });
+        b.addEventListener("click", popBub);
       });
     }
     /* ----- 2. Counting Garden (Wave 3 physical soil mounds + SVG blooming flowers) ----- */

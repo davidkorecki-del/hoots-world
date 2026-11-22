@@ -186,7 +186,53 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
     if(best) best.classList.add("hoot-go");
   }
   var st=document.createElement("style");
-  st.textContent=".hoot-go{animation:hootGo 1.35s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 6px #ffd93b,0 0 22px rgba(255,217,59,.75)!important}@keyframes hootGo{50%{transform:scale(1.06)}}.hoot-nudge{animation:hootNudge 1.1s ease-in-out 3!important;box-shadow:0 0 0 5px #ffd93b!important}@keyframes hootNudge{50%{transform:scale(1.08)}}#hwWinExitBtn{background:#1c7ed6!important;color:#fff!important;border:3px solid #fff!important;box-shadow:0 5px 0 #145ea0,0 10px 20px rgba(28,126,214,.3)!important}#hwWinExitBtn.hw-next{background:#40c057!important;box-shadow:0 5px 0 #2b8a3e,0 10px 20px rgba(64,192,87,.35)!important}";
+  st.textContent=".hoot-go{animation:hootGo 1.35s ease-in-out infinite!important;min-height:64px!important;font-size:max(1.15em,20px)!important;box-shadow:0 0 0 6px #ffd93b,0 0 22px rgba(255,217,59,.75)!important}@keyframes hootGo{50%{transform:scale(1.06)}}.hoot-nudge{animation:hootNudge 1.1s ease-in-out 3!important;box-shadow:0 0 0 5px #ffd93b!important}.balloon.hoot-nudge,.fall-star.hoot-nudge,.fishwrap.hoot-nudge,.food.hoot-nudge,.animal-choice.hoot-nudge,.find-friend.hoot-nudge{box-shadow:none!important;filter:drop-shadow(0 0 12px #ffd93b) drop-shadow(0 0 6px #ffd93b)!important}@keyframes hootNudge{50%{transform:scale(1.08)}}#hwWinExitBtn{background:#1c7ed6!important;color:#fff!important;border:3px solid #fff!important;box-shadow:0 5px 0 #145ea0,0 10px 20px rgba(28,126,214,.3)!important}#hwWinExitBtn.hw-next{background:#40c057!important;box-shadow:0 5px 0 #2b8a3e,0 10px 20px rgba(64,192,87,.35)!important}#hwAutoExitNote{margin:10px 0 0;font-weight:800;font-size:14.5px;color:#3d5a78}";
+  function cancelAutoExit(){
+    if(window.__hwAutoExitT){ clearTimeout(window.__hwAutoExitT); window.__hwAutoExitT=null; }
+    var note=document.getElementById("hwAutoExitNote");
+    if(note) note.hidden=true;
+  }
+  function exitGameToShell(){
+    cancelAutoExit();
+    winCheerAt=0;
+    try{ if(window.__govStopAll) window.__govStopAll(); }catch(e){}
+    try{ if(window.__hootStopCoach) window.__hootStopCoach(); }catch(e){}
+    try{
+      if(window.parent && window.parent.__hwFromTodayPath && typeof window.parent.__llAdvanceTodayPath==="function"){
+        window.parent.__llAdvanceTodayPath();
+        return;
+      }
+    }catch(e){}
+    try{ if(window.parent && window.parent!==window) window.parent.postMessage({hootGameNav:"homeschooling-app-mockup"},"*"); }catch(e){}
+  }
+  /* Device Report #9 (Dawid ruling): for little-kid profiles (Zane/Riley), after a brief celebration
+     the game returns on its own to the games chooser (or Today's Path next stop) instead of parking
+     on a decision screen. Tapping Play Again / Start Screen cancels auto-exit immediately.
+     Kaitlyn (older/teen band) keeps her normal end screens with zero auto-exit. */
+  function armLittleAutoExit(win){
+    cancelAutoExit();
+    try{
+      if(!window.parent || window.parent===window) return;
+      var isLittle=!!(window.parent.__llIsLittleKid && window.parent.__llIsLittleKid());
+      if(!isLittle) return;
+      var fromToday=!!(window.parent.__hwFromTodayPath && typeof window.parent.__llAdvanceTodayPath==="function");
+      var card=win.querySelector("#winCard") || win.firstElementChild;
+      if(card){
+        var note=document.getElementById("hwAutoExitNote");
+        if(!note){
+          note=document.createElement("p");
+          note.id="hwAutoExitNote";
+          card.appendChild(note);
+        }
+        note.hidden=false;
+        note.textContent=fromToday ? "✨ Moving to Next up — or tap Play Again!" : "✨ Back to games in a moment — or tap Play Again!";
+      }
+      window.__hwAutoExitT=setTimeout(function(){
+        window.__hwAutoExitT=null;
+        if(win && winVisible(win)) exitGameToShell();
+      }, 3200);
+    }catch(e){}
+  }
   /* Device Report #7: ensure every iframe game win screen also has a clear one-tap Exit / Next Up
      button right beside Play Again (so children & parents never feel trapped on a win overlay). */
   function ensureWinExit(){
@@ -200,18 +246,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       if(!btn){
         btn=document.createElement("button");
         btn.id="hwWinExitBtn"; btn.type="button"; btn.className="win-btn";
-        btn.addEventListener("click", function(){
-          winCheerAt=0;
-          try{ if(window.__govStopAll) window.__govStopAll(); }catch(e){}
-          try{ if(window.__hootStopCoach) window.__hootStopCoach(); }catch(e){}
-          try{
-            if(window.parent.__hwFromTodayPath && typeof window.parent.__llAdvanceTodayPath==="function"){
-              window.parent.__llAdvanceTodayPath();
-              return;
-            }
-          }catch(e){}
-          try{ window.parent.postMessage({hootGameNav:"homeschooling-app-mockup"},"*"); }catch(e){}
-        });
+        btn.addEventListener("click", exitGameToShell);
         row.appendChild(btn);
       }
       btn.textContent=fromToday ? "Next up ▶" : "✓ Done";
@@ -223,7 +258,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
      instantly when the child taps Play Again / Home. Also support tap-to-skip celebration. */
   function winVisible(el){ return !el.hidden && getComputedStyle(el).display!=='none' && getComputedStyle(el).visibility!=='hidden'; }
   function watchWins(){ if(!window.MutationObserver||!document.body||window.__hfWinObs) return; window.__hfWinObs=1;
-    new MutationObserver(function(list){ list.forEach(function(m){ var el=m.target; if(el.nodeType===1&&/^win/i.test(el.id||'')){ var v=winVisible(el); if(v&&!el.__hfVis){ el.__hfShown=Date.now(); window.__hwWinSkipFn=null; } el.__hfVis=v; } }); })
+    new MutationObserver(function(list){ list.forEach(function(m){ var el=m.target; if(el.nodeType===1&&/^win/i.test(el.id||'')){ var v=winVisible(el); if(v&&!el.__hfVis){ el.__hfShown=Date.now(); window.__hwWinSkipFn=null; ensureWinExit(); armLittleAutoExit(el); } else if(!v&&el.__hfVis){ cancelAutoExit(); } el.__hfVis=v; } }); })
       .observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','class','style']}); }
   function guardWin(e){ var w=e.target, hit=false; while(w&&w.nodeType===1){ if(w.__hfShown&&Date.now()-w.__hfShown<220){ hit=true; break; } w=w.parentElement; } if(hit){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); } }
   ['pointerdown','pointerup','mousedown','mouseup','touchstart','touchend','click'].forEach(function(ev){ window.addEventListener(ev,guardWin,true); });
@@ -233,8 +268,9 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
       try{ fn(); }catch(err){}
       return;
     }
-    var b=e.target&&e.target.closest?e.target.closest('#againBtn,#winHomeBtn'):null;
+    var b=e.target&&e.target.closest?e.target.closest('#againBtn,#winHomeBtn,#hwWinExitBtn'):null;
     if(b){
+      cancelAutoExit();
       winCheerAt=0;
       try{ if(window.__govStopAll) window.__govStopAll(); }catch(err){}
       if(b.id==='againBtn' && hasVoice('hoot-ready-go')){

@@ -3080,6 +3080,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   }
   window.__llCloseOverlay = closeOverlay;
   window.__llGoBack = goBack;
+  window.__llIsLittleKid = function () { return isLittleBand(); };
   function goHome() {
     window.__hwFromTodayPath = false;
     viewStack.length = 0; curView = null; nextView = null;
