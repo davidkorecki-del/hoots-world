@@ -13528,8 +13528,96 @@
   <script src="js/hoot-ss7.js?v=llprev3e66"></script>
   <script src="js/hoot-games.js?v=llprev3e72"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e71"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e77"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
-  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js?v=llprev3e66');}</script>
+  <script>
+  /* Device Report #5 (PWA Freshness & Nightly Bedtime Book Auto-Update):
+     Installed iPad PWAs keep index.html & js/hw-ll-shell.js alive across background resumes
+     and HTTP-cached across nightly deploys that only patch js/hw-ll-shell.js.
+     On boot and resume, check HEAD headers (ETag/Last-Modified/Content-Length) with cache:no-store
+     for both index.html and js/hw-ll-shell.js; if either changed, prime fresh HTTP cache and
+     reload safely at the next idle moment (never mid-game, mid-book, or mid-lesson). */
+  (function pwaFreshness(){
+    var swReg = null;
+    if('serviceWorker' in navigator){
+      try{
+        navigator.serviceWorker.register('sw.js?v=llprev3e77', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+      }catch(e){}
+    }
+    if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
+    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e77';
+    var SIG_KEY = 'hw.pwa.sig.v1', RELOAD_KEY = 'hw.pwa.reloadAt.v1';
+    var baseSig = null, lastChk = 0, pendingReload = false;
+    function safeToReload(){
+      try{
+        var c = document.body && document.body.classList;
+        if(!c) return false;
+        return !(c.contains('game-open') || c.contains('ll-overlay-open') || c.contains('lib-book-open') || c.contains('ll-tutor-open'));
+      }catch(e){ return false; }
+    }
+    function canReloadNow(){
+      try{
+        var last = parseInt(sessionStorage.getItem(RELOAD_KEY) || '0', 10) || 0;
+        if(Date.now() - last < 60000) return false;
+      }catch(e){}
+      return safeToReload();
+    }
+    function doFreshReload(){
+      if(!canReloadNow()){ pendingReload = true; return; }
+      pendingReload = false;
+      try{ sessionStorage.setItem(RELOAD_KEY, String(Date.now())); }catch(e){}
+      Promise.all([
+        fetch('index.html', { cache: 'reload' }).catch(function(){}),
+        fetch(SHELL_URL, { cache: 'reload' }).catch(function(){})
+      ]).then(function(){ location.reload(); }, function(){ location.reload(); });
+    }
+    function headSig(url){
+      return fetch(url + (url.indexOf('?') > -1 ? '&' : '?') + '_hwchk=' + Date.now(), { method: 'HEAD', cache: 'no-store' })
+        .then(function(r){
+          if(!r || !r.ok) return '';
+          return [r.headers.get('etag') || '', r.headers.get('last-modified') || '', r.headers.get('content-length') || ''].join('|');
+        }).catch(function(){ return ''; });
+    }
+    function checkUpdate(force){
+      if(!navigator.onLine) return;
+      var now = Date.now();
+      if(!force && now - lastChk < 90000) return;
+      lastChk = now;
+      if(swReg && swReg.update) try{ swReg.update().catch(function(){}); }catch(e){}
+      Promise.all([headSig('index.html'), headSig('js/hw-ll-shell.js')]).then(function(pair){
+        var sig = pair[0] + '##' + pair[1];
+        if(!pair[0] && !pair[1]) return;
+        if(!baseSig){
+          var prev = '';
+          try{ prev = localStorage.getItem(SIG_KEY) || ''; }catch(e){}
+          baseSig = sig;
+          try{ localStorage.setItem(SIG_KEY, sig); }catch(e){}
+          /* If the server already moved ahead of the last saved signature when this PWA opened
+             from iOS cache, refresh cleanly right away (max once per 60s). */
+          if(prev && prev !== sig && canReloadNow()){
+            doFreshReload();
+          }
+          return;
+        }
+        if(sig !== baseSig){
+          baseSig = sig;
+          try{ localStorage.setItem(SIG_KEY, sig); }catch(e){}
+          doFreshReload();
+        }
+      }).catch(function(){});
+    }
+    setTimeout(function(){ checkUpdate(true); }, 2200);
+    document.addEventListener('visibilitychange', function(){
+      if(!document.hidden){
+        if(pendingReload && canReloadNow()){ doFreshReload(); return; }
+        checkUpdate(false);
+      }
+    });
+    window.addEventListener('pageshow', function(e){ if(e && e.persisted) checkUpdate(true); });
+    document.addEventListener('click', function(){
+      if(pendingReload) setTimeout(function(){ if(pendingReload && canReloadNow()) doFreshReload(); }, 300);
+    }, true);
+  })();
+  </script>
 </body>
 </html>

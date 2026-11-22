@@ -1,4 +1,4 @@
-const C='hw-hootv2-wave3-media';
+const C='hw-hootv2-wave5-media';
 const PRECACHE=[
   'assets/lesson-art/creator-budget-the-project.svg',
   'assets/lesson-art/creator-debug-change-one-thing.svg',
