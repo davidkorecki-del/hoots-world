@@ -2,805 +2,1443 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="twinkle";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
-
+<script>window.__HOOT_GAME_KEY__="twinkle";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e116"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="color-scheme" content="light" />
-
-<title>Catch the Twinkle Stars</title>
+<title>3D Twinkle Stars</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
-    --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#d84a3d; --teal:#17bebb; --leaf:#57cc62; --leaf-dark:#3da147;
-    --night-1:#0a1430; --night-2:#14244d; --night-3:#27407a;
-  }
-  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root{ --ink:#121b38; --gold:#fde047; --outline:#121b38; --warm:#fffdf7; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
   [hidden]{ display:none !important; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:var(--night-1); touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
-    background:linear-gradient(180deg,var(--night-1) 0%,var(--night-2) 48%,var(--night-3) 82%,#33579e 100%); }
+  html,body{ margin:0; width:100%; height:100%; overflow:hidden; font-family:"Nunito",system-ui,sans-serif; background:#090d24; touch-action:none; }
 
-  /* ---------- night decor ---------- */
-  .bg-star{ position:absolute; color:#ffe98a; line-height:1; pointer-events:none; animation:twinkleStar 2.8s ease-in-out infinite; text-shadow:0 0 8px rgba(255,233,138,.8); }
-  @keyframes twinkleStar{ 0%,100%{ opacity:.3; transform:scale(.8) rotate(0deg);} 50%{ opacity:1; transform:scale(1.15) rotate(20deg);} }
-  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
-  #moon{ top:60px; right:5%; width:clamp(56px,15vw,84px); z-index:1; filter:drop-shadow(0 0 18px rgba(255,240,180,.45)); }
-  #moon svg{ width:100%; display:block; }
-  #moon:active{ transform:scale(.92); }
-  #moon.glow{ animation:moonGlow .7s ease-in-out 2 alternate; }
-  @keyframes moonGlow{ from{ filter:drop-shadow(0 0 10px rgba(255,240,180,.4));} to{ filter:drop-shadow(0 0 32px rgba(255,240,180,.95));} }
-  .cloud{ position:absolute; z-index:1; pointer-events:auto; opacity:.5; animation:cloudDrift 26s ease-in-out infinite alternate; }
-  .cloud svg{ width:100%; display:block; transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
-  .cloud.puff svg{ transform:scale(1.3,1.45); opacity:.2; }
-  @keyframes cloudDrift{ from{ transform:translateX(0);} to{ transform:translateX(30px);} }
-  .shooting{ position:absolute; width:110px; height:3px; border-radius:99px; background:linear-gradient(90deg,rgba(255,255,255,0),#fff); top:12%; left:108%; transform:rotate(22deg); opacity:0; animation:shoot 11s linear infinite; animation-delay:3.5s; pointer-events:none; z-index:1; }
-  @keyframes shoot{ 0%,84%{ left:108%; opacity:0;} 88%{ opacity:1;} 97%,100%{ left:-16%; opacity:0;} }
-  .firefly{ z-index:2; width:30px; height:30px; display:grid; place-items:center; animation:flyWander 9s ease-in-out infinite alternate; }
-  .firefly i{ width:8px; height:8px; border-radius:50%; background:#ffe98a; box-shadow:0 0 11px 4px rgba(255,233,138,.7); display:block; animation:flyBlink 2.6s ease-in-out infinite; }
-  @keyframes flyBlink{ 0%,100%{ opacity:.2;} 50%{ opacity:1;} }
-  @keyframes flyWander{ 0%{ transform:translate(0,0);} 50%{ transform:translate(24px,-20px);} 100%{ transform:translate(-14px,-6px);} }
-  .firefly.gone{ opacity:0; transition:opacity .3s; }
+  #stage{ position:fixed; inset:0; width:100%; height:100dvh; overflow:hidden; background:#090d24; }
+  #cv{ position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1; touch-action:none; }
 
-  /* ---------- HUD ---------- */
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(6,12,34,.35),0 8px 16px rgba(6,12,34,.3); cursor:pointer; transition:transform .12s ease; }
-  .round-btn:active{ transform:scale(.9); }
-  .round-btn svg{ width:25px; height:25px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(6,12,34,.3); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
-  #starBank .star-ic{ width:25px; height:25px; }
-  #starBank.bump{ animation:bankBump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bankBump{ 0%{ transform:scale(1);} 40%{ transform:scale(1.16) rotate(-3deg);} 100%{ transform:scale(1);} }
-
-  /* ---------- target card ---------- */
-  #targetCard{ position:relative; z-index:6; margin:8px auto 0; display:flex; align-items:center; gap:12px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(6,12,34,.3),0 12px 22px rgba(6,12,34,.3); padding:7px 10px 7px 16px; max-width:min(94vw,480px); }
-  #targetCard.new-target{ animation:tcIn .45s cubic-bezier(.34,1.7,.5,1); }
-  @keyframes tcIn{ 0%{ transform:scale(.8); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
-  #targetMain{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(21px,5.8vw,29px); line-height:1.05; color:#27407a; white-space:nowrap; }
-  .tc-label{ font-weight:900; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
-  #progressDots{ display:flex; gap:5px; margin-top:4px; }
-  #progressDots i{ width:11px; height:11px; border-radius:50%; background:#dcebf5; border:2px solid #bcd6ea; display:block; }
-  #progressDots i.on{ background:var(--sun); border-color:#e8a90c; }
-  #hearBtn{ width:44px; height:44px; flex:0 0 auto; border-radius:50%; border:3px solid #ffe1a8; background:#fff6dd; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(232,169,12,.35); }
-  #hearBtn:active{ transform:scale(.9); }
-  #hearBtn svg{ width:23px; height:23px; }
-
-  /* ---------- scene ---------- */
-  #scene{ position:relative; flex:1 1 auto; min-height:0; z-index:1; }
-  #hill{ position:absolute; left:0; right:0; bottom:0; height:30%; min-height:120px; z-index:1; pointer-events:none; }
-  /* drifting catchable stars */
-  .fall-star{ position:absolute; z-index:5; width:58px; height:58px; margin-left:-29px; margin-top:-29px; border:none; background:none; padding:0; cursor:pointer; will-change:transform; filter:drop-shadow(0 0 10px rgba(255,217,59,.55)); }
-  .fall-star svg{ width:100%; height:100%; display:block; animation:starSway 2.6s ease-in-out infinite alternate; }
-  @keyframes starSway{ from{ transform:rotate(-9deg) scale(1);} to{ transform:rotate(9deg) scale(1.07);} }
-  .fall-star .star-letter{ position:absolute; inset:0; display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:700; font-size:23px; color:#17324f; padding-top:4px; text-shadow:0 1px 0 rgba(255,255,255,.6); }
-  .fall-star.golden{ width:68px; height:68px; margin-left:-34px; margin-top:-34px; filter:drop-shadow(0 0 18px rgba(255,190,30,.95)); }
-  .fall-star.caught{ animation:starCaught .35s ease-out forwards; }
-  @keyframes starCaught{ to{ transform:scale(1.7) rotate(30deg); opacity:0;} }
-  .fall-star.poof{ animation:starPoof .35s ease-out forwards; }
-  @keyframes starPoof{ to{ transform:scale(.35); opacity:0;} }
-  .sparkle{ position:absolute; z-index:9; pointer-events:none; font-size:18px; line-height:1; animation:sparkleFly .65s ease-out forwards; }
-  @keyframes sparkleFly{ 0%{ transform:translate(0,0) scale(.5); opacity:1;} 100%{ transform:translate(var(--dx,0),var(--dy,-40px)) scale(1.3); opacity:0;} }
-  /* Hoot on the hill + star jar */
-  #hootHill{ position:absolute; z-index:4; left:2%; bottom:5%; width:clamp(118px,32vw,172px); transform:rotate(-9deg); transform-origin:50% 90%; }
-  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:100%; filter:drop-shadow(0 8px 10px rgba(0,0,0,.4)); animation:hootBob 3.4s ease-in-out infinite; transform-origin:50% 92%; }
-  #hootFig svg{ width:100%; display:block; overflow:visible; }
-  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-3px) rotate(-1deg);} }
-  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
-  @keyframes hootJump{ 0%{ transform:translateY(0);} 35%{ transform:translateY(-22px) rotate(-3deg);} 70%{ transform:translateY(2px);} 100%{ transform:translateY(0);} }
-  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
-  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
-  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
-  @keyframes hootTalk{ from{ transform:translateY(0) scale(1);} to{ transform:translateY(-2px) scale(1.018);} }
-  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
-  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
-  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
-  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
-  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
-  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
-  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
-  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
-  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
-  @keyframes blink{ 0%,92%,100%{ transform:scaleY(1);} 95%{ transform:scaleY(.08);} }
-  #jarZone{ position:absolute; z-index:4; right:3%; bottom:4%; width:clamp(128px,34vw,178px); text-align:center; }
-  #jar{ position:relative; width:100%; aspect-ratio:0.92; }
-  #jarGlass{ position:absolute; inset:0; width:100%; height:100%; }
-  #jarStars{ position:absolute; inset:9% 8% 6%; }
-  .jar-slot{ position:absolute; width:21%; aspect-ratio:1; margin-left:-10.5%; margin-top:-10.5%; opacity:.28; }
-  .jar-slot svg{ width:100%; height:100%; display:block; }
-  .jar-star{ position:absolute; width:23%; aspect-ratio:1; margin-left:-11.5%; margin-top:-11.5%; animation:slotPop .45s cubic-bezier(.34,1.8,.5,1); filter:drop-shadow(0 0 7px rgba(255,217,59,.85)); }
-  .jar-star svg{ width:100%; height:100%; display:block; }
-  @keyframes slotPop{ 0%{ transform:scale(.3) rotate(-40deg);} 100%{ transform:scale(1) rotate(0);} }
-  #jarLines{ position:absolute; inset:9% 8% 6%; width:84%; height:85%; opacity:0; transition:opacity 1s ease; pointer-events:none; }
-  #jarZone.reveal #jarLines{ opacity:1; }
-  #jarZone.reveal .jar-star{ filter:drop-shadow(0 0 13px rgba(255,220,90,1)); }
-  #jarLabel{ display:inline-block; margin-top:2px; background:rgba(255,253,246,.94); border:2px solid #fff; color:#27407a; font-family:"Fredoka",sans-serif; font-weight:600; font-size:13.5px; padding:2px 12px; border-radius:999px; box-shadow:0 3px 0 rgba(6,12,34,.3); }
-
-  /* bubble row */
-  #bubbleRow{ position:relative; z-index:6; padding:0 10px max(8px,env(safe-area-inset-bottom)); }
-  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(6,12,34,.3),0 12px 24px rgba(6,12,34,.3); padding:10px 14px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(15px,4.1vw,19px); line-height:1.3; color:var(--ink); max-width:640px; margin:0 auto; }
-  #bubble .b-big{ color:#b97e06; font-size:1.22em; font-weight:700; }
-  #hootName{ display:inline-block; margin-top:5px; margin-left:8px; background:#ffe9a8; color:#27407a; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.22em; padding:2px 10px 2px 12px; border-radius:99px; }
-
-  .fly-clone{ position:absolute; z-index:9; pointer-events:none; }
-  .fly-clone svg{ width:100%; display:block; }
-  .confetti{ position:absolute; z-index:9; width:11px; height:11px; border-radius:3px; pointer-events:none; }
-
-  /* ---------- start panel / win ---------- */
-  #startPanel{ position:absolute; z-index:8; left:50%; top:45%; transform:translate(-50%,-50%); width:min(94vw,452px); background:rgba(255,253,246,.98); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(6,12,34,.3),0 24px 48px rgba(6,12,34,.45); padding:16px 18px 14px; text-align:center; max-height:92dvh; overflow:auto; }
-  #startPanel[hidden]{ display:none; }
-  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.8vw,35px); margin:0; color:var(--ink); }
-  #startPanel h1 .t-a{ color:#b97e06; } #startPanel h1 .t-b{ color:#27407a; }
-  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15px; line-height:1.4; margin:7px 0 0; }
-  .mode-row{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin:13px 0 4px; }
-  .mode-chip{ flex:1 1 46%; border:3px solid #dcebf5; background:#f2f9ff; border-radius:16px; padding:8px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15.5px; color:var(--ink); cursor:pointer; line-height:1.15; }
-  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
-  .mode-chip.selected{ border-color:var(--sun); background:#fff6dd; box-shadow:0 4px 0 rgba(232,169,12,.4); }
-  #playBtn{ margin-top:12px; border:none; cursor:pointer; background:#27407a; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:23px; padding:12px 44px; border-radius:999px; box-shadow:0 6px 0 #101f3d,0 14px 24px rgba(16,31,61,.45); transition:transform .12s ease; }
-  #playBtn:active{ transform:scale(.95); }
-  #winOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(6,10,30,.5); padding:14px; }
-  #winOverlay[hidden]{ display:none; }
-  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 12px 0 rgba(6,12,34,.3),0 30px 60px rgba(6,12,34,.5); padding:20px 22px 18px; text-align:center; width:min(94vw,470px); max-height:92dvh; overflow:auto; }
-  #winStars{ font-size:30px; letter-spacing:6px; color:#e3edf5; line-height:1; }
-  #winStars span{ display:inline-block; }
-  #winStars span.lit{ color:var(--sun); text-shadow:0 0 14px rgba(255,201,60,.8); animation:starLit .4s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes starLit{ 0%{ transform:scale(.3) rotate(-30deg);} 100%{ transform:scale(1) rotate(0);} }
-  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:8px 0 0; }
-  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.45; margin:8px 0 0; }
-  #winChips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
-  .chip{ background:#fdf6e0; border:2px solid #f0dfa0; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; padding:4px 12px; border-radius:999px; }
-  .win-btns{ display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-  .win-btn{ border:none; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; padding:11px 24px; border-radius:999px; }
-  #againBtn{ background:#27407a; color:#fff; box-shadow:0 5px 0 #101f3d; }
-  #winHomeBtn{ background:#eef5fb; color:var(--ink); box-shadow:0 5px 0 #cfdfec; }
-  .win-btn:active{ transform:scale(.95); }
-
-  @media (max-height:500px) and (min-width:560px){
-    #hootHill{ width:clamp(84px,24vh,110px); }
-    #jarZone{ width:clamp(96px,26vh,120px); }
-    #targetCard{ margin-top:4px; padding:4px 8px 4px 12px; }
-    #startPanel{ top:50%; padding:10px 16px; }
-    .fall-star{ width:46px; height:46px; margin-left:-23px; margin-top:-23px; }
+  /* Top HUD */
+  #hud{
+    position:absolute; top:0; left:0; right:0; z-index:10;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) 14px 0 14px;
+    pointer-events:none;
   }
-  @media (prefers-reduced-motion:reduce){
-    .bg-star,.shooting,.firefly{ animation:none !important; }
+  .hud-left{ display:flex; align-items:center; gap:10px; pointer-events:auto; max-width:min(58vw, 530px); }
+  #hootBtn{
+    width:64px; height:64px; flex:0 0 64px; border-radius:50%;
+    border:4px solid #fff;
+    background:radial-gradient(circle at 35% 30%, #fff4b8, #ffc93c 65%, #f59e0b 100%);
+    box-shadow:0 6px 0 var(--outline), 0 0 24px rgba(253,224,71,.62);
+    padding:4px; cursor:pointer;
+    animation:hootBob 2.2s ease-in-out infinite alternate;
   }
-  /* Wave 5C-2 (Big & Physical): big glowing 2yo-catchable falling stars & lush star jar in iPad landscape */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    .fall-star{
-      width:92px !important; height:92px !important; margin-left:-46px !important; margin-top:-46px !important;
-      filter:drop-shadow(0 0 12px rgba(255,220,100,.65));
+  #hootBtn:active{ transform:scale(.9); }
+  @keyframes hootBob{ from{ transform:translateY(0); } to{ transform:translateY(-4px); } }
+  #promptBubble{
+    background:rgba(255,253,247,.95); color:var(--ink);
+    border:4px solid var(--outline); border-radius:22px;
+    padding:8px 14px; font-family:"Fredoka",sans-serif; font-weight:700;
+    font-size:clamp(13.5px, 1.9vw, 17px); line-height:1.22;
+    box-shadow:0 6px 0 var(--outline), 0 12px 26px rgba(0,0,0,.42);
+  }
+  #promptBubble b{ color:#7c3aed; }
+
+  .hud-right{ display:flex; align-items:center; gap:8px; pointer-events:auto; flex-shrink:0; }
+  #skyBadges{
+    display:flex; align-items:center; gap:5px;
+    background:rgba(15,23,54,.86); border:3.5px solid #fde047;
+    border-radius:999px; padding:4px 9px; box-shadow:0 5px 0 var(--outline);
+  }
+  .sbadge{
+    position:relative; width:38px; height:38px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.35); background:rgba(255,255,255,.12);
+    display:grid; place-items:center; font-size:20px; cursor:pointer; padding:0;
+    filter:grayscale(1) opacity(.48); transition:transform .35s cubic-bezier(.34,1.8,.5,1), filter .3s;
+  }
+  .sbadge.active-sky{ border-color:#38bdf8; box-shadow:0 0 12px rgba(56,189,248,.95); filter:grayscale(.2) opacity(.95); }
+  .sbadge.lit{
+    filter:none; border-color:var(--outline);
+    background:radial-gradient(circle at 32% 28%, #fef08a, #facc15 65%, #f59e0b 100%);
+    box-shadow:0 0 16px rgba(250,204,21,.95);
+    animation:popBadge .55s cubic-bezier(.34,1.8,.5,1);
+  }
+  .sbadge-chk{
+    position:absolute; right:-4px; bottom:-4px; font-size:11px; line-height:1;
+    background:#16a34a; color:#fff; border-radius:50%; width:16px; height:16px;
+    display:grid; place-items:center; border:2px solid #fff;
+  }
+  @keyframes popBadge{ 0%{ transform:scale(.4) rotate(-18deg); } 65%{ transform:scale(1.28) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
+
+  #starPill{
+    display:flex; align-items:center; gap:6px;
+    background:#fffef8; border:4px solid var(--outline); border-radius:999px;
+    padding:6px 13px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:19px; color:var(--ink);
+    box-shadow:0 5px 0 var(--outline);
+  }
+  #doneBtn{
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:16px;
+    padding:8px 15px; cursor:pointer; white-space:nowrap;
+    box-shadow:0 5px 0 var(--outline); text-shadow:0 2px 0 rgba(0,0,0,.35);
+  }
+  #doneBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--outline); }
+
+  /* Color Target Pill (shown only in Rainbow Color Match mode!) */
+  #colorCard{
+    position:absolute; right:14px; top:84px; z-index:11;
+    background:rgba(15,23,54,.92); border:4px solid #fde047; border-radius:22px;
+    padding:8px 14px; display:flex; align-items:center; gap:10px;
+    box-shadow:0 7px 0 var(--outline), 0 0 28px rgba(253,224,71,.45);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:16px;
+  }
+  #colorCard img{ width:44px; height:44px; object-fit:contain; filter:drop-shadow(0 0 10px rgba(255,255,255,.7)); animation:starPulse .9s ease-in-out infinite alternate; }
+  @keyframes starPulse{ from{ transform:scale(1) rotate(-6deg); } to{ transform:scale(1.14) rotate(6deg); } }
+
+  /* Big Hero Action Pill (SHAKE JAR! / NEXT SKY!) — sits cleanly ABOVE the glass jar so all trapped stars stay 100% visible! */
+  #actionStage{
+    position:absolute; left:0; right:0; bottom:max(290px, 38vh); z-index:12;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    pointer-events:none; padding:0 12px;
+  }
+  .hero-action-btn{
+    pointer-events:auto;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    border:5px solid #fff; border-radius:999px;
+    padding:10px 28px; cursor:pointer;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:clamp(20px, 3.2vw, 27px); color:#fff;
+    text-shadow:0 3px 0 rgba(18,27,56,.48);
+    animation:heroPulse .55s ease-in-out infinite alternate;
+  }
+  .hero-action-btn:active{ transform:translateY(5px); }
+  #shakeBtn{
+    background:radial-gradient(circle at 35% 25%, #fef08a 0%, #f59e0b 55%, #d97706 100%);
+    color:#1e1b4b; text-shadow:0 1px 0 rgba(255,255,255,.55);
+    box-shadow:0 9px 0 var(--outline), 0 0 38px rgba(253,224,71,.92);
+  }
+  #nextSkyBtn{
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    box-shadow:0 9px 0 var(--outline), 0 0 36px rgba(74,222,128,.9);
+  }
+  @keyframes heroPulse{
+    from{ transform:scale(1); box-shadow:0 9px 0 var(--outline), 0 0 0 0 rgba(253,224,71,.7); }
+    to{ transform:scale(1.06); box-shadow:0 9px 0 var(--outline), 0 0 0 9px rgba(253,224,71,.95); }
+  }
+  .tap-finger{ display:inline-block; font-size:26px; line-height:1; animation:fingerHop .5s ease-in-out infinite alternate; }
+  @keyframes fingerHop{ from{ transform:translateY(0); } to{ transform:translateY(-7px) scale(1.12); } }
+
+  /* Bottom Starlight Dock */
+  #bottomDock{
+    position:absolute; left:50%; bottom:max(10px, env(safe-area-inset-bottom));
+    transform:translateX(-50%); z-index:11;
+    width:min(96vw, 760px);
+    background:linear-gradient(180deg, rgba(24,33,76,.92) 0%, rgba(12,18,46,.96) 100%);
+    backdrop-filter:blur(12px);
+    border:3.5px solid #38bdf8; border-radius:999px;
+    padding:7px 12px;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    box-shadow:0 8px 0 #070b1e, 0 14px 32px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.22);
+  }
+  .dock-group{ display:flex; align-items:center; gap:7px; flex-wrap:nowrap; }
+  .d-pill{
+    border:3.5px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #e0f2fe 0%, #7dd3fc 100%);
+    color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:800; font-size:14.5px;
+    padding:8px 14px; cursor:pointer; white-space:nowrap; min-height:46px;
+    box-shadow:0 4px 0 var(--outline); transition:transform .14s;
+  }
+  .d-pill:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--outline); }
+  .d-pill.sel{
+    background:linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
+    border-color:#fff; box-shadow:0 4px 0 var(--outline), 0 0 18px rgba(253,224,71,.75);
+  }
+  #showerBtn{
+    background:linear-gradient(180deg, #f0abfc 0%, #a855f7 100%);
+    color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.35);
+  }
+  #jarCounter{
+    display:flex; align-items:center; gap:6px;
+    color:#fde047; font-family:"Fredoka",sans-serif; font-weight:800; font-size:17px;
+    padding:0 8px; white-space:nowrap;
+  }
+
+  /* Win Overlay */
+  #winOverlay{
+    position:fixed; inset:0; z-index:40;
+    background:rgba(9,13,36,.78); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .win-card{
+    background:linear-gradient(180deg, #fffef8 0%, #fef3c7 100%);
+    border:6px solid var(--outline); border-radius:34px;
+    padding:26px 24px; text-align:center; max-width:450px; width:100%;
+    box-shadow:0 14px 0 var(--outline), 0 26px 50px rgba(0,0,0,.58);
+  }
+  .win-trophy{ font-size:62px; line-height:1.1; margin-bottom:8px; }
+  .win-card h2{ margin:0 0 8px; font-family:"Fredoka",sans-serif; font-size:32px; color:var(--ink); }
+  .win-card p{ margin:0 0 18px; font-weight:800; font-size:17px; color:#334155; }
+  .big-play{
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:20px;
+    padding:12px 26px; cursor:pointer; box-shadow:0 6px 0 var(--outline);
+  }
+
+  @media (max-width: 740px){
+    #hud{ flex-wrap:wrap; align-items:center; gap:6px; padding:max(8px, env(safe-area-inset-top)) 10px 0; }
+    .hud-left{ display:contents; }
+    #hootBtn{ width:52px; height:52px; flex:0 0 52px; order:1; border-width:3px; }
+    .hud-right{ order:2; margin-left:auto; gap:6px; }
+    #skyBadges{ display:none; }
+    #starPill{ font-size:16px; padding:5px 11px; border-width:3px; }
+    #doneBtn{ font-size:14.5px; padding:6px 12px; border-width:3px; }
+    #promptBubble{
+      order:3; flex:1 0 100%; width:100%;
+      padding:7px 12px; border-width:3px; border-radius:16px;
+      font-size:13.5px; line-height:1.2; text-align:center;
     }
-    .fall-star .star-letter{ font-size:36px !important; font-weight:800 !important; text-shadow:0 2px 0 rgba(255,255,255,.7); }
-    .fall-star.golden{ width:108px !important; height:108px !important; margin-left:-54px !important; margin-top:-54px !important; filter:drop-shadow(0 0 24px rgba(255,200,40,1)) !important; }
-    #jarZone{ width:clamp(176px,25vh,220px) !important; right:4% !important; bottom:5% !important; }
-    #jarLabel{ font-size:16px !important; padding:4px 14px !important; }
-    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(12,24,52,.28) !important; padding:8px 18px !important; }
+    #colorCard{ left:10px; right:auto; top:126px; padding:6px 10px; border-width:3px; font-size:14px; }
+    #colorCard img{ width:34px; height:34px; }
+    #bottomDock{
+      width:min(96vw, 440px); border-radius:24px; border-width:3px; padding:6px 8px;
+      flex-direction:column; gap:5px;
+    }
+    .dock-group{ width:100%; justify-content:center; gap:5px; }
+    .d-pill{ flex:1 1 0; min-width:0; min-height:42px; padding:6px 6px; font-size:12.5px; border-width:3px; text-align:center; }
+    #jarCounter{ font-size:14.5px; }
+    #actionStage{ bottom:308px; }
+    .hero-action-btn{ padding:10px 22px; font-size:20px; border-width:4px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <div class="shooting" aria-hidden="true"></div>
-  <button class="decor" id="moon" type="button" aria-label="Moon — tap for a glow">
-    <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M63 8 A40 40 0 1 0 92 58 A32 32 0 0 1 63 8 Z" fill="#fff3c4" stroke="#e8cf8a" stroke-width="3"/></svg>
-  </button>
-  <button class="decor cloud" type="button" style="top:10%;left:6%;width:110px" aria-label="Cloud — tap and it puffs away"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="88" cy="38" rx="24" ry="13" fill="#fff"/></svg></button>
-  <button class="decor cloud" type="button" style="top:22%;left:56%;width:84px;animation-delay:-12s" aria-label="Cloud — tap and it puffs away"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="88" cy="38" rx="24" ry="13" fill="#fff"/></svg></button>
-  <button class="decor firefly" type="button" style="left:14%;top:56%" aria-label="Firefly — tap and it blinks away"><i></i></button>
-  <button class="decor firefly" type="button" style="left:48%;top:64%;animation-delay:-3s" aria-label="Firefly — tap and it blinks away"><i></i></button>
-  <button class="decor firefly" type="button" style="right:26%;top:50%;animation-delay:-6s" aria-label="Firefly — tap and it blinks away"><i></i></button>
+  <canvas id="cv" aria-label="3D Catch the Twinkle Stars"></canvas>
 
+  <!-- Top HUD -->
   <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+    <div class="hud-left">
+      <button id="hootBtn" type="button" aria-label="Tap Hoot to hear again">
+        <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
-      </button>
+      <div id="promptBubble" aria-live="polite">⭐ <b>CATCH TWINKLE STARS!</b> Tap or swipe smiling stars into your glowing lantern!</div>
     </div>
-    <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      <span id="starCount">0</span>
-    </div>
-  </div>
-
-  <div id="targetCard" style="display:none">
-    <div>
-      <div id="targetMain">Catch 5 stars!</div>
-      <div class="tc-label" id="tcLabel">Into Hoot&rsquo;s star jar</div>
-      <div id="progressDots"></div>
-    </div>
-    <button id="hearBtn" type="button" aria-label="Hear Hoot again">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-    </button>
-  </div>
-
-  <div id="scene">
-    <svg id="hill" viewBox="0 0 400 110" preserveAspectRatio="none" aria-hidden="true"><path d="M0 62 Q110 18 230 44 Q330 64 400 38 L400 110 L0 110Z" fill="#2c5e3a"/><path d="M0 84 Q130 52 250 74 Q340 88 400 66 L400 110 L0 110Z" fill="#1f4529"/></svg>
-    <div id="hootHill">
-      <button id="hootFig" type="button" aria-label="Hoot — tap to hear again">
-        <svg viewBox="0 0 200 210" aria-hidden="true">
-          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
-          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
-          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
-          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
-          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
-          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
-          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
-          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
-          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
-          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
-          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
-          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-    <div id="jarZone">
-      <div id="jar">
-        <svg id="jarGlass" viewBox="0 0 100 108" aria-hidden="true">
-          <rect x="30" y="2" width="40" height="9" rx="4" fill="#8a5a2b"/>
-          <path d="M32 12 L24 26 Q18 38 18 56 L18 88 Q18 104 34 104 L66 104 Q82 104 82 88 L82 56 Q82 38 76 26 L68 12 Z" fill="rgba(190,225,255,.16)" stroke="rgba(255,255,255,.75)" stroke-width="2.5"/>
-          <path d="M28 40 Q24 60 26 84" stroke="rgba(255,255,255,.5)" stroke-width="4" fill="none" stroke-linecap="round"/>
-        </svg>
-        <div id="jarStars"></div>
-        <svg id="jarLines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline id="jarPoly" points="" fill="none" stroke="#ffe98a" stroke-width="2" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px rgba(255,220,90,.9))"/></svg>
+    <div class="hud-right">
+      <div id="skyBadges" aria-label="Constellations lit up">
+        <button type="button" class="sbadge active-sky" data-si="0" title="Nebula Heart">❤️<span class="sbadge-chk" hidden>✓</span></button>
+        <button type="button" class="sbadge" data-si="1" title="Moonbeam Crown">👑<span class="sbadge-chk" hidden>✓</span></button>
+        <button type="button" class="sbadge" data-si="2" title="Candy Butterfly">🦋<span class="sbadge-chk" hidden>✓</span></button>
+        <button type="button" class="sbadge" data-si="3" title="Starlight Rocket">🚀<span class="sbadge-chk" hidden>✓</span></button>
       </div>
-      <span id="jarLabel">Hoot&rsquo;s Star Jar</span>
+      <div id="starPill">⭐ <span id="starCount">0</span></div>
+      <button id="doneBtn" type="button">🏆 Done</button>
     </div>
   </div>
 
-  <div id="bubbleRow">
-    <div id="bubble">Shh… the stars are coming out! Tap <span class="b-big">Play</span> and catch twinkle stars for my jar!</div>
-    <span id="hootName">HOOT</span>
+  <!-- Visual Color Target Card (Color Match Mode) -->
+  <div id="colorCard" hidden>
+    <img id="colorTargetImg" src="assets/twinkle3d/star_gold.png?v=llprev3e116" alt="Target star color">
+    <span id="colorTargetLbl">Catch Yellow!</span>
   </div>
 
-  <div id="startPanel">
-    <h1><span class="t-a">Catch the</span> <span class="t-b">Twinkle Stars</span></h1>
-    <p>Hoot is lying on the hill with his star jar. He&rsquo;ll call out how many stars to catch — tap them as they twinkle and drift!</p>
-    <div class="mode-row" role="group" aria-label="Choose how to play">
-      <button class="mode-chip selected" type="button" data-mode="free">Twinkle Catch<small>Catch the number Hoot calls</small></button>
-      <button class="mode-chip" type="button" data-mode="color">Colour Catch<small>Catch the colour Hoot asks for</small></button>
-      <button class="mode-chip" type="button" data-mode="letter">Letter Catch<small>Catch the letter Hoot asks for</small></button>
+  <!-- Big Action Buttons (SHAKE LANTERN / NEXT SKY) -->
+  <div id="actionStage">
+    <button id="shakeBtn" class="hero-action-btn" type="button" hidden><span>✨ SHAKE JAR! (0/3)</span><span class="tap-finger" aria-hidden="true">👆</span></button>
+    <button id="nextSkyBtn" class="hero-action-btn" type="button" hidden><span>🌙 Next Sky: Moonbeam!</span><span class="tap-finger" aria-hidden="true">👆</span></button>
+  </div>
+
+  <!-- Bottom Starlight Dock -->
+  <div id="bottomDock" role="group" aria-label="Star game modes and magic shower">
+    <div class="dock-group">
+      <button type="button" id="mode5Btn" class="d-pill sel">⭐ 1–5</button>
+      <button type="button" id="mode10Btn" class="d-pill">🔟 1–10</button>
+      <button type="button" id="modeColorBtn" class="d-pill">🌈 Colors</button>
     </div>
-    <button id="playBtn" type="button">▶ Play</button>
+    <div class="dock-group">
+      <div id="jarCounter">✨ <span id="jarCountTxt">0 / 5</span></div>
+      <button type="button" id="showerBtn" class="d-pill">🌠 Wish Shower!</button>
+    </div>
   </div>
 
+  <!-- Win Overlay -->
   <div id="winOverlay" hidden>
-    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
-      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <h2 id="winTitle">A Picture in the Jar!</h2>
-      <p id="winRecap"></p>
-      <div id="winChips"></div>
-      <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
-      </div>
+    <div class="win-card">
+      <div class="win-trophy" aria-hidden="true">⭐👑🦋🚀</div>
+      <h2>Starlight Wizard!</h2>
+      <p id="winSummary">You caught glowing stars, shook your star lantern, and lit up the night sky!</p>
+      <button id="againBtn" class="big-play" type="button">↻ Play Again</button>
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-"use strict";
-  /* ================= DATA ================= */
-  var COLORS=[
-    { id:"yellow", name:"yellow", fill:"#ffd93b", stroke:"#e8a90c" },
-    { id:"pink",   name:"pink",   fill:"#ff8fa3", stroke:"#d95f77" },
-    { id:"blue",   name:"blue",   fill:"#7fd4ff", stroke:"#2f8fc4" },
-    { id:"green",  name:"green",  fill:"#7fe3a8", stroke:"#2f9e5f" },
-    { id:"purple", name:"purple", fill:"#c9a7ff", stroke:"#8b5fd6" }
-  ];
-  var GOLD={ id:"gold", name:"golden", fill:"#ffbe1e", stroke:"#d9930d" };
-  var LETTERS=["H","O","T","S","A","B","C","M","R","L"];
-  var SHAPES=[
-    { name:"star", label:"a STAR",
-      pts:[[50,10],[88,38],[68,86],[32,86],[12,38]], line:[0,2,4,1,3,0] },
-    { name:"smiley", label:"a SMILEY FACE",
-      pts:[[32,30],[68,30],[24,56],[42,72],[58,72],[76,56]], line:[2,3,4,5] },
-    { name:"heart", label:"a HEART",
-      pts:[[28,16],[50,32],[72,16],[90,38],[50,88],[24,60],[10,38]], line:[0,1,2,3,4,5,6,0] }
-  ];
-  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
+  "use strict";
 
-  /* ================= STATE ================= */
-  var state="start";            /* start | playing | won */
-  var mode="free";              /* free | color | letter */
-  var stars=0, praiseIdx=0, soundOn=true, dead=false;
-  var roundToken=0, wonFlag=false;
-  var shape=null, goal=5, caught=0, goldenCaught=0;
-  var targetColor=null, targetLetter=null;
-  var alive=[], spawnTimer=null, spawnCount=0;
+  /* =========================================================================
+     1. VOICE ENGINE (100% Real Studio Muse Hoot Clips, Gated + Fallbacks!)
+     ========================================================================= */
+  var voiceA = new Audio();
+  var voiceGen = 0, lastStepClips = null, idleHelpTimer = null, idleHelpReminded = false;
+  var won = false;
 
-  /* ================= ELMS ================= */
-  function $(id){ return document.getElementById(id); }
-  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
-      targetCard=$("targetCard"), targetMain=$("targetMain"), tcLabel=$("tcLabel"), dotsBox=$("progressDots"),
-      starCount=$("starCount"), starBank=$("starBank"),
-      jarZone=$("jarZone"), jarStars=$("jarStars"), jarPoly=$("jarPoly"), jarLabel=$("jarLabel"),
-      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"), winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars");
-
-  /* background stars */
-  (function makeBgStars(){
-    var glyphs=["★","✦","·","✧"];
-    for(var i=0;i<24;i++){
-      var s=document.createElement("span"); s.className="bg-star";
-      s.textContent=glyphs[i%glyphs.length];
-      s.style.left=(Math.random()*97)+"%"; s.style.top=(Math.random()*58)+"%";
-      s.style.fontSize=(7+Math.random()*8)+"px";
-      s.style.animationDelay=(-Math.random()*3)+"s";
-      scene.appendChild(s);
-    }
-  })();
-
-  /* ================= SOUND FX (WebAudio tones) ================= */
-  var AC=null;
-  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-  function tone(f0,f1,dur,type,vol,delay){
-    if(!soundOn) return; var ac=audio(); if(!ac) return;
-    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
-    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
-    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
-  }
-  function catchSound(){ tone(1320,1320,0.09,"sine",0.1); tone(1760,1760,0.12,"sine",0.09,0.06); }
-  function poofSound(){ tone(220,120,0.16,"triangle",0.09); }
-  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.09); tone(1560,1560,0.12,"sine",0.09,0.07); }
-  function starSound(){ tone(990,990,0.08,"triangle",0.09); tone(1320,1320,0.1,"triangle",0.09,0.06); tone(1760,1760,0.14,"triangle",0.08,0.12); }
-
-  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-     Every clip goes through this single queue on a single Audio element.
-     A line that has started always finishes: the next clip is only loaded
-     from the 'ended' event, never from a timer, and pending (not yet
-     started) lines can be replaced when the game moves on. The hub's
-     injected voice governor arbitrates this element against every other
-     voice in the app the same way. No device text-to-speech anywhere.
-     Hoot calls the catch count with the recorded number clips, colours
-     with the colour clips and letters with the letter clips. */
-  var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-  function getVoice(){
-    if(!voiceEl){
-      voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
-      voiceEl.addEventListener("error",vNext);
-    }
-    return voiceEl;
-  }
-  function hubQuiet(){
+  function hasClip(id){
     try{
-      var d=window.parent&&window.parent.document;
-      if(!d||d===document) return false;
-      var b=d.querySelector('.voice-btn[data-voice="off"]');
-      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
-    }catch(e){ return false; }
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
   }
-  function silenced(){ return !soundOn||hubQuiet(); }
-  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
-  function vNext(){
-    if(!vPlaying){ pumpVoice(); return; }
-    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
+  function resolveCmd(preferredId, fallbacks){
+    if(preferredId && hasClip(preferredId)) return [preferredId];
+    return (fallbacks && fallbacks.length) ? fallbacks.slice() : [];
   }
-  function pumpVoice(){
-    if(vPlaying||dead) return;
-    var item=vQueue.shift(); if(!item) return;
-    if(item.onStart){ try{ item.onStart(); }catch(e){} }
-    if(silenced()){ pumpVoice(); return; }
-    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
-    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
-    var p=el.play();
-    if(p&&p.catch) p.catch(function(){ vNext(); });
+  function clearIdleHelp(){
+    if(idleHelpTimer){ clearTimeout(idleHelpTimer); idleHelpTimer = null; }
   }
-  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
-    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
-    pumpVoice();
+  function armIdleHelp(){
+    clearIdleHelp();
+    if(won || !lastStepClips || !lastStepClips.length || idleHelpReminded) return;
+    idleHelpTimer = setTimeout(function(){
+      if(won || !lastStepClips || !lastStepClips.length) return;
+      idleHelpReminded = true;
+      playVoice(lastStepClips);
+    }, 11500);
   }
-  function clearPending(){ vQueue.length=0; }
-  function enqueuePraise(){
-    praiseIdx++;
-    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise","",null);
+  window.addEventListener("pointerdown", function(){
+    idleHelpReminded = false;
+    armIdleHelp();
+  }, true);
+
+  function playVoice(clips){
+    if(!clips || !clips.length) return;
+    var myGen = ++voiceGen, i = 0;
+    voiceA.onended = null; voiceA.onerror = null;
+    try{ voiceA.pause(); }catch(e){}
+    function step(){
+      if(myGen !== voiceGen || i >= clips.length) return;
+      var id = clips[i++];
+      if(!id){ step(); return; }
+      voiceA.src = "assets/voice/" + id + ".mp3";
+      voiceA.onended = step; voiceA.onerror = step;
+      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
+    }
+    step();
+  }
+  function setStepVoice(preferredId, fallbacks, speakNow){
+    var seq = resolveCmd(preferredId, fallbacks);
+    lastStepClips = seq;
+    idleHelpReminded = false;
+    armIdleHelp();
+    if(speakNow !== false && seq.length) playVoice(seq);
   }
 
-  /* ================= HOOT'S FACE / WORDS ================= */
-  function say(html){ bubble.innerHTML=html; }
-  function hootReact(cls,ms){
-    hootFig.classList.remove("celebrate","shake");
-    void hootFig.offsetWidth;
-    hootFig.classList.add(cls);
-    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  /* =========================================================================
+     2. CELESTA MUSIC-BOX WEBAUDIO SYNTH (Plays Twinkle Twinkle Little Star!)
+     ========================================================================= */
+  var actx = null;
+  function ac(){
+    if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
+    if(actx && actx.state === "suspended") actx.resume();
+    return actx;
   }
-
-  /* ================= HELPERS ================= */
-  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-  function starSVG(fill,stroke){
-    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.3" stroke-linejoin="round"/></svg>';
-  }
-  function updateHUD(){ starCount.textContent=stars; }
-  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
-  function setDots(){
-    dotsBox.innerHTML="";
-    for(var i=0;i<goal;i++){ var d=document.createElement("i"); if(i<caught) d.className="on"; dotsBox.appendChild(d); }
-    jarLabel.textContent="Hoot's Star Jar · "+caught+" of "+goal;
-  }
-  function sparkles(x,y,n){
-    var sr=scene.getBoundingClientRect();
-    for(var i=0;i<(n||5);i++){
-      var s=document.createElement("span"); s.className="sparkle"; s.textContent="✦";
-      s.style.color=i%2?"#ffe98a":"#fff";
-      s.style.left=(x-sr.left-8)+"px"; s.style.top=(y-sr.top-8)+"px";
-      s.style.setProperty("--dx",((Math.random()*70)-35)+"px");
-      s.style.setProperty("--dy",(-(24+Math.random()*44))+"px");
-      scene.appendChild(s);
-      (function(el){ setTimeout(function(){ el.remove(); },700); })(s);
-    }
-  }
-  function confetti(){
-    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#7fd4ff","#ff8fa3","#a5e8ae","#ffe98a"];
-    for(var i=0;i<26;i++){
-      var c=document.createElement("div"); c.className="confetti";
-      c.style.background=cols[i%cols.length];
-      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
-      scene.appendChild(c);
-      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
-      if(c.animate) c.animate([
-        {transform:"translate(0,0) rotate(0deg)",opacity:1},
-        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
-      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
-    }
-  }
-
-  /* ================= THE JAR CONSTELLATION ================= */
-  function buildJar(){
-    jarStars.innerHTML="";
-    jarZone.classList.remove("reveal");
-    jarPoly.setAttribute("points","");
-    shape.pts.forEach(function(p){
-      var s=document.createElement("div"); s.className="jar-slot";
-      s.style.left=p[0]+"%"; s.style.top=p[1]+"%";
-      s.innerHTML=starSVG("#ffffff","#ffffff");
-      jarStars.appendChild(s);
-    });
-    var ptsStr=shape.line.map(function(i){ return shape.pts[i][0]+","+shape.pts[i][1]; }).join(" ");
-    jarPoly.setAttribute("points",ptsStr);
-  }
-  function addJarStar(idx,color){
-    var p=shape.pts[idx]; if(!p) return;
-    var s=document.createElement("div"); s.className="jar-star";
-    s.style.left=p[0]+"%"; s.style.top=p[1]+"%";
-    s.innerHTML=starSVG(color.fill,color.stroke);
-    jarStars.appendChild(s);
-    starSound();
-  }
-  function jarSlotRect(idx){
-    var jr=jarStars.getBoundingClientRect(), p=shape.pts[idx];
-    return { x:jr.left+jr.width*p[0]/100, y:jr.top+jr.height*p[1]/100 };
-  }
-
-  /* ================= FALLING / DRIFTING STARS ================= */
-  function starIsTarget(color,letter,golden){
-    if(golden) return true;
-    if(mode==="free") return true;
-    if(mode==="color") return color.id===targetColor.id;
-    return letter===targetLetter;
-  }
-  function spawnStar(){
-    if(dead||state!=="playing"||wonFlag) return;
-    if(alive.length>=6){
-      /* Sky full: if none of them is catchable, puff the oldest plain
-         star away so a target can always arrive — the game never stalls
-         waiting for a star it can catch. */
-      var anyCatch=alive.some(function(s){ return !s.done&&(s.isTarget||s.golden); });
-      if(!anyCatch){
-        for(var qi=0;qi<alive.length;qi++){
-          var old=alive[qi];
-          if(!old.done&&!old.golden&&!old.isTarget){ old.done=true; old.el.classList.add("poof"); poofSound(); setTimeout(function(){ removeStar(old); },360); break; }
-        }
-      }
-      return;
-    }
-    spawnCount++;
-    var golden=spawnCount>2&&Math.random()<0.12;
-    var color, letter=null, isTarget;
-    if(golden){ color=GOLD; isTarget=true; }
-    else if(mode==="color"){
-      isTarget=Math.random()<0.5;
-      color=isTarget?targetColor:pick(COLORS.filter(function(c){ return c.id!==targetColor.id; }));
-    } else if(mode==="letter"){
-      color=pick(COLORS);
-      isTarget=Math.random()<0.5;
-      letter=isTarget?targetLetter:pick(LETTERS.filter(function(l){ return l!==targetLetter; }));
-    } else {
-      color=pick(COLORS); isTarget=true;
-      if(Math.random()<0.4) letter=pick(LETTERS);
-    }
-    var el=document.createElement("button");
-    el.type="button"; el.className="fall-star"+(golden?" golden":"");
-    el.setAttribute("aria-label",golden?"Golden star":(letter?("Star with letter "+letter):"Twinkle star"));
-    el.innerHTML=starSVG(color.fill,color.stroke)+(letter?'<span class="star-letter">'+letter+'</span>':"");
-    el.style.left=(6+Math.random()*86)+"%";
-    el.style.top=(2+Math.random()*36)+"%";
-    scene.appendChild(el);
-    var star={ el:el, color:color, letter:letter, golden:golden, isTarget:isTarget, done:false, anim:null };
-    alive.push(star);
-    el.addEventListener("pointerdown",function(e){ e.preventDefault(); onStarTap(star); });
-    el.addEventListener("click",function(){ onStarTap(star); });
-    var sr=scene.getBoundingClientRect();
-    var dx=(Math.random()*70-35), dy=sr.height*(0.24+Math.random()*0.16);
-    if(el.animate){
-      star.anim=el.animate([
-        { transform:"translate(0,0)" },
-        { transform:"translate("+dx+"px,"+dy+"px)" }
-      ],{ duration:11000+Math.random()*4500, easing:"linear", fill:"forwards" });
-      star.anim.onfinish=function(){
-        if(star.done) return;
-        star.done=true;
-        el.style.transition="opacity .6s"; el.style.opacity="0";
-        setTimeout(function(){ removeStar(star); },650);
-      };
-    }
-  }
-  function removeStar(star){
-    var i=alive.indexOf(star);
-    if(i>-1) alive.splice(i,1);
-    if(star.el&&star.el.parentNode) star.el.parentNode.removeChild(star.el);
-  }
-  function clearStars(){
-    alive.slice().forEach(function(s){ s.done=true; if(s.anim) s.anim.cancel(); removeStar(s); });
-    alive=[];
-  }
-  function onStarTap(star){
-    if(state!=="playing"||dead||star.done) return;
-    audio();
-    var el=star.el, r=el.getBoundingClientRect();
-    if(!star.isTarget){
-      star.done=true;
-      el.classList.add("poof"); poofSound();
-      sparkles(r.left+r.width/2,r.top+r.height/2,3);
-      if(mode==="color") say("That star is <span class='b-big'>"+star.color.name.toUpperCase()+"</span> — we need "+targetColor.name.toUpperCase()+" ones! It just puffs away, no worries!");
-      else if(mode==="letter") say("That star says <span class='b-big'>"+star.letter+"</span> — we need the letter "+targetLetter+"! It puffs away kindly!");
-      setTimeout(function(){ removeStar(star); },360);
-      return;
-    }
-    star.done=true;
-    el.classList.add("caught"); catchSound();
-    sparkles(r.left+r.width/2,r.top+r.height/2,star.golden?9:5);
-    var slotIdx=caught;
-    setTimeout(function(){ removeStar(star); },120);
-    flyToJar(star,r,slotIdx);
-  }
-  function flyToJar(star,fromRect,slotIdx){
-    var clone=document.createElement("div"); clone.className="fly-clone";
-    clone.innerHTML=starSVG(star.color.fill,star.color.stroke);
-    var sr=scene.getBoundingClientRect(), target=jarSlotRect(slotIdx);
-    var w=42;
-    var x0=fromRect.left+fromRect.width/2-sr.left-w/2, y0=fromRect.top+fromRect.height/2-sr.top-w/2;
-    var x1=target.x-sr.left-w/2, y1=target.y-sr.top-w/2;
-    clone.style.width=w+"px"; clone.style.left=x0+"px"; clone.style.top=y0+"px";
-    scene.appendChild(clone);
-    var finished=false;
-    function finish(){
-      if(finished) return; finished=true; clone.remove();
-      if(dead) return;
-      caught++;
-      stars++; if(star.golden){ stars++; goldenCaught++; }
-      bumpStars(); updateHUD();
-      addJarStar(slotIdx,star.color);
-      setDots();
-      var c=caught;
-      if(star.golden){
-        clearPending();
-        if(window.__hootSpeak) window.__hootSpeak("idle");
-      }
-      if(c>=goal){ winRound(); return; }
-      /* stale count lines never stack up behind the newest catch */
-      vQueue=vQueue.filter(function(q){ return q.kind!=="count"; });
-      enqueue("call-number-"+c+".mp3","count","",function(){
-        say("That&rsquo;s <span class='b-big'>"+c+"</span>! "+(goal-c===1?"One more star!":(goal-c)+" more to catch!"));
+  /* Classic Twinkle Twinkle Little Star melody frequencies (C5..A5) */
+  var TWINKLE_NOTES = [523.25, 523.25, 783.99, 783.99, 880.00, 880.00, 783.99, 698.46, 698.46, 659.25, 659.25, 587.33, 587.33, 523.25];
+  function sfxStarChime(idx){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, f = TWINKLE_NOTES[(idx || 0) % TWINKLE_NOTES.length];
+      [1, 2].forEach(function(mult, k){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = k === 0 ? "triangle" : "sine";
+        o.frequency.setValueAtTime(f * mult, t);
+        g.gain.setValueAtTime(k === 0 ? 0.16 : 0.06, t);
+        g.gain.exponentialRampToValueAtTime(0.0008, t + (k === 0 ? 0.55 : 0.28));
+        o.connect(g); g.connect(c.destination);
+        o.start(t); o.stop(t + 0.6);
       });
-    }
-    if(clone.animate){
-      var anim=clone.animate([
-        {transform:"translate(0,0) scale(1) rotate(0deg)",opacity:1},
-        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.5-40)+"px) scale(1.1) rotate(12deg)",opacity:1,offset:0.55},
-        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.8) rotate(-6deg)",opacity:.95}
-      ],{duration:600,easing:"cubic-bezier(.3,.6,.4,1)"});
-      anim.onfinish=finish;
-      setTimeout(finish,780);
-    } else setTimeout(finish,120);
+    }catch(e){}
   }
-
-  /* ================= CALLOUTS ================= */
-  function callout(full){
-    clearPending();
-    if(mode==="free"){
-      var g=goal;
-      enqueue("name-number-"+g+".mp3","callout","",function(){ /* 3e51: "Seven… stars!", not "Find the number seven" */
-        if(full) say("Catch <span class='b-big'>"+g+" twinkle stars</span> for my jar! Tap them as they drift!");
-        else say("Catch <span class='b-big'>"+g+" twinkle stars</span>!");
+  function sfxJarClink(step){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, base = 880 + (step || 0) * 180;
+      [0, 0.06, 0.12].forEach(function(dt, k){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(base + k * 210, t + dt);
+        g.gain.setValueAtTime(0.11, t + dt);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dt + 0.22);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + dt); o.stop(t + dt + 0.24);
       });
-      if((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("word-stars")) enqueue("word-stars.mp3","callout","",null); /* 3e51 (ported in-blob): "…stars!" */
-    } else if(mode==="color"){
-      var c=targetColor;
-      enqueue("call-color-"+c.id+".mp3","callout","",null);
-      enqueue("name-number-"+goal+".mp3","callout","",function(){ /* 3e51 (ported in-blob) */
-        if(full) say("Catch <span class='b-big'>"+goal+" "+c.name.toUpperCase()+" stars</span>! Only the "+c.name+" ones — the others just puff away!");
-        else say("Catch <span class='b-big'>"+goal+" "+c.name.toUpperCase()+" stars</span>!");
+    }catch(e){}
+  }
+  function sfxCorkPop(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(220, t);
+      o.frequency.exponentialRampToValueAtTime(920, t + 0.11);
+      g.gain.setValueAtTime(0.20, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.18);
+    }catch(e){}
+  }
+  function sfxCloudPuff(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, len = Math.floor(c.sampleRate * 0.22);
+      var buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+      for(var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len * 0.4));
+      var src = c.createBufferSource(); src.buffer = buf;
+      var lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 950;
+      var g = c.createGain(); g.gain.setValueAtTime(0.14, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      src.connect(lp); lp.connect(g); g.connect(c.destination);
+      src.start(t);
+    }catch(e){}
+  }
+  function sfxConstellationFanfare(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [523.25, 523.25, 783.99, 783.99, 880.0, 880.0, 783.99].forEach(function(f, k){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        var dt = k * 0.14;
+        g.gain.setValueAtTime(0.13, t + dt);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dt + 0.42);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + dt); o.stop(t + dt + 0.46);
       });
-    } else {
-      var L=targetLetter;
-      enqueue("call-letter-"+L.toLowerCase()+".mp3","callout","",null);
-      enqueue("name-number-"+goal+".mp3","callout","",function(){ /* 3e51 (ported in-blob) */
-        if(full) say("Catch <span class='b-big'>"+goal+" stars with the letter "+L+"</span>! "+L+" stars only!");
-        else say("Catch <span class='b-big'>"+goal+" stars with the letter "+L+"</span>!");
-      });
+    }catch(e){}
+  }
+  function sfxBoing(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(340, t);
+      o.frequency.exponentialRampToValueAtTime(210, t + 0.18);
+      g.gain.setValueAtTime(0.10, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.20);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.22);
+    }catch(e){}
+  }
+
+  /* =========================================================================
+     3. 4 PIXAR STARLIGHT WORLDS, CONSTELLATIONS & ASSETS
+     ========================================================================= */
+  var VER = "?v=llprev3e116";
+  var COLOR_DEFS = [
+    { key: "gold",  label: "Yellow", clip: "name-color-yellow", hex: "#fde047" },
+    { key: "red",   label: "Red",    clip: "name-color-red",    hex: "#fb7185" },
+    { key: "blue",  label: "Blue",   clip: "name-color-blue",   hex: "#38bdf8" },
+    { key: "green", label: "Green",  clip: "name-color-green",  hex: "#4ade80" }
+  ];
+
+  var SKIES = [
+    {
+      key: "heart", name: "Nebula Heart", emo: "❤️", buddyKey: "bunny", buddyName: "Bunny", buddyClip: "word-bunny",
+      bg: "bg_space", voiceClip: "hoot-twk-heart", glow: "#ff6b9d",
+      /* Normalized coordinates inside the sky constellation zone (-1..1) */
+      pts: [ [0, -0.22], [-0.52, -0.62], [-0.78, -0.05], [0, 0.72], [0.78, -0.05], [0.52, -0.62] ],
+      edges: [ [0,1],[1,2],[2,3],[3,4],[4,5],[5,0] ]
+    },
+    {
+      key: "crown", name: "Moonbeam Crown", emo: "👑", buddyKey: "puppy", buddyName: "Puppy", buddyClip: "word-dog",
+      bg: "bg_moon", voiceClip: "hoot-twk-crown", glow: "#fde047",
+      pts: [ [-0.74, 0.45], [-0.82, -0.35], [-0.34, 0.08], [0, -0.58], [0.34, 0.08], [0.82, -0.35], [0.74, 0.45] ],
+      edges: [ [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0] ]
+    },
+    {
+      key: "butterfly", name: "Candy Butterfly", emo: "🦋", buddyKey: "kitten", buddyName: "Kitten", buddyClip: "word-kitten",
+      bg: "bg_candy", voiceClip: "hoot-twk-butterfly", glow: "#38bdf8",
+      pts: [ [0, -0.36], [-0.78, -0.55], [-0.62, 0.45], [0, 0.36], [0.62, 0.45], [0.78, -0.55] ],
+      edges: [ [0,1],[1,2],[2,3],[3,0],[0,5],[5,4],[4,3] ]
+    },
+    {
+      key: "rocket", name: "Starlight Rocket", emo: "🚀", buddyKey: "bear", buddyName: "Bear", buddyClip: "word-bear",
+      bg: "bg_dino", voiceClip: "hoot-twk-rocket", glow: "#4ade80",
+      pts: [ [0, -0.78], [-0.38, -0.18], [-0.62, 0.52], [-0.22, 0.36], [0.22, 0.36], [0.62, 0.52], [0.38, -0.18] ],
+      edges: [ [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0],[1,6] ]
     }
-  }
+  ];
 
-  /* ================= START / WIN ================= */
-  function startRound(){
-    clearPending(); roundToken++;
-    if(spawnTimer){ clearInterval(spawnTimer); spawnTimer=null; }
-    clearStars();
-    stars=0; caught=0; goldenCaught=0; spawnCount=0; wonFlag=false;
-    targetColor=null; targetLetter=null;
-    if(mode==="free"){
-      shape=SHAPES[Math.floor(Math.random()*SHAPES.length)];
-    } else {
-      shape=SHAPES[0];
-      if(mode==="color") targetColor=pick(COLORS);
-      else targetLetter=(function(){try{var P=window.parent,W=String(P.__llLetterOfWeek&&P.__llLetterOfWeek()||"").toUpperCase();if(/^[A-Z]$/.test(W)){if(LETTERS.indexOf(W)<0)LETTERS.push(W);if(Math.random()<0.6)return W;}}catch(e){}return pick(LETTERS);})();
-    }
-    goal=shape.pts.length;
-    winOverlay.hidden=true; startPanel.hidden=true;
-    state="playing"; updateHUD();
-    buildJar(); setDots();
-    if(mode==="free"){ targetMain.textContent="Catch "+goal+" stars!"; tcLabel.textContent="Into Hoot's star jar"; }
-    else if(mode==="color"){ targetMain.textContent="Catch "+targetColor.name+" stars!"; tcLabel.textContent="Only the colour Hoot called"; }
-    else { targetMain.textContent="Catch letter "+targetLetter+"!"; tcLabel.textContent="Only stars with Hoot's letter"; }
-    targetCard.style.display="flex";
-    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
-    enqueue("hoot-game-hello.mp3","hello","",function(){ say("The stars are coming out! Let&rsquo;s catch them!"); });
-    callout(true);
-    spawnStar(); spawnStar();
-    spawnTimer=setInterval(spawnStar,900);
-  }
-  function winRound(){
-    if(wonFlag) return; wonFlag=true; state="won";
-    if(spawnTimer){ clearInterval(spawnTimer); spawnTimer=null; }
-    clearStars();
-    jarZone.classList.add("reveal");
-    hootReact("celebrate",2200);
-    starSound();
-    targetCard.style.display="none";
-    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
-    var g=goal, sh=shape;
-    enqueue("call-number-"+g+".mp3","recap","",function(){
-      say("You caught <span class='b-big'>"+g+" stars</span> — and look what they made in my jar!");
-    });
-    enqueue("hoot-you-learned.mp3","recap","",null);
-    winTitle.textContent="A Picture in the Jar!";
-    winRecap.innerHTML="You caught <b>"+g+" twinkle stars</b>, and inside Hoot&rsquo;s jar they arranged themselves into <b>"+sh.label+"</b>!"+(goldenCaught?" And you caught a rare <b>golden star</b> too!":"");
-    winChips.innerHTML="";
-    var c1=document.createElement("span"); c1.className="chip"; c1.textContent="★ "+g+" stars caught"; winChips.appendChild(c1);
-    var c2=document.createElement("span"); c2.className="chip"; c2.textContent="Picture: "+sh.label; winChips.appendChild(c2);
-    if(goldenCaught){ var c3=document.createElement("span"); c3.className="chip"; c3.textContent="✦ Golden star bonus!"; winChips.appendChild(c3); }
-    if(mode==="color"){ var c4=document.createElement("span"); c4.className="chip"; c4.textContent="Colour: "+targetColor.name; winChips.appendChild(c4); }
-    if(mode==="letter"){ var c5=document.createElement("span"); c5.className="chip"; c5.textContent="Letter: "+targetLetter; winChips.appendChild(c5); }
-    var starEls=winStars.children;
-    for(var i=0;i<starEls.length;i++){
-      starEls[i].classList.remove("lit");
-      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
-    }
-    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },500);
-  }
-  function resetToStart(){
-    clearPending(); roundToken++;
-    if(spawnTimer){ clearInterval(spawnTimer); spawnTimer=null; }
-    clearStars();
-    state="start"; wonFlag=false; caught=0;
-    jarStars.innerHTML=""; jarZone.classList.remove("reveal"); jarPoly.setAttribute("points","");
-    jarLabel.textContent="Hoot's Star Jar";
-    winOverlay.hidden=true; startPanel.hidden=false;
-    targetCard.style.display="none";
-    say("Shh… the stars are coming out! Tap <span class='b-big'>Play</span> and catch twinkle stars for my jar!");
-    hootFig.classList.add("wave");
-    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
-  }
-
-  /* ================= CONTROLS ================= */
-  function hearAgain(){
-    audio();
-    if(state==="playing"){ callout(); }
-    else if(!vPlaying){ if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact("celebrate",1000); }
-  }
-  hootFig.addEventListener("click",hearAgain);
-  $("hearBtn").addEventListener("click",hearAgain);
-  $("soundBtn").addEventListener("click",function(){
-    soundOn=!soundOn;
-    $("soundOnIc").style.display=soundOn?"block":"none";
-    $("soundOffIc").style.display=soundOn?"none":"block";
-    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-    if(!soundOn){ clearPending(); }
-    else { audio(); tone(660,660,0.1,"triangle",0.12); }
-  });
-  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
-  document.querySelectorAll(".mode-chip").forEach(function(ch){
-    ch.addEventListener("click",function(){
-      mode=ch.getAttribute("data-mode");
-      document.querySelectorAll(".mode-chip").forEach(function(c){ c.classList.toggle("selected",c===ch); });
-      tone(660,660,0.1,"triangle",0.1);
-    });
-  });
-  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
-
-  /* ================= LIVING SCENE TAPS ================= */
-  $("moon").addEventListener("click",function(){
-    audio(); var m=$("moon"); m.classList.remove("glow"); void m.offsetWidth; m.classList.add("glow");
-    sparkleSound();
-    if(state==="start") say("That&rsquo;s Mrs. Moon! She hangs the stars in the sky for us!");
-  });
-  document.querySelectorAll(".cloud").forEach(function(c){
-    c.addEventListener("click",function(){
-      audio(); c.classList.add("puff"); poofSound();
-      if(state==="playing") say("Puff! That&rsquo;s just a cloud — the stars are the twinkly ones!");
-      setTimeout(function(){ c.classList.remove("puff"); },320);
-    });
-  });
-  document.querySelectorAll(".firefly").forEach(function(f){
-    f.addEventListener("click",function(){
-      audio(); f.classList.add("gone"); tone(1500,1900,0.12,"sine",0.07);
-      if(state==="playing") say("That&rsquo;s a firefly, not a star! It blinked away — no worries!");
-      setTimeout(function(){ f.classList.remove("gone"); },4000);
-    });
-  });
-
-  /* ================= LEAVING THE GAME ================= */
-  function teardown(){
-    dead=true; clearPending(); hootTalking(false);
-    if(spawnTimer){ clearInterval(spawnTimer); spawnTimer=null; }
-    clearStars();
-  }
-  window.addEventListener("pagehide",teardown);
-  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
-
-  /* ================= INIT ================= */
-  shape=SHAPES[0]; goal=shape.pts.length;
-  buildJar(); setDots();
-  updateHUD();
-  hootFig.classList.add("wave");
-  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
-
-  /* Probe/debug handle: read-only snapshot of the round state. */
-  window.__twinkleGame={
-    snapshot:function(){
-      return { state:state, mode:mode, stars:stars, caught:caught, goal:goal,
-        shape:shape?shape.name:null, goldenCaught:goldenCaught,
-        targetColor:targetColor?targetColor.id:null, targetLetter:targetLetter,
-        alive:alive.map(function(s){ return { target:s.isTarget, golden:s.golden, color:s.color.id, letter:s.letter }; }),
-        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
-        voiceQueue:vQueue.map(function(q){ return q.file; }) };
-    }
+  var IMG = {};
+  var URLS = {
+    bg_space:    "assets/rocket3d/bg_space.jpg",
+    bg_moon:     "assets/rocket3d/bg_moon.jpg",
+    bg_candy:    "assets/rocket3d/bg_candy.jpg",
+    bg_dino:     "assets/rocket3d/bg_dino.jpg",
+    bunny:       "assets/pizza3d/sprite_cust_bunny.png",
+    puppy:       "assets/pizza3d/sprite_cust_puppy.png",
+    kitten:      "assets/pizza3d/sprite_cust_kitten.png",
+    bear:        "assets/pizza3d/sprite_cust_bear.png",
+    star_gold:   "assets/twinkle3d/star_gold.png",
+    star_red:    "assets/twinkle3d/star_red.png",
+    star_blue:   "assets/twinkle3d/star_blue.png",
+    star_green:  "assets/twinkle3d/star_green.png",
+    star_rainbow:"assets/twinkle3d/star_rainbow.png",
+    jar_back:    "assets/twinkle3d/sprite_jar_back.png",
+    jar_front:   "assets/twinkle3d/sprite_jar_front.png",
+    jar_cork:    "assets/twinkle3d/sprite_jar_cork.png",
+    cloud:       "assets/twinkle3d/sprite_cloud_night.png"
   };
+  Object.keys(URLS).forEach(function(k){
+    var im = new Image();
+    im.src = URLS[k] + VER;
+    IMG[k] = im;
+  });
+
+  /* =========================================================================
+     4. CANVAS & RESPONSIVE GEOMETRY
+     ========================================================================= */
+  var cv = document.getElementById("cv");
+  var ctx = cv.getContext("2d");
+  var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function isPortrait(){ return W < 680; }
+
+  function jarRect(){
+    var port = isPortrait();
+    var h = Math.min(port ? H * 0.23 : H * 0.30, port ? 175 : 225);
+    var w = h * (340 / 400);
+    var cx = W * 0.5;
+    var cy = port ? (H - 134 - h * 0.45) : (H - 86 - h * 0.46);
+    return { cx: cx, cy: cy, w: w, h: h };
+  }
+  function buddyPos(){
+    var port = isPortrait();
+    var sz = Math.min(port ? W * 0.27 : H * 0.25, 195);
+    return {
+      x: port ? (W * 0.17) : (W * 0.16),
+      y: port ? (H - 132 - sz * 0.42) : (H - 84 - sz * 0.44),
+      w: sz, h: sz * 1.12
+    };
+  }
+  function constellationBox(){
+    var port = isPortrait();
+    return {
+      cx: W * 0.5,
+      cy: port ? (H * 0.36) : (H * 0.34),
+      rx: Math.min(port ? W * 0.33 : W * 0.20, 210),
+      ry: Math.min(port ? H * 0.14 : H * 0.17, 130)
+    };
+  }
+
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * DPR; cv.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  /* =========================================================================
+     5. GAME STATE & ENTITIES
+     ========================================================================= */
+  var bubble = document.getElementById("promptBubble");
+  var starCountEl = document.getElementById("starCount");
+  var jarCountTxt = document.getElementById("jarCountTxt");
+  var colorCard = document.getElementById("colorCard");
+  var colorTargetImg = document.getElementById("colorTargetImg");
+  var colorTargetLbl = document.getElementById("colorTargetLbl");
+  var shakeBtn = document.getElementById("shakeBtn");
+  var nextSkyBtn = document.getElementById("nextSkyBtn");
+  var winOverlay = document.getElementById("winOverlay");
+
+  var skyIdx = 0, litSkies = {}, wizardUnlocked = false;
+  var mode = "count5"; /* "count5" | "count10" | "colors" */
+  var targetColorIdx = 0;
+  var phase = "catch"; /* "catch" | "shake" | "launch" | "celebrated" */
+  var goalCount = 5, caughtCount = 0, shakeCount = 0;
+  var totalStars = 0, roundGen = 0;
+
+  var flyingStars = [];   /* swooping catchable 3D stars in sky */
+  var intoJarStars = [];  /* stars flying smoothly into the glass jar mouth */
+  var jarStars = [];      /* stars bouncing & rattling inside the glass jar! */
+  var launchStars = [];   /* stars rocketing up to the constellation vertices! */
+  var litNodes = [];      /* booleans per constellation vertex */
+  var clouds = [];        /* drifting puffy clouds hiding secret stars */
+  var particles = [];     /* soft bokeh sparkles & comet dust */
+  var floatTexts = [];    /* popping numbers & cheers */
+  var netTrail = [];      /* golden magic star-net swipe ribbon */
+  var fireflies = [];     /* ambient floating starlight fireflies */
+  var bgTwinkles = [];    /* ambient parallax micro-stars */
+
+  var jarShakeAmt = 0, jarWobbleVel = 0, jarTilt = 0;
+  var corkPopped = false, corkState = { x: 0, y: 0, vx: 0, vy: 0, rot: 0, vr: 0 };
+  var buddyHopT = 0, buddyFlipT = 0, constGlowT = 0;
+  var swipingNet = false, shakingJarDrag = false, lastShakeX = 0, dragShakeAccum = 0;
+  var spawnAccum = 0;
+
+  for(var fi = 0; fi < 16; fi++){
+    fireflies.push({ x: Math.random(), y: 0.45 + Math.random() * 0.42, ph: Math.random() * Math.PI * 2, spd: 0.4 + Math.random() * 0.6 });
+  }
+  for(var ti = 0; ti < 40; ti++){
+    bgTwinkles.push({ x: Math.random(), y: 0.05 + Math.random() * 0.72, r: 1 + Math.random() * 2.2, ph: Math.random() * Math.PI * 2 });
+  }
+
+  function updateSkyBadges(){
+    document.querySelectorAll(".sbadge").forEach(function(b){
+      var idx = parseInt(b.getAttribute("data-si"), 10);
+      b.classList.toggle("active-sky", idx === (skyIdx % SKIES.length));
+      b.classList.toggle("lit", !!litSkies[idx]);
+      var ck = b.querySelector(".sbadge-chk");
+      if(ck) ck.hidden = !litSkies[idx];
+    });
+  }
+
+  function updateColorCard(){
+    if(mode !== "colors" || phase !== "catch"){ colorCard.hidden = true; return; }
+    colorCard.hidden = false;
+    var cd = COLOR_DEFS[targetColorIdx % COLOR_DEFS.length];
+    colorTargetImg.src = "assets/twinkle3d/star_" + cd.key + ".png" + VER;
+    colorTargetLbl.textContent = "Catch " + cd.label + "!";
+    colorCard.style.borderColor = cd.hex;
+  }
+
+  function updateJarCounter(){
+    jarCountTxt.textContent = caughtCount + " / " + goalCount;
+  }
+
+  function pickNextColor(speakNow){
+    targetColorIdx = (targetColorIdx + 1 + Math.floor(Math.random() * 3)) % COLOR_DEFS.length;
+    updateColorCard();
+    var cd = COLOR_DEFS[targetColorIdx];
+    bubble.innerHTML = "🌈 <b>COLOR CATCH!</b> Catch a glowing <b>" + cd.label.toUpperCase() + " STAR</b>!";
+    if(speakNow) playVoice([cd.clip, "word-star"]);
+  }
+
+  function spawnFlyingStar(forceColorKey, fromX, fromY){
+    if(flyingStars.length >= 9) return;
+    var jr = jarRect();
+    var fromLeft = Math.random() < 0.5;
+    var sx = fromX !== undefined ? fromX : (fromLeft ? -55 : W + 55);
+    var sy = fromY !== undefined ? fromY : (110 + Math.random() * Math.max(120, jr.cy - jr.h * 0.65 - 150));
+    var vx = fromX !== undefined ? ((Math.random() - 0.5) * 90) : ((fromLeft ? 1 : -1) * (58 + Math.random() * 68));
+    var vy = fromY !== undefined ? (-40 - Math.random() * 35) : ((Math.random() - 0.5) * 28);
+
+    var cKey = forceColorKey;
+    if(!cKey){
+      if(mode === "colors"){
+        /* Guarantee at least 2 target-color stars on screen so kids never wait! */
+        var tgtKey = COLOR_DEFS[targetColorIdx].key;
+        var tgtOnScreen = flyingStars.filter(function(s){ return s.colorKey === tgtKey; }).length;
+        cKey = (tgtOnScreen < 2 || Math.random() < 0.52) ? tgtKey : COLOR_DEFS[Math.floor(Math.random() * COLOR_DEFS.length)].key;
+      } else {
+        var r = Math.random();
+        cKey = (wizardUnlocked && r < 0.35) ? "rainbow" : (r < 0.52 ? "gold" : (r < 0.68 ? "blue" : (r < 0.84 ? "red" : (r < 0.94 ? "green" : "rainbow"))));
+      }
+    }
+    var sz = isPortrait() ? (68 + Math.random() * 14) : (78 + Math.random() * 16);
+    flyingStars.push({
+      x: sx, y: sy, vx: vx, vy: vy, baseY: sy,
+      sz: sz, rot: (Math.random() - 0.5) * 0.4, vr: (Math.random() - 0.5) * 1.1,
+      ph: Math.random() * Math.PI * 2, colorKey: cKey,
+      trail: [], wrongShake: 0
+    });
+  }
+
+  function spawnClouds(){
+    clouds = [];
+    for(var i = 0; i < 2; i++){
+      clouds.push({
+        x: W * (0.24 + i * 0.52),
+        y: (isPortrait() ? 155 : 135) + i * 52,
+        vx: (i % 2 === 0 ? 1 : -1) * (16 + Math.random() * 12),
+        w: isPortrait() ? 132 : 164, h: isPortrait() ? 78 : 96,
+        popped: false, respawnT: 0, peekPh: i * 1.9
+      });
+    }
+  }
+
+  function spawnSparkles(x, y, col, count){
+    var cols = col ? [col, "#ffffff", "#fde047"] : ["#fde047", "#38bdf8", "#f472b6", "#4ade80", "#ffffff"];
+    for(var i = 0; i < (count || 12); i++){
+      var a = (i / (count || 12)) * Math.PI * 2 + Math.random() * 0.5;
+      var spd = 70 + Math.random() * 190;
+      particles.push({
+        x: x, y: y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd - 35,
+        r: 4 + Math.random() * 7, col: cols[i % cols.length], life: 1.0, decay: 1.1 + Math.random() * 0.6
+      });
+    }
+  }
+  function spawnFloat(x, y, txt, col){
+    floatTexts.push({
+      x: Math.max(76, Math.min(W - 76, x)),
+      y: Math.max(96, Math.min(H - 120, y)),
+      txt: txt, col: col || "#fde047", life: 1.0, scale: 0.45
+    });
+  }
+
+  function startSky(speakNow){
+    roundGen++;
+    phase = "catch";
+    goalCount = mode === "count10" ? 10 : 5;
+    caughtCount = 0; shakeCount = 0;
+    flyingStars = []; intoJarStars = []; jarStars = []; launchStars = [];
+    var sky = SKIES[skyIdx % SKIES.length];
+    litNodes = sky.pts.map(function(){ return false; });
+    constGlowT = 0; corkPopped = false; jarShakeAmt = 0; jarTilt = 0;
+    buddyHopT = 1.0; buddyFlipT = 0;
+
+    shakeBtn.hidden = true; nextSkyBtn.hidden = true;
+    spawnClouds();
+    for(var i = 0; i < 5; i++){
+      spawnFlyingStar(undefined, W * (0.14 + i * 0.18), (isPortrait() ? 180 : 160) + (i % 2) * 75);
+    }
+
+    updateSkyBadges();
+    updateJarCounter();
+    updateColorCard();
+
+    if(mode === "colors"){
+      var cd = COLOR_DEFS[targetColorIdx % COLOR_DEFS.length];
+      bubble.innerHTML = "🌈 <b>COLOR CATCH!</b> Catch a glowing <b>" + cd.label.toUpperCase() + " STAR</b> for " + sky.buddyName + "!";
+      setStepVoice(null, [cd.clip, "word-star"], speakNow !== false);
+    } else {
+      bubble.innerHTML = sky.emo + " <b>" + sky.name.toUpperCase() + "!</b> Tap or swipe <b>" + goalCount + " glowing stars</b> into your jar!";
+      setStepVoice("hoot-twk-welcome", ["hoot-r3d-tap-stars", "hoot-ready-go"], speakNow !== false);
+    }
+  }
+
+  /* STAGE 1: CATCH A FLYING 3D STAR! */
+  function catchStar(idx){
+    if(phase !== "catch") return;
+    var st = flyingStars[idx];
+    if(!st) return;
+
+    if(mode === "colors"){
+      var wantKey = COLOR_DEFS[targetColorIdx].key;
+      if(st.colorKey !== wantKey && st.colorKey !== "rainbow"){
+        st.wrongShake = 1.0;
+        st.vy = -85;
+        sfxBoing();
+        var cd = COLOR_DEFS[targetColorIdx];
+        playVoice(["hoot-try-again", cd.clip, "word-star"]);
+        spawnFloat(st.x, st.y - 24, "Find " + cd.label + "!", cd.hex);
+        return;
+      }
+    }
+
+    flyingStars.splice(idx, 1);
+    caughtCount++;
+    totalStars++;
+    starCountEl.textContent = String(totalStars);
+    updateJarCounter();
+
+    sfxStarChime(caughtCount - 1);
+    if(caughtCount <= 10) playVoice(["name-number-" + caughtCount]);
+    spawnSparkles(st.x, st.y, null, 14);
+    spawnFloat(st.x, st.y - 20, caughtCount + "!", "#fde047");
+
+    var jr = jarRect();
+    intoJarStars.push({
+      x0: st.x, y0: st.y,
+      x1: jr.cx + (Math.random() - 0.5) * jr.w * 0.25,
+      y1: jr.cy - jr.h * 0.42,
+      t: 0, sz: st.sz * 0.72, colorKey: st.colorKey
+    });
+
+    if(caughtCount >= goalCount){
+      var myGen = roundGen;
+      setTimeout(function(){ if(myGen === roundGen && phase === "catch" && !won) enterShakeStage(); }, 620);
+    } else if(mode === "colors"){
+      var myGen2 = roundGen;
+      setTimeout(function(){ if(myGen2 === roundGen && phase === "catch" && !won) pickNextColor(true); }, 680);
+    }
+  }
+
+  /* STAGE 2: SHAKE THE FULL GLOWING STAR LANTERN! */
+  function enterShakeStage(){
+    phase = "shake";
+    shakeCount = 0;
+    colorCard.hidden = true;
+    var lbl = shakeBtn.querySelector("span");
+    if(lbl) lbl.textContent = "✨ SHAKE JAR! (0/3)";
+    shakeBtn.hidden = false;
+    bubble.innerHTML = "✨ <b>YOUR STAR JAR IS FULL!</b> Shake or tap the glowing jar <b>3 times</b> to light up the sky!";
+    setStepVoice("hoot-twk-shake-jar", ["hoot-tap-big-btn"], true);
+  }
+
+  function performJarShake(){
+    if(phase !== "shake") return;
+    shakeCount++;
+    jarShakeAmt = 1.0;
+    jarWobbleVel = (shakeCount % 2 === 0 ? 1 : -1) * 14;
+    sfxJarClink(shakeCount);
+    buddyHopT = 0.85;
+
+    /* Bounce all trapped 3D stars wildly inside the glass jar! */
+    jarStars.forEach(function(js){
+      js.vx += (Math.random() - 0.5) * 420;
+      js.vy = -220 - Math.random() * 240;
+      js.vr = (Math.random() - 0.5) * 12;
+    });
+    var jr = jarRect();
+    spawnSparkles(jr.cx, jr.cy - jr.h * 0.15, "#fde047", 14);
+    spawnFloat(jr.cx, jr.cy - jr.h * 0.56, shakeCount < 3 ? ("SHAKE " + shakeCount + "!") : "POP!! ✨", "#fde047");
+
+    var lbl = shakeBtn.querySelector("span");
+    if(lbl) lbl.textContent = "✨ SHAKE JAR! (" + shakeCount + "/3)";
+
+    if(shakeCount < 3){
+      playVoice(["name-number-" + shakeCount]);
+    } else {
+      shakeBtn.hidden = true;
+      launchConstellation();
+    }
+  }
+
+  /* STAGE 3: POP CORK & LAUNCH STARS INTO THE GLOWING CONSTELLATION! */
+  function launchConstellation(){
+    var myGen = roundGen;
+    phase = "launch";
+    flyingStars = [];
+    clouds.forEach(function(cl){ cl.popped = true; cl.respawnT = 99; });
+    corkPopped = true;
+    var jr = jarRect();
+    corkState = { x: jr.cx, y: jr.cy - jr.h * 0.44, vx: 130, vy: -420, rot: 0, vr: 7.5 };
+    sfxCorkPop();
+    spawnSparkles(jr.cx, jr.cy - jr.h * 0.45, "#fef08a", 24);
+    bubble.innerHTML = "🌠 <b>WHOOSH!!</b> Watch your stars paint a glowing picture in the night sky!";
+    playVoice(resolveCmd("hoot-twk-constellation", ["hoot-super"]));
+
+    var sky = SKIES[skyIdx % SKIES.length];
+    var cb = constellationBox();
+    var totalNodes = sky.pts.length;
+    launchStars = [];
+
+    for(var ni = 0; ni < totalNodes; ni++){
+      var pt = sky.pts[ni];
+      var src = jarStars[ni % Math.max(1, jarStars.length)];
+      launchStars.push({
+        idx: ni,
+        x0: jr.cx + (Math.random() - 0.5) * 32,
+        y0: jr.cy - jr.h * 0.25,
+        x1: cb.cx + pt[0] * cb.rx,
+        y1: cb.cy + pt[1] * cb.ry,
+        delay: ni * 0.20,
+        t: 0,
+        done: false,
+        colorKey: src ? src.colorKey : "gold"
+      });
+    }
+    jarStars = [];
+
+    setTimeout(function(){
+      if(myGen !== roundGen || won || phase !== "launch") return;
+      finishConstellationCelebration();
+    }, totalNodes * 200 + 820);
+  }
+
+  function finishConstellationCelebration(){
+    phase = "celebrated";
+    var sky = SKIES[skyIdx % SKIES.length];
+    litNodes = sky.pts.map(function(){ return true; });
+    litSkies[skyIdx % SKIES.length] = true;
+    constGlowT = 1.0;
+    totalStars += 5;
+    starCountEl.textContent = String(totalStars);
+    buddyFlipT = 1.3;
+    updateSkyBadges();
+    sfxConstellationFanfare();
+
+    var allFour = SKIES.every(function(_, i){ return !!litSkies[i]; });
+    var justWizard = allFour && !wizardUnlocked;
+    if(justWizard) wizardUnlocked = true;
+
+    var cb = constellationBox();
+    spawnSparkles(cb.cx, cb.cy, sky.glow, 32);
+    spawnSparkles(cb.cx - cb.rx * 0.5, cb.cy - 20, "#fde047", 18);
+    spawnSparkles(cb.cx + cb.rx * 0.5, cb.cy - 20, "#38bdf8", 18);
+
+    var nextSky = SKIES[(skyIdx + 1) % SKIES.length];
+    var lbl = nextSkyBtn.querySelector("span");
+    if(lbl) lbl.textContent = nextSky.emo + " Next Sky: " + nextSky.name + "!";
+    nextSkyBtn.hidden = false;
+
+    if(justWizard){
+      bubble.innerHTML = "👑 <b>STARLIGHT WIZARD!</b> You lit all 4 skies &amp; unlocked ✨ <b>RAINBOW AURORA MAGIC!</b>";
+      setStepVoice("hoot-twk-rocket", ["hoot-amazing", "hoot-win-star"], true);
+    } else {
+      bubble.innerHTML = "🎉 <b>" + sky.name.toUpperCase() + " LIT UP! +5 ⭐!</b> Tap below for " + nextSky.emo + " <b>" + nextSky.name + "</b>!";
+      setStepVoice(sky.voiceClip, ["hoot-amazing", "hoot-win-star"], true);
+    }
+  }
+
+  /* =========================================================================
+     6. POINTER / TOUCH INTERACTION (TAP OR SWIPE MAGIC STAR-NET + SHAKE JAR!)
+     ========================================================================= */
+  function hitTestCatch(px, py){
+    /* 1. Catch any flying star within generous kid magnetic radius (>=84px!) */
+    for(var i = flyingStars.length - 1; i >= 0; i--){
+      var s = flyingStars[i];
+      if(Math.hypot(px - s.x, py - s.y) < Math.max(46, s.sz * 0.68)){
+        catchStar(i);
+        return true;
+      }
+    }
+    /* 2. Pop puffy night clouds to release secret bonus stars! */
+    for(var ci = 0; ci < clouds.length; ci++){
+      var cl = clouds[ci];
+      if(!cl.popped && Math.abs(px - cl.x) < cl.w * 0.52 && Math.abs(py - cl.y) < cl.h * 0.55){
+        cl.popped = true; cl.respawnT = 6.5;
+        sfxCloudPuff();
+        spawnSparkles(cl.x, cl.y, "#e0f2fe", 16);
+        spawnFloat(cl.x, cl.y - 18, "Peekaboo! ⭐", "#fef08a");
+        var wantK = mode === "colors" ? COLOR_DEFS[targetColorIdx].key : "rainbow";
+        spawnFlyingStar(wantK, cl.x, cl.y);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  cv.addEventListener("pointerdown", function(e){
+    e.preventDefault();
+    var rect = cv.getBoundingClientRect();
+    var px = e.clientX - rect.left, py = e.clientY - rect.top;
+
+    /* Check animal buddy tap */
+    var bp = buddyPos();
+    if(Math.hypot(px - bp.x, py - bp.y) < bp.w * 0.62){
+      var sky = SKIES[skyIdx % SKIES.length];
+      buddyHopT = 1.0; sfxStarChime(4); playVoice([sky.buddyClip]);
+      spawnSparkles(bp.x, bp.y - bp.h * 0.2, "#fde047", 12);
+      return;
+    }
+
+    /* Check glowing Star Lantern Jar tap / shake */
+    var jr = jarRect();
+    if(Math.abs(px - jr.cx) < jr.w * 0.68 && Math.abs(py - jr.cy) < jr.h * 0.62){
+      if(phase === "shake"){
+        shakingJarDrag = true; lastShakeX = px; dragShakeAccum = 0;
+        performJarShake();
+        return;
+      } else if(jarStars.length > 0){
+        jarShakeAmt = 0.55; jarWobbleVel = 8; sfxJarClink(1);
+        jarStars.forEach(function(js){ js.vy -= 140; js.vx += (Math.random() - 0.5) * 180; });
+        return;
+      }
+    }
+
+    if(phase === "catch"){
+      swipingNet = true;
+      netTrail.push({ x: px, y: py, life: 1.0 });
+      if(!hitTestCatch(px, py)){
+        /* Sparkle dust anywhere you tap the night sky! */
+        spawnSparkles(px, py, "#fef08a", 6);
+      }
+    }
+  });
+
+  window.addEventListener("pointermove", function(e){
+    var rect = cv.getBoundingClientRect();
+    var px = e.clientX - rect.left, py = e.clientY - rect.top;
+    if(phase === "catch" && swipingNet){
+      netTrail.push({ x: px, y: py, life: 1.0 });
+      if(netTrail.length > 26) netTrail.shift();
+      hitTestCatch(px, py);
+    } else if(phase === "shake" && shakingJarDrag){
+      var dx = px - lastShakeX; lastShakeX = px;
+      dragShakeAccum += Math.abs(dx);
+      jarTilt = Math.max(-0.28, Math.min(0.28, dx * 0.015));
+      if(dragShakeAccum > 95){
+        dragShakeAccum = 0;
+        performJarShake();
+      }
+    }
+  });
+  window.addEventListener("pointerup", function(){ swipingNet = false; shakingJarDrag = false; });
+  window.addEventListener("pointercancel", function(){ swipingNet = false; shakingJarDrag = false; });
+
+  /* UI Button Handlers */
+  shakeBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); performJarShake(); });
+  nextSkyBtn.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    if(phase !== "celebrated") return;
+    skyIdx = (skyIdx + 1) % SKIES.length;
+    startSky(true);
+  });
+  function setMode(m){
+    mode = m;
+    document.getElementById("mode5Btn").classList.toggle("sel", m === "count5");
+    document.getElementById("mode10Btn").classList.toggle("sel", m === "count10");
+    document.getElementById("modeColorBtn").classList.toggle("sel", m === "colors");
+    sfxStarChime(2);
+    startSky(true);
+  }
+  document.getElementById("mode5Btn").addEventListener("click", function(){ setMode("count5"); });
+  document.getElementById("mode10Btn").addEventListener("click", function(){ setMode("count10"); });
+  document.getElementById("modeColorBtn").addEventListener("click", function(){ setMode("colors"); });
+  document.getElementById("showerBtn").addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    sfxConstellationFanfare();
+    for(var i = 0; i < 4; i++) spawnFlyingStar(mode === "colors" && i < 2 ? COLOR_DEFS[targetColorIdx].key : undefined);
+    spawnSparkles(W * 0.5, H * 0.28, null, 24);
+  });
+  document.getElementById("hootBtn").addEventListener("click", function(){
+    if(lastStepClips && lastStepClips.length) playVoice(lastStepClips);
+  });
+  document.querySelectorAll(".sbadge").forEach(function(b){
+    b.addEventListener("click", function(){
+      skyIdx = parseInt(b.getAttribute("data-si"), 10) || 0;
+      sfxStarChime(3); startSky(true);
+    });
+  });
+  document.getElementById("doneBtn").addEventListener("click", function(){
+    roundGen++; won = true; clearIdleHelp();
+    var litCnt = Object.keys(litSkies).length;
+    document.getElementById("winSummary").textContent = litCnt >= 4
+      ? "You lit up all 4 magical constellations, unlocked Rainbow Aurora Wizard Mode, and caught " + totalStars + " twinkling stars!"
+      : "Amazing star catching! You lit up " + litCnt + " constellation" + (litCnt === 1 ? "" : "s") + " and earned " + totalStars + " stars!";
+    winOverlay.hidden = false;
+    playVoice(["hoot-win-star"]);
+  });
+  document.getElementById("againBtn").addEventListener("click", function(){
+    won = false; winOverlay.hidden = true; startSky(true);
+  });
+
+  /* =========================================================================
+     7. 60FPS PIXAR STARLIGHT RENDER & PHYSICS LOOP
+     ========================================================================= */
+  var tAcc = 0, lastT = performance.now();
+
+  function drawCoverImg(im){
+    if(!im || !im.complete || !im.naturalWidth) return;
+    var sc = Math.max(W / im.naturalWidth, H / im.naturalHeight);
+    var dw = im.naturalWidth * sc, dh = im.naturalHeight * sc;
+    ctx.drawImage(im, (W - dw) * 0.5, (H - dh) * 0.5, dw, dh);
+  }
+
+  function render(now){
+    requestAnimationFrame(render);
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now; tAcc += dt;
+
+    var sky = SKIES[skyIdx % SKIES.length];
+    var jr = jarRect(), bp = buddyPos(), cb = constellationBox();
+
+    /* 1. Full-bleed Pixar Starry Night World Backdrop */
+    ctx.fillStyle = "#090d24";
+    ctx.fillRect(0, 0, W, H);
+    drawCoverImg(IMG[sky.bg]);
+
+    /* Soft upper sky night depth gradient so glowing constellations & stars pop dramatically */
+    var skyWash = ctx.createLinearGradient(0, 0, 0, H * 0.72);
+    skyWash.addColorStop(0, "rgba(7,10,32,0.46)");
+    skyWash.addColorStop(0.65, "rgba(12,18,52,0.18)");
+    skyWash.addColorStop(1, "rgba(12,18,52,0)");
+    ctx.fillStyle = skyWash;
+    ctx.fillRect(0, 0, W, H);
+
+    /* Unlocked Rainbow Aurora Borealis ribbons — silky soft glowing curved waves (zero hard rectangle edge!) */
+    if(wizardUnlocked || phase === "celebrated"){
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.lineCap = "round";
+      var aurCols = ["rgba(74,222,128,0.22)", "rgba(192,132,252,0.22)", "rgba(56,189,248,0.20)"];
+      for(var ai = 0; ai < 3; ai++){
+        ctx.strokeStyle = aurCols[ai];
+        ctx.lineWidth = 52 - ai * 8;
+        ctx.shadowColor = aurCols[ai];
+        ctx.shadowBlur = 34;
+        ctx.beginPath();
+        for(var ax = -40; ax <= W + 40; ax += 48){
+          var ay = H * (0.15 + ai * 0.065) + Math.sin(ax * 0.0045 + tAcc * (1.1 + ai * 0.35) + ai * 1.4) * 30;
+          if(ax === -40) ctx.moveTo(ax, ay); else ctx.lineTo(ax, ay);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* Ambient twinkling background micro-stars */
+    for(var ti = 0; ti < bgTwinkles.length; ti++){
+      var bt = bgTwinkles[ti];
+      var tw = 0.28 + 0.72 * (Math.sin(tAcc * 2.8 + bt.ph) * 0.5 + 0.5);
+      ctx.fillStyle = "rgba(255,250,220," + (tw * 0.75).toFixed(2) + ")";
+      ctx.beginPath(); ctx.arc(bt.x * W, bt.y * H, bt.r * (0.7 + tw * 0.45), 0, Math.PI * 2); ctx.fill();
+    }
+
+    /* 2. Glowing Constellation Blueprint & Lit Golden Starlight Beams! */
+    ctx.save();
+    var allLit = phase === "celebrated";
+    if(allLit) constGlowT = Math.min(1, constGlowT + dt * 1.5);
+    /* Draw edges */
+    sky.edges.forEach(function(ed){
+      var p0 = sky.pts[ed[0]], p1 = sky.pts[ed[1]];
+      var x0 = cb.cx + p0[0] * cb.rx, y0 = cb.cy + p0[1] * cb.ry;
+      var x1 = cb.cx + p1[0] * cb.rx, y1 = cb.cy + p1[1] * cb.ry;
+      var edgeLit = litNodes[ed[0]] && litNodes[ed[1]];
+      ctx.save();
+      if(edgeLit){
+        ctx.strokeStyle = allLit ? "#fef08a" : sky.glow;
+        ctx.lineWidth = allLit ? (5.5 + Math.sin(tAcc * 5) * 1.4) : 4.2;
+        ctx.shadowColor = sky.glow; ctx.shadowBlur = allLit ? 22 : 12;
+        ctx.setLineDash([]);
+      } else {
+        ctx.strokeStyle = "rgba(255,248,220,0.28)";
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([7, 8]);
+      }
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      ctx.restore();
+    });
+    /* Draw constellation anchor sockets & snapped glowing Pixar stars */
+    sky.pts.forEach(function(pt, ni){
+      var nx = cb.cx + pt[0] * cb.rx, ny = cb.cy + pt[1] * cb.ry;
+      if(litNodes[ni]){
+        var sImg = IMG.star_gold;
+        var sSz = (allLit ? 44 : 38) + Math.sin(tAcc * 4.5 + ni) * 3.5;
+        var g = ctx.createRadialGradient(nx, ny, 2, nx, ny, sSz * 0.95);
+        g.addColorStop(0, "rgba(255,250,190,0.85)"); g.addColorStop(1, "rgba(255,220,90,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(nx, ny, sSz * 0.95, 0, Math.PI * 2); ctx.fill();
+        if(sImg && sImg.complete && sImg.naturalWidth){
+          ctx.drawImage(sImg, nx - sSz * 0.5, ny - sSz * 0.5, sSz, sSz);
+        }
+      } else {
+        ctx.fillStyle = "rgba(255,250,220,0.32)";
+        ctx.beginPath(); ctx.arc(nx, ny, 5.5, 0, Math.PI * 2); ctx.fill();
+      }
+    });
+    if(allLit){
+      ctx.save();
+      ctx.font = '800 ' + Math.round(isPortrait() ? 24 : 32) + 'px "Fredoka",sans-serif';
+      ctx.textAlign = "center"; ctx.fillStyle = "#fef08a";
+      ctx.shadowColor = sky.glow; ctx.shadowBlur = 18;
+      ctx.fillText(sky.emo + " " + sky.name + "!", cb.cx, cb.cy + cb.ry + 32);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    /* 3. Drifting Puffy Moonlit Clouds hiding giggling secret stars! */
+    for(var ci = 0; ci < clouds.length; ci++){
+      var cl = clouds[ci];
+      if(cl.popped){
+        cl.respawnT -= dt;
+        if(cl.respawnT <= 0 && phase === "catch"){
+          cl.popped = false; cl.x = cl.vx > 0 ? -cl.w : W + cl.w;
+        }
+        continue;
+      }
+      cl.x += cl.vx * dt;
+      if(cl.x > W + cl.w) cl.x = -cl.w;
+      if(cl.x < -cl.w) cl.x = W + cl.w;
+      /* Little peeking star ear behind the cloud to tempt curious taps! */
+      var peekY = cl.y - cl.h * 0.30 + Math.sin(tAcc * 3.2 + cl.peekPh) * 5;
+      if(IMG.star_rainbow.complete && IMG.star_rainbow.naturalWidth){
+        ctx.drawImage(IMG.star_rainbow, cl.x - 18, peekY - 18, 36, 36);
+      }
+      if(IMG.cloud.complete && IMG.cloud.naturalWidth){
+        ctx.drawImage(IMG.cloud, cl.x - cl.w * 0.5, cl.y - cl.h * 0.5, cl.w, cl.h);
+      }
+    }
+
+    /* 4. Flying Catchable 3D Pixar Twinkle Stars! */
+    if(phase === "catch"){
+      spawnAccum += dt;
+      if(spawnAccum > 0.92 && flyingStars.length < 6){
+        spawnAccum = 0;
+        spawnFlyingStar();
+      }
+    }
+    for(var si = flyingStars.length - 1; si >= 0; si--){
+      var st = flyingStars[si];
+      st.x += st.vx * dt;
+      st.y += st.vy * dt + Math.sin(tAcc * 2.6 + st.ph) * 28 * dt;
+      st.rot += st.vr * dt;
+      if(st.wrongShake > 0) st.wrongShake = Math.max(0, st.wrongShake - dt * 3);
+
+      /* Keep gently inside upper catchable sky */
+      var minY = isPortrait() ? 138 : 108;
+      var maxY = jr.cy - jr.h * 0.55;
+      if(st.y < minY){ st.y = minY; st.vy = Math.abs(st.vy) * 0.6; }
+      if(st.y > maxY){ st.y = maxY; st.vy = -Math.abs(st.vy) * 0.6; }
+      if((st.vx > 0 && st.x > W + 85) || (st.vx < 0 && st.x < -85)){
+        flyingStars.splice(si, 1);
+        continue;
+      }
+
+      /* Shimmering comet tail */
+      st.trail.push({ x: st.x, y: st.y });
+      if(st.trail.length > 10) st.trail.shift();
+      for(var k = 0; k < st.trail.length - 1; k++){
+        var frac = (k + 1) / st.trail.length;
+        ctx.fillStyle = "rgba(255,244,180," + (frac * 0.42).toFixed(2) + ")";
+        ctx.beginPath(); ctx.arc(st.trail[k].x, st.trail[k].y, st.sz * 0.14 * frac, 0, Math.PI * 2); ctx.fill();
+      }
+
+      /* Glowing halo (extra bright ring if target color in Color Match mode!) */
+      var isWantedCol = mode === "colors" && (st.colorKey === COLOR_DEFS[targetColorIdx].key || st.colorKey === "rainbow");
+      var gRad = st.sz * (isWantedCol ? 0.92 : 0.72);
+      var sg = ctx.createRadialGradient(st.x, st.y, 4, st.x, st.y, gRad);
+      sg.addColorStop(0, isWantedCol ? "rgba(255,255,220,0.85)" : "rgba(255,242,160,0.48)");
+      sg.addColorStop(1, "rgba(255,220,100,0)");
+      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(st.x, st.y, gRad, 0, Math.PI * 2); ctx.fill();
+
+      var imgStar = IMG["star_" + st.colorKey] || IMG.star_gold;
+      if(imgStar && imgStar.complete && imgStar.naturalWidth){
+        ctx.save();
+        var shOff = st.wrongShake > 0 ? Math.sin(st.wrongShake * Math.PI * 6) * 8 : 0;
+        ctx.translate(st.x + shOff, st.y);
+        ctx.rotate(Math.sin(tAcc * 2.5 + st.ph) * 0.16);
+        var pulse = 1 + Math.sin(tAcc * 4.5 + st.ph) * (isWantedCol ? 0.08 : 0.04);
+        ctx.scale(pulse, pulse);
+        ctx.drawImage(imgStar, -st.sz * 0.5, -st.sz * 0.5, st.sz, st.sz);
+        ctx.restore();
+      }
+    }
+
+    /* 5. Stars Arcing Smoothly Into the Glass Star Lantern Mouth! */
+    for(var ii = intoJarStars.length - 1; ii >= 0; ii--){
+      var isObj = intoJarStars[ii];
+      isObj.t = Math.min(1, isObj.t + dt * 2.3);
+      var u = isObj.t, e = 1 - Math.pow(1 - u, 2.2);
+      var mx = (isObj.x0 + isObj.x1) * 0.5, my = Math.min(isObj.y0, isObj.y1) - 85;
+      var bx = (1 - e) * (1 - e) * isObj.x0 + 2 * (1 - e) * e * mx + e * e * isObj.x1;
+      var by = (1 - e) * (1 - e) * isObj.y0 + 2 * (1 - e) * e * my + e * e * isObj.y1;
+      var imI = IMG["star_" + isObj.colorKey] || IMG.star_gold;
+      var curSz = isObj.sz * (1 - u * 0.35);
+      if(imI && imI.complete && imI.naturalWidth){
+        ctx.save(); ctx.translate(bx, by); ctx.rotate(u * 5.0);
+        ctx.drawImage(imI, -curSz * 0.5, -curSz * 0.5, curSz, curSz);
+        ctx.restore();
+      }
+      if(u >= 1){
+        /* Land inside glass jar with buoyant magical zero-G star-jar bobbing & rattling! */
+        var jIdx = jarStars.length;
+        var row = Math.floor(jIdx / 3), col = jIdx % 3;
+        jarStars.push({
+          lx: (col - 1) * jr.w * 0.20 + (Math.random() - 0.5) * 12,
+          ly: jr.h * (0.18 - row * 0.16),
+          homeY: jr.h * (0.18 - row * 0.16),
+          vx: (Math.random() - 0.5) * 75,
+          vy: 50,
+          rot: (Math.random() - 0.5) * 0.6, vr: (Math.random() - 0.5) * 3,
+          ph: jIdx * 1.3,
+          sz: jr.w * (goalCount > 6 ? 0.30 : 0.38),
+          colorKey: isObj.colorKey
+        });
+        jarShakeAmt = 0.35; jarWobbleVel = 5;
+        sfxJarClink(0);
+        intoJarStars.splice(ii, 1);
+      }
+    }
+
+    /* 6. Grounded Pixar Animal Buddy Cheering on the Left Starlight Hill! */
+    if(buddyHopT > 0) buddyHopT = Math.max(0, buddyHopT - dt * 2.0);
+    if(buddyFlipT > 0) buddyFlipT = Math.max(0, buddyFlipT - dt * 1.15);
+    var bImg = IMG[sky.buddyKey];
+    if(bImg && bImg.complete && bImg.naturalWidth){
+      var hopY = (buddyHopT > 0 ? Math.sin(buddyHopT * Math.PI) * 32 : Math.sin(tAcc * 2.2) * 4);
+      var flipA = buddyFlipT > 0 ? Math.sin(buddyFlipT * Math.PI * 2) * 0.32 : Math.sin(tAcc * 1.8) * 0.03;
+      /* Soft contact shadow */
+      ctx.fillStyle = "rgba(8,12,32,0.42)";
+      ctx.beginPath(); ctx.ellipse(bp.x, bp.y + bp.h * 0.44, bp.w * 0.38, 12, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.save();
+      ctx.translate(bp.x, bp.y - hopY);
+      ctx.rotate(flipA);
+      ctx.drawImage(bImg, -bp.w * 0.5, -bp.h * 0.5, bp.w, bp.h);
+      ctx.restore();
+    }
+
+    /* 7. 3D GLASS STAR WISHING LANTERN JAR (Back Glass -> Bouncing 3D Stars -> Front Specular Glass -> Cork!) */
+    if(jarShakeAmt > 0){
+      jarShakeAmt = Math.max(0, jarShakeAmt - dt * 2.4);
+      jarWobbleVel -= jarTilt * 160 * dt;
+      jarWobbleVel *= 0.86;
+      jarTilt += jarWobbleVel * dt;
+    } else if(!shakingJarDrag){
+      jarTilt *= 0.85;
+    }
+    var fillFrac = Math.min(1, (jarStars.length + intoJarStars.length) / Math.max(1, goalCount));
+
+    /* Warm radial lantern glow illuminating the clouds & meadow around the jar! */
+    var glowR = jr.h * (0.65 + fillFrac * 0.55 + (phase === "shake" ? Math.sin(tAcc * 7) * 0.12 : 0));
+    var jg = ctx.createRadialGradient(jr.cx, jr.cy, 10, jr.cx, jr.cy, glowR);
+    jg.addColorStop(0, "rgba(255,240,145," + (0.22 + fillFrac * 0.46).toFixed(2) + ")");
+    jg.addColorStop(0.55, "rgba(251,191,36," + (0.10 + fillFrac * 0.22).toFixed(2) + ")");
+    jg.addColorStop(1, "rgba(251,191,36,0)");
+    ctx.fillStyle = jg; ctx.beginPath(); ctx.arc(jr.cx, jr.cy, glowR, 0, Math.PI * 2); ctx.fill();
+
+    /* Grounded shadow beneath glass jar */
+    ctx.fillStyle = "rgba(8,10,28,0.48)";
+    ctx.beginPath(); ctx.ellipse(jr.cx, jr.cy + jr.h * 0.48, jr.w * 0.44, 13, 0, 0, Math.PI * 2); ctx.fill();
+
+    ctx.save();
+    ctx.translate(jr.cx, jr.cy);
+    ctx.rotate(jarTilt);
+
+    /* Back translucent glass layer */
+    if(IMG.jar_back.complete && IMG.jar_back.naturalWidth){
+      ctx.drawImage(IMG.jar_back, -jr.w * 0.5, -jr.h * 0.5, jr.w, jr.h);
+    }
+
+    /* Buoyant glowing 3D stars floating & rattling visibly inside the glass jar! */
+    var boundX = jr.w * 0.27, minIY = -jr.h * 0.24, maxIY = jr.h * 0.28;
+    for(var ji = 0; ji < jarStars.length; ji++){
+      var js = jarStars[ji];
+      var targetY = (js.homeY !== undefined ? js.homeY : jr.h * 0.12) + Math.sin(tAcc * 3.1 + (js.ph || ji)) * 6;
+      js.vy += (targetY - js.ly) * 14 * dt;
+      js.vy *= 0.90; js.vx *= 0.93; js.vr *= 0.92;
+      js.lx += js.vx * dt;
+      js.ly += js.vy * dt;
+      js.rot += js.vr * dt;
+      if(js.ly > maxIY){ js.ly = maxIY; js.vy *= -0.55; }
+      if(js.ly < minIY){ js.ly = minIY; js.vy = Math.abs(js.vy) * 0.5; }
+      if(js.lx < -boundX){ js.lx = -boundX; js.vx = Math.abs(js.vx) * 0.6; }
+      if(js.lx >  boundX){ js.lx =  boundX; js.vx = -Math.abs(js.vx) * 0.6; }
+      var imJ = IMG["star_" + js.colorKey] || IMG.star_gold;
+      if(imJ && imJ.complete && imJ.naturalWidth){
+        ctx.save(); ctx.translate(js.lx, js.ly); ctx.rotate(js.rot * 0.45);
+        ctx.drawImage(imJ, -js.sz * 0.5, -js.sz * 0.5, js.sz, js.sz);
+        ctx.restore();
+      }
+    }
+
+    /* Front curved glass specular reflection & antique brass collar */
+    if(IMG.jar_front.complete && IMG.jar_front.naturalWidth){
+      ctx.drawImage(IMG.jar_front, -jr.w * 0.5, -jr.h * 0.5, jr.w, jr.h);
+    }
+
+    /* Natural cork stopper (bobs excitedly in shake stage, pops off in launch stage!) */
+    if(!corkPopped && IMG.jar_cork.complete && IMG.jar_cork.naturalWidth){
+      var corkW = jr.w * 0.52, corkH = corkW * (120 / 220);
+      var corkBob = phase === "shake" ? Math.abs(Math.sin(tAcc * 9)) * 7 : 0;
+      ctx.drawImage(IMG.jar_cork, -corkW * 0.5, -jr.h * 0.56 - corkBob, corkW, corkH);
+    }
+    ctx.restore();
+
+    /* Flying popped cork animation */
+    if(corkPopped && corkState.y < H + 80){
+      corkState.vy += 920 * dt;
+      corkState.x += corkState.vx * dt;
+      corkState.y += corkState.vy * dt;
+      corkState.rot += corkState.vr * dt;
+      if(IMG.jar_cork.complete && IMG.jar_cork.naturalWidth){
+        var cw2 = jr.w * 0.52, ch2 = cw2 * (120 / 220);
+        ctx.save(); ctx.translate(corkState.x, corkState.y); ctx.rotate(corkState.rot);
+        ctx.drawImage(IMG.jar_cork, -cw2 * 0.5, -ch2 * 0.5, cw2, ch2);
+        ctx.restore();
+      }
+    }
+
+    /* 8. Launching Constellation Stars Rocketing From Jar to Sky! */
+    for(var li = 0; li < launchStars.length; li++){
+      var ls = launchStars[li];
+      if(ls.done) continue;
+      if(ls.delay > 0){ ls.delay -= dt; continue; }
+      ls.t = Math.min(1, ls.t + dt * 1.9);
+      var lu = ls.t, le = 1 - Math.pow(1 - lu, 2.5);
+      var lx = ls.x0 + (ls.x1 - ls.x0) * le + Math.sin(lu * Math.PI) * ((li % 2 ? 1 : -1) * 45);
+      var ly = ls.y0 + (ls.y1 - ls.y0) * le;
+      var lImg = IMG["star_" + ls.colorKey] || IMG.star_gold;
+      if(Math.random() < 0.55) spawnSparkles(lx, ly, "#fde047", 1);
+      if(lImg && lImg.complete && lImg.naturalWidth){
+        ctx.save(); ctx.translate(lx, ly); ctx.rotate(lu * 6);
+        ctx.drawImage(lImg, -26, -26, 52, 52);
+        ctx.restore();
+      }
+      if(lu >= 1){
+        ls.done = true;
+        litNodes[ls.idx] = true;
+        sfxStarChime(ls.idx);
+        spawnSparkles(ls.x1, ls.y1, sky.glow, 14);
+      }
+    }
+
+    /* 9. Shimmering Golden Magic Star-Net Swipe Trail */
+    for(var ni2 = netTrail.length - 1; ni2 >= 0; ni2--){
+      netTrail[ni2].life -= dt * 3.8;
+      if(netTrail[ni2].life <= 0) netTrail.splice(ni2, 1);
+    }
+    if(netTrail.length > 1){
+      ctx.save();
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      for(var nk = 1; nk < netTrail.length; nk++){
+        var aN = netTrail[nk].life;
+        ctx.strokeStyle = "rgba(254,240,138," + (aN * 0.85).toFixed(2) + ")";
+        ctx.lineWidth = 4 + aN * 12;
+        ctx.shadowColor = "#fbbf24"; ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.moveTo(netTrail[nk - 1].x, netTrail[nk - 1].y);
+        ctx.lineTo(netTrail[nk].x, netTrail[nk].y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* 10. Ambient Fireflies + Soft Sparkle Particles + Popping Numbers */
+    for(var ff = 0; ff < fireflies.length; ff++){
+      var fl = fireflies[ff];
+      var fx = (fl.x + Math.sin(tAcc * fl.spd + fl.ph) * 0.03) * W;
+      var fy = (fl.y + Math.cos(tAcc * fl.spd * 0.8 + fl.ph) * 0.025) * H;
+      var fa = 0.25 + 0.65 * (Math.sin(tAcc * 2.5 + fl.ph) * 0.5 + 0.5);
+      ctx.fillStyle = "rgba(255,244,160," + fa.toFixed(2) + ")";
+      ctx.beginPath(); ctx.arc(fx, fy, 3.2, 0, Math.PI * 2); ctx.fill();
+    }
+
+    for(var pi = particles.length - 1; pi >= 0; pi--){
+      var p = particles[pi];
+      p.life -= dt * p.decay;
+      if(p.life <= 0){ particles.splice(pi, 1); continue; }
+      p.vy += 160 * dt;
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.col;
+      ctx.shadowColor = p.col; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    for(var fi3 = floatTexts.length - 1; fi3 >= 0; fi3--){
+      var ft = floatTexts[fi3];
+      ft.life -= dt * 1.1;
+      if(ft.life <= 0){ floatTexts.splice(fi3, 1); continue; }
+      ft.y -= dt * 52;
+      ft.scale += (1 - ft.scale) * Math.min(1, dt * 14);
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, ft.life * 1.4));
+      ctx.translate(ft.x, ft.y); ctx.scale(ft.scale, ft.scale);
+      ctx.font = '800 30px "Fredoka",sans-serif';
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 6; ctx.strokeStyle = "#121b38"; ctx.strokeText(ft.txt, 0, 0);
+      ctx.fillStyle = ft.col; ctx.fillText(ft.txt, 0, 0);
+      ctx.restore();
+    }
+  }
+
+  /* =========================================================================
+     8. START!
+     ========================================================================= */
+  startSky(true);
+  requestAnimationFrame(render);
+
+  /* Read-only debug handle for QA */
+  window.__TWINKLE_DEBUG__ = function(){
+    return {
+      phase: phase, mode: mode, sky: SKIES[skyIdx % SKIES.length].key,
+      caught: caughtCount, goal: goalCount, shakes: shakeCount,
+      flying: flyingStars.length, inJar: jarStars.length,
+      litCount: litNodes.filter(Boolean).length, stars: totalStars,
+      wizardUnlocked: wizardUnlocked
+    };
+  };
+  /* Preserve compatibility hook name too */
+  window.__twinkleGame = { snapshot: window.__TWINKLE_DEBUG__ };
 })();
 </script>
-
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e116"></script>
 </body>
 </html>
