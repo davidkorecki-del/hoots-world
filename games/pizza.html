@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="pizza";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e111"></script>
+<script src="js/hoot-game-head.js?v=llprev3e112"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>3D Pizza Shop</title>
@@ -424,6 +424,23 @@
       o.start(t); o.stop(t + 0.3);
     }catch(e){}
   }
+  function sfxWoodRoll(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime, len = Math.floor(c.sampleRate * 0.24);
+      var buf = c.createBuffer(1, len, c.sampleRate);
+      var d = buf.getChannelData(0);
+      for(var i = 0; i < len; i++){
+        var env = Math.sin((i / len) * Math.PI);
+        d[i] = (Math.random() * 2 - 1) * env * 0.55;
+      }
+      var src = c.createBufferSource(); src.buffer = buf;
+      var lp = c.createBiquadFilter(); lp.type = "bandpass"; lp.frequency.value = 340; lp.Q.value = 1.2;
+      var g = c.createGain(); g.gain.setValueAtTime(0.14, t); g.gain.exponentialRampToValueAtTime(0.002, t + 0.24);
+      src.connect(lp); lp.connect(g); g.connect(c.destination);
+      src.start(t);
+    }catch(e){}
+  }
   function sfxTossWhoosh(){
     try{
       var c = ac(); if(!c) return;
@@ -531,34 +548,36 @@
   /* =========================================================================
      3. PHOTOREALISTIC PIXAR-3D & PBR STUDIO ASSETS
      ========================================================================= */
-  var VER = "?v=llprev3e111";
+  var VER = "?v=llprev3e112";
   var ART = {};
   var ASSET_LIST = {
-    kitchen:      "assets/pizza3d/bg_kitchen.jpg",
-    oven:         "assets/pizza3d/bg_oven_interior.jpg",
-    hoot:         "assets/pizza3d/sprite_chef_hoot.png",
-    bunny:        "assets/pizza3d/sprite_cust_bunny.png",
-    puppy:        "assets/pizza3d/sprite_cust_puppy.png",
-    kitten:       "assets/pizza3d/sprite_cust_kitten.png",
-    bear:         "assets/pizza3d/sprite_cust_bear.png",
-    peel3d:       "assets/pizza3d/sprite_peel_3d.png",
-    doughBall:    "assets/pizza3d/sprite_dough_ball.png",
-    crust:        "assets/pizza3d/sprite_dough_crust.png",
-    crustBaked:   "assets/pizza3d/sprite_crust_baked.png",
-    sauce_red:    "assets/pizza3d/tex_sauce_red.png",
-    sauce_pesto:  "assets/pizza3d/tex_sauce_pesto.png",
-    sauce_white:  "assets/pizza3d/tex_sauce_white.png",
-    cheeseRaw:    "assets/pizza3d/tex_cheese_raw.png",
-    cheeseMelted: "assets/pizza3d/tex_cheese_melted.png",
-    toolLadle:    "assets/pizza3d/sprite_tool_ladle.png",
-    toolGrater:   "assets/pizza3d/sprite_tool_grater.png",
-    toolCutter:   "assets/pizza3d/sprite_tool_cutter.png",
-    pep:          "assets/pizza3d/sprite_topping_pep.png",
-    mush:         "assets/pizza3d/sprite_topping_mush.png",
-    pepper:       "assets/pizza3d/sprite_topping_pepper.png",
-    pine:         "assets/pizza3d/sprite_topping_pine.png",
-    olive:        "assets/pizza3d/sprite_topping_olive.png",
-    basil:        "assets/pizza3d/sprite_topping_basil.png"
+    kitchen:        "assets/pizza3d/bg_kitchen.jpg",
+    oven:           "assets/pizza3d/bg_oven_interior.jpg",
+    hoot:           "assets/pizza3d/sprite_chef_hoot.png",
+    bunny:          "assets/pizza3d/sprite_cust_bunny.png",
+    puppy:          "assets/pizza3d/sprite_cust_puppy.png",
+    kitten:         "assets/pizza3d/sprite_cust_kitten.png",
+    bear:           "assets/pizza3d/sprite_cust_bear.png",
+    peel3d:         "assets/pizza3d/sprite_peel_3d.png",
+    peelOven:       "assets/pizza3d/sprite_peel_oven.png",
+    doughBall:      "assets/pizza3d/sprite_dough_ball.png",
+    crust:          "assets/pizza3d/sprite_dough_crust.png",
+    crustBaked:     "assets/pizza3d/sprite_crust_baked.png",
+    sauce_red:      "assets/pizza3d/tex_sauce_red.png",
+    sauce_pesto:    "assets/pizza3d/tex_sauce_pesto.png",
+    sauce_white:    "assets/pizza3d/tex_sauce_white.png",
+    cheeseRaw:      "assets/pizza3d/tex_cheese_raw.png",
+    cheeseMelted:   "assets/pizza3d/tex_cheese_melted.png",
+    toolRollingPin: "assets/pizza3d/sprite_tool_rolling_pin.png",
+    toolLadle:      "assets/pizza3d/sprite_tool_ladle.png",
+    toolGrater:     "assets/pizza3d/sprite_tool_grater.png",
+    toolCutter:     "assets/pizza3d/sprite_tool_cutter.png",
+    pep:            "assets/pizza3d/sprite_topping_pep.png",
+    mush:           "assets/pizza3d/sprite_topping_mush.png",
+    pepper:         "assets/pizza3d/sprite_topping_pepper.png",
+    pine:           "assets/pizza3d/sprite_topping_pine.png",
+    olive:          "assets/pizza3d/sprite_topping_olive.png",
+    basil:          "assets/pizza3d/sprite_topping_basil.png"
   };
   Object.keys(ASSET_LIST).forEach(function(k){
     var im = new Image();
@@ -667,27 +686,32 @@
   var phase = "dough"; /* dough -> sauce -> cheese -> toppings -> bake -> baking -> slice -> serve -> eating -> celebrated */
   var roundGen = 0, totalStars = 0;
 
-  var doughTaps = 0, doughScale = 0.54, doughTossT = 0, doughSpinAngle = 0, doughBounce = 0;
-  var activeSauce = "red", saucePct = 0, ladleX = 0, ladleY = 0, ladleShowT = 0, swipingSauce = false;
+  var doughTaps = 0, doughRoll = 0, doughMilestones = 0, doughScale = 0.52, doughTossT = 0, doughSpinAngle = 0, doughBounce = 0;
+  var rollingPinPos = -0.15, rollingPinSpin = 0, rollingDragging = false, lastRollY = 0, rollAutoAnim = null, rollSfxCd = 0;
+  var activeSauce = "red", saucePct = 0, ladleX = 0, ladleY = 0, ladleShowT = 0, swipingSauce = false, ladleSwipeAnim = null;
   var cheeseShakes = 0, fallingCheese = [], graterTiltT = 0;
   var placedToppings = [], flyingToppings = [], activeTopKey = "pep", draggedTop = null;
   var bakeProgress = 0, ovenTimerT = 0, ovenBubbles = [], steamWisps = [], ovenEmbers = [];
   var cutAngles = [0, Math.PI / 3, (2 * Math.PI) / 3], cutDone = [false, false, false], cutterAnim = null, swipingCut = false, cutStart = null;
-  var serveAnimT = 0, slicesEaten = 0, custHopT = 0, custFlipT = 0, hootBounceT = 0, ovenFlameT = 0;
+  var serveAnimT = 0, slicesEaten = 0, liftedSlice = null, custHopT = 0, custFlipT = 0, hootBounceT = 0, ovenFlameT = 0;
 
   var particles = [], flourMists = [], floatTexts = [], shockwaves = [];
   var tAcc = 0, lastTime = performance.now();
 
-  /* True 3/4 Tabletop Perspective Geometry — peel & pizza sit PHYSICALLY ON the honey-oak counter! */
+  /* TRUE FLAT 3D PERSPECTIVE:
+     - Kitchen counter: 0.50 foreshortening matching bg_kitchen.jpg oak table & sprite_peel_3d.png!
+     - Brick oven hearth: 0.31 low-angle foreshortening lying 100% FLAT on the brick floor! */
   function getPizzaGeom(){
-    var tiltY = (phase === "baking") ? 0.62 : 0.725;
+    if(phase === "baking"){
+      var rO = isPortrait() ? Math.min(W * 0.39, 158) : Math.min(W * 0.22, H * 0.32, 230);
+      return { cx: W * 0.49, cy: isPortrait() ? H * 0.69 : H * 0.745, r: rO, tiltY: 0.31 };
+    }
+    var tiltY = isPortrait() ? 0.54 : 0.50;
     var r = isPortrait()
-      ? Math.min(W * 0.34, H * 0.165, 134)
-      : Math.min(W * 0.178, H * 0.245, 184);
+      ? Math.min(W * 0.37, 152)
+      : Math.min(W * 0.205, H * 0.285, 212);
     var cx = W * 0.5;
-    var cy = (phase === "baking")
-      ? (isPortrait() ? H * 0.64 : H * 0.70)
-      : (isPortrait() ? H * 0.63 : H * 0.69);
+    var cy = isPortrait() ? H * 0.67 : H * 0.72;
     return { cx: cx, cy: cy, r: r, tiltY: tiltY };
   }
   function getCustomerPos(){
@@ -797,12 +821,9 @@
           e.preventDefault(); e.stopPropagation();
           var changed = activeSauce !== s.key;
           activeSauce = s.key;
-          sfxPlop(2);
           if(freePlay && changed) playVoice([s.clip]);
           renderTray();
-          var pg = getPizzaGeom();
-          var a = Math.random() * Math.PI * 2, rad = Math.random() * 0.45;
-          addSauceAt(pg.cx + Math.cos(a) * pg.r * rad, pg.cy + Math.sin(a) * pg.r * pg.tiltY * rad);
+          triggerSauceSwirlPass();
         });
         traySlots.appendChild(btn);
       });
@@ -835,9 +856,10 @@
     } else if(phase === "dough"){
       var btnD = document.createElement("button");
       btnD.type = "button"; btnD.className = "ing-btn wanted";
-      btnD.style.minWidth = "175px";
-      btnD.innerHTML = '<img src="assets/pizza3d/sprite_dough_ball.png' + VER + '" alt="Dough"><span>' + (doughTaps < 2 ? "Stretch Dough! (" + doughTaps + "/3)" : "Toss Dough High! ✨") + '</span>';
-      btnD.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); tapDough(); });
+      btnD.style.minWidth = "185px";
+      var rollStep = Math.min(3, Math.floor(doughRoll * 3 + 0.05));
+      btnD.innerHTML = '<img src="assets/pizza3d/sprite_tool_rolling_pin.png' + VER + '" style="width:46px;height:28px" alt="Roll"><span>' + (rollStep < 2 ? "Roll Dough! (" + rollStep + "/3)" : "Roll &amp; Toss High! ✨") + '</span>';
+      btnD.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); triggerDoughRollPass(); });
       traySlots.appendChild(btnD);
     } else if(phase === "slice"){
       var cutsLeft = cutDone.filter(function(c){ return !c; }).length;
@@ -850,13 +872,13 @@
     } else {
       var info = document.createElement("div");
       info.style.cssText = 'color:#fde68a;font-family:"Fredoka",sans-serif;font-weight:800;font-size:15px;padding:6px 10px;text-align:center;';
-      info.textContent = phase === "baking" ? "🔥 Baking in the 900°F wood-fired brick oven…" : (phase === "eating" ? "😋 Nom nom nom! Fresh wood-fired pizza!" : "🍕 Tap the glowing button above!");
+      info.textContent = phase === "baking" ? "🔥 Baking flat on the 900°F stone oven hearth…" : (phase === "eating" ? "😋 Nom nom nom! Fresh wood-fired pizza!" : "🍕 Tap the glowing button above!");
       traySlots.appendChild(info);
     }
   }
 
   /* =========================================================================
-     6. STAGE TRANSITIONS (DOUGH -> SAUCE -> CHEESE -> TOPPINGS -> BAKE -> SLICE -> SERVE)
+     6. STAGE TRANSITIONS (ROLL DOUGH -> SWIRL SAUCE -> GRATE CHEESE -> TOPPINGS -> FLAT OVEN BAKE -> SLICE -> SERVE)
      ========================================================================= */
   function clearSauceMask(){
     smCtx.clearRect(0, 0, PBUF_SZ, PBUF_SZ);
@@ -866,15 +888,16 @@
   function startNewOrder(speakNow){
     roundGen++;
     phase = "dough";
-    doughTaps = 0; doughScale = 0.54; doughTossT = 0; doughSpinAngle = 0; doughBounce = 0.7;
+    doughTaps = 0; doughRoll = 0; doughMilestones = 0; doughScale = 0.52; doughTossT = 0; doughSpinAngle = 0; doughBounce = 0.5;
+    rollingPinPos = -0.18; rollingPinSpin = 0; rollingDragging = false; rollAutoAnim = null; rollSfxCd = 0;
     var cust = CUSTOMERS[custIdx % CUSTOMERS.length];
     activeSauce = "red";
-    saucePct = 0; clearSauceMask(); ladleShowT = 0; swipingSauce = false;
+    saucePct = 0; clearSauceMask(); ladleShowT = 0; swipingSauce = false; ladleSwipeAnim = null;
     cheeseShakes = 0; fallingCheese = []; graterTiltT = 0;
     placedToppings = []; flyingToppings = []; draggedTop = null;
     bakeProgress = 0; ovenTimerT = 0; ovenBubbles = []; steamWisps = []; ovenEmbers = [];
     cutDone = [false, false, false]; cutterAnim = null; swipingCut = false;
-    serveAnimT = 0; slicesEaten = 0; custHopT = 1.0; custFlipT = 0; hootBounceT = 0.8;
+    serveAnimT = 0; slicesEaten = 0; liftedSlice = null; custHopT = 1.0; custFlipT = 0; hootBounceT = 0.8;
 
     bakeBtn.hidden = true; serveBtn.hidden = true; nextOrderBtn.hidden = true;
     ovenBanner.classList.remove("show");
@@ -882,36 +905,55 @@
     renderOrderTicket();
     renderTray();
 
-    bubble.innerHTML = cust.emo + " <b>" + cust.name.toUpperCase() + " WANTS PIZZA!</b> Tap the dough 3 times to stretch and <b>TOSS IT HIGH!</b>";
+    bubble.innerHTML = cust.emo + " <b>" + cust.name.toUpperCase() + " WANTS PIZZA!</b> Rub or tap to <b>ROLL THE DOUGH</b> flat and <b>TOSS IT HIGH!</b>";
     setStepVoice("hoot-piz-welcome", ["hoot-ready-go", "hoot-tap-big-btn"], speakNow !== false);
   }
 
-  function tapDough(){
+  /* Continuous realistic rolling-pin flattening progression (driven by BOTH finger drag AND animated tap roll!) */
+  function advanceDoughRoll(deltaRoll){
     if(phase !== "dough" || doughTossT > 0) return;
-    doughTaps++;
-    doughBounce = 1.0;
-    hootBounceT = 0.7;
+    doughRoll = Math.min(1, doughRoll + deltaRoll);
+    doughScale = 0.52 + doughRoll * 0.46;
     var pg = getPizzaGeom();
-    spawnFlourPuff(pg.cx, pg.cy, 12);
-    if(doughTaps < 3){
-      doughScale = doughTaps === 1 ? 0.74 : 0.88;
-      sfxPlop(doughTaps);
-      playVoice(doughTaps === 1 ? ["name-number-1"] : resolveCmd("hoot-piz-toss", ["name-number-2"]));
-      spawnFloatText(pg.cx, pg.cy - pg.r * pg.tiltY * 0.75, doughTaps === 1 ? "💨 PRESS!" : "✨ STRETCH!", "#fde047");
+    if(rollSfxCd <= 0){
+      sfxWoodRoll();
+      rollSfxCd = 0.28;
+      spawnFlourPuff(pg.cx + (Math.random() - 0.5) * pg.r * doughScale, pg.cy + rollingPinPos * pg.r * pg.tiltY * 0.7, 5);
+    }
+    if(doughRoll >= 0.34 && doughMilestones < 1){
+      doughMilestones = 1; doughTaps = 1; hootBounceT = 0.65;
+      sfxPlop(1); playVoice(["name-number-1"]);
+      spawnFloatText(pg.cx, pg.cy - pg.r * pg.tiltY * 0.9, "🥖 ROLLING!", "#fde047");
       renderTray();
-    } else {
+    } else if(doughRoll >= 0.68 && doughMilestones < 2){
+      doughMilestones = 2; doughTaps = 2; hootBounceT = 0.65;
+      sfxPlop(2); playVoice(resolveCmd("hoot-piz-toss", ["name-number-2"]));
+      spawnFloatText(pg.cx, pg.cy - pg.r * pg.tiltY * 0.9, "✨ FLATTER!", "#fde047");
+      renderTray();
+    } else if(doughRoll >= 0.99 && doughMilestones < 3){
+      doughMilestones = 3; doughTaps = 3; rollAutoAnim = null; rollingDragging = false;
       doughTossT = 0.001;
       sfxTossWhoosh();
       playVoice(["name-number-3"]);
+      spawnFlourPuff(pg.cx, pg.cy, 16);
       spawnSparkles(pg.cx, pg.cy - 20, 18, ["#fde047", "#fffbeb", "#fb923c"], 210);
       spawnFloatText(pg.cx, pg.cy - pg.r * pg.tiltY, "🍕 BIG TOSS!!", "#fde047");
     }
+  }
+
+  /* Smooth physical back-and-forth wooden rolling-pin animation pass (for tapping dough or button!) */
+  function triggerDoughRollPass(){
+    if(phase !== "dough" || doughTossT > 0) return;
+    var nextGoal = doughRoll < 0.33 ? 0.36 : (doughRoll < 0.67 ? 0.70 : 1.0);
+    rollAutoAnim = { t: 0, startRoll: doughRoll, targetRoll: nextGoal, dir: (doughMilestones % 2 === 0 ? 1 : -1) };
+    sfxWoodRoll();
   }
 
   function enterSauceStage(){
     phase = "sauce";
     activeSauce = "red";
     clearSauceMask();
+    ladleSwipeAnim = null;
     renderOrderTicket();
     renderTray();
     if(freePlay){
@@ -935,7 +977,15 @@
     smCtx.beginPath(); smCtx.arc(bx, by, br, 0, Math.PI * 2); smCtx.fill();
   }
 
-  function addSauceAt(x, y){
+  /* Trigger a smooth circular spiral ladle sweep across the dough when tapped! */
+  function triggerSauceSwirlPass(){
+    if(phase !== "sauce") return;
+    var baseAng = saucePct * Math.PI * 5.0;
+    ladleSwipeAnim = { t: 0, a0: baseAng, a1: baseAng + Math.PI * 1.15, r0: 0.14 + saucePct * 0.42, r1: Math.min(0.68, 0.32 + saucePct * 0.45) };
+    sfxSauceSwirl();
+  }
+
+  function addSauceAt(x, y, pctStep){
     if(phase !== "sauce") return;
     var pg = getPizzaGeom();
     var p = screenToPizza(x, y, pg);
@@ -945,21 +995,17 @@
     ladleY = pg.cy + ry * pg.r * pg.tiltY;
     ladleShowT = 0.75;
 
-    /* Progressive feathered ladle brush stroke onto offscreen marinara mask */
-    stampSauceBrush(rx, ry, 0.44 + Math.random() * 0.14);
-    /* Spread slightly around the ladle swirl for smooth toddler coverage */
-    stampSauceBrush(rx + (Math.random() - 0.5) * 0.22, ry + (Math.random() - 0.5) * 0.22, 0.36);
-    saucePct = Math.min(1, saucePct + 0.18);
-    sfxSauceSwirl();
-    var sObj = SAUCES.find(function(s){ return s.key === activeSauce; }) || SAUCES[0];
-    spawnSparkles(ladleX, ladleY, 5, [sObj.hi, "#fde047"], 100);
+    stampSauceBrush(rx, ry, 0.42 + Math.random() * 0.12);
+    saucePct = Math.min(1, saucePct + (pctStep || 0.14));
     renderOrderTicket();
 
-    if(saucePct >= 0.74){
+    if(saucePct >= 0.78){
       saucePct = 1.0;
+      ladleSwipeAnim = null;
       sfxPlop(5);
-      spawnSparkles(pg.cx, pg.cy, 18, [sObj.hi, "#fde047", "#ffffff"], 190);
-      spawnFloatText(pg.cx, pg.cy - pg.r * pg.tiltY * 0.85, "🍅 YUMMY SAUCE!", "#fde047");
+      var sObj = SAUCES.find(function(s){ return s.key === activeSauce; }) || SAUCES[0];
+      spawnSparkles(pg.cx, pg.cy, 16, [sObj.hi, "#fde047", "#ffffff"], 180);
+      spawnFloatText(pg.cx, pg.cy - pg.r * pg.tiltY * 0.9, "🍅 YUMMY SAUCE!", "#fde047");
       var myGen = roundGen;
       setTimeout(function(){ if(myGen === roundGen && phase === "sauce" && !won) enterCheeseStage(); }, 540);
     }
@@ -1095,10 +1141,10 @@
     playVoice(resolveCmd("hoot-piz-baking", ["hoot-super"]));
 
     var steps = [
-      { ms: 200,  txt: "🔥 3", clip: null },
-      { ms: 1200, txt: "🔥 2", clip: null },
-      { ms: 2200, txt: "🔥 1", clip: null },
-      { ms: 3200, txt: "🔔 DING!!", clip: "ding" }
+      { ms: 700,  txt: "🔥 3", clip: null },
+      { ms: 1650, txt: "🔥 2", clip: null },
+      { ms: 2600, txt: "🔥 1", clip: null },
+      { ms: 3500, txt: "🔔 DING!!", clip: "ding" }
     ];
     steps.forEach(function(s){
       setTimeout(function(){
@@ -1111,7 +1157,7 @@
           setTimeout(function(){
             ovenBanner.classList.remove("show");
             if(myGen === roundGen && phase === "baking" && !won) enterSliceStage();
-          }, 720);
+          }, 760);
         } else {
           sfxPlop(2);
         }
@@ -1165,16 +1211,18 @@
     var myGen = roundGen;
     phase = "eating";
     serveBtn.hidden = true;
-    serveAnimT = 0; slicesEaten = 0;
+    serveAnimT = 0; slicesEaten = 0; liftedSlice = { idx: 0, t: 0 };
     sfxBellDing();
     renderTray();
     var cust = CUSTOMERS[custIdx % CUSTOMERS.length];
     bubble.innerHTML = "😋 <b>NOM NOM NOM!</b> " + cust.emo + " <b>" + cust.name + "</b> is loving your hot wood-fired pizza!";
 
-    [650, 1150, 1650].forEach(function(ms, k){
+    /* Individual steaming slices lift off the board with gooey stretching mozzarella strings! */
+    [650, 1250, 1850].forEach(function(ms, k){
       setTimeout(function(){
         if(myGen !== roundGen || won || phase !== "eating") return;
         slicesEaten = (k + 1) * 2;
+        liftedSlice = (k < 2) ? { idx: slicesEaten, t: 0 } : null;
         custHopT = 1.0;
         sfxMunch();
         var cp = getCustomerPos();
@@ -1273,22 +1321,27 @@
     var hit = screenToPizza(cx, cy, pg);
 
     if(phase === "dough"){
-      if(hit.dist < 1.15){ tapDough(); return; }
+      if(hit.dist < 1.35){
+        rollingDragging = true;
+        lastRollY = cy;
+        triggerDoughRollPass();
+        return;
+      }
     } else if(phase === "sauce"){
-      if(hit.dist < 1.1){ swipingSauce = true; addSauceAt(cx, cy); return; }
+      if(hit.dist < 1.15){ swipingSauce = true; addSauceAt(cx, cy, 0.16); sfxSauceSwirl(); return; }
     } else if(phase === "cheese"){
-      if(hit.dist < 1.25){ shakeCheese(); return; }
+      if(hit.dist < 1.3){ shakeCheese(); return; }
     } else if(phase === "toppings"){
-      if(hit.dist < 0.88){
+      if(hit.dist < 0.90){
         tossToppingOntoPizza(activeTopKey, cx, cy - 45, hit.rx, hit.ry);
         return;
       }
     } else if(phase === "bake"){
       if(cx < W * 0.35 && cy < H * 0.55){ startBakingStage(); return; }
     } else if(phase === "slice"){
-      if(hit.dist < 1.15){ swipingCut = true; cutStart = { x: cx, y: cy }; performNextSlice(); return; }
+      if(hit.dist < 1.2){ swipingCut = true; cutStart = { x: cx, y: cy }; performNextSlice(); return; }
     } else if(phase === "serve"){
-      if(hit.dist < 1.15){ startServingCelebration(); return; }
+      if(hit.dist < 1.2){ startServingCelebration(); return; }
     }
 
     var cp = getCustomerPos();
@@ -1315,16 +1368,27 @@
   });
 
   window.addEventListener("pointermove", function(e){
-    if(phase === "sauce" && swipingSauce){
-      var pg = getPizzaGeom();
+    var pg = getPizzaGeom();
+    if(phase === "dough" && rollingDragging && doughTossT === 0){
+      var dy = e.clientY - lastRollY;
+      lastRollY = e.clientY;
+      if(Math.abs(dy) > 1.5){
+        rollAutoAnim = null; /* Live hand rolling takes direct control! */
+        var normY = (e.clientY - pg.cy) / (pg.r * pg.tiltY * 0.92);
+        rollingPinPos = Math.max(-0.92, Math.min(0.92, normY));
+        rollingPinSpin += dy * 0.12;
+        advanceDoughRoll(Math.min(0.06, Math.abs(dy) / 230));
+      }
+    } else if(phase === "sauce" && swipingSauce){
       var hit = screenToPizza(e.clientX, e.clientY, pg);
-      if(hit.dist < 1.08 && Math.random() < 0.42){
-        addSauceAt(e.clientX, e.clientY);
+      if(hit.dist < 1.1 && Math.random() < 0.48){
+        ladleSwipeAnim = null;
+        addSauceAt(e.clientX, e.clientY, 0.08);
       }
     }
   });
-  window.addEventListener("pointerup", function(){ swipingSauce = false; swipingCut = false; draggedTop = null; });
-  window.addEventListener("pointercancel", function(){ swipingSauce = false; swipingCut = false; draggedTop = null; });
+  window.addEventListener("pointerup", function(){ rollingDragging = false; swipingSauce = false; swipingCut = false; draggedTop = null; });
+  window.addEventListener("pointercancel", function(){ rollingDragging = false; swipingSauce = false; swipingCut = false; draggedTop = null; });
 
   /* =========================================================================
      8. PHOTOREALISTIC 3D PBR CANVAS COMPOSITOR & KITCHEN RENDERERS
@@ -1467,61 +1531,137 @@
     ctx.restore();
   }
 
+  /* Draw realistic 3D extruded puffed pizza crust side-wall beneath the flat top pizza surface! */
+  function drawCrustSideWall(cx, cy, rx, ry, wallH, bakedAmt, inOven){
+    var layers = Math.max(4, Math.round(wallH));
+    for(var ly = layers; ly >= 1; ly--){
+      var frac = ly / layers; /* 1 = bottom touching stone/peel, 0 = top rim */
+      /* Raw dough warm ivory-tan -> golden toasted chestnut crust as bakeProgress increases! */
+      var r = Math.round((214 - bakedAmt * 48) * (1 - frac * 0.38));
+      var g = Math.round((176 - bakedAmt * 82) * (1 - frac * 0.44));
+      var b = Math.round((122 - bakedAmt * 84) * (1 - frac * 0.50));
+      ctx.save();
+      var wg = ctx.createLinearGradient(cx - rx, cy, cx + rx, cy);
+      if(inOven){
+        /* Left side in deep brick shadow, right side kissed by warm crackling wood flames! */
+        wg.addColorStop(0, "rgb(" + Math.round(r * 0.58) + "," + Math.round(g * 0.50) + "," + Math.round(b * 0.44) + ")");
+        wg.addColorStop(0.55, "rgb(" + r + "," + g + "," + b + ")");
+        wg.addColorStop(1, "rgb(" + Math.min(255, Math.round(r * 1.28 + 24)) + "," + Math.min(240, Math.round(g * 1.10 + 12)) + "," + Math.round(b * 0.78) + ")");
+      } else {
+        wg.addColorStop(0, "rgb(" + Math.min(255, Math.round(r * 1.12)) + "," + Math.min(245, Math.round(g * 1.08)) + "," + Math.min(230, Math.round(b * 1.02)) + ")");
+        wg.addColorStop(0.7, "rgb(" + r + "," + g + "," + b + ")");
+        wg.addColorStop(1, "rgb(" + Math.round(r * 0.72) + "," + Math.round(g * 0.66) + "," + Math.round(b * 0.60) + ")");
+      }
+      ctx.fillStyle = wg;
+      /* Slight outward puff bulge halfway up the cornicione rim! */
+      var bulge = 1.0 + Math.sin(frac * Math.PI) * 0.025;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + ly, rx * bulge, ry * bulge, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
   function drawWoodPeelAndPizza(){
     if(phase === "celebrated") return;
     var pg = getPizzaGeom();
     var px = pg.cx, py = pg.cy, pr = pg.r, tiltY = pg.tiltY;
-
-    /* Animate steaming pizza gliding up to the happy customer when serving/eating */
     var drawScale = 1.0;
-    if(phase === "eating"){
-      var cp = getCustomerPos();
-      var u = Math.min(1, serveAnimT);
-      var ease = 1 - Math.pow(1 - u, 3);
-      px = pg.cx + (cp.x - pg.cx) * ease;
-      py = pg.cy + (cp.y + cp.h * 0.34 - pg.cy) * ease;
-      drawScale = 1 - ease * 0.48;
-    }
 
-    /* 1. REAL 3D BEVELED HONEY-OAK WOODEN PIZZA PEEL resting physically on the counter! */
-    if(phase !== "baking" && phase !== "eating"){
-      if(ART.peel3d && ART.peel3d.complete && ART.peel3d.naturalWidth){
-        /* sprite_peel_3d.png (1024x768) has elliptical paddle center at (435, 376), rx = 342 */
-        var peelSc = (pr * 1.15) / 342.0;
-        ctx.drawImage(ART.peel3d, px - 435 * peelSc, py - 376 * peelSc, 1024 * peelSc, 768 * peelSc);
+    /* 0. BRICK OVEN SLIDE-IN & SCOOP-OUT PEEL PHYSICS (100% flat on the terracotta stone hearth!) */
+    var ovenPizzaOffsetY = 0;
+    var ovenPeelOffsetY = H * 0.55; /* hidden off bottom by default during mid-bake */
+    var showOvenPeel = false;
+    if(phase === "baking"){
+      if(ovenTimerT < 0.55){
+        /* Sliding pizza IN on the wooden oven peel! */
+        var uIn = ovenTimerT / 0.55;
+        var easeIn = 1 - Math.pow(1 - uIn, 3);
+        ovenPizzaOffsetY = (1 - easeIn) * H * 0.28;
+        ovenPeelOffsetY = ovenPizzaOffsetY;
+        showOvenPeel = true;
+      } else if(ovenTimerT < 1.0){
+        /* Quick pizzaiolo flick — pizza stays flat on hot brick stone while peel pulls cleanly out! */
+        var uOut = (ovenTimerT - 0.55) / 0.45;
+        ovenPeelOffsetY = uOut * uOut * H * 0.48;
+        showOvenPeel = true;
+      } else if(ovenTimerT > 3.45){
+        /* DING! Wooden oven peel slides back under golden bubbling pizza to scoop it out! */
+        var uScoop = Math.min(1, (ovenTimerT - 3.45) / 0.45);
+        var easeS = 1 - Math.pow(1 - uScoop, 3);
+        ovenPeelOffsetY = (1 - easeS) * H * 0.45;
+        showOvenPeel = true;
       }
+      py += ovenPizzaOffsetY;
     }
 
-    /* 2. Grounded Contact Shadow directly beneath the pizza crust (scales dynamically during 3D dough toss!) */
+    /* 1. REAL FLAT-PERSPECTIVE 3D BEVELED HONEY-OAK WOODEN PEEL ON KITCHEN COUNTER */
+    if(phase !== "baking"){
+      if(ART.peel3d && ART.peel3d.complete && ART.peel3d.naturalWidth){
+        /* New flat-perspective sprite_peel_3d.png (1024x600) paddle center at (430, 286), rx = 346, ry/rx = 0.50 */
+        var peelSc = (pr * 1.15) / 346.0;
+        var peelScaleY = peelSc * (tiltY / 0.50);
+        ctx.drawImage(ART.peel3d, px - 430 * peelSc, py - 286 * peelScaleY, 1024 * peelSc, 600 * peelScaleY);
+      }
+    } else if(showOvenPeel && ART.peelOven && ART.peelOven.complete && ART.peelOven.naturalWidth){
+      /* Wooden brick-oven peel sliding right along the stone floor beneath the pizza! */
+      var opSc = (pr * 1.16) / 250.0;
+      ctx.save();
+      ctx.shadowColor = "rgba(18,5,1,0.55)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 10;
+      ctx.drawImage(ART.peelOven, px - 320 * opSc, (pg.cy + ovenPeelOffsetY) - 190 * opSc + 12, 640 * opSc, 480 * opSc);
+      ctx.restore();
+    }
+
+    /* 2. GROUNDED CONTACT SHADOW (Directional wood-fire cast shadow to the LEFT inside the brick oven!) */
     var tossArc = doughTossT > 0 ? Math.sin(doughTossT * Math.PI) : 0;
-    var shRad = pr * (phase === "dough" ? (doughTaps === 0 ? 0.58 : doughScale * 1.02) : 1.04) * drawScale * (1 - tossArc * 0.32);
+    var crustWallH = (phase === "baking")
+      ? (11 + bakeProgress * 7) /* Dough genuinely puffs taller in 900°F wood-fired heat! */
+      : (phase === "dough" ? (8 - doughRoll * 2) : (8 + bakeProgress * 3));
+    var shRad = pr * (phase === "dough" ? Math.max(0.55, doughScale * 1.02) : 1.04) * drawScale * (1 - tossArc * 0.32);
     ctx.save();
-    var shG = ctx.createRadialGradient(px + 4, py + 7, shRad * 0.55, px + 4, py + 9, shRad * 1.14);
-    shG.addColorStop(0, "rgba(22,7,2," + ((phase === "baking" ? 0.66 : 0.44) * (1 - tossArc * 0.65)).toFixed(2) + ")");
-    shG.addColorStop(1, "rgba(22,7,2,0)");
-    ctx.fillStyle = shG;
-    ctx.beginPath(); ctx.ellipse(px + 4, py + 9, shRad * 1.14, shRad * tiltY * 1.14, 0, 0, Math.PI * 2); ctx.fill();
+    if(phase === "baking"){
+      /* Real soft directional shadow thrown smoothly to the LEFT away from the right-side fire (zero outer edge halo!) */
+      var shO = ctx.createRadialGradient(px - 18, py + crustWallH + 2, shRad * 0.25, px - 18, py + crustWallH + 2, shRad * 1.18);
+      shO.addColorStop(0, "rgba(18,5,1,0.72)");
+      shO.addColorStop(0.55, "rgba(20,6,1,0.44)");
+      shO.addColorStop(0.82, "rgba(20,6,1,0.12)");
+      shO.addColorStop(1, "rgba(20,6,1,0)");
+      ctx.fillStyle = shO;
+      ctx.beginPath(); ctx.ellipse(px - 18, py + crustWallH + 2, shRad * 1.18, shRad * tiltY * 1.16, 0, 0, Math.PI * 2); ctx.fill();
+    } else {
+      var shG = ctx.createRadialGradient(px + 4, py + crustWallH + 2, shRad * 0.50, px + 4, py + crustWallH + 4, shRad * 1.12);
+      shG.addColorStop(0, "rgba(24,8,2," + (0.48 * (1 - tossArc * 0.65)).toFixed(2) + ")");
+      shG.addColorStop(1, "rgba(24,8,2,0)");
+      ctx.fillStyle = shG;
+      ctx.beginPath(); ctx.ellipse(px + 4, py + crustWallH + 4, shRad * 1.12, shRad * tiltY * 1.12, 0, 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
 
-    /* 3. STAGE 1 (RAW FLOUR-DUSTED DOUGH BALL -> HAND-STRETCH -> 3D SPINNING AIR TOSS!) */
+    /* 3. STAGE 1: REAL ROLLING PIN ROLLING MOTION (PLUMP DOUGH BALL -> ROLLED FLAT DISC -> 3D AIR TOSS!) */
     var tossLiftY = -tossArc * Math.min(H * 0.36, 250);
-    var spinSquashY = doughTossT > 0 ? (0.52 + 0.48 * Math.abs(Math.cos(doughTossT * Math.PI * 3))) : 1.0;
-    var bWave = doughBounce > 0 ? Math.sin(doughBounce * Math.PI * 2.5) * doughBounce * 0.11 : 0;
+    var spinSquashY = doughTossT > 0 ? (0.46 + 0.54 * Math.abs(Math.cos(doughTossT * Math.PI * 3))) : 1.0;
+    var bWave = doughBounce > 0 ? Math.sin(doughBounce * Math.PI * 2.5) * doughBounce * 0.08 : 0;
 
     if(phase === "dough"){
-      var curSc = doughScale + (doughTossT > 0 ? (1 - doughScale) * doughTossT + tossArc * 0.18 : 0);
-      var doughTilt = (doughTaps === 0 && doughTossT === 0) ? 0.86 : tiltY; /* Plump 3D dome ball before first press */
+      var curSc = doughScale + (doughTossT > 0 ? (1 - doughScale) * doughTossT + tossArc * 0.16 : 0);
+      /* Plump tall round dough mound smoothly flattens down into flat tabletop perspective as you roll it! */
+      var doughTilt = doughTossT > 0 ? tiltY : (0.82 - doughRoll * (0.82 - tiltY));
+      var doughYOffset = doughTossT > 0 ? tossLiftY : -((1 - doughRoll) * 14); /* Plump ball stands taller above peel! */
+
+      if(doughTossT === 0 && doughRoll > 0.25){
+        drawCrustSideWall(px, py, pr * curSc * 0.99, pr * curSc * doughTilt * 0.99, 5 + doughRoll * 3, 0, false);
+      }
+
       ctx.save();
-      ctx.translate(px, py + tossLiftY);
-      ctx.scale(curSc * (1 + bWave), curSc * (1 - bWave * 0.65) * doughTilt * spinSquashY);
+      ctx.translate(px, py + doughYOffset);
+      ctx.scale(curSc * (1 + bWave), curSc * (1 - bWave * 0.5) * doughTilt * spinSquashY);
       if(doughTossT > 0) ctx.rotate(doughSpinAngle);
-      if(doughTaps === 0 && doughTossT === 0 && ART.doughBall && ART.doughBall.complete && ART.doughBall.naturalWidth){
+      if(doughRoll < 0.08 && doughTossT === 0 && ART.doughBall && ART.doughBall.complete && ART.doughBall.naturalWidth){
         ctx.drawImage(ART.doughBall, -pr, -pr, pr * 2, pr * 2);
       } else {
-        /* Smoothly morph from plump flour-dusted dough ball into hand-stretched artisan crust! */
-        var crustMix = doughTossT > 0 ? 1.0 : (doughTaps === 1 ? 0.48 : 0.92);
+        var crustMix = doughTossT > 0 ? 1.0 : Math.min(1, doughRoll * 1.18);
         if(crustMix < 1 && ART.doughBall && ART.doughBall.complete && ART.doughBall.naturalWidth){
-          ctx.globalAlpha = 1 - crustMix * 0.7;
+          ctx.globalAlpha = 1 - crustMix * 0.65;
           ctx.drawImage(ART.doughBall, -pr, -pr, pr * 2, pr * 2);
         }
         if(ART.crust && ART.crust.complete && ART.crust.naturalWidth){
@@ -1531,55 +1671,104 @@
       }
       ctx.restore();
 
-      if(doughTossT === 0){
-        drawSurfaceRipple(px, py, pr * doughScale * 0.82, pr * doughScale * doughTilt * 0.82);
+      /* REAL TURNED BEECHWOOD ROLLING PIN rolling physically back-and-forth across the dough! */
+      if(doughTossT === 0 && ART.toolRollingPin && ART.toolRollingPin.complete && ART.toolRollingPin.naturalWidth){
+        var pinIdle = (!rollingDragging && !rollAutoAnim) ? Math.sin(tAcc * 3.2) * 0.42 : 0;
+        var pinPos = (!rollingDragging && !rollAutoAnim) ? pinIdle : rollingPinPos;
+        var pinY = py + doughYOffset * 0.65 + pinPos * pr * doughTilt * 0.85;
+        var pinW = pr * 1.72, pinH = pinW * (160 / 512);
+        /* Soft realistic cylindrical shadow cast right onto the dough beneath the rolling pin! */
+        ctx.save();
+        var pSh = ctx.createLinearGradient(px, pinY + pinH * 0.10, px, pinY + pinH * 0.52);
+        pSh.addColorStop(0, "rgba(38,16,4,0.44)");
+        pSh.addColorStop(1, "rgba(38,16,4,0)");
+        ctx.fillStyle = pSh;
+        ctx.beginPath();
+        ctx.ellipse(px, pinY + pinH * 0.24, pinW * 0.34, pinH * 0.22, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        /* Slight subtle rolling tilt & rotating wood sheen highlight as pin rolls! */
+        ctx.translate(px, pinY);
+        ctx.rotate(Math.sin(pinPos * 1.4) * 0.035);
+        ctx.drawImage(ART.toolRollingPin, -pinW * 0.5, -pinH * 0.5, pinW, pinH);
+        /* Subtle animated specular band scrolling vertically across barrel so it visibly SPINS as it rolls! */
+        var sheenOff = Math.sin(rollingPinSpin + pinPos * 5.0) * (pinH * 0.14);
+        ctx.globalCompositeOperation = "lighter";
+        var shL = ctx.createLinearGradient(0, sheenOff - 8, 0, sheenOff + 8);
+        shL.addColorStop(0, "rgba(255,248,225,0)");
+        shL.addColorStop(0.5, "rgba(255,248,225,0.20)");
+        shL.addColorStop(1, "rgba(255,248,225,0)");
+        ctx.fillStyle = shL;
+        ctx.fillRect(-pinW * 0.28, sheenOff - 8, pinW * 0.56, 16);
+        ctx.restore();
+
+        /* Subtle glowing back-and-forth rolling chevrons (▲ / ▼) guiding the rolling motion! */
+        if(!rollingDragging && !rollAutoAnim){
+          var pulseA = 0.45 + 0.35 * Math.sin(tAcc * 4.5);
+          ctx.save();
+          ctx.strokeStyle = "rgba(255,248,210," + pulseA.toFixed(2) + ")";
+          ctx.lineWidth = 4; ctx.lineCap = "round"; ctx.lineJoin = "round";
+          var gTop = py - pr * doughTilt * 0.92 - 10, gBot = py + pr * doughTilt * 0.92 + 10;
+          ctx.beginPath(); ctx.moveTo(px - 14, gTop + 8); ctx.lineTo(px, gTop); ctx.lineTo(px + 14, gTop + 8); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(px - 14, gBot - 8); ctx.lineTo(px, gBot); ctx.lineTo(px + 14, gBot - 8); ctx.stroke();
+          ctx.restore();
+        }
       }
       return;
     }
 
-    /* 4. COMPOSITE & DRAW PHOTOREALISTIC 3D PERSPECTIVE PIZZA (with real separated sliced wedges!) */
+    /* 4. COMPOSITE & DRAW FLAT 3D PERSPECTIVE PIZZA WITH REAL EXTRUDED CRUST SIDE-WALL! */
     compositePizzaTexture();
 
     var hasAnyCut = cutDone[0] || cutDone[1] || cutDone[2];
+    /* Draw 3D puffed crust rim thickness beneath the top surface (skipped only if all slices eaten) */
+    if(!(phase === "eating" && slicesEaten >= 6)){
+      if(!hasAnyCut){
+        drawCrustSideWall(px, py, pr * drawScale * 1.00, pr * drawScale * tiltY * 1.00, crustWallH, bakeProgress, phase === "baking");
+      }
+    }
+
     ctx.save();
     ctx.translate(px, py);
-    ctx.scale(drawScale * (1 + bWave), drawScale * (1 - bWave * 0.65) * tiltY);
+    ctx.scale(drawScale * (1 + bWave), drawScale * (1 - bWave * 0.5) * tiltY);
 
     if(!hasAnyCut){
       ctx.drawImage(pizzaBuf, -pr * 1.04, -pr * 1.04, pr * 2.08, pr * 2.08);
     } else {
-      /* Physical 6-Wedge Pizza Slice Rendering with slight slice separation + melted mozzarella strings! */
+      /* Physical 6-Wedge Pizza Slices with 3D crust thickness edge & separation! */
       var sliceCount = 6;
       var stepA = (Math.PI * 2) / sliceCount;
       for(var sk = 0; sk < sliceCount; sk++){
         if(phase === "eating" && sk < slicesEaten) continue;
+        if(phase === "eating" && liftedSlice && liftedSlice.idx === sk) continue; /* Drawn lifting in 3D below! */
         var a0 = sk * stepA, a1 = (sk + 1) * stepA, aMid = (a0 + a1) * 0.5;
-        /* Check whether either edge of this wedge has been cut */
         var cutL = cutDone[sk % 3], cutR = cutDone[(sk + 1) % 3];
-        var sep = (cutL && cutR) ? 5.0 : ((cutL || cutR) ? 2.8 : 0);
+        var sep = (cutL && cutR) ? 5.5 : ((cutL || cutR) ? 3.0 : 0);
         var ox = Math.cos(aMid) * sep, oy = Math.sin(aMid) * sep;
+
+        /* Subtle 3D bottom crust thickness under each individual slice wedge */
+        ctx.save();
+        ctx.translate(ox, oy + (crustWallH / tiltY) * 0.65);
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, pr * 1.01, a0, a1); ctx.closePath();
+        ctx.fillStyle = "rgba(116,58,18,0.88)"; ctx.fill();
+        ctx.restore();
 
         ctx.save();
         ctx.translate(ox, oy);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.arc(0, 0, pr * 1.08, a0, a1);
-        ctx.closePath();
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, pr * 1.08, a0, a1); ctx.closePath();
         ctx.clip();
-        /* Slight warm depth edge shadow on freshly cut wedge */
         ctx.drawImage(pizzaBuf, -pr * 1.04, -pr * 1.04, pr * 2.08, pr * 2.08);
         ctx.restore();
       }
 
-      /* Delicate glossy melted mozzarella strings & soft natural shadow groove along completed cuts! */
-      if(phase !== "eating" || slicesEaten < 6){
+      /* Delicate glossy melted mozzarella strings stretching across freshly cut seams (hidden once slices are lifted so exposed peel is 100% clean!) */
+      if(phase !== "eating"){
         cutAngles.forEach(function(ang, ci){
           if(!cutDone[ci]) return;
           ctx.save(); ctx.rotate(ang);
-          ctx.strokeStyle = "rgba(38,14,4,0.26)"; ctx.lineWidth = 1.6;
+          ctx.strokeStyle = "rgba(38,14,4,0.22)"; ctx.lineWidth = 1.4;
           ctx.beginPath(); ctx.moveTo(-pr * 0.94, 0); ctx.lineTo(pr * 0.94, 0); ctx.stroke();
-          /* Glossy golden-ivory melted mozzarella cheese strands stretching across the fresh cut! */
-          ctx.strokeStyle = "rgba(255,244,196,0.85)"; ctx.lineWidth = 1.8; ctx.lineCap = "round";
+          ctx.strokeStyle = "rgba(255,244,196,0.82)"; ctx.lineWidth = 1.8; ctx.lineCap = "round";
           for(var st = -3; st <= 3; st++){
             if(st === 0) continue;
             var sx = st * pr * 0.21;
@@ -1593,21 +1782,21 @@
       }
     }
 
-    /* Warm flickering brick-oven firelight rim hugging the right side of the pizza while baking! */
+    /* Warm flickering brick-oven firelight rim hugging the right side of the flat pizza while baking! */
     if(phase === "baking"){
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
-      var flkB = 0.24 + Math.sin(tAcc * 11) * 0.07;
-      var fireRim = ctx.createRadialGradient(pr * 0.72, -pr * 0.18, pr * 0.08, pr * 0.45, -pr * 0.08, pr * 1.12);
-      fireRim.addColorStop(0, "rgba(255,196,88," + flkB.toFixed(2) + ")");
-      fireRim.addColorStop(0.55, "rgba(234,88,12," + (flkB * 0.42).toFixed(2) + ")");
+      var flkB = 0.26 + Math.sin(tAcc * 11) * 0.08;
+      var fireRim = ctx.createRadialGradient(pr * 0.78, -pr * 0.14, pr * 0.08, pr * 0.50, -pr * 0.06, pr * 1.14);
+      fireRim.addColorStop(0, "rgba(255,204,96," + flkB.toFixed(2) + ")");
+      fireRim.addColorStop(0.55, "rgba(234,88,12," + (flkB * 0.44).toFixed(2) + ")");
       fireRim.addColorStop(1, "rgba(234,88,12,0)");
       ctx.fillStyle = fireRim;
-      ctx.beginPath(); ctx.arc(0, 0, pr * 1.03, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, pr * 1.04, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
 
-    /* Soft Luminous Light-Beam Next-Cut Guide during Slice Stage (replaces cartoon dashed stroke!) */
+    /* Soft Luminous Light-Beam Next-Cut Guide during Slice Stage */
     if(phase === "slice"){
       var nextCut = cutDone.indexOf(false);
       if(nextCut >= 0){
@@ -1628,34 +1817,64 @@
 
     ctx.restore();
 
-    /* 5. REALISTIC 3D CULINARY TOOLS WITH SOFT DROP SHADOWS (ZERO CARTOON OUTLINES!) */
+    /* 4B. INDIVIDUAL STEAMING SLICE LIFTING TO CUSTOMER WITH GOOEY STRETCHING MOZZARELLA STRINGS! */
+    if(phase === "eating" && liftedSlice){
+      var cpE = getCustomerPos();
+      var uL = Math.min(1, liftedSlice.t);
+      var easeL = 1 - Math.pow(1 - uL, 2.5);
+      var sIdx = liftedSlice.idx % 6;
+      var sa0 = sIdx * (Math.PI / 3), sa1 = (sIdx + 1) * (Math.PI / 3);
+      var sxNow = px + (cpE.x - px) * easeL;
+      var syNow = py + (cpE.y + cpE.h * 0.12 - py) * easeL - Math.sin(uL * Math.PI) * 48;
+      var scNow = 1.0 - easeL * 0.34;
+      /* Gooey stretching mozzarella threads connecting pie to rising hot slice! */
+      if(uL < 0.72){
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,246,204," + ((1 - uL / 0.72) * 0.85).toFixed(2) + ")";
+        ctx.lineWidth = 2.6 * (1 - uL * 0.7); ctx.lineCap = "round";
+        for(var cs = -1; cs <= 1; cs++){
+          ctx.beginPath();
+          ctx.moveTo(px + cs * 16, py + cs * 6);
+          ctx.quadraticCurveTo((px + sxNow) * 0.5 + cs * 8, (py + syNow) * 0.5 + 18, sxNow + cs * 10, syNow + 6);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      ctx.save();
+      ctx.translate(sxNow, syNow);
+      ctx.scale(scNow, scNow * (tiltY + easeL * 0.25));
+      ctx.shadowColor = "rgba(22,8,2,0.45)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 12;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, pr * 1.08, sa0, sa1); ctx.closePath(); ctx.clip();
+      ctx.drawImage(pizzaBuf, -pr * 1.04, -pr * 1.04, pr * 2.08, pr * 2.08);
+      ctx.restore();
+    }
+
+    /* 5. REALISTIC 3D CULINARY TOOLS WITH SOFT DROP SHADOWS */
     if(phase === "sauce"){
       var lx, ly;
       if(ladleShowT > 0){
         lx = ladleX; ly = ladleY;
       } else {
         var swA = tAcc * 2.4;
-        lx = px + Math.cos(swA) * pr * 0.42;
-        ly = py + Math.sin(swA) * pr * tiltY * 0.42;
-        drawSurfaceRipple(px, py, pr * 0.55, pr * tiltY * 0.55);
+        lx = px + Math.cos(swA) * pr * 0.44;
+        ly = py + Math.sin(swA) * pr * tiltY * 0.44;
+        drawSurfaceRipple(px, py, pr * 0.56, pr * tiltY * 0.56);
       }
       if(ART.toolLadle && ART.toolLadle.complete && ART.toolLadle.naturalWidth){
-        var lSz = pr * 0.78;
+        var lSz = pr * 0.72;
         ctx.save();
         ctx.translate(lx, ly);
-        /* Soft drop shadow on dough */
         ctx.fillStyle = "rgba(32,12,4,0.28)";
-        ctx.beginPath(); ctx.ellipse(4, 14, lSz * 0.24, lSz * 0.16, 0, 0, Math.PI * 2); ctx.fill();
-        /* Anchor ladle bowl center (94/256, 166/256) directly over the sauce spot! */
+        ctx.beginPath(); ctx.ellipse(4, 14, lSz * 0.24, lSz * 0.14, 0, 0, Math.PI * 2); ctx.fill();
         ctx.drawImage(ART.toolLadle, -lSz * 0.367, -lSz * 0.648, lSz, lSz);
         ctx.restore();
       }
     } else if(phase === "cheese"){
-      /* Hovering Brushed Stainless-Steel 3D Box Grater + Fresh Mozzarella Block! */
-      var gx = px + pr * 0.50, gy = py - pr * tiltY * 0.72 + Math.sin(tAcc * 4.5) * 5;
-      var tilt = graterTiltT > 0 ? Math.sin(graterTiltT * Math.PI * 5) * 0.26 - 0.16 : -0.18 + Math.sin(tAcc * 2.6) * 0.05;
+      var grateRub = graterTiltT > 0 ? Math.sin(graterTiltT * Math.PI * 6) * 14 : 0;
+      var gx = px + pr * 0.48, gy = py - pr * tiltY * 0.92 + Math.sin(tAcc * 4.2) * 4 + grateRub;
+      var tilt = graterTiltT > 0 ? Math.sin(graterTiltT * Math.PI * 5) * 0.22 - 0.16 : -0.18 + Math.sin(tAcc * 2.4) * 0.04;
       if(ART.toolGrater && ART.toolGrater.complete && ART.toolGrater.naturalWidth){
-        var gSz = pr * 0.78;
+        var gSz = pr * 0.72;
         ctx.save();
         ctx.translate(gx, gy);
         ctx.rotate(tilt);
@@ -1663,20 +1882,19 @@
         ctx.drawImage(ART.toolGrater, -gSz * 0.5, -gSz * 0.5, gSz, gSz);
         ctx.restore();
       }
-      drawSurfaceRipple(px, py, pr * 0.52, pr * tiltY * 0.52);
+      drawSurfaceRipple(px, py, pr * 0.54, pr * tiltY * 0.54);
     } else if(phase === "slice"){
       var nextCutI = cutDone.indexOf(false);
       if(ART.toolCutter && ART.toolCutter.complete && ART.toolCutter.naturalWidth){
         var cAng = cutterAnim ? cutterAnim.ang : (nextCutI >= 0 ? cutAngles[nextCutI] : 0);
-        var cProg = cutterAnim ? cutterAnim.t : (0.18 + 0.14 * Math.sin(tAcc * 4.2));
+        var cProg = cutterAnim ? cutterAnim.t : (0.18 + 0.16 * Math.sin(tAcc * 4.0));
         var dAlong = (-0.95 + cProg * 1.90) * pr;
         var cutX = px + Math.cos(cAng) * dAlong;
         var cutY = py + Math.sin(cAng) * dAlong * tiltY;
-        var cSz = pr * 0.80;
+        var cSz = pr * 0.74;
         ctx.save();
         ctx.translate(cutX, cutY);
         ctx.shadowColor = "rgba(20,8,2,0.45)"; ctx.shadowBlur = 12; ctx.shadowOffsetY = 8;
-        /* Anchor stainless cutting wheel center (86/256, 166/256) directly on the pizza cut! */
         ctx.drawImage(ART.toolCutter, -cSz * 0.336, -cSz * 0.648, cSz, cSz);
         ctx.restore();
       }
@@ -1789,12 +2007,37 @@
     lastTime = now; tAcc += dt;
 
     if(doughBounce > 0) doughBounce = Math.max(0, doughBounce - dt * 2.4);
+    if(rollSfxCd > 0) rollSfxCd = Math.max(0, rollSfxCd - dt);
     if(ladleShowT > 0) ladleShowT = Math.max(0, ladleShowT - dt);
     if(graterTiltT > 0) graterTiltT = Math.max(0, graterTiltT - dt * 1.8);
     if(custHopT > 0) custHopT = Math.max(0, custHopT - dt * 2.2);
     if(custFlipT > 0) custFlipT = Math.max(0, custFlipT - dt * 1.3);
     if(hootBounceT > 0) hootBounceT = Math.max(0, hootBounceT - dt * 2.2);
     if(ovenFlameT > 0) ovenFlameT = Math.max(0, ovenFlameT - dt);
+
+    /* Animated smooth back-and-forth wooden rolling pin motion when tapped! */
+    if(rollAutoAnim && phase === "dough" && doughTossT === 0){
+      rollAutoAnim.t = Math.min(1, rollAutoAnim.t + dt * 1.75);
+      var rt = rollAutoAnim.t;
+      /* Full physical roll forward then back across the dough! */
+      var prevPin = rollingPinPos;
+      rollingPinPos = Math.sin(rt * Math.PI * 2.0) * 0.78 * rollAutoAnim.dir;
+      rollingPinSpin += (rollingPinPos - prevPin) * 7.5;
+      var goalNow = rollAutoAnim.startRoll + (rollAutoAnim.targetRoll - rollAutoAnim.startRoll) * rt;
+      if(goalNow > doughRoll) advanceDoughRoll(goalNow - doughRoll);
+      if(rt >= 1) rollAutoAnim = null;
+    }
+
+    /* Animated continuous circular ladle spiral sweep when sauce button tapped! */
+    if(ladleSwipeAnim && phase === "sauce"){
+      var pgS = getPizzaGeom();
+      ladleSwipeAnim.t = Math.min(1, ladleSwipeAnim.t + dt * 2.4);
+      var lt = ladleSwipeAnim.t;
+      var lAng = ladleSwipeAnim.a0 + (ladleSwipeAnim.a1 - ladleSwipeAnim.a0) * lt;
+      var lRad = ladleSwipeAnim.r0 + (ladleSwipeAnim.r1 - ladleSwipeAnim.r0) * lt;
+      addSauceAt(pgS.cx + Math.cos(lAng) * pgS.r * lRad, pgS.cy + Math.sin(lAng) * pgS.r * pgS.tiltY * lRad, dt * 0.62);
+      if(lt >= 1) ladleSwipeAnim = null;
+    }
 
     if(doughTossT > 0){
       doughTossT += dt * 1.35;
@@ -1829,15 +2072,15 @@
     var pgCur = getPizzaGeom();
     if(phase === "baking"){
       ovenTimerT += dt;
-      bakeProgress = Math.min(1, ovenTimerT / 3.3);
-      if(Math.random() < 0.28){
+      bakeProgress = Math.max(0, Math.min(1, (ovenTimerT - 0.55) / 2.95));
+      if(bakeProgress > 0.15 && Math.random() < 0.28){
         var a = Math.random() * Math.PI * 2, rad = Math.sqrt(Math.random()) * 0.64;
         ovenBubbles.push({ rx: Math.cos(a) * rad, ry: Math.sin(a) * rad, r: 4.5 + Math.random() * 7.5, life: 1.0 });
       }
-      if(Math.random() < 0.30){
+      if(ovenTimerT > 0.5 && Math.random() < 0.30){
         steamWisps.push({
           x: pgCur.cx + (Math.random() - 0.5) * pgCur.r * 1.15,
-          y: pgCur.cy + (Math.random() - 0.5) * 26,
+          y: pgCur.cy + (Math.random() - 0.5) * 18,
           vx: (Math.random() - 0.5) * 22,
           r: 22 + Math.random() * 18,
           life: 1.0
@@ -1853,11 +2096,10 @@
           em.y = H * (0.48 + Math.random() * 0.14);
         }
       });
-    } else if((phase === "slice" || phase === "serve") && Math.random() < 0.14){
-      /* Freshly baked hot pizza keeps gently steaming on the wooden peel! */
+    } else if((phase === "slice" || phase === "serve" || phase === "eating") && Math.random() < 0.14){
       steamWisps.push({
         x: pgCur.cx + (Math.random() - 0.5) * pgCur.r * 1.05,
-        y: pgCur.cy + (Math.random() - 0.5) * 22,
+        y: pgCur.cy + (Math.random() - 0.5) * 16,
         vx: (Math.random() - 0.5) * 16,
         r: 18 + Math.random() * 16,
         life: 1.0
@@ -1891,6 +2133,7 @@
     }
     if(phase === "eating"){
       serveAnimT = Math.min(1, serveAnimT + dt * 2.2);
+      if(liftedSlice) liftedSlice.t = Math.min(1, liftedSlice.t + dt * 1.75);
     }
 
     for(var shi = shockwaves.length - 1; shi >= 0; shi--){
@@ -2013,6 +2256,6 @@
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e111"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e112"></script>
 </body>
 </html>
