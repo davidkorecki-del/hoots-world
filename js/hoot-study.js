@@ -469,15 +469,19 @@
     if (p && p.type === "order" && !reveal) return "";
     return window.HootStudyVisuals.render(lesson, p, { reveal: !!reveal });
   }
-  function toolbarHtml(courseId) {
+  function toolbarHtml(courseId, lessonId) {
     var dark = document.body.classList.contains("hs-dark");
+    var showCalc = courseId === "math7" || courseId === "sci7";
+    var calcLocked = showCalc && window.HootStudyPro && window.HootStudyPro.isCalcLocked && window.HootStudyPro.isCalcLocked(lessonId);
     return '<div class="hs-tools">' +
       '<button type="button" class="hs-tool" data-hs-tool="pad" aria-expanded="false">✏️ Scratchpad</button>' +
+      (showCalc ? '<button type="button" class="hs-tool" data-hs-tool="calc" aria-expanded="false">' + (calcLocked ? "🧠 No Calc" : "🧮 Calculator") + "</button>" : "") +
       '<button type="button" class="hs-tool" data-hs-tool="ref" aria-expanded="false">📖 Reference</button>' +
       '<button type="button" class="hs-tool" data-hs-tool="dark">' + (dark ? "☀️ Light" : "🌙 Focus Dark") + "</button>" +
       '</div><div class="hs-drawer" id="hs-ref-drawer" hidden>' +
       (window.HootStudyVisuals ? window.HootStudyVisuals.referenceHtml(courseId) : "") +
-      '</div><div class="hs-drawer" id="hs-pad-drawer" hidden></div>';
+      '</div><div class="hs-drawer" id="hs-pad-drawer" hidden></div>' +
+      (showCalc ? '<div class="hs-drawer" id="hs-calc-drawer" hidden></div>' : "");
   }
 
   function interactiveInputHtml(p) {
@@ -512,7 +516,12 @@
         '<button type="submit" class="hs-btn pri">Check my CER draft ▶</button></form>';
     }
     return '<form class="hs-form" data-hs-form="1"><input class="hs-in" inputmode="decimal" autocomplete="off" aria-label="Your answer" placeholder="Your answer' +
-      (p.unit ? " (" + esc(p.unit) + ")" : "") + '"><button type="submit" class="hs-btn pri">Check</button></form>';
+      (p.unit ? " (" + esc(p.unit) + ")" : "") + '"><button type="submit" class="hs-btn pri">Check</button>' +
+      '<div class="hs-qbar" aria-label="Quick math symbols">' +
+        '<button type="button" class="hs-sym" data-hs-sym="-" title="Negative sign">−</button>' +
+        '<button type="button" class="hs-sym" data-hs-sym="/" title="Fraction slash">/</button>' +
+        '<button type="button" class="hs-sym" data-hs-sym="." title="Decimal point">.</button>' +
+      "</div></form>";
   }
 
   var STEPS = ["Learn", "Watch", "Together", "Your turn", "Recap"];
@@ -540,7 +549,7 @@
     function shell(inner) {
       if (cur !== S) return;
       body.innerHTML = '<div class="hs"><div class="hs-toprow"><p class="hs-std">' + esc(lesson.std) + " · " + esc(lesson.subject || "Grade 7 math") + "</p>" +
-        toolbarHtml(lesson.course || "math7") + "</div>" + bar() + inner + "</div>";
+        toolbarHtml(lesson.course || "math7", (S.p && S.p._lesson && S.p._lesson.id) || lesson.id) + "</div>" + bar() + inner + "</div>";
       body.scrollTop = 0;
     }
     function learn() {
@@ -602,6 +611,9 @@
           S.locked = true;
           var hasReasonWord = /\b(because|shows|proves|means|therefore|since|supports|connects)\b/i.test(rTxt);
           var hasEvCue = /\b(passage|text|states|says|according|for example|data|study|shows|percent|%|\d)\b/i.test(eTxt) || /["“”]/.test(eTxt);
+          if (window.HootStudyPro && window.HootStudyPro.saveCer) {
+            window.HootStudyPro.saveCer({ q: p.q, c: cTxt, e: eTxt, r: rTxt, score: 1 + (hasEvCue ? 1 : 0) + (hasReasonWord ? 1 : 0) });
+          }
           fb.innerHTML = "✓ Draft checked! Compare your CER against the rubric &amp; Grade 7 model below.";
           fb.className = "hs-fb ok";
           stdSay(["std-correct-first.mp3"]);
@@ -804,6 +816,17 @@
       } else if (tk === "ref") {
         var dr = body.querySelector("#hs-ref-drawer");
         if (dr) { dr.hidden = !dr.hidden; tool.setAttribute("aria-expanded", String(!dr.hidden)); tool.classList.toggle("on", !dr.hidden); }
+      } else if (tk === "calc") {
+        var cd = body.querySelector("#hs-calc-drawer");
+        if (cd) {
+          cd.hidden = !cd.hidden;
+          tool.setAttribute("aria-expanded", String(!cd.hidden));
+          tool.classList.toggle("on", !cd.hidden);
+          if (!cd.hidden && !cd.firstElementChild && window.HootStudyPro) {
+            var lid = (cur && cur.p && cur.p._lesson && cur.p._lesson.id) || (cur && cur.lesson && cur.lesson.id) || "";
+            window.HootStudyPro.mountCalculator(cd, { lessonId: lid });
+          }
+        }
       } else if (tk === "pad") {
         var pd = body.querySelector("#hs-pad-drawer");
         if (pd) {
@@ -812,6 +835,22 @@
           tool.classList.toggle("on", !pd.hidden);
           if (!pd.hidden && !pd.querySelector("canvas") && window.HootStudyVisuals) window.HootStudyVisuals.mountScratchpad(pd);
         }
+      }
+      return;
+    }
+
+    /* Quick Math Symbol Bar (− / .) */
+    var symBtn = e.target.closest("[data-hs-sym]");
+    if (symBtn && symBtn.closest("#ll-obody .hs")) {
+      var inp = body.querySelector(".hs-in");
+      if (inp && !inp.disabled) {
+        var sym = symBtn.getAttribute("data-hs-sym");
+        if (sym === "-") {
+          inp.value = inp.value.indexOf("-") === 0 ? inp.value.slice(1) : "-" + inp.value;
+        } else {
+          inp.value += sym;
+        }
+        inp.focus();
       }
       return;
     }
@@ -845,6 +884,36 @@
     if (t.hasAttribute("data-hs")) cur.go(t.getAttribute("data-hs"));
     else if (t.hasAttribute("data-hs-pick")) cur.answer(t.getAttribute("data-hs-pick"));
     else cur.hint(+t.getAttribute("data-hs-hint"));
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (!cur || e.metaKey || e.ctrlKey || e.altKey) return;
+    var ov = document.getElementById("ll-overlay");
+    if (!ov || ov.hidden) return;
+    var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+    if (tag === "input" || tag === "textarea") return;
+    var body = document.getElementById("ll-obody");
+    if (!body) return;
+    var k = e.key;
+    if (k >= "1" && k <= "4") {
+      var b = body.querySelector('[data-hs-pick="' + (+k - 1) + '"]');
+      if (b && !b.disabled) { e.preventDefault(); b.click(); }
+    } else if (k === "Enter") {
+      var adv = body.querySelector('[data-hs="item"], [data-hs="more"], [data-hs="next"]');
+      if (adv && !adv.disabled) { e.preventDefault(); adv.click(); }
+    } else if (k === "h" || k === "H") {
+      var hb = body.querySelector("[data-hs-hint]");
+      if (hb) { e.preventDefault(); hb.click(); }
+    } else if (k === "s" || k === "S") {
+      var sb = body.querySelector('[data-hs-tool="pad"]');
+      if (sb) { e.preventDefault(); sb.click(); }
+    } else if (k === "r" || k === "R") {
+      var rb = body.querySelector('[data-hs-tool="ref"]');
+      if (rb) { e.preventDefault(); rb.click(); }
+    } else if (k === "c" || k === "C") {
+      var cb = body.querySelector('[data-hs-tool="calc"]');
+      if (cb) { e.preventDefault(); cb.click(); }
+    }
   });
 
   document.addEventListener("submit", function (e) {

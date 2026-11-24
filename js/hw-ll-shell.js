@@ -1118,12 +1118,14 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   }
   function classBoxHtml() {
     var cur = classTopic(), m = cur ? matchTopic(cur) : [];
+    var chips = ["equations", "circles", "percent", "probability", "CER", "cells", "Constitution", "Revolution"];
     return '<section class="ll-card ll-classbox"><h2 class="cb-h">This week in class</h2>' +
-      '<form class="cb-form" data-cb="1"><label class="cb-lab" for="cb-in">What is your class working on? Your tutor lines up practice for it.</label>' +
-      '<div class="cb-row"><input id="cb-in" name="t" maxlength="80" placeholder="e.g. ratios, the Constitution, writing an argument" value="' + esc(cur) + '"><button type="submit" class="ll-btn pri">Save</button></div></form>' +
+      '<form class="cb-form" data-cb="1"><label class="cb-lab" for="cb-in">What is your class working on? Pick a topic or type one — your tutor lines up practice for it.</label>' +
+      '<div class="cb-row"><input id="cb-in" name="t" maxlength="80" placeholder="e.g. ratios, the Constitution, writing an argument" value="' + esc(cur) + '"><button type="submit" class="ll-btn pri">Save</button></div>' +
+      '<div class="cb-chips">' + chips.map(function (c) { return '<button type="button" class="cb-chip' + (cur.toLowerCase() === c.toLowerCase() ? " on" : "") + '" data-cb-chip="' + esc(c) + '">' + esc(c) + "</button>"; }).join("") + "</div></form>" +
       (cur ? (m.length
         ? '<p class="cb-res">Your tutor\'s practice for <b>' + esc(cur) + "</b>:</p><div class=\"ll-grid\">" + m.map(function (l) { return actCard({ kind: "lesson", title: l.title, emo: l.emo, tags: ["This week"], color: l.color, blurb: "Matches what your class is covering." }); }).join("") + "</div>"
-        : '<p class="cb-res">No lesson matches <b>' + esc(cur) + "</b> yet. Your other lessons are below; tell a grown-up so it can be added.</p>") : "") +
+        : '<p class="cb-res">No lesson matches <b>' + esc(cur) + "</b> yet. Try one of the topic chips above or browse Learn.</p>") : "") +
       "</section>";
   }
 
@@ -1175,16 +1177,19 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
 
   function teenStudyHubHtml() {
     if (!isTeen()) return "";
-    var hs = window.HootStudy;
+    var hs = window.HootStudy, hsp = window.HootStudyPro;
     var vCount = hs && hs.getVault ? hs.getVault().length : 0;
     var isDark = document.body.classList.contains("hs-dark") || (hs && hs.isDark && hs.isDark());
     return '<section class="tc-hub" aria-label="Grade 7 Study Tools">' +
       '<div class="tc-hub-head"><b>⚡ Grade 7 NY Study Hub</b><button type="button" class="tc-hub-dark" data-teen-act="dark" aria-pressed="' + (isDark ? "true" : "false") + '">' + (isDark ? "☀️ Light Mode" : "🌙 Focus Dark") + "</button></div>" +
-      '<div class="tc-hub-grid">' +
+      '<div class="tc-hub-grid tc-hub-4">' +
         '<button type="button" class="tc-hub-btn pri" data-teen-act="test-math"><span class="th-ic" aria-hidden="true">📝</span><span><b>NY Math Practice Test</b><small>10 problems · Standards breakdown</small></span></button>' +
         '<button type="button" class="tc-hub-btn" data-teen-act="test-all"><span class="th-ic" aria-hidden="true">🌐</span><span><b>All-Subjects Mock Exam</b><small>Math · ELA · Science · SS</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="flashcards"><span class="th-ic" aria-hidden="true">⚡</span><span><b>Quick Flip Flashcards</b><small>32 NY Grade 7 3D study cards</small></span></button>' +
         '<button type="button" class="tc-hub-btn vault" data-teen-act="vault"><span class="th-ic" aria-hidden="true">🎯</span><span><b>Mistake Vault <span class="tc-vbadge"' + (vCount ? "" : ' data-zero="1"') + ">" + vCount + '</span></b><small>' + (vCount ? "Clear missed quiz items" : "All clear right now!") + "</small></span></button>" +
-      "</div></section>";
+      "</div>" +
+      (hsp && hsp.focusBarHtml ? hsp.focusBarHtml() : "") +
+      "</section>";
   }
 
   /* 3e38: ages 11+ get a plain checklist for today and progress per course.
@@ -1216,10 +1221,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       '<ol class="tc-list" aria-label="Today\'s checklist">' + rows + "</ol>" +
       '<p class="tc-tools"><button type="button" class="ni-top" id="ll-newideas">Shuffle plan</button><span>' + esc(cfgNow.mode === "school" ? "Practice what you're covering in class." : "Stuck? Open the lesson and your tutor explains it another way.") + "</span></p>" +
       (courses ? '<h3 class="tc-h">Courses</h3><div class="tc-courses">' + courses + "</div>" : "") +
-      (cfgNow.mode === "school" ? classBoxHtml() : "") +
-      waveTodayHtml() + wc2TodayHtml() + /* Wave C1: daily pick, Right Now chips, world map entry; Wave C2: missions entry */
-      we1TodayHtml() + /* Wave E1: Morning Hello + photo quest */
-      we2TodayHtml(); /* Wave E2: Oops Garden + Car mode entries */
+      classBoxHtml();
   }
 
   function kidbarHtml() {
@@ -1257,19 +1259,34 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var paths = pathsFor(state.profile.id);
     /* engine paths (Letters, Basics) are opened from their path card */
     var lessons = [];
-    paths.forEach(function (p) { (LESSONS[p.id] || (/^(math7|ela7|sci7|ss7)$/.test(p.id) ? hlLessons(p.id) : [])).forEach(function (l) { lessons.push(Object.assign({ path: p.title, kind: "lesson" }, l)); }); });
+    paths.forEach(function (p) { (LESSONS[p.id] || (/^(math7|ela7|sci7|ss7)$/.test(p.id) ? hlLessons(p.id) : [])).forEach(function (l) { lessons.push(Object.assign({ path: p.title, pathId: p.id, kind: "lesson" }, l)); }); });
     var pathHtml = paths.map(function (p) {
       return '<button type="button" class="ll-pathcard" data-path="' + esc(p.id) + '"><span class="emo" aria-hidden="true">' + p.emo + '</span><b>' + esc(p.title) + "</b><small>" + p.count + " lessons · " + (isTeen() ? "Open" : "Play") + "</small></button>";
     }).join("");
     var cards = lessons.map(function (l) {
-      return actCard({ kind: "lesson", title: l.title, emo: l.emo, tags: (l.tags || []).concat([l.path]), color: l.color, blurb: l.blurb || (isTeen() ? "Your tutor explains it, shows a worked example, you practise, then a short quiz." : "Open this lesson with the owl tutor.") });
+      var raw = actCard({ kind: "lesson", title: l.title, emo: l.emo, tags: (l.tags || []).concat([l.path]), color: l.color, blurb: l.blurb || (isTeen() ? "Your tutor explains it, shows a worked example, you practise, then a short quiz." : "Open this lesson with the owl tutor.") });
+      if (!isTeen()) return raw;
+      return raw.replace("<article ", '<article data-lsubj="' + esc(l.pathId || "") + '" data-lq="' + esc((l.title + " " + (l.tags || []).join(" ") + " " + (l.path || "")).toLowerCase()) + '" ');
     }).join("");
+    var filterBar = isTeen()
+      ? '<div class="ln-tools" role="search">' +
+          '<input type="search" id="ll-learn-search" class="ln-search" placeholder="🔍 Search Grade 7 lessons, standards, or topics (e.g. circles, 7.EE, CER, cells)…">' +
+          '<div class="ln-pills" role="tablist" aria-label="Filter lessons by subject">' +
+            '<button type="button" class="ln-pill on" data-learn-f="all">All (' + lessons.length + ")</button>" +
+            '<button type="button" class="ln-pill" data-learn-f="math7">📐 Math</button>' +
+            '<button type="button" class="ln-pill" data-learn-f="ela7">📚 English</button>' +
+            '<button type="button" class="ln-pill" data-learn-f="sci7">🔬 Science</button>' +
+            '<button type="button" class="ln-pill" data-learn-f="ss7">🗽 History</button>' +
+            '<button type="button" class="ln-pill" data-learn-f="todo">✨ Not done yet</button>' +
+          "</div></div>"
+      : "";
     return '<div class="ll-kidbar">' + kidbarHtml() + "</div>" +
       (isTeen()
-        ? '<section class="ll-card ll-hero"><div class="htxt"><h2>Your courses</h2><p class="hoot-line">' + esc(bandLabel(curBand())) + " · " + esc(childCfg(state.profile.id).state) + '. Each lesson: explanation, worked example, guided practice, quiz.</p></div></section>'
+        ? '<section class="ll-card ll-hero"><div class="htxt"><h2>Your courses</h2><p class="hoot-line">' + esc(bandLabel(curBand())) + " · " + esc(childCfg(state.profile.id).state) + '. Each lesson: explanation, live visuals, guided practice, and mastery quiz.</p></div></section>'
         : '<section class="ll-card ll-hero" style="--k:#0A7E57"><div class="big" aria-hidden="true">🌱</div><div class="htxt"><h2>Learn</h2><p class="hoot-line">Pick a path — Hoot teaches out loud, then you try.</p></div></section>') +
       '<div id="learnGrid">' + pathHtml + "</div>" +
-      '<div class="todoh-row"><h2 class="todoh">' + (isTeen() ? "All lessons" : "Lessons") + '</h2></div><div class="ll-grid">' + cards + "</div>";
+      filterBar +
+      '<div class="todoh-row"><h2 class="todoh">' + (isTeen() ? "All lessons" : "Lessons") + '</h2></div><div class="ll-grid" id="ll-learn-list">' + cards + "</div>";
   }
 
   /* 3e20: older kids are learning-focused — no games. Practice is built from
@@ -1311,9 +1328,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       var ls = LESSONS[p.id] || hlLessons(p.id), dn = ls.filter(function (l) { return lessonDone(l.title); }).length, pc = Math.round(100 * dn / Math.max(1, ls.length));
       return '<div class="pp-row"><span class="pp-t">' + esc(p.title) + '</span><span class="pp-bar" role="progressbar" aria-valuenow="' + pc + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pc + '%"></i></span><span class="pp-n">' + dn + " / " + ls.length + "</span></div>";
     }).join("");
-    body = '<section class="ll-card ll-progress"><h2 class="cb-h">Your progress</h2>' + prog + '<p class="wc-progmap"><button type="button" class="ll-btn sm" data-wc-map="1">🗺️ See it on the world map</button> <button type="button" class="ll-btn sm" data-we2-garden="1">🌸 Oops Garden</button></p>' + "</section>" + body;
+    body = '<section class="ll-card ll-progress"><h2 class="cb-h">Your progress</h2>' + prog + (isTeen() ? "" : '<p class="wc-progmap"><button type="button" class="ll-btn sm" data-wc-map="1">🗺️ See it on the world map</button> <button type="button" class="ll-btn sm" data-we2-garden="1">🌸 Oops Garden</button></p>') + "</section>" + body;
     return '<div class="ll-kidbar">' + kidbarHtml() + '</div>' +
-      '<section class="ll-card ll-hero"><div class="htxt"><h2>Practice</h2><p class="hoot-line">Built from your own lessons: tricky topics first, then quick reviews so it sticks.</p></div></section>' + teenStudyHubHtml() + body + wc2MissionsEntryHtml() + we2CarEntryHtml(); /* Wave E2: car mode entry */
+      '<section class="ll-card ll-hero"><div class="htxt"><h2>Practice</h2><p class="hoot-line">Built from your own lessons: tricky topics first, then quick reviews so it sticks.</p></div></section>' + teenStudyHubHtml() + body + (isTeen() ? "" : wc2MissionsEntryHtml() + we2CarEntryHtml()); /* Wave E2: car mode entry */
   }
 
   function renderReading() {
@@ -1322,12 +1339,17 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var band = curBand();
     var prefer = [];
     pathsFor(state.profile.id).forEach(function (p) {
-      (LESSONS[p.id] || hlLessons(p.id).slice(0, 6)).forEach(function (l) { if (l.reading) prefer.push(Object.assign({ kind: "lesson" }, l)); });
+      (LESSONS[p.id] || hlLessons(p.id).slice(0, 6)).forEach(function (l) { if (l.reading || (isTeen() && p.id === "ela7")) prefer.push(Object.assign({ kind: "lesson" }, l)); });
     });
     var cards = prefer.map(function (l) {
-      return actCard({ kind: "lesson", title: l.title, emo: l.emo, tags: l.tags, color: l.color, blurb: l.blurb || (isTeen() ? "A reading or writing lesson. Start lesson opens it with your tutor." : "A reading or story lesson. Play now opens the tutor.") });
+      return actCard({ kind: "lesson", title: l.title, emo: l.emo, tags: l.tags, color: l.color, blurb: l.blurb || (isTeen() ? "A Grade 7 reading or writing lesson. Start lesson opens it with your tutor." : "A reading or story lesson. Play now opens the tutor.") });
     }).join("");
-    return '<div class="ll-kidbar">' + kidbarHtml() + '</div>' + libSectionHtml() + '<section class="ll-card ll-hero" style="--k:' + state.profile.color + '"><div class="big">📚</div><div class="htxt"><h2>Reading</h2><p class="hoot-line">' + (band === "teen" ? "Reading and writing lessons at your level." : "Letter sounds and listening — Hoot says every word out loud.") + '</p></div></section><div class="ll-grid">' + cards + "</div>";
+    if (isTeen()) {
+      var lab = window.HootStudyPro && window.HootStudyPro.readingLabHtml ? window.HootStudyPro.readingLabHtml() : "";
+      return '<div class="ll-kidbar">' + kidbarHtml() + "</div>" + lab +
+        '<div class="todoh-row"><h2 class="todoh">Grade 7 ELA Reading &amp; Writing Lessons</h2></div><div class="ll-grid">' + cards + "</div>";
+    }
+    return '<div class="ll-kidbar">' + kidbarHtml() + '</div>' + libSectionHtml() + '<section class="ll-card ll-hero" style="--k:' + state.profile.color + '"><div class="big">📚</div><div class="htxt"><h2>Reading</h2><p class="hoot-line">Letter sounds and listening — Hoot says every word out loud.</p></div></section><div class="ll-grid">' + cards + "</div>";
   }
 
   function renderMemories() {
@@ -1355,18 +1377,25 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       ? '<div class="ll-grid" style="grid-template-columns:1fr 1fr;gap:10px">' + grid + "</div>"
       : '<p class="hoot-line" style="margin:0">No photos yet. Add a photo or video to an activity in Activities and it shows up here.</p>';
     if (isTeen()) {
-      /* teens have no Activities tab: their portfolio is the lessons they have finished */
+      if (window.HootStudyPro && window.HootStudyPro.renderPortfolioHtml) {
+        var logs = [];
+        try { logs = logLoad()[p.id] || []; } catch (err) {}
+        return '<div class="ll-kidbar">' + kidbarHtml() + "</div>" +
+          window.HootStudyPro.renderPortfolioHtml(p, {
+            lessonsFor: function (cid) { return LESSONS[cid] || hlLessons(cid); },
+            isDone: function (title) { return lessonDone(title); },
+            logs: logs
+          });
+      }
+      /* fallback if HootStudyPro isn't loaded */
       var fin = [], got = {};
       pathsFor(p.id).forEach(function (pt) {
         (LESSONS[pt.id] || hlLessons(pt.id)).forEach(function (l) { if (!got[l.title] && lessonDone(l.title)) { got[l.title] = 1; fin.push('<li>' + esc(l.title) + ' <small>· ' + esc(pt.title) + "</small></li>"); } });
       });
-      /* Grade 7 courses (maths, English, science, social studies) record a finished lesson in the log */
-      try { (logLoad()[p.id] || []).forEach(function (ev) { if (ev.type === "lesson" && ev.title && !got[ev.title]) { got[ev.title] = 1; fin.push("<li>" + esc(ev.title) + "</li>"); } }); } catch (err) {}
       return '<div class="ll-kidbar">' + kidbarHtml() + "</div>" +
         '<section class="ll-card ll-hero" style="--k:' + p.color + '"><div class="big">🗂️</div><div class="htxt"><h2>' + esc(p.label) + "'s portfolio</h2><p class='hoot-line'>Every lesson you have finished.</p></div></section>" +
         '<section class="ll-card"><h3 style="margin:0 0 8px">Finished lessons (' + fin.length + ")</h3>" +
-        (fin.length ? '<ul style="margin:0;padding-left:20px;line-height:1.6">' + fin.join("") + "</ul>" : '<p class="hoot-line" style="margin:0">Nothing yet. Finish a lesson in Learn and it is listed here.</p>') + "</section>" +
-        '<section class="ll-card"><h3 style="margin:0 0 8px">Stars</h3><p style="margin:0">Stars so far: ⭐ ' + state.stars + "</p></section>";
+        (fin.length ? '<ul style="margin:0;padding-left:20px;line-height:1.6">' + fin.join("") + "</ul>" : '<p class="hoot-line" style="margin:0">Nothing yet. Finish a lesson in Learn and it is listed here.</p>') + "</section>";
     }
     return '<div class="ll-kidbar">' + kidbarHtml() + "</div>" +
       '<section class="ll-card ll-hero" style="--k:' + p.color + '"><div class="big">📸</div><div class="htxt"><h2>' + esc(p.label) + "'s memories</h2><p class='hoot-line'>Photos and stickers from the day\'s play.</p></div></section>" +
@@ -2273,6 +2302,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     document.body.classList.toggle("ll-pathlock", !playUnlocked());
     document.body.classList.toggle("ll-teen", teen);
     if (window.HootStudy && window.HootStudy.syncDark) window.HootStudy.syncDark(state.profile ? state.profile.id : "");
+    if (!teen && window.HootStudyPro && window.HootStudyPro.stopAmbient) window.HootStudyPro.stopAmbient();
     var h1 = $(".ll-shell-header h1");
     if (h1) h1.textContent = teen ? "Hoot · Study" : "🌈 Hoot's World";
     $$("#ll-tabs button").forEach(function (b) {
@@ -3122,6 +3152,25 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     setTab("today");
   }
 
+  function filterLearnGrid() {
+    var list = document.getElementById("ll-learn-list");
+    if (!list) return;
+    var q = ((document.getElementById("ll-learn-search") || {}).value || "").trim().toLowerCase();
+    var pill = document.querySelector(".ln-pill.on");
+    var f = pill ? pill.getAttribute("data-learn-f") : "all";
+    $$(".ll-act", list).forEach(function (card) {
+      var subj = card.getAttribute("data-lsubj") || "";
+      var hay = card.getAttribute("data-lq") || "";
+      var done = card.classList.contains("done");
+      var okF = f === "all" || (f === "todo" ? !done : subj === f);
+      var okQ = !q || hay.indexOf(q) >= 0;
+      card.hidden = !(okF && okQ);
+    });
+  }
+  document.addEventListener("input", function (e) {
+    if (e.target && e.target.id === "ll-learn-search") filterLearnGrid();
+  });
+
   document.addEventListener("change", function (e) { if (e.target && e.target.closest && e.target.closest("#ll-app .ll-kidsettings")) onKidSetting(e); });
   window.addEventListener("hoot-vault-change", function () {
     if (!window.HootStudy || !window.HootStudy.getVault) return;
@@ -3198,12 +3247,29 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
         window.HootStudy.startPracticeTest($("#ll-obody"), teenAct === "test-all" ? "all" : "math7");
         return;
       }
+      if (teenAct === "flashcards" && window.HootStudyPro) {
+        openShellOverlay("⚡ Quick Flip Flashcards", "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudyPro.openFlashcards($("#ll-obody"), "all");
+        return;
+      }
       if (teenAct === "vault") {
         openShellOverlay("Mistake Vault", "");
         document.body.classList.add("ll-tutor-open");
         window.HootStudy.playVault($("#ll-obody"));
         return;
       }
+    }
+    var cbChip = t.getAttribute("data-cb-chip");
+    if (cbChip) { setClassTopic(cbChip); render(); return; }
+    var rlOpen = t.getAttribute("data-rl-open") || t.getAttribute("data-pf-lesson");
+    if (rlOpen) { openLesson(rlOpen); return; }
+    if (t.getAttribute("data-pf-print") === "1") { try { window.print(); } catch (e) {} return; }
+    var learnF = t.getAttribute("data-learn-f");
+    if (learnF) {
+      $$(".ln-pill").forEach(function (b) { b.classList.toggle("on", b === t); });
+      filterLearnGrid();
+      return;
     }
     var pathId = t.getAttribute("data-path");
     if (pathId) { openPath(pathId); return; }

@@ -1360,7 +1360,8 @@ body.ll-kidband #ll-tabs button[data-tab="memories"]{display:none}
 .tc-hub-head b{font-size:1rem;color:#151922}
 .tc-hub-dark{min-height:36px;padding:5px 12px;border-radius:999px;border:1.5px solid #CBD5E1;background:#F8FAFC;color:#151922;font-size:.86rem;font-weight:600;cursor:pointer}
 .tc-hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-@media (max-width:640px){.tc-hub-grid{grid-template-columns:1fr}}
+.tc-hub-grid.tc-hub-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:640px){.tc-hub-grid,.tc-hub-grid.tc-hub-4{grid-template-columns:1fr}}
 .tc-hub-btn{display:flex;align-items:center;gap:10px;text-align:left;min-height:60px;padding:10px 12px;border-radius:12px;border:1.5px solid #DDE1E7;background:#F8FAFC;color:#151922;cursor:pointer;transition:border-color .15s,background .15s}
 .tc-hub-btn:hover{border-color:#0B5E43;background:#F0FDF4}
 .tc-hub-btn.pri{background:#0B5E43;border-color:#0B5E43;color:#fff}
@@ -1481,6 +1482,152 @@ body.ll-teen.hs-dark #ll-obody .hs-hint{color:#CBD5E1 !important}
 body.ll-teen.hs-dark #ll-obody .hs-n{background:#1E293B;color:#E2E8F0}
 body.ll-teen.hs-dark #ll-obody .hs-cer-model{background:#172554;border-left-color:#60A5FA;color:#DBEAFE}
 body.ll-teen.hs-dark #ll-obody .hs-pad-canvas{background:#0F172A;border-color:#334155}
+
+/* ===== Grade 7 Pro Suite: Calculator, Math Quick-Bar, 3D Flashcards, Focus Timer, Learn Search, Reading Lab, Portfolio & Print ===== */
+#ll-obody .hs-qbar{display:flex;gap:6px;width:100%;margin-top:4px}
+#ll-obody .hs-sym{min-width:44px;min-height:38px;border-radius:9px;border:1.5px solid #CBD5E1;background:#F8FAFC;color:#151922;font-size:1.05rem;font-weight:700;cursor:pointer}
+#ll-obody .hs-sym:hover{border-color:#0B5E43;background:#ECFDF5}
+/* Calculator Drawer */
+#ll-obody .hs-calc{max-width:360px;margin:0 auto}
+#ll-obody .hs-calc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:.88rem;font-weight:700;color:#334155}
+#ll-obody .hs-calc-ins{min-height:32px;padding:4px 10px;border-radius:8px;border:0;background:#0B5E43;color:#fff;font-size:.84rem;font-weight:700;cursor:pointer}
+#ll-obody .hs-calc-scr{background:#fff;border:1.5px solid #CBD5E1;border-radius:10px;padding:8px 12px;text-align:right;margin-bottom:8px;min-height:54px;display:flex;flex-direction:column;justify-content:center}
+#ll-obody .hs-calc-expr{font-size:.78rem;color:#64748B;min-height:14px}
+#ll-obody .hs-calc-val{font-size:1.35rem;font-weight:800;color:#0F172A;word-break:break-all}
+#ll-obody .hs-calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+#ll-obody .hs-calc-grid button{min-height:42px;border-radius:9px;border:1px solid #CBD5E1;background:#fff;color:#0F172A;font-size:1rem;font-weight:700;cursor:pointer}
+#ll-obody .hs-calc-grid .hc-op{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
+#ll-obody .hs-calc-grid .hc-fn{background:#F1F5F9;color:#334155;font-size:.9rem}
+#ll-obody .hs-calc-grid .hc-eq{background:#0B5E43;border-color:#0B5E43;color:#fff}
+#ll-obody .hs-calc-lock{padding:10px 12px;border-radius:10px;background:#FEF3C7;border-left:4px solid #D97706;color:#78350F;font-size:.92rem;line-height:1.45}
+#ll-obody .hs-calc-lock p{margin:4px 0 0 !important;color:inherit !important;font-size:.9rem !important}
+/* 3D Spaced-Repetition Flashcards */
+#ll-obody .fc-wrap{max-width:620px;margin:0 auto}
+#ll-obody .fc-decks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+#ll-obody .fc-pill{min-height:36px;padding:5px 12px;border-radius:999px;border:1.5px solid #CBD5E1;background:#fff;color:#1E293B;font-size:.86rem;font-weight:600;cursor:pointer}
+#ll-obody .fc-pill.on{background:#0B5E43;border-color:#0B5E43;color:#fff}
+#ll-obody .fc-meta{display:flex;justify-content:space-between;font-size:.88rem;color:#475569;margin-bottom:10px;font-weight:600}
+#ll-obody .fc-stage{perspective:1100px;margin-bottom:14px}
+#ll-obody .fc-card{display:block;width:100%;min-height:230px;padding:0;border:0;background:transparent;cursor:pointer;text-align:center}
+#ll-obody .fc-inner{position:relative;width:100%;min-height:230px;transition:transform .52s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+#ll-obody .fc-card.flipped .fc-inner{transform:rotateY(180deg)}
+#ll-obody .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px 22px;border-radius:18px;background:#fff;border:2px solid #DDE1E7;box-shadow:0 10px 26px rgba(15,23,42,.08)}
+#ll-obody .fc-back{transform:rotateY(180deg);background:#F0FDF4;border-color:#10B981}
+#ll-obody .fc-tag{font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;background:#EEF2FF;color:#3730A3}
+#ll-obody .fc-q{margin:0;font-size:1.35rem;line-height:1.35;color:#0F172A}
+#ll-obody .fc-a{margin:0;font-size:1.08rem;line-height:1.55;font-weight:600;color:#064E3B !important}
+#ll-obody .fc-hint{font-size:.82rem;color:#64748B}
+#ll-obody .fc-acts{display:flex;justify-content:center;gap:10px}
+/* Focus Study Timer + Ambient Rain */
+.ft-bar-wrap{margin-top:10px;padding-top:10px;border-top:1px solid #E2E8F0}
+.ft-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.ft-title{font-size:.86rem;font-weight:700;color:#475569}
+.ft-clock{font-size:1.05rem;font-weight:800;font-variant-numeric:tabular-nums;color:#0F172A;min-width:52px}
+.ft-presets,.ft-ctrls{display:flex;flex-wrap:wrap;gap:5px}
+.ft-ctrls{margin-left:auto}
+.ft-chip,.ft-btn{min-height:32px;padding:4px 10px;border-radius:8px;border:1.5px solid #CBD5E1;background:#F8FAFC;color:#1E293B;font-size:.82rem;font-weight:600;cursor:pointer}
+.ft-chip.on,.ft-btn.pri,.ft-btn.on{background:#0B5E43;border-color:#0B5E43;color:#fff}
+.ft-bar{height:5px;border-radius:999px;background:#E2E8F0;overflow:hidden;margin-top:8px}
+.ft-bar i{display:block;height:100%;background:#10B981;transition:width .35s linear}
+/* Learn Search & Topic Chips */
+.ln-tools{margin:14px 0 6px;display:grid;gap:8px}
+.ln-search{width:100%;min-height:44px;padding:8px 14px;border-radius:12px;border:1.5px solid #CBD5E1;background:#fff;color:#151922;font-size:.98rem}
+.ln-pills,.cb-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cb-chips{margin-top:8px}
+.ln-pill,.cb-chip{min-height:34px;padding:4px 12px;border-radius:999px;border:1.5px solid #CBD5E1;background:#fff;color:#1E293B;font-size:.86rem;font-weight:600;cursor:pointer}
+.ln-pill.on,.cb-chip.on{background:#0B5E43;border-color:#0B5E43;color:#fff}
+/* Grade 7 Reading & Writing Lab */
+.rl-wrap{margin:6px 0 18px}
+.rl-head{margin-bottom:10px}
+.rl-head h2{margin:0 0 4px;font-size:1.3rem}
+.rl-head p{margin:0;color:#475569;font-size:.95rem}
+.rl-grid{display:grid;gap:12px}
+.rl-card{background:#fff;border:1px solid var(--teen-line,#DDE1E7);border-radius:14px;padding:16px}
+.rl-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;font-weight:700}
+.rl-tag{padding:2px 8px;border-radius:6px;background:#EEF2FF;color:#3730A3}
+.rl-min{color:#64748B}
+.rl-card h3{margin:0 0 8px;font-size:1.12rem}
+.rl-body{margin:0 0 10px;font-size:1rem;line-height:1.65;color:#1E293B}
+.rl-word{display:inline;padding:1px 4px;border:0;border-bottom:2px dashed #7C3AED;background:rgba(124,58,237,.08);color:#5B21B6;font:inherit;font-weight:700;border-radius:4px;cursor:pointer}
+.rl-word.on{background:#7C3AED;color:#fff;border-bottom-color:transparent}
+.rl-def{margin:0 0 10px;padding:9px 12px;border-radius:10px;background:#F5F3FF;border-left:4px solid #7C3AED;color:#3B0764;font-size:.92rem;line-height:1.45}
+.rl-def[hidden]{display:none !important}
+/* NY Grade 7 Mastery Portfolio & Transcript */
+.pf-hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.pf-rings{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+@media (max-width:720px){.pf-rings{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pf-subj{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:#fff;border:1px solid var(--teen-line,#DDE1E7);text-align:left;cursor:pointer;color:#151922}
+.pf-subj b{display:block;font-size:.94rem}
+.pf-subj small{display:block;font-size:.78rem;color:#64748B;margin-top:2px}
+.pf-ring{flex:none}
+.pf-heat-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pf-heat-top h3{margin:0;font-size:1.05rem}
+.pf-heat-top span{font-size:.86rem;font-weight:600;color:#64748B}
+.pf-heat{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
+.pf-day{aspect-ratio:1;border-radius:5px;background:#E2E8F0;display:block}
+.pf-day.l1{background:#A7F3D0}.pf-day.l2{background:#34D399}.pf-day.l3{background:#059669}
+.pf-stds{display:flex;flex-wrap:wrap;gap:6px}
+.pf-std{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:9px;border:1px solid #CBD5E1;background:#F8FAFC;color:#1E293B;font-size:.82rem;font-weight:700;cursor:pointer;max-width:100%}
+.pf-std small{font-weight:500;opacity:.78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
+.pf-std.done{background:#DCFCE7;border-color:#16A34A;color:#14532D}
+.pf-cer-list{display:grid;gap:10px}
+.pf-cer{padding:12px;border-radius:12px;background:#F8FAFC;border:1px solid #E2E8F0;font-size:.92rem;line-height:1.5}
+.pf-cer-h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px;font-size:.86rem;color:#0B5E43}
+.pf-cer p{margin:3px 0}
+
+/* Focus Dark Mode overrides for Pro Suite */
+body.ll-teen.hs-dark .ft-bar-wrap{border-top-color:#26334A}
+body.ll-teen.hs-dark .ft-title,
+body.ll-teen.hs-dark .rl-head p,
+body.ll-teen.hs-dark .rl-min,
+body.ll-teen.hs-dark .pf-subj small,
+body.ll-teen.hs-dark .pf-heat-top span,
+body.ll-teen.hs-dark #ll-obody .fc-meta,
+body.ll-teen.hs-dark #ll-obody .fc-hint,
+body.ll-teen.hs-dark #ll-obody .hs-calc-head,
+body.ll-teen.hs-dark #ll-obody .hs-calc-expr{color:#94A3B8 !important}
+body.ll-teen.hs-dark .ft-clock,
+body.ll-teen.hs-dark .rl-head h2,
+body.ll-teen.hs-dark .rl-card h3,
+body.ll-teen.hs-dark .rl-body,
+body.ll-teen.hs-dark .pf-subj,
+body.ll-teen.hs-dark #ll-obody .fc-q,
+body.ll-teen.hs-dark #ll-obody .hs-calc-val{color:#F1F5F9 !important}
+body.ll-teen.hs-dark .ft-chip:not(.on),
+body.ll-teen.hs-dark .ft-btn:not(.pri):not(.on),
+body.ll-teen.hs-dark .ln-search,
+body.ll-teen.hs-dark .ln-pill:not(.on),
+body.ll-teen.hs-dark .cb-chip:not(.on),
+body.ll-teen.hs-dark #ll-obody .hs-sym,
+body.ll-teen.hs-dark #ll-obody .fc-pill:not(.on),
+body.ll-teen.hs-dark #ll-obody .hs-calc-scr,
+body.ll-teen.hs-dark #ll-obody .hs-calc-grid button:not(.hc-eq),
+body.ll-teen.hs-dark .pf-std:not(.done){background:#1E293B;border-color:#334155;color:#F1F5F9}
+body.ll-teen.hs-dark #ll-obody .hs-calc-grid .hc-op{background:#1E3A8A;border-color:#3B82F6;color:#DBEAFE}
+body.ll-teen.hs-dark #ll-obody .hs-calc-grid .hc-fn{background:#0F172A;color:#CBD5E1}
+body.ll-teen.hs-dark #ll-obody .hs-calc-lock{background:#451A03;border-left-color:#F59E0B;color:#FEF3C7}
+body.ll-teen.hs-dark .ft-bar,
+body.ll-teen.hs-dark .pf-day.l0{background:#1E293B}
+body.ll-teen.hs-dark .rl-card,
+body.ll-teen.hs-dark .pf-subj,
+body.ll-teen.hs-dark .pf-cer,
+body.ll-teen.hs-dark #ll-obody .fc-face{background:#141E30 !important;border-color:#26334A !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .ll-pathcard .emo{background:#1E293B !important}
+body.ll-teen.hs-dark #ll-obody .fc-back{background:#064E3B !important;border-color:#10B981 !important}
+body.ll-teen.hs-dark #ll-obody .fc-a{color:#ECFDF5 !important}
+body.ll-teen.hs-dark #ll-obody .fc-tag,
+body.ll-teen.hs-dark .rl-tag{background:#312E81;color:#E0E7FF}
+body.ll-teen.hs-dark .rl-word{background:rgba(167,139,250,.18);color:#DDD6FE;border-bottom-color:#A78BFA}
+body.ll-teen.hs-dark .rl-def{background:#2E1065;border-left-color:#A78BFA;color:#EDE9FE}
+body.ll-teen.hs-dark .pf-std.done{background:#064E3B;border-color:#10B981;color:#A7F3D0}
+body.ll-teen.hs-dark .pf-cer-h{color:#34D399}
+
+/* Clean Print / PDF NY Grade 7 Quarterly Progress Report */
+@media print{
+  .ll-shell-header,#ll-tabs,.ll-kidbar,.pf-print,#safe-preview-banner{display:none !important}
+  body,body.ll-teen.hs-dark{background:#fff !important;color:#000 !important}
+  .ll-card,.pf-subj,.pf-cer{background:#fff !important;color:#000 !important;border:1px solid #cbd5e1 !important;break-inside:avoid}
+}
 
 /* ===== 3e29: Hoot's Party Games — candy look ===== */
 .pg-rowh{font-size:1.15rem;margin:16px 4px 8px;color:#17263b}
