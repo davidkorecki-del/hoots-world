@@ -10,6 +10,9 @@
   "use strict";
 
   var CARDS_KEY = "hootworld.hs.cards.v1";
+  var CUSTOM_CARDS_KEY = "hootworld.hs.customcards.v1";
+  var MATCH_BEST_KEY = "hootworld.hs.matchbest.v1";
+  var PINS_KEY = "hootworld.hs.pins.v1";
   var CER_KEY = "hootworld.hs.cer.v1";
 
   function esc(s) {
@@ -210,43 +213,199 @@
     all[kid][cardId] = box;
     saveJ(CARDS_KEY, all);
   }
+  function getCustomCards(kid) {
+    return (loadJ(CUSTOM_CARDS_KEY)[kid || activeKid()] || []).slice();
+  }
+  function addCustomCard(tag, front, back) {
+    var all = loadJ(CUSTOM_CARDS_KEY), kid = activeKid();
+    var list = all[kid] || [];
+    list.unshift({ id: "c_" + Date.now() + "_" + Math.floor(Math.random() * 999), deck: "custom", tag: (tag || "My Quiz").trim().slice(0, 28), front: front.trim().slice(0, 120), back: back.trim().slice(0, 240) });
+    all[kid] = list.slice(0, 60);
+    saveJ(CUSTOM_CARDS_KEY, all);
+  }
+  function removeCustomCard(id) {
+    var all = loadJ(CUSTOM_CARDS_KEY), kid = activeKid();
+    all[kid] = (all[kid] || []).filter(function (c) { return c.id !== id; });
+    saveJ(CUSTOM_CARDS_KEY, all);
+  }
+  function getMatchBest(deckId) {
+    var all = loadJ(MATCH_BEST_KEY);
+    return (all[activeKid()] || {})[deckId] || null;
+  }
+  function saveMatchBest(deckId, secs) {
+    var all = loadJ(MATCH_BEST_KEY), kid = activeKid();
+    all[kid] = all[kid] || {};
+    if (!all[kid][deckId] || secs < all[kid][deckId]) {
+      all[kid][deckId] = secs;
+      saveJ(MATCH_BEST_KEY, all);
+      return true;
+    }
+    return false;
+  }
+
+  /* Lesson Pinning / Bookmarks for upcoming school quizzes */
+  function getPins(kid) {
+    return (loadJ(PINS_KEY)[kid || activeKid()] || []).slice();
+  }
+  function isPinned(title, kid) {
+    return getPins(kid).indexOf(title) >= 0;
+  }
+  function togglePin(title) {
+    if (!title) return false;
+    var all = loadJ(PINS_KEY), kid = activeKid();
+    var list = all[kid] || [];
+    var idx = list.indexOf(title);
+    var added = false;
+    if (idx >= 0) list.splice(idx, 1);
+    else { list.unshift(title); added = true; }
+    all[kid] = list.slice(0, 12);
+    saveJ(PINS_KEY, all);
+    return added;
+  }
+  function pinnedStripHtml() {
+    var pins = getPins();
+    if (!pins.length) return "";
+    return '<div class="tc-pins"><span class="tc-pins-lbl">📌 Pinned for Upcoming Quizzes:</span>' +
+      pins.map(function (t) {
+        return '<span class="tc-pin-chip"><button type="button" class="tc-pin-go" data-rl-open="' + esc(t) + '">' + esc(t) + '</button><button type="button" class="tc-pin-x" data-pin-toggle="' + esc(t) + '" aria-label="Unpin ' + esc(t) + '">✕</button></span>';
+      }).join("") + "</div>";
+  }
+
+  function shufArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
 
   function openFlashcards(body, startDeck) {
     if (!body) return;
     var deck = startDeck || "all";
+    var mode = "flip"; /* flip | match | build */
     var idx = 0, flipped = false;
+    var matchSt = null, matchIv = null;
 
+    function allCards() { return FLASHCARDS.concat(getCustomCards()); }
+    function deckList() {
+      var custN = getCustomCards().length;
+      return DECKS.concat([{ id: "custom", label: "My Cards (" + custN + ")", emo: "🗂️" }]);
+    }
     function filtered() {
       var boxes = cardBoxMap();
-      var list = FLASHCARDS.filter(function (c) { return deck === "all" || c.deck === deck; });
-      /* Sort unmastered (box 0/1) ahead of mastered (box 2+) */
+      var list = allCards().filter(function (c) { return deck === "all" || c.deck === deck; });
       return list.slice().sort(function (a, b) { return (boxes[a.id] || 0) - (boxes[b.id] || 0); });
     }
-
     var queue = filtered();
 
+    function stopMatchTimer() { if (matchIv) { clearInterval(matchIv); matchIv = null; } }
+
+    function startMatch() {
+      stopMatchTimer();
+      var pool = allCards().filter(function (c) { return deck === "all" || c.deck === deck; });
+      if (pool.length < 3) pool = allCards();
+      var chosen = shufArr(pool).slice(0, Math.min(6, pool.length));
+      matchSt = {
+        terms: shufArr(chosen.map(function (c) { return { id: c.id, txt: c.front }; })),
+        defs: shufArr(chosen.map(function (c) { return { id: c.id, txt: c.back }; })),
+        matched: {}, selTerm: null, selDef: null, wrongFlash: false,
+        t0: Date.now(), secs: 0, done: false, isPB: false, total: chosen.length
+      };
+      matchIv = setInterval(function () {
+        if (!matchSt || matchSt.done || !body.querySelector(".ms-clock")) { stopMatchTimer(); return; }
+        matchSt.secs = Math.round((Date.now() - matchSt.t0) / 100) / 10;
+        var el = body.querySelector(".ms-clock");
+        if (el) el.textContent = matchSt.secs.toFixed(1) + "s";
+      }, 100);
+    }
+
+    function modeBarHtml() {
+      return '<div class="fc-modes">' +
+        '<button type="button" class="hs-btn sm' + (mode === "flip" ? " pri" : "") + '" data-fc-mode="flip">🃏 3D Flip</button>' +
+        '<button type="button" class="hs-btn sm' + (mode === "match" ? " pri" : "") + '" data-fc-mode="match">⚡ Match Sprint</button>' +
+        '<button type="button" class="hs-btn sm' + (mode === "build" ? " pri" : "") + '" data-fc-mode="build">➕ My Quiz Cards</button>' +
+      "</div>";
+    }
+
     function draw() {
+      var decksHtml = '<div class="fc-decks" role="tablist" aria-label="Flashcard subjects">' +
+        deckList().map(function (d) {
+          return '<button type="button" class="fc-pill' + (d.id === deck ? " on" : "") + '" data-fc-deck="' + d.id + '">' + d.emo + " " + esc(d.label) + "</button>";
+        }).join("") + "</div>";
+
+      if (mode === "build") {
+        stopMatchTimer();
+        var mine = getCustomCards();
+        body.innerHTML =
+          '<div class="hs fc-wrap">' + modeBarHtml() +
+            '<section class="hs-card">' +
+              '<h3>➕ Build Your Own School Quiz Deck</h3>' +
+              '<p>Have a Science, History, or Spanish quiz coming up? Add your own terms below — they work in both <b>3D Flip</b> and <b>Match Sprint</b>!</p>' +
+              '<form class="hs-cer" data-fc-add="1">' +
+                '<label class="hs-cer-lbl">Quiz / Topic Tag<input class="hs-in" name="tag" maxlength="28" placeholder="e.g. Friday Bio Quiz"></label>' +
+                '<label class="hs-cer-lbl">Front (Term or Question)<input class="hs-in" name="front" maxlength="120" placeholder="e.g. Mitosis" required></label>' +
+                '<label class="hs-cer-lbl">Back (Definition or Answer)<textarea class="hs-cer-in" name="back" rows="2" maxlength="240" placeholder="e.g. Cell division that produces two identical body cells" required></textarea></label>' +
+                '<button type="submit" class="hs-btn pri">＋ Add to My Cards</button>' +
+              "</form>" +
+              '<h4 style="margin:14px 0 8px">My Saved Cards (' + mine.length + ")</h4>" +
+              (mine.length
+                ? '<div class="fc-cust-list">' + mine.map(function (c) {
+                    return '<div class="fc-cust-row"><div><span class="fc-tag">' + esc(c.tag) + '</span> <b>' + esc(c.front) + '</b><small>' + esc(c.back) + '</small></div>' +
+                      '<button type="button" class="hs-btn sm" data-fc-del="' + esc(c.id) + '" aria-label="Delete card">🗑</button></div>';
+                  }).join("") + "</div>"
+                : '<p class="hoot-line" style="margin:0">No custom cards yet — add your first quiz card above!</p>') +
+            "</section>" +
+          "</div>";
+        return;
+      }
+
+      if (mode === "match") {
+        if (!matchSt) startMatch();
+        var best = getMatchBest(deck);
+        var matchedN = Object.keys(matchSt.matched).length;
+        body.innerHTML =
+          '<div class="hs fc-wrap">' + modeBarHtml() + decksHtml +
+            '<div class="fc-meta"><span>Matched: <b>' + matchedN + " / " + matchSt.total + '</b></span><span>⏱ <b class="ms-clock">' + matchSt.secs.toFixed(1) + "s</b>" + (best ? " · 🏆 Best: " + best.toFixed(1) + "s" : "") + "</span></div>" +
+            (matchSt.done
+              ? '<section class="hs-card" style="text-align:center;padding:24px"><h3>🎉 Sprint Complete in ' + matchSt.secs.toFixed(1) + "s!</h3>" +
+                '<p class="hs-verdict ok">' + (matchSt.isPB ? "🏆 Brand-new Personal Best!" : "Awesome speed! Try another round to beat " + (best || matchSt.secs).toFixed(1) + "s.") + "</p>" +
+                '<button type="button" class="hs-btn pri" data-ms-again="1">↻ Play Another Sprint</button></section>'
+              : '<div class="ms-grid">' +
+                  '<div class="ms-col">' + matchSt.terms.map(function (t) {
+                    var dn = !!matchSt.matched[t.id], sel = matchSt.selTerm === t.id;
+                    return '<button type="button" class="ms-tile term' + (dn ? " done" : "") + (sel ? " sel" : "") + '" data-ms-t="' + esc(t.id) + '"' + (dn ? " disabled" : "") + ">" + esc(t.txt) + "</button>";
+                  }).join("") + "</div>" +
+                  '<div class="ms-col">' + matchSt.defs.map(function (d) {
+                    var dn = !!matchSt.matched[d.id], sel = matchSt.selDef === d.id;
+                    return '<button type="button" class="ms-tile def' + (dn ? " done" : "") + (sel ? " sel" : "") + '" data-ms-d="' + esc(d.id) + '"' + (dn ? " disabled" : "") + ">" + esc(d.txt) + "</button>";
+                  }).join("") + "</div>" +
+                "</div>") +
+          "</div>";
+        return;
+      }
+
+      /* Default: 3D Flip mode */
+      stopMatchTimer();
       var boxes = cardBoxMap();
-      var totalInDeck = FLASHCARDS.filter(function (c) { return deck === "all" || c.deck === deck; });
+      var totalInDeck = allCards().filter(function (c) { return deck === "all" || c.deck === deck; });
+      if (!totalInDeck.length) {
+        body.innerHTML = '<div class="hs fc-wrap">' + modeBarHtml() + decksHtml +
+          '<section class="hs-card"><h3>No cards in this deck yet</h3><p>Switch to <b>➕ My Quiz Cards</b> to add your own school study cards!</p></section></div>';
+        return;
+      }
+      if (!queue.length) queue = filtered();
       var mastered = totalInDeck.filter(function (c) { return (boxes[c.id] || 0) >= 2; }).length;
-      var card = queue[idx % Math.max(1, queue.length)];
+      var card = queue[idx % queue.length];
       var box = card ? (boxes[card.id] || 0) : 0;
 
       body.innerHTML =
-        '<div class="hs fc-wrap">' +
-          '<div class="fc-decks" role="tablist" aria-label="Flashcard subjects">' +
-            DECKS.map(function (d) {
-              return '<button type="button" class="fc-pill' + (d.id === deck ? " on" : "") + '" data-fc-deck="' + d.id + '">' + d.emo + " " + esc(d.label) + "</button>";
-            }).join("") +
-          "</div>" +
-          '<div class="fc-meta"><span>Card ' + (idx + 1) + " of " + queue.length + '</span><span>Mastered: <b>' + mastered + " / " + totalInDeck.length + "</b></span></div>" +
+        '<div class="hs fc-wrap">' + modeBarHtml() + decksHtml +
+          '<div class="fc-meta"><span>Card ' + ((idx % queue.length) + 1) + " of " + queue.length + '</span><span>Mastered: <b>' + mastered + " / " + totalInDeck.length + "</b></span></div>" +
           '<div class="fc-stage">' +
             '<button type="button" class="fc-card' + (flipped ? " flipped" : "") + '" data-fc-flip="1" aria-label="Flip flashcard">' +
               '<div class="fc-inner">' +
                 '<div class="fc-face fc-front">' +
                   '<span class="fc-tag">' + esc(card.tag) + (box >= 2 ? " · ✓ Mastered" : "") + "</span>" +
                   '<h3 class="fc-q">' + esc(card.front) + "</h3>" +
-                  '<small class="fc-hint">Tap card or press Space to flip</small>' +
+                  '<small class="fc-hint">Tap card to flip</small>' +
                 "</div>" +
                 '<div class="fc-face fc-back">' +
                   '<span class="fc-tag">' + esc(card.tag) + " · Answer</span>" +
@@ -262,15 +421,61 @@
         "</div>";
     }
 
+    function checkMatchPair() {
+      if (!matchSt || !matchSt.selTerm || !matchSt.selDef) return;
+      if (matchSt.selTerm === matchSt.selDef) {
+        matchSt.matched[matchSt.selTerm] = 1;
+        matchSt.selTerm = null; matchSt.selDef = null;
+        if (Object.keys(matchSt.matched).length === matchSt.total) {
+          stopMatchTimer();
+          matchSt.secs = Math.max(0.1, Math.round((Date.now() - matchSt.t0) / 100) / 10);
+          matchSt.done = true;
+          matchSt.isPB = saveMatchBest(deck, matchSt.secs);
+        }
+      } else {
+        matchSt.selTerm = null; matchSt.selDef = null;
+      }
+      draw();
+    }
+
+    body.onsubmit = function (e) {
+      var f = e.target;
+      if (!f || f.getAttribute("data-fc-add") !== "1") return;
+      e.preventDefault();
+      var tag = f.querySelector('[name="tag"]').value;
+      var fr = f.querySelector('[name="front"]').value;
+      var bk = f.querySelector('[name="back"]').value;
+      if (!fr.trim() || !bk.trim()) return;
+      addCustomCard(tag, fr, bk);
+      deck = "custom";
+      queue = filtered();
+      draw();
+    };
+
     body.onclick = function (e) {
-      var dBtn = e.target.closest("[data-fc-deck]");
-      if (dBtn) {
-        deck = dBtn.getAttribute("data-fc-deck");
-        queue = filtered();
-        idx = 0; flipped = false;
+      var mBtn = e.target.closest("[data-fc-mode]");
+      if (mBtn) {
+        mode = mBtn.getAttribute("data-fc-mode");
+        if (mode === "match") startMatch(); else stopMatchTimer();
+        queue = filtered(); idx = 0; flipped = false;
         draw();
         return;
       }
+      var dBtn = e.target.closest("[data-fc-deck]");
+      if (dBtn) {
+        deck = dBtn.getAttribute("data-fc-deck");
+        queue = filtered(); idx = 0; flipped = false;
+        if (mode === "match") startMatch();
+        draw();
+        return;
+      }
+      var delBtn = e.target.closest("[data-fc-del]");
+      if (delBtn) { removeCustomCard(delBtn.getAttribute("data-fc-del")); queue = filtered(); draw(); return; }
+      if (e.target.closest("[data-ms-again]")) { startMatch(); draw(); return; }
+      var mt = e.target.closest("[data-ms-t]");
+      if (mt && matchSt) { matchSt.selTerm = mt.getAttribute("data-ms-t"); if (matchSt.selDef) checkMatchPair(); else draw(); return; }
+      var md = e.target.closest("[data-ms-d]");
+      if (md && matchSt) { matchSt.selDef = md.getAttribute("data-ms-d"); if (matchSt.selTerm) checkMatchPair(); else draw(); return; }
       if (e.target.closest("[data-fc-flip]")) {
         flipped = !flipped;
         var cardEl = body.querySelector(".fc-card");
@@ -284,10 +489,7 @@
         if (curCard) {
           var prev = cardBoxMap()[curCard.id] || 0;
           setCardBox(curCard.id, rate === "good" ? Math.min(3, prev + 1) : 0);
-          if (rate === "again") {
-            /* Bring back 2 cards later in this session! */
-            queue.splice(Math.min(queue.length, idx + 3), 0, curCard);
-          }
+          if (rate === "again") queue.splice(Math.min(queue.length, idx + 3), 0, curCard);
         }
         idx = (idx + 1) % queue.length;
         flipped = false;
@@ -612,15 +814,39 @@
       : '<p class="hoot-line" style="margin:0">No saved essays yet — write a paragraph in <b>Argument writing: CER coach</b> and it will appear here automatically.</p>';
 
     var vaultN = window.HootStudy && window.HootStudy.getVault ? window.HootStudy.getVault().length : 0;
-    var cardsMastered = FLASHCARDS.filter(function (c) { return (cardBoxMap()[c.id] || 0) >= 2; }).length;
+    var cardsMastered = FLASHCARDS.concat(getCustomCards(profile.id)).filter(function (c) { return (cardBoxMap()[c.id] || 0) >= 2; }).length;
     var todayStr = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+
+    /* Sleek Teen Mastery Badges (earned purely from real Grade 7 skill mastery!) */
+    var labsDone = window.HootStudyLabs && window.HootStudyLabs.getLabsDone ? window.HootStudyLabs.getLabsDone(profile.id) : {};
+    var mapDone = window.HootStudyLabs && window.HootStudyLabs.getMapDone ? Object.keys(window.HootStudyLabs.getMapDone(profile.id)).length : 0;
+    var exams = window.HootStudyExam && window.HootStudyExam.getExams ? window.HootStudyExam.getExams(profile.id) : [];
+    var daily = window.HootStudyExam && window.HootStudyExam.dailyInfo ? window.HootStudyExam.dailyInfo(profile.id) : { totalDays: 0 };
+    var matchBests = Object.keys(loadJ(MATCH_BEST_KEY)[profile.id] || {}).length;
+    var badges = [
+      { ico: "⚖️", name: "Algebra Architect", sub: "Solve an equation in Balance Lab", on: !!(labsDone.balance) },
+      { ico: "🧪", name: "STEM Lab Explorer", sub: "Explore 2+ interactive labs", on: Object.keys(labsDone).length >= 2 },
+      { ico: "✍️", name: "CER Persuader", sub: "Save a 3/3 CER essay", on: cerList.some(function (c) { return c.score >= 3; }) },
+      { ico: "🗺️", name: "NY Historian", sub: "Master 3+ NY Map landmarks", on: mapDone >= 3 },
+      { ico: "🏛️", name: "Exam Ready", sub: "Complete a 2-session NY CBT", on: exams.length >= 1 },
+      { ico: "⚡", name: "Match Sprinter", sub: "Finish a Match Sprint round", on: matchBests >= 1 },
+      { ico: "🔥", name: "Daily Scholar", sub: "Complete a Daily 90s Warm-Up", on: daily.totalDays >= 1 },
+      { ico: "🃏", name: "Card Sharp", sub: "Master 5+ flashcards", on: cardsMastered >= 5 }
+    ];
+    var badgesHtml = badges.map(function (b) {
+      return '<div class="pf-badge' + (b.on ? " on" : "") + '"><span class="pf-bico">' + b.ico + '</span><div><b>' + esc(b.name) + '</b><small>' + (b.on ? "✓ Earned" : esc(b.sub)) + "</small></div></div>";
+    }).join("");
 
     return '<section class="ll-card pf-hero">' +
         '<div><h2>📊 ' + esc(profile.label) + "'s NY Grade 7 Transcript</h2>" +
-        '<p class="hoot-line">' + totalDone + " of " + totalAll + " lessons mastered · " + cardsMastered + "/" + FLASHCARDS.length + " flashcards mastered · " + vaultN + " in Mistake Vault · Generated " + esc(todayStr) + "</p></div>" +
+        '<p class="hoot-line">' + totalDone + " of " + totalAll + " lessons mastered · " + cardsMastered + "/" + FLASHCARDS.length + " flashcards mastered · " + mapDone + "/6 NY landmarks · Generated " + esc(todayStr) + "</p></div>" +
         '<button type="button" class="ll-btn pri pf-print" data-pf-print="1">🖨️ Print / PDF Report</button>' +
       "</section>" +
       '<div class="pf-rings">' + ringsHtml + "</div>" +
+      '<section class="ll-card">' +
+        '<h3 style="margin:0 0 10px">🏅 Grade 7 Mastery Badges (' + badges.filter(function (b) { return b.on; }).length + " / " + badges.length + ")</h3>" +
+        '<div class="pf-badges">' + badgesHtml + "</div>" +
+      "</section>" +
       '<section class="ll-card pf-heat-card">' +
         '<div class="pf-heat-top"><h3>📅 Last 28 Days of Study</h3><span>' + sessions + " completed sessions · " + (totalMins || 0) + " min logged</span></div>" +
         '<div class="pf-heat" aria-label="28-day study activity heatmap">' + cells.join("") + "</div>" +
@@ -645,6 +871,11 @@
     getCerEntries: getCerEntries,
     readingLabHtml: readingLabHtml,
     renderPortfolioHtml: renderPortfolioHtml,
+    getPins: getPins,
+    isPinned: isPinned,
+    togglePin: togglePin,
+    pinnedStripHtml: pinnedStripHtml,
+    getCustomCards: getCustomCards,
     FLASHCARDS: FLASHCARDS
   };
 })();

@@ -651,7 +651,12 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       "</div>" +
       "<p>" + esc(item.blurb || "A short activity for today.") + "</p>" +
       (isTeen()
-        ? '<div class="ll-actions"><button type="button" class="ll-btn pri" data-act="play">' + (item.kind === "game" ? "Take a break" : "Start lesson") + "</button></div></article>"
+        ? (function () {
+            var pinOn = window.HootStudyPro && window.HootStudyPro.isPinned && window.HootStudyPro.isPinned(item.title);
+            return '<div class="ll-actions"><button type="button" class="ll-btn pri" data-act="play">' + (item.kind === "game" ? "Take a break" : "Start lesson") + "</button>" +
+              (item.kind === "lesson" ? '<button type="button" class="ll-btn sm ll-pin-btn' + (pinOn ? " on" : "") + '" data-pin-toggle="' + esc(item.title) + '" aria-pressed="' + (pinOn ? "true" : "false") + '" title="Pin for upcoming quiz">' + (pinOn ? "📌 Pinned" : "📌 Pin") + "</button>" : "") +
+              "</div></article>";
+          })()
         : (bothKids().length === 2 ? '<button type="button" class="ll-tw" data-act="both">Done for both</button>' : "") +
           '<div class="ll-actions">' +
           '<button type="button" class="ll-btn pri" data-act="play">▶ Play now</button>' +
@@ -1177,17 +1182,22 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
 
   function teenStudyHubHtml() {
     if (!isTeen()) return "";
-    var hs = window.HootStudy, hsp = window.HootStudyPro;
+    var hs = window.HootStudy, hsp = window.HootStudyPro, hse = window.HootStudyExam, hsl = window.HootStudyLabs;
     var vCount = hs && hs.getVault ? hs.getVault().length : 0;
     var isDark = document.body.classList.contains("hs-dark") || (hs && hs.isDark && hs.isDark());
+    var dInfo = hse && hse.dailyInfo ? hse.dailyInfo() : { doneToday: false, totalDays: 0 };
+    var mapN = hsl && hsl.getMapDone ? Object.keys(hsl.getMapDone()).length : 0;
     return '<section class="tc-hub" aria-label="Grade 7 Study Tools">' +
-      '<div class="tc-hub-head"><b>⚡ Grade 7 NY Study Hub</b><button type="button" class="tc-hub-dark" data-teen-act="dark" aria-pressed="' + (isDark ? "true" : "false") + '">' + (isDark ? "☀️ Light Mode" : "🌙 Focus Dark") + "</button></div>" +
-      '<div class="tc-hub-grid tc-hub-4">' +
-        '<button type="button" class="tc-hub-btn pri" data-teen-act="test-math"><span class="th-ic" aria-hidden="true">📝</span><span><b>NY Math Practice Test</b><small>10 problems · Standards breakdown</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="test-all"><span class="th-ic" aria-hidden="true">🌐</span><span><b>All-Subjects Mock Exam</b><small>Math · ELA · Science · SS</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="flashcards"><span class="th-ic" aria-hidden="true">⚡</span><span><b>Quick Flip Flashcards</b><small>32 NY Grade 7 3D study cards</small></span></button>' +
+      '<div class="tc-hub-head"><b>⚡ Grade 7 NY Study Studio</b><button type="button" class="tc-hub-dark" data-teen-act="dark" aria-pressed="' + (isDark ? "true" : "false") + '">' + (isDark ? "☀️ Light Mode" : "🌙 Focus Dark") + "</button></div>" +
+      '<div class="tc-hub-grid tc-hub-6">' +
+        '<button type="button" class="tc-hub-btn pri" data-teen-act="ny-exam"><span class="th-ic" aria-hidden="true">🏛️</span><span><b>NY State Exam Sim</b><small>2-session CBT · Levels 1–4</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="labs"><span class="th-ic" aria-hidden="true">🧪</span><span><b>Interactive STEM Labs</b><small>Algebra · Slope · Circles · Bio</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="flashcards"><span class="th-ic" aria-hidden="true">⚡</span><span><b>Flashcards &amp; Match</b><small>3D flip · Sprint · My Cards</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="ny-map"><span class="th-ic" aria-hidden="true">🗺️</span><span><b>NY History Map</b><small>' + mapN + '/6 primary-source landmarks</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="daily"><span class="th-ic" aria-hidden="true">🔥</span><span><b>Daily 90s Warm-Up' + (dInfo.doneToday ? ' <span class="tc-vbadge" data-zero="1">✓</span>' : "") + '</b><small>' + (dInfo.doneToday ? "Done today · Play again" : "3 cross-subject questions") + "</small></span></button>" +
         '<button type="button" class="tc-hub-btn vault" data-teen-act="vault"><span class="th-ic" aria-hidden="true">🎯</span><span><b>Mistake Vault <span class="tc-vbadge"' + (vCount ? "" : ' data-zero="1"') + ">" + vCount + '</span></b><small>' + (vCount ? "Clear missed quiz items" : "All clear right now!") + "</small></span></button>" +
       "</div>" +
+      (hsp && hsp.pinnedStripHtml ? hsp.pinnedStripHtml() : "") +
       (hsp && hsp.focusBarHtml ? hsp.focusBarHtml() : "") +
       "</section>";
   }
@@ -3248,8 +3258,32 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
         window.HootStudy.startPracticeTest($("#ll-obody"), teenAct === "test-all" ? "all" : "math7");
         return;
       }
+      if (teenAct === "ny-exam" && window.HootStudyExam) {
+        openShellOverlay("🏛️ NY Grade 7 State Exam Simulator", "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudyExam.openNyExam($("#ll-obody"));
+        return;
+      }
+      if (teenAct === "labs" && window.HootStudyLabs) {
+        openShellOverlay("🧪 Interactive Grade 7 STEM Labs", "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudyLabs.openLabs($("#ll-obody"), "balance");
+        return;
+      }
+      if (teenAct === "ny-map" && window.HootStudyLabs) {
+        openShellOverlay("🗺️ New York History Map", "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudyLabs.openNyMap($("#ll-obody"));
+        return;
+      }
+      if (teenAct === "daily" && window.HootStudyExam) {
+        openShellOverlay("🔥 Daily 90-Second Brain Warm-Up", "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudyExam.openDailyWarmup($("#ll-obody"));
+        return;
+      }
       if (teenAct === "flashcards" && window.HootStudyPro) {
-        openShellOverlay("⚡ Quick Flip Flashcards", "");
+        openShellOverlay("⚡ Flashcards & Match Sprint", "");
         document.body.classList.add("ll-tutor-open");
         window.HootStudyPro.openFlashcards($("#ll-obody"), "all");
         return;
@@ -3260,6 +3294,12 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
         window.HootStudy.playVault($("#ll-obody"));
         return;
       }
+    }
+    var pinTitle = t.getAttribute("data-pin-toggle");
+    if (pinTitle && window.HootStudyPro && window.HootStudyPro.togglePin) {
+      window.HootStudyPro.togglePin(pinTitle);
+      render();
+      return;
     }
     var cbChip = t.getAttribute("data-cb-chip");
     if (cbChip) { setClassTopic(cbChip); render(); return; }
