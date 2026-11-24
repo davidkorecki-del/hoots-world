@@ -3678,3 +3678,349 @@ body.game-open #game-frame {
     font-size: 3rem !important;
   }
 }
+
+/* ============================================================================
+   KAITLYN VISUAL ELEVATION LAYER (strictly scoped to body.ll-teen)
+   Modern geometric typography, atmospheric aurora canvas, luminous Hero card,
+   tactile bento tiles with glowing gradient medallions, and subject identities.
+   Zane (kida) and Riley (kidb) remain 100% untouched.
+   ============================================================================ */
+body.ll-teen,
+body.ll-teen #ll-app *,
+body.ll-teen #ll-tabs *,
+body.ll-teen .ll-shell-header *,
+body.ll-teen #ll-overlay *:not(svg):not(svg *){
+  font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif !important;
+}
+body.ll-teen h1,body.ll-teen h2,body.ll-teen h3,
+body.ll-teen .tc-head h2,body.ll-teen .ft-clock,body.ll-teen .lab-eq-pill{
+  font-family:"Space Grotesk","Plus Jakarta Sans",system-ui,sans-serif !important;
+  letter-spacing:-.022em;
+}
+
+/* Atmospheric Aurora Background (Light + Focus Dark + Themes) */
+body.ll-shell-on.ll-teen{
+  background:
+    radial-gradient(920px 460px at 8% -6%, rgba(16,185,129,.12), transparent 58%),
+    radial-gradient(840px 440px at 96% 8%, rgba(99,102,241,.11), transparent 58%),
+    radial-gradient(760px 420px at 50% 105%, rgba(14,165,233,.08), transparent 62%),
+    #F4F7FC !important;
+  background-attachment:fixed !important;
+}
+body.ll-shell-on.ll-teen.hs-dark{
+  background:
+    radial-gradient(980px 520px at 10% -8%, rgba(16,185,129,.17), transparent 56%),
+    radial-gradient(900px 500px at 94% 6%, rgba(99,102,241,.19), transparent 56%),
+    radial-gradient(760px 440px at 52% 104%, rgba(236,72,153,.09), transparent 60%),
+    #060A14 !important;
+  background-attachment:fixed !important;
+}
+body.ll-shell-on.ll-teen.hs-theme-indigo.hs-dark{
+  background:
+    radial-gradient(980px 520px at 10% -8%, rgba(99,102,241,.24), transparent 56%),
+    radial-gradient(900px 500px at 94% 6%, rgba(56,189,248,.16), transparent 56%),
+    radial-gradient(760px 440px at 52% 104%, rgba(168,85,247,.12), transparent 60%),
+    #060916 !important;
+}
+body.ll-shell-on.ll-teen.hs-theme-sepia{
+  background:
+    radial-gradient(920px 460px at 8% -6%, rgba(217,119,6,.11), transparent 58%),
+    radial-gradient(840px 440px at 96% 8%, rgba(234,88,12,.08), transparent 58%),
+    #F6EFE2 !important;
+}
+body.ll-shell-on.ll-teen.hs-theme-sepia.hs-dark{
+  background:
+    radial-gradient(980px 520px at 10% -8%, rgba(245,158,11,.17), transparent 56%),
+    radial-gradient(900px 500px at 94% 6%, rgba(234,88,12,.13), transparent 56%),
+    #140F0B !important;
+}
+body.ll-shell-on.ll-teen.hs-theme-rose.hs-dark{
+  background:
+    radial-gradient(980px 520px at 10% -8%, rgba(244,63,94,.18), transparent 56%),
+    radial-gradient(900px 500px at 94% 6%, rgba(168,85,247,.16), transparent 56%),
+    #0C0813 !important;
+}
+
+/* Refined Translucent Top Header & Profile Switcher */
+body.ll-teen .ll-shell-header{
+  background:rgba(15,23,42,.92) !important;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  box-shadow:0 6px 24px rgba(15,23,42,.12);
+}
+body.ll-teen.hs-dark .ll-shell-header{
+  background:rgba(6,10,20,.82) !important;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+body.ll-teen .ll-kidbar button{
+  border-radius:999px;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+  box-shadow:0 2px 10px rgba(15,23,42,.05);
+}
+body.ll-teen .ll-kidbar button:hover{transform:translateY(-1px)}
+body.ll-teen .ll-kidbar button.on{
+  box-shadow:0 6px 18px rgba(16,185,129,.26);
+}
+
+/* Luminous Editorial Hero Card (Today) */
+body.ll-teen .tc-head.tc-hero-pro{
+  position:relative;overflow:hidden;
+  padding:20px 22px;border-radius:20px;
+  background:linear-gradient(135deg,#09332C 0%,#0E2542 54%,#1E1B4B 100%) !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+  box-shadow:0 16px 38px rgba(15,23,42,.18),inset 0 1px 0 rgba(255,255,255,.18) !important;
+  color:#fff !important;
+}
+body.ll-teen.hs-theme-indigo .tc-head.tc-hero-pro{
+  background:linear-gradient(135deg,#1E1B4B 0%,#312E81 52%,#0F172A 100%) !important;
+}
+body.ll-teen.hs-theme-sepia .tc-head.tc-hero-pro{
+  background:linear-gradient(135deg,#451A03 0%,#78350F 52%,#292524 100%) !important;
+}
+body.ll-teen.hs-theme-rose .tc-head.tc-hero-pro{
+  background:linear-gradient(135deg,#4C0519 0%,#881337 52%,#1E1B4B 100%) !important;
+}
+body.ll-teen .tc-head.tc-hero-pro::after{
+  content:"";position:absolute;right:-60px;top:-60px;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle,rgba(52,211,153,.30) 0%,transparent 70%);
+  pointer-events:none;
+}
+body.ll-teen.hs-theme-indigo .tc-head.tc-hero-pro::after{background:radial-gradient(circle,rgba(129,140,248,.34) 0%,transparent 70%)}
+body.ll-teen.hs-theme-sepia .tc-head.tc-hero-pro::after{background:radial-gradient(circle,rgba(251,191,36,.30) 0%,transparent 70%)}
+body.ll-teen.hs-theme-rose .tc-head.tc-hero-pro::after{background:radial-gradient(circle,rgba(251,113,133,.32) 0%,transparent 70%)}
+body.ll-teen .tc-hero-pro .tc-mark{
+  width:60px;height:60px;border-radius:16px;padding:4px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(8px);flex:none;
+}
+body.ll-teen .tc-eyebrow{
+  display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.10em;
+  padding:3px 9px;border-radius:999px;margin-bottom:5px;
+  background:rgba(255,255,255,.14);color:#A7F3D0;border:1px solid rgba(255,255,255,.15);
+}
+body.ll-teen.hs-theme-indigo .tc-eyebrow{color:#C7D2FE}
+body.ll-teen.hs-theme-sepia .tc-eyebrow{color:#FDE68A}
+body.ll-teen.hs-theme-rose .tc-eyebrow{color:#FECDD3}
+body.ll-teen .tc-hero-pro h2{
+  margin:0;font-size:clamp(1.32rem,3.2vw,1.65rem);color:#fff !important;line-height:1.18;
+}
+body.ll-teen .tc-hero-pro p{
+  margin:3px 0 0;color:rgba(226,232,240,.85) !important;font-size:.92rem;font-weight:500;
+}
+body.ll-teen .tc-hero-pills{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;
+}
+body.ll-teen .tc-hero-pills span{
+  font-size:.76rem;font-weight:700;padding:4px 10px;border-radius:999px;
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.14);
+  color:#F8FAFC;backdrop-filter:blur(6px);
+}
+body.ll-teen .tc-hero-pro .tc-ring{
+  position:relative;z-index:1;
+  background:conic-gradient(#34D399 calc(var(--p,0)*1%), rgba(255,255,255,.18) 0) !important;
+  box-shadow:0 0 24px rgba(52,211,153,.28);
+}
+body.ll-teen .tc-hero-pro .tc-ring b{
+  background:#0D243C !important;color:#fff !important;
+}
+
+/* Luxury Elevated Frosted Surfaces (Light & Dark) */
+body.ll-teen .tc-hub,
+body.ll-teen .ll-card,
+body.ll-teen .tc-list,
+body.ll-teen .rl-card,
+body.ll-teen .pf-subj,
+body.ll-teen .tutexp-step,
+body.ll-teen #ll-obody .hs-card,
+body.ll-teen #ll-obody .lab-card{
+  border-radius:18px !important;
+  background:rgba(255,255,255,.88) !important;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(15,23,42,.08) !important;
+  box-shadow:0 8px 28px rgba(15,23,42,.055),0 1px 2px rgba(15,23,42,.04) !important;
+}
+body.ll-teen.hs-dark .tc-hub,
+body.ll-teen.hs-dark .ll-card,
+body.ll-teen.hs-dark .tc-list,
+body.ll-teen.hs-dark .rl-card,
+body.ll-teen.hs-dark .pf-subj,
+body.ll-teen.hs-dark .tutexp-step,
+body.ll-teen.hs-dark #ll-obody .hs-card,
+body.ll-teen.hs-dark #ll-obody .lab-card{
+  background:rgba(15,23,42,.78) !important;
+  border:1px solid rgba(148,163,184,.16) !important;
+  box-shadow:0 14px 36px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+body.ll-teen.hs-theme-sepia.hs-dark .tc-hub,
+body.ll-teen.hs-theme-sepia.hs-dark .ll-card,
+body.ll-teen.hs-theme-sepia.hs-dark .tc-list,
+body.ll-teen.hs-theme-sepia.hs-dark .rl-card,
+body.ll-teen.hs-theme-sepia.hs-dark .pf-subj,
+body.ll-teen.hs-theme-sepia.hs-dark .tutexp-step,
+body.ll-teen.hs-theme-sepia.hs-dark #ll-obody .hs-card,
+body.ll-teen.hs-theme-sepia.hs-dark #ll-obody .lab-card{
+  background:rgba(34,26,20,.86) !important;
+  border:1px solid rgba(251,191,36,.16) !important;
+}
+
+/* Tactile Bento Study Studio Tiles + Glowing Gradient Icon Medallions */
+body.ll-teen .tc-hub{padding:18px !important}
+body.ll-teen .tc-hub-head b{font-size:1.08rem;letter-spacing:-.015em}
+body.ll-teen .tc-hub-btn{
+  position:relative;overflow:hidden;
+  min-height:70px;padding:12px 14px;border-radius:15px;
+  border:1px solid rgba(15,23,42,.08);
+  background:linear-gradient(180deg,#FFFFFF 0%,#F8FAFC 100%);
+  box-shadow:0 4px 14px rgba(15,23,42,.04);
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,border-color .18s ease;
+}
+body.ll-teen .tc-hub-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 24px rgba(15,23,42,.10);
+  border-color:var(--teen-accent,#10B981);
+}
+body.ll-teen .tc-hub-btn:active{transform:translateY(0) scale(.99)}
+body.ll-teen.hs-dark .tc-hub-btn:not(.pri){
+  background:linear-gradient(180deg,rgba(30,41,59,.88) 0%,rgba(15,23,42,.92) 100%);
+  border:1px solid rgba(148,163,184,.16);
+  box-shadow:0 6px 18px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.07);
+}
+body.ll-teen.hs-dark .tc-hub-btn:not(.pri):hover{
+  border-color:var(--teen-accent,#10B981);
+  box-shadow:0 12px 26px rgba(0,0,0,.36),0 0 0 1px rgba(16,185,129,.22);
+}
+body.ll-teen .tc-hub-btn.pri{
+  background:linear-gradient(135deg,#059669 0%,#0D9488 100%) !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  box-shadow:0 10px 26px rgba(5,150,105,.30),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+body.ll-teen.hs-theme-indigo .tc-hub-btn.pri{
+  background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%) !important;
+  box-shadow:0 10px 26px rgba(79,70,229,.34),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+body.ll-teen.hs-theme-sepia .tc-hub-btn.pri{
+  background:linear-gradient(135deg,#B45309 0%,#D97706 100%) !important;
+  box-shadow:0 10px 26px rgba(180,83,9,.32),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+body.ll-teen.hs-theme-rose .tc-hub-btn.pri{
+  background:linear-gradient(135deg,#E11D48 0%,#DB2777 100%) !important;
+  box-shadow:0 10px 26px rgba(225,29,72,.32),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+/* Glowing Color-Coded Icon Medallions */
+body.ll-teen .tc-hub-btn .th-ic{
+  width:42px;height:42px;border-radius:12px;
+  display:grid;place-items:center;font-size:1.35rem;flex:none;
+  background:rgba(255,255,255,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
+}
+body.ll-teen .tc-hub-btn[data-tone="labs"] .th-ic{
+  background:linear-gradient(135deg,#06B6D4,#2563EB);
+  box-shadow:0 6px 14px rgba(37,99,235,.32),inset 0 1px 0 rgba(255,255,255,.35);
+}
+body.ll-teen .tc-hub-btn[data-tone="cards"] .th-ic{
+  background:linear-gradient(135deg,#F59E0B,#EA580C);
+  box-shadow:0 6px 14px rgba(234,88,12,.32),inset 0 1px 0 rgba(255,255,255,.35);
+}
+body.ll-teen .tc-hub-btn[data-tone="map"] .th-ic{
+  background:linear-gradient(135deg,#8B5CF6,#4F46E5);
+  box-shadow:0 6px 14px rgba(79,70,229,.32),inset 0 1px 0 rgba(255,255,255,.35);
+}
+body.ll-teen .tc-hub-btn[data-tone="daily"] .th-ic{
+  background:linear-gradient(135deg,#FB7185,#E11D48);
+  box-shadow:0 6px 14px rgba(225,29,72,.32),inset 0 1px 0 rgba(255,255,255,.35);
+}
+body.ll-teen .tc-hub-btn[data-tone="vault"] .th-ic{
+  background:linear-gradient(135deg,#34D399,#059669);
+  box-shadow:0 6px 14px rgba(5,150,105,.32),inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* Smart Next-Move Strip Elevation */
+body.ll-teen .tc-next{
+  border-radius:14px;padding:13px 15px;
+  background:linear-gradient(120deg,rgba(16,185,129,.12) 0%,rgba(59,130,246,.10) 100%);
+  box-shadow:0 4px 16px rgba(15,23,42,.05),inset 0 1px 0 rgba(255,255,255,.16);
+}
+body.ll-teen.hs-theme-indigo .tc-next{background:linear-gradient(120deg,rgba(99,102,241,.18) 0%,rgba(14,165,233,.11) 100%)}
+body.ll-teen.hs-theme-sepia .tc-next{background:linear-gradient(120deg,rgba(217,119,6,.16) 0%,rgba(234,88,12,.09) 100%)}
+body.ll-teen.hs-theme-rose .tc-next{background:linear-gradient(120deg,rgba(244,63,94,.16) 0%,rgba(168,85,247,.11) 100%)}
+
+/* Signature Subject Course Cards on Learn & Today */
+body.ll-teen .ll-pathcard{
+  position:relative;overflow:hidden;
+  border-radius:18px !important;padding:16px 16px 16px 18px !important;
+  background:rgba(255,255,255,.90) !important;
+  border:1px solid rgba(15,23,42,.08) !important;
+  box-shadow:0 8px 24px rgba(15,23,42,.05) !important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+body.ll-teen.hs-dark .ll-pathcard{
+  background:linear-gradient(180deg,rgba(22,33,54,.88) 0%,rgba(13,20,36,.92) 100%) !important;
+  border:1px solid rgba(148,163,184,.16) !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+body.ll-teen .ll-pathcard:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 34px rgba(15,23,42,.12) !important;
+}
+body.ll-teen .ll-pathcard::before{
+  content:"";position:absolute;left:0;top:0;right:0;height:4px;
+  background:var(--sc,linear-gradient(90deg,#10B981,#14B8A6));
+}
+body.ll-teen .ll-pathcard[data-path="math7"]{--sc:linear-gradient(90deg,#10B981,#06B6D4);--sbg:linear-gradient(135deg,#10B981,#0D9488)}
+body.ll-teen .ll-pathcard[data-path="ela7"]{--sc:linear-gradient(90deg,#A855F7,#EC4899);--sbg:linear-gradient(135deg,#9333EA,#DB2777)}
+body.ll-teen .ll-pathcard[data-path="sci7"]{--sc:linear-gradient(90deg,#0EA5E9,#3B82F6);--sbg:linear-gradient(135deg,#0284C7,#2563EB)}
+body.ll-teen .ll-pathcard[data-path="ss7"]{--sc:linear-gradient(90deg,#F59E0B,#EA580C);--sbg:linear-gradient(135deg,#D97706,#EA580C)}
+body.ll-teen .ll-pathcard[data-path="ny"]{--sc:linear-gradient(90deg,#6366F1,#0EA5E9);--sbg:linear-gradient(135deg,#4F46E5,#0284C7)}
+body.ll-teen .ll-pathcard[data-path="creator"]{--sc:linear-gradient(90deg,#F43F5E,#F59E0B);--sbg:linear-gradient(135deg,#E11D48,#D97706)}
+body.ll-teen .ll-pathcard .emo,
+body.ll-teen.hs-dark .ll-pathcard .emo{
+  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+  background:var(--sbg,linear-gradient(135deg,#10B981,#0D9488)) !important;
+  box-shadow:0 8px 18px rgba(15,23,42,.24),inset 0 1px 0 rgba(255,255,255,.34);
+  font-size:1.55rem;margin-bottom:6px;
+}
+@media (max-width:520px){
+  body.ll-teen .tc-hub-head{flex-direction:column;align-items:flex-start;gap:8px}
+  body.ll-teen .tc-next{flex-direction:column;align-items:flex-start;gap:10px}
+  body.ll-teen .tc-next .ll-btn{width:100%}
+  body.ll-teen .tc-head.tc-hero-pro{padding:16px;gap:12px}
+  body.ll-teen .tc-hero-pro .tc-mark{width:48px;height:48px}
+}
+body.ll-teen .tc-course{
+  border-radius:15px !important;padding:11px 15px !important;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+body.ll-teen .tc-course:hover{transform:translateY(-1px);border-color:var(--teen-accent,#10B981) !important}
+body.ll-teen .tc-bar{height:8px;border-radius:999px;overflow:hidden}
+body.ll-teen .tc-bar i{background:linear-gradient(90deg,#10B981,#06B6D4);border-radius:999px}
+body.ll-teen .tc-course[data-path="ela7"] .tc-bar i{background:linear-gradient(90deg,#A855F7,#EC4899)}
+body.ll-teen .tc-course[data-path="sci7"] .tc-bar i{background:linear-gradient(90deg,#0EA5E9,#3B82F6)}
+body.ll-teen .tc-course[data-path="ss7"] .tc-bar i{background:linear-gradient(90deg,#F59E0B,#EA580C)}
+
+/* Elevated Answer Choices, Badges & Floating Dock */
+body.ll-teen #ll-obody .hs-choice{
+  border-radius:13px;padding:11px 14px;
+  transition:transform .14s ease,border-color .14s ease,background .14s ease;
+}
+body.ll-teen #ll-obody .hs-choice:hover:not(:disabled){
+  transform:translateY(-1px);border-color:var(--teen-accent,#10B981);
+}
+body.ll-teen .pf-badge{
+  border-radius:14px;padding:12px;
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+body.ll-teen .pf-badge.on{
+  background:linear-gradient(135deg,rgba(16,185,129,.16),rgba(6,182,212,.12)) !important;
+  border:1.5px solid rgba(16,185,129,.55) !important;
+  box-shadow:0 8px 20px rgba(16,185,129,.16);
+}
+body.ll-teen #ll-tabs{
+  border-radius:20px !important;
+  box-shadow:0 12px 36px rgba(15,23,42,.22),inset 0 1px 0 rgba(255,255,255,.18) !important;
+}
+body.ll-teen #ll-tabs button.on{
+  box-shadow:0 6px 16px rgba(16,185,129,.30);
+}
+body.ll-teen.hs-theme-indigo #ll-tabs button.on{box-shadow:0 6px 16px rgba(99,102,241,.36)}
+body.ll-teen.hs-theme-sepia #ll-tabs button.on{box-shadow:0 6px 16px rgba(217,119,6,.36)}
+body.ll-teen.hs-theme-rose #ll-tabs button.on{box-shadow:0 6px 16px rgba(225,29,72,.36)}

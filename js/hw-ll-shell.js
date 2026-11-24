@@ -1196,12 +1196,12 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       "</div></div>" +
       (hsp && hsp.nextMoveHtml ? hsp.nextMoveHtml() : "") +
       '<div class="tc-hub-grid tc-hub-6">' +
-        '<button type="button" class="tc-hub-btn pri" data-teen-act="ny-exam"><span class="th-ic" aria-hidden="true">🏛️</span><span><b>NY State Exam Sim</b><small>2-session CBT · Levels 1–4</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="labs"><span class="th-ic" aria-hidden="true">🧊</span><span><b>3D &amp; STEM Labs</b><small>3D Net · Balance · Slope · Bio</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="flashcards"><span class="th-ic" aria-hidden="true">⚡</span><span><b>Flashcards &amp; Match</b><small>3D flip · Sprint · My Cards</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="ny-map"><span class="th-ic" aria-hidden="true">🗺️</span><span><b>NY History Map</b><small>' + mapN + '/6 primary-source landmarks</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="daily"><span class="th-ic" aria-hidden="true">🔥</span><span><b>Daily 90s Warm-Up' + (dInfo.doneToday ? ' <span class="tc-vbadge" data-zero="1">✓</span>' : "") + '</b><small>' + (dInfo.doneToday ? "Done today · Play again" : "3 cross-subject questions") + "</small></span></button>" +
-        '<button type="button" class="tc-hub-btn vault" data-teen-act="vault"><span class="th-ic" aria-hidden="true">🎯</span><span><b>Mistake Vault <span class="tc-vbadge"' + (vCount ? "" : ' data-zero="1"') + ">" + vCount + '</span></b><small>' + (vCount ? "Clear missed quiz items" : "All clear right now!") + "</small></span></button>" +
+        '<button type="button" class="tc-hub-btn pri" data-tone="exam" data-teen-act="ny-exam"><span class="th-ic" aria-hidden="true">🏛️</span><span><b>NY State Exam Sim</b><small>2-session CBT · Levels 1–4</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-tone="labs" data-teen-act="labs"><span class="th-ic" aria-hidden="true">🧊</span><span><b>3D &amp; STEM Labs</b><small>3D Net · Balance · Slope · Bio</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-tone="cards" data-teen-act="flashcards"><span class="th-ic" aria-hidden="true">⚡</span><span><b>Flashcards &amp; Match</b><small>3D flip · Sprint · My Cards</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-tone="map" data-teen-act="ny-map"><span class="th-ic" aria-hidden="true">🗺️</span><span><b>NY History Map</b><small>' + mapN + '/6 primary-source landmarks</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-tone="daily" data-teen-act="daily"><span class="th-ic" aria-hidden="true">🔥</span><span><b>Daily 90s Warm-Up' + (dInfo.doneToday ? ' <span class="tc-vbadge" data-zero="1">✓</span>' : "") + '</b><small>' + (dInfo.doneToday ? "Done today · Play again" : "3 cross-subject questions") + "</small></span></button>" +
+        '<button type="button" class="tc-hub-btn vault" data-tone="vault" data-teen-act="vault"><span class="th-ic" aria-hidden="true">🎯</span><span><b>Mistake Vault <span class="tc-vbadge"' + (vCount ? "" : ' data-zero="1"') + ">" + vCount + '</span></b><small>' + (vCount ? "Clear missed quiz items" : "All clear right now!") + "</small></span></button>" +
       "</div>" +
       (hsp && hsp.pinnedStripHtml ? hsp.pinnedStripHtml() : "") +
       (hsp && hsp.focusBarHtml ? hsp.focusBarHtml() : "") +
@@ -1228,9 +1228,19 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       var dn = ls.filter(function (l) { return lessonDone(l.title); }).length, w = Math.round(dn / ls.length * 100);
       return '<button type="button" class="tc-course" data-path="' + esc(c.id) + '"><span class="tc-cemo" aria-hidden="true">' + esc(c.emo || "📘") + '</span><span class="tc-cname">' + esc(c.title) + '</span><span class="tc-bar" aria-hidden="true"><i style="width:' + w + '%"></i></span><span class="tc-cnum">' + dn + " of " + ls.length + "</span></button>";
     }).join("");
+    var hr = new Date().getHours();
+    var greetWord = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
+    var allDoneC = 0, allTotC = 0;
+    ["math7", "ela7", "sci7", "ss7"].forEach(function (cid) {
+      var ls = hlLessons(cid); allTotC += ls.length;
+      allDoneC += ls.filter(function (l) { return lessonDone(l.title); }).length;
+    });
+    var mapDoneN = window.HootStudyLabs && window.HootStudyLabs.getMapDone ? Object.keys(window.HootStudyLabs.getMapDone()).length : 0;
+    var cerN = window.HootStudyPro && window.HootStudyPro.getCerEntries ? window.HootStudyPro.getCerEntries(p.id).length : 0;
     return '<div class="ll-kidbar" id="ll-kidbar">' + kidbarHtml() + "</div>" +
-      '<section class="tc-head"><span class="tc-mark" aria-hidden="true">' + brownHootFace() + '</span>' +
-      '<div class="tc-htxt"><h2>Today</h2><p>' + esc(when) + " · " + (doneN === plan.length && plan.length ? "all done" : doneN + " of " + plan.length + " done") + "</p></div>" +
+      '<section class="tc-head tc-hero-pro"><span class="tc-mark" aria-hidden="true">' + brownHootFace() + '</span>' +
+      '<div class="tc-htxt"><span class="tc-eyebrow">NY GRADE 7 · STUDY STUDIO</span><h2>' + greetWord + ", " + esc(p.label) + '</h2><p>' + esc(when) + " · " + (doneN === plan.length && plan.length ? "All of today's plan complete ✓" : doneN + " of " + plan.length + " today's steps done") + "</p>" +
+      '<div class="tc-hero-pills"><span>📚 ' + allDoneC + "/" + allTotC + " mastered</span><span>🗺️ " + mapDoneN + "/6 NY map</span><span>✍️ " + cerN + " CER essays</span></div></div>" +
       '<div class="tc-ring" style="--p:' + pct + '" role="img" aria-label="' + pct + ' percent of today done"><b>' + pct + "%</b></div></section>" +
       teenStudyHubHtml() +
       tutExpTodayHtml() + /* Fix pass 10: Today's 15 minutes sits at the TOP of her Today, not the bottom */
