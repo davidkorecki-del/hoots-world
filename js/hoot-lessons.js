@@ -332,11 +332,47 @@
     var p = paths[pathId]; if (!p || !body) return false;
     var res = results();
     if (external[pathId]) {
-      body.innerHTML = '<div class="hs hs-list"><p class="hs-std">' + (pathId === "math7" ? "Fresh problems every time" : "Fresh questions every time") + ' · 4 of 5 right first try = learned</p>' + p.lessons.map(function (id, i) {
-        var x = byId[id], r = res[id] || {};
-        var st = r.struggle ? '<span class="hs-tag no">practise again</span>' : r.mastered ? '<span class="hs-tag ok">✓ learned</span>' : "";
-        return '<button type="button" class="hs-row" data-hl-open="' + id + '"><span class="hs-n">' + (i + 1) + '</span><span class="hs-t">' + esc(x.title) + '<small>' + esc(x.std || "") + "</small></span>" + st + "</button>";
-      }).join("") + "</div>";
+      var COVERS = {
+        math7: { img: "assets/teen/cover-math7.jpg", tag: "NY GRADE 7 · MATH", emo: "📐" },
+        ela7: { img: "assets/teen/cover-ela7.jpg", tag: "NY GRADE 7 · ELA", emo: "📚" },
+        sci7: { img: "assets/teen/cover-sci7.jpg", tag: "NY GRADE 7 · SCIENCE", emo: "🔬" },
+        ss7: { img: "assets/teen/cover-ss7.jpg", tag: "NY GRADE 7 · HISTORY", emo: "🗽" }
+      };
+      var cov = COVERS[pathId] || { img: "assets/teen/hero-sanctuary.jpg", tag: "NY GRADE 7 COURSE", emo: "📘" };
+      var doneN = 0, nextId = null, nextTitle = "";
+      p.lessons.forEach(function (id) {
+        var r = res[id] || {};
+        if (r.mastered) doneN++;
+        else if (!nextId) { nextId = id; nextTitle = (byId[id] && byId[id].title) || ""; }
+      });
+      var pct = Math.round(100 * doneN / Math.max(1, p.lessons.length));
+      var hero = '<section class="hs-course-hero hs-subj-' + esc(pathId) + '">' +
+        '<img class="hs-ch-bg" src="' + cov.img + '" alt="" aria-hidden="true">' +
+        '<div class="hs-ch-scrim" aria-hidden="true"></div>' +
+        '<div class="hs-ch-in">' +
+          '<div class="hs-ch-top">' +
+            '<span class="hs-ch-emo" aria-hidden="true">' + cov.emo + "</span>" +
+            '<div class="hs-ch-txt"><span class="hs-ch-tag">' + esc(cov.tag) + '</span><h2>' + esc(p.title) + '</h2><p>' + doneN + " of " + p.lessons.length + " lessons mastered · Fresh problems every run (4/5 first try = mastered)</p></div>" +
+            '<div class="hs-ch-ring" style="--p:' + pct + '" role="img" aria-label="' + pct + ' percent mastered"><b>' + pct + "%</b></div>" +
+          "</div>" +
+          '<div class="hs-ch-foot">' +
+            '<div class="hs-ch-bar"><i style="width:' + pct + '%"></i></div>' +
+            (nextId ? '<button type="button" class="hs-ch-cta" data-hl-open="' + esc(nextId) + '">▶ ' + (doneN ? "Continue: " : "Start: ") + esc(nextTitle) + "</button>" : '<span class="hs-ch-done">🏆 Course Complete!</span>') +
+          "</div>" +
+        "</div></section>";
+      body.innerHTML = '<div class="hs hs-list hs-subj-' + esc(pathId) + '">' + hero +
+        '<div class="hs-list-grid">' + p.lessons.map(function (id, i) {
+          var x = byId[id], r = res[id] || {}, isNext = id === nextId;
+          var cls = "hs-row" + (r.mastered ? " is-done" : r.struggle ? " is-retry" : isNext ? " is-next" : "");
+          var st = r.struggle
+            ? '<span class="hs-tag no">↻ Practice again</span>'
+            : r.mastered
+              ? '<span class="hs-tag ok">✓ Mastered</span>'
+              : isNext
+                ? '<span class="hs-tag next">▶ Up next</span>'
+                : '<span class="hs-row-arr" aria-hidden="true">→</span>';
+          return '<button type="button" class="' + cls + '" data-hl-open="' + id + '"><span class="hs-n">' + (r.mastered ? "✓" : (i + 1)) + '</span><span class="hs-t"><b>' + esc(x.title) + '</b><small><span class="hs-std-chip">' + esc(x.std || "Grade 7") + "</span></small></span>" + st + "</button>";
+        }).join("") + "</div></div>";
       return true;
     }
     var firstTodo = -1;

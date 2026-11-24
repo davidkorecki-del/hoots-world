@@ -463,7 +463,22 @@
 
   /* ---------- UI Helpers ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function qHtml(p) { return (p.passage ? '<blockquote class="hs-pass">' + esc(p.passage) + "</blockquote>" : "") + '<p class="hs-q">' + esc(p.q) + "</p>"; }
+  function qHtml(p) {
+    return (p.passage ? '<blockquote class="hs-pass"><span class="hs-pass-lbl">📖 PASSAGE</span><span class="hs-pass-txt">' + esc(p.passage) + "</span></blockquote>" : "") +
+      '<p class="hs-q">' + esc(p.q) + "</p>";
+  }
+  function solStepsHtml(steps) {
+    if (!steps || !steps.length) return "";
+    return '<ol class="hs-sol hs-sol-cards">' + steps.map(function (s, idx) {
+      return '<li class="hs-sol-card"><span class="hs-sol-num">Step ' + (idx + 1) + '</span><span class="hs-sol-txt">' + esc(s) + "</span></li>";
+    }).join("") + "</ol>";
+  }
+  var COURSE_COVER = {
+    math7: "assets/teen/cover-math7.jpg",
+    ela7: "assets/teen/cover-ela7.jpg",
+    sci7: "assets/teen/cover-sci7.jpg",
+    ss7: "assets/teen/cover-ss7.jpg"
+  };
   function visHtml(lesson, p, reveal) {
     if (!window.HootStudyVisuals) return "";
     if (p && p.type === "order" && !reveal) return "";
@@ -486,8 +501,9 @@
 
   function interactiveInputHtml(p) {
     if (p.type === "mc") {
+      var LETS = ["A", "B", "C", "D", "E", "F"];
       return '<div class="hs-mc">' + p.choices.map(function (c, i) {
-        return '<button type="button" class="hs-choice" data-hs-pick="' + i + '">' + esc(c) + "</button>";
+        return '<button type="button" class="hs-choice" data-hs-pick="' + i + '"><span class="hs-choice-let" aria-hidden="true">' + (LETS[i] || (i + 1)) + '</span><span class="hs-choice-txt">' + esc(c) + "</span></button>";
       }).join("") + "</div>";
     }
     if (p.type === "highlight") {
@@ -524,14 +540,20 @@
       "</div></form>";
   }
 
-  var STEPS = ["Learn", "Watch", "Together", "Your turn", "Recap"];
+  var STEPS = [
+    { lbl: "Learn", ico: "💡" },
+    { lbl: "Watch", ico: "👀" },
+    { lbl: "Together", ico: "🤝" },
+    { lbl: "Your turn", ico: "🎯" },
+    { lbl: "Recap", ico: "🏆" }
+  ];
   var cur = null;
 
   function play(lesson, body, opts) {
     opts = opts || {};
     stdStop();
     syncDarkForProfile(activeKid());
-    var S = cur = { lesson: lesson, step: 0, wrongFirst: 0, misses: [], t0: Date.now(), ordPicked: [], modeTag: opts.modeTag || "lesson" };
+    var S = cur = { lesson: lesson, step: 0, wrongFirst: 0, streak: 0, bestStreak: 0, misses: [], t0: Date.now(), ordPicked: [], modeTag: opts.modeTag || "lesson" };
     if (lesson.newRun) lesson.newRun();
 
     var ex = opts.problems ? null : lesson.gen();
@@ -542,22 +564,37 @@
       if (opts.stepsLabel) {
         return '<p class="hs-mode-pill">' + esc(opts.stepsLabel) + "</p>";
       }
-      return '<ol class="hs-steps">' + STEPS.map(function (s, i) {
-        return '<li class="' + (i < S.step ? "done" : i === S.step ? "now" : "") + '">' + (i < S.step ? "✓ " : "") + s + "</li>";
-      }).join("") + "</ol>";
+      var pct = Math.round((S.step / (STEPS.length - 1)) * 100);
+      return '<div class="hs-stepper-wrap"><ol class="hs-steps">' + STEPS.map(function (s, i) {
+        return '<li class="' + (i < S.step ? "done" : i === S.step ? "now" : "") + '"><span class="hs-st-ic" aria-hidden="true">' + (i < S.step ? "✓" : s.ico) + "</span>" + s.lbl + "</li>";
+      }).join("") + '</ol><div class="hs-stepbar" aria-hidden="true"><i style="width:' + pct + '%"></i></div></div>';
     }
     function shell(inner) {
       if (cur !== S) return;
-      body.innerHTML = '<div class="hs"><div class="hs-toprow"><p class="hs-std">' + esc(lesson.std) + " · " + esc(lesson.subject || "Grade 7 math") + "</p>" +
-        toolbarHtml(lesson.course || "math7", (S.p && S.p._lesson && S.p._lesson.id) || lesson.id) + "</div>" + bar() + inner + "</div>";
+      var cid = lesson.course || "math7";
+      var covImg = COURSE_COVER[cid] || "assets/teen/hero-sanctuary.jpg";
+      var streakPill = S.streak >= 2 ? '<span class="hs-streak-pill">🔥 ' + S.streak + ' in a row!</span>' : "";
+      body.innerHTML = '<div class="hs hs-subj-' + esc(cid) + '" data-course="' + esc(cid) + '">' +
+        '<header class="hs-lhero">' +
+          '<img class="hs-lh-bg" src="' + covImg + '" alt="" aria-hidden="true">' +
+          '<div class="hs-lh-scrim" aria-hidden="true"></div>' +
+          '<div class="hs-lh-in">' +
+            '<div class="hs-lh-meta"><span class="hs-lh-std">' + esc(lesson.std || "NY Grade 7") + '</span><span class="hs-lh-sub">' + esc(lesson.subject || "Grade 7 Study") + "</span>" + streakPill + "</div>" +
+            '<h2 class="hs-lh-title">' + esc(lesson.title) + "</h2>" +
+          "</div>" +
+        "</header>" +
+        '<div class="hs-toprow">' + toolbarHtml(cid, (S.p && S.p._lesson && S.p._lesson.id) || lesson.id) + "</div>" +
+        bar() + inner + "</div>";
       body.scrollTop = 0;
     }
     function learn() {
       S.step = 0;
-      shell('<section class="hs-card"><h3>' + esc(lesson.title) + "</h3>" +
+      shell('<section class="hs-card hs-learn-card">' +
+        '<div class="hs-sec-kicker"><span>💡 CONCEPT BRIEF</span></div>' +
         visHtml(lesson, null, false) +
-        lesson.learn.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") +
-        '<p class="hs-vocab"><b>Key idea:</b> ' + esc(lesson.vocab) + '</p><button type="button" class="hs-btn pri" data-hs="next">Watch an example ▶</button></section>');
+        '<div class="hs-learn-body">' + lesson.learn.map(function (p) { return '<p class="hs-learn-p">' + esc(p) + "</p>"; }).join("") + "</div>" +
+        '<div class="hs-vocab"><span class="hs-vocab-lbl">✨ KEY IDEA</span><p>' + esc(lesson.vocab) + '</p></div>' +
+        '<div class="hs-cta-row"><button type="button" class="hs-btn pri hs-btn-lg" data-hs="next">Watch a worked example ▶</button></div></section>');
       stdSay(["std-" + lesson.id + "-learn1.mp3", "std-" + lesson.id + "-learn2.mp3", "std-" + lesson.id + "-vocab.mp3"]);
     }
     function watch() {
@@ -570,9 +607,13 @@
           var wc = wi === 0 ? ex.methodClip : wi === 1 ? ex.whyClip : null;
           if (wc) stdSay([wc], true);
         }
-        shell('<section class="hs-card">' + qHtml(ex) + visHtml(lesson, ex, shown >= ex.steps.length) +
-          '<ol class="hs-sol">' + ex.steps.slice(0, shown).map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>" +
-          (shown < ex.steps.length ? '<button type="button" class="hs-btn" data-hs="more">Next step ▼</button>' : '<button type="button" class="hs-btn pri" data-hs="next">Try one together ▶</button>') + "</section>");
+        shell('<section class="hs-card hs-watch-card">' +
+          '<div class="hs-sec-kicker"><span>👀 WORKED EXAMPLE</span><small>Step ' + shown + " of " + ex.steps.length + "</small></div>" +
+          qHtml(ex) + visHtml(lesson, ex, shown >= ex.steps.length) +
+          solStepsHtml(ex.steps.slice(0, shown)) +
+          '<div class="hs-cta-row">' +
+          (shown < ex.steps.length ? '<button type="button" class="hs-btn hs-btn-lg" data-hs="more">Reveal next step ▼</button>' : '<button type="button" class="hs-btn pri hs-btn-lg" data-hs="next">Try one together ▶</button>') +
+          "</div></section>");
       }
       S.more = function () { shown++; draw(); };
       draw();
@@ -582,8 +623,11 @@
         ? "Practice Test · Question " + (idx + 1) + " of " + total + (p._std ? " (" + p._std + ")" : "")
         : opts.modeTag === "vault"
           ? "Mistake Vault · Item " + (idx + 1) + " of " + total + (p._lessonTitle ? " · " + p._lessonTitle : "")
-          : (mode === "quiz" ? "Question " + (idx + 1) + " of " + total : "Together " + (idx + 1) + " of " + total);
-      return '<section class="hs-card"><p class="hs-count">' + esc(label) + "</p>" +
+          : (mode === "quiz" ? "Your Turn · Question " + (idx + 1) + " of " + total : "Guided Practice · " + (idx + 1) + " of " + total);
+      var dots = '<span class="hs-qdots" aria-hidden="true">';
+      for (var d = 0; d < total; d++) dots += '<i class="' + (d < idx ? "done" : d === idx ? "now" : "") + '"></i>';
+      dots += "</span>";
+      return '<section class="hs-card hs-q-card"><div class="hs-q-head"><p class="hs-count">' + esc(label) + "</p>" + dots + "</div>" +
         qHtml(p) + visHtml(lesson, p, false) + interactiveInputHtml(p) +
         '<p class="hs-fb" aria-live="polite"></p>' +
         (mode === "together" ? '<div class="hs-hints"><button type="button" class="hs-btn sm" data-hs-hint="0">💡 Hint</button><button type="button" class="hs-btn sm" data-hs-hint="1">🔄 Another way</button><button type="button" class="hs-btn sm" data-hs-hint="2">👣 First step</button></div><p class="hs-hint"></p>' : '<p class="hs-hint"></p>') +
@@ -635,7 +679,8 @@
         S.tries++;
         if (ok) {
           S.locked = true;
-          fb.textContent = "✓ Correct!" + (S.tries === 1 ? " First try." : "");
+          if (S.tries === 1) { S.streak++; if (S.streak > S.bestStreak) S.bestStreak = S.streak; }
+          fb.textContent = "✓ Correct!" + (S.tries === 1 ? (S.streak >= 2 ? " 🔥 " + S.streak + " in a row!" : " First try!") : "");
           fb.className = "hs-fb ok";
           stdSay([S.tries === 1 ? "std-correct-first.mp3" : "std-correct.mp3"]);
           if (opts.modeTag === "vault" && S.tries === 1) {
@@ -646,6 +691,7 @@
           if (p._std) { S.stdResults = S.stdResults || {}; S.stdResults[p._std] = S.stdResults[p._std] || { ok: 0, tot: 0 }; S.stdResults[p._std].tot++; if (S.tries === 1) S.stdResults[p._std].ok++; }
           finishItem(true);
         } else if (S.tries === 1) {
+          S.streak = 0;
           /* Smart Math Mistake Diagnostic! */
           var diagMsg = "";
           if (typeof p.diag === "function") {
@@ -681,8 +727,8 @@
       function finishItem(ok) {
         var p = S.p, after = body.querySelector(".hs-after");
         var revVis = !ok && p.vis ? visHtml(lesson, p, true) : "";
-        after.innerHTML = revVis + (ok ? "" : '<ol class="hs-sol">' + (p.steps || []).map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>") +
-          '<button type="button" class="hs-btn pri" data-hs="item">' + (i < list.length - 1 ? "Next ▶" : mode === "quiz" ? "See my results ▶" : "Your turn ▶") + "</button>";
+        after.innerHTML = revVis + (ok ? "" : solStepsHtml(p.steps)) +
+          '<button type="button" class="hs-btn pri hs-btn-lg" data-hs="item">' + (i < list.length - 1 ? "Next question ▶" : mode === "quiz" ? "See my results ▶" : "Start your turn ▶") + "</button>";
         $$(".hs-choice, .hs-seg, .hs-ord-chip", body).forEach(function (b) { b.disabled = true; });
         var inp = body.querySelector(".hs-in"); if (inp) inp.disabled = true;
       }
@@ -704,9 +750,14 @@
       if (!opts.skipRecord && window.HootLessons && window.HootLessons.recordResult) {
         window.HootLessons.recordResult(lesson.id, S.wrongFirst, quiz.length, Date.now() - S.t0);
       }
+      var xpGain = learned ? 25 : 12, gemGain = learned ? 10 : 5;
       if (window.HootTeenArcade && window.HootTeenArcade.awardXP) {
-        window.HootTeenArcade.awardXP(learned ? 25 : 12, learned ? 10 : 5);
+        window.HootTeenArcade.awardXP(xpGain, gemGain);
       }
+      if (learned && window.HootStudyPro && window.HootStudyPro.celebrate) {
+        window.HootStudyPro.celebrate();
+      }
+      var scorePct = Math.round((right / Math.max(1, quiz.length)) * 100);
       var stdTable = "";
       if (opts.modeTag === "test" && S.stdResults) {
         var rows = Object.keys(S.stdResults).map(function (st) {
@@ -716,17 +767,25 @@
         stdTable = '<div class="hs-std-grid"><h4>NY Grade 7 Standards Breakdown</h4>' + rows + "</div>";
       }
       var vaultLeft = getVault().length;
-      shell('<section class="hs-card"><h3>' + right + " of " + quiz.length + " right first try</h3>" +
+      shell('<section class="hs-card hs-recap-card">' +
+        '<div class="hs-recap-hero ' + (learned ? "ok" : "keep") + '">' +
+          '<div class="hs-recap-ring" style="--p:' + scorePct + '" role="img" aria-label="' + scorePct + ' percent score"><b>' + scorePct + "%</b></div>" +
+          '<div class="hs-recap-txt">' +
+            '<span class="hs-recap-badge">' + (learned ? "🏆 LESSON MASTERED" : "💪 GREAT PRACTICE") + "</span>" +
+            '<h3>' + right + " of " + quiz.length + " right first try</h3>" +
+            '<div class="hs-xp-earn"><span>⚡ +' + xpGain + ' XP</span><span>💎 +' + gemGain + " Gems</span>" + (S.bestStreak >= 2 ? "<span>🔥 " + S.bestStreak + " streak</span>" : "") + "</div>" +
+          "</div>" +
+        "</div>" +
         '<p class="hs-verdict ' + (learned ? "ok" : "no") + '">' +
         (opts.modeTag === "vault"
           ? (vaultLeft === 0 ? "🎉 Mistake Vault completely cleared! Awesome mastery!" : "Nice work! " + vaultLeft + " item" + (vaultLeft === 1 ? "" : "s") + " left in your Mistake Vault.")
           : opts.modeTag === "test"
             ? (learned ? "🏆 NY Grade 7 Practice Test ready! Strong mastery across standards." : "Good practice run — missed items were saved to your Mistake Vault so you can drill them next.")
-            : (learned ? "✓ Learned! I'll bring this back for a quick review in a few days." : "Almost — this goes on your Practice list &amp; Mistake Vault so we can nail it.")) + "</p>" +
+            : (learned ? "✓ Mastered! Hoot will schedule a quick spaced review later so it sticks." : "Almost there — missed questions were saved to your Mistake Vault so you can nail them.")) + "</p>" +
         stdTable +
-        (S.misses.length ? "<h4>Look again</h4>" + S.misses.map(function (p) { return '<div class="hs-miss">' + qHtml(p) + '<ol class="hs-sol">' + (p.steps || []).map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol></div>"; }).join("") : "") +
+        (S.misses.length ? '<h4 class="hs-miss-h">🔍 Review missed questions</h4>' + S.misses.map(function (p) { return '<div class="hs-miss">' + qHtml(p) + solStepsHtml(p.steps) + "</div>"; }).join("") : "") +
         '<div class="hs-end"><button type="button" class="hs-btn" data-hs="again">↻ Practice again (' + esc(lesson.again || "new numbers") + ')</button>' +
-        (opts.modeTag === "lesson" && nextOf(lesson) ? '<button type="button" class="hs-btn pri" data-hs="nextlesson">Next lesson ▶</button>' : "") + "</div></section>");
+        (opts.modeTag === "lesson" && nextOf(lesson) ? '<button type="button" class="hs-btn pri hs-btn-lg" data-hs="nextlesson">Next lesson ▶</button>' : "") + "</div></section>");
     }
     S.go = function (what) {
       if (what === "next") { if (S.step === 0) watch(); else if (S.step === 1) run(together, "together", function () { run(quiz, "quiz", recap); }); }
