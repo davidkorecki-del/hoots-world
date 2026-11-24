@@ -587,6 +587,7 @@
         bar() + inner + "</div>";
       body.scrollTop = 0;
     }
+    var STD_PENDING = { "m7-rationals": 1, "m7-prism-volume": 1, "m7-compound-prob": 1, "m7-data-stats": 1, "e7-cer-coach": 1 };
     function learn() {
       S.step = 0;
       shell('<section class="hs-card hs-learn-card">' +
@@ -595,7 +596,11 @@
         '<div class="hs-learn-body">' + lesson.learn.map(function (p) { return '<p class="hs-learn-p">' + esc(p) + "</p>"; }).join("") + "</div>" +
         '<div class="hs-vocab"><span class="hs-vocab-lbl">✨ KEY IDEA</span><p>' + esc(lesson.vocab) + '</p></div>' +
         '<div class="hs-cta-row"><button type="button" class="hs-btn pri hs-btn-lg" data-hs="next">Watch a worked example ▶</button></div></section>');
-      stdSay(["std-" + lesson.id + "-learn1.mp3", "std-" + lesson.id + "-learn2.mp3", "std-" + lesson.id + "-vocab.mp3"]);
+      var hh = window.HOOT_HAVE || {};
+      var lClips = ["std-" + lesson.id + "-learn1", "std-" + lesson.id + "-learn2", "std-" + lesson.id + "-vocab"];
+      if (!STD_PENDING[lesson.id] || hh[lClips[0]]) {
+        stdSay(lClips.map(function (c) { return c + ".mp3"; }));
+      }
     }
     function watch() {
       S.step = 1; var shown = 1;

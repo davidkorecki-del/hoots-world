@@ -533,7 +533,7 @@
       b.remove();
       explode(cx, cy, kind, 1.35);
       bubble.innerHTML = "🎆 <b>" + cfg.name + " SUPER BURST!</b> Watch it sparkle!";
-      playVoice([cfg.clip, "hoot-yay"]);
+      playVoice([cfg.clip, "hoot-great-job"]);
       recordLaunch();
       scheduleNextAnimalCall();
       setTimeout(function(){
@@ -624,7 +624,7 @@
     });
     if(!silentVoice){
       bubble.innerHTML = "🎆 <b>" + cfg.name + " FIREWORK!</b> Watch it burst in the sky!";
-      playVoice([cfg.clip, "hoot-yay"]);
+      playVoice([cfg.clip, "hoot-great-job"]);
       scheduleNextAnimalCall();
     }
   }

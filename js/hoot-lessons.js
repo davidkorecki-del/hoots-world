@@ -731,6 +731,10 @@
     var l = byId[t.getAttribute("data-hl-open")];
     if (!l) return;
     window.__hwFromTodayPath = false;
+    if (typeof window.__llOpenHlLesson === "function") {
+      window.__llOpenHlLesson(l.id, l.title);
+      return;
+    }
     var ttl = document.querySelector("#ll-otitle"); if (ttl) ttl.textContent = l.title;
     play(l.id, body);
     body.scrollTop = 0;

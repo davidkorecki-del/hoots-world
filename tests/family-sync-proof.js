@@ -958,7 +958,60 @@
     });
   });
 
-  /* ---------- Execute all 17 proofs sequentially ---------- */
+  // 18. Kaitlyn Grade 7 stores: fresh join, empty-cloud protection, and 3-way merge across all 12 hs_* stores
+  proof("18. [Grade 7 Pro/Sanctuary] All 12 Kaitlyn hs_* stores sync, resist empty-cloud wipe & 3-way merge", function () {
+    var cloud = makeCloud();
+    var code = "OWL-TEST18-HS12AA";
+    var devA = makeDevice(cloud, {
+      clockBase: Date.parse("2026-11-24T17:00:00.000Z"),
+      ls: {
+        "hootworld.familycode.v1": code,
+        "hootworld.hs.vibe.v1": { kidc: { xp: 140, gems: 65, avatar: "nova", mood: "Speedrun 🔥", fx: "sakura", owned: { muse: 1, fox: 1, moon: 1, art: 1, nova: 1, stars: 1, sakura: 1, off: 1 } } },
+        "hootworld.hs.arcade.v1": { kidc: { dash: 240, timeline: 7 } },
+        "hootworld.hs.vault.v1": { kidc: [{ q: "2x + 3 = 11", lessonId: "m7-two-step" }] },
+        "hootworld.hs.cer.v1": { kidc: [{ q: "School uniforms", c: "Claim", e: "Evidence", r: "Because", score: 3 }] },
+        "hootworld.hs.cards.v1": { kidc: { "fc-1": 1 } },
+        "hootworld.hs.customcards.v1": { kidc: [{ f: "Slope", b: "Rise/run" }] },
+        "hootworld.hs.exams.v1": { kidc: [{ pct: 88, level: 4 }] },
+        "hootworld.hs.daily.v1": { kidc: { "2026-11-24": 1 } },
+        "hootworld.hs.nymap.v1": { kidc: { erie: 1, seneca: 1 } },
+        "hootworld.hs.labs.v1": { kidc: { prism3d: 1 } },
+        "hootworld.hs.pins.v1": { kidc: { "Unit rates": 1 } },
+        "hootworld.hs.matchbest.v1": { kidc: 180 }
+      }
+    });
+    devA.boot();
+    return tick(60).then(function () {
+      assert(cloud.rows[code], "Device A uploaded all 12 Kaitlyn Grade 7 stores");
+      var devB = makeDevice(cloud, { clockBase: Date.parse("2026-11-24T17:05:00.000Z") });
+      devB.boot();
+      devB.els["sync-join-input"].value = code;
+      devB.els["sync-join-btn"].click();
+      return tick(60).then(function () {
+        assert(devB.getJson("hootworld.hs.vibe.v1").kidc.xp === 140, "fresh join copied hs_vibe XP");
+        assert(devB.getJson("hootworld.hs.vibe.v1").kidc.avatar === "nova", "fresh join copied hs_vibe avatar");
+        assert(devB.getJson("hootworld.hs.arcade.v1").kidc.dash === 240, "fresh join copied hs_arcade PB");
+        assert(devB.getJson("hootworld.hs.exams.v1").kidc[0].level === 4, "fresh join copied hs_exams Level 4");
+        assert(devB.getJson("hootworld.hs.nymap.v1").kidc.erie === 1, "fresh join copied hs_nymap");
+        assert(devB.getJson("hootworld.hs.matchbest.v1").kidc === 180, "fresh join copied hs_match");
+        // Concurrent edits: Device A unlocks another landmark; Device B sets Word Blitz PB!
+        var mapA = devA.getJson("hootworld.hs.nymap.v1"); mapA.kidc.saratoga = 1; devA.setLs("hootworld.hs.nymap.v1", mapA);
+        devA.runTimers(3000);
+        return tick(40).then(function () {
+          var arcB = devB.getJson("hootworld.hs.arcade.v1"); arcB.kidc.blitz = 190; devB.setLs("hootworld.hs.arcade.v1", arcB);
+          devB.runTimers(3000);
+          return tick(60);
+        }).then(function () {
+          var st = cloud.rows[code].state;
+          assert(st.hs_nymap.kidc.saratoga === 1 && st.hs_nymap.kidc.erie === 1, "merged NY map landmark from Device A");
+          assert(st.hs_arcade.kidc.dash === 240 && st.hs_arcade.kidc.blitz === 190, "merged Arcade PBs from both devices");
+          assert(st.hs_vibe.kidc.xp === 140 && st.hs_cer.kidc.length === 1 && st.hs_exams.kidc[0].level === 4, "preserved all other hs_* stores");
+        });
+      });
+    });
+  });
+
+  /* ---------- Execute all proofs sequentially ---------- */
   var passed = 0;
   var chain = Promise.resolve();
   tests.forEach(function (t) {

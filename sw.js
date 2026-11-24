@@ -201,7 +201,15 @@ const PRECACHE=[
   'assets/voice/coach/twinkle-idle.mp3',
   'assets/voice/coach/twinkle-intro.mp3',
   'assets/voice/coach/twinkle-praise.mp3',
-  'assets/voice/coach/twinkle-wrong.mp3'
+  'assets/voice/coach/twinkle-wrong.mp3',
+  'assets/teen/hero-sanctuary.jpg',
+  'assets/teen/cover-math7.jpg',
+  'assets/teen/cover-ela7.jpg',
+  'assets/teen/cover-sci7.jpg',
+  'assets/teen/cover-ss7.jpg',
+  'assets/pizza_cartoon/thumb_pizza.jpg',
+  'assets/rocket3d/thumb_rocket.jpg',
+  'assets/twinkle3d/thumb_twinkle.jpg'
 ];
 /* Wave 3: strictly media-only cache (never HTML, CSS, or JS).
    Resilient batched precache (one failed file never aborts install) +

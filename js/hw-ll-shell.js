@@ -1864,6 +1864,36 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       var need = {}; try { need = (JSON.parse(localStorage.getItem("hootworld.nyneed.v1") || "{}") || {})[kid] || {}; } catch (e) {}
       var needN = Object.keys(need).filter(function (k) { return need[k]; }).length;
       block += '<h3 class="db-h">New York grade 7 lessons</h3><p class="db-ny">' + nyDone + " of " + ny.length + " done" + (needN ? " · " + needN + " needed re-teaching (in Practice)" : "") + "</p>";
+      /* Grade 7 NY Study Snapshot for Grown-ups */
+      var subjs = [
+        { id: "math7", lbl: "📐 Math 7" },
+        { id: "ela7",  lbl: "📚 ELA 7" },
+        { id: "sci7",  lbl: "🔬 Science 7" },
+        { id: "ss7",   lbl: "🗽 NY History" }
+      ].map(function (s) {
+        var ls = hlLessons(s.id);
+        var dn = ls.filter(function (l) { return res[l.id] && res[l.id].mastered; }).length;
+        return '<span class="db-chip' + (dn > 0 ? " ok" : "") + '">' + s.lbl + ": " + dn + "/" + ls.length + "</span>";
+      }).join("");
+      var vaultN = 0, cerN = 0, examArr = [], mapN = 0, vibeObj = null, arcObj = {};
+      try { vaultN = ((JSON.parse(localStorage.getItem("hootworld.hs.vault.v1") || "{}") || {})[kid] || []).length; } catch (e) {}
+      try { cerN = ((JSON.parse(localStorage.getItem("hootworld.hs.cer.v1") || "{}") || {})[kid] || []).length; } catch (e) {}
+      try { examArr = ((JSON.parse(localStorage.getItem("hootworld.hs.exams.v1") || "{}") || {})[kid] || []); } catch (e) {}
+      try { mapN = Object.keys(((JSON.parse(localStorage.getItem("hootworld.hs.nymap.v1") || "{}") || {})[kid] || {})).length; } catch (e) {}
+      try { vibeObj = window.HootTeenArcade && window.HootTeenArcade.getVibe ? window.HootTeenArcade.getVibe(kid) : null; } catch (e) {}
+      try { arcObj = ((JSON.parse(localStorage.getItem("hootworld.hs.arcade.v1") || "{}") || {})[kid] || {}); } catch (e) {}
+      var bestEx = examArr.reduce(function (best, x) { return !best || (x.pct || 0) > (best.pct || 0) ? x : best; }, null);
+      var rk = vibeObj && window.HootTeenArcade && window.HootTeenArcade.rankFor ? window.HootTeenArcade.rankFor(vibeObj.xp) : null;
+      block += '<h3 class="db-h">🎓 Grade 7 NY Study Snapshot</h3>' +
+        '<p class="db-chips">' + subjs + "</p>" +
+        '<p class="db-chips">' +
+          '<span class="db-chip' + (bestEx ? " ok" : "") + '">🏛️ NY Exam: ' + (bestEx ? ("Best " + bestEx.pct + "% (Level " + bestEx.level + ") · " + examArr.length + " run" + (examArr.length > 1 ? "s" : "")) : "Not taken yet") + "</span>" +
+          '<span class="db-chip' + (vaultN ? " help" : " ok") + '">🎯 Mistake Vault: ' + (vaultN ? vaultN + " to clear" : "All clear ✓") + "</span>" +
+          '<span class="db-chip">✍️ CER Essays: ' + cerN + "</span>" +
+          '<span class="db-chip">🗺️ NY History Map: ' + mapN + "/6</span>" +
+          (rk ? '<span class="db-chip ok">⚡ Lv ' + rk.lv + " " + esc(rk.title) + " (" + vibeObj.xp + " XP · 💎 " + vibeObj.gems + ")</span>" : "") +
+          (arcObj.dash || arcObj.blitz || arcObj.timeline ? '<span class="db-chip">🎮 Arcade PBs: ' + [arcObj.dash ? "Dash " + arcObj.dash : "", arcObj.blitz ? "Blitz " + arcObj.blitz : "", arcObj.timeline ? "Timeline " + arcObj.timeline : ""].filter(Boolean).join(" · ") + "</span>" : "") +
+        "</p>";
     }
     return block + "</section>";
   }
@@ -2863,6 +2893,18 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
     openLessonRoute(title, false);
   }
+  window.__llOpenHlLesson = function (id, title) {
+    var h = HL();
+    if (!h || !h.byId[id]) return false;
+    var lbl = title || h.byId[id].title;
+    nextView = { kind: "hl", title: lbl };
+    openShellOverlay(lbl, "");
+    document.body.classList.add("ll-tutor-open");
+    h.play(id, $("#ll-obody"));
+    wcThenInsert(null, lbl);
+    wc2PrintBtnInsert(null, lbl);
+    return true;
+  };
 
   /* ID-primary lesson open (Fix 11 port + Wave 2 route fix): check HL() FIRST so
      moved lessons (Colour names, Shape names, More colours, Star and heart) and
