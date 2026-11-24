@@ -641,6 +641,7 @@
           if (opts.modeTag === "vault" && S.tries === 1) {
             removeFromVault(p.q);
             fb.textContent = "✓ Cleared from your Mistake Vault!";
+            if (getVault().length === 0 && window.HootStudyPro && window.HootStudyPro.celebrate) window.HootStudyPro.celebrate();
           }
           if (p._std) { S.stdResults = S.stdResults || {}; S.stdResults[p._std] = S.stdResults[p._std] || { ok: 0, tot: 0 }; S.stdResults[p._std].tot++; if (S.tries === 1) S.stdResults[p._std].ok++; }
           finishItem(true);

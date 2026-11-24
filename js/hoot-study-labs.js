@@ -98,6 +98,7 @@
         st.msg = "🎉 Solved! x = " + st.curC + " (Check: " + st.a + "(" + st.curC + ")" + (st.b >= 0 ? " + " + st.b : " − " + Math.abs(st.b)) + " = " + st.c + " ✓)";
         st.msgType = "ok";
         markLabDone("balance");
+        if (window.HootStudyPro && window.HootStudyPro.celebrate) window.HootStudyPro.celebrate();
       }
       draw();
       if (st.tilt !== 0) {
@@ -404,12 +405,202 @@
     draw();
   }
 
+  /* =========================================================================
+     LAB 5: DRAG-TO-ROTATE 3D PRISM & UNFOLDING 2D NET (7.G.6)
+     ========================================================================= */
+  function renderPrism3DLab(stage) {
+    var s = { l: 6, w: 4, h: 3, unfold: 0, yaw: -0.62, pitch: 0.46, dragging: false, lx: 0, ly: 0, animRaf: 0 };
+
+    stage.innerHTML =
+      '<div class="lab-card">' +
+        '<div class="lab-hdr"><div><h3>🧊 3D Prism &amp; Unfolding 2D Net (7.G.6)</h3><p>Drag directly on the 3D box to orbit it in space, then slide <b>Unfold 2D Net</b> to see all 6 faces of Surface Area!</p></div>' +
+        '<button type="button" class="hs-btn sm pri" data-p3-anim="1">📦 Auto Unfold / Fold</button></div>' +
+        '<div class="lab-p3-grid">' +
+          '<div class="lab-p3-stage">' +
+            '<canvas class="lab-p3-cv" width="680" height="440" aria-label="Interactive 3D rectangular prism canvas"></canvas>' +
+            '<small class="lab-p3-tip">👆 Drag to rotate 3D · 6 color-coded faces</small>' +
+          "</div>" +
+          '<div class="lab-p3-ctrl">' +
+            '<div class="lab-readout" id="p3-readout"></div>' +
+            '<label class="lab-rng">📦 Unfold 2D Net: <b id="p3-uv">0%</b><input type="range" min="0" max="100" step="1" value="0" data-p3="unfold"></label>' +
+            '<label class="lab-rng">Length (l): <b id="p3-lv">6</b><input type="range" min="2" max="10" step="1" value="6" data-p3="l"></label>' +
+            '<label class="lab-rng">Width (w): <b id="p3-wv">4</b><input type="range" min="2" max="8" step="1" value="4" data-p3="w"></label>' +
+            '<label class="lab-rng">Height (h): <b id="p3-hv">3</b><input type="range" min="2" max="8" step="1" value="3" data-p3="h"></label>' +
+            '<div class="lab-p3-legend">' +
+              '<span><i style="background:#10B981"></i> Top &amp; Bottom (2 × lw)</span>' +
+              '<span><i style="background:#3B82F6"></i> Front &amp; Back (2 × lh)</span>' +
+              '<span><i style="background:#EC4899"></i> Left &amp; Right (2 × wh)</span>' +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+      "</div>";
+
+    var cv = stage.querySelector(".lab-p3-cv");
+    var ctx = cv.getContext("2d");
+    var ro = stage.querySelector("#p3-readout");
+
+    function updateReadout() {
+      var vol = s.l * s.w * s.h;
+      var lw = s.l * s.w, lh = s.l * s.h, wh = s.w * s.h;
+      var sa = 2 * (lw + lh + wh);
+      ro.innerHTML =
+        '<b>Volume:</b> ' + s.l + " × " + s.w + " × " + s.h + " = <b>" + vol + " u³</b><br>" +
+        '<b>Surface Area:</b> 2(' + lw + " + " + lh + " + " + wh + ") = <b>" + sa + " u²</b>";
+      stage.querySelector("#p3-uv").textContent = Math.round(s.unfold * 100) + "%";
+      stage.querySelector("#p3-lv").textContent = s.l;
+      stage.querySelector("#p3-wv").textContent = s.w;
+      stage.querySelector("#p3-hv").textContent = s.h;
+    }
+
+    function rot3(p) {
+      /* Center vertical offset gently so folded & unfolded both stay framed */
+      var cy = (1 - s.unfold) * (s.h * 0.45);
+      var cz = s.unfold * (-s.w * 0.35);
+      var x = p[0], y = p[1] - cy, z = p[2] - cz;
+      /* Yaw around Y */
+      var cyaw = Math.cos(s.yaw), syaw = Math.sin(s.yaw);
+      var x1 = x * cyaw - z * syaw;
+      var z1 = x * syaw + z * cyaw;
+      /* Pitch around X */
+      var cp = Math.cos(s.pitch), sp = Math.sin(s.pitch);
+      var y2 = y * cp - z1 * sp;
+      var z2 = y * sp + z1 * cp;
+      return [x1, y2, z2];
+    }
+
+    function proj(v) {
+      /* Auto-zoom closer when folded, pull back smoothly as the 2D net unfolds flat! */
+      var cam = 16.5 + s.unfold * 8.5;
+      var scale = (cv.width * 0.62) / Math.max(6, cam - v[2]);
+      return [cv.width * 0.5 + v[0] * scale, cv.height * 0.52 - v[1] * scale, v[2]];
+    }
+
+    function draw3D() {
+      var dark = document.body.classList.contains("hs-dark");
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.fillStyle = dark ? "#0B1220" : "#F8FAFC";
+      ctx.fillRect(0, 0, cv.width, cv.height);
+
+      /* Subtle floor grid lines */
+      ctx.strokeStyle = dark ? "rgba(148,163,184,0.08)" : "rgba(100,116,139,0.12)";
+      ctx.lineWidth = 1;
+      for (var g = -12; g <= 12; g += 3) {
+        var a1 = proj(rot3([g, -0.02, -12])), a2 = proj(rot3([g, -0.02, 12]));
+        ctx.beginPath(); ctx.moveTo(a1[0], a1[1]); ctx.lineTo(a2[0], a2[1]); ctx.stroke();
+        var b1 = proj(rot3([-12, -0.02, g])), b2 = proj(rot3([12, -0.02, g]));
+        ctx.beginPath(); ctx.moveTo(b1[0], b1[1]); ctx.lineTo(b2[0], b2[1]); ctx.stroke();
+      }
+
+      var hx = s.l / 2, hz = s.w / 2, h = s.h;
+      var th = s.unfold * (Math.PI / 2);
+      var cth = Math.cos(th), sth = Math.sin(th);
+      var c2 = Math.cos(2 * th), s2 = Math.sin(2 * th);
+
+      /* Exact 6 hinged faces of the rectangular prism */
+      var backTopY = h * cth, backTopZ = -hz - h * sth;
+      var topFarY = backTopY + s.w * s2, topFarZ = backTopZ + s.w * c2;
+      var alpha = s.unfold < 0.15 ? 0.96 : 0.84;
+      var faces = [
+        { name: "Bottom", area: s.l * s.w, fill: "rgba(16,185,129," + alpha + ")", stroke: "#059669",
+          pts: [[-hx, 0, -hz], [hx, 0, -hz], [hx, 0, hz], [-hx, 0, hz]] },
+        { name: "Front", area: s.l * s.h, fill: "rgba(59,130,246," + alpha + ")", stroke: "#2563EB",
+          pts: [[-hx, 0, hz], [hx, 0, hz], [hx, h * cth, hz + h * sth], [-hx, h * cth, hz + h * sth]] },
+        { name: "Back", area: s.l * s.h, fill: "rgba(37,99,235," + alpha + ")", stroke: "#1D4ED8",
+          pts: [[hx, 0, -hz], [-hx, 0, -hz], [-hx, backTopY, backTopZ], [hx, backTopY, backTopZ]] },
+        { name: "Top", area: s.l * s.w, fill: "rgba(52,211,153," + alpha + ")", stroke: "#047857",
+          pts: [[-hx, backTopY, backTopZ], [hx, backTopY, backTopZ], [hx, topFarY, topFarZ], [-hx, topFarY, topFarZ]] },
+        { name: "Left", area: s.w * s.h, fill: "rgba(236,72,153," + alpha + ")", stroke: "#BE185D",
+          pts: [[-hx, 0, -hz], [-hx, 0, hz], [-hx - h * sth, h * cth, hz], [-hx - h * sth, h * cth, -hz]] },
+        { name: "Right", area: s.w * s.h, fill: "rgba(219,39,119," + alpha + ")", stroke: "#DB2777",
+          pts: [[hx, 0, hz], [hx, 0, -hz], [hx + h * sth, h * cth, -hz], [hx + h * sth, h * cth, hz]] }
+      ];
+
+      var drawList = faces.map(function (f) {
+        var rpts = f.pts.map(rot3);
+        var ppts = rpts.map(proj);
+        var avgZ = (rpts[0][2] + rpts[1][2] + rpts[2][2] + rpts[3][2]) / 4;
+        var cx = (ppts[0][0] + ppts[1][0] + ppts[2][0] + ppts[3][0]) / 4;
+        var cy = (ppts[0][1] + ppts[1][1] + ppts[2][1] + ppts[3][1]) / 4;
+        return { f: f, ppts: ppts, avgZ: avgZ, cx: cx, cy: cy };
+      }).sort(function (a, b) { return a.avgZ - b.avgZ; });
+
+      drawList.forEach(function (item) {
+        var p = item.ppts;
+        ctx.beginPath();
+        ctx.moveTo(p[0][0], p[0][1]);
+        ctx.lineTo(p[1][0], p[1][1]);
+        ctx.lineTo(p[2][0], p[2][1]);
+        ctx.lineTo(p[3][0], p[3][1]);
+        ctx.closePath();
+        ctx.fillStyle = item.f.fill;
+        ctx.fill();
+        ctx.lineWidth = 2.4;
+        ctx.strokeStyle = dark ? "#E2E8F0" : "#0F172A";
+        ctx.stroke();
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 15px system-ui, -apple-system, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(item.f.area + " u²", item.cx, item.cy);
+      });
+    }
+
+    cv.addEventListener("pointerdown", function (e) {
+      s.dragging = true; s.lx = e.clientX; s.ly = e.clientY;
+      try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    cv.addEventListener("pointermove", function (e) {
+      if (!s.dragging) return;
+      s.yaw += (e.clientX - s.lx) * 0.012;
+      s.pitch = Math.max(-1.25, Math.min(1.42, s.pitch + (e.clientY - s.ly) * 0.012));
+      s.lx = e.clientX; s.ly = e.clientY;
+      draw3D();
+    });
+    cv.addEventListener("pointerup", function () { s.dragging = false; });
+    cv.addEventListener("pointercancel", function () { s.dragging = false; });
+
+    stage.oninput = function (e) {
+      var k = e.target && e.target.getAttribute && e.target.getAttribute("data-p3");
+      if (!k) return;
+      if (k === "unfold") s.unfold = (+e.target.value) / 100;
+      else s[k] = +e.target.value;
+      markLabDone("prism3d");
+      updateReadout();
+      draw3D();
+    };
+    stage.onclick = function (e) {
+      if (!e.target.closest("[data-p3-anim]")) return;
+      if (s.animRaf) cancelAnimationFrame(s.animRaf);
+      var target = s.unfold > 0.5 ? 0 : 1;
+      var targetPitch = target === 1 ? 1.15 : 0.46;
+      var startU = s.unfold, startP = s.pitch, t0 = performance.now();
+      markLabDone("prism3d");
+      function step(now) {
+        var t = Math.min(1, (now - t0) / 700);
+        var ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        s.unfold = startU + (target - startU) * ease;
+        s.pitch = startP + (targetPitch - startP) * ease;
+        var rng = stage.querySelector('[data-p3="unfold"]');
+        if (rng) rng.value = String(Math.round(s.unfold * 100));
+        updateReadout();
+        draw3D();
+        if (t < 1) s.animRaf = requestAnimationFrame(step);
+      }
+      s.animRaf = requestAnimationFrame(step);
+    };
+
+    updateReadout();
+    draw3D();
+  }
+
   /* Main Interactive Labs Launcher */
   function openLabs(body, startTab) {
     if (!body) return;
     var tab = startTab || "balance";
     var TABS = [
       { id: "balance", lbl: "⚖️ Algebra Balance" },
+      { id: "prism3d", lbl: "🧊 3D Prism & Net" },
       { id: "slope", lbl: "📈 Slope Explorer" },
       { id: "geom", lbl: "📐 Circles & Angles" },
       { id: "sci", lbl: "🧬 Genetics & Food Web" }
@@ -424,6 +615,7 @@
           '</div><div id="lab-stage"></div></div>';
       var stage = body.querySelector("#lab-stage");
       if (tab === "balance") renderBalanceLab(stage);
+      else if (tab === "prism3d") renderPrism3DLab(stage);
       else if (tab === "slope") renderSlopeLab(stage);
       else if (tab === "geom") renderGeomLab(stage);
       else renderSciLab(stage);

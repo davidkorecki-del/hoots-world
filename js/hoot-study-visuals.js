@@ -384,7 +384,7 @@
   }
 
   /* =========================================================================
-     3. BUILT-IN iPAD / APPLE PENCIL SCRATCHPAD CANVAS
+     3. PRO iPAD / APPLE PENCIL SCRATCHPAD (SMOOTH INK, HIGHLIGHTER, LINE SNAP, PNG)
      ========================================================================= */
   function mountScratchpad(host) {
     if (!host) return;
@@ -393,17 +393,36 @@
       '<button type="button" class="hs-pad-col on" data-col="#1E293B" aria-label="Dark ink" style="--c:#1E293B"></button>' +
       '<button type="button" class="hs-pad-col" data-col="#2563EB" aria-label="Blue ink" style="--c:#2563EB"></button>' +
       '<button type="button" class="hs-pad-col" data-col="#E0457B" aria-label="Pink ink" style="--c:#E0457B"></button>' +
+      '<button type="button" class="hs-pad-act" data-act="hi" title="Highlighter">🖍️ Highlight</button>' +
+      '<button type="button" class="hs-pad-act" data-act="line" title="Straight line tool">📏 Line</button>' +
       '<button type="button" class="hs-pad-act" data-act="eraser">🧽 Eraser</button>' +
-      '<button type="button" class="hs-pad-act" data-act="grid">⊞ Grid</button>' +
+      '<button type="button" class="hs-pad-act on" data-act="grid">⊞ Grid</button>' +
       '<button type="button" class="hs-pad-act" data-act="undo">↩ Undo</button>' +
       '<button type="button" class="hs-pad-act" data-act="clear">Clear</button>' +
-      '</div><canvas class="hs-pad-cv" width="640" height="220" aria-label="Scratchpad workspace"></canvas>';
+      '<button type="button" class="hs-pad-act" data-act="save" title="Save scratchpad as PNG">💾 PNG</button>' +
+      '</div><canvas class="hs-pad-cv" width="680" height="230" aria-label="Pro Scratchpad workspace"></canvas>';
 
     var cv = host.querySelector(".hs-pad-cv");
     var ctx = cv.getContext("2d");
-    var strokes = [], curStroke = null, color = "#1E293B", erasing = false, showGrid = true;
+    var strokes = [], curStroke = null, color = "#1E293B", tool = "pen", showGrid = true;
 
     function isDark() { return document.body.classList.contains("hs-dark"); }
+    function drawSmooth(pts) {
+      if (pts.length === 1) {
+        ctx.beginPath(); ctx.arc(pts[0][0], pts[0][1], Math.max(1.5, ctx.lineWidth * 0.5), 0, Math.PI * 2); ctx.fill();
+        return;
+      }
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (var i = 1; i < pts.length - 1; i++) {
+        var mx = (pts[i][0] + pts[i + 1][0]) * 0.5;
+        var my = (pts[i][1] + pts[i + 1][1]) * 0.5;
+        ctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+      }
+      var last = pts[pts.length - 1];
+      ctx.lineTo(last[0], last[1]);
+      ctx.stroke();
+    }
     function drawAll() {
       var w = cv.width, h = cv.height;
       ctx.clearRect(0, 0, w, h);
@@ -419,12 +438,33 @@
         if (!st.pts.length) return;
         ctx.save();
         ctx.lineCap = "round"; ctx.lineJoin = "round";
-        ctx.strokeStyle = st.erase ? (isDark() ? "#0F172A" : "#FFFDF8") : (st.col === "#1E293B" && isDark() ? "#F8FAFC" : st.col);
-        ctx.lineWidth = st.erase ? 18 : 3.2;
-        ctx.beginPath();
-        ctx.moveTo(st.pts[0][0], st.pts[0][1]);
-        for (var i = 1; i < st.pts.length; i++) ctx.lineTo(st.pts[i][0], st.pts[i][1]);
-        ctx.stroke();
+        if (st.tool === "hi") {
+          ctx.globalAlpha = 0.34;
+          ctx.strokeStyle = "#FACC15";
+          ctx.fillStyle = "#FACC15";
+          ctx.lineWidth = 18;
+          drawSmooth(st.pts);
+        } else if (st.tool === "eraser") {
+          ctx.strokeStyle = isDark() ? "#0F172A" : "#FFFDF8";
+          ctx.fillStyle = ctx.strokeStyle;
+          ctx.lineWidth = 20;
+          drawSmooth(st.pts);
+        } else if (st.tool === "line") {
+          var lc = st.col === "#1E293B" && isDark() ? "#F8FAFC" : st.col;
+          ctx.strokeStyle = lc;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(st.pts[0][0], st.pts[0][1]);
+          var end = st.pts[st.pts.length - 1];
+          ctx.lineTo(end[0], end[1]);
+          ctx.stroke();
+        } else {
+          var pc = st.col === "#1E293B" && isDark() ? "#F8FAFC" : st.col;
+          ctx.strokeStyle = pc;
+          ctx.fillStyle = pc;
+          ctx.lineWidth = st.w || 3.2;
+          drawSmooth(st.pts);
+        }
         ctx.restore();
       });
     }
@@ -435,36 +475,56 @@
     cv.addEventListener("pointerdown", function (e) {
       e.preventDefault();
       try { cv.setPointerCapture(e.pointerId); } catch (err) {}
-      curStroke = { col: color, erase: erasing, pts: [pt(e)] };
+      var pWidth = (e.pointerType === "pen" && e.pressure > 0) ? (1.8 + e.pressure * 3.8) : 3.2;
+      curStroke = { col: color, tool: tool, w: pWidth, pts: [pt(e)] };
       strokes.push(curStroke);
       drawAll();
     });
     cv.addEventListener("pointermove", function (e) {
       if (!curStroke) return;
       e.preventDefault();
-      curStroke.pts.push(pt(e));
+      var p = pt(e);
+      if (curStroke.tool === "line") curStroke.pts = [curStroke.pts[0], p];
+      else curStroke.pts.push(p);
       drawAll();
     });
     cv.addEventListener("pointerup", function () { curStroke = null; });
     cv.addEventListener("pointercancel", function () { curStroke = null; });
 
+    function syncToolBtns() {
+      ["hi", "line", "eraser"].forEach(function (k) {
+        var b = host.querySelector('[data-act="' + k + '"]');
+        if (b) b.classList.toggle("on", tool === k);
+      });
+    }
+
     host.addEventListener("click", function (e) {
       var cBtn = e.target.closest("[data-col]");
       if (cBtn) {
-        color = cBtn.getAttribute("data-col"); erasing = false;
+        color = cBtn.getAttribute("data-col");
+        if (tool === "eraser" || tool === "hi") tool = "pen";
         host.querySelectorAll(".hs-pad-col").forEach(function (b) { b.classList.toggle("on", b === cBtn); });
-        var eb = host.querySelector('[data-act="eraser"]'); if (eb) eb.classList.remove("on");
+        syncToolBtns();
         return;
       }
       var aBtn = e.target.closest("[data-act]");
       if (!aBtn) return;
       var act = aBtn.getAttribute("data-act");
-      if (act === "eraser") { erasing = !erasing; aBtn.classList.toggle("on", erasing); }
-      else if (act === "grid") { showGrid = !showGrid; aBtn.classList.toggle("on", showGrid); drawAll(); }
+      if (act === "hi" || act === "line" || act === "eraser") {
+        tool = tool === act ? "pen" : act;
+        syncToolBtns();
+      } else if (act === "grid") { showGrid = !showGrid; aBtn.classList.toggle("on", showGrid); drawAll(); }
       else if (act === "undo") { strokes.pop(); drawAll(); }
       else if (act === "clear") { strokes = []; drawAll(); }
+      else if (act === "save") {
+        try {
+          var a = document.createElement("a");
+          a.download = "hoots-scratchpad.png";
+          a.href = cv.toDataURL("image/png");
+          a.click();
+        } catch (err) {}
+      }
     });
-    var gb = host.querySelector('[data-act="grid"]'); if (gb) gb.classList.add("on");
     drawAll();
   }
 

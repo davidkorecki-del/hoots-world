@@ -1188,10 +1188,16 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var dInfo = hse && hse.dailyInfo ? hse.dailyInfo() : { doneToday: false, totalDays: 0 };
     var mapN = hsl && hsl.getMapDone ? Object.keys(hsl.getMapDone()).length : 0;
     return '<section class="tc-hub" aria-label="Grade 7 Study Tools">' +
-      '<div class="tc-hub-head"><b>⚡ Grade 7 NY Study Studio</b><button type="button" class="tc-hub-dark" data-teen-act="dark" aria-pressed="' + (isDark ? "true" : "false") + '">' + (isDark ? "☀️ Light Mode" : "🌙 Focus Dark") + "</button></div>" +
+      '<div class="tc-hub-head"><b>⚡ Grade 7 NY Study Studio</b>' +
+      '<div class="tc-hub-ctrl">' +
+        (hsp && hsp.themeSwatchesHtml ? hsp.themeSwatchesHtml() : "") +
+        '<button type="button" class="tc-cmdk-btn" data-teen-act="cmdk" title="Quick Jump (⌘K)">🔍 Jump <kbd>⌘K</kbd></button>' +
+        '<button type="button" class="tc-hub-dark" data-teen-act="dark" aria-pressed="' + (isDark ? "true" : "false") + '">' + (isDark ? "☀️ Light" : "🌙 Dark") + "</button>" +
+      "</div></div>" +
+      (hsp && hsp.nextMoveHtml ? hsp.nextMoveHtml() : "") +
       '<div class="tc-hub-grid tc-hub-6">' +
         '<button type="button" class="tc-hub-btn pri" data-teen-act="ny-exam"><span class="th-ic" aria-hidden="true">🏛️</span><span><b>NY State Exam Sim</b><small>2-session CBT · Levels 1–4</small></span></button>' +
-        '<button type="button" class="tc-hub-btn" data-teen-act="labs"><span class="th-ic" aria-hidden="true">🧪</span><span><b>Interactive STEM Labs</b><small>Algebra · Slope · Circles · Bio</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="labs"><span class="th-ic" aria-hidden="true">🧊</span><span><b>3D &amp; STEM Labs</b><small>3D Net · Balance · Slope · Bio</small></span></button>' +
         '<button type="button" class="tc-hub-btn" data-teen-act="flashcards"><span class="th-ic" aria-hidden="true">⚡</span><span><b>Flashcards &amp; Match</b><small>3D flip · Sprint · My Cards</small></span></button>' +
         '<button type="button" class="tc-hub-btn" data-teen-act="ny-map"><span class="th-ic" aria-hidden="true">🗺️</span><span><b>NY History Map</b><small>' + mapN + '/6 primary-source landmarks</small></span></button>' +
         '<button type="button" class="tc-hub-btn" data-teen-act="daily"><span class="th-ic" aria-hidden="true">🔥</span><span><b>Daily 90s Warm-Up' + (dInfo.doneToday ? ' <span class="tc-vbadge" data-zero="1">✓</span>' : "") + '</b><small>' + (dInfo.doneToday ? "Done today · Play again" : "3 cross-subject questions") + "</small></span></button>" +
@@ -2312,6 +2318,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     document.body.classList.toggle("ll-pathlock", !playUnlocked());
     document.body.classList.toggle("ll-teen", teen);
     if (window.HootStudy && window.HootStudy.syncDark) window.HootStudy.syncDark(state.profile ? state.profile.id : "");
+    if (window.HootStudyPro && window.HootStudyPro.syncTheme) window.HootStudyPro.syncTheme(state.profile ? state.profile.id : "");
     if (!teen && window.HootStudyPro && window.HootStudyPro.stopAmbient) window.HootStudyPro.stopAmbient();
     var h1 = $(".ll-shell-header h1");
     if (h1) h1.textContent = teen ? "Hoot · Study" : "🌈 Hoot's World";
@@ -3198,6 +3205,78 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var box = document.querySelector(".ll-classbox"); if (box) box.scrollIntoView({ block: "start" });
   });
 
+  function runTeenAct(teenAct) {
+    if (!teenAct || !window.HootStudy) return false;
+    if (teenAct === "dark") {
+      window.HootStudy.setDark(!document.body.classList.contains("hs-dark"));
+      render();
+      return true;
+    }
+    if (teenAct === "cmdk" && window.HootStudyPro && window.HootStudyPro.openQuickJump) {
+      window.HootStudyPro.openQuickJump(function (item) {
+        if (item.kind === "act") runTeenAct(item.val);
+        else if (item.kind === "lesson") {
+          if (!openLessonById(item.val)) {
+            var foundL = window.HootStudy.lessons.filter(function (x) { return x.id === item.val; })[0];
+            if (foundL) { openShellOverlay(foundL.title, ""); document.body.classList.add("ll-tutor-open"); window.HootStudy.play(foundL, $("#ll-obody")); }
+          }
+        }
+      });
+      return true;
+    }
+    if (teenAct === "test-math" || teenAct === "test-all") {
+      var titleT = teenAct === "test-all" ? "NY Grade 7 All-Subjects Exam" : "NY Grade 7 Math Practice Test";
+      openShellOverlay(titleT, "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudy.startPracticeTest($("#ll-obody"), teenAct === "test-all" ? "all" : "math7");
+      return true;
+    }
+    if (teenAct === "ny-exam" && window.HootStudyExam) {
+      openShellOverlay("🏛️ NY Grade 7 State Exam Simulator", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudyExam.openNyExam($("#ll-obody"));
+      return true;
+    }
+    if ((teenAct === "labs" || teenAct.indexOf("labs-") === 0) && window.HootStudyLabs) {
+      var subLab = teenAct.indexOf("labs-") === 0 ? teenAct.slice(5) : "balance";
+      openShellOverlay("🧊 Interactive Grade 7 STEM Labs", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudyLabs.openLabs($("#ll-obody"), subLab);
+      return true;
+    }
+    if (teenAct === "ny-map" && window.HootStudyLabs) {
+      openShellOverlay("🗺️ New York History Map", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudyLabs.openNyMap($("#ll-obody"));
+      return true;
+    }
+    if (teenAct === "daily" && window.HootStudyExam) {
+      openShellOverlay("🔥 Daily 90-Second Brain Warm-Up", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudyExam.openDailyWarmup($("#ll-obody"));
+      return true;
+    }
+    if (teenAct === "flashcards" && window.HootStudyPro) {
+      openShellOverlay("⚡ Flashcards & Match Sprint", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudyPro.openFlashcards($("#ll-obody"), "all");
+      return true;
+    }
+    if (teenAct === "vault") {
+      openShellOverlay("Mistake Vault", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootStudy.playVault($("#ll-obody"));
+      return true;
+    }
+    return false;
+  }
+  document.addEventListener("keydown", function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K") && isTeen()) {
+      e.preventDefault();
+      runTeenAct("cmdk");
+    }
+  });
+
   function onAppClick(e) {
     var t = e.target.closest("button, .gcard, .ll-chk, .ll-act-game, .ll-act");
     if (!t) return;
@@ -3244,57 +3323,14 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (t.classList.contains("kh-stone") || t.classList.contains("kh-gobtn")) { var li = t.closest("[data-title]"); state.pendingStone = li && li.getAttribute("data-title"); window.__hwFromTodayPath = isLittleBand(); }
     else if (t.getAttribute("data-act") === "play") { window.__hwFromTodayPath = false; }
     if (t.getAttribute("data-gp-tab")) { setTab(t.getAttribute("data-gp-tab")); return; }
-    var teenAct = t.getAttribute("data-teen-act");
-    if (teenAct && window.HootStudy) {
-      if (teenAct === "dark") {
-        window.HootStudy.setDark(!document.body.classList.contains("hs-dark"));
-        render();
-        return;
-      }
-      if (teenAct === "test-math" || teenAct === "test-all") {
-        var titleT = teenAct === "test-all" ? "NY Grade 7 All-Subjects Exam" : "NY Grade 7 Math Practice Test";
-        openShellOverlay(titleT, "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudy.startPracticeTest($("#ll-obody"), teenAct === "test-all" ? "all" : "math7");
-        return;
-      }
-      if (teenAct === "ny-exam" && window.HootStudyExam) {
-        openShellOverlay("🏛️ NY Grade 7 State Exam Simulator", "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudyExam.openNyExam($("#ll-obody"));
-        return;
-      }
-      if (teenAct === "labs" && window.HootStudyLabs) {
-        openShellOverlay("🧪 Interactive Grade 7 STEM Labs", "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudyLabs.openLabs($("#ll-obody"), "balance");
-        return;
-      }
-      if (teenAct === "ny-map" && window.HootStudyLabs) {
-        openShellOverlay("🗺️ New York History Map", "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudyLabs.openNyMap($("#ll-obody"));
-        return;
-      }
-      if (teenAct === "daily" && window.HootStudyExam) {
-        openShellOverlay("🔥 Daily 90-Second Brain Warm-Up", "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudyExam.openDailyWarmup($("#ll-obody"));
-        return;
-      }
-      if (teenAct === "flashcards" && window.HootStudyPro) {
-        openShellOverlay("⚡ Flashcards & Match Sprint", "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudyPro.openFlashcards($("#ll-obody"), "all");
-        return;
-      }
-      if (teenAct === "vault") {
-        openShellOverlay("Mistake Vault", "");
-        document.body.classList.add("ll-tutor-open");
-        window.HootStudy.playVault($("#ll-obody"));
-        return;
-      }
+    var hsTheme = t.getAttribute("data-hs-theme");
+    if (hsTheme && window.HootStudyPro && window.HootStudyPro.setTheme) {
+      window.HootStudyPro.setTheme(hsTheme);
+      render();
+      return;
     }
+    var teenAct = t.getAttribute("data-teen-act");
+    if (teenAct && runTeenAct(teenAct)) return;
     var pinTitle = t.getAttribute("data-pin-toggle");
     if (pinTitle && window.HootStudyPro && window.HootStudyPro.togglePin) {
       window.HootStudyPro.togglePin(pinTitle);

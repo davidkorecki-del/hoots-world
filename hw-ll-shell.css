@@ -1750,6 +1750,86 @@ body.ll-teen.hs-dark #ll-obody .cbt-lvl.l1{background:#450A0A;border-color:#EF44
 body.ll-teen.hs-dark .pf-badge.on{background:#064E3B;border-color:#10B981;color:#ECFDF5}
 body.ll-teen.hs-dark .pf-badge.on small{color:#6EE7B7 !important}
 
+/* ===== 3D Prism Lab, Theme Studio (4 Palettes), Glassmorphic Nav, Quick Jump (⌘K), Next-Move Coach & Micro-Confetti ===== */
+body.ll-teen #ll-tabs{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);background:rgba(255,255,255,.84) !important}
+body.ll-teen.hs-dark #ll-tabs{background:rgba(15,23,42,.80) !important}
+.tc-hub-ctrl{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.tc-themes{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:999px;background:#F1F5F9;border:1px solid #CBD5E1}
+.tc-swatch{width:18px;height:18px;border-radius:50%;border:2px solid transparent;background:var(--sw);cursor:pointer;padding:0;transition:transform .14s}
+.tc-swatch:hover{transform:scale(1.15)}
+.tc-swatch.on{border-color:#0F172A;box-shadow:0 0 0 2px #fff inset}
+.tc-cmdk-btn{min-height:36px;padding:4px 10px;border-radius:999px;border:1.5px solid #CBD5E1;background:#F8FAFC;color:#151922;font-size:.84rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.tc-cmdk-btn kbd{font-size:.72rem;padding:1px 5px;border-radius:5px;background:#E2E8F0;color:#475569;font-weight:700}
+.tc-next{display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:10px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,.11),rgba(59,130,246,.08));border:1.5px solid var(--teen-accent,#0B5E43)}
+.tc-next-ic{font-size:1.55rem;line-height:1;flex:none}
+.tc-next-txt{flex:1;min-width:0}
+.tc-next-txt small{display:block;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--teen-accent,#0B5E43)}
+.tc-next-txt b{display:block;font-size:.96rem;color:#0F172A}
+.tc-next-txt span{display:block;font-size:.82rem;color:#475569}
+@media (max-width:560px){.tc-next{flex-wrap:wrap}}
+/* 3D Prism & Unfolding Net Lab */
+#ll-obody .lab-p3-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:start}
+@media (max-width:680px){#ll-obody .lab-p3-grid{grid-template-columns:1fr}}
+#ll-obody .lab-p3-stage{text-align:center}
+#ll-obody .lab-p3-cv{display:block;width:100%;height:auto;aspect-ratio:680/440;border-radius:14px;border:1.5px solid #CBD5E1;touch-action:none;cursor:grab}
+#ll-obody .lab-p3-cv:active{cursor:grabbing}
+#ll-obody .lab-p3-tip{display:block;margin-top:6px;font-size:.8rem;color:#64748B;font-weight:600}
+#ll-obody .lab-p3-legend{display:grid;gap:4px;margin-top:8px;font-size:.82rem;font-weight:600;color:#475569}
+#ll-obody .lab-p3-legend span{display:flex;align-items:center;gap:7px}
+#ll-obody .lab-p3-legend i{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+/* ⌘K Quick-Jump Command Palette */
+.cmdk-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.56);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:min(12vh,88px) 16px 24px}
+.cmdk-box{width:100%;max-width:560px;background:#fff;border:1px solid #CBD5E1;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.32);overflow:hidden}
+.cmdk-in-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #E2E8F0}
+.cmdk-in-row input{flex:1;border:0;outline:none;background:transparent;font-size:1rem;color:#0F172A}
+.cmdk-esc{border:1px solid #CBD5E1;background:#F8FAFC;color:#475569;border-radius:7px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer}
+.cmdk-list{max-height:360px;overflow-y:auto;padding:6px}
+.cmdk-item{display:flex;align-items:center;gap:11px;width:100%;padding:9px 11px;border:0;border-radius:10px;background:transparent;text-align:left;cursor:pointer;color:#0F172A}
+.cmdk-item.on,.cmdk-item:hover{background:#ECFDF5;color:#065F46}
+.cmdk-ic{font-size:1.25rem;width:28px;text-align:center;flex:none}
+.cmdk-item b{display:block;font-size:.94rem}
+.cmdk-item small{display:block;font-size:.78rem;color:#64748B}
+.cmdk-empty{padding:18px;text-align:center;color:#64748B;font-size:.92rem;margin:0}
+/* Micro-confetti burst & animated Portfolio rings */
+.hs-confetti{position:fixed;left:50%;top:42%;z-index:10000;pointer-events:none}
+.hs-confetti i{position:absolute;width:8px;height:8px;border-radius:2px;animation:hsPop 1.05s cubic-bezier(.15,.85,.35,1) forwards}
+@keyframes hsPop{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.35) rotate(var(--rot));opacity:0}}
+.pf-ring circle:nth-child(2){animation:pfRingDraw .75s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pfRingDraw{from{stroke-dashoffset:163.4}}
+@media (prefers-reduced-motion:reduce){.pf-ring circle:nth-child(2){animation:none}}
+/* Dark Mode adjustments for new controls */
+body.ll-teen.hs-dark .tc-themes{background:#1E293B;border-color:#334155}
+body.ll-teen.hs-dark .tc-swatch.on{border-color:#fff;box-shadow:0 0 0 2px #0F172A inset}
+body.ll-teen.hs-dark .tc-cmdk-btn{background:#1E293B;border-color:#334155;color:#F1F5F9}
+body.ll-teen.hs-dark .tc-cmdk-btn kbd{background:#0F172A;color:#94A3B8}
+body.ll-teen.hs-dark .tc-next-txt b{color:#F1F5F9}
+body.ll-teen.hs-dark .tc-next-txt span,
+body.ll-teen.hs-dark #ll-obody .lab-p3-tip,
+body.ll-teen.hs-dark #ll-obody .lab-p3-legend{color:#94A3B8}
+body.ll-teen.hs-dark #ll-obody .lab-p3-cv{border-color:#334155}
+body.ll-teen.hs-dark .cmdk-box{background:#141E30;border-color:#334155}
+body.ll-teen.hs-dark .cmdk-in-row{border-bottom-color:#26334A}
+body.ll-teen.hs-dark .cmdk-in-row input,body.ll-teen.hs-dark .cmdk-item{color:#F1F5F9}
+body.ll-teen.hs-dark .cmdk-esc{background:#1E293B;border-color:#334155;color:#CBD5E1}
+body.ll-teen.hs-dark .cmdk-item.on,body.ll-teen.hs-dark .cmdk-item:hover{background:#1E293B;color:#fff}
+body.ll-teen.hs-dark .cmdk-item small{color:#94A3B8}
+
+/* 3 Additional Personal Study Themes (strictly scoped to Kaitlyn: body.ll-teen.hs-theme-*) */
+body.ll-teen.hs-theme-indigo{--teen-accent:#4F46E5;--kid:#4F46E5}
+body.ll-teen.hs-theme-indigo.hs-dark{--teen-accent:#818CF8}
+body.ll-teen.hs-theme-indigo .tc-hub-btn.pri,body.ll-teen.hs-theme-indigo .ll-btn.pri,body.ll-teen.hs-theme-indigo #ll-obody .hs-btn.pri,body.ll-teen.hs-theme-indigo .ft-btn.pri,body.ll-teen.hs-theme-indigo .ft-chip.on,body.ll-teen.hs-theme-indigo .ln-pill.on,body.ll-teen.hs-theme-indigo #ll-obody .fc-pill.on{background:#4F46E5;border-color:#4F46E5;color:#fff}
+body.ll-teen.hs-theme-indigo.hs-dark #ll-tabs button.on,body.ll-teen.hs-theme-indigo.hs-dark .ll-kidbar button.on{background:#6366F1 !important;border-color:#6366F1 !important;color:#fff !important}
+body.ll-teen.hs-theme-sepia{--bg:#F6EFE2;--teen-accent:#B45309;--kid:#B45309;--teen-line:#E5D7BF}
+body.ll-teen.hs-theme-sepia .ll-card,body.ll-teen.hs-theme-sepia .tc-head,body.ll-teen.hs-theme-sepia .tc-hub,body.ll-teen.hs-theme-sepia .tc-course,body.ll-teen.hs-theme-sepia .rl-card,body.ll-teen.hs-theme-sepia .pf-subj{background:#FFFDF7 !important}
+body.ll-teen.hs-theme-sepia .tc-hub-btn.pri,body.ll-teen.hs-theme-sepia .ll-btn.pri,body.ll-teen.hs-theme-sepia #ll-obody .hs-btn.pri,body.ll-teen.hs-theme-sepia .ft-btn.pri,body.ll-teen.hs-theme-sepia .ft-chip.on,body.ll-teen.hs-theme-sepia .ln-pill.on,body.ll-teen.hs-theme-sepia #ll-obody .fc-pill.on{background:#B45309;border-color:#B45309;color:#fff}
+body.ll-teen.hs-theme-sepia.hs-dark{--bg:#18130E;--teen-accent:#F59E0B;--teen-line:#342A21;background:#18130E !important}
+body.ll-teen.hs-theme-sepia.hs-dark .ll-card,body.ll-teen.hs-theme-sepia.hs-dark .tc-head,body.ll-teen.hs-theme-sepia.hs-dark .tc-hub,body.ll-teen.hs-theme-sepia.hs-dark .tc-course,body.ll-teen.hs-theme-sepia.hs-dark .rl-card,body.ll-teen.hs-theme-sepia.hs-dark .pf-subj,body.ll-teen.hs-theme-sepia.hs-dark #ll-obody .hs-card,body.ll-teen.hs-theme-sepia.hs-dark #ll-obody .lab-card{background:#231C15 !important;border-color:#3B3025 !important}
+body.ll-teen.hs-theme-sepia.hs-dark #ll-tabs button.on,body.ll-teen.hs-theme-sepia.hs-dark .ll-kidbar button.on{background:#D97706 !important;border-color:#D97706 !important;color:#fff !important}
+body.ll-teen.hs-theme-rose{--teen-accent:#E11D48;--kid:#E11D48}
+body.ll-teen.hs-theme-rose.hs-dark{--teen-accent:#FB7185}
+body.ll-teen.hs-theme-rose .tc-hub-btn.pri,body.ll-teen.hs-theme-rose .ll-btn.pri,body.ll-teen.hs-theme-rose #ll-obody .hs-btn.pri,body.ll-teen.hs-theme-rose .ft-btn.pri,body.ll-teen.hs-theme-rose .ft-chip.on,body.ll-teen.hs-theme-rose .ln-pill.on,body.ll-teen.hs-theme-rose #ll-obody .fc-pill.on{background:#E11D48;border-color:#E11D48;color:#fff}
+body.ll-teen.hs-theme-rose.hs-dark #ll-tabs button.on,body.ll-teen.hs-theme-rose.hs-dark .ll-kidbar button.on{background:#E11D48 !important;border-color:#E11D48 !important;color:#fff !important}
+
 /* ===== 3e29: Hoot's Party Games — candy look ===== */
 .pg-rowh{font-size:1.15rem;margin:16px 4px 8px;color:#17263b}
 .pg-row,.pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}

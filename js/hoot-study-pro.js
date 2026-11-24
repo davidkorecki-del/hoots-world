@@ -13,6 +13,7 @@
   var CUSTOM_CARDS_KEY = "hootworld.hs.customcards.v1";
   var MATCH_BEST_KEY = "hootworld.hs.matchbest.v1";
   var PINS_KEY = "hootworld.hs.pins.v1";
+  var THEME_KEY = "hootworld.hs.theme.v1";
   var CER_KEY = "hootworld.hs.cer.v1";
 
   function esc(s) {
@@ -431,6 +432,7 @@
           matchSt.secs = Math.max(0.1, Math.round((Date.now() - matchSt.t0) / 100) / 10);
           matchSt.done = true;
           matchSt.isPB = saveMatchBest(deck, matchSt.secs);
+          celebrate();
         }
       } else {
         matchSt.selTerm = null; matchSt.selDef = null;
@@ -861,6 +863,165 @@
       "</section>";
   }
 
+  /* =========================================================================
+     7. PERSONAL STUDY THEMES (4 PALETTES), MICRO-CONFETTI, NEXT MOVE & ⌘K QUICK JUMP
+     ========================================================================= */
+  var THEMES = [
+    { id: "emerald", name: "Emerald Focus", dot: "#10B981" },
+    { id: "indigo", name: "Midnight Indigo", dot: "#6366F1" },
+    { id: "sepia", name: "Warm Sepia Reader", dot: "#D97706" },
+    { id: "rose", name: "Slate Rose", dot: "#F43F5E" }
+  ];
+  function getTheme() {
+    try { return localStorage.getItem(THEME_KEY) || "emerald"; } catch (e) { return "emerald"; }
+  }
+  function syncTheme(profileId) {
+    THEMES.forEach(function (t) { document.body.classList.remove("hs-theme-" + t.id); });
+    if (profileId !== "kidc") return;
+    var cur = getTheme();
+    if (cur && cur !== "emerald") document.body.classList.add("hs-theme-" + cur);
+  }
+  function setTheme(id) {
+    var ok = THEMES.some(function (t) { return t.id === id; });
+    var val = ok ? id : "emerald";
+    try { localStorage.setItem(THEME_KEY, val); } catch (e) {}
+    syncTheme(activeKid());
+  }
+  function themeSwatchesHtml() {
+    var cur = getTheme();
+    return '<span class="tc-themes" role="group" aria-label="Study theme color">' +
+      THEMES.map(function (t) {
+        return '<button type="button" class="tc-swatch' + (t.id === cur ? " on" : "") + '" data-hs-theme="' + t.id + '" title="' + esc(t.name) + '" aria-label="' + esc(t.name) + '" style="--sw:' + t.dot + '"></button>';
+      }).join("") + "</span>";
+  }
+
+  function celebrate() {
+    try {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var host = document.createElement("div");
+      host.className = "hs-confetti";
+      host.setAttribute("aria-hidden", "true");
+      var cols = ["#10B981", "#6366F1", "#F59E0B", "#EC4899", "#38BDF8", "#A855F7"];
+      for (var i = 0; i < 28; i++) {
+        var sp = document.createElement("i");
+        var ang = (Math.PI * 2 * i) / 28 + (Math.random() - 0.5) * 0.25;
+        var dist = 70 + Math.random() * 140;
+        sp.style.setProperty("--dx", (Math.cos(ang) * dist).toFixed(1) + "px");
+        sp.style.setProperty("--dy", (Math.sin(ang) * dist - 40).toFixed(1) + "px");
+        sp.style.setProperty("--rot", Math.round((Math.random() - 0.5) * 520) + "deg");
+        sp.style.background = cols[i % cols.length];
+        host.appendChild(sp);
+      }
+      document.body.appendChild(host);
+      setTimeout(function () { if (host.parentNode) host.parentNode.removeChild(host); }, 1250);
+    } catch (e) {}
+  }
+
+  function nextMoveHtml() {
+    var hs = window.HootStudy, hse = window.HootStudyExam, hsl = window.HootStudyLabs;
+    var vaultN = hs && hs.getVault ? hs.getVault().length : 0;
+    var daily = hse && hse.dailyInfo ? hse.dailyInfo() : { doneToday: false };
+    var labs = hsl && hsl.getLabsDone ? hsl.getLabsDone() : {};
+    var mapN = hsl && hsl.getMapDone ? Object.keys(hsl.getMapDone()).length : 0;
+    var move;
+    if (vaultN > 0) {
+      move = { ico: "🎯", title: "Clear " + vaultN + " item" + (vaultN === 1 ? "" : "s") + " in your Mistake Vault", sub: "Quick 3-minute targeted review of your recent misses.", act: "vault", cta: "Review now ▶" };
+    } else if (!daily.doneToday) {
+      move = { ico: "🔥", title: "Daily 90-Second Brain Warm-Up ready", sub: "3 fresh cross-subject Grade 7 questions to kick off today.", act: "daily", cta: "Start warm-up ▶" };
+    } else if (!labs.prism3d) {
+      move = { ico: "🧊", title: "Try the 3D Unfolding Prism Lab (7.G.6)", sub: "Rotate a 3D prism and unfold all 6 faces into a flat 2D net.", act: "labs-prism3d", cta: "Open 3D Lab ▶" };
+    } else if (mapN < 6) {
+      move = { ico: "🗺️", title: (6 - mapN) + " NY History Map landmark" + (6 - mapN === 1 ? "" : "s") + " left to master", sub: "Explore primary-source quotes across New York State.", act: "ny-map", cta: "Explore map ▶" };
+    } else {
+      move = { ico: "🏛️", title: "Ready for a 2-Session NY State Exam Sim?", sub: "Test yourself across Non-Calculator + Calculator sessions.", act: "ny-exam", cta: "Launch exam ▶" };
+    }
+    return '<div class="tc-next">' +
+      '<span class="tc-next-ic" aria-hidden="true">' + move.ico + "</span>" +
+      '<div class="tc-next-txt"><small>✨ Recommended Next Move</small><b>' + esc(move.title) + "</b><span>" + esc(move.sub) + "</span></div>" +
+      '<button type="button" class="ll-btn pri sm" data-teen-act="' + move.act + '">' + esc(move.cta) + "</button>" +
+    "</div>";
+  }
+
+  /* ⌘K Quick-Jump Command Palette */
+  function openQuickJump(dispatch) {
+    var existing = document.getElementById("hs-cmdk");
+    if (existing) { existing.remove(); return; }
+    var items = [
+      { id: "act:labs-prism3d", ico: "🧊", title: "3D Prism & Unfolding Net Lab", sub: "Interactive STEM Lab · 7.G.6", kind: "act", val: "labs-prism3d" },
+      { id: "act:labs", ico: "⚖️", title: "Equation Balance & Algebra Lab", sub: "Step-by-Step Algebra · 7.EE.4", kind: "act", val: "labs" },
+      { id: "act:labs-slope", ico: "📈", title: "Proportional Slope Explorer", sub: "Coordinate Plane Lab · 7.RP.2", kind: "act", val: "labs-slope" },
+      { id: "act:labs-geom", ico: "📐", title: "Circle & Angle Protractor Lab", sub: "Geometry Lab · 7.G.4, 7.G.5", kind: "act", val: "labs-geom" },
+      { id: "act:labs-sci", ico: "🧬", title: "Punnett Square & Hudson Food Web Lab", sub: "Science Simulator · MS-LS2/3", kind: "act", val: "labs-sci" },
+      { id: "act:ny-exam", ico: "🏛️", title: "NY Grade 7 State Exam Simulator", sub: "2-Session CBT · Levels 1–4", kind: "act", val: "ny-exam" },
+      { id: "act:flashcards", ico: "⚡", title: "Quick Flip Flashcards & Match Sprint", sub: "3D Cards · Custom Decks", kind: "act", val: "flashcards" },
+      { id: "act:ny-map", ico: "🗺️", title: "Interactive NY History Map", sub: "6 Primary-Source Landmarks · 7.1–7.8", kind: "act", val: "ny-map" },
+      { id: "act:daily", ico: "🔥", title: "Daily 90-Second Brain Warm-Up", sub: "3 Cross-Subject Questions", kind: "act", val: "daily" },
+      { id: "act:vault", ico: "🎯", title: "Mistake Vault", sub: "Clear missed quiz problems", kind: "act", val: "vault" },
+      { id: "act:dark", ico: "🌙", title: "Toggle Focus Dark / Light Mode", sub: "Workspace appearance", kind: "act", val: "dark" }
+    ];
+    if (window.HootStudy && window.HootStudy.lessons) {
+      window.HootStudy.lessons.forEach(function (l) {
+        items.push({ id: "lsn:" + l.id, ico: l.emo || "📘", title: l.title, sub: (l.std || "") + " · " + (l.subject || "Grade 7"), kind: "lesson", val: l.id });
+      });
+    }
+
+    var wrap = document.createElement("div");
+    wrap.id = "hs-cmdk";
+    wrap.className = "cmdk-backdrop";
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-modal", "true");
+    wrap.setAttribute("aria-label", "Quick Jump command palette");
+    wrap.innerHTML =
+      '<div class="cmdk-box">' +
+        '<div class="cmdk-in-row"><span aria-hidden="true">🔍</span>' +
+        '<input type="search" id="cmdk-input" autocomplete="off" placeholder="Jump to any Grade 7 lesson, 3D Lab, Exam, Flashcards, or NY standard (e.g. 7.G.6)…">' +
+        '<button type="button" class="cmdk-esc" data-cmdk-close="1">Esc</button></div>' +
+        '<div class="cmdk-list" id="cmdk-list"></div>' +
+      "</div>";
+    document.body.appendChild(wrap);
+
+    var inp = wrap.querySelector("#cmdk-input");
+    var listEl = wrap.querySelector("#cmdk-list");
+    var shown = items.slice(0, 10), sel = 0;
+
+    function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }
+    function paint() {
+      var q = (inp.value || "").trim().toLowerCase();
+      shown = (q
+        ? items.filter(function (it) { return (it.title + " " + it.sub).toLowerCase().indexOf(q) >= 0; })
+        : items
+      ).slice(0, 12);
+      if (sel >= shown.length) sel = 0;
+      listEl.innerHTML = shown.length
+        ? shown.map(function (it, i) {
+            return '<button type="button" class="cmdk-item' + (i === sel ? " on" : "") + '" data-cmdk-i="' + i + '">' +
+              '<span class="cmdk-ic">' + it.ico + '</span><span><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + "</small></span></button>";
+          }).join("")
+        : '<p class="cmdk-empty">No matching Grade 7 lessons or tools.</p>';
+    }
+    function pickItem(i) {
+      var it = shown[i];
+      if (!it) return;
+      close();
+      if (typeof dispatch === "function") dispatch(it);
+    }
+
+    inp.addEventListener("input", function () { sel = 0; paint(); });
+    inp.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { e.preventDefault(); close(); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); sel = (sel + 1) % Math.max(1, shown.length); paint(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); sel = (sel - 1 + Math.max(1, shown.length)) % Math.max(1, shown.length); paint(); }
+      else if (e.key === "Enter") { e.preventDefault(); pickItem(sel); }
+    });
+    wrap.addEventListener("click", function (e) {
+      if (e.target === wrap || e.target.closest("[data-cmdk-close]")) { close(); return; }
+      var b = e.target.closest("[data-cmdk-i]");
+      if (b) pickItem(+b.getAttribute("data-cmdk-i"));
+    });
+    paint();
+    try { inp.focus(); } catch (e) {}
+  }
+
   window.HootStudyPro = {
     mountCalculator: mountCalculator,
     isCalcLocked: isCalcLocked,
@@ -876,6 +1037,13 @@
     togglePin: togglePin,
     pinnedStripHtml: pinnedStripHtml,
     getCustomCards: getCustomCards,
+    getTheme: getTheme,
+    setTheme: setTheme,
+    syncTheme: syncTheme,
+    themeSwatchesHtml: themeSwatchesHtml,
+    celebrate: celebrate,
+    nextMoveHtml: nextMoveHtml,
+    openQuickJump: openQuickJump,
     FLASHCARDS: FLASHCARDS
   };
 })();
