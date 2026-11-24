@@ -1303,6 +1303,185 @@ body.ll-kidband #ll-tabs button[data-tab="memories"]{display:none}
 #ll-obody .hs-tag.ok{background:#ebfbee;color:#145e28}
 #ll-obody .hs-tag.no{background:#fff1ee;color:#7a1f14}
 
+/* ===== Grade 7 NY Tutor Upgrades: Live Diagrams, Scratchpad, Reference, Highlight, Order, CER, Vault, Study Hub & Focus Dark ===== */
+#ll-obody .hs-toprow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:2px 0 8px}
+#ll-obody .hs-tools{display:flex;flex-wrap:wrap;gap:6px}
+#ll-obody .hs-tool{min-height:36px;padding:4px 11px;border-radius:999px;border:1.5px solid #cbd5e1;background:#fff;color:#1e293b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s}
+#ll-obody .hs-tool:hover{border-color:#0B5E43}
+#ll-obody .hs-tool.on{background:#0B5E43;border-color:#0B5E43;color:#fff}
+#ll-obody .hs-drawer{margin:0 0 12px;background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:14px;padding:12px}
+#ll-obody .hs-drawer[hidden]{display:none !important}
+#ll-obody .hs-vis{margin:10px 0 14px;padding:8px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;text-align:center}
+#ll-obody .hs-vis svg{display:block;width:100%;max-width:460px;height:auto;margin:0 auto}
+#ll-obody .hs-diag{margin:8px 0 10px;padding:10px 12px;background:#FEF3C7;border-left:4px solid #D97706;border-radius:8px;font-size:.96rem;color:#78350F !important;font-weight:500}
+#ll-obody .hs-pad-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+#ll-obody .hs-pad-col{width:28px;height:28px;border-radius:50%;border:2.5px solid #cbd5e1;background:var(--c,#1E293B);cursor:pointer;padding:0;flex:none}
+#ll-obody .hs-pad-col.on{border-color:#0F172A;box-shadow:0 0 0 2px #fff inset}
+#ll-obody .hs-pad-act{min-height:34px;padding:4px 10px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;color:#1e293b;font-size:.84rem;font-weight:600;cursor:pointer}
+#ll-obody .hs-pad-act.on{background:#0B5E43;color:#fff;border-color:#0B5E43}
+#ll-obody .hs-pad-cv{display:block;width:100%;height:220px;border-radius:10px;border:1.5px solid #CBD5E1;background:#FFFDF8;touch-action:none;cursor:crosshair}
+#ll-obody .hs-ref-box h4{margin:0 0 8px;font-size:1rem;color:#0F172A}
+#ll-obody .hs-ref-list{margin:0;padding-left:18px;display:grid;gap:5px;font-size:.94rem;line-height:1.45;color:#1E293B}
+/* Highlight clause / evidence segments */
+#ll-obody .hs-mode-pill{display:inline-block;margin:0 0 12px;padding:6px 12px;border-radius:999px;background:#ECFDF5;border:1.5px solid #0B5E43;color:#065F46;font-size:.88rem;font-weight:700}
+#ll-obody .hs-hl-tip{margin:0 0 8px !important;font-size:.88rem !important;font-weight:600;color:#475569 !important}
+#ll-obody .hs-hl-box{padding:14px;background:#FBF7EE;border:1.5px solid #E2D6F3;border-radius:12px;margin:10px 0 12px;line-height:1.65}
+#ll-obody .hs-hl-text{display:flex;flex-wrap:wrap;gap:8px}
+#ll-obody .hs-seg{display:inline-block;text-align:left;padding:6px 11px;border-radius:9px;border:1.5px solid #C4B5FD;background:#fff;color:#151922;font-size:1rem;font-weight:500;cursor:pointer;transition:background .15s,border-color .15s}
+#ll-obody .hs-seg:hover:not(:disabled){background:#F3E8FF;border-color:#7A2E8E}
+#ll-obody .hs-seg.right{background:#DCFCE7;border-color:#15803D;color:#14532D;font-weight:700}
+#ll-obody .hs-seg.wrong{background:#FEE2E2;border-color:#B91C1C;color:#7F1D1D}
+/* Chronological / process order builder */
+#ll-obody .hs-ord-picked{min-height:54px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px;background:#F8FAFC;border:1.5px dashed #94A3B8;border-radius:12px;margin:8px 0 10px}
+#ll-obody .hs-ord-empty{color:#64748B;font-size:.94rem;font-weight:500}
+#ll-obody .hs-ord-slot{padding:7px 11px;border-radius:9px;border:1.5px solid #0B5E43;background:#ECFDF5;color:#065F46;font-size:.94rem;font-weight:600;cursor:pointer}
+#ll-obody .hs-ord-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+#ll-obody .hs-ord-chip{min-height:44px;padding:8px 13px;border-radius:10px;border:1.5px solid #94A3B8;background:#fff;color:#151922;font-size:.96rem;font-weight:600;cursor:pointer}
+#ll-obody .hs-ord-chip:disabled{opacity:.38;cursor:default}
+#ll-obody .hs-ord-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* CER Argument Writing Coach */
+#ll-obody .hs-cer{display:grid;gap:10px;margin:8px 0 10px}
+#ll-obody .hs-cer-lbl{display:grid;gap:5px;font-size:.92rem;font-weight:700;color:#1E293B}
+#ll-obody .hs-cer-in{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #94A3B8;background:#fff;color:#151922;font-size:.98rem;line-height:1.45;resize:vertical}
+#ll-obody .hs-cer-rubric{margin:10px 0;padding:12px 14px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;font-size:.95rem}
+#ll-obody .hs-cer-rubric ul{margin:6px 0 10px;padding-left:20px;display:grid;gap:5px;line-height:1.45}
+#ll-obody .hs-cer-model{padding:11px 13px;background:#EFF6FF;border-left:4px solid #2563EB;border-radius:8px;font-size:.95rem;line-height:1.5;margin:8px 0 2px;color:#1E3A8A}
+#ll-obody .hs-cer-model p{margin:4px 0 0 !important;color:inherit !important;font-size:.95rem !important}
+/* NY Grade 7 Standards Breakdown */
+#ll-obody .hs-std-grid{margin:12px 0;padding:12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px}
+#ll-obody .hs-std-grid h4{margin:0 0 8px;font-size:.98rem}
+#ll-obody .hs-stdr{display:grid;grid-template-columns:86px 1fr 44px;align-items:center;gap:10px;margin:6px 0;font-size:.9rem}
+#ll-obody .hs-stdbar{height:10px;background:#E2E8F0;border-radius:999px;overflow:hidden;display:block}
+#ll-obody .hs-stdbar i{display:block;height:100%;border-radius:999px}
+
+/* Teen Study Hub (Today & Practice quick actions for Kaitlyn) */
+.tc-hub{margin:0 0 14px;padding:14px 15px;background:#fff;border:1px solid var(--teen-line,#DDE1E7);border-radius:14px}
+.tc-hub-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.tc-hub-head b{font-size:1rem;color:#151922}
+.tc-hub-dark{min-height:36px;padding:5px 12px;border-radius:999px;border:1.5px solid #CBD5E1;background:#F8FAFC;color:#151922;font-size:.86rem;font-weight:600;cursor:pointer}
+.tc-hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:640px){.tc-hub-grid{grid-template-columns:1fr}}
+.tc-hub-btn{display:flex;align-items:center;gap:10px;text-align:left;min-height:60px;padding:10px 12px;border-radius:12px;border:1.5px solid #DDE1E7;background:#F8FAFC;color:#151922;cursor:pointer;transition:border-color .15s,background .15s}
+.tc-hub-btn:hover{border-color:#0B5E43;background:#F0FDF4}
+.tc-hub-btn.pri{background:#0B5E43;border-color:#0B5E43;color:#fff}
+.tc-hub-btn.pri:hover{background:#094D37}
+.tc-hub-btn .th-ic{font-size:1.45rem;line-height:1;flex:none}
+.tc-hub-btn b{display:flex;align-items:center;gap:6px;font-size:.94rem;line-height:1.25}
+.tc-hub-btn small{display:block;font-size:.78rem;opacity:.82;margin-top:2px;font-weight:500}
+.tc-vbadge{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#DC2626;color:#fff;font-size:.78rem;font-weight:700}
+.tc-vbadge[data-zero="1"]{background:#16A34A}
+
+/* ===== Focus Dark Mode (strictly scoped to Kaitlyn / teen band: body.ll-teen.hs-dark) ===== */
+body.ll-teen.hs-dark{--bg:#0B1220;--ink:#F1F5F9;--mut:#94A3B8;--teen-accent:#10B981;--teen-line:#26334A;background:#0B1220 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .ll-shell-header{background:#060B14;border-bottom:1px solid #1E293B}
+body.ll-teen.hs-dark .ll-kidbar button{background:#141E30;color:#CBD5E1;border-color:#2A3950}
+body.ll-teen.hs-dark .ll-kidbar button.on{background:#10B981;border-color:#10B981;color:#052E16}
+body.ll-teen.hs-dark .ll-card,
+body.ll-teen.hs-dark .ll-hero,
+body.ll-teen.hs-dark .tc-head,
+body.ll-teen.hs-dark .tc-hub,
+body.ll-teen.hs-dark .tc-list,
+body.ll-teen.hs-dark .tc-course,
+body.ll-teen.hs-dark .ll-pathcard,
+body.ll-teen.hs-dark .ll-classbox,
+body.ll-teen.hs-dark .tutexp-step,
+body.ll-teen.hs-dark .tutexp-q{background:#141E30 !important;border-color:#26334A !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .tutexp-sub,
+body.ll-teen.hs-dark .tutexp-main small,
+body.ll-teen.hs-dark .tutexp-from{color:#94A3B8 !important}
+body.ll-teen.hs-dark .tutexp-main b,
+body.ll-teen.hs-dark .tutexp-qq{color:#F1F5F9 !important}
+body.ll-teen.hs-dark .tutexp-chk{background:#1E293B !important;border-color:#64748B !important}
+body.ll-teen.hs-dark .tutexp-opt{background:#1E293B !important;border-color:#334155 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .tc-ring{background:conic-gradient(#10B981 calc(var(--p,0)*1%), #1E293B 0) !important}
+body.ll-teen.hs-dark .tc-ring b{background:#141E30 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .tc-row{border-bottom-color:#26334A}
+body.ll-teen.hs-dark .tc-row.next{background:#0F2922 !important}
+body.ll-teen.hs-dark .tc-row .tc-main b,
+body.ll-teen.hs-dark .tc-head h2,
+body.ll-teen.hs-dark .tc-hub-head b,
+body.ll-teen.hs-dark .tc-h,
+body.ll-teen.hs-dark .todoh,
+body.ll-teen.hs-dark .ll-hero h2,
+body.ll-teen.hs-dark .ll-act h3,
+body.ll-teen.hs-dark .tc-cname{color:#F1F5F9 !important}
+body.ll-teen.hs-dark .tc-row .tc-main small,
+body.ll-teen.hs-dark .tc-head p,
+body.ll-teen.hs-dark .tc-cnum,
+body.ll-teen.hs-dark .tc-tools span,
+body.ll-teen.hs-dark .ll-hero .hoot-line,
+body.ll-teen.hs-dark .ll-act p,
+body.ll-teen.hs-dark .ll-pathcard small{color:#94A3B8 !important}
+body.ll-teen.hs-dark .tc-tag,
+body.ll-teen.hs-dark .ll-tag{background:#1E293B !important;color:#CBD5E1 !important}
+body.ll-teen.hs-dark .tc-bar,
+body.ll-teen.hs-dark .pp-bar,
+body.ll-teen.hs-dark .ll-prog{background:#1E293B !important}
+body.ll-teen.hs-dark .tc-hub-dark,
+body.ll-teen.hs-dark .ni-top,
+body.ll-teen.hs-dark .ll-btn:not(.pri){background:#1E293B !important;border-color:#334155 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .tc-hub-btn:not(.pri){background:#1E293B;border-color:#334155;color:#F1F5F9}
+body.ll-teen.hs-dark .tc-hub-btn:not(.pri):hover{border-color:#10B981;background:#162D27}
+body.ll-teen.hs-dark .tc-hub-btn.pri{background:#059669;border-color:#059669}
+body.ll-teen.hs-dark #ll-tabs{background:#0F172AF5 !important;border:1px solid #26334A}
+body.ll-teen.hs-dark #ll-tabs button{color:#CBD5E1}
+body.ll-teen.hs-dark #ll-tabs button.on{background:#10B981 !important;color:#052E16 !important}
+body.ll-teen.hs-dark #ll-overlay,
+body.ll-teen.hs-dark #ll-obody{background:#0B1220 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark .ll-ohead{background:#060B14 !important;border-bottom:1px solid #26334A;color:#F1F5F9 !important}
+body.ll-teen.hs-dark #ll-obody .hs{color:#F1F5F9}
+body.ll-teen.hs-dark #ll-obody .hs-std,
+body.ll-teen.hs-dark #ll-obody .hs-count,
+body.ll-teen.hs-dark #ll-obody .hs-t small{color:#94A3B8 !important}
+body.ll-teen.hs-dark #ll-obody .hs-steps li{background:#141E30;border-color:#334155;color:#CBD5E1}
+body.ll-teen.hs-dark #ll-obody .hs-steps li.now{background:#10B981;border-color:#10B981;color:#052E16}
+body.ll-teen.hs-dark #ll-obody .hs-steps li.done{background:#064E3B;border-color:#10B981;color:#A7F3D0}
+body.ll-teen.hs-dark #ll-obody .hs-card,
+body.ll-teen.hs-dark #ll-obody .hs-row{background:#141E30 !important;border-color:#26334A !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark #ll-obody .hs-card p,
+body.ll-teen.hs-dark #ll-obody .hs-sol li,
+body.ll-teen.hs-dark #ll-obody .hs-ref-box h4,
+body.ll-teen.hs-dark #ll-obody .hs-ref-list,
+body.ll-teen.hs-dark #ll-obody .hs-cer-lbl,
+body.ll-teen.hs-dark #ll-obody .hs-pad-lbl{color:#F1F5F9 !important}
+body.ll-teen.hs-dark #ll-obody .hs-vocab,
+body.ll-teen.hs-dark #ll-obody .hs-drawer,
+body.ll-teen.hs-dark #ll-obody .hs-std-grid,
+body.ll-teen.hs-dark #ll-obody .hs-ord-picked,
+body.ll-teen.hs-dark #ll-obody .hs-cer-rubric{background:#1E293B !important;border-color:#334155 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark #ll-obody .hs-mode-pill{background:#064E3B;border-color:#10B981;color:#A7F3D0}
+body.ll-teen.hs-dark #ll-obody .hs-hl-tip{color:#CBD5E1 !important}
+body.ll-teen.hs-dark #ll-obody .hs-pass,
+body.ll-teen.hs-dark #ll-obody .hs-hl-box{background:#1E1B2E !important;border-color:#4C1D95 !important;color:#F1F5F9 !important}
+body.ll-teen.hs-dark #ll-obody .hs-vis{background:#0F172A;border-color:#334155;color:#F1F5F9}
+body.ll-teen.hs-dark #ll-obody .hs-diag{background:#451A03;border-left-color:#F59E0B;color:#FEF3C7 !important}
+body.ll-teen.hs-dark #ll-obody .hs-tool,
+body.ll-teen.hs-dark #ll-obody .hs-btn:not(.pri),
+body.ll-teen.hs-dark #ll-obody .hs-choice,
+body.ll-teen.hs-dark #ll-obody .hs-seg,
+body.ll-teen.hs-dark #ll-obody .hs-ord-chip,
+body.ll-teen.hs-dark #ll-obody .hs-pad-act:not(.on),
+body.ll-teen.hs-dark #ll-obody .hs-in,
+body.ll-teen.hs-dark #ll-obody .hs-cer-in{background:#1E293B;border-color:#3B4D68;color:#F1F5F9}
+body.ll-teen.hs-dark #ll-obody .hs-pad-col[data-col="#1E293B"]{background:#F8FAFC}
+body.ll-teen.hs-dark #ll-obody .hs-pad-col.on{border-color:#10B981;box-shadow:0 0 0 2px #0F172A inset}
+body.ll-teen.hs-dark #ll-obody .hs-pad-cv{background:#0F172A;border-color:#334155}
+body.ll-teen.hs-dark #ll-obody .hs-btn.pri,
+body.ll-teen.hs-dark #ll-obody .hs-tool.on{background:#059669;border-color:#059669;color:#fff}
+body.ll-teen.hs-dark #ll-obody .hs-choice.right,
+body.ll-teen.hs-dark #ll-obody .hs-seg.right,
+body.ll-teen.hs-dark #ll-obody .hs-ord-slot{background:#064E3B;border-color:#10B981;color:#A7F3D0}
+body.ll-teen.hs-dark #ll-obody .hs-choice.wrong,
+body.ll-teen.hs-dark #ll-obody .hs-seg.wrong{background:#450A0A;border-color:#EF4444;color:#FECACA}
+body.ll-teen.hs-dark #ll-obody .hs-fb.ok,
+body.ll-teen.hs-dark #ll-obody .hs-verdict.ok{color:#34D399 !important}
+body.ll-teen.hs-dark #ll-obody .hs-fb.no,
+body.ll-teen.hs-dark #ll-obody .hs-verdict.no{color:#FCA5A5 !important}
+body.ll-teen.hs-dark #ll-obody .hs-hint{color:#CBD5E1 !important}
+body.ll-teen.hs-dark #ll-obody .hs-n{background:#1E293B;color:#E2E8F0}
+body.ll-teen.hs-dark #ll-obody .hs-cer-model{background:#172554;border-left-color:#60A5FA;color:#DBEAFE}
+body.ll-teen.hs-dark #ll-obody .hs-pad-canvas{background:#0F172A;border-color:#334155}
+
 /* ===== 3e29: Hoot's Party Games — candy look ===== */
 .pg-rowh{font-size:1.15rem;margin:16px 4px 8px;color:#17263b}
 .pg-row,.pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}

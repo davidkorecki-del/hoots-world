@@ -252,11 +252,11 @@ var HW_THUMBS = {
   function pathsFor(id) {
     var b = bandOf(id), st = childCfg(id).state;
     if (b === "teen") {
-      var m7 = { id: "math7", title: "Grade 7 math · full course", count: 15, emo: "📐" };
       var cnt = function (id, n) { return HL() && HL().paths[id] ? HL().paths[id].lessons.length : n; };
-      var e7 = { id: "ela7", title: "Grade 7 English · full course", count: cnt("ela7", 12), emo: "📚" };
-      var s7 = { id: "sci7", title: "Grade 7 science · full course", count: cnt("sci7", 8), emo: "🔬" };
-      var ss7 = { id: "ss7", title: "Grade 7 social studies · full course", count: cnt("ss7", 8), emo: "🗽" };
+      var m7 = { id: "math7", title: "Grade 7 math · full course", count: cnt("math7", 20), emo: "📐" };
+      var e7 = { id: "ela7", title: "Grade 7 English · full course", count: cnt("ela7", 13), emo: "📚" };
+      var s7 = { id: "sci7", title: "Grade 7 science · full course", count: cnt("sci7", 12), emo: "🔬" };
+      var ss7 = { id: "ss7", title: "Grade 7 social studies · full course", count: cnt("ss7", 9), emo: "🗽" };
       return st === "New York"
         ? [{ id: "ny", title: "Grade 7 · NY standards", count: 16, emo: "🗽" }, m7, e7, s7, ss7, { id: "creator", title: "Creator skills · ages 11–13", count: 8, emo: "✨" }]
         : [m7, e7, s7, ss7, { id: "creator", title: "Creator skills · ages 11–13", count: 8, emo: "✨" }];
@@ -1173,6 +1173,20 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     );
   }
 
+  function teenStudyHubHtml() {
+    if (!isTeen()) return "";
+    var hs = window.HootStudy;
+    var vCount = hs && hs.getVault ? hs.getVault().length : 0;
+    var isDark = document.body.classList.contains("hs-dark") || (hs && hs.isDark && hs.isDark());
+    return '<section class="tc-hub" aria-label="Grade 7 Study Tools">' +
+      '<div class="tc-hub-head"><b>⚡ Grade 7 NY Study Hub</b><button type="button" class="tc-hub-dark" data-teen-act="dark" aria-pressed="' + (isDark ? "true" : "false") + '">' + (isDark ? "☀️ Light Mode" : "🌙 Focus Dark") + "</button></div>" +
+      '<div class="tc-hub-grid">' +
+        '<button type="button" class="tc-hub-btn pri" data-teen-act="test-math"><span class="th-ic" aria-hidden="true">📝</span><span><b>NY Math Practice Test</b><small>10 problems · Standards breakdown</small></span></button>' +
+        '<button type="button" class="tc-hub-btn" data-teen-act="test-all"><span class="th-ic" aria-hidden="true">🌐</span><span><b>All-Subjects Mock Exam</b><small>Math · ELA · Science · SS</small></span></button>' +
+        '<button type="button" class="tc-hub-btn vault" data-teen-act="vault"><span class="th-ic" aria-hidden="true">🎯</span><span><b>Mistake Vault <span class="tc-vbadge"' + (vCount ? "" : ' data-zero="1"') + ">" + vCount + '</span></b><small>' + (vCount ? "Clear missed quiz items" : "All clear right now!") + "</small></span></button>" +
+      "</div></section>";
+  }
+
   /* 3e38: ages 11+ get a plain checklist for today and progress per course.
      Same plan underneath; a different skin, with Hoot as a small mark. */
   function renderTeenToday() {
@@ -1197,6 +1211,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       '<section class="tc-head"><span class="tc-mark" aria-hidden="true">' + brownHootFace() + '</span>' +
       '<div class="tc-htxt"><h2>Today</h2><p>' + esc(when) + " · " + (doneN === plan.length && plan.length ? "all done" : doneN + " of " + plan.length + " done") + "</p></div>" +
       '<div class="tc-ring" style="--p:' + pct + '" role="img" aria-label="' + pct + ' percent of today done"><b>' + pct + "%</b></div></section>" +
+      teenStudyHubHtml() +
       tutExpTodayHtml() + /* Fix pass 10: Today's 15 minutes sits at the TOP of her Today, not the bottom */
       '<ol class="tc-list" aria-label="Today\'s checklist">' + rows + "</ol>" +
       '<p class="tc-tools"><button type="button" class="ni-top" id="ll-newideas">Shuffle plan</button><span>' + esc(cfgNow.mode === "school" ? "Practice what you're covering in class." : "Stuck? Open the lesson and your tutor explains it another way.") + "</span></p>" +
@@ -1298,7 +1313,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }).join("");
     body = '<section class="ll-card ll-progress"><h2 class="cb-h">Your progress</h2>' + prog + '<p class="wc-progmap"><button type="button" class="ll-btn sm" data-wc-map="1">🗺️ See it on the world map</button> <button type="button" class="ll-btn sm" data-we2-garden="1">🌸 Oops Garden</button></p>' + "</section>" + body;
     return '<div class="ll-kidbar">' + kidbarHtml() + '</div>' +
-      '<section class="ll-card ll-hero"><div class="htxt"><h2>Practice</h2><p class="hoot-line">Built from your own lessons: tricky topics first, then quick reviews so it sticks.</p></div></section>' + body + wc2MissionsEntryHtml() + we2CarEntryHtml(); /* Wave E2: car mode entry */
+      '<section class="ll-card ll-hero"><div class="htxt"><h2>Practice</h2><p class="hoot-line">Built from your own lessons: tricky topics first, then quick reviews so it sticks.</p></div></section>' + teenStudyHubHtml() + body + wc2MissionsEntryHtml() + we2CarEntryHtml(); /* Wave E2: car mode entry */
   }
 
   function renderReading() {
@@ -2257,6 +2272,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     document.body.classList.toggle("ll-kidband", isKidBand());
     document.body.classList.toggle("ll-pathlock", !playUnlocked());
     document.body.classList.toggle("ll-teen", teen);
+    if (window.HootStudy && window.HootStudy.syncDark) window.HootStudy.syncDark(state.profile ? state.profile.id : "");
     var h1 = $(".ll-shell-header h1");
     if (h1) h1.textContent = teen ? "Hoot · Study" : "🌈 Hoot's World";
     $$("#ll-tabs button").forEach(function (b) {
@@ -3107,6 +3123,11 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   }
 
   document.addEventListener("change", function (e) { if (e.target && e.target.closest && e.target.closest("#ll-app .ll-kidsettings")) onKidSetting(e); });
+  window.addEventListener("hoot-vault-change", function () {
+    if (!window.HootStudy || !window.HootStudy.getVault) return;
+    var n = window.HootStudy.getVault().length;
+    $$(".tc-vbadge").forEach(function (b) { b.textContent = String(n); if (n) b.removeAttribute("data-zero"); else b.setAttribute("data-zero", "1"); });
+  });
 
   document.addEventListener("submit", function (e) {
     var f = e.target; if (f && f.getAttribute && f.getAttribute("data-pl-form") === "1") { e.preventDefault(); plannerAdd(f); return; }
@@ -3163,6 +3184,27 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (t.classList.contains("kh-stone") || t.classList.contains("kh-gobtn")) { var li = t.closest("[data-title]"); state.pendingStone = li && li.getAttribute("data-title"); window.__hwFromTodayPath = isLittleBand(); }
     else if (t.getAttribute("data-act") === "play") { window.__hwFromTodayPath = false; }
     if (t.getAttribute("data-gp-tab")) { setTab(t.getAttribute("data-gp-tab")); return; }
+    var teenAct = t.getAttribute("data-teen-act");
+    if (teenAct && window.HootStudy) {
+      if (teenAct === "dark") {
+        window.HootStudy.setDark(!document.body.classList.contains("hs-dark"));
+        render();
+        return;
+      }
+      if (teenAct === "test-math" || teenAct === "test-all") {
+        var titleT = teenAct === "test-all" ? "NY Grade 7 All-Subjects Exam" : "NY Grade 7 Math Practice Test";
+        openShellOverlay(titleT, "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudy.startPracticeTest($("#ll-obody"), teenAct === "test-all" ? "all" : "math7");
+        return;
+      }
+      if (teenAct === "vault") {
+        openShellOverlay("Mistake Vault", "");
+        document.body.classList.add("ll-tutor-open");
+        window.HootStudy.playVault($("#ll-obody"));
+        return;
+      }
+    }
     var pathId = t.getAttribute("data-path");
     if (pathId) { openPath(pathId); return; }
     if (t.classList.contains("pg-songbtn") && window.HootGames) { window.HootGames.sing(t.getAttribute("data-song"), t); return; }

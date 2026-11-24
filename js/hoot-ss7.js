@@ -211,6 +211,26 @@
   };
   L.forEach(function (l) { if (MORE[l.id]) l.items = l.items.concat(MORE[l.id]); });
 
+  /* Interactive chronological timeline items appended after MORE so existing std-why-* indices stay intact */
+  var RICH = {
+    "ss7-road-rev": [
+      { __noClip: true, type: "order", q: "Put these causes of the American Revolution in CHRONOLOGICAL order (earliest → latest):",
+        orderItems: ["Stamp Act (1765)", "Boston Tea Party (1773)", "Lexington & Concord (1775)", "Declaration of Independence (1776)"],
+        why: "Taxes (1765) led to protests (1773), fighting (1775), and then formal independence (1776)." }
+    ],
+    "ss7-rev-war": [
+      { __noClip: true, type: "order", q: "Put these Revolutionary War turning points in CHRONOLOGICAL order (earliest → latest):",
+        orderItems: ["Battle of Saratoga (1777)", "Winter at Valley Forge (1777–78)", "British surrender at Yorktown (1781)", "Treaty of Paris (1783)"],
+        why: "Saratoga brought France into the war (1777), followed by Valley Forge, Yorktown (1781), and the Treaty of Paris (1783)." }
+    ],
+    "ss7-civil-war": [
+      { __noClip: true, type: "order", q: "Put these Civil War events in CHRONOLOGICAL order (earliest → latest):",
+        orderItems: ["Fort Sumter (1861)", "Emancipation Proclamation (1863)", "Surrender at Appomattox (1865)", "13th Amendment ratified (Dec 1865)"],
+        why: "Fighting began at Fort Sumter (1861), Emancipation came in 1863, Lee surrendered in April 1865, and the 13th Amendment followed in December 1865." }
+    ]
+  };
+  L.forEach(function (l) { if (RICH[l.id]) l.items = l.items.concat(RICH[l.id]); });
+
   if (window.HootStudy && window.HootStudy.addBankCourse) {
     window.HootStudy.addBankCourse({ id: "ss7", title: "Grade 7 social studies · full course", emo: "🗽", color: "#9A3412", subject: "Grade 7 social studies", again: "new questions", review: "Social studies review: mixed practice" }, L);
   }

@@ -310,6 +310,70 @@
       { q: "Which sentence is EVIDENCE, not a claim?", a: "Our school recycled 2 tons of paper last year.", w: ["Recycling is the most important thing a school can do.", "Every class should have its own recycling bin.", "Our school does not care enough about the planet."], why: "A measured amount can be checked. The others are opinions." }
     ] });
 
+  /* Interactive text-highlighting items appended at the end so existing std-why-* indices stay intact */
+  var RICH = {
+    "e7-clauses": [
+      { __noClip: true, type: "highlight", q: "Tap the DEPENDENT clause in this sentence:",
+        segments: [
+          { text: "Although the storm knocked out the lights," , hit: true },
+          { text: "our family finished the board game" },
+          { text: "by flashlight." }
+        ],
+        why: "\"Although the storm knocked out the lights\" has a subject (storm) and verb (knocked), but \"Although\" makes it dependent." },
+      { __noClip: true, type: "highlight", q: "Tap the INDEPENDENT clause in this sentence:",
+        segments: [
+          { text: "After the soccer tournament ended," },
+          { text: "the whole team celebrated with pizza" , hit: true },
+          { text: "before heading home." }
+        ],
+        why: "\"The whole team celebrated with pizza\" has a subject and verb and stands alone as a complete thought." }
+    ],
+    "e7-evidence": [
+      { __noClip: true, type: "highlight", q: "Tap the sentence that BEST proves Maya prepared carefully for her speech:",
+        segments: [
+          { text: "The auditorium filled quickly before first period." },
+          { text: "Maya's index cards were color-coded and worn soft at the corners from a week of practice.", hit: true },
+          { text: "The principal adjusted the microphone on stage." }
+        ],
+        why: "Color-coded cards worn soft from a week of practice directly show careful preparation." },
+      { __noClip: true, type: "highlight", q: "Tap the sentence that BEST supports the inference that the old library is very popular:",
+        segments: [
+          { text: "The brick building has stood on Main Street since 1912." },
+          { text: "Every afternoon, all forty reading tables fill up within ten minutes of school letting out.", hit: true },
+          { text: "Its tall windows look out over the town square." }
+        ],
+        why: "All forty tables filling up within ten minutes directly proves high demand and popularity." }
+    ]
+  };
+  L.forEach(function (l) { if (RICH[l.id]) l.items = l.items.concat(RICH[l.id]); });
+
+  /* Dedicated NY 7W1 Argument Writing: Claim → Evidence → Reasoning (CER) Coach */
+  lesson({ id: "e7-cer-coach", title: "Argument writing: CER coach", std: "7W1", emo: "✍️", isWorkshop: true,
+    topic: /cer|essay|writing|paragraph|argument|reasoning/, again: "new prompts",
+    learn: ["Strong Grade 7 arguments use CER: a clear CLAIM (your arguable answer), specific EVIDENCE from the text, and REASONING that explains HOW your evidence proves your claim.",
+            "In reasoning, use bridge words like \"because,\" \"this shows,\" or \"therefore\" so the reader clearly sees why your evidence matters."],
+    vocab: "CER = Claim (answer) + Evidence (text proof) + Reasoning (how it proves it)",
+    method: "1) State your claim clearly. 2) Cite a specific fact or detail from the passage. 3) Explain how that detail proves your claim.",
+    hints: ["Keep your claim to one clear sentence answering the question.", "Pull a concrete detail, number, or quote from the passage for your evidence.", "Start your reasoning with \"This shows that...\" or \"Because...\" to connect evidence back to your claim."],
+    items: [
+      { __noClip: true, type: "cer",
+        pass: "A 2024 district study followed 600 middle-schoolers after their school moved start time from 7:30 a.m. to 8:30 a.m. Students averaged 43 more minutes of sleep per night, morning tardies dropped by 38%, and first-period math averages rose by 6 points.",
+        q: "Should middle schools start later in the morning? Write a short CER paragraph using evidence from the study.",
+        model: "Claim: Middle schools should move to a later start time because it helps students succeed. Evidence: In a study of 600 students who started at 8:30 a.m., students got 43 extra minutes of sleep, tardies fell by 38%, and first-period math averages increased by 6 points. Reasoning: This shows that extra sleep directly improves both attendance and focus in challenging classes." },
+      { __noClip: true, type: "cer",
+        pass: "In many cities, tree-lined neighborhoods are up to 9°F cooler during summer heat waves than paved blocks without trees. Trees also absorb stormwater during heavy rains and filter dust from the air.",
+        q: "Should cities invest money in planting more street trees? Build your CER response from the passage.",
+        model: "Claim: Cities should invest in planting more street trees to protect residents and neighborhoods. Evidence: According to the passage, tree-lined blocks can be up to 9°F cooler in summer heat waves, while also absorbing stormwater and filtering dust. Reasoning: Because trees lower dangerous heat and reduce flooding at the same time, planting them solves several city problems at once." },
+      { __noClip: true, type: "cer",
+        pass: "When Riverside Middle School started a 15-minute daily independent reading block, students were allowed to pick any book they wanted. By the end of the year, library checkouts tripled and reading comprehension scores grew twice as fast as the year before.",
+        q: "Does giving students choice in independent reading pay off? Support your claim with evidence and reasoning.",
+        model: "Claim: Giving students time to read books they choose significantly improves reading growth. Evidence: After Riverside Middle School added a 15-minute choice reading block, library checkouts tripled and comprehension scores grew twice as fast. Reasoning: This proves that when students feel excited about what they read, they practice more and become stronger readers." },
+      { __noClip: true, type: "cer",
+        pass: "Before the Erie Canal opened in 1825, shipping a ton of grain from Buffalo to New York City took three weeks and cost $100. After the canal opened, the same trip took eight days and cost less than $10, causing towns along the route to boom.",
+        q: "Was the Erie Canal a major turning point for New York's economy? Write a CER paragraph explaining why.",
+        model: "Claim: The Erie Canal was a major economic turning point for New York State. Evidence: Shipping a ton of grain dropped from three weeks and $100 to just eight days and under $10, and towns along the canal boomed. Reasoning: Therefore, by making trade dramatically faster and cheaper, the canal unlocked rapid business and population growth across New York." }
+    ] });
+
   if (window.HootStudy && window.HootStudy.addBankCourse) {
     window.HootStudy.addBankCourse({ id: "ela7", title: "Grade 7 English · full course", emo: "📚", color: "#7A2E8E", subject: "Grade 7 English", again: "new questions", review: "English review: mixed practice" }, L);
   }

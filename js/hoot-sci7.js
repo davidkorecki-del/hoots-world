@@ -308,6 +308,21 @@
   };
   L.forEach(function (l) { if (MORE[l.id]) l.items = l.items.concat(MORE[l.id]); });
 
+  /* Interactive sequencing items appended after MORE so existing std-why-* indices stay intact */
+  var RICH = {
+    "s7-cells": [
+      { __noClip: true, type: "order", q: "Put the levels of biological organization in order from SMALLEST to LARGEST:",
+        orderItems: ["Cell", "Tissue", "Organ", "Organ system"],
+        why: "Cells build tissues, tissues build organs, and organs work together in organ systems." }
+    ],
+    "s7-experiments": [
+      { __noClip: true, type: "order", q: "Put the steps of a fair scientific investigation in order from FIRST to LAST:",
+        orderItems: ["Ask a testable question", "Write a hypothesis", "Run controlled trials & collect data", "Analyze data & draw a conclusion"],
+        why: "Scientists start with a question and testable prediction, collect fair data, then analyze it for a conclusion." }
+    ]
+  };
+  L.forEach(function (l) { if (RICH[l.id]) l.items = l.items.concat(RICH[l.id]); });
+
   if (window.HootStudy && window.HootStudy.addBankCourse) {
     window.HootStudy.addBankCourse({ id: "sci7", title: "Grade 7 science · full course", emo: "🔬", color: "#0E6E8C", subject: "Grade 7 science", again: "new questions", review: "Science review: mixed practice" }, L);
   }
