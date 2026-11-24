@@ -466,6 +466,7 @@
         { w: "producers", d: "organisms or habitats that anchor and support the base of a local food web" },
         " and filter-feeders can transform an entire urban estuary."
       ],
+      jumpId: "e7-cer-coach",
       jumpLesson: "Argument writing: CER coach"
     },
     {
@@ -479,6 +480,7 @@
         { w: "commerce", d: "the large-scale buying, selling, and transport of goods" },
         " hub and earning New York its nickname: the Empire State."
       ],
+      jumpId: "e7-central-idea",
       jumpLesson: "Central idea"
     },
     {
@@ -492,7 +494,8 @@
         { w: "attention", d: "sustained mental focus without drifting off task" },
         " and problem-solving accuracy — showing that rest isn't wasted time, it's part of studying."
       ],
-      jumpLesson: "Inference & evidence"
+      jumpId: "e7-evidence",
+      jumpLesson: "Inferences & citing evidence"
     }
   ];
 
@@ -507,7 +510,7 @@
         '<h3>' + esc(p.title) + "</h3>" +
         '<p class="rl-body">' + textHtml + "</p>" +
         '<div class="rl-def" hidden aria-live="polite"></div>' +
-        '<div class="rl-acts"><button type="button" class="ll-btn sm pri" data-rl-open="' + esc(p.jumpLesson) + '">✍️ Practice skill: ' + esc(p.jumpLesson) + "</button></div>" +
+        '<div class="rl-acts"><button type="button" class="ll-btn sm pri" data-rl-open-id="' + esc(p.jumpId) + '" data-rl-open="' + esc(p.jumpLesson) + '">✍️ Practice skill: ' + esc(p.jumpLesson) + "</button></div>" +
       "</article>";
     }).join("");
     return '<section class="rl-wrap">' +
@@ -570,7 +573,7 @@
       window.HootStudy.lessons.forEach(function (l) {
         if (!l.std || l.id.indexOf("-review") >= 0) return;
         var done = helpers.isDone(l.title);
-        stdChips.push('<button type="button" class="pf-std' + (done ? " done" : "") + '" data-pf-lesson="' + esc(l.title) + '" title="' + esc(l.title) + '">' +
+        stdChips.push('<button type="button" class="pf-std' + (done ? " done" : "") + '" data-rl-open-id="' + esc(l.id) + '" data-pf-lesson="' + esc(l.title) + '" title="' + esc(l.title) + '">' +
           (done ? "✓ " : "") + esc(l.std.split(",")[0]) + " <small>" + esc(l.title) + "</small></button>");
       });
     }

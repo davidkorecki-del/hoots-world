@@ -3262,8 +3262,22 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
     var cbChip = t.getAttribute("data-cb-chip");
     if (cbChip) { setClassTopic(cbChip); render(); return; }
+    var rlOpenId = t.getAttribute("data-rl-open-id");
     var rlOpen = t.getAttribute("data-rl-open") || t.getAttribute("data-pf-lesson");
-    if (rlOpen) { openLesson(rlOpen); return; }
+    if (rlOpenId || rlOpen) {
+      if (rlOpenId && openLessonById(rlOpenId)) return;
+      if (rlOpenId && window.HootStudy && window.HootStudy.lessons) {
+        var foundL = window.HootStudy.lessons.filter(function (x) { return x.id === rlOpenId; })[0];
+        if (foundL) {
+          openShellOverlay(foundL.title, "");
+          document.body.classList.add("ll-tutor-open");
+          window.HootStudy.play(foundL, $("#ll-obody"));
+          return;
+        }
+      }
+      if (rlOpen) openLesson(rlOpen);
+      return;
+    }
     if (t.getAttribute("data-pf-print") === "1") { try { window.print(); } catch (e) {} return; }
     var learnF = t.getAttribute("data-learn-f");
     if (learnF) {
