@@ -947,6 +947,11 @@
     var existing = document.getElementById("hs-cmdk");
     if (existing) { existing.remove(); return; }
     var items = [
+      { id: "act:arc-hootle", ico: "🟩", title: "Daily HOOTLE (Grade 7 Wordle)", sub: "Brain Arcade · 5-Letter Word Challenge", kind: "act", val: "arc-hootle" },
+      { id: "act:arc-dash", ico: "🧮", title: "Equation Dash (45s Math Arcade)", sub: "Brain Arcade · 5× Fever Combo", kind: "act", val: "arc-dash" },
+      { id: "act:arc-blitz", ico: "⚡", title: "Word Blitz (ELA Vocab Arcade)", sub: "Brain Arcade · Roots & Connotation", kind: "act", val: "arc-blitz" },
+      { id: "act:arc-timeline", ico: "🗺️", title: "Timeline Rush (NY History Duel)", sub: "Brain Arcade · Which Happened First?", kind: "act", val: "arc-timeline" },
+      { id: "act:vibe", ico: "✨", title: "Customize My Vibe Studio", sub: "Avatars · Moods · Particles · Lo-Fi Audio", kind: "act", val: "vibe" },
       { id: "act:labs-prism3d", ico: "🧊", title: "3D Prism & Unfolding Net Lab", sub: "Interactive STEM Lab · 7.G.6", kind: "act", val: "labs-prism3d" },
       { id: "act:labs", ico: "⚖️", title: "Equation Balance & Algebra Lab", sub: "Step-by-Step Algebra · 7.EE.4", kind: "act", val: "labs" },
       { id: "act:labs-slope", ico: "📈", title: "Proportional Slope Explorer", sub: "Coordinate Plane Lab · 7.RP.2", kind: "act", val: "labs-slope" },

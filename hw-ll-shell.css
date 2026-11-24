@@ -4024,3 +4024,345 @@ body.ll-teen #ll-tabs button.on{
 body.ll-teen.hs-theme-indigo #ll-tabs button.on{box-shadow:0 6px 16px rgba(99,102,241,.36)}
 body.ll-teen.hs-theme-sepia #ll-tabs button.on{box-shadow:0 6px 16px rgba(217,119,6,.36)}
 body.ll-teen.hs-theme-rose #ll-tabs button.on{box-shadow:0 6px 16px rgba(225,29,72,.36)}
+
+/* ==========================================================================
+   KAITLYN STUDY SANCTUARY, BRAIN ARCADE & VIBE STUDIO (v125 — teen only)
+   ========================================================================== */
+#hs-vibe-fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+body.ll-teen #ll-app{position:relative;z-index:1}
+
+/* Illustrated Lo-Fi NYC Sanctuary Hero */
+body.ll-teen .tc-head.tc-hero-art{
+  position:relative !important;display:block !important;
+  padding:0 !important;overflow:hidden !important;
+  border-radius:24px !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  background:#091526 !important;
+  box-shadow:0 22px 50px rgba(8,18,36,.34),inset 0 1px 0 rgba(255,255,255,.22) !important;
+}
+body.ll-teen .tc-head.tc-hero-art::before{display:none !important}
+body.ll-teen .tc-hero-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:right center;
+  opacity:.95;pointer-events:none;
+}
+body.ll-teen .tc-hero-scrim{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(102deg,rgba(6,13,26,.94) 0%,rgba(9,20,38,.82) 52%,rgba(9,20,38,.34) 100%),
+    linear-gradient(180deg,rgba(6,13,26,.12) 0%,rgba(6,13,26,.72) 100%);
+}
+body.ll-teen .tc-hero-inner{
+  position:relative;z-index:2;padding:22px 24px 18px;
+  display:flex;flex-direction:column;gap:16px;
+}
+body.ll-teen .tc-hero-top{display:flex;align-items:center;gap:16px}
+body.ll-teen .tc-av-btn{
+  position:relative;flex:none;width:64px;height:64px;border-radius:20px;
+  border:1.5px solid rgba(255,255,255,.32);
+  background:linear-gradient(135deg,rgba(255,255,255,.20),rgba(255,255,255,.07));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  display:grid;place-items:center;cursor:pointer;padding:0;
+  box-shadow:0 10px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .16s ease,border-color .16s ease;
+}
+body.ll-teen .tc-av-btn:hover{transform:translateY(-2px) scale(1.03);border-color:#34D399}
+body.ll-teen .tc-av-ico{font-size:2rem;line-height:1}
+body.ll-teen .tc-av-edit{
+  position:absolute;right:-5px;bottom:-5px;width:24px;height:24px;border-radius:999px;
+  background:linear-gradient(135deg,#10B981,#06B6D4);border:2px solid #091526;
+  display:grid;place-items:center;font-size:.72rem;box-shadow:0 4px 10px rgba(0,0,0,.35);
+}
+body.ll-teen .tc-hero-art .tc-htxt{flex:1;min-width:0}
+body.ll-teen .tc-meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:5px}
+body.ll-teen .tc-hero-art .tc-eyebrow{
+  margin:0;padding:3px 9px;border-radius:999px;
+  background:rgba(16,185,129,.22);border:1px solid rgba(52,211,153,.45);
+  color:#A7F3D0 !important;font-size:.69rem;letter-spacing:.09em;
+}
+body.ll-teen .tc-mood-pill,
+body.ll-teen .tc-gem-pill{
+  font:700 .74rem "Plus Jakarta Sans",sans-serif;
+  padding:3px 10px;border-radius:999px;cursor:pointer;
+  background:rgba(255,255,255,.13);color:#F8FAFC;
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:background .15s ease,transform .14s ease;
+}
+body.ll-teen .tc-gem-pill{background:rgba(56,189,248,.18);border-color:rgba(125,211,252,.42);color:#E0F2FE}
+body.ll-teen .tc-mood-pill:hover,body.ll-teen .tc-gem-pill:hover{background:rgba(255,255,255,.24);transform:translateY(-1px)}
+body.ll-teen .tc-hero-art .tc-htxt h2{
+  font-size:clamp(1.42rem,3vw,1.88rem) !important;color:#fff !important;
+  text-shadow:0 2px 14px rgba(0,0,0,.38);margin:0 0 3px;
+}
+body.ll-teen .tc-hero-art .tc-htxt p{color:rgba(226,232,240,.92) !important;font-size:.9rem;margin:0}
+body.ll-teen .tc-xp-wrap{display:flex;align-items:center;gap:10px;margin-top:9px;max-width:410px}
+body.ll-teen .tc-xp-bar{
+  flex:1;height:8px;border-radius:999px;overflow:hidden;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.12);
+}
+body.ll-teen .tc-xp-bar i{
+  display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#34D399,#22D3EE,#818CF8);
+  box-shadow:0 0 12px rgba(52,211,153,.55);transition:width .35s ease;
+}
+body.ll-teen .tc-xp-wrap small{
+  font-weight:700;font-size:.76rem;color:#CBD5E1;white-space:nowrap;
+}
+body.ll-teen .tc-hero-foot{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  padding-top:12px;border-top:1px solid rgba(255,255,255,.14);
+}
+body.ll-teen .tc-hero-art .tc-hero-pills{margin-top:0}
+body.ll-teen .tc-lofi-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+body.ll-teen .tc-lofi-lbl{font-size:.92rem;opacity:.85;margin-right:2px}
+body.ll-teen .tc-lofi-btn,
+body.ll-teen .tc-vibe-cta{
+  font:700 .76rem "Plus Jakarta Sans",sans-serif;
+  padding:6px 10px;border-radius:999px;cursor:pointer;
+  background:rgba(15,23,42,.56);color:#E2E8F0;
+  border:1px solid rgba(255,255,255,.20);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:transform .14s ease,background .14s ease,border-color .14s ease;
+}
+body.ll-teen .tc-lofi-btn:hover{background:rgba(255,255,255,.20);color:#fff}
+body.ll-teen .tc-lofi-btn.on{
+  background:linear-gradient(135deg,#10B981,#06B6D4);color:#041A1E;
+  border-color:#6EE7B7;box-shadow:0 0 16px rgba(16,185,129,.45);
+}
+body.ll-teen .tc-vibe-cta{
+  background:linear-gradient(135deg,rgba(168,85,247,.88),rgba(236,72,153,.88));
+  color:#fff;border-color:rgba(255,255,255,.32);
+  box-shadow:0 4px 14px rgba(168,85,247,.35);
+}
+body.ll-teen .tc-vibe-cta:hover{transform:translateY(-1px);filter:brightness(1.08)}
+
+/* 🎮 Brain Arcade Spotlight Strip on Today */
+body.ll-teen .arc-strip{
+  margin:14px 0;padding:16px 18px;border-radius:20px;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(15,23,42,.08);
+  box-shadow:0 10px 28px rgba(15,23,42,.06);
+}
+body.ll-teen.hs-dark .arc-strip{
+  background:linear-gradient(180deg,rgba(18,28,48,.84),rgba(12,19,34,.90));
+  border:1px solid rgba(148,163,184,.18);
+  box-shadow:0 16px 38px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.07);
+}
+body.ll-teen .arc-strip-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  margin-bottom:12px;
+}
+body.ll-teen .arc-strip-head b{display:block;font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;font-size:1.08rem;letter-spacing:-.015em}
+body.ll-teen .arc-strip-head small{color:var(--mut,#64748B);font-size:.82rem;font-weight:600}
+body.ll-teen.hs-dark .arc-strip-head small{color:#94A3B8}
+body.ll-teen .arc-strip-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;
+}
+@media (max-width:740px){body.ll-teen .arc-strip-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+body.ll-teen .arc-tile{
+  position:relative;overflow:hidden;text-align:left;cursor:pointer;
+  display:flex;flex-direction:column;gap:4px;padding:13px 14px;border-radius:16px;
+  border:1px solid rgba(255,255,255,.22);color:#fff;
+  box-shadow:0 10px 22px rgba(15,23,42,.18),inset 0 1px 0 rgba(255,255,255,.26);
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,filter .18s ease;
+}
+body.ll-teen .arc-tile:hover{transform:translateY(-3px);filter:brightness(1.06);box-shadow:0 16px 30px rgba(15,23,42,.26)}
+body.ll-teen .arc-tile:active{transform:scale(.98)}
+body.ll-teen .arc-tile[data-arc-tone="hootle"]{background:linear-gradient(135deg,#059669 0%,#0D9488 100%)}
+body.ll-teen .arc-tile[data-arc-tone="dash"]{background:linear-gradient(135deg,#2563EB 0%,#0891B2 100%)}
+body.ll-teen .arc-tile[data-arc-tone="blitz"]{background:linear-gradient(135deg,#7C3AED 0%,#DB2777 100%)}
+body.ll-teen .arc-tile[data-arc-tone="timeline"]{background:linear-gradient(135deg,#D97706 0%,#EA580C 100%)}
+body.ll-teen .arc-tile .arc-ic{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  background:rgba(255,255,255,.20);font-size:1.3rem;margin-bottom:4px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34);
+}
+body.ll-teen .arc-tile b{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;font-size:.98rem;line-height:1.15;color:#fff}
+body.ll-teen .arc-tile small{font-size:.76rem;color:rgba(255,255,255,.88);font-weight:600;line-height:1.25}
+
+/* Magazine-Style Illustrated Learn Subject Cover Cards */
+body.ll-teen #learnGrid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
+}
+@media (max-width:600px){body.ll-teen #learnGrid{grid-template-columns:1fr}}
+body.ll-teen .ll-pathcard.has-cover{
+  padding:0 !important;display:flex;flex-direction:column;text-align:left;
+  overflow:hidden;border-radius:20px !important;
+}
+body.ll-teen .ll-pathcard.has-cover::before{display:none !important}
+body.ll-teen .ll-pcover{
+  position:relative;display:block;width:100%;aspect-ratio:16/8.2;overflow:hidden;background:#0F172A;
+}
+body.ll-teen .ll-pcover img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);
+}
+body.ll-teen .ll-pathcard.has-cover:hover .ll-pcover img{transform:scale(1.05)}
+body.ll-teen .ll-pcover-scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(15,23,42,.08) 0%,rgba(15,23,42,.68) 100%);
+}
+body.ll-teen .ll-ptag{
+  position:absolute;left:12px;bottom:10px;
+  font:800 .69rem "Plus Jakarta Sans",sans-serif;letter-spacing:.07em;
+  padding:4px 9px;border-radius:999px;
+  background:rgba(15,23,42,.74);color:#F8FAFC;
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+body.ll-teen .ll-pemo{
+  position:absolute;right:12px;top:10px;width:40px;height:40px;border-radius:12px;
+  display:grid;place-items:center;font-size:1.35rem;
+  background:rgba(15,23,42,.66);border:1px solid rgba(255,255,255,.26);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 6px 16px rgba(0,0,0,.32);
+}
+body.ll-teen .ll-pbody{
+  display:flex;flex-direction:column;gap:4px;padding:13px 16px 15px;width:100%;
+}
+body.ll-teen .ll-pbody b{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;font-size:1.08rem;letter-spacing:-.015em}
+body.ll-teen .ll-pbody small{font-size:.82rem;opacity:.82;font-weight:600}
+body.ll-teen .ll-pbar{
+  margin-top:6px;height:7px;border-radius:999px;overflow:hidden;
+  background:rgba(148,163,184,.24);display:block;width:100%;
+}
+body.ll-teen .ll-pbar i{display:block;height:100%;border-radius:999px;background:var(--sc,linear-gradient(90deg,#10B981,#06B6D4))}
+
+/* ✨ Customize My Vibe Studio */
+body.ll-teen .vb-wrap{display:flex;flex-direction:column;gap:14px}
+body.ll-teen .vb-top{
+  display:flex;align-items:center;gap:16px;padding:18px;border-radius:20px;
+  background:linear-gradient(135deg,#0B1F3A 0%,#1E1B4B 60%,#311042 100%);
+  color:#fff;border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 16px 36px rgba(15,23,42,.26);
+}
+body.ll-teen .vb-av-big{
+  width:68px;height:68px;border-radius:22px;flex:none;
+  display:grid;place-items:center;font-size:2.3rem;
+  background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.28);
+}
+body.ll-teen .vb-meta{flex:1;min-width:0}
+body.ll-teen .vb-meta h3{margin:0 0 3px;color:#fff;font-size:1.25rem}
+body.ll-teen .vb-meta p{margin:0 0 8px;color:#CBD5E1;font-size:.88rem}
+body.ll-teen .vb-xpbar{height:9px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.16)}
+body.ll-teen .vb-xpbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#34D399,#22D3EE,#A78BFA)}
+body.ll-teen .vb-gems{
+  flex:none;padding:9px 14px;border-radius:14px;
+  background:rgba(56,189,248,.18);border:1px solid rgba(125,211,252,.42);
+  font-weight:800;font-size:1.05rem;color:#E0F2FE;white-space:nowrap;
+}
+body.ll-teen .vb-sec{padding:16px !important}
+body.ll-teen .vb-sec h4{margin:0 0 4px;font-size:1rem}
+body.ll-teen .vb-sub{margin:0 0 12px;font-size:.84rem;opacity:.78}
+body.ll-teen .vb-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:600px){body.ll-teen .vb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+body.ll-teen .vb-tile{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:13px 10px;border-radius:15px;cursor:pointer;text-align:center;
+  border:1.5px solid rgba(148,163,184,.26);background:rgba(148,163,184,.08);
+  color:inherit;transition:transform .15s ease,border-color .15s ease,background .15s ease;
+}
+body.ll-teen .vb-tile:hover{transform:translateY(-2px);border-color:var(--teen-accent,#10B981)}
+body.ll-teen .vb-tile.on{
+  border-color:#10B981;background:rgba(16,185,129,.16);
+  box-shadow:0 0 0 1px rgba(16,185,129,.35),0 8px 18px rgba(16,185,129,.18);
+}
+body.ll-teen .vb-tile.lock{opacity:.86}
+body.ll-teen .vb-ic{font-size:1.85rem;line-height:1.1}
+body.ll-teen .vb-tile b{font-size:.86rem}
+body.ll-teen .vb-tile small{font-size:.74rem;font-weight:700;opacity:.82}
+body.ll-teen .vb-moods,body.ll-teen .vb-snds{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+body.ll-teen .vb-mood,body.ll-teen .vb-snd{
+  padding:9px 13px;border-radius:999px;cursor:pointer;font-weight:700;font-size:.86rem;
+  border:1.5px solid rgba(148,163,184,.28);background:rgba(148,163,184,.08);color:inherit;
+  transition:transform .14s ease,border-color .14s ease,background .14s ease;
+}
+body.ll-teen .vb-mood.on,body.ll-teen .vb-snd.on{
+  background:linear-gradient(135deg,#10B981,#06B6D4);color:#041A1E;border-color:#6EE7B7;
+}
+
+/* 🎮 Brain Arcade Game Boards (Daily HOOTLE, Equation Dash, Word Blitz, Timeline Rush) */
+body.ll-teen .htl-grid{
+  display:flex;flex-direction:column;gap:7px;align-items:center;margin:14px auto;
+}
+body.ll-teen .htl-row{display:flex;gap:7px}
+body.ll-teen .htl-cell{
+  width:52px;height:52px;border-radius:12px;
+  display:grid;place-items:center;
+  font:800 1.45rem "Space Grotesk","Plus Jakarta Sans",sans-serif;
+  border:2px solid rgba(148,163,184,.34);background:rgba(148,163,184,.08);
+  transition:transform .15s ease,background .2s ease,border-color .2s ease;
+}
+body.ll-teen .htl-cell.fill{border-color:var(--teen-accent,#10B981);transform:scale(1.04)}
+body.ll-teen .htl-cell.hit{background:#10B981;border-color:#10B981;color:#fff;box-shadow:0 4px 14px rgba(16,185,129,.35)}
+body.ll-teen .htl-cell.near{background:#F59E0B;border-color:#F59E0B;color:#fff;box-shadow:0 4px 14px rgba(245,158,11,.30)}
+body.ll-teen .htl-cell.abs{background:#475569;border-color:#475569;color:#E2E8F0}
+body.ll-teen .htl-kb{display:flex;flex-direction:column;gap:6px;max-width:480px;margin:12px auto 0}
+body.ll-teen .htl-krow{display:flex;justify-content:center;gap:5px}
+body.ll-teen .htl-key{
+  flex:1;min-width:26px;max-width:44px;height:44px;border-radius:10px;padding:0 4px;
+  border:1px solid rgba(148,163,184,.30);background:rgba(148,163,184,.16);color:inherit;
+  font:800 .86rem "Plus Jakarta Sans",sans-serif;cursor:pointer;
+}
+body.ll-teen .htl-key.wide{flex:1.5;max-width:68px;font-size:.76rem}
+body.ll-teen .htl-key.hit{background:#10B981;border-color:#10B981;color:#fff}
+body.ll-teen .htl-key.near{background:#F59E0B;border-color:#F59E0B;color:#fff}
+body.ll-teen .htl-key.abs{background:#334155;border-color:#334155;color:#94A3B8}
+
+body.ll-teen .arc-hud{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:10px 14px;border-radius:14px;margin-bottom:14px;
+  background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.22);
+  font-weight:700;font-size:.98rem;
+}
+body.ll-teen .arc-combo.hot{
+  padding:3px 10px;border-radius:999px;
+  background:linear-gradient(135deg,#F97316,#EC4899);color:#fff;
+  box-shadow:0 0 16px rgba(236,72,153,.45);
+}
+body.ll-teen .arc-prompt{
+  text-align:center;font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;
+  font-size:clamp(1.35rem,3.4vw,1.95rem);font-weight:700;
+  padding:22px 16px;margin:0 0 14px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(59,130,246,.12));
+  border:1px solid rgba(148,163,184,.24);
+}
+body.ll-teen .arc-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body.ll-teen .arc-opt{min-height:58px;font-size:1.12rem !important;font-weight:800;text-align:center !important;justify-content:center !important;display:flex !important;align-items:center}
+
+body.ll-teen .tl-vs{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:14px 0;
+}
+@media (max-width:600px){body.ll-teen .tl-vs{grid-template-columns:1fr}}
+body.ll-teen .tl-sep{
+  display:grid;place-items:center;font-family:"Space Grotesk",sans-serif;
+  font-weight:800;font-size:.92rem;opacity:.7;padding:4px;
+}
+body.ll-teen .tl-card{
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;
+  padding:22px 16px;border-radius:18px;text-align:center;cursor:pointer;
+  border:2px solid rgba(148,163,184,.28);background:rgba(148,163,184,.10);color:inherit;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+body.ll-teen .tl-card:hover:not(:disabled){transform:translateY(-3px);border-color:var(--teen-accent,#10B981);box-shadow:0 12px 26px rgba(15,23,42,.16)}
+body.ll-teen .tl-tag{
+  font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  padding:3px 9px;border-radius:999px;background:rgba(99,102,241,.18);color:#818CF8;
+}
+body.ll-teen .tl-card b{font-size:1.08rem;line-height:1.3}
+body.ll-teen .tl-yr{
+  font-family:"Space Grotesk",sans-serif;font-size:1.45rem;font-weight:800;
+  padding:4px 12px;border-radius:10px;background:rgba(15,23,42,.18);
+}
+body.ll-teen .tl-card.win{border-color:#10B981;background:rgba(16,185,129,.18)}
+body.ll-teen .tl-card.lose{border-color:#EF4444;background:rgba(239,68,68,.14)}
+
+@media (max-width:520px){
+  body.ll-teen .tc-hero-inner{padding:16px}
+  body.ll-teen .tc-hero-top{flex-wrap:wrap;gap:12px}
+  body.ll-teen .tc-av-btn{width:54px;height:54px;border-radius:16px}
+  body.ll-teen .tc-hero-foot{flex-direction:column;align-items:flex-start}
+  body.ll-teen .htl-cell{width:46px;height:46px;font-size:1.25rem}
+  body.ll-teen .vb-top{flex-wrap:wrap}
+}

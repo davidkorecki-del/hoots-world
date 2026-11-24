@@ -1238,10 +1238,57 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var mapDoneN = window.HootStudyLabs && window.HootStudyLabs.getMapDone ? Object.keys(window.HootStudyLabs.getMapDone()).length : 0;
     var cerN = window.HootStudyPro && window.HootStudyPro.getCerEntries ? window.HootStudyPro.getCerEntries(p.id).length : 0;
     return '<div class="ll-kidbar" id="ll-kidbar">' + kidbarHtml() + "</div>" +
-      '<section class="tc-head tc-hero-pro"><span class="tc-mark" aria-hidden="true">' + brownHootFace() + '</span>' +
-      '<div class="tc-htxt"><span class="tc-eyebrow">NY GRADE 7 · STUDY STUDIO</span><h2>' + greetWord + ", " + esc(p.label) + '</h2><p>' + esc(when) + " · " + (doneN === plan.length && plan.length ? "All of today's plan complete ✓" : doneN + " of " + plan.length + " today's steps done") + "</p>" +
-      '<div class="tc-hero-pills"><span>📚 ' + allDoneC + "/" + allTotC + " mastered</span><span>🗺️ " + mapDoneN + "/6 NY map</span><span>✍️ " + cerN + " CER essays</span></div></div>" +
-      '<div class="tc-ring" style="--p:' + pct + '" role="img" aria-label="' + pct + ' percent of today done"><b>' + pct + "%</b></div></section>" +
+      (function () {
+        var arc = window.HootTeenArcade;
+        var vb = arc && arc.getVibe ? arc.getVibe(p.id) : { xp: 0, gems: 50, avatar: "muse", mood: "Locked in 🎧" };
+        var rk = arc && arc.rankFor ? arc.rankFor(vb.xp) : { lv: 1, title: "Rising Scholar", pct: 0, cur: 0, span: 100 };
+        var av = arc && arc.avatarObj ? arc.avatarObj(vb.avatar) : { ico: "🎧", name: "Lo-Fi Muse" };
+        var actSnd = arc && arc.activeSound ? arc.activeSound() : null;
+        var sndBtns = [
+          { id: "lofi", lbl: "🎹 Lo-Fi" },
+          { id: "rain", lbl: "🌧 Rain" },
+          { id: "fire", lbl: "🔥 Fire" },
+          { id: "waves", lbl: "🌊 Waves" }
+        ].map(function (s) {
+          return '<button type="button" class="tc-lofi-btn' + (actSnd === s.id ? " on" : "") + '" data-lofi-snd="' + s.id + '">' + s.lbl + "</button>";
+        }).join("");
+        return '<section class="tc-head tc-hero-pro tc-hero-art">' +
+          '<img class="tc-hero-bg" src="assets/teen/hero-sanctuary.jpg" alt="" aria-hidden="true">' +
+          '<div class="tc-hero-scrim" aria-hidden="true"></div>' +
+          '<div class="tc-hero-inner">' +
+            '<div class="tc-hero-top">' +
+              '<button type="button" class="tc-av-btn" data-teen-act="vibe" title="Customize My Vibe &amp; Avatar" aria-label="Customize My Vibe">' +
+                '<span class="tc-av-ico">' + av.ico + '</span><span class="tc-av-edit" aria-hidden="true">✨</span>' +
+              "</button>" +
+              '<div class="tc-htxt">' +
+                '<div class="tc-meta-row"><span class="tc-eyebrow">LV ' + rk.lv + ' · ' + esc(rk.title.toUpperCase()) + '</span>' +
+                '<button type="button" class="tc-mood-pill" data-teen-act="vibe">' + esc(vb.mood) + '</button>' +
+                '<button type="button" class="tc-gem-pill" data-teen-act="vibe">💎 ' + vb.gems + "</button></div>" +
+                '<h2>' + greetWord + ", " + esc(p.label) + "</h2>" +
+                '<p>' + esc(when) + " · " + (doneN === plan.length && plan.length ? "All of today's plan complete ✓" : doneN + " of " + plan.length + " today's steps done") + "</p>" +
+                '<div class="tc-xp-wrap"><div class="tc-xp-bar"><i style="width:' + rk.pct + '%"></i></div><small>' + vb.xp + " XP" + (rk.toNext ? " · " + rk.toNext + " to Lv " + (rk.lv + 1) : " · MAX") + "</small></div>" +
+              "</div>" +
+              '<div class="tc-ring" style="--p:' + pct + '" role="img" aria-label="' + pct + ' percent of today done"><b>' + pct + "%</b></div>" +
+            "</div>" +
+            '<div class="tc-hero-foot">' +
+              '<div class="tc-hero-pills"><span>📚 ' + allDoneC + "/" + allTotC + " mastered</span><span>🗺️ " + mapDoneN + "/6 NY map</span><span>✍️ " + cerN + " CER</span></div>" +
+              '<div class="tc-lofi-row"><span class="tc-lofi-lbl" aria-hidden="true">🎧</span>' + sndBtns +
+              '<button type="button" class="tc-vibe-cta" data-teen-act="vibe">✨ Vibe</button></div>' +
+            "</div>" +
+          "</div></section>" +
+          (function () {
+            var sc = arc && arc.getScores ? arc.getScores() : {};
+            return '<section class="arc-strip" aria-label="Grade 7 Brain Arcade">' +
+              '<div class="arc-strip-head"><div><b>🎮 Brain Arcade</b><small>Play to earn XP &amp; 💎 Gems while leveling up Grade 7 skills</small></div>' +
+              '<button type="button" class="ll-btn sm" data-teen-act="vibe">✨ Shop (' + vb.gems + " 💎)</button></div>" +
+              '<div class="arc-strip-grid">' +
+                '<button type="button" class="arc-tile" data-arc-tone="hootle" data-teen-act="arc-hootle"><span class="arc-ic">🟩</span><b>Daily HOOTLE</b><small>5-letter NY Wordle · +35 XP</small></button>' +
+                '<button type="button" class="arc-tile" data-arc-tone="dash" data-teen-act="arc-dash"><span class="arc-ic">🧮</span><b>Equation Dash</b><small>' + (sc.dash ? "🏆 Best: " + sc.dash + " pts" : "45s 5× Fever Math") + "</small></button>" +
+                '<button type="button" class="arc-tile" data-arc-tone="blitz" data-teen-act="arc-blitz"><span class="arc-ic">⚡</span><b>Word Blitz</b><small>' + (sc.blitz ? "🏆 Best: " + sc.blitz + " pts" : "45s Vocab &amp; Roots") + "</small></button>" +
+                '<button type="button" class="arc-tile" data-arc-tone="timeline" data-teen-act="arc-timeline"><span class="arc-ic">🗺️</span><b>Timeline Rush</b><small>' + (sc.timeline ? "🏆 Best: " + sc.timeline + " streak" : "NY History Duel") + "</small></button>" +
+              "</div></section>";
+          })();
+      })() +
       teenStudyHubHtml() +
       tutExpTodayHtml() + /* Fix pass 10: Today's 15 minutes sits at the TOP of her Today, not the bottom */
       '<ol class="tc-list" aria-label="Today\'s checklist">' + rows + "</ol>" +
@@ -1286,7 +1333,23 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     /* engine paths (Letters, Basics) are opened from their path card */
     var lessons = [];
     paths.forEach(function (p) { (LESSONS[p.id] || (/^(math7|ela7|sci7|ss7)$/.test(p.id) ? hlLessons(p.id) : [])).forEach(function (l) { lessons.push(Object.assign({ path: p.title, pathId: p.id, kind: "lesson" }, l)); }); });
+    var TEEN_COVERS = {
+      ny: { img: "assets/teen/hero-sanctuary.jpg", tag: "NY CORE · ALL SUBJECTS" },
+      math7: { img: "assets/teen/cover-math7.jpg", tag: "7.RP · 7.NS · 7.EE · 7.G" },
+      ela7: { img: "assets/teen/cover-ela7.jpg", tag: "7R · 7W · CER · VOCAB" },
+      sci7: { img: "assets/teen/cover-sci7.jpg", tag: "MS-LS · MS-PS · MS-ESS" },
+      ss7: { img: "assets/teen/cover-ss7.jpg", tag: "NY 7.1 – 7.8 HISTORY" }
+    };
     var pathHtml = paths.map(function (p) {
+      var cov = isTeen() ? TEEN_COVERS[p.id] : null;
+      if (cov) {
+        var pls = LESSONS[p.id] || hlLessons(p.id);
+        var dn = pls.filter(function (l) { return lessonDone(l.title); }).length;
+        var pc = Math.round(100 * dn / Math.max(1, pls.length));
+        return '<button type="button" class="ll-pathcard has-cover" data-path="' + esc(p.id) + '">' +
+          '<span class="ll-pcover"><img src="' + cov.img + '" alt="" loading="lazy" decoding="async"><span class="ll-pcover-scrim" aria-hidden="true"></span><span class="ll-ptag">' + esc(cov.tag) + '</span><span class="ll-pemo" aria-hidden="true">' + p.emo + "</span></span>" +
+          '<span class="ll-pbody"><b>' + esc(p.title) + '</b><small>' + dn + " of " + pls.length + ' mastered · Open course →</small><span class="ll-pbar" aria-hidden="true"><i style="width:' + pc + '%"></i></span></span></button>';
+      }
       return '<button type="button" class="ll-pathcard" data-path="' + esc(p.id) + '"><span class="emo" aria-hidden="true">' + p.emo + '</span><b>' + esc(p.title) + "</b><small>" + p.count + " lessons · " + (isTeen() ? "Open" : "Play") + "</small></button>";
     }).join("");
     var cards = lessons.map(function (l) {
@@ -2329,7 +2392,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     document.body.classList.toggle("ll-teen", teen);
     if (window.HootStudy && window.HootStudy.syncDark) window.HootStudy.syncDark(state.profile ? state.profile.id : "");
     if (window.HootStudyPro && window.HootStudyPro.syncTheme) window.HootStudyPro.syncTheme(state.profile ? state.profile.id : "");
+    if (window.HootTeenArcade && window.HootTeenArcade.syncFx) window.HootTeenArcade.syncFx(teen);
     if (!teen && window.HootStudyPro && window.HootStudyPro.stopAmbient) window.HootStudyPro.stopAmbient();
+    if (!teen && window.HootTeenArcade && window.HootTeenArcade.stopSound) window.HootTeenArcade.stopSound();
     var h1 = $(".ll-shell-header h1");
     if (h1) h1.textContent = teen ? "Hoot · Study" : "🌈 Hoot's World";
     $$("#ll-tabs button").forEach(function (b) {
@@ -3272,6 +3337,19 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       window.HootStudyPro.openFlashcards($("#ll-obody"), "all");
       return true;
     }
+    if (teenAct === "vibe" && window.HootTeenArcade) {
+      openShellOverlay("✨ Customize My Vibe", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootTeenArcade.openVibeStudio($("#ll-obody"));
+      return true;
+    }
+    if ((teenAct === "arcade" || teenAct.indexOf("arc-") === 0) && window.HootTeenArcade) {
+      var game = teenAct.indexOf("arc-") === 0 ? teenAct.slice(4) : "hootle";
+      openShellOverlay("🎮 Grade 7 Brain Arcade", "");
+      document.body.classList.add("ll-tutor-open");
+      window.HootTeenArcade.openArcade($("#ll-obody"), game);
+      return true;
+    }
     if (teenAct === "vault") {
       openShellOverlay("Mistake Vault", "");
       document.body.classList.add("ll-tutor-open");
@@ -3285,6 +3363,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       e.preventDefault();
       runTeenAct("cmdk");
     }
+  });
+  window.addEventListener("hoot-vibe-change", function () {
+    if (isTeen() && state.tab === "today") render();
   });
 
   function onAppClick(e) {

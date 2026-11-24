@@ -704,6 +704,9 @@
       if (!opts.skipRecord && window.HootLessons && window.HootLessons.recordResult) {
         window.HootLessons.recordResult(lesson.id, S.wrongFirst, quiz.length, Date.now() - S.t0);
       }
+      if (window.HootTeenArcade && window.HootTeenArcade.awardXP) {
+        window.HootTeenArcade.awardXP(learned ? 25 : 12, learned ? 10 : 5);
+      }
       var stdTable = "";
       if (opts.modeTag === "test" && S.stdResults) {
         var rows = Object.keys(S.stdResults).map(function (st) {
