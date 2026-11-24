@@ -2536,9 +2536,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     return id;
   }
   function pathHostFor(titleOrId) {
-    var id = PATH_PANEL[titleOrId] ? titleOrId : (pathIdForTitle(titleOrId) || "little");
-    var el = document.getElementById(PATH_PANEL[id] || PATH_PANEL.little);
-    return el || document.getElementById("panel-little");
+    var defId = isTeen() ? "ny" : "little";
+    var id = PATH_PANEL[titleOrId] ? titleOrId : (pathIdForTitle(titleOrId) || defId);
+    var el = document.getElementById(PATH_PANEL[id] || PATH_PANEL[defId]);
+    return el || document.getElementById(PATH_PANEL[defId] || "panel-little");
   }
   function clearLessonFocus(root) {
     if (!root) return;
