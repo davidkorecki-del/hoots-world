@@ -1465,6 +1465,19 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
           });
         });
       } catch (err) {}
+      try {
+        var paintRaw = localStorage.getItem("hw.paint.gallery.v1." + p.id);
+        var paintList = paintRaw ? JSON.parse(paintRaw) : [];
+        if (Array.isArray(paintList)) {
+          paintList.forEach(function (pt) {
+            if (!pt || !pt.url) return;
+            items.push({
+              ts: pt.ts || 0,
+              html: '<figure style="margin:0;position:relative"><img src="' + pt.url + '" alt="Finger Paint artwork" style="' + css + ';border:3px solid #e4ac6d"><figcaption style="position:absolute;left:8px;bottom:8px;background:rgba(255,253,246,.92);color:#1b2c47;font-weight:800;font-size:12px;padding:3px 9px;border-radius:999px">🎨 Painting</figcaption></figure>'
+            });
+          });
+        }
+      } catch (err) {}
     }
     items.sort(function (a, b) { return b.ts - a.ts; });
     var grid = items.map(function (x) { return x.html; }).concat(getPhotos(p.id).map(function (u) { return '<img src="' + u + '" alt="" style="' + css + '">'; })).join("");
@@ -2523,6 +2536,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var p = PROFILES.filter(function (x) { return x.id === id; })[0];
     if (!p) return;
     state.profile = p;
+    try { window.__llActiveProfileId = p.id; } catch (e) {}
     syncMuseProfile(id);
     applyChildState(id);
     document.body.classList.add("ll-shell-on");

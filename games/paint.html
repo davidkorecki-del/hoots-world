@@ -422,52 +422,111 @@ window.__HOOT_SELF_COACH__=true;
     transform:scale(1.06);
   }
 
-  /* ================= GALLERY MODAL ================= */
-  #galleryModal{
+  /* ================= GALLERY & SAVED PREVIEW MODAL ================= */
+  #galleryModal, #savedModal{
     position:absolute;
     inset:0;
     z-index:30;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:rgba(27,44,71,.5);
+    background:rgba(27,44,71,.52);
     padding:16px;
   }
-  #galleryModal[hidden]{ display:none; }
-  #galleryCard{
+  #galleryModal[hidden], #savedModal[hidden]{ display:none; }
+  #galleryCard, #savedCard{
     background:var(--cream);
     border:6px solid #fff;
     border-radius:30px;
     padding:18px;
     width:min(92vw, 520px);
-    max-height:84vh;
+    max-height:86vh;
     overflow-y:auto;
     text-align:center;
     box-shadow:0 14px 36px rgba(20,30,50,.38);
   }
+  #savedCard{ width:min(92vw, 440px); }
+  #savedPreviewImg{
+    width:100%;
+    max-height:46vh;
+    object-fit:contain;
+    border-radius:16px;
+    border:5px solid #b87436;
+    background:#fff;
+    margin:10px 0 8px;
+    box-shadow:0 6px 14px rgba(0,0,0,.18);
+  }
+  #savedWhere{
+    font-size:16px;
+    font-weight:700;
+    color:#2b4368;
+    margin:4px 0 12px;
+  }
+  .saved-actions{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .saved-btn{
+    min-width:118px;
+    min-height:60px;
+    padding:0 20px;
+    border-radius:999px;
+    border:4px solid #fff;
+    font-family:"Fredoka",sans-serif;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  .saved-btn.dl{ background:linear-gradient(180deg,#38bdf8,#0284c7); color:#fff; box-shadow:0 5px 0 #075985; }
+  .saved-btn.ok{ background:linear-gradient(180deg,#6ce078,#40b84f); color:#fff; box-shadow:0 5px 0 #268432; }
   #galleryGrid{
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(128px,1fr));
+    grid-template-columns:repeat(auto-fill, minmax(132px,1fr));
     gap:12px;
     margin:12px 0 16px;
   }
   .g-item{
+    position:relative;
     border:5px solid #b87436;
     border-radius:14px;
     overflow:hidden;
     background:#fff;
     box-shadow:0 4px 10px rgba(0,0,0,.18);
   }
-  .g-item img{ width:100%; height:96px; object-fit:cover; display:block; }
+  .g-item img{ width:100%; height:98px; object-fit:cover; display:block; }
+  .g-item-bar{
+    display:flex;
+    justify-content:space-between;
+    padding:4px 6px;
+    background:#fff8e8;
+    border-top:2px solid #ecd4ad;
+  }
+  .g-mini{
+    border:none;
+    background:#fff;
+    border-radius:8px;
+    padding:3px 8px;
+    font-size:15px;
+    cursor:pointer;
+    text-decoration:none;
+    box-shadow:0 2px 0 rgba(0,0,0,.12);
+  }
   #closeGalleryBtn{
     min-width:120px;
-    min-height:64px;
+    min-height:60px;
     border-radius:999px;
     border:4px solid #fff;
     background:var(--leaf);
     color:#fff;
     font-family:"Fredoka",sans-serif;
-    font-size:28px;
+    font-size:24px;
     font-weight:700;
     cursor:pointer;
     box-shadow:0 5px 0 #268432;
@@ -712,10 +771,23 @@ window.__HOOT_SELF_COACH__=true;
     </div>
   </div>
 
+  <!-- Saved Painting Preview Modal -->
+  <div id="savedModal" hidden>
+    <div id="savedCard" role="dialog" aria-modal="true" aria-label="Painting saved">
+      <div style="font-size:24px;font-weight:700">📸 Saved to Memories!</div>
+      <img id="savedPreviewImg" alt="Your saved painting">
+      <div id="savedWhere">Saved in Hoot&rsquo;s <b>Memories</b> tab &amp; your studio gallery 🖼️</div>
+      <div class="saved-actions">
+        <a class="saved-btn dl" id="savedDownloadBtn" download="hoots-painting.jpg">⬇️ Save File</a>
+        <button class="saved-btn ok" id="closeSavedBtn" type="button">🎨 Keep Painting</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Saved Paintings Gallery Modal -->
   <div id="galleryModal" hidden>
-    <div id="galleryCard">
-      <div style="font-size:36px">🖼️ ⭐ 🎨</div>
+    <div id="galleryCard" role="dialog" aria-modal="true" aria-label="Saved paintings gallery">
+      <div style="font-size:24px;font-weight:700">🖼️ Saved Paintings</div>
       <div id="galleryGrid"></div>
       <button id="closeGalleryBtn" type="button" aria-label="Keep Painting">🎨 ▶</button>
     </div>
@@ -1611,38 +1683,92 @@ window.__HOOT_SELF_COACH__=true;
     }
   });
 
-  /* Save Snapshot to Studio Gallery */
+  /* Save Snapshot to Persistent Memories & Studio Gallery */
+  function activeKidId(){
+    try{
+      if(window.parent && window.parent.__llActiveProfileId) return window.parent.__llActiveProfileId;
+    }catch(e){}
+    try{
+      var p=localStorage.getItem("hootworld.activeProfile.v1");
+      if(p) return p;
+    }catch(e){}
+    return "kida";
+  }
+  function galleryKey(){ return "hw.paint.gallery.v1."+activeKidId(); }
+  function loadSavedGallery(){
+    try{
+      var raw=localStorage.getItem(galleryKey());
+      var arr=raw?JSON.parse(raw):[];
+      galleryItems=Array.isArray(arr)?arr:[];
+    }catch(e){ galleryItems=[]; }
+    galleryBtn.style.display=galleryItems.length?"grid":"none";
+  }
+  function persistGallery(){
+    try{ localStorage.setItem(galleryKey(), JSON.stringify(galleryItems)); }catch(e){
+      while(galleryItems.length>1){
+        galleryItems.pop();
+        try{ localStorage.setItem(galleryKey(), JSON.stringify(galleryItems)); break; }catch(e2){}
+      }
+    }
+    galleryBtn.style.display=galleryItems.length?"grid":"none";
+  }
   function flattenArt(){
     var out=document.createElement("canvas");
-    out.width=W; out.height=H;
+    var maxW=720, scale=Math.min(1, maxW/Math.max(1,W));
+    out.width=Math.max(160, Math.round(W*scale));
+    out.height=Math.max(120, Math.round(H*scale));
     var cx=out.getContext("2d");
     cx.fillStyle=nightPaper?"#13203d":"#fffdf6";
-    cx.fillRect(0,0,W,H);
-    cx.drawImage(paintCanvas,0,0,W,H);
-    cx.drawImage(guideCanvas,0,0,W,H);
-    return out.toDataURL("image/png");
+    cx.fillRect(0,0,out.width,out.height);
+    cx.drawImage(paintCanvas,0,0,out.width,out.height);
+    cx.drawImage(guideCanvas,0,0,out.width,out.height);
+    return out.toDataURL("image/jpeg", 0.84);
+  }
+  function renderGalleryGrid(){
+    galleryGrid.innerHTML="";
+    if(!galleryItems.length){
+      galleryGrid.innerHTML='<p style="grid-column:1/-1;color:#4a6185;font-weight:700">No saved paintings yet — tap 📸 to save one!</p>';
+      return;
+    }
+    galleryItems.forEach(function(item,idx){
+      var src=(typeof item==="string")?item:item.url;
+      var d=document.createElement("div");
+      d.className="g-item";
+      d.innerHTML='<img src="'+src+'" alt="Saved painting">'
+        +'<div class="g-item-bar">'
+        +'<a class="g-mini" href="'+src+'" download="hoots-painting-'+(idx+1)+'.jpg" aria-label="Download painting">⬇️</a>'
+        +'<button class="g-mini" type="button" data-del="'+idx+'" aria-label="Delete painting">🗑️</button>'
+        +'</div>';
+      d.querySelector("[data-del]").addEventListener("click",function(){
+        audio(); popSfx();
+        galleryItems.splice(idx,1);
+        persistGallery();
+        renderGalleryGrid();
+      });
+      galleryGrid.appendChild(d);
+    });
   }
   saveBtn.addEventListener("click",function(){
     audio();
     var url=flattenArt();
-    galleryItems.unshift(url);
-    if(galleryItems.length>12) galleryItems.pop();
-    galleryBtn.style.display="grid";
-    addStar();
+    galleryItems.unshift({ url:url, ts:Date.now() });
+    if(galleryItems.length>12) galleryItems.length=12;
+    persistGallery();
     celebrateHoot();
-    burstSparkles(W/2,H/2,null,26);
-    speakPraise();
+    sparkleSfx();
+    burstSparkles(W/2,H/2,null,22);
+    $("savedPreviewImg").src=url;
+    $("savedDownloadBtn").href=url;
+    $("savedModal").hidden=false;
+  });
+  $("closeSavedBtn").addEventListener("click",function(){
+    audio(); popSfx();
+    $("savedModal").hidden=true;
   });
 
   galleryBtn.addEventListener("click",function(){
     audio(); popSfx();
-    galleryGrid.innerHTML="";
-    galleryItems.forEach(function(src){
-      var d=document.createElement("div");
-      d.className="g-item";
-      d.innerHTML='<img src="'+src+'" alt="Saved painting">';
-      galleryGrid.appendChild(d);
-    });
+    renderGalleryGrid();
     galleryModal.hidden=false;
   });
   $("closeGalleryBtn").addEventListener("click",function(){
@@ -1671,6 +1797,7 @@ window.__HOOT_SELF_COACH__=true;
 
   /* ================= INIT ================= */
   buildPots();
+  loadSavedGallery();
   requestAnimationFrame(function(){ fitCanvases(false); });
   enqueue("hoot-game-hello.mp3");
 
