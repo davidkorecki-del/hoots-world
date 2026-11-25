@@ -971,10 +971,8 @@ window.__HOOT_SELF_COACH__=true;
   }
   function speakColorName(clip){
     if(!clip) return;
-    var id="name-color-"+clip;
-    if(!hasClip(id)) return;
     clearVoice(true);
-    enqueue(id+".mp3");
+    enqueue("name-color-"+clip+".mp3");
   }
   function speakPraise(){
     var f=PRAISE[praiseIdx%PRAISE.length];

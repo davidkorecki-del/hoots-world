@@ -1398,13 +1398,19 @@ window.__HOOT_SELF_COACH__=true;
     vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
     pumpVoice();
   }
-  function speakFindLetter(L){
+  function speakFindLetter(L, isBoot){
     var low=L.toLowerCase();
     var file=pickClip("hoot-fish-find-"+low, "call-letter-"+low+".mp3");
+    wantedBuoy.classList.remove("pop"); void wantedBuoy.offsetWidth; wantedBuoy.classList.add("pop");
+    if(isBoot){
+      try{
+        if(window.parent && window.parent!==window && window.parent.__hwPlayAfterIntro && window.parent.__hwPlayAfterIntro(VBASE+file)){
+          return;
+        }
+      }catch(e){}
+    }
     clearVoice(true);
-    enqueue(file,"callout",L,function(){
-      wantedBuoy.classList.remove("pop"); void wantedBuoy.offsetWidth; wantedBuoy.classList.add("pop");
-    });
+    enqueue(file,"callout",L,null);
   }
   function speakCatchPhonics(L,golden){
     var low=L.toLowerCase();
@@ -1691,7 +1697,7 @@ window.__HOOT_SELF_COACH__=true;
   }
 
   /* ================= GAME FLOW ================= */
-  function presentQuestTarget(speakNow){
+  function presentQuestTarget(speakNow, isBoot){
     targetLetter=targets[tIdx];
     targetLetterEl.textContent=targetLetter;
     targetEmoji.textContent=DATA[targetLetter].emoji;
@@ -1709,7 +1715,7 @@ window.__HOOT_SELF_COACH__=true;
     renderFishWave(wave, goldenLetter);
     updateHUD();
     drawRestingLine();
-    if(speakNow) speakFindLetter(targetLetter);
+    if(speakNow) speakFindLetter(targetLetter, !!isBoot);
     armIdle();
   }
 
@@ -1725,7 +1731,7 @@ window.__HOOT_SELF_COACH__=true;
     drawRestingLine();
   }
 
-  function startNewRound(silent){
+  function startNewRound(silent, isBoot){
     clearIdle();
     clearVoice(true);
     teachGen++;
@@ -1742,7 +1748,7 @@ window.__HOOT_SELF_COACH__=true;
     targets=shuffle(lettersSet.slice());
     tIdx=0;
     if(mode==="quest"){
-      presentQuestTarget(!silent);
+      presentQuestTarget(!silent, !!isBoot);
     } else {
       presentFreeWave();
       if(!silent) enqueue("hoot-game-hello.mp3","hello","",null);
@@ -2120,7 +2126,7 @@ window.__HOOT_SELF_COACH__=true;
   document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= BOOT RIGHT INTO THE POND ================= */
-  startNewRound(false);
+  startNewRound(false, true);
 
   /* Snapshot API for automated verification */
   window.__fishingGame={

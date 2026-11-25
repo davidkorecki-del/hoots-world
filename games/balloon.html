@@ -722,23 +722,30 @@ window.__HOOT_SELF_COACH__=true;
     vQueue.push({file:file});
     pumpVoice();
   }
-  function callTarget(L){
+  function callTarget(L, isBoot){
     var low=L.toLowerCase();
-    var clip=hasClip("call-letter-"+low)?("call-letter-"+low+".mp3"):("name-letter-"+low+".mp3");
+    var clip="call-letter-"+low+".mp3";
+    wantedBanner.classList.remove("pop"); void wantedBanner.offsetWidth; wantedBanner.classList.add("pop");
+    if(isBoot){
+      try{
+        if(window.parent && window.parent!==window && window.parent.__hwPlayAfterIntro && window.parent.__hwPlayAfterIntro(VBASE+clip)){
+          return;
+        }
+      }catch(e){}
+    }
     clearVoice(true);
     enqueue(clip);
-    wantedBanner.classList.remove("pop"); void wantedBanner.offsetWidth; wantedBanner.classList.add("pop");
   }
   function speakPopSuccess(L, nextL){
     var low=L.toLowerCase();
     clearVoice(true);
-    if(hasClip("name-letter-"+low)) enqueue("name-letter-"+low+".mp3");
+    enqueue("name-letter-"+low+".mp3");
     var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
     if(!hasClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
     enqueue(pr);
     if(nextL){
       var nlow=nextL.toLowerCase();
-      enqueue(hasClip("call-letter-"+nlow)?("call-letter-"+nlow+".mp3"):("name-letter-"+nlow+".mp3"));
+      enqueue("call-letter-"+nlow+".mp3");
     }
   }
   function speakWrong(T){
@@ -747,7 +754,7 @@ window.__HOOT_SELF_COACH__=true;
     var low=T.toLowerCase();
     clearVoice(true);
     enqueue(w);
-    enqueue(hasClip("call-letter-"+low)?("call-letter-"+low+".mp3"):("name-letter-"+low+".mp3"));
+    enqueue("call-letter-"+low+".mp3");
   }
 
   /* ================= IDLE NUDGE ================= */
@@ -926,7 +933,7 @@ window.__HOOT_SELF_COACH__=true;
     basketChips.appendChild(c);
   }
 
-  function presentQuestWave(speakNow){
+  function presentQuestWave(speakNow, isBoot){
     targetLetter=targets[tIdx];
     targetLetterEl.textContent=targetLetter;
     targetEmoji.textContent=DATA[targetLetter].emo;
@@ -940,7 +947,7 @@ window.__HOOT_SELF_COACH__=true;
       spawnBalloon(L, i, wave.length, i===rainbowIdx, false);
     });
     updateHUD();
-    if(speakNow) callTarget(targetLetter);
+    if(speakNow) callTarget(targetLetter, isBoot);
     armIdle();
   }
 
@@ -954,7 +961,7 @@ window.__HOOT_SELF_COACH__=true;
     updateHUD();
   }
 
-  function startRound(){
+  function startRound(isBoot){
     clearIdle();
     clearVoice(true);
     state="play";
@@ -966,7 +973,7 @@ window.__HOOT_SELF_COACH__=true;
     targets=shuffle(lettersSet.slice());
     tIdx=0;
     if(mode==="quest"){
-      presentQuestWave(true);
+      presentQuestWave(true, !!isBoot);
     } else {
       presentFreeSky();
       enqueue("hoot-game-hello.mp3");
@@ -1124,7 +1131,7 @@ window.__HOOT_SELF_COACH__=true;
   document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= BOOT ================= */
-  startRound();
+  startRound(true);
   animId=requestAnimationFrame(tick);
 
   window.__balloonGame={

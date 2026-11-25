@@ -2413,7 +2413,7 @@
       @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
-  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e139">
+  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e140">
   <link rel="stylesheet" href="js/hw-learn-fx.css?v=llprev3e118">
   <link rel="stylesheet" href="js/hw-monti-works.css?v=llprev3e66">
 <script src="js/hoot-config.js?v=llprev3e66"></script>
@@ -6751,7 +6751,7 @@
     (function gamePlayer(){
       /* Wave 3: 20 embedded games extracted to static same-origin games/<key>.html files
          with shared runtime js/hoot-game-head.js, js/hoot-game-tail.css, js/hoot-game-tail.js. */
-      var GAME_VER = "llprev3e139";
+      var GAME_VER = "llprev3e140";
       var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Town Rescue Patrol", rocket: "3D Rocket Count-Up", pizza: "Hoot's Pizza Shop", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Thunder Weather Machine", shapes: "Fireworks Night", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat" };
       var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "pizza-shop": "pizza", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band" };
       var overlay = document.getElementById("game-overlay");
@@ -6764,9 +6764,34 @@
       /* 3e44: Safari only lets a page make sound during a tap. The game's
          spoken intro starts here inside the tap on the game card; the game
          frame skips its own copy and stops this one when the game talks. */
-      var __introA = null;
-      window.__hwIntroPlaying = function(){ return !!(__introA && !__introA.paused); };
-      window.__hwStopIntro = function(){ if(__introA){ try{ __introA.pause(); }catch(e){} __introA = null; } };
+      var __introA = null, __introAfter = null, __introEl = null;
+      window.__hwIntroPlaying = function(){ return !!(__introA && !__introA.paused && !__introA.ended); };
+      window.__hwStopIntro = function(){ __introAfter = null; if(__introA){ try{ __introA.pause(); }catch(e){} __introA = null; } };
+      /* Reuses the Safari-unlocked parent intro Audio element so a game's first target
+         prompt (e.g. "Find the letter C!" in Balloon Pop or Letter Fishing) ALWAYS plays
+         cleanly right after the hub intro finishes on iOS without autoplay rejection! */
+      window.__hwPlayAfterIntro = function(src){
+        if(!src) return false;
+        try{
+          var off = document.querySelector('.voice-btn[data-voice="off"]');
+          if(off && (off.classList.contains("sel") || off.classList.contains("active") || off.getAttribute("aria-pressed") === "true")) return false;
+          if(__introA && !__introA.paused && !__introA.ended){
+            __introAfter = src;
+            return true;
+          }
+          if(__introEl){
+            var a = __introEl;
+            __introA = a;
+            __introAfter = null;
+            a.onended = a.onerror = function(){ if(__introA === a) __introA = null; };
+            a.src = src;
+            var p = window.__govPlayNow ? window.__govPlayNow(a) : a.play();
+            if(p && p.catch) p.catch(function(){});
+            return true;
+          }
+        }catch(e){}
+        return false;
+      };
       window.__hwParentIntro = function(key){
         window.__hwStopIntro(); window.__hwIntroKey = null;
         try{
@@ -6778,11 +6803,36 @@
           var introSrc = ncId
             ? (hasNc ? ("assets/voice/" + ncId + ".mp3") : (key === "real" ? "assets/voice/name-firefighter.mp3" : "assets/voice/hoot-ready-go.mp3"))
             : ("assets/voice/coach/" + key + "-intro.mp3");
-          var a = new Audio(introSrc); __introA = a;
+          if(!__introEl) __introEl = new Audio();
+          var a = __introEl; __introA = a; __introAfter = null;
+          a.src = introSrc;
           window.__hwIntroKey = key; window.__hwIntroAt = Date.now();
-          a.onended = a.onerror = function(){ if(__introA === a) __introA = null; };
+          a.onended = function(){
+            if(__introA !== a) return;
+            if(__introAfter){
+              var nextSrc = __introAfter; __introAfter = null;
+              a.onended = a.onerror = function(){ if(__introA === a) __introA = null; };
+              a.src = nextSrc;
+              var p2 = window.__govPlayNow ? window.__govPlayNow(a) : a.play();
+              if(p2 && p2.catch) p2.catch(function(){ if(__introA === a) __introA = null; });
+            } else {
+              __introA = null;
+            }
+          };
+          a.onerror = function(){
+            if(__introA !== a) return;
+            if(__introAfter){
+              var nextSrc = __introAfter; __introAfter = null;
+              a.onended = a.onerror = function(){ if(__introA === a) __introA = null; };
+              a.src = nextSrc;
+              var p2 = window.__govPlayNow ? window.__govPlayNow(a) : a.play();
+              if(p2 && p2.catch) p2.catch(function(){ if(__introA === a) __introA = null; });
+            } else {
+              __introA = null;
+            }
+          };
           try{ if(window.__hootStopClip) window.__hootStopClip(); }catch(e){}
-          var p = window.__govPlayNow ? window.__govPlayNow(a) : a.play(); if(p && p.catch) p.catch(function(){ if(__introA === a){ __introA = null; window.__hwIntroKey = null; } });
+          var p = window.__govPlayNow ? window.__govPlayNow(a) : a.play(); if(p && p.catch) p.catch(function(){ if(__introA === a){ __introAfter = null; __introA = null; window.__hwIntroKey = null; } });
         }catch(e){ window.__hwIntroKey = null; }
       };
       function openGame(key){
@@ -13566,19 +13616,19 @@
   }
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e139"></script>
+  <script src="js/hoot-lessons.js?v=llprev3e140"></script>
   <script src="js/hoot-study-visuals.js?v=llprev3e123"></script>
   <script src="js/hoot-study-pro.js?v=llprev3e125"></script>
   <script src="js/hoot-study-labs.js?v=llprev3e123"></script>
   <script src="js/hoot-study-exam.js?v=llprev3e122"></script>
   <script src="js/hoot-teen-arcade.js?v=llprev3e125"></script>
-  <script src="js/hoot-study.js?v=llprev3e139"></script>
+  <script src="js/hoot-study.js?v=llprev3e140"></script>
   <script src="js/hoot-ela7.js?v=llprev3e119"></script>
   <script src="js/hoot-sci7.js?v=llprev3e119"></script>
   <script src="js/hoot-ss7.js?v=llprev3e119"></script>
   <script src="js/hoot-games.js?v=llprev3e118"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e139"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e140"></script>
   <script src="js/hw-learn-fx.js?v=llprev3e118"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>
@@ -13592,12 +13642,12 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e139', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e140', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
-    var PAGE_VER = 'llprev3e139';
-    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e139';
+    var PAGE_VER = 'llprev3e140';
+    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e140';
     var SIG_KEY = 'hw.pwa.sig.v1', VER_KEY = 'hw.pwa.ver.v1', RELOAD_KEY = 'hw.pwa.reloadAt.v1';
     var baseSig = null, lastChk = 0, pendingReload = false;
     function safeToReload(){
