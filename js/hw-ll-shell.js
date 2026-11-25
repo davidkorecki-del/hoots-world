@@ -5,7 +5,12 @@ var HW_THUMBS = {
   real: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"><defs><linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0284c7"/><stop offset="1" stop-color="#bae6fd"/></linearGradient></defs><rect width="320" height="320" rx="44" fill="url(#r)"/><rect x="0" y="220" width="320" height="100" fill="#334155"/><g stroke="#141e30" stroke-width="6" stroke-linejoin="round"><rect x="34" y="128" width="150" height="86" rx="14" fill="#ef4444"/><rect x="174" y="146" width="76" height="68" rx="14" fill="#dc2626"/><rect x="188" y="156" width="44" height="30" rx="6" fill="#bae6fd"/><rect x="46" y="106" width="118" height="16" rx="7" fill="#fde047"/><circle cx="192" cy="132" r="11" fill="#38bdf8"/><circle cx="86" cy="216" r="24" fill="#1e293b"/><circle cx="86" cy="216" r="10" fill="#fde047"/><circle cx="206" cy="216" r="24" fill="#1e293b"/><circle cx="206" cy="216" r="10" fill="#fde047"/><path d="M235 120 Q268 86 290 66" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/></g></svg>'),
   rocket: "assets/rocket3d/thumb_rocket.jpg?v=llprev3e105",
   pizza: "assets/pizza_cartoon/thumb_pizza.jpg?v=llprev3e118",
-  twinkle: "assets/twinkle3d/thumb_twinkle.jpg?v=llprev3e116"
+  twinkle: "assets/twinkle3d/thumb_twinkle.jpg?v=llprev3e116",
+  feed: "assets/thumbs_v2/thumb_feed.jpg?v=llprev3e136",
+  animals: "assets/thumbs_v2/thumb_animals.jpg?v=llprev3e136",
+  peek: "assets/thumbs_v2/thumb_peek.jpg?v=llprev3e136",
+  fishing: "assets/thumbs_v2/thumb_fishing.jpg?v=llprev3e136",
+  paint: "assets/thumbs_v2/thumb_paint.jpg?v=llprev3e136"
 }; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp (-212 KB cold load) */
 /* Hoot's World layout preview 2 — v63 shell routing + data-to-card mapping.
    Does not rewrite Muse game, tutor, or lesson internals. */
