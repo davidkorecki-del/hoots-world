@@ -1472,22 +1472,185 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   }
 
 
-  /* 3e25: Hoot's picks first (one strong game per skill); the rest under "More games". */
-  var PICKS = ["pizza", "rocket", "balloon", "fishing", "bubblepop", "splash", "shapes", "memory", "animals", "feed", "peek", "piano", "paint"];
+  /* v145: Flickable Storybook Game Library (Hero Snap Carousel + Horizontal Shelves + Grid Toggle) */
+  var GAME_SHELVES = [
+    { id:"worlds",  emo:"🌟", label:"Big Worlds",        keys:["pizza","rocket","twinkle","real","splash","shapes"] },
+    { id:"learn",   emo:"🔤", label:"ABC, 123 & Puzzles",keys:["balloon","fishing","bubblepop","memory","find"] },
+    { id:"create",  emo:"🎨", label:"Music, Art & Magic",keys:["paint","piano","band","dance","dress","magic"] },
+    { id:"animals", emo:"🐾", label:"Animals & Friends", keys:["feed","animals","peek","friends"] }
+  ];
+  var gameLibCat = "all";
+  var gameLibView = "flick"; /* "flick" | "grid" */
+
+  function gameByKey(k) { return GAMES.filter(function (g) { return g.key === k; })[0] || null; }
+
   function renderGames() {
     if (!hasGames()) return renderPractice();
-    var card = function (g) {
-      return '<button type="button" class="gcard" data-game="' + g.key + '" style="--k:' + (g.color || "#ffe08a") + '">' + gameThumb(g.key, g.emo) + "<b>" + esc(g.title) + "</b><small>" + esc(g.cat) + "</small></button>";
+    var allOrdered = [];
+    GAME_SHELVES.forEach(function (sh) {
+      sh.keys.forEach(function (k) {
+        var g = gameByKey(k);
+        if (g && allOrdered.indexOf(g) === -1) allOrdered.push(g);
+      });
+    });
+    GAMES.forEach(function (g) { if (allOrdered.indexOf(g) === -1) allOrdered.push(g); });
+
+    var activeShelf = GAME_SHELVES.filter(function (s) { return s.id === gameLibCat; })[0];
+    var deckList = activeShelf ? activeShelf.keys.map(gameByKey).filter(Boolean) : allOrdered;
+
+    var filterPills = '<button type="button" class="gl-pill' + (gameLibCat === "all" ? " on" : "") + '" data-gl-cat="all">✨ All (' + allOrdered.length + ')</button>' +
+      GAME_SHELVES.map(function (sh) {
+        return '<button type="button" class="gl-pill' + (gameLibCat === sh.id ? " on" : "") + '" data-gl-cat="' + sh.id + '">' + sh.emo + " " + esc(sh.label) + "</button>";
+      }).join("");
+
+    var viewToggle = '<div class="gl-view-seg" role="group" aria-label="Library view">' +
+      '<button type="button" class="gl-vbtn' + (gameLibView === "flick" ? " on" : "") + '" data-gl-view="flick" aria-pressed="' + String(gameLibView === "flick") + '">🎠 Flick</button>' +
+      '<button type="button" class="gl-vbtn' + (gameLibView === "grid" ? " on" : "") + '" data-gl-view="grid" aria-pressed="' + String(gameLibView === "grid") + '">⊞ Grid</button>' +
+    '</div>';
+
+    var heroCard = function (g, idx) {
+      return '<button type="button" class="gl-hero-card' + (idx === 0 ? " is-center" : "") + '" data-game="' + g.key + '" data-gl-idx="' + idx + '" style="--k:' + (g.color || "#ffe08a") + '">' +
+        '<span class="gl-hero-art">' + gameThumb(g.key, g.emo) + '</span>' +
+        '<span class="gl-hero-meta">' +
+          '<b>' + esc(g.title) + '</b>' +
+          '<small>' + esc(g.cat) + '</small>' +
+          '<span class="gl-play-chip" aria-hidden="true">▶ Play</span>' +
+        '</span>' +
+      '</button>';
     };
-    var picks = PICKS.map(function (k) { return GAMES.filter(function (g) { return g.key === k; })[0]; }).filter(Boolean);
-    var more = GAMES.filter(function (g) { return PICKS.indexOf(g.key) === -1; });
+
+    var shelfCard = function (g) {
+      return '<button type="button" class="gcard gl-shelf-card" data-game="' + g.key + '" style="--k:' + (g.color || "#ffe08a") + '">' +
+        gameThumb(g.key, g.emo) + "<b>" + esc(g.title) + "</b><small>" + esc(g.cat) + "</small></button>";
+    };
+
     var party = (window.HootGames ? window.HootGames.list : []).map(function (g) {
-      return '<button type="button" class="gcard pgcard" data-pgame="' + g.key + '"><span class="pg-ico" aria-hidden="true">' + g.emo + "</span><b>" + esc(g.title) + "</b><small>New · with Hoot</small></button>";
+      return '<button type="button" class="gcard pgcard gl-shelf-card" data-pgame="' + g.key + '"><span class="pg-ico" aria-hidden="true">' + g.emo + "</span><b>" + esc(g.title) + "</b><small>With Hoot</small></button>";
     }).join("");
-    var songs = ""; /* Dawid ruling: remove Sing with Hoot */
-    var cards = (party ? '<h2 class="pg-rowh">🎉 Hoot\'s Party Games</h2><div class="pg-row">' + party + "</div>" + songs + '<h2 class="pg-rowh">Hoot\'s picks</h2><div id="gameGridPicks" class="pg-grid">' : "") + picks.map(card).join("") + (party ? "</div>" : "") +
-      '<details class="ll-moregames"' + (state.moreGames ? " open" : "") + '><summary>More games (' + more.length + ')</summary><div id="gameGridMore">' + more.map(card).join("") + "</div></details>";
-    return '<div class="ll-kidbar">' + kidbarHtml() + '</div><section class="ll-card ll-hero" style="--k:' + state.profile.color + '"><div class="big">' + brownHootFace() + '</div><div class="htxt"><h2>Hoot\'s Games</h2><p class="hoot-line">Pick a game — they all open here, inside Hoot\'s World.</p></div></section><div id="gameGrid">' + cards + "</div>" + wc2MissionsEntryHtml() + we2CarEntryHtml(); /* Wave E2: car mode entry */
+
+    var bodyHtml = "";
+    if (gameLibView === "grid") {
+      bodyHtml = '<div id="gameGrid" class="gl-grid-all">' + deckList.map(shelfCard).join("") + '</div>' +
+        (party ? '<section class="gl-shelf"><div class="gl-shelf-hd"><h3>🎉 Hoot\'s Party Games</h3></div><div class="gl-shelf-track">' + party + '</div></section>' : "");
+    } else {
+      var dots = deckList.map(function (g, i) {
+        return '<button type="button" class="gl-dot' + (i === 0 ? " on" : "") + '" data-gl-dot="' + i + '" aria-label="Go to ' + esc(g.title) + '"></button>';
+      }).join("");
+      var shelvesHtml = (activeShelf ? [activeShelf] : GAME_SHELVES).map(function (sh) {
+        var list = sh.keys.map(gameByKey).filter(Boolean);
+        return '<section class="gl-shelf">' +
+          '<div class="gl-shelf-hd"><h3>' + sh.emo + " " + esc(sh.label) + '</h3><span class="gl-swipe-hint" aria-hidden="true">Flick →</span></div>' +
+          '<div class="gl-shelf-track">' + list.map(shelfCard).join("") + '</div>' +
+        '</section>';
+      }).join("");
+      bodyHtml =
+        '<section class="gl-carousel-wrap" aria-label="Flick through games">' +
+          '<button type="button" class="gl-arrow gl-prev" data-gl-step="-1" aria-label="Previous game">‹</button>' +
+          '<div class="gl-track" id="glTrack">' + deckList.map(heroCard).join("") + '</div>' +
+          '<button type="button" class="gl-arrow gl-next" data-gl-step="1" aria-label="Next game">›</button>' +
+          '<div class="gl-dots" id="glDots">' + dots + '</div>' +
+        '</section>' +
+        '<div id="gameGrid" class="gl-shelves">' + shelvesHtml +
+          (party ? '<section class="gl-shelf"><div class="gl-shelf-hd"><h3>🎉 Hoot\'s Party Games</h3><span class="gl-swipe-hint" aria-hidden="true">Flick →</span></div><div class="gl-shelf-track">' + party + '</div></section>' : "") +
+        '</div>';
+    }
+
+    return '<div class="ll-kidbar">' + kidbarHtml() + '</div>' +
+      '<div class="gl-top">' +
+        '<div class="gl-brand"><span class="gl-hoot-mini" aria-hidden="true">' + brownHootFace() + '</span><div><h2>Hoot\'s Game Library</h2><p>Flick to browse — tap any picture to play!</p></div></div>' +
+        viewToggle +
+      '</div>' +
+      '<div class="gl-filters" role="tablist" aria-label="Game categories">' + filterPills + '</div>' +
+      bodyHtml +
+      wc2MissionsEntryHtml() + we2CarEntryHtml();
+  }
+
+  function initGameCarousel(root) {
+    if (!root) return;
+    /* Filter & view switcher clicks */
+    root.querySelectorAll("[data-gl-cat]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        gameLibCat = b.getAttribute("data-gl-cat") || "all";
+        hwHubPop(520);
+        render();
+      });
+    });
+    root.querySelectorAll("[data-gl-view]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        gameLibView = b.getAttribute("data-gl-view") || "flick";
+        hwHubPop(580);
+        render();
+      });
+    });
+
+    var track = root.querySelector("#glTrack");
+    if (!track) return;
+    var cards = Array.prototype.slice.call(track.querySelectorAll(".gl-hero-card"));
+    var dots = Array.prototype.slice.call(root.querySelectorAll(".gl-dot"));
+    var activeIdx = 0;
+
+    function syncActive() {
+      var tr = track.getBoundingClientRect();
+      var mid = tr.left + tr.width / 2;
+      var best = 0, bestDist = 1e9;
+      cards.forEach(function (c, i) {
+        var r = c.getBoundingClientRect();
+        var d = Math.abs((r.left + r.width / 2) - mid);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      activeIdx = best;
+      cards.forEach(function (c, i) { c.classList.toggle("is-center", i === best); });
+      dots.forEach(function (d, i) { d.classList.toggle("on", i === best); });
+    }
+
+    function scrollToCard(idx) {
+      if (!cards.length) return;
+      var target = Math.max(0, Math.min(cards.length - 1, idx));
+      var c = cards[target];
+      if (!c) return;
+      var left = c.offsetLeft - (track.clientWidth - c.offsetWidth) / 2;
+      track.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+      hwHubPop(480 + (target % 5) * 40);
+    }
+
+    var rafId = 0;
+    track.addEventListener("scroll", function () {
+      if (rafId) return;
+      rafId = requestAnimationFrame(function () { rafId = 0; syncActive(); });
+    }, { passive: true });
+
+    root.querySelectorAll("[data-gl-step]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var step = Number(btn.getAttribute("data-gl-step")) || 1;
+        scrollToCard((activeIdx + step + cards.length) % cards.length);
+      });
+    });
+    dots.forEach(function (dot) {
+      dot.addEventListener("click", function () {
+        scrollToCard(Number(dot.getAttribute("data-gl-dot")) || 0);
+      });
+    });
+
+    /* Mouse drag-to-flick on desktop (touch flicks natively via scroll-snap) */
+    var dragDown = false, startX = 0, startScroll = 0, dragged = false;
+    track.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "touch") return;
+      dragDown = true; dragged = false; startX = e.clientX; startScroll = track.scrollLeft;
+    });
+    track.addEventListener("pointermove", function (e) {
+      if (!dragDown) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > 10) dragged = true;
+      if (dragged) track.scrollLeft = startScroll - dx;
+    });
+    function endDrag() { dragDown = false; }
+    track.addEventListener("pointerup", endDrag);
+    track.addEventListener("pointercancel", endDrag);
+    track.addEventListener("click", function (e) {
+      if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; }
+    }, true);
+
+    setTimeout(syncActive, 60);
   }
 
   function renderLearn() {
@@ -2584,6 +2747,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (state.tab === "learn") document.body.classList.add("ll-tab-learn");
     $$("#ll-tabs button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === state.tab); });
     bumpStars();
+    if (state.tab === "games") initGameCarousel(app);
     afterRender();
   }
 
