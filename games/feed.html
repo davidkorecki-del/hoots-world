@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="feed";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e128"></script>
+<script src="js/hoot-game-head.js?v=llprev3e129"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -817,6 +817,9 @@
   function childKey(){
     try{ return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null; }catch(e){ return null; }
   }
+  function hasVoice(id){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+  }
   function foodClip(food, qty){
     return qty === 1 ? ("food-" + food.id + "-one.mp3") : ("food-" + food.id + ".mp3");
   }
@@ -827,19 +830,23 @@
       prefix.push(ck === "kida" ? "hi-kida.mp3" : ck === "kidb" ? "hi-kidb.mp3" : "hoot-game-hello.mp3");
     }
     if(mode === "number" && reqFood){
-      if(reqNeed === 1){
-        sayClips(prefix.concat(["feed-hungry-for.mp3", foodClip(reqFood, 1)]), true);
+      var fullKey = "hoot-feed-" + reqFood.id + "-" + reqNeed;
+      if(hasVoice(fullKey)){
+        sayClips(prefix.concat([fullKey + ".mp3"]), true);
       } else {
-        sayClips(prefix.concat(["feed-hungry-for.mp3", "name-number-" + reqNeed + ".mp3", foodClip(reqFood, reqNeed)]), true);
+        /* Clean natural fallback without splicing "Number 2" (name-number-*)! */
+        sayClips(prefix.concat(["feed-hungry-for.mp3", foodClip(reqFood, reqNeed)]), true);
       }
     } else if(mode === "color"){
-      sayClips(prefix.concat(["call-color-" + sortColor + ".mp3"]), true);
+      var colKey = "hoot-feed-color-" + sortColor;
+      sayClips(prefix.concat([hasVoice(colKey) ? (colKey + ".mp3") : ("call-color-" + sortColor + ".mp3")]), true);
     } else if(mode === "blender"){
       if(blendReadyToDrink){
-        sayClips(prefix.concat(["hoot-amazing.mp3"]), true);
+        sayClips(prefix.concat([hasVoice("hoot-feed-smoothie-ready") ? "hoot-feed-smoothie-ready.mp3" : "hoot-super.mp3"]), true);
+      } else if(blendItems.length >= 3){
+        sayClips(prefix.concat([hasVoice("hoot-feed-blend-go") ? "hoot-feed-blend-go.mp3" : "hoot-tap-big-btn.mp3"]), true);
       } else {
-        var left = Math.max(1, 3 - blendItems.length);
-        sayClips(prefix.concat(["feed-hungry-for.mp3", "name-number-" + left + ".mp3"]), true);
+        sayClips(prefix.concat([hasVoice("hoot-feed-blend-start") ? "hoot-feed-blend-start.mp3" : "hoot-ready-go.mp3"]), true);
       }
     }
   }
@@ -1150,11 +1157,14 @@
         updateBlenderVisual();
         renderOrderCloud(false);
         var n = blendItems.length;
-        sayClips(["name-number-" + n + ".mp3", foodClip(food, 1)], true);
         if(n >= 3){
           blendGoBtn.hidden = false;
           plateGrid.innerHTML = "";
           sfxStar();
+          sayClips([foodClip(food, 1), hasVoice("hoot-feed-blend-go") ? "hoot-feed-blend-go.mp3" : "hoot-tap-big-btn.mp3"], true);
+        } else {
+          var bKey = "hoot-feed-bite-" + n;
+          sayClips(hasVoice(bKey) ? [bKey + ".mp3", foodClip(food, 1)] : [foodClip(food, 1)], true);
         }
         inputLock = false;
         armIdle();
@@ -1198,7 +1208,8 @@
         popBadge(cx + 36, cy - 24, String(reqGot));
         renderOrderCloud(false);
         if(reqGot < reqNeed){
-          sayClips(["name-number-" + reqGot + ".mp3"], true);
+          var biteKey = "hoot-feed-bite-" + reqGot;
+          sayClips([hasVoice(biteKey) ? (biteKey + ".mp3") : (reqGot === 1 ? "hoot-got-it.mp3" : "hoot-nice-2.mp3")], true);
           inputLock = false;
           armIdle();
         } else {
@@ -1278,7 +1289,7 @@
     reqFood = pool[Math.floor(Math.random() * pool.length)];
     reqNeed = ordersDone === 0 ? (1 + Math.floor(Math.random() * 2))
             : ordersDone === 1 ? (2 + Math.floor(Math.random() * 2))
-            : (3 + Math.floor(Math.random() * 2));
+            : 3;
     reqGot = 0;
 
     var list = [];
@@ -1374,7 +1385,7 @@
         orderCloud.hidden = false;
         renderOrderCloud(true);
         sfxStar();
-        sayClips(["hoot-giggle.mp3"], true);
+        sayClips([hasVoice("hoot-feed-smoothie-ready") ? "hoot-feed-smoothie-ready.mp3" : "hoot-super.mp3"], true);
         inputLock = false;
         armIdle();
       }
@@ -1404,13 +1415,13 @@
       awardStar();
       showerConfetti();
       hootBtn.classList.add("happy-jump");
-      showWinCelebration();
+      showWinCelebration(true);
     }, 900);
   }
   smoothieCupBtn.addEventListener("pointerup", function(){ feedSmoothieToHoot(); });
   smoothieCupBtn.addEventListener("click", function(){ feedSmoothieToHoot(); });
 
-  function showWinCelebration(){
+  function showWinCelebration(fromSmoothie){
     state = "won";
     inputLock = false;
     winPlates.innerHTML = "";
@@ -1426,7 +1437,7 @@
       (function(el, ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(stEls[i], 140 + i * 140);
     }
     winOverlay.hidden = false;
-    sayClips(["hoot-win-yay.mp3"], true);
+    sayClips([fromSmoothie && hasVoice("hoot-feed-smoothie-yum") ? "hoot-feed-smoothie-yum.mp3" : "hoot-win-yay.mp3"], true);
   }
 
   /* ================= CONTROLS & LIVING SCENE TAPS ================= */
@@ -1539,7 +1550,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e128">
-<script src="js/hoot-game-tail.js?v=llprev3e128"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e129">
+<script src="js/hoot-game-tail.js?v=llprev3e129"></script>
 </body>
 </html>
