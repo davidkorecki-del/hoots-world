@@ -3808,6 +3808,21 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     } catch (e) {}
     buildChrome();
     hookMapLessonStops();
+    /* If a background PWA update or Family Sync adopt reloaded the page right after
+       a child profile was already chosen, restore that profile seamlessly instead of
+       kicking the user back out to the profile picker. */
+    var autoProf = "";
+    try {
+      autoProf = sessionStorage.getItem("hw.autoReload.profile") || "";
+      if (autoProf) sessionStorage.removeItem("hw.autoReload.profile");
+    } catch (e) {}
+    if (autoProf && PROFILES.some(function (p) { return p.id === autoProf; })) {
+      if (typeof window.__hootSelectProfile === "function") {
+        try { window.__hootSelectProfile(autoProf, { enter: true, silent: true }); } catch (e) {}
+      }
+      setProfile(autoProf, { keepGreet: true });
+      return;
+    }
     // If Muse already hid the gate (refresh mid-session), still wait for a pick.
     var gate = $("#profile-gate");
     if (gate && gate.hidden) {
