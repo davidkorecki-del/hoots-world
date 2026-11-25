@@ -2,332 +2,627 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="animals";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
-
+<script>window.__HOOT_GAME_KEY__="animals";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e131"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
-
 <title>Animal Homes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
-    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62; --leaf-dark:#3da147;
+    --ink:#17324f;
+    --cream:#fffdf7;
+    --sun:#ffc93c;
+    --leaf:#3cc858;
+    --coral:#ff5d52;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   [hidden]{ display:none !important; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#aee7ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
-    background:linear-gradient(180deg,#6ec9f7 0%,#a5e3ff 30%,#d9f6e3 58%,#eafce8 100%); }
+  html,body{ height:100%; margin:0; overflow:hidden; }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#66c7f7;
+    touch-action:none;
+    user-select:none; -webkit-user-select:none;
+  }
 
-  /* ---------- living meadow decor ---------- */
-  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
-  #sun{ top:6px; right:6px; width:74px; height:74px; z-index:1; }
-  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
-  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
+  #stage{
+    position:fixed; inset:0; height:100dvh; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:space-between;
+    background:linear-gradient(180deg, #4db7f5 0%, #9de2ff 40%, #d8f8de 66%, #59cc62 100%);
+  }
+
+  /* ================= STORYBOOK SUNNY WOODLAND SCENERY ================= */
+  #scenery{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+  #meadowSvg{
+    position:absolute; left:0; right:0; bottom:12%;
+    width:100%; height:62%; display:block;
+  }
+  #pineLeft{
+    position:absolute; left:-18px; bottom:26%;
+    width:clamp(112px, 19vw, 190px);
+    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
+  }
+  #oakRight{
+    position:absolute; right:-20px; bottom:28%;
+    width:clamp(118px, 20vw, 200px);
+    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
+  }
+
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; pointer-events:auto; }
+  #sunBtn{ top:74px; right:16px; width:80px; height:80px; z-index:2; }
+  #sunBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 16px rgba(255,183,3,.5)); }
+  #sunBtn .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 44s linear infinite; }
+  #sunBtn.zing .rays{ animation:sunSpin .9s cubic-bezier(.34,1.5,.5,1) 1; }
   @keyframes sunSpin{ to{ transform:rotate(360deg); } }
-  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
-  #sun:active{ transform:scale(.93); }
-  .cloud{ z-index:1; width:104px; height:46px; opacity:.95; animation:drift linear infinite; }
-  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
-  .cloud.puff svg{ transform:scale(1.22,1.35); }
-  @keyframes drift{ from{ transform:translateX(-130px); } to{ transform:translateX(112vw); } }
-  .bfly{ z-index:2; width:38px; height:30px; animation:flutter 7s ease-in-out infinite alternate; }
-  .bfly svg{ width:100%; height:100%; display:block; overflow:visible; }
-  .bfly .bw{ transform-box:fill-box; animation:flapB .22s ease-in-out infinite alternate; }
-  .bfly .bw-l{ transform-origin:100% 50%; } .bfly .bw-r{ transform-origin:0% 50%; }
-  @keyframes flapB{ from{ transform:scaleX(1);} to{ transform:scaleX(.45);} }
-  @keyframes flutter{ 0%{ transform:translate(0,0) rotate(-4deg);} 50%{ transform:translate(24px,-18px) rotate(5deg);} 100%{ transform:translate(-12px,-6px) rotate(-3deg);} }
 
-  /* ---------- HUD ---------- */
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
-  .round-btn:active{ transform:scale(.9); }
-  .round-btn svg{ width:25px; height:25px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
-  #starBank .star-ic{ width:25px; height:25px; }
-  #starBank.bump{ animation:bankBump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bankBump{ 0%{ transform:scale(1);} 40%{ transform:scale(1.16) rotate(-3deg);} 100%{ transform:scale(1);} }
+  .cloud{ z-index:1; width:124px; height:56px; opacity:.95; animation:cloudDrift linear infinite; }
+  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(23,50,79,.08)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.24, 1.34); }
+  @keyframes cloudDrift{ from{ transform:translateX(-150px); } to{ transform:translateX(112vw); } }
 
-  /* ---------- target card ---------- */
-  #targetCard{ position:relative; z-index:6; margin:8px auto 0; display:flex; align-items:center; gap:12px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(23,50,79,.12),0 12px 22px rgba(23,50,79,.12); padding:7px 10px 7px 16px; max-width:min(94vw,480px); }
-  #targetCard.new-target{ animation:tcIn .45s cubic-bezier(.34,1.7,.5,1); }
-  @keyframes tcIn{ 0%{ transform:scale(.8); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
-  #targetMain{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(22px,6vw,30px); line-height:1; color:var(--leaf-dark); white-space:nowrap; }
-  .tc-label{ font-weight:900; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
-  #progressDots{ display:flex; gap:5px; margin-top:4px; }
-  #progressDots i{ width:11px; height:11px; border-radius:50%; background:#dcebf5; border:2px solid #bcd6ea; display:block; }
-  #progressDots i.on{ background:var(--sun); border-color:#e8a90c; }
-  #hearBtn{ width:44px; height:44px; flex:0 0 auto; border-radius:50%; border:3px solid #ffe1a8; background:#fff6dd; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(232,169,12,.35); }
-  #hearBtn:active{ transform:scale(.9); }
-  #hearBtn svg{ width:23px; height:23px; }
+  #bflyBtn{
+    left:16%; top:21%; width:66px; height:66px; z-index:3;
+    display:grid; place-items:center; animation:bflyFloat 6.8s ease-in-out infinite alternate;
+  }
+  #bflyBtn svg{ width:50px; height:40px; overflow:visible; }
+  #bflyBtn .bw{ transform-box:fill-box; animation:flapW .2s ease-in-out infinite alternate; }
+  #bflyBtn .bw-l{ transform-origin:100% 50%; }
+  #bflyBtn .bw-r{ transform-origin:0% 50%; }
+  @keyframes flapW{ from{ transform:scaleX(1); } to{ transform:scaleX(.42); } }
+  @keyframes bflyFloat{
+    0%{ transform:translate(0,0) rotate(-5deg); }
+    50%{ transform:translate(24px,-16px) rotate(6deg); }
+    100%{ transform:translate(-10px,-4px) rotate(-3deg); }
+  }
 
-  /* ---------- scene ---------- */
-  #scene{ position:relative; flex:1 1 auto; min-height:0; z-index:1; }
-  #meadow{ position:absolute; left:0; right:0; bottom:0; height:46%; z-index:0; pointer-events:none; }
-  /* the presented animal / home on its wooden perch */
-  #perch{ position:absolute; z-index:5; left:50%; top:2%; transform:translateX(-50%); width:clamp(104px,30vw,148px); text-align:center; }
-  #perchArt{ filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:perchBob 2.6s ease-in-out infinite; }
-  #perchArt svg{ width:100%; display:block; }
-  @keyframes perchBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-6px);} }
-  #perch.shake #perchArt{ animation:perchShake .45s ease-in-out 2; }
-  @keyframes perchShake{ 0%,100%{ transform:translateX(0);} 25%{ transform:translateX(-8px) rotate(-3deg);} 75%{ transform:translateX(8px) rotate(3deg);} }
-  #perchName{ display:inline-block; margin-top:2px; background:#8a5a2b; color:#fff6dd; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15px; padding:3px 14px; border-radius:999px; box-shadow:0 3px 0 rgba(90,55,20,.5); }
-  #perchPole{ width:10px; height:26px; margin:0 auto; background:linear-gradient(90deg,#8a5a2b,#a9713d,#8a5a2b); border-radius:4px; }
-  /* choice spots */
-  .spot{ position:absolute; z-index:4; width:clamp(96px,28vw,138px); border:none; background:none; padding:0; cursor:pointer; font-family:inherit; text-align:center; transition:transform .12s ease; }
-  .spot:active{ transform:scale(.93); }
-  .spot .zone{ border-radius:50%; padding:10px; border:3px dashed rgba(255,255,255,.0); transition:border-color .2s, background .2s; }
-  .spot-l{ left:2%; bottom:24%; } .spot-l .zone{ background:radial-gradient(circle at 50% 60%,rgba(87,204,98,.35),rgba(87,204,98,0) 70%); }
-  .spot-c{ left:50%; transform:translateX(-50%); bottom:19%; } .spot-c:active{ transform:translateX(-50%) scale(.93); }
-  .spot-c .zone{ background:radial-gradient(circle at 50% 60%,rgba(246,201,60,.4),rgba(246,201,60,0) 70%); }
-  .spot-r{ right:2%; bottom:24%; } .spot-r .zone{ background:radial-gradient(circle at 50% 60%,rgba(78,168,224,.38),rgba(78,168,224,0) 70%); }
-  .spot svg{ width:100%; display:block; filter:drop-shadow(0 6px 8px rgba(23,50,79,.22)); }
-  .spot .spot-name{ display:inline-block; margin-top:1px; background:rgba(255,253,246,.96); border:2px solid #fff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; padding:2px 12px; border-radius:999px; box-shadow:0 3px 0 rgba(23,50,79,.15); }
-  .spot.right .zone{ border-color:#fff; background:radial-gradient(circle at 50% 60%,rgba(255,201,60,.55),rgba(255,201,60,.08) 72%); animation:spotGlow .5s ease-in-out 3 alternate; }
-  @keyframes spotGlow{ from{ transform:scale(1);} to{ transform:scale(1.07);} }
-  .spot.wrong{ animation:spotWiggle .4s ease-in-out; }
-  @keyframes spotWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-4deg);} 75%{ transform:rotate(4deg);} }
-  .spot-c.wrong{ animation:spotWiggleC .4s ease-in-out; }
-  @keyframes spotWiggleC{ 0%,100%{ transform:translateX(-50%) rotate(0);} 25%{ transform:translateX(-50%) rotate(-4deg);} 75%{ transform:translateX(-50%) rotate(4deg);} }
-  /* animal choice buttons (Who Lives Here) */
-  .choice-row{ position:absolute; z-index:4; left:0; right:0; bottom:21%; display:flex; justify-content:center; gap:4vw; padding:0 8px; }
-  .animal-choice{ width:clamp(88px,26vw,124px); border:none; background:none; padding:0; cursor:pointer; font-family:inherit; text-align:center; }
-  .animal-choice:active{ transform:scale(.93); }
-  .animal-choice svg{ width:100%; display:block; filter:drop-shadow(0 6px 8px rgba(23,50,79,.22)); animation:perchBob 2.8s ease-in-out infinite; }
-  .animal-choice .spot-name{ display:inline-block; background:rgba(255,253,246,.96); border:2px solid #fff; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; padding:2px 12px; border-radius:999px; box-shadow:0 3px 0 rgba(23,50,79,.15); }
-  .animal-choice.wrong{ animation:spotWiggle .4s ease-in-out; }
-  /* number chips (Count mode) */
-  .num-chip{ width:64px; height:64px; border-radius:50%; border:3px solid #fff; background:var(--teal); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:30px; cursor:pointer; box-shadow:0 5px 0 rgba(14,116,120,.5); }
-  .num-chip:active{ transform:scale(.9); }
-  .num-chip.wrong{ animation:spotWiggle .4s ease-in-out; background:#b9cbd8; }
-  /* count minis + meet grid */
-  .mini-pair{ position:absolute; z-index:3; width:64px; text-align:center; pointer-events:none; }
-  .mini-pair .mp-home{ width:64px; } .mini-pair .mp-an{ width:44px; margin:-30px auto 0; position:relative; }
-  .mini-pair svg{ width:100%; display:block; }
-  .mini-pair.bounce .mp-an{ animation:miniBounce .5s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes miniBounce{ 0%{ transform:translateY(0);} 40%{ transform:translateY(-14px);} 100%{ transform:translateY(0);} }
-  #meetGrid{ position:absolute; z-index:4; inset:4px 6px 70px; display:grid; grid-template-columns:repeat(4,1fr); gap:2px 4px; align-content:start; }
-  .meet-home{ border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
-  .meet-home svg{ width:100%; max-height:64px; display:block; filter:drop-shadow(0 4px 5px rgba(23,50,79,.2)); transition:transform .15s ease; }
-  .meet-home:active svg{ transform:scale(.9); }
-  .meet-home.met svg{ filter:drop-shadow(0 0 9px rgba(255,201,60,.95)); }
-  .meet-home .mh-name{ display:block; font-family:"Fredoka",sans-serif; font-weight:600; font-size:11.5px; color:var(--ink); background:rgba(255,253,246,.85); border-radius:99px; padding:0 4px; margin-top:-4px; }
-  /* village strip — homed animals live here */
-  #village{ position:absolute; z-index:4; left:0; right:0; bottom:0; display:flex; justify-content:center; gap:5px; padding:14px 6px 4px;
-    background:linear-gradient(180deg,rgba(87,204,98,0),rgba(87,204,98,.35) 30%,rgba(61,161,71,.4)); }
-  #village::before{ content:""; position:absolute; left:0; right:0; top:8px; height:5px; background:repeating-linear-gradient(90deg,#a9713d 0 16px,#8a5a2b 16px 20px); opacity:.75; border-radius:3px; }
-  .plot{ position:relative; width:15.5%; max-width:62px; height:56px; }
-  .plot .pl-home{ position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:88%; opacity:.45; filter:grayscale(.4); }
-  .plot .pl-an{ position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:62%; display:none; }
-  .plot.filled .pl-home{ opacity:1; filter:none; }
-  .plot.filled .pl-an{ display:block; }
-  .plot svg{ width:100%; display:block; }
-  .plot.filled .pl-an svg{ animation:liveBob 1.6s ease-in-out infinite alternate; }
-  .plot.filled.water .pl-an svg{ animation:liveSplash 1.1s ease-in-out infinite; }
-  .plot.filled.flyer .pl-an svg{ animation:liveFlit 2.2s ease-in-out infinite; }
-  @keyframes liveBob{ from{ transform:translateY(0);} to{ transform:translateY(-4px);} }
-  @keyframes liveSplash{ 0%,100%{ transform:translateY(0) rotate(0);} 30%{ transform:translateY(-9px) rotate(-6deg);} 55%{ transform:translateY(1px);} }
-  @keyframes liveFlit{ 0%,100%{ transform:translate(0,0);} 30%{ transform:translate(5px,-7px);} 65%{ transform:translate(-4px,-3px);} }
-  .note-float{ position:absolute; z-index:7; font-size:17px; color:#2f83c4; pointer-events:none; animation:noteUp 1.6s ease-out forwards; }
-  @keyframes noteUp{ 0%{ transform:translateY(0); opacity:0;} 15%{ opacity:1;} 100%{ transform:translateY(-44px) rotate(10deg); opacity:0;} }
+  /* ================= CLEAN PICTURE-ONLY TOP BAR (ALL >=64PX) ================= */
+  #hud{
+    position:relative; z-index:12;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:max(8px, env(safe-area-inset-top)) 12px 0;
+    pointer-events:none;
+  }
+  .hud-group{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
+  .mode-pill{
+    min-width:68px; height:66px; padding:0 12px; border-radius:22px;
+    border:4px solid #fff; background:rgba(255,253,247,.95);
+    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    display:flex; align-items:center; justify-content:center; gap:4px;
+    font-size:26px; cursor:pointer;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), background .15s, box-shadow .15s;
+  }
+  .mode-pill:active{ transform:translateY(3px) scale(.95); }
+  .mode-pill.on{
+    background:linear-gradient(180deg, #ffe885 0%, #ffc93c 100%);
+    border-color:#17324f;
+    box-shadow:0 5px 0 #17324f, 0 0 22px rgba(255,201,60,.78);
+    transform:translateY(-2px) scale(1.04);
+  }
 
-  /* ---------- Hoot row ---------- */
-  #groundRow{ position:relative; z-index:6; display:flex; align-items:flex-end; gap:6px; padding:0 10px max(8px,env(safe-area-inset-bottom)); }
-  #hootZone{ display:flex; align-items:flex-end; gap:8px; flex:1 1 auto; min-width:0; }
-  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,29vw,168px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
-  #hootFig svg{ width:100%; display:block; overflow:visible; }
-  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-4px) rotate(-1deg);} }
-  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
-  @keyframes hootJump{ 0%{ transform:translateY(0);} 35%{ transform:translateY(-26px) rotate(-3deg);} 70%{ transform:translateY(2px);} 100%{ transform:translateY(0);} }
-  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
-  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
-  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
-  @keyframes hootTalk{ from{ transform:translateY(0) scale(1);} to{ transform:translateY(-2px) scale(1.018);} }
-  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
-  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
-  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
-  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
-  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
-  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
-  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
-  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
-  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
-  @keyframes blink{ 0%,92%,100%{ transform:scaleY(1);} 95%{ transform:scaleY(.08);} }
-  #bubbleCol{ flex:1 1 auto; min-width:0; padding-bottom:6px; }
-  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:20px; box-shadow:0 5px 0 rgba(23,50,79,.14),0 12px 24px rgba(23,50,79,.14); padding:10px 14px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(15px,4.1vw,19px); line-height:1.3; color:var(--ink); }
-  #bubble::after{ content:""; position:absolute; left:-11px; bottom:16px; border:6px solid transparent; border-right:9px solid var(--paper); }
-  #bubble .b-big{ color:#d84a3d; font-size:1.22em; font-weight:700; }
-  #hootName{ display:inline-block; margin-top:5px; margin-left:8px; background:#17324f; color:#ffe9a8; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.22em; padding:2px 10px 2px 12px; border-radius:99px; }
+  #soundBtn{
+    width:66px; height:66px; border-radius:50%;
+    border:4px solid #fff; background:rgba(255,253,247,.96);
+    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    display:grid; place-items:center; cursor:pointer;
+  }
+  #soundBtn:active{ transform:translateY(3px) scale(.94); }
+  #soundBtn svg{ width:30px; height:30px; }
 
-  /* fly clone + particles */
-  .fly-clone{ position:absolute; z-index:9; pointer-events:none; }
-  .fly-clone svg{ width:100%; display:block; }
-  .particle{ position:absolute; z-index:9; width:10px; height:10px; border-radius:3px; pointer-events:none; }
-  .confetti{ position:absolute; z-index:9; width:11px; height:11px; border-radius:3px; pointer-events:none; }
+  #starPill{
+    height:66px; padding:0 18px 0 14px; border-radius:999px;
+    border:4px solid #fff; background:rgba(255,253,247,.96);
+    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    display:flex; align-items:center; gap:8px;
+    font-weight:800; font-size:26px; color:#17324f;
+  }
+  #starPill svg{ width:30px; height:30px; display:block; }
+  #starPill.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBump{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22) rotate(-4deg); } 100%{ transform:scale(1); } }
 
-  /* ---------- start panel / win ---------- */
-  #startPanel{ position:absolute; z-index:8; left:50%; top:45%; transform:translate(-50%,-50%); width:min(94vw,452px); background:rgba(255,253,246,.98); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:16px 18px 14px; text-align:center; max-height:92dvh; overflow:auto; }
-  #startPanel[hidden]{ display:none; }
-  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,36px); margin:0; color:var(--ink); }
-  #startPanel h1 .t-a{ color:var(--leaf-dark); } #startPanel h1 .t-b{ color:#e07f00; }
-  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15px; line-height:1.4; margin:7px 0 0; }
-  .mode-row{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin:13px 0 4px; }
-  .mode-chip{ flex:1 1 46%; border:3px solid #dcebf5; background:#f2f9ff; border-radius:16px; padding:8px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15.5px; color:var(--ink); cursor:pointer; line-height:1.15; }
-  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
-  .mode-chip.selected{ border-color:var(--sun); background:#fff6dd; box-shadow:0 4px 0 rgba(232,169,12,.4); }
-  #playBtn{ margin-top:12px; border:none; cursor:pointer; background:var(--leaf); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:23px; padding:12px 44px; border-radius:999px; box-shadow:0 6px 0 var(--leaf-dark),0 14px 24px rgba(61,161,71,.35); transition:transform .12s ease; }
-  #playBtn:active{ transform:scale(.95); }
-  #winOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
-  #winOverlay[hidden]{ display:none; }
-  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 12px 0 rgba(23,50,79,.15),0 30px 60px rgba(23,50,79,.3); padding:20px 22px 18px; text-align:center; width:min(94vw,470px); max-height:92dvh; overflow:auto; }
-  #winStars{ font-size:30px; letter-spacing:6px; color:#e3edf5; line-height:1; }
-  #winStars span{ display:inline-block; }
-  #winStars span.lit{ color:var(--sun); text-shadow:0 0 14px rgba(255,201,60,.8); animation:starLit .4s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes starLit{ 0%{ transform:scale(.3) rotate(-30deg);} 100%{ transform:scale(1) rotate(0);} }
-  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:8px 0 0; }
-  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.45; margin:8px 0 0; }
-  #winChips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
-  .chip{ background:#eaf7ec; border:2px solid #bfe6c6; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; padding:4px 12px; border-radius:999px; }
-  .win-btns{ display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-  .win-btn{ border:none; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; padding:11px 24px; border-radius:999px; }
-  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 5px 0 var(--leaf-dark); }
-  #winHomeBtn{ background:#eef5fb; color:var(--ink); box-shadow:0 5px 0 #cfdfec; }
-  .win-btn:active{ transform:scale(.95); }
+  /* ================= CENTER STAGE: HOOT + HERO ANIMAL STUMP + THOUGHT CLOUD ================= */
+  #centerStage{
+    position:relative; z-index:6; flex:1 1 auto; min-height:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    padding:4px 10px 6px;
+    gap:6px;
+  }
 
-  @media (max-height:500px) and (min-width:560px){
-    #hootFig{ width:clamp(80px,24vh,104px); }
-    #perch{ width:clamp(80px,22vh,104px); }
-    #targetCard{ margin-top:4px; padding:4px 8px 4px 12px; }
-    #startPanel{ top:50%; padding:10px 16px; }
-    .spot{ width:clamp(76px,22vh,104px); }
-    .plot{ height:44px; }
+  /* 100% Picture-Only Puffy Thought Cloud */
+  #orderCloud{
+    position:relative; z-index:9;
+    display:flex; align-items:center; gap:12px;
+    background:#fffdf8; border:5px solid #17324f; border-radius:36px;
+    padding:8px 14px 8px 18px;
+    box-shadow:0 8px 0 #17324f, 0 16px 32px rgba(23,50,79,.22);
+    max-width:94vw;
+    transition:transform .22s cubic-bezier(.34,1.7,.5,1);
+  }
+  #orderCloud::after{
+    content:""; position:absolute; left:50%; bottom:-16px; transform:translateX(-50%);
+    width:20px; height:20px; border-radius:50%;
+    background:#fffdf8; border:5px solid #17324f;
+    box-shadow:0 4px 0 #17324f;
+  }
+  #orderCloud.pop-in{ animation:cloudPop .46s cubic-bezier(.34,1.75,.5,1); }
+  @keyframes cloudPop{ 0%{ transform:scale(.62) translateY(14px); opacity:0; } 100%{ transform:scale(1) translateY(0); opacity:1; } }
+
+  #cloudInner{ display:flex; align-items:center; gap:10px; }
+  .cloud-animal-badge{
+    width:62px; height:62px; border-radius:20px;
+    background:#fff6d8; border:3.5px solid #f59e0b;
+    display:grid; place-items:center; padding:4px;
+  }
+  .cloud-animal-badge svg{ width:100%; height:100%; display:block; }
+  .cloud-arrow{ font-size:26px; color:#16a34a; font-weight:900; }
+  .cloud-q{
+    width:58px; height:58px; border-radius:20px;
+    background:#eff6ff; border:3.5px dashed #3b82f6;
+    display:grid; place-items:center; font-size:30px;
+  }
+  .cloud-stars{ display:flex; align-items:center; gap:4px; font-size:26px; color:#d8e4f0; }
+  .cloud-stars span.lit{ color:#ffc93c; text-shadow:0 2px 6px rgba(245,158,11,.55); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.85,.5,1); }
+  @keyframes slotFed{ 0%{ transform:scale(.45) rotate(-14deg); } 60%{ transform:scale(1.26) rotate(6deg); } 100%{ transform:scale(1) rotate(0); } }
+
+  #repeatBtn{
+    width:64px; height:64px; border-radius:50%; flex:0 0 auto;
+    border:4px solid #17324f; background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
+    box-shadow:0 5px 0 #17324f; display:grid; place-items:center; cursor:pointer;
+  }
+  #repeatBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 #17324f; }
+  #repeatBtn svg{ width:30px; height:30px; }
+
+  /* Hoot + Hero Animal Stump Duo */
+  #heroRow{
+    position:relative; z-index:7;
+    display:flex; align-items:flex-end; justify-content:center;
+    gap:clamp(14px, 4vw, 38px);
+    width:100%;
+  }
+
+  #hootBtn{
+    position:relative; border:none; background:none; padding:0; cursor:pointer;
+    width:clamp(124px, 24vh, 184px);
+    filter:drop-shadow(0 10px 14px rgba(23,50,79,.24));
+    transform-origin:50% 94%;
+    animation:hootIdle 3.1s ease-in-out infinite;
+  }
+  #hootBtn svg{ width:100%; height:auto; display:block; overflow:visible; }
+  @keyframes hootIdle{ 0%,100%{ transform:translateY(0) rotate(-.8deg); } 50%{ transform:translateY(-5px) rotate(.8deg); } }
+  #hootBtn .wing-l{ transform-box:fill-box; transform-origin:85% 18%; transition:transform .2s; }
+  #hootBtn .wing-r{ transform-box:fill-box; transform-origin:15% 18%; transition:transform .2s; }
+  #hootBtn .eyelids{ transform-box:fill-box; transform-origin:center; animation:hootBlink 4.4s infinite; }
+  @keyframes hootBlink{ 0%,93%,100%{ transform:scaleY(0); } 96%{ transform:scaleY(1); } }
+  #hootBtn.happy-jump{ animation:hootHappy .52s cubic-bezier(.34,1.7,.5,1) 3; }
+  @keyframes hootHappy{ 0%,100%{ transform:translateY(0) scale(1); } 40%{ transform:translateY(-22px) scale(.96,1.06) rotate(-3deg); } 75%{ transform:translateY(2px) scale(1.05,.95); } }
+  #hootBtn.happy-jump .wing-l{ animation:flapL .22s ease-in-out infinite alternate; }
+  #hootBtn.happy-jump .wing-r{ animation:flapR .22s ease-in-out infinite alternate; }
+  @keyframes flapL{ from{ transform:rotate(0); } to{ transform:rotate(38deg); } }
+  @keyframes flapR{ from{ transform:rotate(0); } to{ transform:rotate(-38deg); } }
+  #hootBtn.head-wobble{ animation:headWobble .42s ease-in-out 2; }
+  @keyframes headWobble{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-8deg); } 75%{ transform:rotate(8deg); } }
+  #hootBtn.talking{ animation:talkPulse .22s ease-in-out infinite alternate; }
+  @keyframes talkPulse{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-3px) scale(1.02); } }
+
+  /* Giant Draggable Hero Animal on Sunlit Tree Stump */
+  #heroAnimalWrap{
+    position:relative; display:flex; flex-direction:column; align-items:center;
+    margin-bottom:2px;
+  }
+  #heroAnimalWrap[hidden]{ display:none !important; }
+  #heroAnimalBtn{
+    position:relative; z-index:3; border:none; background:none; padding:0;
+    width:clamp(112px, 21vh, 152px); height:clamp(112px, 21vh, 152px);
+    cursor:grab; touch-action:none;
+    filter:drop-shadow(0 12px 16px rgba(23,50,79,.28));
+    animation:animalWave 2.1s ease-in-out infinite alternate;
+  }
+  #heroAnimalBtn svg{ width:100%; height:100%; display:block; overflow:visible; pointer-events:none; }
+  #heroAnimalBtn.dragging-src{ opacity:.25; transform:scale(.88); animation:none; }
+  #heroAnimalBtn.gone{ opacity:0; transform:scale(.3); transition:opacity .2s, transform .2s; animation:none; }
+  @keyframes animalWave{
+    0%{ transform:translateY(0) rotate(-3deg) scale(1); }
+    100%{ transform:translateY(-10px) rotate(3deg) scale(1.04); }
+  }
+  #stumpSvg{
+    width:clamp(108px, 20vh, 146px); height:auto; margin-top:-20px; z-index:1;
+    filter:drop-shadow(0 6px 8px rgba(23,50,79,.22)); pointer-events:none;
+  }
+
+  /* ================= MEADOW HABITAT STAGE (3 GIANT HOMES OR 6 EXPLORE HOMES) ================= */
+  #meadowDeck{
+    position:relative; z-index:8; width:100%;
+    padding:14px 12px max(12px, env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, #5fd166 0%, #3fb64c 52%, #2f9c3e 100%);
+    border-top:6px solid #17324f;
+    box-shadow:0 -10px 26px rgba(23,50,79,.22), inset 0 6px 0 rgba(255,255,255,.32);
+  }
+  #homesGrid{
+    max-width:840px; margin:0 auto;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+    gap:clamp(12px, 3vw, 26px);
+    min-height:132px;
+  }
+  #homesGrid.explore-mode{ max-width:960px; gap:clamp(10px, 2vw, 18px); }
+
+  .home-btn{
+    position:relative;
+    width:clamp(108px, 27vw, 152px); height:clamp(108px, 27vw, 152px);
+    border-radius:34px;
+    border:5px solid #17324f;
+    background:radial-gradient(circle at 35% 28%, #ffffff 0%, #fffdf6 64%, #e5f5ec 100%);
+    box-shadow:0 8px 0 #17324f, 0 14px 24px rgba(23,50,79,.26), inset 0 -6px 0 #d5ebd8;
+    padding:10px; cursor:pointer; touch-action:manipulation;
+    display:grid; place-items:center;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .16s, border-color .16s;
+  }
+  #homesGrid.explore-mode .home-btn{
+    width:clamp(96px, 26vw, 126px); height:clamp(96px, 26vw, 126px);
+    border-radius:28px; padding:8px;
+  }
+  .home-btn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 4px 5px rgba(23,50,79,.16)); pointer-events:none; }
+  .home-btn:active{ transform:translateY(4px) scale(.95); box-shadow:0 4px 0 #17324f; }
+
+  .home-btn.drop-hover{
+    border-color:#ffb703;
+    box-shadow:0 8px 0 #17324f, 0 0 0 9px rgba(255,201,60,.75), 0 0 30px rgba(255,183,3,.95);
+    transform:translateY(-8px) scale(1.08);
+  }
+  .home-btn.nudge-glow{
+    border-color:#ffb703;
+    box-shadow:0 8px 0 #17324f, 0 0 0 8px rgba(255,201,60,.68), 0 0 28px rgba(255,183,3,.95);
+    animation:homeNudge .65s ease-in-out infinite alternate;
+  }
+  @keyframes homeNudge{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.06); } }
+
+  .home-btn.knocking{ animation:doorKnock .14s ease-in-out 4 alternate; }
+  @keyframes doorKnock{ from{ transform:rotate(-5deg) scale(1.03); } to{ transform:rotate(5deg) scale(1.05); } }
+
+  .home-btn.celebrating{
+    background:radial-gradient(circle at 50% 35%, #fff9db 0%, #dcfce7 100%);
+    border-color:#16a34a;
+    box-shadow:0 8px 0 #14532d, 0 0 30px rgba(74,222,128,.95);
+    transform:scale(1.08);
+  }
+
+  /* Peek-out animal badge inside home when solved or knocked open! */
+  .home-resident{
+    position:absolute; left:50%; top:-16px; transform:translateX(-50%) scale(0);
+    width:72%; height:72%; pointer-events:none;
+    filter:drop-shadow(0 8px 12px rgba(23,50,79,.32));
+    transition:transform .38s cubic-bezier(.34,1.85,.5,1);
+  }
+  .home-btn.has-resident .home-resident{ transform:translateX(-50%) scale(1); }
+
+  /* Knock-knock badge in Knock Surprise mode */
+  .knock-badge{
+    position:absolute; right:-8px; top:-10px;
+    width:40px; height:40px; border-radius:50%;
+    background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
+    border:3.5px solid #17324f; box-shadow:0 4px 0 #17324f;
+    display:grid; place-items:center; font-size:20px; pointer-events:none;
+    animation:knockBob .7s ease-in-out infinite alternate;
+  }
+  @keyframes knockBob{ from{ transform:scale(1) rotate(-8deg); } to{ transform:scale(1.14) rotate(8deg); } }
+
+  .nudge-hand{
+    position:absolute; right:-10px; bottom:-14px; font-size:36px; line-height:1;
+    pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));
+    animation:handTap .55s ease-in-out infinite alternate;
+  }
+  @keyframes handTap{ from{ transform:translate(0,0) rotate(-10deg); } to{ transform:translate(-6px,-8px) rotate(4deg); } }
+
+  /* Rescued Village Strip (tiny happy neighbors at bottom of meadow!) */
+  #villageStrip{
+    max-width:740px; margin:10px auto 0;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    min-height:46px;
+  }
+  #villageStrip[hidden]{ display:none !important; }
+  .vslot{
+    width:46px; height:46px; border-radius:16px;
+    background:rgba(255,253,247,.32); border:3px dashed rgba(255,255,255,.65);
+    display:grid; place-items:center; padding:4px;
+    transition:transform .3s cubic-bezier(.34,1.8,.5,1), background .2s;
+  }
+  .vslot.filled{
+    background:#fffdf7; border:3px solid #17324f;
+    box-shadow:0 3px 0 #17324f;
+    animation:slotFed .48s cubic-bezier(.34,1.85,.5,1);
+  }
+  .vslot svg{ width:100%; height:100%; display:block; }
+
+  /* Floating dragged / flying animal */
+  .drag-ghost, .fly-animal{
+    position:fixed; z-index:40; width:108px; height:108px; pointer-events:none;
+    filter:drop-shadow(0 16px 20px rgba(23,50,79,.36));
+  }
+  .drag-ghost svg, .fly-animal svg{ width:100%; height:100%; display:block; }
+
+  /* Sparkles, splashes & floating emojis */
+  .fx-dot{ position:fixed; z-index:35; pointer-events:none; border-radius:50%; }
+  .fx-pop{
+    position:fixed; z-index:36; pointer-events:none;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:36px;
+    color:#fff; -webkit-text-stroke:2px #17324f;
+    text-shadow:0 4px 0 #17324f;
+    animation:popFloat .95s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes popFloat{
+    0%{ transform:translate(-50%, 0) scale(.4); opacity:0; }
+    25%{ transform:translate(-50%, -18px) scale(1.22); opacity:1; }
+    100%{ transform:translate(-50%, -68px) scale(1); opacity:0; }
+  }
+
+  /* ================= ONE-TAP START TREEHOUSE (ZERO READING!) ================= */
+  #startVeil{
+    position:fixed; inset:0; z-index:30;
+    background:rgba(23,50,79,.22); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  #goTreehouseBtn{
+    width:min(86vw, 304px); min-height:202px;
+    border:6px solid #17324f; border-radius:42px;
+    background:linear-gradient(180deg, #fffdf7 0%, #dff8e5 100%);
+    box-shadow:0 12px 0 #17324f, 0 24px 48px rgba(23,50,79,.38);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+    padding:20px; cursor:pointer;
+    animation:goPulse 1.25s ease-in-out infinite alternate;
+  }
+  @keyframes goPulse{ from{ transform:scale(1); } to{ transform:scale(1.05); } }
+  #goTreehouseBtn:active{ transform:translateY(5px) scale(.97); box-shadow:0 7px 0 #17324f; }
+  .go-play-pill{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:184px; min-height:72px; padding:10px 28px; border-radius:999px;
+    border:5px solid #17324f;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-size:32px; font-weight:800;
+    box-shadow:0 6px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+
+  /* ================= CELEBRATION WIN OVERLAY ================= */
+  #winOverlay{
+    position:fixed; inset:0; z-index:45;
+    background:rgba(23,50,79,.45); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  #winCard{
+    width:min(92vw, 440px);
+    background:#fffdf8; border:6px solid #17324f; border-radius:36px;
+    box-shadow:0 12px 0 #17324f, 0 28px 60px rgba(23,50,79,.4);
+    padding:22px 20px 20px; text-align:center;
+  }
+  #winStars{ font-size:40px; letter-spacing:6px; color:#dbe7f3; line-height:1; }
+  #winStars span.lit{ color:#ffc93c; text-shadow:0 0 18px rgba(255,201,60,.95); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.8,.5,1); }
+  #winTitle{ font-size:clamp(26px, 6.5vw, 34px); margin:10px 0 8px; color:#17324f; }
+  #winFriends{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:10px 0 18px; }
+  .win-mini{ width:56px; height:56px; border-radius:50%; background:#e6faec; border:3px solid #17324f; padding:6px; }
+  .win-mini svg{ width:100%; height:100%; display:block; }
+  .win-btns{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+  #againBtn, .win-btn{
+    min-width:190px; min-height:72px; padding:12px 28px; border-radius:999px;
+    border:5px solid #17324f;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:inherit; font-size:26px; font-weight:800; cursor:pointer;
+    box-shadow:0 7px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+  #againBtn:active, .win-btn:active{ transform:translateY(4px); box-shadow:0 3px 0 #14532d; }
+
+  @media (max-width:460px){
+    #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 0; gap:4px; }
+    .hud-group{ gap:5px; }
+    .mode-pill{ min-width:64px; height:64px; padding:0 8px; font-size:22px; border-radius:18px; gap:2px; }
+    #soundBtn{ width:64px; height:64px; }
+    #starPill{ height:64px; padding:0 11px 0 9px; gap:5px; font-size:22px; }
+    #starPill svg{ width:24px; height:24px; }
+    #orderCloud{ padding:7px 10px 7px 12px; gap:7px; }
+    #cloudInner{ gap:6px; }
+    .cloud-animal-badge{ width:48px; height:48px; border-radius:15px; padding:3px; }
+    .cloud-q{ width:46px; height:46px; border-radius:15px; font-size:24px; }
+    .cloud-arrow{ font-size:20px; }
+    .cloud-stars{ font-size:19px; gap:2px; }
+    .home-btn{ width:clamp(100px, 28vw, 118px); height:clamp(100px, 28vw, 118px); border-radius:26px; padding:8px; }
+    #homesGrid{ gap:10px; }
+    #hootBtn{ width:clamp(112px, 22vh, 146px); }
+    #heroAnimalBtn{ width:clamp(98px, 18vh, 126px); height:clamp(98px, 18vh, 126px); }
+  }
+  @media (max-height:640px){
+    #hootBtn{ width:clamp(106px, 22vh, 148px); }
+    #heroAnimalBtn{ width:clamp(92px, 18vh, 120px); height:clamp(92px, 18vh, 120px); }
+    .home-btn{ width:clamp(92px, 21vh, 122px); height:clamp(92px, 21vh, 122px); }
+    #meadowDeck{ padding-top:8px; padding-bottom:8px; }
+    #villageStrip{ margin-top:6px; min-height:38px; }
+    .vslot{ width:38px; height:38px; }
   }
   @media (prefers-reduced-motion:reduce){
-    .cloud,.bfly,#perchArt,.animal-choice svg{ animation:none !important; }
-  }
-  /* Wave 5C-2 (Big & Physical): hero perched animal, giant animal choices & tactile illustrated home cards */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #perch{ width:clamp(146px,21vh,180px) !important; }
-    #perchName{ font-size:18px !important; padding:5px 16px !important; }
-    .animal-choice{ width:clamp(132px,19vh,164px) !important; }
-    .animal-choice .spot-name{ font-size:17px !important; padding:4px 12px !important; }
-    #meetGrid{ inset:10px 24px 78px !important; gap:12px 18px !important; }
-    .meet-home{
-      background:rgba(255,253,246,.92) !important; border:4px solid #fff !important; border-radius:22px !important;
-      padding:8px 10px !important; box-shadow:0 6px 0 rgba(23,50,79,.15) !important;
-    }
-    .meet-home svg{ max-height:106px !important; }
-    .meet-home .mh-name{ font-size:15.5px !important; font-weight:700 !important; margin-top:4px; background:transparent !important; }
-    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; padding:8px 18px !important; }
+    .cloud, #bflyBtn, #sunBtn .rays, #heroAnimalBtn{ animation:none !important; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
-    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.4" fill="#17324f"/><circle cx="59" cy="46" r="3.4" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
-  </button>
-  <button class="decor cloud" type="button" style="top:9%;animation-duration:88s;animation-delay:-40s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="88" cy="38" rx="24" ry="13" fill="#fff"/></svg></button>
-  <button class="decor cloud" type="button" style="top:20%;animation-duration:110s;animation-delay:-80s;width:78px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="88" cy="38" rx="24" ry="13" fill="#fff"/></svg></button>
-  <button class="decor bfly" type="button" style="left:12%;bottom:38%" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><ellipse cx="20" cy="16" rx="3" ry="9" fill="#17324f"/></svg></button>
+  <!-- Living Sunny Woodland Backdrop -->
+  <div id="scenery" aria-hidden="true">
+    <button class="decor cloud" type="button" style="top:10%;animation-duration:84s;animation-delay:-30s" tabindex="-1">
+      <svg viewBox="0 0 124 56"><ellipse cx="40" cy="39" rx="31" ry="14" fill="#fff"/><ellipse cx="68" cy="28" rx="27" ry="19" fill="#fff"/><ellipse cx="92" cy="39" rx="24" ry="13" fill="#fff"/></svg>
+    </button>
+    <button class="decor cloud" type="button" style="top:18%;animation-duration:108s;animation-delay:-72s;transform:scale(.82)" tabindex="-1">
+      <svg viewBox="0 0 124 56"><ellipse cx="40" cy="39" rx="31" ry="14" fill="#fff"/><ellipse cx="68" cy="28" rx="27" ry="19" fill="#fff"/><ellipse cx="92" cy="39" rx="24" ry="13" fill="#fff"/></svg>
+    </button>
 
-  <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
-      </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
-      </button>
-    </div>
-    <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      <span id="starCount">0</span>
-    </div>
-  </div>
+    <button class="decor" id="sunBtn" type="button" aria-label="Tap Mr. Sun">
+      <svg viewBox="0 0 100 100">
+        <g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round">
+          <path d="M50 3v12M50 85v12M3 50h12M85 50h12M17 17l8 8M75 75l8 8M83 17l-8 8M25 75l-8 8"/>
+        </g>
+        <circle cx="50" cy="50" r="27" fill="#ffd23f" stroke="#f09d00" stroke-width="3.5"/>
+        <circle cx="41" cy="46" r="3.4" fill="#17324f"/><circle cx="59" cy="46" r="3.4" fill="#17324f"/>
+        <circle cx="35" cy="53" r="4" fill="#ff9f1c" opacity=".55"/><circle cx="65" cy="53" r="4" fill="#ff9f1c" opacity=".55"/>
+        <path d="M40 57 Q50 65 60 57" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </button>
 
-  <div id="targetCard" style="display:none">
-    <div>
-      <div id="targetMain">Frog</div>
-      <div class="tc-label" id="tcLabel">Where does Frog live?</div>
-      <div id="progressDots"></div>
-    </div>
-    <button id="hearBtn" type="button" aria-label="Hear Hoot again">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+    <!-- Rolling Woodland Hills + Winding Path + Meadow Daisies -->
+    <svg id="meadowSvg" viewBox="0 0 900 340" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 155 Q230 68 480 138 T900 110 L900 340 L0 340 Z" fill="#8ce07c"/>
+      <path d="M0 205 Q290 134 570 188 T900 166 L900 340 L0 340 Z" fill="#52c55b"/>
+      <!-- Cozy winding dirt trail -->
+      <path d="M360 340 Q420 260 470 215 Q515 175 495 148 Q518 175 525 220 Q535 275 565 340 Z" fill="#f3d8a3" opacity=".82"/>
+      <!-- Wildflowers -->
+      <g>
+        <circle cx="195" cy="228" r="9" fill="#fff"/><circle cx="195" cy="228" r="4.5" fill="#ffd23f"/>
+        <circle cx="242" cy="248" r="7.5" fill="#ffb3c6"/><circle cx="242" cy="248" r="3.6" fill="#ffd23f"/>
+        <circle cx="685" cy="222" r="9" fill="#fff"/><circle cx="685" cy="222" r="4.5" fill="#ffd23f"/>
+        <circle cx="738" cy="246" r="8" fill="#ffe680"/><circle cx="738" cy="246" r="3.8" fill="#f97316"/>
+        <circle cx="808" cy="216" r="8.5" fill="#ffb3c6"/><circle cx="808" cy="216" r="4" fill="#fff"/>
+      </g>
+    </svg>
+
+    <!-- Grounded Storybook Woodland Trees -->
+    <svg id="pineLeft" viewBox="0 0 180 250">
+      <ellipse cx="90" cy="238" rx="44" ry="9" fill="rgba(23,50,79,.14)"/>
+      <rect x="76" y="176" width="28" height="62" rx="6" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
+      <path d="M22 186 L90 98 L158 186 Z" fill="#2ea043" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M34 136 L90 56 L146 136 Z" fill="#3ec456" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M48 88 L90 22 L132 88 Z" fill="#58d66b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+    </svg>
+
+    <svg id="oakRight" viewBox="0 0 190 250">
+      <ellipse cx="98" cy="238" rx="46" ry="9" fill="rgba(23,50,79,.14)"/>
+      <path d="M82 238 Q88 180 88 122 L108 122 Q108 180 116 238 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
+      <circle cx="62" cy="96" r="42" fill="#3eb84d" stroke="#17324f" stroke-width="4"/>
+      <circle cx="132" cy="88" r="40" fill="#2ea03d" stroke="#17324f" stroke-width="4"/>
+      <circle cx="98" cy="58" r="44" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
+      <circle cx="96" cy="96" r="36" fill="#47c456"/>
+    </svg>
+
+    <button class="decor" id="bflyBtn" type="button" aria-label="Tap butterfly">
+      <svg viewBox="0 0 44 34">
+        <g class="bw bw-l"><ellipse cx="11" cy="12" rx="10" ry="7.5" fill="#60a5fa" stroke="#17324f" stroke-width="2"/><ellipse cx="12" cy="24" rx="7.5" ry="6" fill="#bfdbfe" stroke="#17324f" stroke-width="2"/></g>
+        <g class="bw bw-r"><ellipse cx="33" cy="12" rx="10" ry="7.5" fill="#60a5fa" stroke="#17324f" stroke-width="2"/><ellipse cx="32" cy="24" rx="7.5" ry="6" fill="#bfdbfe" stroke="#17324f" stroke-width="2"/></g>
+        <ellipse cx="22" cy="17" rx="3.2" ry="10" fill="#17324f"/>
+      </svg>
     </button>
   </div>
 
-  <div id="scene">
-    <svg id="meadow" viewBox="0 0 400 110" preserveAspectRatio="none" aria-hidden="true"><path d="M0 55 Q90 15 200 48 Q310 78 400 40 L400 110 L0 110Z" fill="#8edd7e"/><path d="M0 78 Q110 45 230 72 Q330 92 400 66 L400 110 L0 110Z" fill="#57cc62"/></svg>
-    <div id="perch" hidden>
-      <div id="perchArt"></div>
-      <div id="perchPole"></div>
-      <span id="perchName">Frog</span>
-    </div>
-    <div id="spots"></div>
-    <div id="choiceRow" class="choice-row" hidden></div>
-    <div id="meetGrid" hidden></div>
-    <div id="countLayer"></div>
-    <div id="village"></div>
-  </div>
-
-  <div id="groundRow">
-    <div id="hootZone">
-      <button id="hootFig" type="button" aria-label="Hoot — tap to hear again">
-        <svg viewBox="0 0 200 210" aria-hidden="true">
-          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
-          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
-          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
-          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
-          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
-          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
-          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
-          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
-          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
-          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
-          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
-          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
-        </svg>
+  <!-- Top Bar: 3 Giant Picture Mode Buttons + Sound + Star Counter -->
+  <div id="hud">
+    <div class="hud-group" role="group" aria-label="Game modes">
+      <button type="button" class="mode-pill on" data-mode="takehome" aria-label="Take animals home">
+        <span aria-hidden="true">🐾</span><span aria-hidden="true">🏠</span>
       </button>
-      <div id="bubbleCol">
-        <div id="bubble">Hi! I&rsquo;m Hoot! Every animal has a home — let&rsquo;s take them home together!</div>
-        <span id="hootName">HOOT</span>
+      <button type="button" class="mode-pill" data-mode="knock" aria-label="Knock knock surprise">
+        <span aria-hidden="true">🚪</span><span aria-hidden="true">❓</span>
+      </button>
+      <button type="button" class="mode-pill" data-mode="explore" aria-label="Explore animal village">
+        <span aria-hidden="true">🌿</span><span aria-hidden="true">🔍</span>
+      </button>
+    </div>
+    <div class="hud-group">
+      <button type="button" id="soundBtn" aria-label="Sound on or off">
+        <svg id="sndOnSvg" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.8a9 9 0 0 1 0 12.4"/></svg>
+        <svg id="sndOffSvg" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#cbd5e1"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <div id="starPill" aria-label="Stars earned">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l3 6 6.6 1-4.8 4.6 1.1 6.6L12 17.5 6.1 20.6l1.1-6.6L2.4 9.4l6.6-1z" fill="#ffc93c" stroke="#d98a00" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span id="starCount">0</span>
       </div>
     </div>
   </div>
 
-  <div id="startPanel">
-    <h1><span class="t-a">Animal</span> <span class="t-b">Homes</span></h1>
-    <p>Hoot introduces each animal — tap its real home and watch it move in and live there!</p>
-    <div class="mode-row" role="group" aria-label="Choose how to play">
-      <button class="mode-chip selected" type="button" data-mode="takehome">Take Me Home<small>Hoot shows an animal — find its home</small></button>
-      <button class="mode-chip" type="button" data-mode="who">Who Lives Here?<small>Hoot shows a home — find its animal</small></button>
-      <button class="mode-chip" type="button" data-mode="meet">Meet the Neighbours<small>Tap homes and meet everyone</small></button>
-      <button class="mode-chip" type="button" data-mode="count">Count the Neighbours<small>How many animals are home?</small></button>
+  <!-- Center Stage: Picture-Only Thought Cloud + Ranger Hoot + Giant Draggable Hero Animal -->
+  <div id="centerStage">
+    <div id="orderCloud">
+      <div id="cloudInner"></div>
+      <button type="button" id="repeatBtn" aria-label="Hear Hoot again">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#fff"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.8a9 9 0 0 1 0 12.4"/></svg>
+      </button>
     </div>
-    <button id="playBtn" type="button">▶ Play</button>
+
+    <div id="heroRow">
+      <button type="button" id="hootBtn" aria-label="Tap Hoot to giggle and repeat">
+        <svg viewBox="0 0 220 225" aria-hidden="true">
+          <path d="M90 186 L110 214 L130 186 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+          <ellipse class="wing-l" cx="40" cy="134" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(14 40 134)"/>
+          <ellipse class="wing-r" cx="180" cy="134" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(-14 180 134)"/>
+          <ellipse cx="110" cy="130" rx="70" ry="73" fill="#a06a3b" stroke="#17324f" stroke-width="4.5"/>
+          <ellipse cx="110" cy="148" rx="48" ry="47" fill="#fdeed3"/>
+          <path d="M92 166 q7 6 14 0 M114 166 q7 6 14 0 M103 179 q7 6 14 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <!-- Cute Woodland Explorer Bandana with Golden Paw Badge -->
+          <path d="M72 114 Q110 128 148 114 L110 154 Z" fill="#22c55e" stroke="#17324f" stroke-width="3.5" stroke-linejoin="round"/>
+          <circle cx="110" cy="134" r="7" fill="#ffc93c" stroke="#17324f" stroke-width="2.2"/>
+          <!-- Ear Tufts & Head -->
+          <path d="M58 46 Q44 14 68 23 Q82 28 78 50 Z" fill="#8a5a33" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M162 46 Q176 14 152 23 Q138 28 142 50 Z" fill="#8a5a33" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+          <circle cx="110" cy="76" r="56" fill="#a06a3b" stroke="#17324f" stroke-width="4.5"/>
+          <ellipse cx="86" cy="76" rx="25" ry="27" fill="#fdeed3" stroke="#17324f" stroke-width="3"/>
+          <ellipse cx="134" cy="76" rx="25" ry="27" fill="#fdeed3" stroke="#17324f" stroke-width="3"/>
+          <g id="hootPupils">
+            <circle cx="86" cy="76" r="12.5" fill="#17324f"/>
+            <circle cx="134" cy="76" r="12.5" fill="#17324f"/>
+            <circle cx="90" cy="71" r="4.5" fill="#fff"/>
+            <circle cx="138" cy="71" r="4.5" fill="#fff"/>
+          </g>
+          <g class="eyelids">
+            <ellipse cx="86" cy="76" rx="24" ry="26" fill="#a06a3b"/>
+            <ellipse cx="134" cy="76" rx="24" ry="26" fill="#a06a3b"/>
+          </g>
+          <circle cx="59" cy="96" r="9.5" fill="#ffb59d" opacity=".9"/>
+          <circle cx="161" cy="96" r="9.5" fill="#ffb59d" opacity=".9"/>
+          <path d="M97 89 Q110 83 123 89 Q118 102 110 105 Q102 102 97 89 Z" fill="#ff9f1c" stroke="#17324f" stroke-width="3.2"/>
+          <path d="M84 198 q-8 8 -14 6 M84 198 q-2 10 -8 12 M136 198 q8 8 14 6 M136 198 q2 10 8 12" stroke="#ff9f1c" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- Giant Animated Draggable Animal on Sunlit Tree Stump -->
+      <div id="heroAnimalWrap">
+        <button type="button" id="heroAnimalBtn" aria-label="Drag or tap animal"></button>
+        <svg id="stumpSvg" viewBox="0 0 150 64" aria-hidden="true">
+          <ellipse cx="75" cy="54" rx="64" ry="9" fill="rgba(23,50,79,.18)"/>
+          <path d="M24 22 L126 22 L134 52 Q122 58 75 58 Q28 58 16 52 Z" fill="#9c6b3b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+          <ellipse cx="75" cy="22" rx="51" ry="14" fill="#f3d6a4" stroke="#17324f" stroke-width="4"/>
+          <ellipse cx="75" cy="22" rx="34" ry="8" fill="none" stroke="#d5aa6d" stroke-width="2.5"/>
+          <path d="M46 34 v14 M76 38 v14 M104 34 v13" stroke="#754921" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
   </div>
 
+  <!-- Lush Meadow Deck with Giant Storybook Homes + Happy Village Strip -->
+  <div id="meadowDeck">
+    <div id="homesGrid" aria-label="Animal homes"></div>
+    <div id="villageStrip" aria-label="Animals home safely"></div>
+  </div>
+
+  <!-- Picture-First One-Tap Start Treehouse (Unlocks iOS Audio with Zero Reading!) -->
+  <div id="startVeil">
+    <button type="button" id="goTreehouseBtn" aria-label="Play Animal Homes">
+      <svg width="132" height="102" viewBox="0 0 132 102" aria-hidden="true">
+        <rect x="52" y="64" width="28" height="34" rx="6" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
+        <circle cx="34" cy="48" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/>
+        <circle cx="98" cy="48" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/>
+        <circle cx="66" cy="30" r="26" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
+        <rect x="40" y="34" width="52" height="36" rx="8" fill="#ffe6a7" stroke="#17324f" stroke-width="4"/>
+        <path d="M32 38 L66 12 L100 38 Z" fill="#ff5d52" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M56 70 V52 A10 10 0 0 1 76 52 V70 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="3.5"/>
+        <circle cx="71" cy="60" r="2.5" fill="#ffc93c"/>
+      </svg>
+      <span class="go-play-pill">▶</span>
+    </button>
+  </div>
+
+  <!-- Picture-First Win Celebration -->
   <div id="winOverlay" hidden>
     <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
       <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
       <h2 id="winTitle">Everybody&rsquo;s Home!</h2>
-      <p id="winRecap"></p>
-      <div id="winChips"></div>
+      <div id="winFriends"></div>
       <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+        <button type="button" id="againBtn" aria-label="Play again">▶ 🐾</button>
       </div>
     </div>
   </div>
@@ -335,598 +630,744 @@
 
 <script>
 (function(){
-"use strict";
-  /* ================= DATA (the same neighbours as always) ================= */
-  function svgWrap(inner){ return '<svg viewBox="0 0 120 120" role="img" aria-hidden="true">'+inner+'</svg>'; }
-  var ART_ANIMAL = {
-    bee: svgWrap('<ellipse cx="34" cy="42" rx="15" ry="10" fill="#EAF6FF" transform="rotate(-24 34 42)"/><ellipse cx="86" cy="42" rx="15" ry="10" fill="#EAF6FF" transform="rotate(24 86 42)"/><ellipse cx="60" cy="70" rx="30" ry="32" fill="#F6C93C"/><path d="M37 84 q23 9 46 0 M43 96 q17 7 34 0" stroke="#2B2B2B" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="49" cy="60" r="4.4" fill="#22301C"/><circle cx="71" cy="60" r="4.4" fill="#22301C"/><path d="M51 71 q9 7 18 0" stroke="#22301C" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M48 40 q-4 -12 -12 -15 M72 40 q4 -12 12 -15" stroke="#22301C" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M88 76 l12 5 -12 5z" fill="#2B2B2B"/>'),
-    bird: svgWrap('<ellipse cx="60" cy="70" rx="30" ry="31" fill="#4FA8E0"/><ellipse cx="60" cy="80" rx="17" ry="20" fill="#FBD9D0"/><circle cx="60" cy="37" r="19" fill="#62B6E8"/><circle cx="53" cy="34" r="3.8" fill="#22301C"/><circle cx="67" cy="34" r="3.8" fill="#22301C"/><path d="M54 42 L66 42 L60 50 Z" fill="#F6B73C"/><path d="M47 22 q13 -11 26 0 q-13 -4 -26 0" fill="#E4572E"/><path d="M31 62 q-16 -5 -20 -19 q15 -1 22 9z" fill="#2F7FB8"/><path d="M89 62 q16 -5 20 -19 q-15 -1 -22 9z" fill="#2F7FB8"/><path d="M52 101 v8 M68 101 v8" stroke="#D99613" stroke-width="3.4" stroke-linecap="round"/>'),
-    rabbit: svgWrap('<ellipse cx="43" cy="24" rx="9" ry="22" fill="#EDEDF2" stroke="#C9C9D6" stroke-width="2"/><ellipse cx="43" cy="26" rx="4.4" ry="14" fill="#F7A8C4"/><ellipse cx="77" cy="24" rx="9" ry="22" fill="#EDEDF2" stroke="#C9C9D6" stroke-width="2"/><ellipse cx="77" cy="26" rx="4.4" ry="14" fill="#F7A8C4"/><circle cx="60" cy="76" r="33" fill="#F4F4F8" stroke="#C9C9D6" stroke-width="2"/><circle cx="48" cy="70" r="4.4" fill="#22301C"/><circle cx="72" cy="70" r="4.4" fill="#22301C"/><ellipse cx="60" cy="80" rx="5" ry="4" fill="#EF6AA5"/><path d="M60 84 q0 5 -5 5 M60 84 q0 5 5 5" stroke="#22301C" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="55" y="90" width="10" height="8" rx="2" fill="#fff" stroke="#C9C9D6" stroke-width="1.6"/><circle cx="37" cy="83" r="6" fill="#FBD3E4"/><circle cx="83" cy="83" r="6" fill="#FBD3E4"/>'),
-    bear: svgWrap('<circle cx="33" cy="34" r="13" fill="#8A5A2B"/><circle cx="87" cy="34" r="13" fill="#8A5A2B"/><circle cx="33" cy="34" r="6" fill="#D9A05B"/><circle cx="87" cy="34" r="6" fill="#D9A05B"/><circle cx="60" cy="66" r="37" fill="#9C6B35"/><ellipse cx="60" cy="76" rx="17" ry="13" fill="#EFD3A0"/><circle cx="47" cy="58" r="4.6" fill="#22301C"/><circle cx="73" cy="58" r="4.6" fill="#22301C"/><ellipse cx="60" cy="70" rx="7" ry="5.4" fill="#4A2E12"/><path d="M60 75 q0 6 -7 6 M60 75 q0 6 7 6" stroke="#4A2E12" stroke-width="2.6" fill="none" stroke-linecap="round"/>'),
-    fish: svgWrap('<path d="M14 60 Q44 26 78 34 Q104 40 104 60 Q104 80 78 86 Q44 94 14 60Z" fill="#FF8A3D"/><path d="M16 60 L4 38 Q18 58 4 84Z" fill="#E4572E"/><path d="M52 36 q8 24 0 48" stroke="#E4572E" stroke-width="5" fill="none"/><path d="M72 40 q7 20 0 40" stroke="#E4572E" stroke-width="5" fill="none"/><circle cx="90" cy="52" r="5" fill="#22301C"/><circle cx="92" cy="50" r="1.8" fill="#fff"/><path d="M96 66 q6 4 0 8" stroke="#B33A1E" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="30" cy="20" rx="5" ry="7" fill="#BFE6F5"/><ellipse cx="48" cy="10" rx="4" ry="5.5" fill="#BFE6F5"/>'),
-    frog: svgWrap('<circle cx="38" cy="36" r="13" fill="#4CAF6D"/><circle cx="82" cy="36" r="13" fill="#4CAF6D"/><circle cx="38" cy="36" r="8" fill="#fff"/><circle cx="82" cy="36" r="8" fill="#fff"/><circle cx="38" cy="37" r="4" fill="#22301C"/><circle cx="82" cy="37" r="4" fill="#22301C"/><ellipse cx="60" cy="76" rx="38" ry="32" fill="#57B877"/><ellipse cx="60" cy="88" rx="22" ry="16" fill="#DFF3C9"/><path d="M40 74 q20 14 40 0" stroke="#22301C" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="32" cy="82" r="6" fill="#F6A9B8"/><circle cx="88" cy="82" r="6" fill="#F6A9B8"/>'),
-    squirrel: svgWrap('<path d="M88 96 q30 -6 26 -38 q-2 -22 -24 -28 q10 16 2 26 q10 22 -4 40z" fill="#C96A2B"/><path d="M90 88 q18 -6 16 -26" stroke="#A5521F" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M36 36 L30 12 L52 24 Z" fill="#D97E36"/><path d="M78 36 L84 12 L62 24 Z" fill="#D97E36"/><circle cx="57" cy="62" r="31" fill="#E08A44"/><ellipse cx="57" cy="76" rx="16" ry="18" fill="#FBE3C2"/><circle cx="46" cy="55" r="4.2" fill="#22301C"/><circle cx="68" cy="55" r="4.2" fill="#22301C"/><ellipse cx="57" cy="64" rx="5" ry="4" fill="#7A3E14"/><path d="M57 68 q0 5 -5 5 M57 68 q0 5 5 5" stroke="#7A3E14" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="57" cy="94" rx="9" ry="12" fill="#8A5A2B"/><path d="M57 84 q6 4 0 8 M50 90 q7 3 14 0" stroke="#5E3A18" stroke-width="2.2" fill="none"/>'),
-    spider: svgWrap('<g stroke="#3A3550" stroke-width="4.4" fill="none" stroke-linecap="round"><path d="M34 52 Q14 44 8 26 M34 68 Q12 68 4 56 M34 82 Q16 90 10 106 M86 52 Q106 44 112 26 M86 68 Q108 68 116 56 M86 82 Q104 90 110 106"/></g><circle cx="60" cy="70" r="30" fill="#4A4570"/><circle cx="60" cy="40" r="17" fill="#5B5685"/><circle cx="53" cy="38" r="3.6" fill="#fff"/><circle cx="67" cy="38" r="3.6" fill="#fff"/><path d="M50 48 q10 7 20 0" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round"/><circle cx="44" cy="72" r="5" fill="#EF6AA5" opacity=".8"/><circle cx="76" cy="72" r="5" fill="#EF6AA5" opacity=".8"/>'),
-    ant: svgWrap('<path d="M44 34 q-10 -16 -22 -18 M52 32 q-2 -16 -12 -24" stroke="#7A3320" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="52" cy="44" r="16" fill="#B6492B"/><ellipse cx="66" cy="66" rx="13" ry="12" fill="#C85A36"/><ellipse cx="86" cy="88" rx="19" ry="16" fill="#B6492B"/><circle cx="47" cy="41" r="3.4" fill="#22301C"/><circle cx="58" cy="41" r="3.4" fill="#22301C"/><path d="M46 50 q6 5 13 0" stroke="#5E2413" stroke-width="2.6" fill="none" stroke-linecap="round"/><g stroke="#7A3320" stroke-width="3.4" stroke-linecap="round"><path d="M62 76 L50 96 M72 72 L66 96 M80 76 L82 98"/></g>'),
-    fox: svgWrap('<path d="M26 52 L20 14 L50 32 Z" fill="#E8722A"/><path d="M94 52 L100 14 L70 32 Z" fill="#E8722A"/><path d="M29 44 L26 26 L42 36 Z" fill="#FBD9B0"/><path d="M91 44 L94 26 L78 36 Z" fill="#FBD9B0"/><circle cx="60" cy="66" r="36" fill="#F07F33"/><path d="M36 82 q24 26 48 0 q-6 20 -24 20 q-18 0 -24 -20z" fill="#FFF3E2"/><circle cx="46" cy="60" r="4.4" fill="#22301C"/><circle cx="74" cy="60" r="4.4" fill="#22301C"/><ellipse cx="60" cy="78" rx="7" ry="5.4" fill="#22301C"/><path d="M60 83 q0 6 -6 6 M60 83 q0 6 6 6" stroke="#22301C" stroke-width="2.5" fill="none" stroke-linecap="round"/>'),
-    turtle: svgWrap('<circle cx="98" cy="58" r="14" fill="#7FBF6E"/><circle cx="94" cy="55" r="2.8" fill="#22301C"/><path d="M90 64 q5 3 10 0" stroke="#3E7A34" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M8 92 a44 34 0 0 1 88 0z" fill="#4C9440"/><path d="M8 92 a44 34 0 0 1 88 0" fill="none" stroke="#35702C" stroke-width="3"/><ellipse cx="52" cy="80" rx="17" ry="12" fill="#8FD07E"/><path d="M28 74 q8 10 4 18 M76 74 q-8 10 -4 18 M52 62 v8" stroke="#35702C" stroke-width="3" fill="none"/><path d="M4 92 h96" stroke="#2C5E24" stroke-width="5" stroke-linecap="round"/><ellipse cx="18" cy="100" rx="9" ry="5" fill="#7FBF6E"/><ellipse cx="86" cy="100" rx="9" ry="5" fill="#7FBF6E"/>'),
-    penguin: svgWrap('<ellipse cx="60" cy="64" rx="32" ry="42" fill="#2E3440"/><ellipse cx="60" cy="74" rx="20" ry="30" fill="#FFFDF6"/><circle cx="49" cy="40" r="4.2" fill="#22301C"/><circle cx="71" cy="40" r="4.2" fill="#22301C"/><path d="M52 48 L68 48 L60 57 Z" fill="#F08A24"/><ellipse cx="27" cy="66" rx="8" ry="20" fill="#2E3440" transform="rotate(14 27 66)"/><ellipse cx="93" cy="66" rx="8" ry="20" fill="#2E3440" transform="rotate(-14 93 66)"/><ellipse cx="46" cy="108" rx="11" ry="5" fill="#F08A24"/><ellipse cx="74" cy="108" rx="11" ry="5" fill="#F08A24"/><path d="M44 18 q16 -10 32 0 l-4 8 q-12 -6 -24 0z" fill="#E4572E"/>')
-  };
-  var ART_HOME = {
-    hive: svgWrap('<path d="M14 14 q46 -10 92 0" stroke="#8A5A2B" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M60 10 v12" stroke="#8A5A2B" stroke-width="5"/><path d="M34 44 a26 14 0 0 1 52 0z" fill="#F6C93C"/><path d="M28 58 a32 13 0 0 1 64 0 l0 8 a32 12 0 0 1 -64 0z" fill="#EDB62E"/><path d="M28 76 a32 12 0 0 1 64 0 l0 8 a32 12 0 0 1 -64 0z" fill="#F6C93C"/><path d="M32 94 a28 11 0 0 1 56 0 l0 4 a28 10 0 0 1 -56 0z" fill="#EDB62E"/><ellipse cx="60" cy="82" rx="8" ry="10" fill="#7A4E12"/><circle cx="24" cy="30" r="4" fill="#F6C93C"/><circle cx="98" cy="38" r="4" fill="#F6C93C"/>'),
-    nest: svgWrap('<ellipse cx="60" cy="86" rx="46" ry="14" fill="#B9D9EE"/><path d="M14 74 q46 -20 92 0 q-4 26 -46 26 q-42 0 -46 -26z" fill="#9C6B35"/><path d="M20 78 q40 -14 80 -2 M26 88 q34 -10 68 -2 M34 96 q26 -7 52 -1" stroke="#6E4520" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M24 72 q-8 -12 2 -18 M96 72 q8 -12 -2 -18 M60 62 q0 -14 10 -18" stroke="#9C6B35" stroke-width="4.4" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="62" rx="11" ry="14" fill="#CDEBFB" transform="rotate(-10 44 62)"/><ellipse cx="62" cy="58" rx="11" ry="15" fill="#FDE8EF" transform="rotate(6 62 58)"/><ellipse cx="78" cy="63" rx="10" ry="13" fill="#FFF3C4" transform="rotate(14 78 63)"/>'),
-    burrow: svgWrap('<path d="M6 102 a54 40 0 0 1 108 0z" fill="#6DBE5A"/><ellipse cx="60" cy="86" rx="23" ry="20" fill="#4A2E12"/><ellipse cx="60" cy="88" rx="16" ry="14" fill="#2E1B08"/><path d="M16 66 q4 -10 0 -16 M30 58 q6 -8 14 -9 M92 60 q8 -6 14 -5 M102 74 q8 -4 12 -2" stroke="#3E9B4F" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="28" cy="84" r="5" fill="#EF6AA5"/><circle cx="94" cy="88" r="5" fill="#F6C93C"/><circle cx="40" cy="66" r="4" fill="#fff"/><path d="M84 52 q2 -10 10 -12 q1 9 -6 13z" fill="#FF8A3D"/><path d="M88 50 q6 -4 10 -1" stroke="#3E9B4F" stroke-width="3" fill="none"/>'),
-    cave: svgWrap('<path d="M8 106 L14 52 Q20 18 60 12 Q100 18 106 52 L112 106 Z" fill="#9AA3AD"/><path d="M14 106 L20 56 Q26 30 50 22 L44 106z" fill="#868F99"/><path d="M36 106 a24 34 0 0 1 48 0z" fill="#2E3138"/><path d="M36 106 a24 34 0 0 1 48 0" fill="none" stroke="#6E7680" stroke-width="4"/><circle cx="30" cy="40" r="5" fill="#B7BFC7"/><circle cx="88" cy="30" r="6" fill="#B7BFC7"/><path d="M10 106 q10 -8 20 0 q10 -8 20 0 q10 -8 20 0 q10 -8 20 0 q10 -8 20 0" stroke="#57B877" stroke-width="5" fill="none" stroke-linecap="round"/>'),
-    pond: svgWrap('<ellipse cx="60" cy="72" rx="52" ry="34" fill="#5FB6E8"/><ellipse cx="60" cy="68" rx="44" ry="27" fill="#83CCF2"/><path d="M22 66 q12 -6 24 0 M56 84 q12 -6 24 0 M66 56 q10 -5 20 0" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".8"/><path d="M16 52 q-2 -22 6 -34 M24 54 q2 -20 10 -30" stroke="#3E9B4F" stroke-width="4.4" fill="none" stroke-linecap="round"/><ellipse cx="88" cy="82" rx="13" ry="6" fill="#57B877"/><circle cx="90" cy="76" r="6" fill="#EF6AA5"/><circle cx="34" cy="88" r="4" fill="#fff" opacity=".7"/><circle cx="46" cy="94" r="3" fill="#fff" opacity=".7"/>'),
-    lilypad: svgWrap('<ellipse cx="60" cy="74" rx="52" ry="32" fill="#5FB6E8"/><ellipse cx="60" cy="70" rx="44" ry="25" fill="#83CCF2"/><path d="M60 84 L18 62 a46 27 0 1 1 84 12 a46 27 0 0 1 -42 10z" fill="#3FA34D"/><path d="M60 84 L26 66 M60 84 L60 52 M60 84 L94 68" stroke="#2C7A3B" stroke-width="2.6"/><path d="M84 44 q8 -10 16 -4 q-2 10 -12 12 q10 4 6 12 q-10 2 -14 -6 q-8 -2 -6 -10 q4 -6 10 -4z" fill="#F7A8C4"/><circle cx="86" cy="54" r="4.4" fill="#F6C93C"/><ellipse cx="26" cy="88" rx="10" ry="5" fill="#57B877"/>'),
-    treehollow: svgWrap('<path d="M34 110 L40 34 Q42 12 60 10 Q78 12 80 34 L86 110 Z" fill="#8A5A2B"/><path d="M44 108 L48 40 M74 108 L71 42" stroke="#6E4520" stroke-width="4" stroke-linecap="round"/><path d="M40 40 Q16 30 10 8 Q34 8 44 26z" fill="#6E4520"/><path d="M80 40 Q104 30 110 8 Q86 8 76 26z" fill="#6E4520"/><ellipse cx="60" cy="66" rx="17" ry="21" fill="#3A2410"/><ellipse cx="60" cy="68" rx="12" ry="16" fill="#241605"/><circle cx="34" cy="22" r="13" fill="#3E9B4F"/><circle cx="88" cy="18" r="15" fill="#4CAF62"/><circle cx="60" cy="8" r="12" fill="#358A44"/><circle cx="26" cy="34" r="4" fill="#E4572E"/><circle cx="94" cy="30" r="4" fill="#E23B3B"/>'),
-    web: svgWrap('<path d="M8 8 L60 60 L112 8 M112 60 H60 M104 104 L60 60 L16 104 M60 112 V60 M8 60 h52" stroke="#C9D4DC" stroke-width="3" fill="none"/><path d="M30 30 Q60 44 90 30 M22 60 Q60 78 98 60 M34 88 Q60 72 86 88 M44 16 Q60 56 76 16" stroke="#DCE7EE" stroke-width="2.6" fill="none"/><path d="M8 112 Q30 84 60 86 Q92 84 112 112" stroke="#8A5A2B" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M60 86 q2 -14 -6 -20" stroke="#3E9B4F" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="98" cy="20" r="5" fill="#BFE6F5"/><circle cx="22" cy="44" r="4" fill="#BFE6F5"/>'),
-    anthill: svgWrap('<path d="M10 106 Q28 52 60 48 Q92 52 110 106 Z" fill="#C08552"/><path d="M26 106 Q38 66 58 56 L54 106z" fill="#A96F3E"/><ellipse cx="60" cy="66" rx="11" ry="9" fill="#4A2E12"/><path d="M22 96 q6 -3 10 2 M84 92 q7 -3 11 2 M40 82 q5 -3 9 1" stroke="#8A5A2B" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="36" cy="74" r="3" fill="#8A5A2B"/><circle cx="88" cy="76" r="3" fill="#8A5A2B"/><path d="M14 106 q8 -14 4 -26 M106 106 q-8 -14 -4 -26" stroke="#3E9B4F" stroke-width="4.4" fill="none" stroke-linecap="round"/><circle cx="98" cy="34" r="4.4" fill="#B6492B"/><circle cx="22" cy="28" r="4.4" fill="#B6492B"/>'),
-    den: svgWrap('<path d="M6 106 a54 42 0 0 1 108 0z" fill="#A9743F"/><path d="M6 106 a54 42 0 0 1 108 0" fill="none" stroke="#7A4E24" stroke-width="3"/><path d="M38 106 a22 26 0 0 1 44 0z" fill="#33200C"/><path d="M38 106 a22 26 0 0 1 44 0" fill="none" stroke="#5E3A18" stroke-width="4"/><path d="M20 62 q14 -16 6 -30 M100 62 q-14 -16 -6 -30 M60 52 q0 -18 -12 -26" stroke="#6E4520" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M14 44 q-8 -12 -2 -22 q12 4 12 16z M106 44 q8 -12 2 -22 q-12 4 -12 16z" fill="#57B877"/><circle cx="26" cy="88" r="4.4" fill="#D9D9D9"/><circle cx="94" cy="90" r="4.4" fill="#C9C9C9"/><circle cx="86" cy="72" r="3.6" fill="#D9D9D9"/>'),
-    shell: svgWrap('<path d="M10 100 a50 42 0 0 1 100 0z" fill="#57A047"/><path d="M10 100 a50 42 0 0 1 100 0" fill="none" stroke="#3A7A30" stroke-width="3"/><path d="M34 66 a30 24 0 0 1 52 0 l-6 12 a40 30 0 0 1 -40 0z" fill="#74BC63"/><ellipse cx="60" cy="86" rx="16" ry="11" fill="#9BD48C"/><path d="M22 88 q10 6 8 12 M98 88 q-10 6 -8 12 M60 58 v8" stroke="#3A7A30" stroke-width="3" fill="none"/><path d="M4 100 h112" stroke="#2C5E24" stroke-width="5" stroke-linecap="round"/><path d="M14 100 q-4 -12 4 -18 M106 100 q4 -12 -4 -18" stroke="#7FBF6E" stroke-width="5" fill="none" stroke-linecap="round"/>'),
-    icehome: svgWrap('<rect x="0" y="78" width="120" height="42" fill="#3E8FC7"/><path d="M0 92 q15 -5 30 0 t30 0 t30 0 t30 0" stroke="#8CC8EC" stroke-width="3" fill="none"/><path d="M6 82 L18 50 L58 44 L96 52 L114 82 Z" fill="#F4FBFF" stroke="#B9D9EE" stroke-width="3" stroke-linejoin="round"/><path d="M24 64 L52 58 M62 60 L92 64" stroke="#CDEBFB" stroke-width="4" stroke-linecap="round"/><path d="M6 82 L114 82" stroke="#9FD0EE" stroke-width="4"/><path d="M22 30 l3 7 7 1 -5 5 1 7 -6 -4 -6 4 1 -7 -5 -5 7 -1z M94 18 l2 5 5 .6 -4 4 1 5 -4 -3 -4 3 1 -5 -4 -4 5 -.6z" fill="#fff"/>')
-  };
-  var PAIRS=[
-    {id:"bee",name:"Bee",home:"Beehive",homeId:"hive",fact:"Bees dance to tell their friends where the flowers are!",clue:"This golden home hangs in a tree, and inside it is sticky, sweet honey.",homeFact:"A beehive can hold thousands of bees, all one big family."},
-    {id:"bird",name:"Bird",home:"Nest",homeId:"nest",fact:"Birds build nests twig by twig, all by themselves!",clue:"This home is a cosy cup of twigs, high up where eggs stay safe.",homeFact:"A nest is like a cradle in the sky for baby birds."},
-    {id:"rabbit",name:"Rabbit",home:"Burrow",homeId:"burrow",fact:"Rabbits thump their big back feet to warn their friends: watch out!",clue:"This home is a tunnel under the grass with a round, dark doorway.",homeFact:"A rabbit burrow has lots of tunnels, like underground hallways."},
-    {id:"bear",name:"Bear",home:"Cave",homeId:"cave",fact:"Bears sleep in their cave all winter long. What a long nap!",clue:"This big rocky home is cool, quiet and dark inside.",homeFact:"A cave keeps a bear warm and dry through the snow."},
-    {id:"fish",name:"Fish",home:"Pond",homeId:"pond",fact:"Fish sleep with their eyes open — they have no eyelids!",clue:"This home is made of water! It splashes, ripples and sparkles.",homeFact:"The whole pond is the fish's home — every splashy corner."},
-    {id:"frog",name:"Frog",home:"Lily Pad",homeId:"lilypad",fact:"Frogs are champion jumpers — boing, boing, splash!",clue:"This home is a green floating leaf with a pink flower on top.",homeFact:"A lily pad is a frog's boat, chair and sunbed all in one."},
-    {id:"squirrel",name:"Squirrel",home:"Tree Hollow",homeId:"treehollow",fact:"Squirrels bury acorns, then find them again in winter!",clue:"This home is a hole inside a tall tree, safe above the ground.",homeFact:"A tree hollow is like a little round bedroom in the trunk."},
-    {id:"spider",name:"Spider",home:"Web",homeId:"web",fact:"A spider's web is stronger than steel of the same size!",clue:"This home is made of silky threads, and it sparkles with dew.",homeFact:"A spider builds its web fresh, spinning every thread itself."},
-    {id:"ant",name:"Ant",home:"Anthill",homeId:"anthill",fact:"An ant can carry things 50 times heavier than itself!",clue:"This home is a busy mound of earth with tiny doors everywhere.",homeFact:"Under an anthill is a whole city of tunnels and rooms."},
-    {id:"fox",name:"Fox",home:"Den",homeId:"den",fact:"Fox cubs play and wrestle right outside their den!",clue:"This home hides under tree roots, with a secret earthy doorway.",homeFact:"A fox den is dug deep, where cubs stay warm and hidden."},
-    {id:"turtle",name:"Turtle",home:"Shell",homeId:"shell",fact:"A turtle's shell is part of its body — it can feel touches!",clue:"This home goes everywhere its animal goes. It is never left behind!",homeFact:"A turtle carries its home on its back, day and night."},
-    {id:"penguin",name:"Penguin",home:"Icy Shore",homeId:"icehome",fact:"Penguins huddle together to stay warm in the snow!",clue:"This home is a cold, icy shore right next to the sea.",homeFact:"Penguins live on ice and rocks by the cold sea, and dive in to catch fish!"}
+  "use strict";
+
+  function wrapSvg(inner){ return '<svg viewBox="0 0 120 120" aria-hidden="true">' + inner + '</svg>'; }
+
+  /* ================= 12 STORYBOOK ANIMALS & HOMES (ALL VOICED!) ================= */
+  var PAIRS = [
+    { id:"bear", name:"Bear", home:"Cave", homeSlug:"cave", fx:"💤", color:"#9c6b35", sfx:"hum",
+      animal: wrapSvg('<circle cx="32" cy="34" r="14" fill="#8a5a2b" stroke="#17324f" stroke-width="3.5"/><circle cx="88" cy="34" r="14" fill="#8a5a2b" stroke="#17324f" stroke-width="3.5"/><circle cx="32" cy="34" r="6" fill="#e5b173"/><circle cx="88" cy="34" r="6" fill="#e5b173"/><circle cx="60" cy="66" r="37" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="77" rx="18" ry="14" fill="#f7deb0" stroke="#17324f" stroke-width="2.5"/><circle cx="46" cy="58" r="5" fill="#17324f"/><circle cx="74" cy="58" r="5" fill="#17324f"/><circle cx="48" cy="56" r="1.8" fill="#fff"/><circle cx="76" cy="56" r="1.8" fill="#fff"/><ellipse cx="60" cy="71" rx="7.5" ry="5.5" fill="#3a200d"/><path d="M60 76 q0 6 -7 6 M60 76 q0 6 7 6" stroke="#3a200d" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="34" cy="72" r="5.5" fill="#ff9ebb" opacity=".75"/><circle cx="86" cy="72" r="5.5" fill="#ff9ebb" opacity=".75"/>'),
+      homeSvg: wrapSvg('<path d="M8 106 L16 50 Q22 18 60 12 Q98 18 104 50 L112 106 Z" fill="#9aa5b1" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M16 104 L22 54 Q28 28 52 20 L46 104 Z" fill="#7f8c99"/><path d="M35 106 a25 36 0 0 1 50 0 Z" fill="#252a34" stroke="#17324f" stroke-width="4"/><circle cx="60" cy="62" r="7" fill="#ffc93c" opacity=".88"/><path d="M10 106 q10 -8 20 0 q10 -8 20 0 q10 -8 20 0 q10 -8 20 0 q10 -8 20 0" stroke="#4ade80" stroke-width="5.5" fill="none" stroke-linecap="round"/>')
+    },
+    { id:"frog", name:"Frog", home:"Lily Pad", homeSlug:"lily-pad", fx:"💦", color:"#4ade80", sfx:"ribbit",
+      animal: wrapSvg('<circle cx="38" cy="36" r="14" fill="#4cc95a" stroke="#17324f" stroke-width="3.5"/><circle cx="82" cy="36" r="14" fill="#4cc95a" stroke="#17324f" stroke-width="3.5"/><circle cx="38" cy="36" r="8.5" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="82" cy="36" r="8.5" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="38" cy="36" r="4.5" fill="#17324f"/><circle cx="82" cy="36" r="4.5" fill="#17324f"/><ellipse cx="60" cy="76" rx="39" ry="31" fill="#57cc62" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="88" rx="22" ry="15" fill="#dcfce7"/><path d="M38 72 q22 16 44 0" stroke="#17324f" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="31" cy="79" r="6" fill="#ff8fab"/><circle cx="89" cy="79" r="6" fill="#ff8fab"/>'),
+      homeSvg: wrapSvg('<ellipse cx="60" cy="74" rx="52" ry="32" fill="#38bdf8" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="70" rx="43" ry="24" fill="#7dd3fc"/><path d="M60 84 L18 62 a46 27 0 1 1 84 12 a46 27 0 0 1 -42 10 Z" fill="#3cc858" stroke="#17324f" stroke-width="3.5"/><path d="M60 84 L28 66 M60 84 L60 52 M60 84 L92 68" stroke="#15803d" stroke-width="2.8"/><path d="M84 42 q8 -10 16 -4 q-2 10 -12 12 q10 4 6 12 q-10 2 -14 -6 q-8 -2 -6 -10 q4 -6 10 -4 Z" fill="#ff7aa2" stroke="#17324f" stroke-width="2.5"/><circle cx="86" cy="52" r="4.5" fill="#ffd23f"/>')
+    },
+    { id:"bee", name:"Bee", home:"Beehive", homeSlug:"beehive", fx:"🍯", color:"#facc15", sfx:"buzz",
+      animal: wrapSvg('<ellipse cx="32" cy="40" rx="16" ry="11" fill="#e0f2fe" stroke="#17324f" stroke-width="3.2" transform="rotate(-24 32 40)"/><ellipse cx="88" cy="40" rx="16" ry="11" fill="#e0f2fe" stroke="#17324f" stroke-width="3.2" transform="rotate(24 88 40)"/><ellipse cx="60" cy="70" rx="31" ry="33" fill="#ffd23f" stroke="#17324f" stroke-width="4"/><path d="M35 83 q25 10 50 0 M41 95 q19 7 38 0" stroke="#17324f" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="48" cy="59" r="4.8" fill="#17324f"/><circle cx="72" cy="59" r="4.8" fill="#17324f"/><path d="M51 70 q9 7 18 0" stroke="#17324f" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M48 38 q-4 -12 -12 -15 M72 38 q4 -12 12 -15" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="38" cy="68" r="5" fill="#ff8fab" opacity=".8"/><circle cx="82" cy="68" r="5" fill="#ff8fab" opacity=".8"/>'),
+      homeSvg: wrapSvg('<path d="M12 16 q48 -10 96 0" stroke="#8b5a2b" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M60 12 v14" stroke="#8b5a2b" stroke-width="5"/><path d="M34 44 a26 15 0 0 1 52 0 Z" fill="#ffd23f" stroke="#17324f" stroke-width="3.5"/><path d="M27 58 a33 13 0 0 1 66 0 l0 8 a33 12 0 0 1 -66 0 Z" fill="#f59e0b" stroke="#17324f" stroke-width="3.5"/><path d="M27 76 a33 12 0 0 1 66 0 l0 8 a33 12 0 0 1 -66 0 Z" fill="#ffd23f" stroke="#17324f" stroke-width="3.5"/><path d="M32 94 a28 11 0 0 1 56 0 l0 5 a28 10 0 0 1 -56 0 Z" fill="#f59e0b" stroke="#17324f" stroke-width="3.5"/><ellipse cx="60" cy="82" rx="9" ry="11" fill="#4a280a" stroke="#17324f" stroke-width="3"/>')
+    },
+    { id:"bird", name:"Bird", home:"Nest", homeSlug:"nest", fx:"🎵", color:"#38bdf8", sfx:"chirp",
+      animal: wrapSvg('<ellipse cx="60" cy="70" rx="30" ry="31" fill="#38bdf8" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="80" rx="18" ry="20" fill="#fde2d8"/><circle cx="60" cy="38" r="20" fill="#60c5fa" stroke="#17324f" stroke-width="4"/><circle cx="52" cy="35" r="4.2" fill="#17324f"/><circle cx="68" cy="35" r="4.2" fill="#17324f"/><path d="M53 43 L67 43 L60 52 Z" fill="#ff9f1c" stroke="#17324f" stroke-width="2.5"/><path d="M47 21 q13 -12 26 0" fill="#ff5d52" stroke="#17324f" stroke-width="3" stroke-linecap="round"/><path d="M30 62 q-16 -6 -20 -20 q15 -1 22 10 Z" fill="#0284c7" stroke="#17324f" stroke-width="3.5"/><path d="M90 62 q16 -6 20 -20 q-15 -1 -22 10 Z" fill="#0284c7" stroke="#17324f" stroke-width="3.5"/><path d="M52 102 v8 M68 102 v8" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>'),
+      homeSvg: wrapSvg('<ellipse cx="44" cy="60" rx="11" ry="15" fill="#bae6fd" stroke="#17324f" stroke-width="3" transform="rotate(-10 44 60)"/><ellipse cx="62" cy="56" rx="11" ry="15" fill="#fbcfe8" stroke="#17324f" stroke-width="3" transform="rotate(6 62 56)"/><ellipse cx="78" cy="61" rx="10" ry="14" fill="#fef08a" stroke="#17324f" stroke-width="3" transform="rotate(14 78 61)"/><path d="M14 72 q46 -18 92 0 q-4 30 -46 30 q-42 0 -46 -30 Z" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><path d="M22 78 q38 -12 76 -2 M28 89 q32 -10 64 -2" stroke="#6e4520" stroke-width="4" fill="none" stroke-linecap="round"/>')
+    },
+    { id:"rabbit", name:"Rabbit", home:"Burrow", homeSlug:"burrow", fx:"🥕", color:"#f472b6", sfx:"hop",
+      animal: wrapSvg('<ellipse cx="42" cy="25" rx="10" ry="23" fill="#fffdf8" stroke="#17324f" stroke-width="3.5"/><ellipse cx="42" cy="27" rx="4.6" ry="14" fill="#ff9ebb"/><ellipse cx="78" cy="25" rx="10" ry="23" fill="#fffdf8" stroke="#17324f" stroke-width="3.5"/><ellipse cx="78" cy="27" rx="4.6" ry="14" fill="#ff9ebb"/><circle cx="60" cy="76" r="34" fill="#fffdf8" stroke="#17324f" stroke-width="4"/><circle cx="47" cy="70" r="4.8" fill="#17324f"/><circle cx="73" cy="70" r="4.8" fill="#17324f"/><ellipse cx="60" cy="80" rx="5.5" ry="4.2" fill="#ff5d8f"/><path d="M60 84 q0 5 -5 5 M60 84 q0 5 5 5" stroke="#17324f" stroke-width="2.8" fill="none" stroke-linecap="round"/><rect x="55" y="90" width="10" height="8" rx="2" fill="#fff" stroke="#17324f" stroke-width="2"/><circle cx="36" cy="82" r="6" fill="#ffb3c6"/><circle cx="84" cy="82" r="6" fill="#ffb3c6"/>'),
+      homeSvg: wrapSvg('<path d="M8 104 a52 40 0 0 1 104 0 Z" fill="#5fd166" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="88" rx="24" ry="20" fill="#4a2e12" stroke="#17324f" stroke-width="3.5"/><ellipse cx="60" cy="90" rx="16" ry="13" fill="#261606"/><circle cx="28" cy="84" r="6" fill="#ff7aa2" stroke="#17324f" stroke-width="2"/><circle cx="94" cy="86" r="6" fill="#ffd23f" stroke="#17324f" stroke-width="2"/><path d="M82 54 L94 40 L90 58 Z" fill="#f97316" stroke="#17324f" stroke-width="2.5"/>')
+    },
+    { id:"fish", name:"Fish", home:"Pond", homeSlug:"pond", fx:"🫧", color:"#fb923c", sfx:"splash",
+      animal: wrapSvg('<path d="M22 60 L6 36 Q20 58 6 86 Z" fill="#ff5d52" stroke="#17324f" stroke-width="3.5" stroke-linejoin="round"/><path d="M18 60 Q46 26 80 34 Q106 40 106 60 Q106 80 80 86 Q46 94 18 60 Z" fill="#ff9f1c" stroke="#17324f" stroke-width="4"/><path d="M52 36 q8 24 0 48 M72 40 q7 20 0 40" stroke="#ff5d52" stroke-width="6" fill="none"/><circle cx="90" cy="52" r="5.5" fill="#17324f"/><circle cx="92" cy="50" r="2" fill="#fff"/><path d="M95 66 q6 4 0 8" stroke="#17324f" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="34" cy="20" r="6" fill="#bae6fd" stroke="#17324f" stroke-width="2.2"/><circle cx="50" cy="12" r="4.5" fill="#bae6fd" stroke="#17324f" stroke-width="2.2"/>'),
+      homeSvg: wrapSvg('<ellipse cx="60" cy="72" rx="52" ry="34" fill="#38bdf8" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="68" rx="43" ry="26" fill="#7dd3fc"/><path d="M24 66 q12 -6 24 0 M56 84 q12 -6 24 0 M66 56 q10 -5 20 0" stroke="#fff" stroke-width="3.8" fill="none" stroke-linecap="round"/><path d="M16 52 q-2 -22 6 -34 M25 54 q2 -20 10 -30" stroke="#16a34a" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="88" cy="82" rx="13" ry="6" fill="#4ade80" stroke="#17324f" stroke-width="2.5"/><circle cx="90" cy="76" r="6" fill="#ff7aa2" stroke="#17324f" stroke-width="2"/>')
+    },
+    { id:"penguin", name:"Penguin", home:"Icy Shore", homeSlug:"icy-shore", fx:"❄️", color:"#38bdf8", sfx:"slide",
+      animal: wrapSvg('<ellipse cx="26" cy="66" rx="9" ry="21" fill="#1e293b" stroke="#17324f" stroke-width="3.5" transform="rotate(14 26 66)"/><ellipse cx="94" cy="66" rx="9" ry="21" fill="#1e293b" stroke="#17324f" stroke-width="3.5" transform="rotate(-14 94 66)"/><ellipse cx="60" cy="64" rx="32" ry="42" fill="#334155" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="74" rx="20" ry="30" fill="#fffdf8"/><circle cx="48" cy="40" r="4.8" fill="#17324f"/><circle cx="72" cy="40" r="4.8" fill="#17324f"/><circle cx="50" cy="38" r="1.7" fill="#fff"/><circle cx="74" cy="38" r="1.7" fill="#fff"/><path d="M51 48 L69 48 L60 58 Z" fill="#ff9f1c" stroke="#17324f" stroke-width="2.8"/><ellipse cx="46" cy="107" rx="12" ry="5.5" fill="#ff9f1c" stroke="#17324f" stroke-width="2.8"/><ellipse cx="74" cy="107" rx="12" ry="5.5" fill="#ff9f1c" stroke="#17324f" stroke-width="2.8"/><path d="M43 18 q17 -12 34 0 l-4 9 q-13 -6 -26 0 Z" fill="#ff5d52" stroke="#17324f" stroke-width="3"/>'),
+      homeSvg: wrapSvg('<rect x="4" y="76" width="112" height="36" rx="12" fill="#0284c7" stroke="#17324f" stroke-width="4"/><path d="M12 92 q16 -6 32 0 t32 0 t32 0" stroke="#7dd3fc" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M10 80 L24 44 L60 36 L96 46 L110 80 Z" fill="#f0f9ff" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M28 62 L54 56 M66 58 L92 62" stroke="#bae6fd" stroke-width="4.5" stroke-linecap="round"/><circle cx="28" cy="24" r="5" fill="#fff" stroke="#38bdf8" stroke-width="2"/><circle cx="92" cy="20" r="4.5" fill="#fff" stroke="#38bdf8" stroke-width="2"/>')
+    },
+    { id:"squirrel", name:"Squirrel", home:"Tree Hollow", homeSlug:"tree-hollow", fx:"🌰", color:"#f97316", sfx:"hop",
+      animal: wrapSvg('<path d="M84 96 q32 -6 28 -38 q-2 -24 -26 -30 q10 16 2 28 q10 22 -4 40 Z" fill="#c96a2b" stroke="#17324f" stroke-width="3.8"/><path d="M36 38 L28 12 L52 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><path d="M78 38 L86 12 L62 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><circle cx="57" cy="63" r="31" fill="#ec9042" stroke="#17324f" stroke-width="4"/><ellipse cx="57" cy="77" rx="17" ry="18" fill="#fef0d5"/><circle cx="46" cy="56" r="4.6" fill="#17324f"/><circle cx="68" cy="56" r="4.6" fill="#17324f"/><ellipse cx="57" cy="65" rx="5.5" ry="4" fill="#6b3410"/><ellipse cx="57" cy="95" rx="10" ry="12" fill="#8b5a2b" stroke="#17324f" stroke-width="3"/>'),
+      homeSvg: wrapSvg('<path d="M34 110 L40 34 Q42 12 60 10 Q78 12 80 34 L86 110 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/><circle cx="34" cy="26" r="16" fill="#3cc858" stroke="#17324f" stroke-width="3.5"/><circle cx="88" cy="22" r="17" fill="#2ea043" stroke="#17324f" stroke-width="3.5"/><circle cx="60" cy="14" r="16" fill="#55cf64" stroke="#17324f" stroke-width="3.5"/><ellipse cx="60" cy="68" rx="17" ry="22" fill="#2b1908" stroke="#17324f" stroke-width="3.5"/>')
+    },
+    { id:"fox", name:"Fox", home:"Den", homeSlug:"den", fx:"✨", color:"#f97316", sfx:"hop",
+      animal: wrapSvg('<path d="M26 52 L18 14 L50 32 Z" fill="#f97316" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><path d="M94 52 L102 14 L70 32 Z" fill="#f97316" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><path d="M29 44 L26 26 L42 36 Z" fill="#fed7aa"/><path d="M91 44 L94 26 L78 36 Z" fill="#fed7aa"/><circle cx="60" cy="66" r="36" fill="#fb923c" stroke="#17324f" stroke-width="4"/><path d="M34 80 q26 26 52 0 q-6 22 -26 22 q-20 0 -26 -22 Z" fill="#fffdf8"/><circle cx="46" cy="60" r="4.8" fill="#17324f"/><circle cx="74" cy="60" r="4.8" fill="#17324f"/><ellipse cx="60" cy="78" rx="7" ry="5.5" fill="#17324f"/>'),
+      homeSvg: wrapSvg('<path d="M8 106 a52 42 0 0 1 104 0 Z" fill="#b07b42" stroke="#17324f" stroke-width="4"/><path d="M36 106 a24 28 0 0 1 48 0 Z" fill="#2d1b0a" stroke="#17324f" stroke-width="4"/><path d="M22 60 q14 -16 6 -30 M98 60 q-14 -16 -6 -30" stroke="#784b22" stroke-width="5.5" fill="none" stroke-linecap="round"/><circle cx="24" cy="30" r="10" fill="#4ade80" stroke="#17324f" stroke-width="3"/><circle cx="96" cy="30" r="10" fill="#4ade80" stroke="#17324f" stroke-width="3"/>')
+    },
+    { id:"turtle", name:"Turtle", home:"Shell", homeSlug:"shell", fx:"💚", color:"#22c55e", sfx:"hop",
+      animal: wrapSvg('<circle cx="98" cy="58" r="15" fill="#7dd36f" stroke="#17324f" stroke-width="3.5"/><circle cx="95" cy="55" r="3.4" fill="#17324f"/><path d="M89 65 q6 4 11 0" stroke="#17324f" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M10 92 a44 36 0 0 1 88 0 Z" fill="#22c55e" stroke="#17324f" stroke-width="4"/><ellipse cx="54" cy="79" rx="17" ry="12" fill="#86efac" stroke="#15803d" stroke-width="2.5"/><path d="M6 92 h94" stroke="#17324f" stroke-width="5" stroke-linecap="round"/><ellipse cx="22" cy="100" rx="10" ry="6" fill="#7dd36f" stroke="#17324f" stroke-width="3"/><ellipse cx="84" cy="100" rx="10" ry="6" fill="#7dd36f" stroke="#17324f" stroke-width="3"/>'),
+      homeSvg: wrapSvg('<path d="M10 98 a50 42 0 0 1 100 0 Z" fill="#22c55e" stroke="#17324f" stroke-width="4"/><path d="M34 66 a30 24 0 0 1 52 0 l-6 12 a40 30 0 0 1 -40 0 Z" fill="#4ade80" stroke="#15803d" stroke-width="3"/><ellipse cx="60" cy="84" rx="16" ry="11" fill="#bbf7d0" stroke="#15803d" stroke-width="2.5"/><path d="M6 98 h108" stroke="#17324f" stroke-width="5.5" stroke-linecap="round"/>')
+    },
+    { id:"spider", name:"Spider", home:"Web", homeSlug:"web", fx:"✨", color:"#8b5cf6", sfx:"hop",
+      animal: wrapSvg('<g stroke="#17324f" stroke-width="4.8" fill="none" stroke-linecap="round"><path d="M34 52 Q14 44 8 26 M34 68 Q12 68 4 56 M34 82 Q16 90 10 106 M86 52 Q106 44 112 26 M86 68 Q108 68 116 56 M86 82 Q104 90 110 106"/></g><circle cx="60" cy="70" r="30" fill="#6366f1" stroke="#17324f" stroke-width="4"/><circle cx="60" cy="40" r="18" fill="#818cf8" stroke="#17324f" stroke-width="4"/><circle cx="53" cy="38" r="4" fill="#fff"/><circle cx="67" cy="38" r="4" fill="#fff"/><circle cx="53" cy="38" r="2" fill="#17324f"/><circle cx="67" cy="38" r="2" fill="#17324f"/><path d="M51 49 q9 6 18 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>'),
+      homeSvg: wrapSvg('<rect x="10" y="10" width="100" height="100" rx="22" fill="#eff6ff" stroke="#17324f" stroke-width="3.5"/><path d="M16 16 L60 60 L104 16 M104 60 H16 M104 104 L60 60 L16 104 M60 104 V16" stroke="#94a3b8" stroke-width="3" fill="none"/><circle cx="60" cy="60" r="16" fill="none" stroke="#94a3b8" stroke-width="3"/><circle cx="60" cy="60" r="32" fill="none" stroke="#94a3b8" stroke-width="3"/><circle cx="92" cy="26" r="5" fill="#38bdf8"/>')
+    },
+    { id:"ant", name:"Ant", home:"Anthill", homeSlug:"anthill", fx:"🌟", color:"#ef4444", sfx:"hop",
+      animal: wrapSvg('<path d="M44 34 q-10 -16 -22 -18 M52 32 q-2 -16 -12 -24" stroke="#17324f" stroke-width="3.6" fill="none" stroke-linecap="round"/><g stroke="#17324f" stroke-width="3.8" stroke-linecap="round"><path d="M62 76 L48 98 M72 72 L66 98 M80 76 L84 100"/></g><ellipse cx="86" cy="86" rx="19" ry="16" fill="#dc2626" stroke="#17324f" stroke-width="3.8"/><ellipse cx="66" cy="66" rx="13" ry="12" fill="#ef4444" stroke="#17324f" stroke-width="3.8"/><circle cx="52" cy="44" r="17" fill="#dc2626" stroke="#17324f" stroke-width="3.8"/><circle cx="47" cy="41" r="3.6" fill="#fff"/><circle cx="58" cy="41" r="3.6" fill="#fff"/><circle cx="47" cy="41" r="1.8" fill="#17324f"/><circle cx="58" cy="41" r="1.8" fill="#17324f"/>'),
+      homeSvg: wrapSvg('<path d="M10 106 Q28 48 60 44 Q92 48 110 106 Z" fill="#d99559" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><ellipse cx="60" cy="64" rx="12" ry="9" fill="#4a2e12" stroke="#17324f" stroke-width="3"/><path d="M14 106 q8 -14 4 -26 M106 106 q-8 -14 -4 -26" stroke="#22c55e" stroke-width="5" fill="none" stroke-linecap="round"/>')
+    }
   ];
-  function byId(id){ for(var i=0;i<PAIRS.length;i++){ if(PAIRS[i].id===id) return PAIRS[i]; } return null; }
-  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
-  var GOAL=6, COUNT_ROUNDS=4;
+
+  function $(id){ return document.getElementById(id); }
+  var hootBtn = $("hootBtn"), hootPupils = $("hootPupils"), orderCloud = $("orderCloud"),
+      cloudInner = $("cloudInner"), heroAnimalWrap = $("heroAnimalWrap"), heroAnimalBtn = $("heroAnimalBtn"),
+      homesGrid = $("homesGrid"), villageStrip = $("villageStrip"), starCountEl = $("starCount"),
+      starPill = $("starPill"), startVeil = $("startVeil"), winOverlay = $("winOverlay"),
+      winFriends = $("winFriends"), winStars = $("winStars");
 
   /* ================= STATE ================= */
-  var state="start";            /* start | playing | won */
-  var mode="takehome";          /* takehome | who | meet | count */
-  var stars=0, praiseIdx=0, soundOn=true, dead=false;
-  var inputLock=false, roundToken=0, lastHintAt=0;
-  var queue=[], current=null, homed=[], met={};
-  var countK=0, countRound=0, countAnswers=[];
+  var state = "start";       /* start | playing | won */
+  var mode = "takehome";     /* takehome | knock | explore */
+  var GOAL = 4;
+  var soundOn = true, dead = false, inputLock = false;
+  var stars = 0, roundTok = 0;
+  var queue = [], current = null, homed = [], exploreSet = [];
+  var idleTimer = null;
 
-  /* ================= ELMS ================= */
-  function $(id){ return document.getElementById(id); }
-  var stage=$("stage"), scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"),
-      targetCard=$("targetCard"), targetMain=$("targetMain"), tcLabel=$("tcLabel"), dotsBox=$("progressDots"),
-      starCount=$("starCount"), starBank=$("starBank"), perch=$("perch"), perchArt=$("perchArt"), perchName=$("perchName"),
-      spots=$("spots"), choiceRow=$("choiceRow"), meetGrid=$("meetGrid"), countLayer=$("countLayer"), village=$("village"),
-      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"), winChips=$("winChips"), winTitle=$("winTitle"), winStars=$("winStars");
-
-  /* ================= SOUND FX (WebAudio tones) ================= */
-  var AC=null;
-  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-  function tone(f0,f1,dur,type,vol,delay){
-    if(!soundOn) return; var ac=audio(); if(!ac) return;
-    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
-    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
-    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  /* ================= WEBAUDIO SOUND EFFECTS ================= */
+  var AC = null;
+  function audio(){
+    if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; } }
+    if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
+    return AC;
   }
-  function popSound(){ tone(520,140,0.14,"square",0.14); tone(880,220,0.1,"triangle",0.09); }
-  function boingSound(){ tone(300,70,0.34,"sine",0.18); tone(150,60,0.3,"triangle",0.07,0.03); }
-  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.09); tone(1560,1560,0.12,"sine",0.09,0.07); }
-  function chirpSound(){ tone(1250,1900,0.09,"sine",0.08); tone(1350,2000,0.09,"sine",0.08,0.11); }
-  function hopSound(){ tone(300,640,0.16,"sine",0.13); }
-  function starSound(){ tone(990,990,0.08,"triangle",0.09); tone(1320,1320,0.1,"triangle",0.09,0.06); tone(1760,1760,0.14,"triangle",0.08,0.12); }
+  function tone(f0, f1, dur, type, vol, delay){
+    if(!soundOn) return;
+    var ac = audio(); if(!ac) return;
+    var t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(f0, t);
+    if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 20), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.04);
+  }
+  function sfxPop(){ tone(520, 960, 0.13, "sine", 0.11); }
+  function sfxBoing(){ tone(240, 420, 0.14, "triangle", 0.11); tone(420, 210, 0.18, "triangle", 0.10, 0.12); }
+  function sfxStar(){ tone(880, 880, 0.08, "triangle", 0.10); tone(1175, 1175, 0.10, "triangle", 0.10, 0.07); tone(1568, 1568, 0.16, "triangle", 0.09, 0.14); }
+  function sfxKnock(){
+    tone(240, 120, 0.07, "square", 0.11, 0);
+    tone(260, 130, 0.07, "square", 0.11, 0.12);
+    tone(240, 115, 0.08, "square", 0.12, 0.24);
+  }
+  function sfxHabitat(kind){
+    if(kind === "buzz"){ tone(185, 210, 0.22, "sawtooth", 0.055, 0); tone(210, 175, 0.24, "sawtooth", 0.055, 0.22); }
+    else if(kind === "chirp"){ tone(980, 1480, 0.11, "sine", 0.11, 0); tone(1180, 1760, 0.12, "sine", 0.11, 0.14); }
+    else if(kind === "splash"){ tone(420, 180, 0.14, "sine", 0.11, 0); tone(580, 960, 0.16, "sine", 0.10, 0.12); }
+    else if(kind === "slide"){ tone(880, 320, 0.28, "triangle", 0.11, 0); tone(320, 660, 0.14, "sine", 0.10, 0.28); }
+    else if(kind === "hum"){ tone(140, 175, 0.26, "triangle", 0.12, 0); tone(175, 135, 0.24, "triangle", 0.10, 0.26); }
+    else { tone(360, 740, 0.16, "sine", 0.11, 0); tone(460, 920, 0.16, "sine", 0.10, 0.16); }
+  }
 
-  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-     Every clip goes through this single queue on a single Audio element.
-     A line that has started always finishes: the next clip is only loaded
-     from the 'ended' event, never from a timer, and pending (not yet
-     started) lines can be replaced when the game moves on. The hub's
-     injected voice governor arbitrates this element against every other
-     voice in the app the same way. No device text-to-speech anywhere.
-     NOTE: there are no recorded clips that name animals or homes, so
-     Hoot's animal teaching lives in his speech bubble while the closest
-     recorded praise / hint / recap clips carry his voice. */
-  var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-  function getVoice(){
+  /* ================= STUDIO HOOT VOICE QUEUE ================= */
+  var VBASE = "assets/voice/";
+  var voiceEl = null, vQueue = [], vPlaying = false;
+  function getVoiceEl(){
     if(!voiceEl){
-      voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
-      voiceEl.addEventListener("error",vNext);
+      voiceEl = new Audio();
+      voiceEl.preload = "auto";
+      voiceEl.addEventListener("ended", vNext);
+      voiceEl.addEventListener("error", vNext);
     }
     return voiceEl;
   }
-  function hubQuiet(){
+  function hubMuted(){
     try{
-      var d=window.parent&&window.parent.document;
-      if(!d||d===document) return false;
-      var b=d.querySelector('.voice-btn[data-voice="off"]');
-      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+      var d = window.parent && window.parent.document;
+      if(!d || d === document) return false;
+      var b = d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
     }catch(e){ return false; }
   }
-  function silenced(){ return !soundOn||hubQuiet(); }
-  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function clearVoice(){
+    vQueue.length = 0;
+    if(voiceEl){
+      voiceEl.__govWait = false; voiceEl.__govNext = null;
+      try{ voiceEl.pause(); }catch(e){}
+    }
+    vPlaying = false;
+    hootBtn.classList.remove("talking");
+  }
   function vNext(){
-    if(!vPlaying){ pumpVoice(); return; }
-    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
-  }
-  function pumpVoice(){
-    if(vPlaying||dead) return;
-    var item=vQueue.shift(); if(!item) return;
-    if(item.onStart){ try{ item.onStart(); }catch(e){} }
-    if(silenced()){ pumpVoice(); return; }
-    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
-    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
-    var p=el.play();
-    if(p&&p.catch) p.catch(function(){ vNext(); });
-  }
-  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
-    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    vPlaying = false;
+    hootBtn.classList.remove("talking");
     pumpVoice();
   }
-  function clearPending(){ vQueue.length=0; }
-  function enqueuePraise(){
-    praiseIdx++;
-    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise","",null);
-  }
-  function enqueueHint(){
-    var now=Date.now();
-    if(now-lastHintAt<4500) return;
-    lastHintAt=now;
-    if(vCurrent&&vCurrent.kind==="hint") return;
-    for(var i=0;i<vQueue.length;i++) if(vQueue[i].kind==="hint") return;
-    enqueue("hoot-try-again.mp3","hint","",null);
-  }
-
-  /* ================= HOOT'S FACE / WORDS ================= */
-  function say(html){ bubble.innerHTML=html; }
-  function hootReact(cls,ms){
-    hootFig.classList.remove("celebrate","shake");
-    void hootFig.offsetWidth;
-    hootFig.classList.add(cls);
-    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
-  }
-
-  /* ================= HELPERS ================= */
-  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-  function listWords(arr){
-    if(arr.length<=1) return arr.join("");
-    return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1];
-  }
-  function livingClass(id){
-    if(id==="fish"||id==="frog"||id==="turtle") return "water";
-    if(id==="bee"||id==="bird"||id==="spider") return "flyer";
-    return "";
-  }
-  function buildVillage(){
-    village.innerHTML="";
-    for(var i=0;i<GOAL;i++){
-      var plot=document.createElement("div"); plot.className="plot"; plot.id="plot"+i;
-      plot.innerHTML='<div class="pl-home"></div><div class="pl-an"></div>';
-      village.appendChild(plot);
+  function pumpVoice(){
+    if(vPlaying || dead) return;
+    var file = vQueue.shift();
+    if(!file) return;
+    if(!soundOn || hubMuted()){ pumpVoice(); return; }
+    var el = getVoiceEl();
+    vPlaying = true;
+    hootBtn.classList.add("talking");
+    if(/hoot-giggle/i.test(file)){
+      window.__bellyArmed = true;
+      setTimeout(function(){ window.__bellyArmed = false; }, 600);
     }
+    el.setAttribute("src", VBASE + file);
+    el.src = VBASE + file;
+    var pr = el.play();
+    if(pr && pr.catch) pr.catch(function(){ vNext(); });
   }
-  function settleInVillage(pair){
-    var idx=homed.length-1; if(idx<0||idx>=GOAL) return;
-    var plot=$("plot"+idx); if(!plot) return;
-    plot.classList.add("filled"); var __lc=livingClass(pair.id); if(__lc) plot.classList.add(__lc);
-    plot.querySelector(".pl-home").innerHTML=ART_HOME[pair.homeId];
-    plot.querySelector(".pl-an").innerHTML=ART_ANIMAL[pair.id];
-    if(pair.id==="bird"){
-      for(var i=0;i<3;i++){
-        (function(d){
-          setTimeout(function(){
-            if(dead) return;
-            var n=document.createElement("span"); n.className="note-float"; n.textContent="\u266A";
-            var r=plot.getBoundingClientRect(), sr=scene.getBoundingClientRect();
-            n.style.left=(r.left-sr.left+r.width*0.55)+"px"; n.style.top=(r.top-sr.top-6)+"px";
-            scene.appendChild(n); setTimeout(function(){ n.remove(); },1650);
-          },d);
-        })(i*420);
+  function sayClips(list, replace){
+    if(replace) clearVoice();
+    (list || []).forEach(function(f){ if(f) vQueue.push(f.indexOf(".mp3") > -1 ? f : f + ".mp3"); });
+    pumpVoice();
+  }
+  function childKey(){
+    try{ return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null; }catch(e){ return null; }
+  }
+  function hasVoice(id){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+  }
+  function speakPrompt(withHello){
+    var prefix = [];
+    if(withHello){
+      var ck = childKey();
+      prefix.push(ck === "kida" ? "hi-kida.mp3" : ck === "kidb" ? "hi-kidb.mp3" : "hoot-game-hello.mp3");
+    }
+    if(mode === "explore"){
+      sayClips(prefix.concat([hasVoice("hoot-home-explore") ? "hoot-home-explore.mp3" : "hoot-ready-go.mp3"]), true);
+    } else if(current){
+      if(mode === "knock" && hasVoice("hoot-home-knock-prompt")){
+        sayClips(prefix.concat(["hoot-home-knock-prompt.mp3", "homes-where-" + current.id + ".mp3"]), true);
+      } else {
+        sayClips(prefix.concat(["homes-where-" + current.id + ".mp3"]), true);
       }
     }
-    if(pair.id==="frog"||pair.id==="fish") hopSound();
   }
-  function setDots(total,on){
-    dotsBox.innerHTML="";
-    for(var i=0;i<total;i++){ var d=document.createElement("i"); if(i<on) d.className="on"; dotsBox.appendChild(d); }
-  }
-  function updateHUD(){ starCount.textContent=stars; }
-  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
-  function burst(x,y){
-    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#57cc62","#ff8fa3","#4ea8e0"];
-    for(var i=0;i<7;i++){
-      var p=document.createElement("div"); p.className="particle";
-      p.style.background=cols[i%cols.length];
-      p.style.left=(x-sr.left-5)+"px"; p.style.top=(y-sr.top-5)+"px";
-      scene.appendChild(p);
-      var ang=(Math.PI*2*i)/7+Math.random()*0.5, dist=40+Math.random()*34;
-      if(p.animate) p.animate([
-        {transform:"translate(0,0) scale(1)",opacity:1},
-        {transform:"translate("+Math.cos(ang)*dist+"px,"+(Math.sin(ang)*dist+24)+"px) scale(.4)",opacity:0}
-      ],{duration:520,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(el){ setTimeout(function(){ el.remove(); },560); })(p);
-    }
-  }
-  function confetti(){
-    var sr=scene.getBoundingClientRect(), cols=["#ffc93c","#57cc62","#ff8fa3","#4ea8e0","#ff6b5e"];
-    for(var i=0;i<26;i++){
-      var c=document.createElement("div"); c.className="confetti";
-      c.style.background=cols[i%cols.length];
-      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
-      scene.appendChild(c);
-      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
-      if(c.animate) c.animate([
-        {transform:"translate(0,0) rotate(0deg)",opacity:1},
-        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
-      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
-    }
-  }
-  function flyAnimalTo(pair,fromRect,toEl,done){
-    var clone=document.createElement("div"); clone.className="fly-clone";
-    clone.innerHTML=ART_ANIMAL[pair.id];
-    var sr=scene.getBoundingClientRect(), tr=toEl.getBoundingClientRect();
-    var w=Math.min(fromRect.width,110);
-    var x0=fromRect.left+fromRect.width/2-sr.left-w/2, y0=fromRect.top+fromRect.height/2-sr.top-w/2;
-    var x1=tr.left+tr.width/2-sr.left-w/2, y1=tr.top+tr.height/2-sr.top-w/2;
-    clone.style.width=w+"px"; clone.style.left=x0+"px"; clone.style.top=y0+"px";
-    scene.appendChild(clone);
-    var finished=false;
-    function finish(){ if(finished) return; finished=true; clone.remove(); done(); }
-    if(clone.animate){
-      var anim=clone.animate([
-        {transform:"translate(0,0) scale(1)",opacity:1},
-        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.5-56)+"px) scale(.85)",opacity:1,offset:0.55},
-        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.55)",opacity:.95}
-      ],{duration:680,easing:"cubic-bezier(.3,.6,.4,1)"});
-      anim.onfinish=finish;
-      setTimeout(finish,860);
-    } else setTimeout(finish,120);
-  }
-
-  /* ================= ROUND FLOW ================= */
-  function clearScene(){
-    spots.innerHTML=""; choiceRow.innerHTML=""; choiceRow.hidden=true;
-    meetGrid.innerHTML=""; meetGrid.hidden=true; countLayer.innerHTML="";
-    perch.hidden=true;
-  }
-  function presentPair(pair){
-    current=pair;
-    if(mode==="takehome"){
-      perchArt.innerHTML=ART_ANIMAL[pair.id]; perchName.textContent=pair.name; perch.hidden=false;
-      targetMain.textContent=pair.name; tcLabel.textContent="Where does "+pair.name+" live?";
-      say("This is <span class='b-big'>"+pair.name+"</span>! "+pair.fact+" Where does "+pair.name+" live? Tap "+pair.name+"&rsquo;s home!");
-      (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})();if(h["homes-where-"+pair.id]) enqueue("homes-where-"+pair.id+".mp3","callout","",null);})(); /* 3e44 */
-      var others=shuffle(PAIRS.filter(function(p){ return p.id!==pair.id; })).slice(0,2);
-      var homes=shuffle([pair].concat(others));
-      var pos=["spot-l","spot-c","spot-r"];
-      spots.innerHTML="";
-      homes.forEach(function(p,i){
-        var b=document.createElement("button"); b.type="button"; b.className="spot "+pos[i];
-        b.setAttribute("aria-label",p.home);
-        b.innerHTML='<div class="zone">'+ART_HOME[p.homeId]+'</div><span class="spot-name">'+p.home+'</span>';
-        b.addEventListener("click",function(){ onHomeTap(b,p); });
-        spots.appendChild(b);
-      });
-    } else { /* who */
-      perchArt.innerHTML=ART_HOME[pair.homeId]; perchName.textContent=pair.home; perch.hidden=false;
-      targetMain.textContent=pair.home; tcLabel.textContent="Who lives in the "+pair.home+"?";
-      say("Look — a <span class='b-big'>"+pair.home+"</span>! "+pair.clue+" Who lives here? Tap the animal!");
-      (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})(),k="word-home-"+pair.home.toLowerCase().replace(/ /g,"-");if(h[k]) enqueue(k+".mp3","name","",null);})(); /* 3e44 */
-      if((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-who-lives-in")){ clearPending(); enqueue("ask-who-lives-in.mp3","callout","",null); enqueue("word-home-"+String(pair.home).toLowerCase().replace(/ +/g,"-")+".mp3","callout","",null); } /* 3e51 */
-      var others=shuffle(PAIRS.filter(function(p){ return p.id!==pair.id; })).slice(0,2);
-      var animals=shuffle([pair].concat(others));
-      choiceRow.innerHTML=""; choiceRow.hidden=false;
-      animals.forEach(function(p){
-        var b=document.createElement("button"); b.type="button"; b.className="animal-choice";
-        b.setAttribute("aria-label",p.name);
-        b.innerHTML=ART_ANIMAL[p.id]+'<span class="spot-name">'+p.name+'</span>';
-        b.addEventListener("click",function(){ onAnimalTap(b,p); });
-        choiceRow.appendChild(b);
-      });
-    }
-    targetCard.style.display="flex";
-    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
-    setDots(GOAL,homed.length);
-    inputLock=false;
-  }
-  function nextPair(){
-    if(dead||state!=="playing") return;
-    if(homed.length>=GOAL){ winRound(); return; }
-    var remaining=queue.filter(function(p){ return homed.indexOf(p)<0; });
-    presentPair(remaining[0]);
-  }
-  function correctHome(spotEl,pair){
-    inputLock=true;
-    spotEl.classList.add("right");
-    var pairNow=current;
-    stars++; bumpStars(); updateHUD();
-    hootReact("celebrate",1750); popSound();
-    say("<span class='b-big'>"+pairNow.name+" lives in the "+pairNow.home+"!</span> "+pairNow.homeFact+" Star for you!");
-    (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})(),k="word-home-"+pairNow.home.toLowerCase().replace(/ /g,"-");if(h[k]) enqueue(k+".mp3","name","",null);})(); /* 3e44: Hoot names the home */
-    enqueuePraise();
-    var fromRect=(mode==="takehome"?perchArt:spotEl).getBoundingClientRect();
-    /* the praised animal flies home and moves into the village */
-    setTimeout(function(){
-      if(dead) return;
-      homed.push(pairNow); settleInVillage(pairNow); starSound();
-      var plot=$("plot"+(homed.length-1));
-      if(plot){ var r=plot.getBoundingClientRect(); burst(r.left+r.width/2,r.top+10); }
-      setDots(GOAL,homed.length);
-    }, mode==="takehome"?650:500);
-    if(mode==="takehome"){
-      flyAnimalTo(pairNow,fromRect,spotEl,function(){});
-    }
-    perch.hidden=true;
-    /* Established rule: correct answers auto-advance — about 1.6s of
-       praise, fact and star, then the next round. No Next button. */
-    var tk=++roundToken;
-    setTimeout(function(){
-      if(dead||tk!==roundToken||state!=="playing") return;
-      clearScene(); nextPair();
-    },1750);
-  }
-  function onHomeTap(b,p){
-    if(state!=="playing"||inputLock||dead) return;
-    if(b.dataset.done) return;
-    audio();
-    if(p.id===current.id){ b.dataset.done="1"; correctHome(b,p); }
-    else {
-      boingSound(); hootReact("shake",1000);
-      perch.classList.remove("shake"); void perch.offsetWidth; perch.classList.add("shake");
-      b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
-      say("That&rsquo;s the <span class='b-big'>"+p.home+"</span> — not "+current.name+"&rsquo;s home! "+current.clue+" Try again!");
-      enqueueHint();
-    }
-  }
-  function onAnimalTap(b,p){
-    if(state!=="playing"||inputLock||dead) return;
-    if(b.dataset.done) return;
-    audio();
-    if(p.id===current.id){ b.dataset.done="1"; correctHome(b,p); }
-    else {
-      boingSound(); hootReact("shake",1000);
-      b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
-      say("That&rsquo;s <span class='b-big'>"+p.name+"</span>! "+p.name+" doesn&rsquo;t live in the "+current.home+". "+current.clue+" Who else could it be?");
-      enqueueHint();
-    }
-  }
-
-  /* ---------- Meet the Neighbours ---------- */
-  function startMeet(){
-    clearScene();
-    targetMain.textContent="Neighbours"; tcLabel.textContent="Tap a home — who lives inside?";
-    targetCard.style.display="flex";
-    setDots(PAIRS.length,Object.keys(met).length);
-    say("Welcome to the village! Tap any home and see who pops out to say hello!");
-    enqueue("hoot-game-hello.mp3","hello","",null);
-    meetGrid.hidden=false;
-    PAIRS.forEach(function(p){
-      var b=document.createElement("button"); b.type="button"; b.className="meet-home"+(met[p.id]?" met":"");
-      b.setAttribute("aria-label",p.home);
-      b.innerHTML=ART_HOME[p.homeId]+'<span class="mh-name">'+p.home+'</span>';
-      b.addEventListener("click",function(){
-        if(state!=="playing"||dead) return;
-        audio(); popSound();
-        perchArt.innerHTML=ART_ANIMAL[p.id]; perchName.textContent=p.name; perch.hidden=false;
-        say("<span class='b-big'>"+p.name+"</span> lives in the "+p.home+"! "+p.fact);
-        clearPending(); enqueue("word-"+p.id+".mp3","name","",null); enqueue("word-home-"+String(p.home).toLowerCase().replace(/ +/g,"-")+".mp3","name","",null); /* 3e51: Meet the Neighbours says who popped out and its home */
-        hootReact("celebrate",1100);
-        if(!met[p.id]){
-          met[p.id]=1; b.classList.add("met"); stars++; bumpStars(); updateHUD();
-          if(window.__hootSpeak) window.__hootSpeak("idle");
-          setDots(PAIRS.length,Object.keys(met).length);
-          if(Object.keys(met).length>=PAIRS.length){
-            var tk=++roundToken;
-            (window.__hwFastWin||setTimeout)(function(){ if(!dead&&tk===roundToken&&state==="playing") winRound(); },400);
-          }
-        } else {
-          if(window.__hootSpeak) window.__hootSpeak("idle");
-        }
-      });
-      meetGrid.appendChild(b);
-    });
-  }
-
-  /* ---------- Count the Neighbours ---------- */
-  var COUNT_SPOTS=[[4,6],[30,2],[56,8],[78,3],[16,30],[44,26],[70,30],[88,24],[58,44]];
-  function startCountRound(){
-    clearScene();
-    countK=2+Math.floor(Math.random()*8); /* 2..9 */
-    targetMain.textContent="How many?"; tcLabel.textContent="How many neighbours are home?";
-    targetCard.style.display="flex";
-    setDots(COUNT_ROUNDS,countRound);
-    say("Some neighbours are home! Count them with me — how many animals can you see?");
-    enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-how-many-animals")?"ask-how-many-animals.mp3":"hoot-look-closely.mp3","look","",null); /* 3e51: ask the real question */
-    var chosen=shuffle(PAIRS.slice()).slice(0,countK);
-    countLayer.innerHTML="";
-    chosen.forEach(function(p,i){
-      var d=document.createElement("div"); d.className="mini-pair"; d.id="mini"+i;
-      d.style.left=COUNT_SPOTS[i][0]+"%"; d.style.top=COUNT_SPOTS[i][1]+"%";
-      d.innerHTML='<div class="mp-home">'+ART_HOME[p.homeId]+'</div><div class="mp-an">'+ART_ANIMAL[p.id]+'</div>';
-      countLayer.appendChild(d);
-    });
-    var opts=shuffle([countK].concat(shuffle([countK-1,countK+1,countK+2].filter(function(v){ return v>0&&v!==countK; })).slice(0,2)));
-    choiceRow.innerHTML=""; choiceRow.hidden=false;
-    opts.forEach(function(v){
-      var b=document.createElement("button"); b.type="button"; b.className="num-chip"; b.textContent=v;
-      b.setAttribute("aria-label","Number "+v);
-      b.addEventListener("click",function(){ onCountTap(b,v,chosen); });
-      choiceRow.appendChild(b);
-    });
-    inputLock=false;
-  }
-  function onCountTap(b,v,chosen){
-    if(state!=="playing"||inputLock||dead) return;
-    audio();
-    if(v!==countK){
-      boingSound(); hootReact("shake",1000);
-      b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
-      say("Good counting try! Let&rsquo;s count together slowly — touch each neighbour: 1, 2, 3…");
-      enqueueHint();
+  function speakCelebrate(pair, isFirstHalf){
+    var customKey = "hoot-home-" + pair.id;
+    if(hasVoice(customKey)){
+      sayClips([customKey + ".mp3"], true);
       return;
     }
-    inputLock=true;
-    stars++; bumpStars(); updateHUD();
-    countAnswers.push(countK);
-    hootReact("celebrate",1600);
-    say("Let&rsquo;s count out loud together!");
-    clearPending();
-    for(var i=0;i<countK;i++){
-      (function(n){
-        enqueue("call-number-"+n+".mp3","count","",function(){
-          var m=$("mini"+(n-1));
-          if(m){ m.classList.remove("bounce"); void m.offsetWidth; m.classList.add("bounce"); }
-          say("Counting neighbours… <span class='b-big'>"+n+"!</span>");
-        });
-      })(i+1);
-    }
-    enqueuePraise();
-    var tk=++roundToken;
-    setTimeout(function(){
-      if(dead||tk!==roundToken||state!=="playing") return;
-      countRound++;
-      if(countRound>=COUNT_ROUNDS){ winRound(); } else { startCountRound(); }
-    },1400+countK*620);
+    var ck = childKey();
+    var cheer = (isFirstHalf && ck === "kida") ? "great-job-kida.mp3"
+              : (isFirstHalf && ck === "kidb") ? "great-job-kidb.mp3"
+              : "hoot-amazing.mp3";
+    var seq = ["word-home-" + pair.homeSlug + ".mp3"];
+    if(pair.id === "frog") seq.push("sound-ribbit.mp3");
+    seq.push(cheer);
+    sayClips(seq, true);
   }
 
-  /* ================= START / WIN ================= */
-  function startRound(){
-    clearPending(); roundToken++;
-    stars=0; homed=[]; met={}; countRound=0; countAnswers=[]; inputLock=false; wonRoundFlag=false;
-    buildVillage();
-    village.style.display=(mode==="meet")?"none":"flex";
-    winOverlay.hidden=true; startPanel.hidden=true;
-    state="playing"; updateHUD(); clearScene();
-    if(mode==="meet"){ startMeet(); return; }
-    if(mode==="count"){ startCountRound(); return; }
-    queue=shuffle(PAIRS.slice()).slice(0,GOAL);
-    enqueue("hoot-game-hello.mp3","hello","",function(){
-      say(mode==="takehome" ? "Hello! Let&rsquo;s take every animal home!" : "Hello! Let&rsquo;s play Who Lives Here?");
-    });
-    presentPair(queue[0]);
+  /* ================= HELPERS & VISUAL FX ================= */
+  function shuffle(a){
+    a = a.slice();
+    for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
   }
-  var wonRoundFlag=false;
-  function winRound(){
-    if(wonRoundFlag) return; wonRoundFlag=true; state="won";
-    clearScene(); village.style.display="flex";
-    targetCard.style.display="none";
-    vQueue=vQueue.filter(function(q){ return q.kind==="praise"; });
-    enqueue("hoot-you-learned.mp3","recap","",null);
-    winChips.innerHTML="";
-    if(mode==="meet"){
-      winTitle.textContent="You Met Everyone!";
-      winRecap.innerHTML="You met all <b>12 neighbours</b> and learned where every one of them lives!";
-      PAIRS.forEach(function(p){ var c=document.createElement("span"); c.className="chip"; c.textContent=p.name+" → "+p.home; winChips.appendChild(c); });
-      setDots(PAIRS.length,PAIRS.length);
-    } else if(mode==="count"){
-      winTitle.textContent="Counting Star!";
-      winRecap.innerHTML="You counted the neighbours four times: <b>"+listWords(countAnswers.map(String))+"</b> — and Hoot counted out loud with you!";
-      countAnswers.forEach(function(n){ var c=document.createElement("span"); c.className="chip"; c.textContent=n+" neighbours"; winChips.appendChild(c); });
+  function lookAtPoint(x, y){
+    var r = hootBtn.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.36;
+    var dx = Math.max(-6, Math.min(6, (x - cx) / 28));
+    var dy = Math.max(-5, Math.min(6, (y - cy) / 28));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+  }
+  function resetEyes(){ hootPupils.setAttribute("transform", "translate(0,0)"); }
+
+  function burstSparkles(cx, cy, colorHex, count){
+    var cols = [colorHex || "#ffc93c", "#ffd23f", "#ffffff", "#4ade80"];
+    for(var i = 0; i < (count || 12); i++){
+      var d = document.createElement("div");
+      d.className = "fx-dot";
+      var sz = 9 + Math.random() * 10;
+      d.style.width = sz + "px"; d.style.height = sz + "px";
+      d.style.left = (cx - sz / 2) + "px"; d.style.top = (cy - sz / 2) + "px";
+      d.style.background = cols[i % cols.length];
+      d.style.border = "2px solid #17324f";
+      document.body.appendChild(d);
+      var ang = (Math.PI * 2 * i) / (count || 12) + Math.random() * 0.4;
+      var dist = 40 + Math.random() * 64;
+      if(d.animate){
+        d.animate([
+          { transform:"translate(0,0) scale(1)", opacity:1 },
+          { transform:"translate(" + (Math.cos(ang)*dist).toFixed(1) + "px," + (Math.sin(ang)*dist + 16).toFixed(1) + "px) scale(.2)", opacity:0 }
+        ], { duration:560 + Math.random() * 240, easing:"cubic-bezier(.2,.8,.3,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 820); })(d);
+    }
+  }
+  function popBadge(cx, cy, text){
+    var p = document.createElement("div");
+    p.className = "fx-pop";
+    p.textContent = text;
+    p.style.left = cx + "px"; p.style.top = cy + "px";
+    document.body.appendChild(p);
+    setTimeout(function(){ p.remove(); }, 980);
+  }
+  function showerConfetti(){
+    var w = window.innerWidth, cols = ["#ffc93c","#4ade80","#ff6b7a","#38bdf8","#a855f7"];
+    for(var i = 0; i < 28; i++){
+      var c = document.createElement("div");
+      c.className = "fx-dot";
+      c.style.width = "13px"; c.style.height = "13px"; c.style.borderRadius = "4px";
+      c.style.background = cols[i % cols.length];
+      c.style.left = (w * 0.15 + Math.random() * w * 0.7) + "px";
+      c.style.top = "18%";
+      document.body.appendChild(c);
+      var dx = (Math.random() - 0.5) * 320, dy = 240 + Math.random() * 340, rot = (Math.random() - 0.5) * 520;
+      if(c.animate){
+        c.animate([
+          { transform:"translate(0,0) rotate(0deg)", opacity:1 },
+          { transform:"translate(" + dx + "px," + dy + "px) rotate(" + rot + "deg)", opacity:0 }
+        ], { duration:1150 + Math.random() * 650, easing:"cubic-bezier(.2,.7,.3,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 1850); })(c);
+    }
+  }
+
+  /* ================= GENTLE IDLE POINTER NUDGE ================= */
+  function clearIdle(){
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    Array.prototype.forEach.call(homesGrid.querySelectorAll(".home-btn"), function(b){
+      b.classList.remove("nudge-glow");
+      var h = b.querySelector(".nudge-hand"); if(h) h.remove();
+    });
+  }
+  function addHandTo(el){
+    if(!el || el.querySelector(".nudge-hand")) return;
+    var h = document.createElement("span");
+    h.className = "nudge-hand"; h.setAttribute("aria-hidden", "true"); h.textContent = "👆";
+    el.appendChild(h);
+  }
+  function armIdle(){
+    clearIdle();
+    if(state !== "playing" || dead || mode === "explore") return;
+    idleTimer = setTimeout(function(){
+      if(state !== "playing" || dead || inputLock || !current) return;
+      var match = homesGrid.querySelector('.home-btn[data-id="' + current.id + '"]');
+      if(match){ match.classList.add("nudge-glow"); addHandTo(match); }
+      if(!vPlaying) speakPrompt(false);
+    }, 6400);
+  }
+
+  /* ================= THOUGHT CLOUD & VILLAGE STRIP ================= */
+  function renderCloud(pop){
+    cloudInner.innerHTML = "";
+    if(mode === "explore"){
+      cloudInner.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:32px;padding:4px 6px;"><span>🏡</span><span>👆</span><span>🐾</span></div>';
+    } else if(current){
+      var starsHtml = '<div class="cloud-stars">';
+      for(var i = 0; i < GOAL; i++){
+        starsHtml += '<span class="' + (i < homed.length ? 'lit' : '') + '">★</span>';
+      }
+      starsHtml += '</div>';
+      var rightIcon = mode === "knock" ? "🚪" : "🏠";
+      cloudInner.innerHTML =
+        '<div class="cloud-animal-badge">' + current.animal + '</div>' +
+        '<span class="cloud-arrow">➜</span>' +
+        '<div class="cloud-q">' + rightIcon + '</div>' +
+        starsHtml;
+    }
+    if(pop){
+      orderCloud.classList.remove("pop-in"); void orderCloud.offsetWidth; orderCloud.classList.add("pop-in");
+    }
+  }
+
+  function renderVillageStrip(){
+    if(mode === "explore"){
+      villageStrip.hidden = true;
+      return;
+    }
+    villageStrip.hidden = false;
+    villageStrip.innerHTML = "";
+    for(var i = 0; i < GOAL; i++){
+      var slot = document.createElement("div");
+      var p = homed[i];
+      slot.className = "vslot" + (p ? " filled" : "");
+      if(p) slot.innerHTML = p.animal;
+      villageStrip.appendChild(slot);
+    }
+  }
+
+  /* ================= DRAG HERO ANIMAL TO HOME (PLUS 1-TAP ON ANY HOME!) ================= */
+  (function bindHeroDrag(){
+    var ghost = null, activeId = null, moved = false, startX = 0, startY = 0, hovered = null;
+
+    function clearHover(){
+      if(hovered){ hovered.classList.remove("drop-hover"); hovered = null; }
+    }
+    function findHomeUnder(x, y){
+      var btns = homesGrid.querySelectorAll(".home-btn");
+      var best = null, bestD = 110;
+      for(var i = 0; i < btns.length; i++){
+        var r = btns[i].getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var d = Math.hypot(x - cx, y - cy);
+        if(d < bestD){ bestD = d; best = btns[i]; }
+      }
+      return best;
+    }
+
+    heroAnimalBtn.addEventListener("pointerdown", function(e){
+      if(state !== "playing" || mode !== "takehome" || inputLock || dead || !current) return;
+      e.preventDefault();
+      audio();
+      clearIdle();
+      activeId = e.pointerId;
+      startX = e.clientX; startY = e.clientY; moved = false;
+      try{ heroAnimalBtn.setPointerCapture(e.pointerId); }catch(_){}
+      lookAtPoint(e.clientX, e.clientY);
+    });
+
+    heroAnimalBtn.addEventListener("pointermove", function(e){
+      if(activeId !== e.pointerId || !current) return;
+      if(!moved && Math.hypot(e.clientX - startX, e.clientY - startY) > 10){
+        moved = true;
+        sfxPop();
+        heroAnimalBtn.classList.add("dragging-src");
+        ghost = document.createElement("div");
+        ghost.className = "drag-ghost";
+        ghost.innerHTML = current.animal;
+        document.body.appendChild(ghost);
+      }
+      if(moved && ghost){
+        ghost.style.left = (e.clientX - 54) + "px";
+        ghost.style.top = (e.clientY - 54) + "px";
+        lookAtPoint(e.clientX, e.clientY);
+        var h = findHomeUnder(e.clientX, e.clientY);
+        if(h !== hovered){ clearHover(); hovered = h; if(hovered) hovered.classList.add("drop-hover"); }
+      }
+    });
+
+    function finish(e, cancelled){
+      if(activeId !== e.pointerId) return;
+      activeId = null;
+      resetEyes();
+      var dropHome = hovered;
+      clearHover();
+      if(ghost){ ghost.remove(); ghost = null; }
+      heroAnimalBtn.classList.remove("dragging-src");
+      if(cancelled){ armIdle(); return; }
+      if(!moved){
+        /* Tapped the animal directly -> cute habitat sound + repeat prompt! */
+        sfxHabitat(current.sfx);
+        var r = heroAnimalBtn.getBoundingClientRect();
+        popBadge(r.left + r.width / 2, r.top + 10, current.fx);
+        speakPrompt(false);
+        armIdle();
+        return;
+      }
+      if(dropHome){
+        var pid = dropHome.getAttribute("data-id");
+        var picked = PAIRS.filter(function(p){ return p.id === pid; })[0];
+        if(picked) handleHomeChoice(dropHome, picked, { x: e.clientX, y: e.clientY });
+      } else {
+        armIdle();
+      }
+    }
+    heroAnimalBtn.addEventListener("pointerup", function(e){ finish(e, false); });
+    heroAnimalBtn.addEventListener("pointercancel", function(e){ finish(e, true); });
+  })();
+
+  function flyAnimalToHome(pair, fromRect, homeBtn, cb){
+    var fly = document.createElement("div");
+    fly.className = "fly-animal";
+    fly.innerHTML = pair.animal;
+    var x0 = fromRect.left + fromRect.width / 2 - 54;
+    var y0 = fromRect.top + fromRect.height / 2 - 54;
+    var tr = homeBtn.getBoundingClientRect();
+    var x1 = tr.left + tr.width / 2 - 54;
+    var y1 = tr.top + tr.height * 0.35 - 54;
+    fly.style.left = x0 + "px"; fly.style.top = y0 + "px";
+    document.body.appendChild(fly);
+    sfxPop();
+    var done = false;
+    function end(){
+      if(done) return; done = true;
+      fly.remove();
+      if(cb) cb(x1 + 54, y1 + 54);
+    }
+    if(fly.animate){
+      var a = fly.animate([
+        { transform:"translate(0,0) scale(1) rotate(0deg)" },
+        { transform:"translate(" + ((x1-x0)*0.5).toFixed(1) + "px," + ((y1-y0)*0.5 - 64).toFixed(1) + "px) scale(1.12) rotate(10deg)", offset:0.52 },
+        { transform:"translate(" + (x1-x0).toFixed(1) + "px," + (y1-y0).toFixed(1) + "px) scale(.7) rotate(-4deg)" }
+      ], { duration:460, easing:"cubic-bezier(.26,.72,.36,1)" });
+      a.onfinish = end;
+      setTimeout(end, 560);
     } else {
-      winTitle.textContent="Everybody's Home!";
-      var pairs=homed.slice();
-      winRecap.innerHTML="Every animal is home and happy: <b>"+listWords(pairs.map(function(p){ return p.name+" in the "+p.home; }))+"</b>!";
-      pairs.forEach(function(p){ var c=document.createElement("span"); c.className="chip"; c.textContent=p.name+" → "+p.home; winChips.appendChild(c); });
+      setTimeout(end, 120);
     }
-    var starEls=winStars.children;
-    for(var i=0;i<starEls.length;i++){
-      starEls[i].classList.remove("lit");
-      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*180);
-    }
-    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },350);
-  }
-  function resetToStart(){
-    clearPending(); roundToken++;
-    state="start"; inputLock=false; wonRoundFlag=false;
-    winOverlay.hidden=true; startPanel.hidden=false;
-    targetCard.style.display="none";
-    clearScene(); buildVillage(); village.style.display="flex";
-    say("Hi! I&rsquo;m Hoot! Every animal has a home — tap <span class='b-big'>Play</span> and let&rsquo;s take them home together!");
-    hootFig.classList.add("wave");
-    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
   }
 
-  /* ================= CONTROLS ================= */
-  function hearAgain(){
-    audio();
-    if(state==="playing"&&current&&(mode==="takehome"||mode==="who")) presentPair(current);
-    else if(state!=="playing"&&!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
+  /* ================= CORE GAMEPLAY: TAKE HOME / KNOCK-KNOCK / EXPLORE ================= */
+  function awardStar(){
+    stars++;
+    starCountEl.textContent = String(stars);
+    starPill.classList.remove("bump"); void starPill.offsetWidth; starPill.classList.add("bump");
+    sfxStar();
   }
-  hootFig.addEventListener("click",hearAgain);
-  $("hearBtn").addEventListener("click",function(){
+
+  function handleHomeChoice(homeBtn, pickedPair, dropPt){
+    if(state !== "playing" || inputLock || dead) return;
     audio();
-    if(state==="playing"&&current&&(mode==="takehome"||mode==="who")){
-      say(mode==="takehome" ? "Where does <span class='b-big'>"+current.name+"</span> live? "+current.clue
-                             : "Who lives in the <span class='b-big'>"+current.home+"</span>? "+current.clue);
-      if(!vPlaying) enqueue("hoot-look-closely.mp3","look","",null);
-    } else hearAgain();
+    clearIdle();
+
+    if(mode === "explore"){
+      sfxKnock();
+      homeBtn.classList.remove("knocking"); void homeBtn.offsetWidth; homeBtn.classList.add("knocking");
+      var r = homeBtn.getBoundingClientRect();
+      setTimeout(function(){
+        if(dead) return;
+        homeBtn.classList.add("has-resident", "celebrating");
+        sfxHabitat(pickedPair.sfx);
+        burstSparkles(r.left + r.width / 2, r.top + 28, pickedPair.color, 12);
+        popBadge(r.left + r.width / 2, r.top + 10, pickedPair.fx);
+        var ck = "hoot-home-" + pickedPair.id;
+        if(hasVoice(ck)) sayClips([ck + ".mp3"], true);
+        else sayClips(["word-" + pickedPair.id + ".mp3", "word-home-" + pickedPair.homeSlug + ".mp3"], true);
+        setTimeout(function(){ homeBtn.classList.remove("celebrating"); }, 1400);
+      }, 280);
+      return;
+    }
+
+    if(!current) return;
+    var isRight = pickedPair.id === current.id;
+
+    if(mode === "knock"){
+      inputLock = true;
+      sfxKnock();
+      homeBtn.classList.remove("knocking"); void homeBtn.offsetWidth; homeBtn.classList.add("knocking");
+      var kr = homeBtn.getBoundingClientRect();
+      setTimeout(function(){
+        if(dead) return;
+        if(!isRight){
+          sfxBoing();
+          popBadge(kr.left + kr.width / 2, kr.top + 14, "💤");
+          hootBtn.classList.remove("head-wobble"); void hootBtn.offsetWidth; hootBtn.classList.add("head-wobble");
+          sayClips(["word-home-" + pickedPair.homeSlug + ".mp3", "hoot-try-again.mp3"], true);
+          inputLock = false;
+          var match = homesGrid.querySelector('.home-btn[data-id="' + current.id + '"]');
+          if(match){ match.classList.add("nudge-glow"); addHandTo(match); }
+          return;
+        }
+        /* Knock-knock RIGHT HOME -> door bursts open & animal pops out! */
+        var kb = homeBtn.querySelector(".knock-badge"); if(kb) kb.remove();
+        homeBtn.classList.add("has-resident", "celebrating");
+        celebrateSuccess(homeBtn, kr.left + kr.width / 2, kr.top + 24);
+      }, 360);
+      return;
+    }
+
+    /* Take Me Home mode */
+    if(!isRight){
+      inputLock = true;
+      sfxBoing();
+      hootBtn.classList.remove("head-wobble"); void hootBtn.offsetWidth; hootBtn.classList.add("head-wobble");
+      if(homeBtn.animate){
+        homeBtn.animate([
+          { transform:"translateX(0)" }, { transform:"translateX(-10px) rotate(-5deg)" },
+          { transform:"translateX(10px) rotate(5deg)" }, { transform:"translateX(0)" }
+        ], { duration:380 });
+      }
+      sayClips(["word-home-" + pickedPair.homeSlug + ".mp3", "hoot-try-again.mp3"], true);
+      setTimeout(function(){
+        inputLock = false;
+        var match = homesGrid.querySelector('.home-btn[data-id="' + current.id + '"]');
+        if(match){ match.classList.add("nudge-glow"); addHandTo(match); }
+      }, 450);
+      return;
+    }
+
+    inputLock = true;
+    var fromRect = dropPt
+      ? { left: dropPt.x - 48, top: dropPt.y - 48, width: 96, height: 96 }
+      : heroAnimalBtn.getBoundingClientRect();
+    heroAnimalBtn.classList.add("gone");
+    flyAnimalToHome(current, fromRect, homeBtn, function(cx, cy){
+      if(dead) return;
+      homeBtn.classList.add("has-resident", "celebrating");
+      celebrateSuccess(homeBtn, cx, cy);
+    });
+  }
+
+  function celebrateSuccess(homeBtn, cx, cy){
+    var pairNow = current;
+    homed.push(pairNow);
+    awardStar();
+    sfxHabitat(pairNow.sfx);
+    burstSparkles(cx, cy, pairNow.color, 16);
+    popBadge(cx, cy - 22, pairNow.fx);
+    hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
+    renderCloud(false);
+    renderVillageStrip();
+    speakCelebrate(pairNow, homed.length % 2 === 1);
+
+    var tok = ++roundTok;
+    setTimeout(function(){
+      if(dead || tok !== roundTok) return;
+      hootBtn.classList.remove("happy-jump");
+      if(homed.length >= GOAL){
+        if(mode === "takehome"){
+          /* Exciting Bonus Finale: 2 Knock-Knock Surprise rounds before the win party! */
+          showWinCelebration();
+        } else {
+          showWinCelebration();
+        }
+      } else {
+        presentNextRound(false);
+      }
+    }, 1750);
+  }
+
+  function buildHomeCards(list, isKnock, isExplore){
+    homesGrid.innerHTML = "";
+    homesGrid.classList.toggle("explore-mode", !!isExplore);
+    list.forEach(function(p){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "home-btn";
+      b.setAttribute("data-id", p.id);
+      b.setAttribute("aria-label", p.home);
+      b.innerHTML =
+        p.homeSvg +
+        '<div class="home-resident">' + p.animal + '</div>' +
+        (isKnock ? '<span class="knock-badge" aria-hidden="true">✊</span>' : '');
+      b.addEventListener("click", function(){ handleHomeChoice(b, p, null); });
+      homesGrid.appendChild(b);
+    });
+  }
+
+  function presentNextRound(withHello){
+    state = "playing";
+    inputLock = false;
+
+    if(mode === "explore"){
+      heroAnimalWrap.hidden = true;
+      exploreSet = shuffle(PAIRS).slice(0, 6);
+      buildHomeCards(exploreSet, false, true);
+      renderCloud(true);
+      renderVillageStrip();
+      speakPrompt(!!withHello);
+      return;
+    }
+
+    var remaining = queue.filter(function(p){ return homed.indexOf(p) < 0; });
+    current = remaining[0] || PAIRS[0];
+
+    if(mode === "takehome"){
+      heroAnimalWrap.hidden = false;
+      heroAnimalBtn.classList.remove("gone", "dragging-src");
+      heroAnimalBtn.innerHTML = current.animal;
+      heroAnimalBtn.setAttribute("aria-label", current.name);
+    } else {
+      heroAnimalWrap.hidden = true;
+    }
+
+    var distractors = shuffle(PAIRS.filter(function(p){ return p.id !== current.id; })).slice(0, 2);
+    buildHomeCards(shuffle([current].concat(distractors)), mode === "knock", false);
+    renderCloud(true);
+    renderVillageStrip();
+    speakPrompt(!!withHello);
+    armIdle();
+  }
+
+  function showWinCelebration(){
+    state = "won";
+    inputLock = false;
+    showerConfetti();
+    winFriends.innerHTML = "";
+    homed.forEach(function(p){
+      var d = document.createElement("div");
+      d.className = "win-mini";
+      d.innerHTML = p.animal;
+      winFriends.appendChild(d);
+    });
+    var stEls = winStars.children;
+    for(var i = 0; i < stEls.length; i++){
+      stEls[i].classList.remove("lit");
+      (function(el, ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(stEls[i], 140 + i * 140);
+    }
+    winOverlay.hidden = false;
+    sayClips(["hoot-win-yay.mp3"], true);
+  }
+
+  /* ================= CONTROLS & LIVING SCENE TAPS ================= */
+  function syncModePills(){
+    Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
+      b.classList.toggle("on", b.getAttribute("data-mode") === mode);
+    });
+  }
+  function beginSession(selectedMode, withHello){
+    roundTok++;
+    clearIdle();
+    homed = [];
+    queue = shuffle(PAIRS).slice(0, GOAL);
+    hootBtn.classList.remove("happy-jump");
+    winOverlay.hidden = true;
+    startVeil.hidden = true;
+    mode = selectedMode || mode || "takehome";
+    syncModePills();
+    presentNextRound(withHello);
+  }
+
+  $("goTreehouseBtn").addEventListener("click", function(){
+    audio(); sfxPop();
+    beginSession("takehome", true);
   });
-  $("soundBtn").addEventListener("click",function(){
-    soundOn=!soundOn;
-    $("soundOnIc").style.display=soundOn?"block":"none";
-    $("soundOffIc").style.display=soundOn?"none":"block";
-    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-    if(!soundOn){ clearPending(); }
-    else { audio(); tone(660,660,0.1,"triangle",0.12); }
+  $("againBtn").addEventListener("click", function(){
+    audio(); sfxPop();
+    beginSession(mode === "explore" ? "takehome" : mode, false);
   });
-  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
-  document.querySelectorAll(".mode-chip").forEach(function(ch){
-    ch.addEventListener("click",function(){
-      mode=ch.getAttribute("data-mode");
-      document.querySelectorAll(".mode-chip").forEach(function(c){ c.classList.toggle("selected",c===ch); });
-      tone(660,660,0.1,"triangle",0.1);
+  Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
+    b.addEventListener("click", function(){
+      audio(); sfxPop();
+      startVeil.hidden = true;
+      winOverlay.hidden = true;
+      beginSession(b.getAttribute("data-mode"), false);
     });
   });
-  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
 
-  /* ================= LIVING SCENE TAPS ================= */
-  $("sun").addEventListener("click",function(){
-    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
-    sparkleSound();
-    if(state==="start") say("That&rsquo;s Mr. Sun! He watches over all the animal homes!");
+  $("repeatBtn").addEventListener("click", function(){
+    audio();
+    if(state === "playing") speakPrompt(false);
   });
-  document.querySelectorAll(".cloud").forEach(function(c){
-    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); tone(220,120,0.16,"triangle",0.09); setTimeout(function(){ c.classList.remove("puff"); },300); });
+  hootBtn.addEventListener("click", function(){
+    audio();
+    var r = hootBtn.getBoundingClientRect();
+    popBadge(r.left + r.width / 2, r.top + 20, "🎵");
+    hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
+    setTimeout(function(){ hootBtn.classList.remove("happy-jump"); }, 900);
+    sayClips(["hoot-giggle.mp3"], true);
+    if(state === "playing" && mode !== "explore"){
+      setTimeout(function(){ if(state === "playing" && !vPlaying) speakPrompt(false); }, 1150);
+    }
   });
-  document.querySelectorAll(".bfly").forEach(function(bf){
-    bf.addEventListener("click",function(){
-      audio(); sparkleSound();
-      if(bf.animate) bf.animate([{transform:"rotate(0deg) scale(1)"},{transform:"rotate(360deg) scale(1.25)"}],{duration:560,easing:"ease-in-out"});
+
+  $("soundBtn").addEventListener("click", function(){
+    soundOn = !soundOn;
+    $("sndOnSvg").style.display = soundOn ? "block" : "none";
+    $("sndOffSvg").style.display = soundOn ? "none" : "block";
+    if(!soundOn) clearVoice();
+    else { audio(); sfxPop(); }
+  });
+
+  $("sunBtn").addEventListener("click", function(){
+    audio();
+    $("sunBtn").classList.remove("zing"); void $("sunBtn").offsetWidth; $("sunBtn").classList.add("zing");
+    sfxStar();
+  });
+  $("bflyBtn").addEventListener("click", function(){
+    audio(); sfxPop();
+    var r = $("bflyBtn").getBoundingClientRect();
+    burstSparkles(r.left + 32, r.top + 32, "#60a5fa", 8);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".cloud"), function(cl){
+    cl.addEventListener("click", function(){
+      audio(); sfxPop();
+      cl.classList.remove("puff"); void cl.offsetWidth; cl.classList.add("puff");
+      setTimeout(function(){ cl.classList.remove("puff"); }, 400);
     });
   });
 
-  /* ================= LEAVING THE GAME ================= */
-  function teardown(){ dead=true; clearPending(); hootTalking(false); }
-  window.addEventListener("pagehide",teardown);
-  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+  window.addEventListener("pagehide", function(){ dead = true; clearIdle(); clearVoice(); });
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(); });
 
-  /* ================= INIT ================= */
-  buildVillage();
-  updateHUD();
-  hootFig.classList.add("wave");
-  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  /* Pre-populate lush preview scene behind the start treehouse! */
+  current = PAIRS[1]; /* Frog */
+  heroAnimalBtn.innerHTML = current.animal;
+  buildHomeCards([PAIRS[0], PAIRS[1], PAIRS[2]], false, false);
+  renderCloud(false);
+  renderVillageStrip();
 
-  /* Probe/debug handle: read-only snapshot of the round state. */
-  window.__animalsGame={
-    snapshot:function(){
-      return { state:state, mode:mode, stars:stars,
-        current:current?current.id:null, homed:homed.map(function(p){ return p.id; }),
-        met:Object.keys(met).length, countK:countK, countRound:countRound,
-        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
-        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+  window.__animalsGame = {
+    snapshot: function(){
+      return {
+        state: state, mode: mode, stars: stars,
+        current: current ? current.id : null,
+        homedCount: homed.length, goal: GOAL,
+        winShown: !winOverlay.hidden, voicePlaying: vPlaying
+      };
     }
   };
 })();
 </script>
-<style id="hw-animalsfit">@media (max-height:720px){#perch{width:min(clamp(104px,30vw,148px),16vh)!important}#perchPole{display:none!important}.spot-c{bottom:10%!important}}</style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e131">
+<script src="js/hoot-game-tail.js?v=llprev3e131"></script>
 </body>
 </html>
