@@ -2,231 +2,1453 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="magic";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
+<script>
+window.__HOOT_GAME_KEY__="magic";
+window.__HOOT_SELF_COACH__=true;
+</script>
+<script src="js/hoot-game-head.js?v=llprev3e141"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
-
 <title>Magic Hat Surprises</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
-  :root{ --ink:#2a2140; --ink-soft:#5d5480; --paper:#fffdf6; --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#e04a3f; --teal:#17bebb; --leaf:#57cc62; --plum:#6c4bd8; }
+  :root{
+    --midnight:#140931;
+    --royal:#2a1461;
+    --violet:#482496;
+    --crimson:#a4133c;
+    --crimson-deep:#630824;
+    --crimson-hi:#d62454;
+    --gold:#ffd84d;
+    --gold-deep:#d99100;
+    --gold-soft:#fff3b8;
+    --cream:#fffdf7;
+    --ink:#221242;
+    --leaf:#47c75d;
+  }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#241b45; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column; background:linear-gradient(180deg,#2c2160 0%,#3d2a72 60%,#2a1e52 100%); }
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(6px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:46px; height:46px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); display:grid; place-items:center; box-shadow:0 4px 0 rgba(10,6,30,.35); cursor:pointer; }
-  .round-btn:active{ transform:scale(.9); } .round-btn svg{ width:23px; height:23px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:5px 15px 5px 10px; box-shadow:0 4px 0 rgba(10,6,30,.3); font-family:"Fredoka",sans-serif; font-weight:700; font-size:21px; }
-  #starBank .star-ic{ width:24px; height:24px; } #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
-  /* magic stage */
-  #scene{ position:relative; margin:6px 10px 0; border-radius:20px; overflow:hidden; flex:1 1 auto; min-height:0; background:radial-gradient(ellipse at 50% 30%,#57449c 0%,#3d2a72 55%,#2a1e52 100%); border:3px solid rgba(255,255,255,.3); }
-  #scene::before,#scene::after{ content:""; position:absolute; top:0; bottom:0; width:30px; background:repeating-linear-gradient(0deg,#a02c46 0 18px,#c23a58 18px 36px); z-index:2; }
-  #scene::before{ left:0; border-right:4px solid #ffc93c; } #scene::after{ right:0; border-left:4px solid #ffc93c; }
-  .stage-star{ position:absolute; color:#ffd93b; opacity:.8; animation:twinkle 2.4s ease-in-out infinite alternate; z-index:1; pointer-events:none; }
-  @keyframes twinkle{ from{ opacity:.3; transform:scale(.75) rotate(-8deg);} to{ opacity:1; transform:scale(1.2) rotate(8deg);} }
-  /* Hoot the magician + bubble */
-  #hootZone{ position:absolute; left:34px; right:34px; top:8px; z-index:3; display:flex; align-items:flex-start; gap:8px; }
-  #hootFig{ flex:0 0 auto; width:86px; height:96px; border:none; background:none; padding:0; cursor:pointer; }
-  #hootFig svg{ width:100%; height:100%; display:block; }
-  #hootFig.talking svg{ animation:talkBob .38s ease-in-out infinite alternate; }
-  #hootFig.celebrate svg{ animation:celebrate .8s cubic-bezier(.34,1.6,.5,1); }
-  @keyframes talkBob{ from{ transform:translateY(0) rotate(-1.5deg);} to{ transform:translateY(-4px) rotate(1.5deg);} }
-  @keyframes celebrate{ 0%{transform:translateY(0)} 35%{transform:translateY(-13px) rotate(-5deg)} 70%{transform:translateY(-4px) rotate(4deg)} 100%{transform:translateY(0)} }
-  #bubbleCol{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
-  #bubble{ background:var(--paper); border:3px solid #fff; border-radius:16px; border-bottom-left-radius:4px; box-shadow:0 4px 0 rgba(10,6,30,.3); padding:7px 12px; font-weight:800; font-size:clamp(13.5px,3.7vw,17px); line-height:1.28; }
-  #bubble .b-big{ font-family:"Fredoka",sans-serif; color:var(--coral-dark); }
-  #hootName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.14em; color:#fff; background:var(--plum); border-radius:999px; padding:2px 10px; margin-left:8px; }
-  /* hat area */
-  #hatZone{ position:absolute; left:0; right:0; bottom:8px; z-index:3; display:flex; flex-direction:column; align-items:center; }
-  #popZone{ height:104px; display:flex; align-items:flex-end; justify-content:center; position:relative; }
-  #popArt{ width:104px; height:104px; }
-  #popArt svg{ width:100%; height:100%; display:block; }
-  #popArt.pop{ animation:popBounce var(--popdur,.8s) cubic-bezier(.34,1.6,.5,1); }
-  @keyframes popBounce{ 0%{ transform:scale(.2) translateY(46px); opacity:0;} 45%{ transform:scale(1.18) translateY(-16px); opacity:1;} 70%{ transform:scale(.94) translateY(2px);} 100%{ transform:scale(1) translateY(0);} }
-  #countRow{ display:none; gap:5px; flex-wrap:wrap; justify-content:center; max-width:330px; padding:0 8px; }
-  #countRow .cstar{ font-size:30px; color:#ffd93b; text-shadow:0 2px 0 rgba(10,6,30,.4); animation:popBounce .6s cubic-bezier(.34,1.6,.5,1) backwards; }
-  #surpriseName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:#ffd93b; min-height:24px; text-shadow:0 2px 0 rgba(10,6,30,.45); text-align:center; padding:0 40px; }
-  #hatRow{ display:flex; align-items:flex-end; gap:14px; }
-  #hatBtn{ width:158px; height:104px; border:none; background:none; padding:0; cursor:pointer; position:relative; }
-  #hatBtn svg{ width:100%; height:100%; display:block; }
-  #hatBtn.wiggle svg{ animation:hatWiggle .55s ease-in-out; }
-  #hatBtn.glow svg{ filter:drop-shadow(0 0 14px rgba(255,217,59,.95)); }
-  @keyframes hatWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-6deg) translateY(-4px);} 55%{ transform:rotate(6deg) translateY(-7px);} 80%{ transform:rotate(-3deg);} }
-  #wandWrap{ display:flex; flex-direction:column; align-items:center; gap:3px; }
-  #wandBtn{ width:66px; height:66px; border-radius:50%; border:3px solid #fff; background:radial-gradient(circle at 35% 30%,#8b6fd8,#573aa8); cursor:pointer; font-size:29px; color:#ffd93b; box-shadow:0 4px 0 rgba(10,6,30,.35); touch-action:none; }
-  #wandBtn:active{ transform:scale(.92) rotate(-14deg); }
-  #wandBtn.ready{ animation:wandPulse 1s ease-in-out infinite; }
-  #wandBtn.cue, #hatBtn.cue{ position:relative; }
-  #hatBtn.cue{ animation:hatCue 1s ease-in-out infinite; }
-  @keyframes hatCue{ 50%{ transform:scale(1.06); } }
-  #magicHand{ position:absolute; z-index:8; font-size:34px; line-height:1; pointer-events:none; animation:handBob .7s ease-in-out infinite; filter:drop-shadow(0 2px 0 #fff); }
-  #wandBtn #magicHand{ top:-22px; right:-10px; }
-  #hatBtn #magicHand{ top:-30px; left:50%; right:auto; margin-left:-17px; }
-  @keyframes handBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(8px);} }
-  #howRow{ display:flex; align-items:center; justify-content:center; gap:8px; margin:12px 0 4px; }
-  .how-step{ display:flex; flex-direction:column; align-items:center; gap:2px; min-width:72px; }
-  .how-ic{ font-size:28px; line-height:1; }
-  .how-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; color:#5a4a86; line-height:1.15; }
-  .how-arrow{ font-size:18px; color:#8b6fd8; font-weight:700; }
-  #letterBadge{ position:absolute; left:8px; top:8px; z-index:7; min-width:44px; min-height:44px; border-radius:12px; background:#ffd93b; color:#2a1a4a; font-family:"Fredoka",sans-serif; font-weight:700; font-size:28px; display:none; place-items:center; border:3px solid #fff; box-shadow:0 4px 0 rgba(10,6,30,.3); }
-  #letterBadge.on{ display:grid; }
-  #chargeWrap{ min-width:72px; }
-  #chargeBar{ height:10px; border-radius:999px; background:rgba(255,255,255,.2); overflow:hidden; border:2px solid rgba(255,255,255,.4); }
-  #chargeLab{ font-size:10px; letter-spacing:.06em; }
-  @keyframes wandPulse{ 0%,100%{ box-shadow:0 4px 0 rgba(10,6,30,.35);} 50%{ box-shadow:0 0 0 6px rgba(255,217,59,.6),0 4px 0 rgba(10,6,30,.35);} }
-  #chargeWrap{ width:74px; }
-  #chargeLab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:10px; letter-spacing:.08em; color:#cfc4ff; text-align:center; margin:0 0 2px; }
-  #chargeBar{ height:11px; border-radius:999px; background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.4); overflow:hidden; }
-  #chargeFill{ height:100%; width:0%; background:linear-gradient(90deg,#ffd93b,#ff8fab); transition:width .18s; }
-  .sparkle-fly{ position:absolute; font-size:16px; color:#ffd93b; pointer-events:none; z-index:4; animation:sparkFly .55s ease-out forwards; }
-  @keyframes sparkFly{ from{ transform:translate(0,0) scale(.7); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.25); opacity:0;} }
-  .burst-star{ position:absolute; font-size:20px; pointer-events:none; z-index:4; animation:burstFly .8s ease-out forwards; }
-  @keyframes burstFly{ from{ transform:translate(0,0) scale(.6); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(40deg); opacity:0;} }
-  /* panel */
-  #panel{ position:relative; z-index:5; padding:7px 10px max(8px,env(safe-area-inset-bottom)); }
-  #modeRow{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
-  .mode-chip{ border:3px solid rgba(255,255,255,.35); background:rgba(255,253,246,.12); border-radius:13px; padding:5px 2px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:12.5px; color:#e9e2ff; cursor:pointer; text-align:center; }
-  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:10px; opacity:.85; }
-  .mode-chip.sel{ border-color:var(--sun); background:var(--paper); color:var(--ink); }
-  #choices{ display:none; gap:7px; margin-top:7px; }
-  #choices.on{ display:flex; }
-  .choice-btn{ flex:1 1 0; border:3px solid #fff; background:var(--paper); border-radius:15px; padding:6px 3px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:17px; color:var(--ink); cursor:pointer; box-shadow:0 4px 0 rgba(10,6,30,.3); display:flex; flex-direction:column; align-items:center; gap:1px; }
-  .choice-btn svg{ width:40px; height:36px; }
-  .choice-btn small{ font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
-  .choice-btn:active{ transform:scale(.94); }
-  .choice-btn.off{ opacity:.35; pointer-events:none; }
-  #underRow{ display:flex; align-items:center; gap:9px; margin-top:7px; }
-  #roundLab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:12px; letter-spacing:.08em; color:#cfc4ff; white-space:nowrap; }
-  #starsBox{ display:flex; gap:4px; }
-  #starsBox span{ font-size:19px; color:rgba(255,255,255,.25); }
-  #starsBox span.on{ color:#ffd93b; text-shadow:0 0 9px rgba(255,217,59,.8); }
-  #nextBtn{ margin-left:auto; border:3px solid #fff; background:var(--leaf); color:#fff; border-radius:999px; padding:8px 18px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15px; cursor:pointer; box-shadow:0 4px 0 rgba(10,6,30,.3); display:none; }
-  #nextBtn.on{ display:block; }
-  #nextBtn:active{ transform:scale(.94); }
-  #collection{ display:flex; gap:6px; margin-top:7px; overflow-x:auto; min-height:42px; scrollbar-width:none; align-items:center; }
-  #collection::-webkit-scrollbar{ display:none; }
-  .coll-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:10.5px; letter-spacing:.09em; color:#cfc4ff; flex:0 0 auto; }
-  .coll-item{ flex:0 0 auto; width:42px; height:42px; border-radius:11px; background:rgba(255,253,246,.94); border:2px solid #fff; display:grid; place-items:center; }
-  .coll-item svg{ width:34px; height:34px; }
-  .overlay{ position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; background:rgba(16,10,40,.55); padding:16px; }
-  .overlay[hidden]{ display:none; }
-  .card{ background:var(--paper); border:3px solid #fff; border-radius:24px; box-shadow:0 10px 0 rgba(10,6,30,.3),0 24px 48px rgba(10,6,30,.35); padding:20px 20px 16px; max-width:430px; width:100%; text-align:center; }
-  .card h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,7vw,36px); margin:0 0 6px; line-height:1.08; }
-  .card h1 .t1{ color:var(--plum); } .card h1 .t2{ color:var(--coral-dark); }
-  .card p{ font-weight:800; font-size:15.5px; line-height:1.4; color:var(--ink-soft); margin:0 0 13px; }
-  .big-play{ border:3px solid #fff; background:var(--plum); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px; border-radius:999px; padding:12px 30px; cursor:pointer; box-shadow:0 6px 0 #46318f; }
-  .big-play:active{ transform:scale(.95); }
-  #winStars{ font-size:30px; color:#e8a90c; letter-spacing:4px; min-height:38px; }
-  .win-btns{ display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
-  .win-btn{ border:3px solid #fff; border-radius:999px; padding:10px 20px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:16.5px; cursor:pointer; box-shadow:0 4px 0 rgba(10,6,30,.25); }
-  #againBtn{ background:var(--leaf); color:#fff; } #winHomeBtn{ background:var(--paper); color:var(--ink); }
-  @media (max-height:700px){ #popZone{ height:84px; } #popArt{ width:84px; height:84px; } #hatBtn{ width:132px; height:88px; } #hootFig{ width:72px; height:80px; } }
-  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
-  /* Wave 5C-3 (Big & Physical): grand magic hat, glowing 94px star wand & chunky 3D surprise choices */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #hatBtn{ width:228px !important; height:152px !important; }
-    #wandBtn{
-      width:92px !important; height:92px !important; border:4px solid #fff !important;
-      box-shadow:0 8px 0 #3a2378, 0 14px 24px rgba(87,58,168,.38) !important; font-size:38px !important;
+  [hidden]{ display:none !important; }
+  html,body{ height:100%; width:100%; margin:0; padding:0; overflow:hidden; }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--cream);
+    background:var(--midnight);
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* ================= GRAND ROYAL VELVET MAGICIAN THEATER ================= */
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:
+      radial-gradient(ellipse 68% 58% at 50% 44%, rgba(114,66,214,.62) 0%, rgba(52,23,115,.35) 52%, transparent 78%),
+      radial-gradient(circle at 22% 24%, rgba(255,216,77,.14) 0%, transparent 45%),
+      radial-gradient(circle at 78% 24%, rgba(255,152,216,.14) 0%, transparent 45%),
+      linear-gradient(180deg, #100729 0%, #231152 46%, #31196b 74%, #1d0d42 100%);
+  }
+
+  /* Soft volumetric stage spotlights streaming onto the hat */
+  #spotlights{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    overflow:hidden;
+  }
+  .beam{
+    position:absolute;
+    top:-12%;
+    width:42vw;
+    height:108%;
+    opacity:.22;
+    filter:blur(10px);
+    transform-origin:50% 0%;
+  }
+  .beam-l{
+    left:4%;
+    background:linear-gradient(180deg, rgba(255,232,140,.72) 0%, rgba(255,220,110,.16) 58%, transparent 100%);
+    clip-path:polygon(38% 0%, 56% 0%, 100% 100%, 4% 100%);
+    animation:beamSwayL 7s ease-in-out infinite alternate;
+  }
+  .beam-r{
+    right:4%;
+    background:linear-gradient(180deg, rgba(235,196,255,.68) 0%, rgba(190,136,255,.16) 58%, transparent 100%);
+    clip-path:polygon(44% 0%, 62% 0%, 96% 100%, 0% 100%);
+    animation:beamSwayR 8s ease-in-out infinite alternate;
+  }
+  @keyframes beamSwayL{ from{ transform:rotate(-3deg); } to{ transform:rotate(3deg); } }
+  @keyframes beamSwayR{ from{ transform:rotate(3deg); } to{ transform:rotate(-3deg); } }
+
+  /* Starry royal sky */
+  #starSky{
+    position:absolute;
+    inset:0 0 28% 0;
+    z-index:2;
+    pointer-events:none;
+  }
+  .sky-star{
+    position:absolute;
+    border:none;
+    background:none;
+    padding:4px;
+    color:var(--gold);
+    line-height:1;
+    cursor:pointer;
+    pointer-events:auto;
+    filter:drop-shadow(0 0 8px rgba(255,216,77,.85));
+    animation:starTwinkle 2.6s ease-in-out infinite alternate;
+  }
+  .sky-star.zing{ animation:starZing .55s cubic-bezier(.34,1.8,.5,1) 1 !important; }
+  @keyframes starTwinkle{
+    from{ opacity:.42; transform:scale(.78) rotate(-8deg); }
+    to{ opacity:1; transform:scale(1.18) rotate(10deg); }
+  }
+  @keyframes starZing{
+    0%{ transform:scale(1) rotate(0deg); }
+    45%{ transform:scale(1.75) rotate(35deg); filter:drop-shadow(0 0 18px #fff); }
+    100%{ transform:scale(1) rotate(0deg); }
+  }
+
+  /* Parted Crimson Velvet Theater Curtains + Golden Valance */
+  #valance{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:clamp(46px, 7.2vh, 72px);
+    z-index:4;
+    pointer-events:none;
+  }
+  #valance svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 12px rgba(10,2,26,.55)); }
+
+  .curtain-btn{
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:clamp(46px, 8.8vw, 128px);
+    z-index:5;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    transition:transform .38s cubic-bezier(.34,1.6,.5,1);
+    overflow:visible;
+  }
+  .curtain-btn svg{ width:100%; height:100%; display:block; }
+  #curtainLeft{ left:0; transform-origin:0% 0%; }
+  #curtainRight{ right:0; transform-origin:100% 0%; }
+  #curtainLeft.swish{ transform:skewX(-4deg) scaleX(1.06); }
+  #curtainRight.swish{ transform:skewX(4deg) scaleX(1.06); }
+
+  /* Polished Theater Stage Floor & Glowing Golden Footlights */
+  #stageFloor{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:78px;
+    height:clamp(108px, 21vh, 178px);
+    z-index:3;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse 46% 52% at 50% 42%, rgba(255,216,77,.24) 0%, rgba(164,90,255,.14) 55%, transparent 78%),
+      radial-gradient(ellipse 30% 40% at 21% 48%, rgba(255,222,120,.16) 0%, transparent 72%),
+      linear-gradient(180deg, #4b1d52 0%, #371242 28%, #260b34 100%);
+    border-top:4px solid rgba(255,216,77,.58);
+    box-shadow:inset 0 12px 28px rgba(255,216,77,.16), 0 -10px 30px rgba(12,4,30,.55);
+    border-radius:50% 50% 0 0 / 26px 26px 0 0;
+  }
+  #stageFloor::after{
+    content:"";
+    position:absolute;
+    inset:6px 0 0 0;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 2px, transparent 2px 54px);
+    opacity:.65;
+  }
+
+  #footlights{
+    position:absolute;
+    left:clamp(46px, 8vw, 128px);
+    right:clamp(46px, 8vw, 128px);
+    bottom:80px;
+    height:28px;
+    z-index:6;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-evenly;
+    pointer-events:none;
+  }
+  .footlight{
+    position:relative;
+    width:26px;
+    height:20px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    pointer-events:auto;
+  }
+  .footlight::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    bottom:4px;
+    width:46px;
+    height:34px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,232,122,.78) 0%, rgba(255,192,56,.26) 45%, transparent 75%);
+    pointer-events:none;
+    animation:bulbGlow 2.4s ease-in-out infinite alternate;
+  }
+  .footlight::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    bottom:1px;
+    transform:translateX(-50%);
+    width:20px;
+    height:13px;
+    border-radius:12px 12px 4px 4px;
+    background:linear-gradient(180deg, #fff8cc 0%, #ffd84d 45%, #c77b00 100%);
+    border:2px solid #fff3b0;
+    box-shadow:0 0 12px rgba(255,216,77,.9);
+  }
+  .footlight.flash::before{
+    transform:translateX(-50%) scale(1.65);
+    opacity:1;
+  }
+  @keyframes bulbGlow{
+    from{ opacity:.62; transform:translateX(-50%) scale(.92); }
+    to{ opacity:1; transform:translateX(-50%) scale(1.12); }
+  }
+
+  /* ================= TOP HUD (ALL >=64PX, PICTURE-ONLY) ================= */
+  #hud{
+    position:relative;
+    z-index:20;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left));
+    pointer-events:none;
+  }
+  .hud-group{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    pointer-events:auto;
+  }
+  .hud-pill{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 16px;
+    border-radius:999px;
+    border:4px solid #fff6d6;
+    background:rgba(66,34,140,.95);
+    color:#fff;
+    font-size:29px;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 5px 0 rgba(14,5,36,.65), 0 10px 22px rgba(10,2,28,.35);
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1), background .16s, box-shadow .16s;
+  }
+  .hud-pill:active{ transform:translateY(3px) scale(.94); }
+  .hud-pill.round{ width:64px; padding:0; border-radius:50%; }
+  .hud-pill.mode-btn.active{
+    background:linear-gradient(180deg, #ffe87c 0%, #ffbe26 100%);
+    color:var(--ink);
+    border-color:#fff;
+    box-shadow:0 5px 0 #b87300, 0 0 22px rgba(255,216,77,.75);
+    transform:translateY(-2px);
+  }
+  .mode-q-glyph{
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:34px;
+    line-height:1;
+    color:#ffd84d;
+    text-shadow:0 2px 0 rgba(20,6,48,.55);
+  }
+  .hud-pill.mode-btn.active .mode-q-glyph{
+    color:#7a1034;
+    text-shadow:0 1px 0 rgba(255,255,255,.6);
+  }
+  #starPill{
+    min-height:64px;
+    height:64px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #fff6d6;
+    background:rgba(44,22,98,.92);
+    box-shadow:0 5px 0 rgba(14,5,36,.65);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    pointer-events:auto;
+  }
+  #starPill.bump{ animation:starBump .46s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBump{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.18) rotate(-3deg); }
+    100%{ transform:scale(1); }
+  }
+  #starPips{
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .star-pip{
+    font-size:24px;
+    line-height:1;
+    color:rgba(255,255,255,.24);
+    transition:transform .28s cubic-bezier(.34,1.8,.5,1), color .2s;
+  }
+  .star-pip.on{
+    color:var(--gold);
+    text-shadow:0 0 12px rgba(255,216,77,.95);
+    transform:scale(1.16);
+  }
+  #starNum{
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:24px;
+    color:#fff6c7;
+    min-width:18px;
+    text-align:center;
+  }
+
+  /* ================= MAIN THEATER ARENA ================= */
+  #arena{
+    position:relative;
+    z-index:10;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    padding:0 clamp(46px, 8.5vw, 130px) 10px;
+  }
+
+  #stageRow{
+    position:relative;
+    width:100%;
+    max-width:980px;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:clamp(12px, 3.2vw, 44px);
+    padding-bottom:clamp(10px, 2.4vh, 24px);
+  }
+
+  /* MAGICIAN HOOT (Left side of stage) */
+  #hootAnchor{
+    position:relative;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    z-index:12;
+  }
+  #magicianHoot{
+    position:relative;
+    width:clamp(138px, 16.5vw, 212px);
+    height:clamp(152px, 18.5vw, 232px);
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    transform-origin:50% 90%;
+    filter:drop-shadow(0 12px 16px rgba(10,3,26,.52));
+    animation:hootIdle 3.4s ease-in-out infinite;
+    outline:none;
+  }
+  #magicianHoot svg{ width:100%; height:100%; display:block; overflow:visible; }
+  #magicianHoot:active{ transform:scale(.94); }
+  @keyframes hootIdle{
+    0%,100%{ transform:translateY(0) rotate(-1.2deg); }
+    50%{ transform:translateY(-6px) rotate(1.4deg); }
+  }
+  #magicianHoot.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{
+    from{ transform:translateY(0) scale(1); }
+    to{ transform:translateY(-5px) scale(1.03); }
+  }
+  #magicianHoot.cheer{ animation:hootCheer .52s cubic-bezier(.34,1.8,.5,1) 2; }
+  @keyframes hootCheer{
+    0%,100%{ transform:translateY(0) rotate(0); }
+    45%{ transform:translateY(-22px) rotate(-5deg) scale(1.06); }
+  }
+  #magicianHoot .hoot-wing-r{
+    transform-box:fill-box;
+    transform-origin:15% 40%;
+    transition:transform .28s cubic-bezier(.34,1.7,.5,1);
+  }
+  #magicianHoot.cheer .hoot-wing-r,
+  #magicianHoot.cast .hoot-wing-r{
+    transform:rotate(-32deg) translateY(-6px);
+  }
+
+  /* CENTER VELVET TOP HAT + MAGIC TABLE + POP-OUT SURPRISE */
+  #centerEnsemble{
+    position:relative;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    z-index:13;
+  }
+
+  /* Pop-Out Surprise & Sneaky Peek Stage directly above the Top Hat rim */
+  #popStage{
+    position:relative;
+    width:clamp(196px, 24vw, 276px);
+    height:clamp(142px, 22vh, 198px);
+    margin-bottom:clamp(-32px, -3.5vh, -20px);
+    z-index:14;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    pointer-events:none;
+  }
+
+  /* Sneaky Peek silhouette in Guess Mode */
+  #peekWrap{
+    position:absolute;
+    left:50%;
+    bottom:-26px;
+    transform:translateX(-50%);
+    width:clamp(118px, 14.5vw, 158px);
+    height:clamp(118px, 14.5vw, 158px);
+    overflow:hidden;
+    pointer-events:none;
+    z-index:13;
+    clip-path:inset(0 0 24% 0);
+  }
+  #peekArt{
+    width:100%;
+    height:100%;
+    transform:translateY(44%) scale(.88);
+    filter:brightness(.14) saturate(1.6) drop-shadow(0 0 12px rgba(255,216,77,.92));
+    animation:sneakyBob 2.4s ease-in-out infinite;
+  }
+  #peekWrap.higher #peekArt{
+    animation:sneakyBobHigh 2s ease-in-out infinite;
+  }
+  #peekArt svg{ width:100%; height:100%; display:block; }
+  @keyframes sneakyBob{
+    0%,100%{ transform:translateY(56%) scale(.86) rotate(-3deg); }
+    42%,58%{ transform:translateY(16%) scale(.96) rotate(3deg); }
+  }
+  @keyframes sneakyBobHigh{
+    0%,100%{ transform:translateY(42%) scale(.9) rotate(-4deg); }
+    42%,58%{ transform:translateY(4%) scale(1.02) rotate(4deg); }
+  }
+  #peekQ{
+    position:absolute;
+    left:50%;
+    top:4px;
+    transform:translateX(-50%);
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:clamp(30px, 4vw, 42px);
+    color:var(--gold);
+    text-shadow:0 4px 0 #4d229e, 0 0 18px rgba(255,216,77,.95);
+    animation:qFloat 1.5s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  @keyframes qFloat{
+    from{ transform:translateX(-50%) translateY(0) scale(.94); }
+    to{ transform:translateX(-50%) translateY(-8px) scale(1.12); }
+  }
+
+  /* Huge Smiling Pop-Out Surprise + Giant Starting Letter Badge */
+  #popRevealBtn{
+    position:relative;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    pointer-events:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:clamp(144px, 18vw, 190px);
+    height:clamp(144px, 18vw, 190px);
+    margin-bottom:6px;
+    z-index:16;
+    outline:none;
+  }
+  #popRevealBtn.pop-in{
+    animation:surpriseSpring .68s cubic-bezier(.22,1.62,.42,1) forwards;
+  }
+  #popRevealBtn.hop{
+    animation:surpriseHop .42s cubic-bezier(.34,1.8,.5,1);
+  }
+  @keyframes surpriseSpring{
+    0%{ transform:translateY(84px) scale(.22) rotate(-10deg); opacity:0; }
+    52%{ transform:translateY(-16px) scale(1.16) rotate(4deg); opacity:1; }
+    78%{ transform:translateY(4px) scale(.95) rotate(-2deg); opacity:1; }
+    100%{ transform:translateY(0) scale(1) rotate(0deg); opacity:1; }
+  }
+  @keyframes surpriseHop{
+    0%,100%{ transform:translateY(0) scale(1); }
+    45%{ transform:translateY(-18px) scale(1.12) rotate(-4deg); }
+  }
+  #popArt{
+    width:100%;
+    height:100%;
+    filter:drop-shadow(0 12px 18px rgba(14,4,38,.55)) drop-shadow(0 0 22px rgba(255,235,140,.45));
+  }
+  #popArt svg{ width:100%; height:100%; display:block; overflow:visible; }
+
+  #letterBadge{
+    position:absolute;
+    right:-18px;
+    top:-4px;
+    width:clamp(60px, 7.2vw, 78px);
+    height:clamp(60px, 7.2vw, 78px);
+    border-radius:22px;
+    background:linear-gradient(180deg, #fff29a 0%, #ffc82e 100%);
+    border:4.5px solid #fff;
+    color:var(--ink);
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:clamp(36px, 4.4vw, 48px);
+    line-height:1;
+    display:grid;
+    place-items:center;
+    box-shadow:0 6px 0 #c77b00, 0 12px 24px rgba(10,2,28,.45);
+    transform:rotate(7deg);
+    animation:badgePop .55s cubic-bezier(.34,1.8,.5,1) .12s backwards;
+  }
+  @keyframes badgePop{
+    0%{ transform:scale(0) rotate(-18deg); }
+    100%{ transform:scale(1) rotate(7deg); }
+  }
+
+  /* Purple Magic Poof Cloud */
+  #poofLayer{
+    position:absolute;
+    left:50%;
+    bottom:-10px;
+    transform:translateX(-50%);
+    width:260px;
+    height:120px;
+    pointer-events:none;
+    z-index:18;
+  }
+  .poof-puff{
+    position:absolute;
+    border-radius:50%;
+    background:radial-gradient(circle at 38% 35%, #fff8ff 0%, #e1b8ff 46%, rgba(164,92,255,.78) 78%, transparent 100%);
+    opacity:0;
+    pointer-events:none;
+  }
+
+  /* Giant Shimmering Velvet Top Hat Button */
+  #hatWrap{
+    position:relative;
+    z-index:15;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:-14px;
+  }
+  #hatAura{
+    position:absolute;
+    left:50%;
+    top:48%;
+    width:136%;
+    height:136%;
+    transform:translate(-50%,-50%) scale(.75);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,226,105,.72) 0%, rgba(196,120,255,.42) 44%, transparent 72%);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s, transform .35s cubic-bezier(.34,1.6,.5,1);
+  }
+  #hatWrap.charged #hatAura{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1.08);
+    animation:auraPulse 1.15s ease-in-out infinite alternate;
+  }
+  @keyframes auraPulse{
+    from{ transform:translate(-50%,-50%) scale(1.02); opacity:.78; }
+    to{ transform:translate(-50%,-50%) scale(1.18); opacity:1; }
+  }
+
+  #magicHatBtn{
+    position:relative;
+    width:clamp(192px, 23.5vw, 266px);
+    height:clamp(134px, 16.5vw, 186px);
+    min-width:64px;
+    min-height:64px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    filter:drop-shadow(0 12px 16px rgba(10,3,28,.62));
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), filter .25s;
+  }
+  #magicHatBtn svg{ width:100%; height:100%; display:block; overflow:visible; }
+  #magicHatBtn:active{ transform:scale(.95, 1.04); }
+  #hatWrap.charged #magicHatBtn{
+    filter:drop-shadow(0 0 18px rgba(255,222,95,.95)) drop-shadow(0 10px 18px rgba(10,3,28,.55));
+    animation:hatExcited 1.05s ease-in-out infinite;
+  }
+  @keyframes hatExcited{
+    0%,100%{ transform:translateY(0) rotate(0deg) scale(1); }
+    25%{ transform:translateY(-6px) rotate(-4deg) scale(1.04, .97); }
+    50%{ transform:translateY(-2px) rotate(0deg) scale(.98, 1.04); }
+    75%{ transform:translateY(-6px) rotate(4deg) scale(1.04, .97); }
+  }
+  #magicHatBtn.wiggle{ animation:hatWiggle .46s ease-in-out 1 !important; }
+  @keyframes hatWiggle{
+    0%,100%{ transform:rotate(0) scale(1); }
+    25%{ transform:rotate(-8deg) scale(1.06, .94); }
+    60%{ transform:rotate(7deg) scale(.96, 1.05); }
+  }
+  #magicHatBtn.poof-kick{ animation:hatKick .42s cubic-bezier(.34,1.8,.5,1) 1 !important; }
+  @keyframes hatKick{
+    0%{ transform:scale(1); }
+    30%{ transform:scale(1.16, .82) translateY(8px); }
+    68%{ transform:scale(.94, 1.08) translateY(-5px); }
+    100%{ transform:scale(1); }
+  }
+
+  /* Draped Golden Magician Table */
+  #magicTable{
+    position:relative;
+    z-index:12;
+    width:clamp(218px, 26.5vw, 304px);
+    height:clamp(82px, 11.5vh, 114px);
+    pointer-events:none;
+    filter:drop-shadow(0 12px 18px rgba(8,2,24,.65));
+  }
+  #magicTable svg{ width:100%; height:100%; display:block; overflow:visible; }
+
+  /* STAR MAGIC WAND (Right of Hat on Landscape, Centered Control Row on Portrait) */
+  #wandAnchor{
+    position:relative;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding-bottom:clamp(26px, 5vh, 52px);
+    z-index:16;
+  }
+  #magicWandBtn{
+    position:relative;
+    width:clamp(94px, 11.2vw, 122px);
+    height:clamp(94px, 11.2vw, 122px);
+    min-width:64px;
+    min-height:64px;
+    border-radius:50%;
+    border:5px solid #fff8d6;
+    background:radial-gradient(circle at 34% 28%, #8f63ff 0%, #5c2fd1 58%, #35158c 100%);
+    box-shadow:
+      0 8px 0 #260d6b,
+      0 14px 28px rgba(10,2,28,.55),
+      inset 0 4px 10px rgba(255,255,255,.42);
+    cursor:pointer;
+    padding:10px;
+    display:grid;
+    place-items:center;
+    touch-action:none;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .22s;
+  }
+  #magicWandBtn svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+    filter:drop-shadow(0 4px 6px rgba(18,5,48,.45));
+  }
+  #magicWandBtn:active{ transform:scale(.92) rotate(-10deg); }
+  #magicWandBtn.cue-ready{
+    box-shadow:
+      0 8px 0 #260d6b,
+      0 0 0 6px rgba(255,216,77,.82),
+      0 0 32px rgba(255,216,77,.92);
+    animation:wandReady 1.25s ease-in-out infinite;
+  }
+  @keyframes wandReady{
+    0%,100%{ transform:scale(1) rotate(0deg); }
+    50%{ transform:scale(1.07) rotate(-4deg); }
+  }
+  #magicWandBtn.wave{
+    animation:wandWave .48s cubic-bezier(.34,1.7,.5,1) 1 !important;
+  }
+  @keyframes wandWave{
+    0%{ transform:rotate(0) scale(1); }
+    35%{ transform:rotate(-26deg) scale(1.12); }
+    72%{ transform:rotate(14deg) scale(1.05); }
+    100%{ transform:rotate(0) scale(1); }
+  }
+  #magicWandBtn.dimmed{
+    opacity:.74;
+    transform:scale(.92);
+  }
+
+  /* Unmistakable Bouncing 👆 Hand Cue */
+  .magic-hand{
+    position:absolute;
+    z-index:22;
+    font-size:clamp(36px, 4.4vw, 48px);
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 4px 0 rgba(25,8,58,.65)) drop-shadow(0 0 12px rgba(255,232,120,.9));
+    animation:handBounce .68s ease-in-out infinite alternate;
+  }
+  #wandHand{
+    right:-16px;
+    bottom:-18px;
+  }
+  #hatHand{
+    right:14px;
+    bottom:4px;
+  }
+  @keyframes handBounce{
+    from{ transform:translateY(0) scale(1) rotate(-10deg); }
+    to{ transform:translateY(-12px) scale(1.12) rotate(4deg); }
+  }
+
+  /* ================= GUESS WHO'S INSIDE: 3 BIG PICTURE CHOICE BUBBLES ================= */
+  #guessRow{
+    position:relative;
+    z-index:17;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(12px, 3vw, 28px);
+    padding:0 8px 22px;
+  }
+  .guess-bubble{
+    position:relative;
+    width:clamp(84px, 11vw, 108px);
+    height:clamp(84px, 11vw, 108px);
+    min-width:64px;
+    min-height:64px;
+    border-radius:50%;
+    border:5px solid #fff8d6;
+    background:radial-gradient(circle at 32% 28%, #ffffff 0%, #fff4db 68%, #ffe1a3 100%);
+    box-shadow:
+      0 7px 0 #b87300,
+      0 12px 24px rgba(10,2,28,.48),
+      inset 0 4px 8px rgba(255,255,255,.9);
+    padding:10px;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), opacity .22s, filter .22s;
+    animation:bubblePopIn .4s cubic-bezier(.34,1.7,.5,1) backwards;
+  }
+  .guess-bubble:nth-child(2){ animation-delay:.07s; }
+  .guess-bubble:nth-child(3){ animation-delay:.14s; }
+  @keyframes bubblePopIn{
+    0%{ transform:scale(.4) translateY(24px); opacity:0; }
+    100%{ transform:scale(1) translateY(0); opacity:1; }
+  }
+  .guess-bubble:active{ transform:translateY(4px) scale(.93); }
+  .guess-bubble svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .guess-bubble.wrong{
+    opacity:.36;
+    pointer-events:none;
+    animation:bubbleWobble .42s ease-in-out;
+  }
+  @keyframes bubbleWobble{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-9px) rotate(-6deg); }
+    75%{ transform:translateX(9px) rotate(6deg); }
+  }
+  .guess-bubble.correct{
+    border-color:#7bf58e;
+    box-shadow:0 7px 0 #2b8a3e, 0 0 28px rgba(104,245,126,.95);
+    transform:scale(1.12);
+  }
+
+  /* ================= BOTTOM GOLDEN THEATER SHELF ================= */
+  #shelfBar{
+    position:relative;
+    z-index:18;
+    flex:0 0 auto;
+    height:calc(78px + env(safe-area-inset-bottom));
+    padding:7px max(12px, env(safe-area-inset-right)) max(7px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background:linear-gradient(180deg, #5e2469 0%, #3a1147 30%, #240830 100%);
+    border-top:5px solid #ffd84d;
+    box-shadow:inset 0 3px 0 rgba(255,248,200,.72), 0 -6px 22px rgba(8,2,22,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #shelfTrack{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    padding:0 6px;
+  }
+  #shelfTrack::-webkit-scrollbar{ display:none; }
+  #shelfTrack.scrollable{ justify-content:flex-start; }
+
+  .shelf-slot{
+    flex:0 0 auto;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    border:3px dashed rgba(255,216,77,.42);
+    background:rgba(255,255,255,.06);
+    display:grid;
+    place-items:center;
+    color:rgba(255,216,77,.35);
+    font-size:22px;
+  }
+  .shelf-token{
+    flex:0 0 auto;
+    width:64px;
+    height:64px;
+    min-width:64px;
+    min-height:64px;
+    border-radius:50%;
+    border:3.5px solid #ffd84d;
+    background:radial-gradient(circle at 35% 30%, #fffdf8 0%, #ffefc2 100%);
+    box-shadow:0 4px 0 #b87300, 0 6px 14px rgba(10,2,28,.45);
+    padding:6px;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    position:relative;
+    outline:none;
+    animation:tokenLand .48s cubic-bezier(.34,1.8,.5,1);
+    transition:transform .14s;
+  }
+  .shelf-token:active{ transform:scale(.9); }
+  .shelf-token.sing{ animation:tokenSing .52s cubic-bezier(.34,1.8,.5,1); }
+  .shelf-token svg{ width:100%; height:100%; display:block; }
+  .shelf-token .tok-let{
+    position:absolute;
+    right:-4px;
+    bottom:-4px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#5c2fd1;
+    border:2px solid #fff;
+    color:#ffd84d;
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:13px;
+    display:grid;
+    place-items:center;
+    line-height:1;
+  }
+  @keyframes tokenLand{
+    0%{ transform:scale(.2) translateY(-28px); opacity:0; }
+    100%{ transform:scale(1) translateY(0); opacity:1; }
+  }
+  @keyframes tokenSing{
+    0%,100%{ transform:scale(1); }
+    45%{ transform:scale(1.22) translateY(-6px); }
+  }
+
+  /* ================= FX LAYER ================= */
+  #fxLayer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:26;
+    overflow:hidden;
+  }
+  .fx-star{
+    position:absolute;
+    font-size:24px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 0 8px rgba(255,220,90,.95));
+  }
+  .fx-conf{
+    position:absolute;
+    width:13px;
+    height:13px;
+    border-radius:4px;
+    pointer-events:none;
+  }
+
+  /* ================= GRAND GOLDEN CURTAIN CONFETTI FINALE OVERLAY ================= */
+  #winOverlay{
+    position:fixed;
+    inset:0;
+    z-index:40;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    background:radial-gradient(circle at 50% 42%, rgba(74,26,142,.72) 0%, rgba(16,6,38,.86) 100%);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+  }
+  #winCard{
+    width:min(92vw, 440px);
+    background:linear-gradient(180deg, #fffdf5 0%, #fff2cb 100%);
+    border:6px solid #ffd84d;
+    border-radius:34px;
+    padding:22px 20px 20px;
+    text-align:center;
+    color:var(--ink);
+    box-shadow:0 12px 0 #b87300, 0 26px 56px rgba(8,2,24,.65), 0 0 42px rgba(255,216,77,.42);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    animation:winCardPop .5s cubic-bezier(.34,1.65,.5,1);
+  }
+  @keyframes winCardPop{
+    0%{ transform:scale(.55) translateY(30px); opacity:0; }
+    100%{ transform:scale(1) translateY(0); opacity:1; }
+  }
+  #winStars{
+    display:flex;
+    gap:8px;
+    font-size:40px;
+    line-height:1;
+  }
+  #winStars span{
+    color:#e4cfa0;
+    transform:scale(.75);
+    transition:transform .36s cubic-bezier(.34,1.9,.5,1), color .2s;
+  }
+  #winStars span.lit{
+    color:#ffb703;
+    transform:scale(1.16);
+    text-shadow:0 3px 0 #c97a00, 0 0 18px rgba(255,212,60,.85);
+  }
+  #winTrophy{
+    font-size:52px;
+    line-height:1.1;
+    filter:drop-shadow(0 6px 10px rgba(42,20,97,.22));
+  }
+  #winTrophies{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .win-tok{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#fff;
+    border:3px solid #ffd84d;
+    box-shadow:0 4px 0 #d99100;
+    padding:5px;
+    display:grid;
+    place-items:center;
+  }
+  .win-tok svg{ width:100%; height:100%; display:block; }
+  .win-btns{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:4px;
+  }
+  #againBtn{
+    min-width:176px;
+    min-height:68px;
+    padding:0 28px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:linear-gradient(180deg, #5ce071 0%, #2eb848 100%);
+    color:#fff;
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:28px;
+    letter-spacing:2px;
+    cursor:pointer;
+    box-shadow:0 7px 0 #1f8233, 0 12px 24px rgba(31,130,51,.35);
+    transition:transform .14s;
+  }
+  #againBtn:active{ transform:translateY(4px) scale(.96); }
+  .win-btn{
+    min-height:64px;
+    padding:0 22px;
+    border-radius:999px;
+    border:4px solid #fff;
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:20px;
+    cursor:pointer;
+  }
+
+  /* ================= RESPONSIVE: iPHONE PORTRAIT (390x844) ================= */
+  @media (max-width:640px) and (orientation:portrait){
+    .curtain-btn{ width:26px; }
+    #footlights{ left:22px; right:22px; bottom:78px; }
+    #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 2px; gap:6px; }
+    .hud-group{ gap:6px; }
+    .hud-pill{ min-width:64px; height:64px; padding:0 12px; font-size:26px; }
+    #starPill{ padding:0 10px; gap:4px; }
+    .star-pip{ font-size:17px; }
+    #starPips{ gap:2px; }
+    #starNum{ font-size:20px; }
+
+    #arena{
+      padding:0 18px 8px;
+      justify-content:space-between;
     }
-    #popZone{ height:136px !important; }
-    #popArt{ width:136px !important; height:136px !important; }
-    #panel{ max-width:940px; margin:0 auto; width:100%; padding:8px 18px max(12px,env(safe-area-inset-bottom)) !important; }
-    .choice-btn{
-      min-height:94px !important; border:4px solid #fff !important; border-radius:22px !important;
-      padding:10px 8px !important; box-shadow:0 7px 0 rgba(23,50,79,.16) !important; font-size:17px !important;
+    #stageRow{
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      padding-bottom:6px;
     }
-    .choice-btn svg{ width:62px !important; height:54px !important; }
-    .choice-btn small{ font-size:14.5px !important; }
+    #hootAnchor{
+      position:absolute;
+      left:8px;
+      top:24px;
+      z-index:11;
+    }
+    #magicianHoot{
+      width:110px;
+      height:122px;
+    }
+    #centerEnsemble{
+      margin-top:auto;
+    }
+    #popStage{
+      width:210px;
+      height:152px;
+      margin-bottom:-22px;
+    }
+    #popRevealBtn{
+      width:138px;
+      height:138px;
+    }
+    #letterBadge{
+      width:58px;
+      height:58px;
+      font-size:34px;
+      right:-14px;
+      top:-2px;
+    }
+    #magicHatBtn{
+      width:186px;
+      height:130px;
+    }
+    #magicTable{
+      width:216px;
+      height:78px;
+    }
+    #wandAnchor{
+      padding-bottom:6px;
+      margin-top:6px;
+    }
+    #magicWandBtn{
+      width:92px;
+      height:92px;
+    }
+    #guessRow{
+      gap:12px;
+      padding:4px 4px 8px;
+    }
+    .guess-bubble{
+      width:90px;
+      height:90px;
+      padding:8px;
+    }
+    #stageFloor{
+      bottom:76px;
+      height:210px;
+    }
+  }
+
+  /* Compact desktop / iPad height tune */
+  @media (min-width:641px) and (max-height:790px){
+    #popStage{ height:clamp(132px, 21vh, 172px); margin-bottom:-24px; }
+    #popRevealBtn{ width:clamp(134px, 16vw, 166px); height:clamp(134px, 16vw, 166px); }
+    #magicHatBtn{ width:clamp(186px, 22vw, 236px); height:clamp(130px, 15.5vw, 164px); }
+    #magicTable{ width:clamp(214px, 25vw, 272px); height:clamp(76px, 10.5vh, 96px); }
+    #magicianHoot{ width:clamp(134px, 15.5vw, 184px); height:clamp(146px, 17vw, 202px); }
+    .guess-bubble{ width:88px; height:88px; }
+  }
+
+  /* Guess mode hides wand smoothly so choices shine front-and-center */
+  #stage.mode-guess #wandAnchor{ display:none; }
+  #stage.mode-pop #guessRow{ display:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01s !important; }
   }
 </style>
 </head>
 <body>
-<div id="stage">
-  <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#2a2140" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#2a2140"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#2a2140" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#2a2140"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
-      </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#2a2140" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#cfc4ff"/></svg>
-      </button>
-    </div>
-    <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      <span id="starCount">0</span>
-    </div>
+<div id="stage" class="mode-pop">
+  <!-- Volumetric Stage Spotlights -->
+  <div id="spotlights" aria-hidden="true">
+    <div class="beam beam-l"></div>
+    <div class="beam beam-r"></div>
   </div>
 
-  <main id="scene" aria-label="Magic stage. Hoot the Magician presents his hat.">
-    <div id="hootZone">
-      <button id="hootFig" type="button" aria-label="Hoot the Magician — tap to hear him giggle"></button>
-      <div id="bubbleCol">
-        <div id="bubble" aria-live="polite">Abracadabra! I&rsquo;m Hoot the Magician! Wave my wand, then tap my hat!</div>
-        <span id="hootName">HOOT THE MAGICIAN</span>
-      </div>
+  <!-- Twinkling Starry Royal Sky -->
+  <div id="starSky"></div>
+
+  <!-- Top Scalloped Crimson Velvet Valance with Gold Fringe -->
+  <div id="valance" aria-hidden="true">
+    <svg viewBox="0 0 1200 90" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="valGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#690823"/>
+          <stop offset="55%" stop-color="#a8133d"/>
+          <stop offset="100%" stop-color="#c91f4d"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,0 H1200 V36 Q1100,82 1000,36 Q900,82 800,36 Q700,82 600,36 Q500,82 400,36 Q300,82 200,36 Q100,82 0,36 Z" fill="url(#valGrad)"/>
+      <path d="M0,36 Q100,82 200,36 Q300,82 400,36 Q500,82 600,36 Q700,82 800,36 Q900,82 1000,36 Q1100,82 1200,36" fill="none" stroke="#ffd84d" stroke-width="5" stroke-linecap="round"/>
+      <g fill="#ffd84d">
+        <circle cx="100" cy="62" r="5.5"/><circle cx="300" cy="62" r="5.5"/><circle cx="500" cy="62" r="5.5"/>
+        <circle cx="700" cy="62" r="5.5"/><circle cx="900" cy="62" r="5.5"/><circle cx="1100" cy="62" r="5.5"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Parted Crimson Velvet Side Curtains -->
+  <button id="curtainLeft" class="curtain-btn" type="button" aria-label="Left Velvet Curtain">
+    <svg viewBox="0 0 140 800" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="curtL" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#5a0720"/>
+          <stop offset="28%" stop-color="#a6133d"/>
+          <stop offset="54%" stop-color="#760a2a"/>
+          <stop offset="80%" stop-color="#c91f4d"/>
+          <stop offset="100%" stop-color="#870d30"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,0 H136 C120,170 108,330 62,445 C98,555 112,670 116,800 H0 Z" fill="url(#curtL)"/>
+      <path d="M136,0 C120,170 108,330 62,445 C98,555 112,670 116,800" fill="none" stroke="#ffd84d" stroke-width="7"/>
+      <path d="M0,432 Q38,448 64,445" fill="none" stroke="#ffd84d" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="66" cy="445" r="10" fill="#ffd84d" stroke="#b87300" stroke-width="2.5"/>
+      <path d="M66,455 L58,492 L74,492 Z" fill="#ffd84d" stroke="#b87300" stroke-width="2"/>
+    </svg>
+  </button>
+  <button id="curtainRight" class="curtain-btn" type="button" aria-label="Right Velvet Curtain">
+    <svg viewBox="0 0 140 800" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="curtR" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0%" stop-color="#5a0720"/>
+          <stop offset="28%" stop-color="#a6133d"/>
+          <stop offset="54%" stop-color="#760a2a"/>
+          <stop offset="80%" stop-color="#c91f4d"/>
+          <stop offset="100%" stop-color="#870d30"/>
+        </linearGradient>
+      </defs>
+      <path d="M140,0 H4 C20,170 32,330 78,445 C42,555 28,670 24,800 H140 Z" fill="url(#curtR)"/>
+      <path d="M4,0 C20,170 32,330 78,445 C42,555 28,670 24,800" fill="none" stroke="#ffd84d" stroke-width="7"/>
+      <path d="M140,432 Q102,448 76,445" fill="none" stroke="#ffd84d" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="74" cy="445" r="10" fill="#ffd84d" stroke="#b87300" stroke-width="2.5"/>
+      <path d="M74,455 L66,492 L82,492 Z" fill="#ffd84d" stroke="#b87300" stroke-width="2"/>
+    </svg>
+  </button>
+
+  <!-- Stage Floor & Glowing Golden Footlights -->
+  <div id="stageFloor" aria-hidden="true"></div>
+  <div id="footlights">
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+    <button class="footlight" type="button" aria-label="Stage light"></button>
+  </div>
+
+  <!-- Top HUD: Picture-Only Modes + 5-Star Tracker + Sound Toggle -->
+  <header id="hud">
+    <div class="hud-group">
+      <button id="modePopBtn" class="hud-pill mode-btn active" type="button" aria-label="Magic Pop" aria-pressed="true">🪄</button>
+      <button id="modeGuessBtn" class="hud-pill mode-btn" type="button" aria-label="Guess Who is Inside" aria-pressed="false"><span class="mode-q-glyph" aria-hidden="true">?</span></button>
     </div>
-    <div id="hatZone">
-      <div id="popZone"><div id="letterBadge" aria-hidden="true"></div><div id="popArt" hidden></div><div id="countRow"></div></div>
-      <div id="surpriseName" aria-live="polite"></div>
-      <div id="hatRow">
-        <button id="hatBtn" type="button" aria-label="Tap the magic hat"></button>
-        <div id="wandWrap">
-          <button id="wandBtn" type="button" aria-label="Wave the magic wand to charge the hat with sparkles">&#10022;</button>
-          <div id="chargeWrap"><p id="chargeLab">WAND SPARKLES</p><div id="chargeBar"><div id="chargeFill"></div></div></div>
+    <div class="hud-group">
+      <div id="starPill" aria-label="Stars collected">
+        <div id="starPips" aria-hidden="true">
+          <span class="star-pip">★</span><span class="star-pip">★</span><span class="star-pip">★</span><span class="star-pip">★</span><span class="star-pip">★</span>
+        </div>
+        <span id="starNum">0</span>
+      </div>
+      <button id="soundBtn" class="hud-pill round" type="button" aria-label="Toggle Sound">🔊</button>
+    </div>
+  </header>
+
+  <!-- Main Theater Stage Arena -->
+  <main id="arena">
+    <div id="stageRow">
+      <!-- Magician Hoot on the Left -->
+      <div id="hootAnchor">
+        <button id="magicianHoot" type="button" aria-label="Magician Hoot">
+          <svg viewBox="0 0 220 240" aria-hidden="true">
+            <defs>
+              <linearGradient id="capeGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5d2ad1"/>
+                <stop offset="100%" stop-color="#2c106e"/>
+              </linearGradient>
+              <linearGradient id="hootHatG" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3f238c"/>
+                <stop offset="55%" stop-color="#1f0e4f"/>
+                <stop offset="100%" stop-color="#311875"/>
+              </linearGradient>
+              <linearGradient id="hootBodyG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#b57a44"/>
+                <stop offset="100%" stop-color="#8b572a"/>
+              </linearGradient>
+            </defs>
+            <!-- Ground contact shadow -->
+            <ellipse cx="110" cy="226" rx="68" ry="11" fill="rgba(10,2,28,.45)"/>
+            <!-- Flowing Starry Purple Wizard Cape -->
+            <path d="M46,120 Q12,174 26,216 Q72,226 110,214 Q148,226 194,216 Q208,174 174,120 Z" fill="url(#capeGrad)" stroke="#ffd84d" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M56,126 Q28,174 40,206 Q78,214 110,204 Q142,214 180,206 Q192,174 164,126 Z" fill="#8b1038" opacity=".45"/>
+            <!-- Tiny Gold Stars on Cape -->
+            <g fill="#ffd84d">
+              <path d="M42,176 l2.4,5 5.4.8 -3.9,3.8 .9,5.4 -4.8-2.6 -4.8,2.6 .9-5.4 -3.9-3.8 5.4-.8z"/>
+              <path d="M178,176 l2.4,5 5.4.8 -3.9,3.8 .9,5.4 -4.8-2.6 -4.8,2.6 .9-5.4 -3.9-3.8 5.4-.8z"/>
+              <circle cx="52" cy="198" r="3"/>
+              <circle cx="168" cy="198" r="3"/>
+            </g>
+            <!-- Owl Feet -->
+            <path d="M84,214 L74,225 M88,215 L86,227 M93,214 L98,225" stroke="#ff9f1c" stroke-width="5.5" stroke-linecap="round"/>
+            <path d="M136,214 L146,225 M132,215 L134,227 M127,214 L122,225" stroke="#ff9f1c" stroke-width="5.5" stroke-linecap="round"/>
+            <!-- Chubby Owl Body -->
+            <ellipse cx="110" cy="152" rx="58" ry="64" fill="url(#hootBodyG)" stroke="#5c3515" stroke-width="3"/>
+            <!-- Cream Belly with Soft Feather Scallops -->
+            <ellipse cx="110" cy="166" rx="39" ry="44" fill="#fdeed3"/>
+            <path d="M86,158 q8,8 16,0 M102,158 q8,8 16,0 M118,158 q8,8 16,0 M92,174 q8,8 16,0 M112,174 q8,8 16,0" stroke="#e2c396" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Left & Right Wings -->
+            <path d="M54,132 Q34,158 50,188 Q66,180 68,154 Z" fill="#9a6334" stroke="#5c3515" stroke-width="3"/>
+            <g class="hoot-wing-r">
+              <path d="M166,132 Q194,144 188,178 Q170,180 156,154 Z" fill="#9a6334" stroke="#5c3515" stroke-width="3"/>
+            </g>
+            <!-- Golden Cape Clasp Collar -->
+            <path d="M68,122 Q110,138 152,122" fill="none" stroke="#ffd84d" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="110" cy="130" r="8" fill="#ffd84d" stroke="#b87300" stroke-width="2.5"/>
+            <circle cx="110" cy="130" r="3.5" fill="#d62454"/>
+            <!-- Owl Head & Cute Ear Tufts -->
+            <path d="M64,74 Q50,48 74,56 Q86,61 82,80 Z" fill="#8b572a" stroke="#5c3515" stroke-width="2.8"/>
+            <path d="M156,74 Q170,48 146,56 Q134,61 138,80 Z" fill="#8b572a" stroke="#5c3515" stroke-width="2.8"/>
+            <circle cx="110" cy="96" r="48" fill="url(#hootBodyG)" stroke="#5c3515" stroke-width="3"/>
+            <!-- Eye Discs -->
+            <ellipse cx="89" cy="96" rx="22" ry="24" fill="#fff4df" stroke="#d8b684" stroke-width="2"/>
+            <ellipse cx="131" cy="96" rx="22" ry="24" fill="#fff4df" stroke="#d8b684" stroke-width="2"/>
+            <!-- Expressive Tracking Pupils -->
+            <g id="hootPupils">
+              <circle cx="90" cy="96" r="10.5" fill="#221242"/>
+              <circle cx="130" cy="96" r="10.5" fill="#221242"/>
+              <circle cx="94" cy="92" r="4" fill="#fff"/>
+              <circle cx="134" cy="92" r="4" fill="#fff"/>
+              <circle cx="87" cy="100" r="2" fill="#fff" opacity=".8"/>
+              <circle cx="127" cy="100" r="2" fill="#fff" opacity=".8"/>
+            </g>
+            <!-- Rosy Cheeks & Smiling Orange Beak -->
+            <ellipse cx="67" cy="112" rx="9" ry="6" fill="#ff9494" opacity=".72"/>
+            <ellipse cx="153" cy="112" rx="9" ry="6" fill="#ff9494" opacity=".72"/>
+            <path d="M100,108 Q110,103 120,108 Q116,123 110,125 Q104,123 100,108 Z" fill="#ff9f1c" stroke="#c96b00" stroke-width="2.2"/>
+            <!-- Gold-Star Magician Hat Perched Jauntily -->
+            <g transform="rotate(-6 110 52)">
+              <ellipse cx="110" cy="54" rx="54" ry="11" fill="#1e0e4a" stroke="#ffd84d" stroke-width="3"/>
+              <path d="M74,52 L82,8 Q110,-2 138,8 L146,52 Z" fill="url(#hootHatG)" stroke="#ffd84d" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M76,41 Q110,48 144,41 L145,51 Q110,58 75,51 Z" fill="#d62454"/>
+              <path d="M110,16 l3.6,7.4 8.2,1.2 -5.9,5.7 1.4,8.1 -7.3-3.9 -7.3,3.9 1.4-8.1 -5.9-5.7 8.2-1.2 Z" fill="#ffd84d" stroke="#b87300" stroke-width="1.4"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Center Giant Velvet Top Hat on Draped Golden Table -->
+      <div id="centerEnsemble">
+        <div id="popStage">
+          <!-- Sneaky Peek (Guess Mode) -->
+          <div id="peekWrap" hidden>
+            <div id="peekArt"></div>
+          </div>
+          <div id="peekQ" hidden>?</div>
+
+          <!-- Popped Surprise + Giant Starting Letter Badge -->
+          <button id="popRevealBtn" type="button" hidden aria-label="Magic Surprise">
+            <div id="popArt"></div>
+            <div id="letterBadge" aria-hidden="true">B</div>
+          </button>
+
+          <!-- Magic Poof Cloud Container -->
+          <div id="poofLayer" aria-hidden="true"></div>
+        </div>
+
+        <!-- Giant Shimmering Velvet Top Hat -->
+        <div id="hatWrap">
+          <div id="hatAura" aria-hidden="true"></div>
+          <button id="magicHatBtn" type="button" aria-label="Tap the Magic Velvet Top Hat">
+            <svg viewBox="0 0 280 196" aria-hidden="true">
+              <defs>
+                <linearGradient id="hatCrown" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#190c42"/>
+                  <stop offset="28%" stop-color="#3c2287"/>
+                  <stop offset="56%" stop-color="#25125c"/>
+                  <stop offset="84%" stop-color="#47289e"/>
+                  <stop offset="100%" stop-color="#180b3d"/>
+                </linearGradient>
+                <linearGradient id="hatBrim" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3d238a"/>
+                  <stop offset="100%" stop-color="#180b3d"/>
+                </linearGradient>
+                <linearGradient id="hatRibbon" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#9e1036"/>
+                  <stop offset="38%" stop-color="#e8295c"/>
+                  <stop offset="72%" stop-color="#ba1542"/>
+                  <stop offset="100%" stop-color="#870d2e"/>
+                </linearGradient>
+              </defs>
+              <!-- Soft shadow on magician table -->
+              <ellipse cx="140" cy="182" rx="116" ry="12" fill="rgba(10,2,28,.55)"/>
+              <!-- Upside-down or Upright Iconic Magician Top Hat with open rim glow -->
+              <!-- Open rim dark magical top -->
+              <ellipse cx="140" cy="36" rx="76" ry="20" fill="#13062e" stroke="#ffd84d" stroke-width="3.5"/>
+              <ellipse cx="140" cy="36" rx="64" ry="13" fill="#08021a"/>
+              <!-- Swirling faint interior magic sheen -->
+              <ellipse cx="140" cy="36" rx="46" ry="8" fill="rgba(192,132,255,.32)"/>
+              <!-- Tall Flared Velvet Crown -->
+              <path d="M64,38 L78,160 Q140,176 202,160 L216,38 Q140,56 64,38 Z" fill="url(#hatCrown)" stroke="#ffd84d" stroke-width="3.5" stroke-linejoin="round"/>
+              <!-- Velvet Gloss Highlight Streak -->
+              <path d="M90,52 L98,154 Q112,157 118,155 L112,55 Z" fill="rgba(255,255,255,.13)"/>
+              <!-- Crimson Silk Hatband -->
+              <path d="M74,126 Q140,144 206,126 L203,154 Q140,172 77,154 Z" fill="url(#hatRibbon)"/>
+              <path d="M75,126 Q140,144 205,126" fill="none" stroke="#ffd84d" stroke-width="2.5"/>
+              <path d="M77,154 Q140,172 203,154" fill="none" stroke="#ffd84d" stroke-width="2.5"/>
+              <!-- Curved Upturned Royal Velvet Brim -->
+              <path d="M22,158 Q140,192 258,158 Q266,172 246,180 Q140,204 34,180 Q14,172 22,158 Z" fill="url(#hatBrim)" stroke="#ffd84d" stroke-width="3.8" stroke-linejoin="round"/>
+              <!-- Gleaming Golden Star Emblem & Sparkles on Hat Front -->
+              <path d="M140,70 l6.2,12.6 13.9,2 -10,9.8 2.4,13.8 -12.5-6.6 -12.5,6.6 2.4-13.8 -10-9.8 13.9-2 Z" fill="#ffd84d" stroke="#b87300" stroke-width="2.2" stroke-linejoin="round"/>
+              <circle cx="104" cy="96" r="4" fill="#fff4b8"/>
+              <circle cx="176" cy="94" r="4.5" fill="#fff4b8"/>
+              <path d="M180,68 l2,4.5 4.5,2 -4.5,2 -2,4.5 -2-4.5 -4.5-2 4.5-2 Z" fill="#ffd84d"/>
+            </svg>
+          </button>
+          <span id="hatHand" class="magic-hand" hidden aria-hidden="true">👆</span>
+        </div>
+
+        <!-- Draped Golden Magician Table -->
+        <div id="magicTable" aria-hidden="true">
+          <svg viewBox="0 0 320 120" preserveAspectRatio="xMidYMin meet">
+            <defs>
+              <linearGradient id="clothG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6b28b8"/>
+                <stop offset="55%" stop-color="#481787"/>
+                <stop offset="100%" stop-color="#2c0c59"/>
+              </linearGradient>
+              <linearGradient id="goldBar" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#c97d00"/>
+                <stop offset="50%" stop-color="#ffe780"/>
+                <stop offset="100%" stop-color="#c97d00"/>
+              </linearGradient>
+            </defs>
+            <!-- Pedestal Golden Legs -->
+            <rect x="148" y="64" width="24" height="44" rx="8" fill="url(#goldBar)" stroke="#7a4600" stroke-width="2.5"/>
+            <path d="M110,114 Q160,96 210,114 L202,118 H118 Z" fill="url(#goldBar)" stroke="#7a4600" stroke-width="2.5"/>
+            <!-- Table Top Rim -->
+            <ellipse cx="160" cy="18" rx="146" ry="16" fill="#7d38cc" stroke="#ffd84d" stroke-width="4"/>
+            <!-- Draped Velvet Tablecloth -->
+            <path d="M22,22 Q160,40 298,22 L288,82 Q256,96 224,80 Q192,98 160,82 Q128,98 96,80 Q64,96 32,82 Z" fill="url(#clothG)" stroke="#ffd84d" stroke-width="3.8" stroke-linejoin="round"/>
+            <!-- Golden Fringe Tassels -->
+            <g fill="#ffd84d">
+              <circle cx="64" cy="91" r="4.5"/><circle cx="128" cy="91" r="4.5"/><circle cx="192" cy="91" r="4.5"/><circle cx="256" cy="91" r="4.5"/>
+            </g>
+            <!-- Embroidered Gold Crescent & Star on Cloth -->
+            <path d="M156,42 A18,18 0 1,0 156,74 A14,14 0 1,1 156,42 Z" fill="#ffd84d"/>
+            <path d="M174,50 l2.4,5.2 5.6.8 -4.1,4 1,5.6 -4.9-2.6 -4.9,2.6 1-5.6 -4.1-4 5.6-.8 Z" fill="#fff3b8"/>
+          </svg>
         </div>
       </div>
+
+      <!-- Big Chunky Glowing Star Magic Wand -->
+      <div id="wandAnchor">
+        <button id="magicWandBtn" class="cue-ready" type="button" aria-label="Tap or wave the Star Magic Wand">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="starG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#fff8b0"/>
+                <stop offset="45%" stop-color="#ffd84d"/>
+                <stop offset="100%" stop-color="#f09800"/>
+              </linearGradient>
+              <linearGradient id="stickG" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3a1e6e"/>
+                <stop offset="100%" stop-color="#170838"/>
+              </linearGradient>
+            </defs>
+            <!-- Wand Handle -->
+            <line x1="24" y1="98" x2="72" y2="50" stroke="url(#stickG)" stroke-width="14" stroke-linecap="round"/>
+            <line x1="24" y1="98" x2="36" y2="86" stroke="#fffdf7" stroke-width="14" stroke-linecap="round"/>
+            <line x1="42" y1="80" x2="66" y2="56" stroke="rgba(255,255,255,.35)" stroke-width="4" stroke-linecap="round"/>
+            <!-- Big Radiant Golden Star Tip -->
+            <path d="M78,14 l8.4,17 18.8,2.8 -13.6,13.2 3.2,18.7 L78,56.8 61.2,65.7 64.4,47 50.8,33.8 69.6,31 Z" fill="url(#starG)" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/>
+            <!-- Twinkling Star Sparkles -->
+            <path d="M36,24 l3,7 7,3 -7,3 -3,7 -3-7 -7-3 7-3 Z" fill="#fff6b8"/>
+            <path d="M98,74 l2.4,5.4 5.4,2.4 -5.4,2.4 -2.4,5.4 -2.4-5.4 -5.4-2.4 5.4-2.4 Z" fill="#ffd84d"/>
+            <circle cx="24" cy="54" r="4" fill="#ffe87c"/>
+          </svg>
+        </button>
+        <span id="wandHand" class="magic-hand" aria-hidden="true">👆</span>
+      </div>
     </div>
+
+    <!-- 3 Big Picture Choice Bubbles (Guess Who's Inside Mode Only) -->
+    <div id="guessRow" role="group" aria-label="Guess choices"></div>
   </main>
 
-  <section id="panel" aria-label="Magic controls">
-    <div id="modeRow" role="group" aria-label="Choose a trick">
-      <button class="mode-chip sel" type="button" data-mode="peek">✨ Surprise Peek<small>Name it &amp; its letter</small></button>
-      <button class="mode-chip" type="button" data-mode="hiding">🔍 What&rsquo;s Hiding?<small>Guess the clue</small></button>
-      <button class="mode-chip" type="button" data-mode="count">⭐ Count the Magic<small>Count 1&ndash;10</small></button>
-      <button class="mode-chip" type="button" data-mode="letter">🔤 Letter Magic<small>First letters</small></button>
-    </div>
-    <div id="choices" role="group" aria-label="Your choices"></div>
-    <div id="underRow">
-      <span id="roundLab">0 OF 5 STARS</span>
-      <div id="starsBox" aria-hidden="true"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
-      <button id="nextBtn" type="button">Next Trick &rarr;</button>
-    </div>
-    <div id="collection"><span class="coll-lab">YOUR SURPRISES</span><span id="collEmpty" style="font-weight:800;font-size:12px;color:#cfc4ff;">Your surprises will appear here&hellip;</span></div>
-  </section>
+  <!-- Bottom Golden Theater Shelf (Tap any collected surprise to hear its word again!) -->
+  <footer id="shelfBar" aria-label="Collected Magic Surprises">
+    <div id="shelfTrack"></div>
+  </footer>
 
-  <div class="overlay" id="startOverlay">
-    <div class="card">
-      <h1><span class="t1">Magic Hat</span> <span class="t2">Surprises</span></h1>
-      <p>Tap the wand so the hat glows, then tap the hat. A surprise pops out &mdash; we will say its name and its first letter!</p>
-      <div id="howRow" aria-hidden="true">
-        <div class="how-step"><span class="how-ic">✨</span><span class="how-lab">Tap the wand</span></div>
-        <span class="how-arrow">→</span>
-        <div class="how-step"><span class="how-ic">🎩</span><span class="how-lab">Tap the glowing hat</span></div>
-        <span class="how-arrow">→</span>
-        <div class="how-step"><span class="how-ic">🐰</span><span class="how-lab">Name it &amp; its letter</span></div>
-      </div>
-      <button class="big-play" id="playBtn" type="button">&#9654; Start the Show!</button>
-    </div>
-  </div>
+  <!-- Sparkle, Poof & Confetti FX Layer -->
+  <div id="fxLayer" aria-hidden="true"></div>
 
-  <div class="overlay" id="winOverlay" hidden>
-    <div class="card">
-      <div id="winStars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-      <h1><span class="t1">Magic</span> <span class="t2">Star!</span></h1>
-      <p id="winSub">You filled all 5 magic stars! Hoot is so proud &mdash; you are a real Magic Star.</p>
+  <!-- 5-Star Grand Golden Curtain Confetti Finale Overlay -->
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-label="Magic Star Finale">
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <div id="winTrophy" aria-hidden="true">🎩✨🌟</div>
+      <div id="winTrophies"></div>
       <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">&#8635; Play Again</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+        <button id="againBtn" type="button" aria-label="Play Again">↻ ▶</button>
       </div>
     </div>
   </div>
@@ -234,369 +1456,1140 @@
 
 <script>
 (function(){
-"use strict";
-/* ================= DATA ================= */
-function art(id){
-  switch(id){
-    case "bunny": return '<ellipse cx="38" cy="26" rx="7" ry="17" fill="#fff" stroke="#d9c8e8" stroke-width="2"/><ellipse cx="62" cy="26" rx="7" ry="17" fill="#fff" stroke="#d9c8e8" stroke-width="2"/><ellipse cx="38" cy="26" rx="3" ry="10" fill="#ff8fab"/><ellipse cx="62" cy="26" rx="3" ry="10" fill="#ff8fab"/><circle cx="50" cy="62" r="26" fill="#fff" stroke="#d9c8e8" stroke-width="2"/><circle cx="41" cy="58" r="3.4" fill="#2a2140"/><circle cx="59" cy="58" r="3.4" fill="#2a2140"/><path d="M46 68 Q50 66 54 68 Q50 74 46 68Z" fill="#ff8fab"/>';
-    case "frog": return '<circle cx="34" cy="36" r="10" fill="#57cc62"/><circle cx="66" cy="36" r="10" fill="#57cc62"/><circle cx="34" cy="36" r="4.4" fill="#fff"/><circle cx="66" cy="36" r="4.4" fill="#fff"/><circle cx="34" cy="37" r="2.4" fill="#2a2140"/><circle cx="66" cy="37" r="2.4" fill="#2a2140"/><ellipse cx="50" cy="62" rx="30" ry="24" fill="#57cc62"/><ellipse cx="50" cy="70" rx="17" ry="13" fill="#d9f7c9"/><path d="M34 62 Q50 74 66 62" stroke="#2e7d3a" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
-    case "butterfly": return '<ellipse cx="28" cy="38" rx="17" ry="12" fill="#ff8fab" transform="rotate(-24 28 38)"/><ellipse cx="72" cy="38" rx="17" ry="12" fill="#ff8fab" transform="rotate(24 72 38)"/><ellipse cx="30" cy="64" rx="13" ry="9" fill="#c39bff" transform="rotate(20 30 64)"/><ellipse cx="70" cy="64" rx="13" ry="9" fill="#c39bff" transform="rotate(-20 70 64)"/><ellipse cx="50" cy="54" rx="6" ry="22" fill="#2a2140"/><circle cx="50" cy="28" r="7" fill="#2a2140"/><path d="M45 22 q-7 -9 -13 -8 M55 22 q7 -9 13 -8" stroke="#2a2140" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
-    case "teddy": return '<circle cx="26" cy="26" r="12" fill="#b07a45"/><circle cx="74" cy="26" r="12" fill="#b07a45"/><circle cx="26" cy="26" r="6" fill="#ecd0a8"/><circle cx="74" cy="26" r="6" fill="#ecd0a8"/><circle cx="50" cy="42" r="24" fill="#b07a45"/><ellipse cx="50" cy="50" rx="11" ry="9" fill="#ecd0a8"/><circle cx="41" cy="38" r="3.2" fill="#2a2140"/><circle cx="59" cy="38" r="3.2" fill="#2a2140"/><ellipse cx="50" cy="47" rx="4.4" ry="3.4" fill="#5b3413"/><ellipse cx="50" cy="76" rx="17" ry="13" fill="#ecd0a8"/>';
-    case "duck": return '<circle cx="50" cy="34" r="19" fill="#ffd93b"/><ellipse cx="50" cy="68" rx="27" ry="19" fill="#ffd93b"/><circle cx="43" cy="31" r="3.2" fill="#2a2140"/><circle cx="57" cy="31" r="3.2" fill="#2a2140"/><path d="M40 40 Q50 34 60 40 Q50 50 40 40Z" fill="#f97316"/><path d="M26 60 q-12 -8 -6 -18 q10 4 12 12Z" fill="#f2c230"/>';
-    case "fish": return '<path d="M14 50 Q38 22 64 34 Q86 44 88 50 Q86 56 64 66 Q38 78 14 50Z" fill="#38b6e3"/><path d="M14 50 L2 34 Q8 50 2 66Z" fill="#2f8fc4"/><circle cx="66" cy="44" r="4.4" fill="#fff"/><circle cx="67" cy="44" r="2.4" fill="#2a2140"/><path d="M40 34 q6 16 0 32 M54 36 q5 14 0 28" stroke="#2f8fc4" stroke-width="3.4" fill="none"/><circle cx="84" cy="24" r="5" fill="#aee7ff"/><circle cx="92" cy="12" r="3.4" fill="#aee7ff"/>';
-    case "bird": return '<ellipse cx="50" cy="58" rx="24" ry="22" fill="#7fb2f0"/><circle cx="50" cy="30" r="16" fill="#7fb2f0"/><path d="M28 48 Q8 30 4 44 Q16 62 30 62Z" fill="#5b8dd9"/><path d="M72 48 Q92 30 96 44 Q84 62 70 62Z" fill="#5b8dd9"/><circle cx="44" cy="28" r="2.8" fill="#2a2140"/><circle cx="56" cy="28" r="2.8" fill="#2a2140"/><path d="M44 36 L56 36 L50 44Z" fill="#ff9f1c"/><ellipse cx="50" cy="64" rx="12" ry="11" fill="#d6ebff"/>';
-    case "flower": return '<path d="M50 96 Q48 66 50 48" stroke="#3da347" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="M50 76 Q36 74 33 62 Q46 63 50 70Z" fill="#57cc62"/><g fill="#ff8fab"><circle cx="50" cy="18" r="10"/><circle cx="33" cy="30" r="10"/><circle cx="67" cy="30" r="10"/><circle cx="39" cy="44" r="10"/><circle cx="61" cy="44" r="10"/></g><circle cx="50" cy="32" r="9" fill="#ffc93c"/>';
-    case "apple": return '<path d="M50 26 Q48 12 60 8" stroke="#7a4a21" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="M52 16 q14 -8 20 2 q-10 9 -20 -2Z" fill="#57cc62"/><path d="M50 30 C 30 14 12 32 16 56 C 19 76 36 90 50 82 C 64 90 81 76 84 56 C 88 32 70 14 50 30Z" fill="#ef4444"/><ellipse cx="32" cy="44" rx="7" ry="11" fill="#fff" opacity=".4"/>';
-    case "balloon": return '<ellipse cx="50" cy="34" rx="24" ry="28" fill="#ff6b5e"/><ellipse cx="41" cy="24" rx="7" ry="11" fill="#fff" opacity=".4"/><path d="M44 60 L56 60 L50 70Z" fill="#e04a3f"/><path d="M50 70 q-7 9 0 16 q7 7 0 12" stroke="#8ea6c9" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
-    case "kitten": return '<path d="M26 34 L20 12 L40 22Z" fill="#f49d65"/><path d="M74 34 L80 12 L60 22Z" fill="#f49d65"/><path d="M28 30 L25 18 L36 24Z" fill="#ff8fab"/><path d="M72 30 L75 18 L64 24Z" fill="#ff8fab"/><circle cx="50" cy="52" r="30" fill="#f49d65"/><circle cx="39" cy="48" r="3.4" fill="#2a2140"/><circle cx="61" cy="48" r="3.4" fill="#2a2140"/><path d="M45 58 Q50 55 55 58 Q50 64 45 58Z" fill="#ff8fab"/><path d="M14 52 h16 M16 62 l14 -3 M86 52 H70 M84 62 l-14 -3" stroke="#d98a4b" stroke-width="2.4" stroke-linecap="round"/>';
-    case "moon": return '<path d="M66 8 A40 40 0 1 0 66 92 A31 31 0 1 1 66 8Z" fill="#ffd93b"/><path d="M76 20 l2.4 5.4 5.9.7 -4.3 4 1.1 5.8 -5.1 -2.8 -5.1 2.8 1.1 -5.8 -4.3 -4 5.9 -.7Z" fill="#fff"/>';
-    case "star": return '<path d="M50 6 l13.4 27.1 29.9 4.3 -21.6 21.1 5.1 29.8 L50 74.4 23.2 88.3 28.3 58.5 6.7 37.4 36.6 33.1Z" fill="#ffd93b" stroke="#e8a90c" stroke-width="2.6" stroke-linejoin="round"/>';
+  "use strict";
+
+  /* ================= 13 SMILING SURPRISES & VERIFIED STUDIO CLIPS ================= */
+  var ITEMS = [
+    { id:"bunny",     letter:"B", voice:"word-bunny.mp3",      emoji:"🐰" },
+    { id:"frog",      letter:"F", voice:"word-frog.mp3",       emoji:"🐸" },
+    { id:"butterfly", letter:"B", voice:"word-butterfly.mp3",  emoji:"🦋" },
+    { id:"teddy",     letter:"T", voice:"word-teddy-bear.mp3", emoji:"🐻" },
+    { id:"duck",      letter:"D", voice:"word-duckling.mp3",   emoji:"🦆" },
+    { id:"fish",      letter:"F", voice:"word-fish.mp3",       emoji:"🐟" },
+    { id:"bird",      letter:"B", voice:"word-bird.mp3",       emoji:"🐦" },
+    { id:"flower",    letter:"F", voice:"word-flower.mp3",     emoji:"🌸" },
+    { id:"apple",     letter:"A", voice:"teach-apple.mp3",     emoji:"🍎" },
+    { id:"balloon",   letter:"B", voice:"word-balloon.mp3",    emoji:"🎈" },
+    { id:"kitten",    letter:"K", voice:"word-kitten.mp3",     emoji:"🐱" },
+    { id:"moon",      letter:"M", voice:"word-moon.mp3",       emoji:"🌙" },
+    { id:"star",      letter:"S", voice:"word-star.mp3",       emoji:"⭐" }
+  ];
+
+  var PRAISE_CLIPS = [
+    "hoot-great-job.mp3",
+    "hoot-amazing.mp3",
+    "hoot-star.mp3",
+    "hoot-super.mp3",
+    "hoot-yay-2.mp3"
+  ];
+  var WRONG_CLIPS = [
+    "hoot-try-again.mp3",
+    "hoot-look-closely.mp3",
+    "hoot-almost.mp3"
+  ];
+  var WIN_CLIPS = [
+    "hoot-win-yay.mp3",
+    "hoot-win-star.mp3"
+  ];
+  var GOAL = 5;
+
+  function surpriseSVG(id){
+    switch(id){
+      case "bunny":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<ellipse cx="44" cy="28" rx="10" ry="24" transform="rotate(-10 44 28)" fill="#fff" stroke="#d0b7e6" stroke-width="3"/>'
+          +'<ellipse cx="76" cy="28" rx="10" ry="24" transform="rotate(10 76 28)" fill="#fff" stroke="#d0b7e6" stroke-width="3"/>'
+          +'<ellipse cx="44" cy="30" rx="4.8" ry="15" transform="rotate(-10 44 30)" fill="#ff9ebb"/>'
+          +'<ellipse cx="76" cy="30" rx="4.8" ry="15" transform="rotate(10 76 30)" fill="#ff9ebb"/>'
+          +'<circle cx="60" cy="74" r="34" fill="#fff" stroke="#d0b7e6" stroke-width="3"/>'
+          +'<circle cx="47" cy="68" r="5" fill="#221242"/><circle cx="73" cy="68" r="5" fill="#221242"/>'
+          +'<circle cx="49" cy="66" r="1.9" fill="#fff"/><circle cx="75" cy="66" r="1.9" fill="#fff"/>'
+          +'<ellipse cx="36" cy="79" rx="6.5" ry="4.2" fill="#ffb3c6" opacity=".75"/>'
+          +'<ellipse cx="84" cy="79" rx="6.5" ry="4.2" fill="#ffb3c6" opacity=".75"/>'
+          +'<path d="M55,77 Q60,73 65,77 Q60,84 55,77 Z" fill="#ff7aa2"/>'
+          +'<path d="M51,85 Q60,93 69,85" fill="none" stroke="#221242" stroke-width="3" stroke-linecap="round"/>'
+          +'</svg>';
+      case "frog":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<circle cx="40" cy="40" r="16" fill="#52cf62" stroke="#237a32" stroke-width="3"/>'
+          +'<circle cx="80" cy="40" r="16" fill="#52cf62" stroke="#237a32" stroke-width="3"/>'
+          +'<circle cx="40" cy="40" r="8.5" fill="#fff"/><circle cx="80" cy="40" r="8.5" fill="#fff"/>'
+          +'<circle cx="41" cy="41" r="4.6" fill="#221242"/><circle cx="79" cy="41" r="4.6" fill="#221242"/>'
+          +'<circle cx="43" cy="39" r="1.8" fill="#fff"/><circle cx="81" cy="39" r="1.8" fill="#fff"/>'
+          +'<ellipse cx="60" cy="74" rx="40" ry="30" fill="#52cf62" stroke="#237a32" stroke-width="3"/>'
+          +'<ellipse cx="60" cy="84" rx="24" ry="16" fill="#d9fac9"/>'
+          +'<ellipse cx="34" cy="74" rx="6.5" ry="4" fill="#ff9ebb" opacity=".72"/>'
+          +'<ellipse cx="86" cy="74" rx="6.5" ry="4" fill="#ff9ebb" opacity=".72"/>'
+          +'<path d="M40,72 Q60,90 80,72" fill="none" stroke="#1b5e27" stroke-width="4" stroke-linecap="round"/>'
+          +'</svg>';
+      case "butterfly":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<ellipse cx="33" cy="48" rx="24" ry="18" transform="rotate(-24 33 48)" fill="#ff77a9" stroke="#b8235f" stroke-width="3"/>'
+          +'<ellipse cx="87" cy="48" rx="24" ry="18" transform="rotate(24 87 48)" fill="#ff77a9" stroke="#b8235f" stroke-width="3"/>'
+          +'<circle cx="30" cy="46" r="7" fill="#ffd84d"/><circle cx="90" cy="46" r="7" fill="#ffd84d"/>'
+          +'<ellipse cx="36" cy="78" rx="18" ry="13" transform="rotate(22 36 78)" fill="#b983ff" stroke="#5d2ad1" stroke-width="3"/>'
+          +'<ellipse cx="84" cy="78" rx="18" ry="13" transform="rotate(-22 84 78)" fill="#b983ff" stroke="#5d2ad1" stroke-width="3"/>'
+          +'<ellipse cx="60" cy="68" rx="9" ry="26" fill="#3a2268" stroke="#1d0d3d" stroke-width="2.5"/>'
+          +'<circle cx="60" cy="38" r="12" fill="#4f2d8f" stroke="#1d0d3d" stroke-width="2.5"/>'
+          +'<circle cx="55.5" cy="36" r="2.4" fill="#fff"/><circle cx="64.5" cy="36" r="2.4" fill="#fff"/>'
+          +'<path d="M55,42 Q60,46 65,42" fill="none" stroke="#ffd84d" stroke-width="2.4" stroke-linecap="round"/>'
+          +'<path d="M54,28 Q44,12 34,14 M66,28 Q76,12 86,14" fill="none" stroke="#ffd84d" stroke-width="3" stroke-linecap="round"/>'
+          +'<circle cx="34" cy="14" r="3.5" fill="#ffd84d"/><circle cx="86" cy="14" r="3.5" fill="#ffd84d"/>'
+          +'</svg>';
+      case "teddy":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<circle cx="32" cy="32" r="15" fill="#bc7d45" stroke="#75431a" stroke-width="3"/>'
+          +'<circle cx="88" cy="32" r="15" fill="#bc7d45" stroke="#75431a" stroke-width="3"/>'
+          +'<circle cx="32" cy="32" r="8" fill="#f3d4aa"/><circle cx="88" cy="32" r="8" fill="#f3d4aa"/>'
+          +'<ellipse cx="60" cy="92" rx="28" ry="22" fill="#bc7d45" stroke="#75431a" stroke-width="3"/>'
+          +'<ellipse cx="60" cy="95" rx="16" ry="13" fill="#f3d4aa"/>'
+          +'<circle cx="60" cy="54" r="30" fill="#bc7d45" stroke="#75431a" stroke-width="3"/>'
+          +'<ellipse cx="60" cy="63" rx="15" ry="12" fill="#f3d4aa"/>'
+          +'<circle cx="48" cy="49" r="4.6" fill="#221242"/><circle cx="72" cy="49" r="4.6" fill="#221242"/>'
+          +'<circle cx="49.5" cy="47.5" r="1.7" fill="#fff"/><circle cx="73.5" cy="47.5" r="1.7" fill="#fff"/>'
+          +'<ellipse cx="60" cy="59" rx="5.5" ry="4" fill="#4f290e"/>'
+          +'<path d="M52,66 Q60,72 68,66" fill="none" stroke="#4f290e" stroke-width="2.8" stroke-linecap="round"/>'
+          +'<path d="M47,80 L60,86 L47,92 Z M73,80 L60,86 L73,92 Z" fill="#e8295c" stroke="#9e1036" stroke-width="2"/>'
+          +'<circle cx="60" cy="86" r="4" fill="#ffd84d"/>'
+          +'</svg>';
+      case "duck":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M54,18 Q60,8 65,20 Q72,12 69,24" fill="none" stroke="#ffd84d" stroke-width="5" stroke-linecap="round"/>'
+          +'<ellipse cx="60" cy="82" rx="34" ry="25" fill="#ffd84d" stroke="#cc8a00" stroke-width="3"/>'
+          +'<path d="M28,74 Q14,62 22,52 Q36,56 38,70 Z" fill="#f2b824" stroke="#cc8a00" stroke-width="2.6"/>'
+          +'<path d="M92,74 Q106,62 98,52 Q84,56 82,70 Z" fill="#f2b824" stroke="#cc8a00" stroke-width="2.6"/>'
+          +'<circle cx="60" cy="46" r="25" fill="#ffd84d" stroke="#cc8a00" stroke-width="3"/>'
+          +'<circle cx="50" cy="42" r="4.4" fill="#221242"/><circle cx="70" cy="42" r="4.4" fill="#221242"/>'
+          +'<circle cx="51.5" cy="40.5" r="1.6" fill="#fff"/><circle cx="71.5" cy="40.5" r="1.6" fill="#fff"/>'
+          +'<ellipse cx="40" cy="51" rx="5.5" ry="3.5" fill="#ff9494" opacity=".7"/>'
+          +'<ellipse cx="80" cy="51" rx="5.5" ry="3.5" fill="#ff9494" opacity=".7"/>'
+          +'<path d="M47,52 Q60,44 73,52 Q60,65 47,52 Z" fill="#ff821c" stroke="#c44d00" stroke-width="2.5"/>'
+          +'</svg>';
+      case "fish":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M26,62 L8,38 Q18,62 8,86 Z" fill="#1aa3d8" stroke="#0c5e8a" stroke-width="3" stroke-linejoin="round"/>'
+          +'<path d="M52,36 Q66,14 78,34 Z" fill="#ffd84d" stroke="#c98000" stroke-width="2.6"/>'
+          +'<path d="M24,62 Q48,26 84,38 Q108,48 110,62 Q108,76 84,86 Q48,98 24,62 Z" fill="#35c4f0" stroke="#0c5e8a" stroke-width="3"/>'
+          +'<path d="M52,40 Q58,62 52,84 M68,39 Q74,62 68,85" stroke="#ffd84d" stroke-width="6" fill="none" stroke-linecap="round"/>'
+          +'<circle cx="88" cy="54" r="7" fill="#fff"/><circle cx="89.5" cy="54" r="3.8" fill="#221242"/><circle cx="91" cy="52" r="1.4" fill="#fff"/>'
+          +'<path d="M84,68 Q92,75 100,67" fill="none" stroke="#0c5e8a" stroke-width="3" stroke-linecap="round"/>'
+          +'<circle cx="104" cy="28" r="6" fill="#c7f2ff" stroke="#53c8f5" stroke-width="2"/>'
+          +'<circle cx="111" cy="15" r="4" fill="#c7f2ff" stroke="#53c8f5" stroke-width="2"/>'
+          +'</svg>';
+      case "bird":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M56,22 Q60,8 68,18 Q76,12 72,26" fill="none" stroke="#4ba3f5" stroke-width="5" stroke-linecap="round"/>'
+          +'<path d="M34,62 Q8,40 10,58 Q20,76 38,76 Z" fill="#478fe6" stroke="#1f5ca8" stroke-width="3"/>'
+          +'<path d="M86,62 Q112,40 110,58 Q100,76 82,76 Z" fill="#478fe6" stroke="#1f5ca8" stroke-width="3"/>'
+          +'<ellipse cx="60" cy="74" rx="29" ry="27" fill="#68b6ff" stroke="#1f5ca8" stroke-width="3"/>'
+          +'<ellipse cx="60" cy="82" rx="16" ry="15" fill="#e1f2ff"/>'
+          +'<circle cx="60" cy="42" r="22" fill="#68b6ff" stroke="#1f5ca8" stroke-width="3"/>'
+          +'<circle cx="51" cy="39" r="4" fill="#221242"/><circle cx="69" cy="39" r="4" fill="#221242"/>'
+          +'<circle cx="52.5" cy="37.5" r="1.5" fill="#fff"/><circle cx="70.5" cy="37.5" r="1.5" fill="#fff"/>'
+          +'<ellipse cx="43" cy="47" rx="5" ry="3.2" fill="#ff9ebb" opacity=".75"/>'
+          +'<ellipse cx="77" cy="47" rx="5" ry="3.2" fill="#ff9ebb" opacity=".75"/>'
+          +'<path d="M52,47 L68,47 L60,58 Z" fill="#ffaa1c" stroke="#c96b00" stroke-width="2.2" stroke-linejoin="round"/>'
+          +'</svg>';
+      case "flower":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M60,112 Q58,84 60,64" stroke="#36a846" stroke-width="7" fill="none" stroke-linecap="round"/>'
+          +'<path d="M58,92 Q36,90 32,76 Q48,74 58,84 Z" fill="#52cf62" stroke="#247a32" stroke-width="2.5"/>'
+          +'<path d="M62,96 Q84,94 88,80 Q72,78 62,88 Z" fill="#52cf62" stroke="#247a32" stroke-width="2.5"/>'
+          +'<g fill="#ff7aa8" stroke="#c9386b" stroke-width="2.8">'
+          +'<circle cx="60" cy="24" r="15"/><circle cx="84" cy="36" r="15"/><circle cx="82" cy="60" r="15"/>'
+          +'<circle cx="38" cy="60" r="15"/><circle cx="36" cy="36" r="15"/>'
+          +'</g>'
+          +'<circle cx="60" cy="46" r="18" fill="#ffd84d" stroke="#d48c00" stroke-width="3"/>'
+          +'<circle cx="53.5" cy="43" r="3" fill="#221242"/><circle cx="66.5" cy="43" r="3" fill="#221242"/>'
+          +'<path d="M53,51 Q60,58 67,51" fill="none" stroke="#221242" stroke-width="2.8" stroke-linecap="round"/>'
+          +'</svg>';
+      case "apple":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M60,34 Q58,16 70,11" stroke="#7a4620" stroke-width="6" fill="none" stroke-linecap="round"/>'
+          +'<path d="M62,22 Q82,10 90,24 Q74,34 62,22 Z" fill="#52cf62" stroke="#247a32" stroke-width="2.8"/>'
+          +'<path d="M60,38 C34,20 14,42 18,70 C22,94 42,110 60,100 C78,110 98,94 102,70 C106,42 86,20 60,38 Z" fill="#f03e3e" stroke="#a61b1b" stroke-width="3.2"/>'
+          +'<ellipse cx="36" cy="54" rx="8" ry="14" transform="rotate(-14 36 54)" fill="#fff" opacity=".36"/>'
+          +'<circle cx="48" cy="66" r="4.5" fill="#221242"/><circle cx="72" cy="66" r="4.5" fill="#221242"/>'
+          +'<circle cx="49.5" cy="64.5" r="1.6" fill="#fff"/><circle cx="73.5" cy="64.5" r="1.6" fill="#fff"/>'
+          +'<path d="M51,77 Q60,86 69,77" fill="none" stroke="#221242" stroke-width="3.2" stroke-linecap="round"/>'
+          +'</svg>';
+      case "balloon":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M60,86 Q50,96 62,104 Q70,110 58,116" stroke="#ffd84d" stroke-width="3.8" fill="none" stroke-linecap="round"/>'
+          +'<path d="M53,78 L67,78 L60,88 Z" fill="#d92638" stroke="#991423" stroke-width="2.4"/>'
+          +'<ellipse cx="60" cy="44" rx="32" ry="37" fill="#ff5c5c" stroke="#b51d29" stroke-width="3.2"/>'
+          +'<ellipse cx="45" cy="31" rx="9" ry="15" transform="rotate(-18 45 31)" fill="#fff" opacity=".38"/>'
+          +'<circle cx="50" cy="44" r="4.2" fill="#221242"/><circle cx="70" cy="44" r="4.2" fill="#221242"/>'
+          +'<circle cx="51.5" cy="42.5" r="1.5" fill="#fff"/><circle cx="71.5" cy="42.5" r="1.5" fill="#fff"/>'
+          +'<path d="M52,55 Q60,63 68,55" fill="none" stroke="#221242" stroke-width="3" stroke-linecap="round"/>'
+          +'</svg>';
+      case "kitten":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M30,48 L22,16 L52,32 Z" fill="#f7a052" stroke="#ad5c16" stroke-width="3" stroke-linejoin="round"/>'
+          +'<path d="M90,48 L98,16 L68,32 Z" fill="#f7a052" stroke="#ad5c16" stroke-width="3" stroke-linejoin="round"/>'
+          +'<path d="M32,42 L28,25 L45,34 Z" fill="#ff9ebb"/>'
+          +'<path d="M88,42 L92,25 L75,34 Z" fill="#ff9ebb"/>'
+          +'<circle cx="60" cy="68" r="36" fill="#f7a052" stroke="#ad5c16" stroke-width="3"/>'
+          +'<path d="M54,34 V44 M60,33 V46 M66,34 V44" stroke="#d17524" stroke-width="3.5" stroke-linecap="round"/>'
+          +'<circle cx="47" cy="64" r="4.8" fill="#221242"/><circle cx="73" cy="64" r="4.8" fill="#221242"/>'
+          +'<circle cx="48.5" cy="62.5" r="1.8" fill="#fff"/><circle cx="74.5" cy="62.5" r="1.8" fill="#fff"/>'
+          +'<path d="M55,74 Q60,70 65,74 Q60,80 55,74 Z" fill="#ff7aa2"/>'
+          +'<path d="M52,82 Q60,88 68,82" fill="none" stroke="#221242" stroke-width="2.8" stroke-linecap="round"/>'
+          +'<path d="M14,68 H34 M16,78 L34,74 M106,68 H86 M104,78 L86,74" stroke="#ad5c16" stroke-width="2.8" stroke-linecap="round"/>'
+          +'</svg>';
+      case "moon":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M76,12 A46,46 0 1,0 76,108 A36,36 0 1,1 76,12 Z" fill="#ffd84d" stroke="#c98000" stroke-width="3.2" stroke-linejoin="round"/>'
+          +'<circle cx="44" cy="54" r="4.4" fill="#221242"/><circle cx="45.5" cy="52.5" r="1.6" fill="#fff"/>'
+          +'<ellipse cx="38" cy="65" rx="5.5" ry="3.5" fill="#ff9494" opacity=".7"/>'
+          +'<path d="M36,72 Q46,80 56,72" fill="none" stroke="#221242" stroke-width="3" stroke-linecap="round"/>'
+          +'<path d="M88,26 l3,6.6 7.3,1 -5.3,5.2 1.2,7.3 -6.2-3.4 -6.2,3.4 1.2-7.3 -5.3-5.2 7.3-1 Z" fill="#fff6b8"/>'
+          +'<circle cx="96" cy="64" r="4.5" fill="#fff6b8"/>'
+          +'</svg>';
+      case "star":
+        return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+          +'<path d="M60,10 l15,30.6 33.8,4.9 -24.4,23.8 5.8,33.6 L60,87 29.8,102.9 35.6,69.3 11.2,45.5 45,40.6 Z" fill="#ffd84d" stroke="#cc8000" stroke-width="3.5" stroke-linejoin="round"/>'
+          +'<circle cx="49" cy="58" r="4.6" fill="#221242"/><circle cx="71" cy="58" r="4.6" fill="#221242"/>'
+          +'<circle cx="50.5" cy="56.5" r="1.7" fill="#fff"/><circle cx="72.5" cy="56.5" r="1.7" fill="#fff"/>'
+          +'<ellipse cx="40" cy="67" rx="5.5" ry="3.4" fill="#ff9494" opacity=".75"/>'
+          +'<ellipse cx="80" cy="67" rx="5.5" ry="3.4" fill="#ff9494" opacity=".75"/>'
+          +'<path d="M51,69 Q60,78 69,69" fill="none" stroke="#221242" stroke-width="3.2" stroke-linecap="round"/>'
+          +'</svg>';
+    }
+    return "";
   }
-  return "";
-}
-var ITEMS=[
-  {id:"bunny",name:"Bunny",letter:"B",clue:"I hop, wiggle my nose, and my ears are very, very long!",fact:"Happy bunnies jump and twist in the air!"},
-  {id:"frog",name:"Frog",letter:"F",clue:"It hops and says ribbit, ribbit \u2014 and jumps from lily pad to lily pad!",fact:"Frogs are champion jumpers!"},
-  {id:"butterfly",name:"Butterfly",letter:"B",clue:"I flutter on pretty wings and visit flowers all day.",fact:"Butterflies taste with their feet!"},
-  {id:"teddy",name:"Teddy Bear",letter:"T",clue:"I am soft and cuddly, and I love big hugs.",fact:"Teddy gives the best hugs!"},
-  {id:"duck",name:"Duckling",letter:"D",clue:"I say quack, quack \u2014 and I love splashing in puddles!",fact:"Ducklings follow in a line!"},
-  {id:"fish",name:"Fish",letter:"F",clue:"I swim under the water and blow little bubbles.",fact:"Fish sleep with their eyes open!"},
-  {id:"bird",name:"Bird",letter:"B",clue:"I sing tweet-tweet and flap my wings to fly.",fact:"Birds sing to say good morning!"},
-  {id:"flower",name:"Flower",letter:"F",clue:"I bloom in the garden and smell sweet.",fact:"Flowers turn to face the sunshine!"},
-  {id:"apple",name:"Apple",letter:"A",clue:"I am crunchy, red, and I grow on a tree.",fact:"An apple a day is a yummy snack!"},
-  {id:"balloon",name:"Balloon",letter:"B",clue:"I float up, up, up into the sky!",fact:"Balloons love birthday parties!"},
-  {id:"kitten",name:"Kitten",letter:"K",clue:"I say meow, purr softly, and chase balls of yarn.",fact:"Kittens purr when they are happy!"},
-  {id:"moon",name:"Moon",letter:"M",clue:"I shine in the night sky while you sleep.",fact:"The Moon lights up the night!"}
-];
-var GOAL=5;
-var HAT_SVG='<svg viewBox="0 0 200 130" aria-hidden="true"><ellipse cx="100" cy="112" rx="96" ry="15" fill="#241b45" stroke="#ffd93b" stroke-width="3"/><path d="M52 112 L64 30 Q100 12 136 30 L148 112Z" fill="#2f2763" stroke="#ffd93b" stroke-width="3"/><rect x="56" y="88" width="88" height="15" fill="#c23a58"/><path d="M84 52 l3.4 7 7.6 1 -5.5 5.4 1.3 7.6 L84 69.4 77.2 73 78.5 65.4 73 60 80.6 59Z" fill="#ffd93b"/><circle cx="118" cy="66" r="4.4" fill="#ffd93b"/></svg>';
-var HOOT_MAGICIAN='<svg viewBox="0 0 200 210" aria-hidden="true"><path d="M28 108 Q4 170 34 196 L86 178 Q52 150 28 108Z" fill="#573aa8"/><path d="M172 108 Q196 170 166 196 L114 178 Q148 150 172 108Z" fill="#573aa8"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#2a2140"/><circle cx="122" cy="72" r="11" fill="#2a2140"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/><path d="M58 34 L66 6 L84 20 L100 2 L116 20 L134 6 L142 34Z" fill="#2f2763" stroke="#ffd93b" stroke-width="2.4" stroke-linejoin="round"/><path d="M76 190 q-8 8 -14 6 M124 190 q8 8 14 6" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
 
-/* ================= STATE ================= */
-var state="start"; /* start | playing | won */
-var mode="peek"; /* peek | hiding | count | letter */
-var stars=0, bank=0, busy=false, dead=false, soundOn=true, praiseIdx=0;
-var current=null, lastId=null, charge=0, guessed=false, firstTry=true, countN=0, answered=false, revealed=false;
-var collection={};
-var timers=[];
-function later(fn,ms){ var id=setTimeout(function(){ timers=timers.filter(function(x){return x!==id;}); fn(); },ms); timers.push(id); return id; }
-function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+  /* ================= STATE ================= */
+  var state = "play";       /* play | won */
+  var mode = "pop";         /* pop | guess */
+  var charged = false;
+  var revealed = false;
+  var current = null;
+  var deck = [];
+  var stars = 0;
+  var collected = [];       /* array of item objects on the bottom golden shelf */
+  var collectedMap = {};
+  var soundOn = true;
+  var dead = false;
+  var praiseIdx = 0;
+  var wrongIdx = 0;
+  var winIdx = 0;
+  var wandDown = false;
+  var lastWandTapAt = 0;
+  var lastSparkAt = 0;
+  var guessLocked = false;
+  var winPending = false;
+  var timers = [];
+  var idleTimer = null;
 
-/* ================= ELMS ================= */
-function $(id){ return document.getElementById(id); }
-var scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"), hatBtn=$("hatBtn"), wandBtn=$("wandBtn"),
-    chargeFill=$("chargeFill"), popArt=$("popArt"), countRow=$("countRow"), nameEl=$("surpriseName"),
-    choicesEl=$("choices"), nextBtn=$("nextBtn"), roundLab=$("roundLab"), starsBox=$("starsBox"),
-    starCount=$("starCount"), starBank=$("starBank"), collEl=$("collection"),
-    startOverlay=$("startOverlay"), winOverlay=$("winOverlay");
-hootFig.innerHTML=HOOT_MAGICIAN; hatBtn.innerHTML=HAT_SVG;
-(function(){ var glyphs=["\u2605","\u2726","\u2606"]; for(var i=0;i<12;i++){ var s=document.createElement("span"); s.className="stage-star"; s.textContent=glyphs[i%3]; s.style.left=(5+Math.random()*90)+"%"; s.style.top=(4+Math.random()*46)+"%"; s.style.fontSize=(11+Math.random()*11)+"px"; s.style.animationDelay=(-Math.random()*2.4)+"s"; scene.appendChild(s); } })();
-function renderStars(){ var s=starsBox.children; for(var i=0;i<s.length;i++) s[i].className=i<stars?"on":""; roundLab.textContent=stars+" OF "+GOAL+" STARS"; }
-
-/* ================= SOUND FX ================= */
-var AC=null;
-function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-function tone(f0,f1,dur,type,vol,delay){ if(!soundOn) return; var ac=audio(); if(!ac) return; var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain(); o.type=type||"sine"; o.frequency.setValueAtTime(f0,t); if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.13,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05); }
-function popSound(){ tone(300,900,0.16,"sine",0.18); tone(700,1200,0.12,"triangle",0.1,0.03); }
-function sparkleSound(){ tone(1180,1180,0.09,"sine",0.08); tone(1560,1560,0.11,"sine",0.08,0.06); tone(2090,2090,0.13,"sine",0.07,0.12); }
-function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
-function fanfareSound(){ [523,659,784,1047,1319,1568].forEach(function(f,i){ tone(f,f,0.34,"triangle",0.15,i*0.1); }); }
-function wrongSound(){ tone(330,262,0.2,"sine",0.1); }
-
-/* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-   Teaching lines that match a recorded clip use it (call-letter, call-number,
-   hoot-* praise/hints). Surprise names + facts have no recorded clip, so those
-   words live in Hoot's bubble and the closest praise/giggle clip carries the voice. */
-var VBASE="assets/voice/";
-var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-function getVoice(){ if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();}); voiceEl.addEventListener("error",vNext); } return voiceEl; }
-function hubQuiet(){ try{ var d=window.parent&&window.parent.document; if(!d||d===document) return false; var b=d.querySelector('.voice-btn[data-voice="off"]'); return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true")); }catch(e){ return false; } }
-function silenced(){ return !soundOn||hubQuiet(); }
-function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
-function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice(); }
-function pumpVoice(){ if(vPlaying||dead) return; var item=vQueue.shift(); if(!item) return; if(item.onStart){ try{ item.onStart(); }catch(e){} } if(silenced()){ pumpVoice(); return; } var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true); el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file; var p=el.play(); if(p&&p.catch) p.catch(function(){ vNext(); }); }
-function enqueue(file,kind){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){return;} vQueue.push({file:file,kind:kind||""}); pumpVoice(); }
-function clearPending(){ vQueue.length=0; }
-var HOOT_LINES = {
-  intro: "Tap the wand so my hat glows, then tap the hat. A surprise will pop out — we will say its name and its first letter!",
-  idle: "Tap the sparkly wand, then tap the hat!",
-  wrong: "Not that one. Listen to the clue again, then pick a new picture!",
-  praise: "Yes! We named the surprise and its first letter!"
-};
-var idleTimer=null;
-function bumpIdle(){
-  if(idleTimer) clearTimeout(idleTimer);
-  idleTimer=setTimeout(function(){
-    if(dead||state!=="playing") return;
-    if(mode==="hiding"&&!guessed) say("Listen to my clue, then tap a picture under the stage!");
-    else if(charge<30) say(HOOT_LINES.idle);
-    else say("The hat is glowing — tap the hat!");
-  },8000);
-}
-function placeMagicHand(onEl){
-  var old=document.getElementById("magicHand"); if(old) old.remove();
-  document.querySelectorAll("#wandBtn.cue,#hatBtn.cue").forEach(function(el){ el.classList.remove("cue"); });
-  if(!onEl) return;
-  onEl.classList.add("cue");
-  var hand=document.createElement("span"); hand.id="magicHand"; hand.setAttribute("aria-hidden","true"); hand.textContent="👆";
-  onEl.style.position=onEl.style.position||"relative";
-  onEl.appendChild(hand);
-}
-function cueWandOrHat(){
-  if(state!=="playing") return;
-  if(mode==="hiding"&&!guessed){ placeMagicHand(null); return; }
-  if(charge<30) placeMagicHand(wandBtn);
-  else placeMagicHand(hatBtn);
-}
-function articleFor(name){ return /^[AEIOUaeiou]/.test(name)?"an":"a"; }
-var PRAISE=["hoot-amazing.mp3","hoot-great-job.mp3","hoot-star.mp3"];
-function enqueuePraise(){ var f=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++; enqueue(f,"praise"); }
-
-/* ================= WORDS & FX ================= */
-function say(html){ bubble.innerHTML=html; }
-function hootReact(){ hootFig.classList.remove("celebrate"); void hootFig.offsetWidth; hootFig.classList.add("celebrate"); setTimeout(function(){ hootFig.classList.remove("celebrate"); },850); }
-function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-function sparkleBurst(){
-  var r=hatBtn.getBoundingClientRect(), sr=scene.getBoundingClientRect();
-  for(var i=0;i<9;i++){ var s=document.createElement("span"); s.className="burst-star"; s.textContent=i%2?"\u2726":"\u2605"; s.style.color=i%2?"#ff8fab":"#ffd93b"; s.style.left=(r.left-sr.left+r.width*(0.25+Math.random()*0.5))+"px"; s.style.top=(r.top-sr.top-6)+"px"; s.style.setProperty("--dx",((Math.random()*130)-65)+"px"); s.style.setProperty("--dy",(-(30+Math.random()*70))+"px"); scene.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },850); })(s); }
-}
-function addStar(){
-  stars++; bank++; starCount.textContent=bank;
-  starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
-  starSound(); renderStars();
-}
-function addToCollection(item){
-  if(collection[item.id]) return; collection[item.id]=true;
-  var empty=$("collEmpty"); if(empty) empty.remove();
-  var d=document.createElement("div"); d.className="coll-item"; d.title=item.name;
-  d.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+art(item.id)+'</svg>';
-  collEl.appendChild(d); collEl.scrollLeft=collEl.scrollWidth;
-}
-
-/* ================= TRICK FLOW ================= */
-function pickItem(){
-  var pool=ITEMS.filter(function(it){ return it.id!==lastId; });
-  current=pool[Math.floor(Math.random()*pool.length)]; lastId=current.id;
-}
-function setCharge(n){
-  charge=Math.max(0,Math.min(100,n)); chargeFill.style.width=charge+"%";
-  hatBtn.classList.toggle("glow",charge>=30);
-  wandBtn.classList.toggle("ready",charge<30);
-}
-function resetTrick(){
-  busy=false; answered=false; guessed=false; firstTry=true; revealed=false; setCharge(0);
-  popArt.hidden=true; popArt.innerHTML=""; popArt.classList.remove("pop");
-  countRow.style.display="none"; countRow.innerHTML=""; nameEl.textContent="";
-  var lb=document.getElementById("letterBadge"); if(lb){ lb.classList.remove("on"); lb.textContent=""; }
-  choicesEl.classList.remove("on"); choicesEl.innerHTML=""; nextBtn.classList.remove("on");
-  clearTimeout(trickTimer);
-  placeMagicHand(null);
-}
-function beginTrick(){
-  resetTrick(); pickItem();
-  if(mode==="hiding"){
-    say("Something is hiding in my hat! Clue: <span class='b-big'>"+current.clue+"</span> Tap a picture, then we will pop the hat!");
-    enqueue((function(n){try{return !!((window.parent.HOOT_HAVE||{})[n]);}catch(e){return false;}})("ask-whos-in-hat")?"ask-whos-in-hat.mp3":"hoot-look-closely.mp3","hint"); /* 3e51 */
-    showGuessChoices();
-  } else if(mode==="count"){
-    say("Tap the wand so the hat glows, then tap the hat. Magic stars will pop out — count them with me!");
-    if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
-  } else if(mode==="letter"){
-    say("Tap the wand so the hat glows, then tap the hat. A surprise will pop out — you tell me its first letter!");
-    if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
-  } else {
-    say(HOOT_LINES.intro);
-    if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
+  function later(fn, ms){
+    var id = setTimeout(function(){
+      timers = timers.filter(function(x){ return x !== id; });
+      if(!dead) fn();
+    }, ms);
+    timers.push(id);
+    return id;
   }
-  cueWandOrHat();
-  bumpIdle();
-}
-function showGuessChoices(){
-  choicesEl.innerHTML=""; choicesEl.classList.add("on");
-  var others=shuffle(ITEMS.filter(function(it){ return it.id!==current.id; })).slice(0,2);
-  var opts=shuffle([current].concat(others));
-  opts.forEach(function(it){
-    var b=document.createElement("button"); b.type="button"; b.className="choice-btn";
-    b.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+art(it.id)+'</svg>'+it.name;
-    b.addEventListener("click",function(){
-      if(busy||guessed) return; audio();
-      if(it.id===current.id){ guessed=true; b.style.borderColor="#57cc62"; sparkleSound(); say("You picked the <span class='b-big'>"+it.name+"</span>! Let&rsquo;s open the hat&hellip;"); setCharge(100); later(function(){ if(!dead) reveal(); },550); }
-      else { firstTry=false; b.classList.add("off"); wrongSound(); say(HOOT_LINES.wrong+" <span class='b-big'>"+current.clue+"</span>"); enqueue("hoot-try-again.mp3","hint"); bumpIdle(); }
+  function clearTimers(){
+    timers.forEach(clearTimeout);
+    timers = [];
+  }
+
+  function $(id){ return document.getElementById(id); }
+  var stage = $("stage"),
+      starSky = $("starSky"),
+      modePopBtn = $("modePopBtn"),
+      modeGuessBtn = $("modeGuessBtn"),
+      starPill = $("starPill"),
+      starPips = $("starPips").children,
+      starNum = $("starNum"),
+      soundBtn = $("soundBtn"),
+      magicianHoot = $("magicianHoot"),
+      hootPupils = $("hootPupils"),
+      peekWrap = $("peekWrap"),
+      peekArt = $("peekArt"),
+      peekQ = $("peekQ"),
+      popRevealBtn = $("popRevealBtn"),
+      popArt = $("popArt"),
+      letterBadge = $("letterBadge"),
+      poofLayer = $("poofLayer"),
+      hatWrap = $("hatWrap"),
+      magicHatBtn = $("magicHatBtn"),
+      hatHand = $("hatHand"),
+      magicWandBtn = $("magicWandBtn"),
+      wandHand = $("wandHand"),
+      guessRow = $("guessRow"),
+      shelfTrack = $("shelfTrack"),
+      fxLayer = $("fxLayer"),
+      winOverlay = $("winOverlay"),
+      winStars = $("winStars"),
+      winTrophies = $("winTrophies"),
+      againBtn = $("againBtn");
+
+  /* ================= WEBAUDIO MAGICAL SFX ================= */
+  var AC = null;
+  function audio(){
+    if(!AC){
+      try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; }
+    }
+    if(AC && AC.state === "suspended") AC.resume();
+    return AC;
+  }
+  function tone(f0, f1, dur, type, vol, delay){
+    if(!soundOn) return;
+    var ac = audio(); if(!ac) return;
+    var t = ac.currentTime + (delay || 0);
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(f0, t);
+    if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 1), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.04);
+  }
+  function noisePuff(dur, freq, vol){
+    if(!soundOn) return;
+    var ac = audio(); if(!ac) return;
+    var t = ac.currentTime;
+    var len = Math.max(1, (dur * ac.sampleRate) | 0);
+    var buf = ac.createBuffer(1, len, ac.sampleRate);
+    var d = buf.getChannelData(0);
+    for(var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.8);
+    var src = ac.createBufferSource(); src.buffer = buf;
+    var flt = ac.createBiquadFilter(); flt.type = "bandpass"; flt.frequency.value = freq || 750; flt.Q.value = 0.8;
+    var g = ac.createGain();
+    g.gain.setValueAtTime(vol || 0.24, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(flt); flt.connect(g); g.connect(ac.destination);
+    src.start(t);
+  }
+  function harpArpeggioSfx(){
+    var notes = [523.25, 659.25, 783.99, 987.77, 1174.66, 1567.98];
+    notes.forEach(function(f, i){
+      tone(f, f * 1.005, 0.22, "triangle", 0.1, i * 0.045);
+      tone(f * 2, f * 2, 0.14, "sine", 0.04, i * 0.045 + 0.01);
     });
-    choicesEl.appendChild(b);
-  });
-}
-function showNumberChoices(){
-  choicesEl.innerHTML=""; choicesEl.classList.add("on");
-  var opts=new Set([countN]); while(opts.size<3){ var n=1+Math.floor(Math.random()*10); opts.add(n); }
-  shuffle(Array.from(opts)).forEach(function(n){
-    var b=document.createElement("button"); b.type="button"; b.className="choice-btn"; b.textContent=n;
-    b.addEventListener("click",function(){
-      if(answered) return; audio();
-      if(n===countN){ answered=true; b.style.borderColor="#57cc62"; onCorrectAnswer("You counted <span class='b-big'>"+countN+"</span> magic stars! Counting star!","call-number-"+countN+".mp3"); }
-      else { b.classList.add("off"); wrongSound(); say("Count with Hoot again &mdash; touch each star: 1, 2, 3&hellip; How many are there?"); enqueue("hoot-try-again.mp3","hint"); }
+  }
+  function magicPoofSfx(){
+    noisePuff(0.22, 620, 0.28);
+    tone(260, 780, 0.16, "sine", 0.16);
+    tone(659, 1046, 0.18, "triangle", 0.12, 0.05);
+    tone(1046, 1568, 0.22, "sine", 0.1, 0.11);
+  }
+  function boingSfx(){
+    tone(310, 175, 0.2, "sine", 0.11);
+  }
+  function twinkleBellSfx(pitch){
+    var p = pitch || 1175;
+    tone(p, p, 0.16, "sine", 0.09);
+    tone(p * 1.5, p * 1.5, 0.18, "triangle", 0.06, 0.05);
+  }
+  function curtainSwishSfx(){
+    noisePuff(0.24, 420, 0.12);
+  }
+  function starChimeSfx(){
+    tone(880, 880, 0.1, "triangle", 0.1);
+    tone(1175, 1175, 0.11, "triangle", 0.1, 0.07);
+    tone(1568, 1568, 0.18, "triangle", 0.1, 0.14);
+  }
+  function finaleFanfareSfx(){
+    [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98].forEach(function(f, i){
+      tone(f, f, 0.34, "triangle", 0.14, i * 0.095);
     });
-    choicesEl.appendChild(b);
-  });
-}
-function showLetterChoices(){
-  choicesEl.innerHTML=""; choicesEl.classList.add("on");
-  var letters=new Set([current.letter]); while(letters.size<3){ letters.add("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)]); }
-  shuffle(Array.from(letters)).forEach(function(L){
-    var b=document.createElement("button"); b.type="button"; b.className="choice-btn"; b.innerHTML=L+"<small>tap me</small>";
-    b.addEventListener("click",function(){
-      if(answered) return; audio();
-      if(L===current.letter){ answered=true; b.style.borderColor="#57cc62"; onCorrectAnswer("<span class='b-big'>"+current.name+"</span> starts with <span class='b-big'>"+L+"</span>! Letter Magic mastered!","call-letter-"+L.toLowerCase()+".mp3"); }
-      else { b.classList.add("off"); wrongSound(); say("Not "+L+" &mdash; say it slowly: <span class='b-big'>"+current.name+"</span>&hellip; what sound does it start with?"); enqueue("hoot-try-again.mp3","hint"); }
+  }
+
+  /* ================= STUDIO HOOT VOICE QUEUE (ZERO speechSynthesis) ================= */
+  var VBASE = "assets/voice/";
+  var voiceEl = null, vQueue = [], vPlaying = false;
+
+  function hasClip(id){
+    try{
+      var H = window.parent && window.parent.HOOT_HAVE;
+      if(H) return !!H[id];
+    }catch(e){}
+    return true;
+  }
+  function hubQuiet(){
+    try{
+      var d = window.parent && window.parent.document;
+      if(!d || d === document) return false;
+      var b = d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
+    }catch(e){ return false; }
+  }
+  function getVoice(){
+    if(!voiceEl){
+      voiceEl = new Audio();
+      voiceEl.preload = "auto";
+      voiceEl.addEventListener("ended", function(){
+        var e = voiceEl;
+        if(e.__hwT && Date.now() - e.__hwT < 350){
+          if(!e.paused && !e.ended) return;
+          if(!e.__hwRetry){
+            e.__hwRetry = 1;
+            try{ e.currentTime = 0; }catch(x){}
+            var p = e.play();
+            if(p && p.catch) p.catch(vNext);
+            return;
+          }
+        }
+        vNext();
+      });
+      voiceEl.addEventListener("error", vNext);
+    }
+    return voiceEl;
+  }
+  function vNext(){
+    if(!vPlaying){ pumpVoice(); return; }
+    vPlaying = false;
+    magicianHoot.classList.remove("talking");
+    pumpVoice();
+  }
+  function pumpVoice(){
+    if(vPlaying || dead) return;
+    var item = vQueue.shift();
+    if(!item) return;
+    if(!soundOn || hubQuiet()){ pumpVoice(); return; }
+    var el = getVoice();
+    vPlaying = true;
+    magicianHoot.classList.add("talking");
+    el.__hwT = Date.now();
+    el.__hwRetry = 0;
+    el.src = VBASE + item.file;
+    var p = el.play();
+    if(p && p.catch) p.catch(vNext);
+  }
+  function clearVoice(stop){
+    vQueue.length = 0;
+    if(stop && voiceEl){
+      voiceEl.__hwT = 0;
+      voiceEl.__hwRetry = 1;
+      try{ voiceEl.pause(); }catch(e){}
+      vPlaying = false;
+      magicianHoot.classList.remove("talking");
+    }
+  }
+  function enqueue(file){
+    if(!file) return;
+    vQueue.push({ file:file });
+    pumpVoice();
+  }
+  function playPromptClip(file, preferAfterIntro){
+    if(!soundOn || hubQuiet()) return;
+    if(preferAfterIntro){
+      try{
+        if(window.parent && window.parent !== window && window.parent.__hwPlayAfterIntro && window.parent.__hwPlayAfterIntro(VBASE + file)){
+          return;
+        }
+      }catch(e){}
+    }
+    clearVoice(true);
+    enqueue(file);
+  }
+  function speakSurprise(item, withPraise){
+    if(!item) return;
+    clearVoice(true);
+    enqueue(item.voice);
+    enqueue("name-letter-" + item.letter.toLowerCase() + ".mp3");
+    if(withPraise){
+      var pr = PRAISE_CLIPS[praiseIdx % PRAISE_CLIPS.length];
+      praiseIdx++;
+      if(!hasClip(pr.replace(".mp3", ""))) pr = "hoot-great-job.mp3";
+      enqueue(pr);
+    }
+  }
+  function speakWrong(){
+    clearVoice(true);
+    var wr = WRONG_CLIPS[wrongIdx % WRONG_CLIPS.length];
+    wrongIdx++;
+    if(!hasClip(wr.replace(".mp3", ""))) wr = "hoot-try-again.mp3";
+    enqueue(wr);
+  }
+
+  /* ================= VISUAL FX & CONFETTI ================= */
+  function shuffle(a){
+    var arr = a.slice();
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1)), t = arr[i];
+      arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function shootWandSparkles(fromX, fromY){
+    var hr = magicHatBtn.getBoundingClientRect();
+    var tx = hr.left + hr.width * 0.5;
+    var ty = hr.top + hr.height * 0.24;
+    var glyphs = ["✦", "★", "✨", "✶"];
+    var cols = ["#ffd84d", "#fff6b8", "#ff9ee5", "#c4a3ff"];
+    for(var i = 0; i < 8; i++){
+      var s = document.createElement("span");
+      s.className = "fx-star";
+      s.textContent = glyphs[i % glyphs.length];
+      s.style.color = cols[i % cols.length];
+      s.style.fontSize = (18 + Math.random() * 14) + "px";
+      s.style.left = fromX + "px";
+      s.style.top = fromY + "px";
+      fxLayer.appendChild(s);
+      var midX = (fromX + tx) * 0.5 + (Math.random() - 0.5) * 70;
+      var midY = Math.min(fromY, ty) - 48 - Math.random() * 54;
+      var dx1 = midX - fromX, dy1 = midY - fromY;
+      var dx2 = tx - fromX + (Math.random() - 0.5) * 64;
+      var dy2 = ty - fromY + (Math.random() - 0.5) * 26;
+      if(s.animate){
+        s.animate([
+          { transform:"translate(-50%,-50%) scale(.5) rotate(0deg)", opacity:1 },
+          { transform:"translate(" + dx1.toFixed(1) + "px," + dy1.toFixed(1) + "px) scale(1.25) rotate(120deg)", opacity:1, offset:0.48 },
+          { transform:"translate(" + dx2.toFixed(1) + "px," + dy2.toFixed(1) + "px) scale(.35) rotate(260deg)", opacity:0 }
+        ], { duration:460 + i * 35, easing:"cubic-bezier(.25,.75,.35,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 760); })(s);
+    }
+  }
+
+  function burstMagicPoof(){
+    poofLayer.innerHTML = "";
+    var puffs = [
+      { l:12, b:6, s:74, dx:-58, dy:-38 },
+      { l:52, b:12, s:90, dx:-24, dy:-68 },
+      { l:98, b:16, s:96, dx:6, dy:-76 },
+      { l:142, b:12, s:86, dx:36, dy:-58 },
+      { l:176, b:6, s:72, dx:62, dy:-32 }
+    ];
+    puffs.forEach(function(p, idx){
+      var d = document.createElement("div");
+      d.className = "poof-puff";
+      d.style.left = p.l + "px";
+      d.style.bottom = p.b + "px";
+      d.style.width = p.s + "px";
+      d.style.height = p.s + "px";
+      poofLayer.appendChild(d);
+      if(d.animate){
+        d.animate([
+          { transform:"scale(.25) translate(0,18px)", opacity:0 },
+          { transform:"scale(1.12) translate(" + (p.dx * 0.45) + "px," + (p.dy * 0.45) + "px)", opacity:.95, offset:0.28 },
+          { transform:"scale(1.48) translate(" + p.dx + "px," + p.dy + "px)", opacity:0 }
+        ], { duration:660 + idx * 40, easing:"cubic-bezier(.2,.8,.3,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 900); })(d);
     });
-    choicesEl.appendChild(b);
-  });
-}
-function onCorrectAnswer(msg,clip){
-  addStar(); sparkleBurst(); hootReact();
-  say(msg);
-  if(clip) enqueue(clip,"teach");
-  enqueuePraise();
-  afterStar();
-}
-var trickTimer=null;
-function showNext(){
-  nextBtn.classList.add("on");
-  clearTimeout(trickTimer);
-  trickTimer=later(function(){
-    if(!dead&&state==="playing"&&!busy&&charge===0){ popSound(); beginTrick(); }
-  },3000);
-}
-function __hwAuto(ok,go,pause){var t0=Date.now(),q=0;function w(){if(dead||!ok())return;var now=Date.now(),b=vPlaying||vQueue.length;if(b&&now-t0<12000){q=0;setTimeout(w,200);return;}if(!q)q=now;if(now-q>=pause||now-t0>=12000){go();return;}setTimeout(w,200);}setTimeout(w,300);}
-function __hwNextTrick(){__hwAuto(function(){return state==="playing"&&!busy&&nextBtn.classList.contains("on");},function(){popSound();beginTrick();},1500);}
-function afterStar(){
-  if(stars>=GOAL){ later(winGame,1300); }
-  else showNext();
-}
-function reveal(){
-  if(busy||state!=="playing"||dead) return;
-  if(revealed&&mode!=="peek"){ say("That trick is done, magician! A brand-new surprise is coming!"); return; }
-  if(mode==="hiding"&&!guessed){ say("First, guess who&rsquo;s hiding! Tap a picture under my stage!"); enqueue("hoot-look-closely.mp3","hint"); return; }
-  if(charge<30){ audio(); tone(520,680,0.14,"triangle",0.12); hatBtn.classList.remove("wiggle"); void hatBtn.offsetWidth; hatBtn.classList.add("wiggle"); say("The wand first! Tap the sparkly wand so my hat glows, then tap the hat."); placeMagicHand(wandBtn); if(window.__hootSpeak) window.__hootSpeak("idle"); bumpIdle(); return; }
-  busy=true; audio();
-  hatBtn.classList.remove("wiggle"); void hatBtn.offsetWidth; hatBtn.classList.add("wiggle");
-  tone(240,520,0.4,"sine",0.1);
-  later(function(){
-    if(dead) return;
-    revealed=true;
-    popSound(); sparkleBurst();
-    var big=charge>=80, mid=charge>=55;
-    popArt.style.setProperty("--popdur", big? "1.05s" : mid? "0.85s" : "0.65s");
-    if(mode==="count"){
-      countN=1+Math.floor(Math.random()*10);
-      popArt.hidden=true; countRow.style.display="flex"; countRow.innerHTML="";
-      for(var i=0;i<countN;i++){ var s=document.createElement("span"); s.className="cstar"; s.textContent="\u2605"; s.style.animationDelay=(i*0.09)+"s"; countRow.appendChild(s); }
-      nameEl.textContent="Magic Stars!";
-      say("POP! Magic stars! Count them with Hoot &mdash; touch each one: 1, 2, 3&hellip; How many stars are there?");
-      showNumberChoices();
-    } else {
-      popArt.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+art(current.id)+'</svg>';
-      popArt.hidden=false; popArt.classList.remove("pop"); void popArt.offsetWidth; popArt.classList.add("pop");
-      popArt.style.transform="scale("+(big?1.22:mid?1.08:1)+")";
-      nameEl.textContent=current.name+"!";
-      addToCollection(current);
-      (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})(),M={duck:"duckling",teddy:"teddy-bear"},w="word-"+(M[current.id]||current.id);if(current.id==="apple"&&!h[w]) w="teach-apple";if(h[w]||w==="teach-apple") enqueue(w+".mp3","name");})(); /* 3e44: Hoot names the surprise */
-      if(mode==="peek"){
-        var lb=document.getElementById("letterBadge");
-        if(lb){ lb.textContent=current.letter; lb.classList.add("on"); }
-        say("POP! It&rsquo;s "+articleFor(current.name)+" <span class='b-big'>"+current.name+"</span>! "+current.name+" starts with <span class='b-big'>"+current.letter+"</span>! "+current.fact);
-        enqueuePraise();
-        addStar(); hootReact(); afterStar();
-        placeMagicHand(null);
-        pickItem(); /* the next wand + hat cycle pops a NEW surprise */
-      } else if(mode==="hiding"){
-        if(firstTry){ say("POP! You were RIGHT &mdash; it&rsquo;s the <span class='b-big'>"+current.name.toUpperCase()+"</span>! "+current.fact); addStar(); hootReact(); afterStar(); }
-        else { say("POP! It was the <span class='b-big'>"+current.name.toUpperCase()+"</span> all along! "+current.fact+" The star waits for a first-try guess &mdash; next trick!"); showNext(); }
-        enqueuePraise();
-      } else if(mode==="letter"){
-        var lb2=document.getElementById("letterBadge");
-        if(lb2){ lb2.textContent="?"; lb2.classList.add("on"); }
-        say("POP! It&rsquo;s "+articleFor(current.name)+" <span class='b-big'>"+current.name+"</span>! What letter does "+current.name+" start with?");
-        showLetterChoices();
+  }
+
+  function burstHatConfetti(big){
+    var hr = magicHatBtn.getBoundingClientRect();
+    var cx = hr.left + hr.width * 0.5;
+    var cy = hr.top + hr.height * 0.18;
+    var cols = ["#ffd84d", "#fff5b8", "#ff6ea9", "#c084fc", "#5ce071", "#38bdf8"];
+    var cnt = big ? 34 : 20;
+    for(var i = 0; i < cnt; i++){
+      var isStar = (i % 3 === 0);
+      var el = document.createElement(isStar ? "span" : "div");
+      el.className = isStar ? "fx-star" : "fx-conf";
+      if(isStar){
+        el.textContent = i % 2 ? "★" : "✦";
+        el.style.color = cols[i % cols.length];
+        el.style.fontSize = (18 + Math.random() * 14) + "px";
+      } else {
+        el.style.background = cols[i % cols.length];
+      }
+      el.style.left = cx + "px";
+      el.style.top = cy + "px";
+      fxLayer.appendChild(el);
+      var ang = (-Math.PI * 0.92) + Math.random() * (Math.PI * 0.84);
+      var dist = (big ? 110 : 75) + Math.random() * (big ? 160 : 115);
+      var dx = Math.cos(ang) * dist;
+      var dy = Math.sin(ang) * dist - 20;
+      var rot = (Math.random() - 0.5) * 420;
+      if(el.animate){
+        el.animate([
+          { transform:"translate(-50%,-50%) scale(.4) rotate(0deg)", opacity:1 },
+          { transform:"translate(" + (dx * 0.72).toFixed(1) + "px," + (dy * 0.85).toFixed(1) + "px) scale(1.15) rotate(" + (rot * 0.5).toFixed(0) + "deg)", opacity:1, offset:0.55 },
+          { transform:"translate(" + dx.toFixed(1) + "px," + (dy + 95).toFixed(1) + "px) scale(.45) rotate(" + rot.toFixed(0) + "deg)", opacity:0 }
+        ], { duration:760 + Math.random() * 340, easing:"cubic-bezier(.18,.78,.28,1)" });
+      }
+      (function(n){ setTimeout(function(){ n.remove(); }, 1180); })(el);
+    }
+  }
+
+  function showerFinaleConfetti(){
+    var w = window.innerWidth;
+    var cols = ["#ffd84d", "#fff3b0", "#ff6ea9", "#c084fc", "#5ce071", "#38bdf8"];
+    for(var i = 0; i < 42; i++){
+      var isStar = i % 2 === 0;
+      var c = document.createElement(isStar ? "span" : "div");
+      c.className = isStar ? "fx-star" : "fx-conf";
+      if(isStar){
+        c.textContent = "★";
+        c.style.color = cols[i % cols.length];
+        c.style.fontSize = (18 + Math.random() * 16) + "px";
+      } else {
+        c.style.background = cols[i % cols.length];
+      }
+      c.style.left = (w * 0.08 + Math.random() * w * 0.84) + "px";
+      c.style.top = "-16px";
+      fxLayer.appendChild(c);
+      var dx = (Math.random() - 0.5) * 220;
+      var dy = window.innerHeight + 60;
+      var rot = (Math.random() - 0.5) * 620;
+      if(c.animate){
+        c.animate([
+          { transform:"translate(0,0) rotate(0deg)", opacity:1 },
+          { transform:"translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) rotate(" + rot.toFixed(0) + "deg)", opacity:0.85 }
+        ], { duration:1500 + Math.random() * 900, delay:Math.random() * 420, easing:"cubic-bezier(.22,.65,.35,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 2900); })(c);
+    }
+  }
+
+  /* ================= BUILD TWINKLING STAR SKY ================= */
+  (function initSky(){
+    var spots = [
+      { l:12, t:14, s:20 }, { l:24, t:9, s:15 }, { l:36, t:18, s:22 },
+      { l:64, t:16, s:22 }, { l:76, t:10, s:16 }, { l:87, t:15, s:20 },
+      { l:18, t:34, s:16 }, { l:82, t:33, s:18 }, { l:46, t:10, s:14 },
+      { l:55, t:22, s:15 }, { l:28, t:46, s:14 }, { l:72, t:45, s:14 }
+    ];
+    var glyphs = ["✦", "★", "✶"];
+    spots.forEach(function(sp, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "sky-star";
+      b.setAttribute("aria-label", "Twinkling stage star");
+      b.textContent = glyphs[i % glyphs.length];
+      b.style.left = sp.l + "%";
+      b.style.top = sp.t + "%";
+      b.style.fontSize = sp.s + "px";
+      b.style.animationDelay = (-Math.random() * 2.5).toFixed(2) + "s";
+      b.addEventListener("click", function(){
+        audio();
+        twinkleBellSfx(980 + (i % 5) * 140);
+        b.classList.remove("zing"); void b.offsetWidth; b.classList.add("zing");
+      });
+      starSky.appendChild(b);
+    });
+  })();
+
+  /* ================= HUD & SHELF RENDERING ================= */
+  function renderStars(){
+    starNum.textContent = String(stars);
+    for(var i = 0; i < starPips.length; i++){
+      starPips[i].classList.toggle("on", i < stars);
+    }
+  }
+
+  function renderShelf(){
+    shelfTrack.innerHTML = "";
+    var totalSlots = Math.max(GOAL, collected.length);
+    shelfTrack.classList.toggle("scrollable", collected.length > 5);
+    for(var i = 0; i < totalSlots; i++){
+      var item = collected[i];
+      if(item){
+        (function(it){
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "shelf-token";
+          btn.setAttribute("aria-label", it.id + " " + it.letter);
+          btn.innerHTML = surpriseSVG(it.id) + '<span class="tok-let" aria-hidden="true">' + it.letter + '</span>';
+          btn.addEventListener("click", function(){
+            audio();
+            twinkleBellSfx(1046);
+            btn.classList.remove("sing"); void btn.offsetWidth; btn.classList.add("sing");
+            hootCheer();
+            speakSurprise(it, false);
+          });
+          shelfTrack.appendChild(btn);
+        })(item);
+      } else {
+        var slot = document.createElement("div");
+        slot.className = "shelf-slot";
+        slot.setAttribute("aria-hidden", "true");
+        slot.textContent = "★";
+        shelfTrack.appendChild(slot);
       }
     }
-    setCharge(0); busy=false;
-  },560);
-}
-/* wand: tap or swoosh (pointer move while pressed) charges the hat */
-var wandDown=false, lastSpark=0;
-function wandSpark(x,y){
-  var now=Date.now(); if(now-lastSpark<110) return; lastSpark=now;
-  if(state!=="playing"||busy||answered) return;
-  audio(); setCharge(charge+(charge<30?50:16)); sparkleSound();
-  var sr=scene.getBoundingClientRect();
-  var fx=x-sr.left, fy=y-sr.top;
-  for(var i=0;i<3;i++){ var s=document.createElement("span"); s.className="sparkle-fly"; s.textContent="\u2726"; s.style.left=fx+"px"; s.style.top=fy+"px"; s.style.setProperty("--dx",((Math.random()*70)-35)+"px"); s.style.setProperty("--dy",(-(16+Math.random()*36))+"px"); scene.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },600); })(s); }
-  if(charge>=30&&charge<66) say("The hat is GLOWING! Tap the hat!");
-  cueWandOrHat();
-  bumpIdle();
-}
-wandBtn.addEventListener("pointerdown",function(e){ wandDown=true; wandSpark(e.clientX,e.clientY); });
-wandBtn.addEventListener("pointermove",function(e){ if(wandDown) wandSpark(e.clientX,e.clientY); });
-window.addEventListener("pointerup",function(){ wandDown=false; });
-hatBtn.addEventListener("click",reveal);
-nextBtn.addEventListener("click",function(){ if(state==="playing"&&!busy){ popSound(); beginTrick(); } });
-hootFig.addEventListener("click",function(){ audio(); if(mode==="hiding"&&current&&!guessed){ enqueue("hoot-look-closely.mp3","hint"); say("Clue: <span class='b-big'>"+current.clue+"</span>"); } else { say(HOOT_LINES.idle); } });
-
-/* ================= FLOW ================= */
-function winGame(){
-  if(dead||state!=="playing") return;
-  state="won"; clearPending();
-  say("You filled all 5 magic stars &mdash; you are a real Magic Star!");
-  enqueue("hoot-you-learned.mp3","recap"); fanfareSound(); sparkleBurst();
-  (window.__hwFastWin||later)(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },400);
-}
-function setMode(m){
-  if(state!=="playing"||busy) return;
-  mode=m;
-  Array.prototype.forEach.call(document.querySelectorAll(".mode-chip"),function(c){ c.classList.toggle("sel",c.getAttribute("data-mode")===m); });
-  popSound(); beginTrick();
-}
-Array.prototype.forEach.call(document.querySelectorAll(".mode-chip"),function(c){ c.addEventListener("click",function(){ setMode(c.getAttribute("data-mode")); }); });
-function resetRun(){ stars=0; bank=0; starCount.textContent="0"; collection={}; lastId=null; collEl.innerHTML='<span class="coll-lab">YOUR SURPRISES</span><span id="collEmpty" style="font-weight:800;font-size:12px;color:#cfc4ff;">Your surprises will appear here&hellip;</span>'; renderStars(); }
-function startGame(){
-  state="playing"; startOverlay.hidden=true; winOverlay.hidden=true; resetRun();
-  say(HOOT_LINES.intro);
-  if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
-  beginTrick();
-}
-$("playBtn").addEventListener("click",function(){ audio(); startGame(); });
-$("againBtn").addEventListener("click",function(){ audio(); winOverlay.hidden=true; state="playing"; resetRun(); say("The show goes on! Wave the wand for a brand-new trick!"); beginTrick(); });
-$("winHomeBtn").addEventListener("click",function(){ winOverlay.hidden=true; startOverlay.hidden=false; state="start"; clearTimers(); });
-$("homeBtn").addEventListener("click",function(){ clearPending(); clearTimers(); state="start"; winOverlay.hidden=true; startOverlay.hidden=false; });
-$("soundBtn").addEventListener("click",function(){
-  soundOn=!soundOn;
-  $("soundOnIc").style.display=soundOn?"":"none"; $("soundOffIc").style.display=soundOn?"none":"";
-  this.setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-  if(!soundOn){ clearPending(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} vPlaying=false; vCurrent=null; hootTalking(false); } }
-  else audio();
-});
-
-/* teardown: no stale timers or ghost audio when the hub closes the game */
-function teardown(){ dead=true; clearPending(); clearTimers(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} } }
-window.addEventListener("pagehide",teardown);
-document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
-
-renderStars();
-
-/* Probe/debug handle: read-only snapshot of the game state. */
-window.__magicGame={
-  snapshot:function(){
-    return { state:state, mode:mode, stars:stars, bank:bank, charge:charge, busy:busy,
-      current:current?current.id:null, guessed:guessed, firstTry:firstTry, countN:countN, answered:answered,
-      collected:Object.keys(collection), winShown:!winOverlay.hidden,
-      voicePlaying:vPlaying, voiceQueue:vQueue.map(function(q){ return q.file; }) };
+    if(collected.length > 5){
+      shelfTrack.scrollLeft = shelfTrack.scrollWidth;
+    }
   }
-};
+
+  function addCollected(item){
+    if(!item || collectedMap[item.id]) return;
+    collectedMap[item.id] = true;
+    collected.push(item);
+    renderShelf();
+  }
+
+  function hootCheer(){
+    magicianHoot.classList.remove("cheer");
+    void magicianHoot.offsetWidth;
+    magicianHoot.classList.add("cheer");
+  }
+
+  /* ================= VISUAL HAND CUES & IDLE NUDGE ================= */
+  function updateCues(){
+    if(state !== "play"){
+      wandHand.hidden = true;
+      hatHand.hidden = true;
+      hatWrap.classList.remove("charged");
+      magicWandBtn.classList.remove("cue-ready", "dimmed");
+      return;
+    }
+    if(mode === "pop"){
+      hatWrap.classList.toggle("charged", charged);
+      if(charged && !revealed){
+        wandHand.hidden = true;
+        hatHand.hidden = false;
+        magicWandBtn.classList.remove("cue-ready");
+        magicWandBtn.classList.add("dimmed");
+      } else {
+        hatHand.hidden = true;
+        wandHand.hidden = false;
+        magicWandBtn.classList.add("cue-ready");
+        magicWandBtn.classList.remove("dimmed");
+      }
+    } else {
+      wandHand.hidden = true;
+      hatHand.hidden = true;
+      hatWrap.classList.toggle("charged", charged || revealed);
+    }
+  }
+
+  function armIdle(){
+    if(idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(function(){
+      if(dead || state !== "play") return;
+      if(mode === "pop"){
+        if(!charged){
+          magicWandBtn.classList.remove("wave"); void magicWandBtn.offsetWidth; magicWandBtn.classList.add("wave");
+        } else {
+          magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+        }
+      } else if(mode === "guess" && !revealed){
+        peekWrap.classList.add("higher");
+        magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+        playPromptClip("ask-whos-in-hat.mp3", false);
+      }
+      armIdle();
+    }, 9500);
+  }
+
+  /* ================= DECK & ROUND SETUP ================= */
+  function nextItem(){
+    if(!deck.length){
+      deck = shuffle(ITEMS);
+      if(current && deck.length > 1 && deck[0].id === current.id){
+        var tmp = deck.shift();
+        deck.push(tmp);
+      }
+    }
+    current = deck.shift();
+    return current;
+  }
+
+  function hideRevealed(){
+    popRevealBtn.hidden = true;
+    popRevealBtn.classList.remove("pop-in", "hop");
+    popArt.innerHTML = "";
+  }
+
+  function preparePopTrick(){
+    clearTimers();
+    charged = false;
+    revealed = false;
+    guessLocked = false;
+    nextItem();
+    hideRevealed();
+    peekWrap.hidden = true;
+    peekQ.hidden = true;
+    guessRow.innerHTML = "";
+    updateCues();
+    armIdle();
+  }
+
+  function prepareGuessTrick(preferAfterIntro){
+    clearTimers();
+    charged = false;
+    revealed = false;
+    guessLocked = false;
+    nextItem();
+    hideRevealed();
+
+    /* Show sneaky peeking silhouette inside the hat rim */
+    peekArt.innerHTML = surpriseSVG(current.id);
+    peekWrap.classList.remove("higher");
+    peekWrap.hidden = false;
+    peekQ.hidden = false;
+
+    /* Build 3 big picture-only choice bubbles */
+    guessRow.innerHTML = "";
+    var distractors = shuffle(ITEMS.filter(function(it){ return it.id !== current.id; })).slice(0, 2);
+    var opts = shuffle([current].concat(distractors));
+    opts.forEach(function(it){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "guess-bubble";
+      b.dataset.id = it.id;
+      b.setAttribute("aria-label", it.id);
+      b.innerHTML = surpriseSVG(it.id);
+      b.addEventListener("click", function(){ onGuessTap(it, b); });
+      guessRow.appendChild(b);
+    });
+
+    updateCues();
+    playPromptClip("ask-whos-in-hat.mp3", !!preferAfterIntro);
+    armIdle();
+  }
+
+  /* ================= STEP 1: WAND TAP OR WAVE ================= */
+  function triggerWand(clientX, clientY){
+    if(dead || state !== "play" || mode !== "pop" || winPending) return;
+    audio();
+    armIdle();
+
+    /* If a previous surprise was still showing, tuck it away and pick a brand-new surprise! */
+    if(revealed){
+      clearTimers();
+      revealed = false;
+      hideRevealed();
+      nextItem();
+    }
+
+    charged = true;
+    harpArpeggioSfx();
+
+    var wr = magicWandBtn.getBoundingClientRect();
+    var sx = (typeof clientX === "number" && clientX > 0) ? clientX : (wr.left + wr.width * 0.5);
+    var sy = (typeof clientY === "number" && clientY > 0) ? clientY : (wr.top + wr.height * 0.5);
+    shootWandSparkles(sx, sy);
+
+    magicWandBtn.classList.remove("wave"); void magicWandBtn.offsetWidth; magicWandBtn.classList.add("wave");
+    magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+    magicianHoot.classList.add("cast");
+    setTimeout(function(){ magicianHoot.classList.remove("cast"); }, 460);
+
+    updateCues();
+  }
+
+  magicWandBtn.addEventListener("pointerdown", function(e){
+    wandDown = true;
+    lastWandTapAt = Date.now();
+    lastSparkAt = lastWandTapAt;
+    triggerWand(e.clientX, e.clientY);
+  });
+  magicWandBtn.addEventListener("pointermove", function(e){
+    if(!wandDown) return;
+    var now = Date.now();
+    if(now - lastSparkAt < 180) return;
+    lastSparkAt = now;
+    if(state === "play" && mode === "pop"){
+      audio();
+      twinkleBellSfx(1318);
+      shootWandSparkles(e.clientX, e.clientY);
+      if(!charged) triggerWand(e.clientX, e.clientY);
+    }
+  });
+  window.addEventListener("pointerup", function(){ wandDown = false; });
+  window.addEventListener("pointercancel", function(){ wandDown = false; });
+  magicWandBtn.addEventListener("click", function(e){
+    if(Date.now() - lastWandTapAt < 300) return;
+    lastWandTapAt = Date.now();
+    triggerWand(e.clientX, e.clientY);
+  });
+
+  /* ================= STEP 2: POP THE VELVET TOP HAT ================= */
+  function popHatSurprise(){
+    if(dead || state !== "play" || !current || winPending) return;
+
+    revealed = true;
+    charged = false;
+
+    /* Hide sneaky peek if coming from Guess mode */
+    peekWrap.hidden = true;
+    peekQ.hidden = true;
+
+    /* POOF! Purple cloud + golden star confetti + bouncy hat kick */
+    magicPoofSfx();
+    burstMagicPoof();
+    burstHatConfetti(stars + 1 >= GOAL);
+
+    magicHatBtn.classList.remove("poof-kick", "wiggle");
+    void magicHatBtn.offsetWidth;
+    magicHatBtn.classList.add("poof-kick");
+
+    /* Huge smiling surprise springs straight out above the rim with giant starting letter badge */
+    popArt.innerHTML = surpriseSVG(current.id);
+    letterBadge.textContent = current.letter;
+    popRevealBtn.setAttribute("aria-label", current.id + " starts with " + current.letter);
+    popRevealBtn.hidden = false;
+    popRevealBtn.classList.remove("pop-in", "hop");
+    void popRevealBtn.offsetWidth;
+    popRevealBtn.classList.add("pop-in");
+
+    /* Celebrate with Hoot + Star + Golden Shelf + Studio Voice Chain */
+    hootCheer();
+    stars++;
+    renderStars();
+    starPill.classList.remove("bump"); void starPill.offsetWidth; starPill.classList.add("bump");
+    starChimeSfx();
+    addCollected(current);
+    speakSurprise(current, true);
+
+    updateCues();
+
+    /* Check for 5-Star Grand Golden Curtain Finale */
+    if(stars >= GOAL){
+      winPending = true;
+      var scheduleWin = window.__hwFastWin || later;
+      scheduleWin(function(){
+        if(!dead && state === "play") showWin();
+      }, 1350);
+    } else if(mode === "guess"){
+      /* Auto-advance cleanly to the next sneaky peek after celebrating */
+      later(function(){
+        if(state === "play" && mode === "guess") prepareGuessTrick(false);
+      }, 2500);
+    } else {
+      armIdle();
+    }
+  }
+
+  magicHatBtn.addEventListener("click", function(){
+    if(dead || state !== "play") return;
+    audio();
+    armIdle();
+
+    if(mode === "guess"){
+      if(revealed) return;
+      /* Tap hat in Guess mode -> peeks higher & replays "Who's in the hat?" */
+      peekWrap.classList.add("higher");
+      magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+      twinkleBellSfx(880);
+      playPromptClip("ask-whos-in-hat.mp3", false);
+      return;
+    }
+
+    /* Magic Pop Mode */
+    if(!charged){
+      /* Playful bounce & extra spotlight on the Star Magic Wand */
+      magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+      magicWandBtn.classList.remove("wave"); void magicWandBtn.offsetWidth; magicWandBtn.classList.add("wave");
+      twinkleBellSfx(740);
+      return;
+    }
+
+    popHatSurprise();
+  });
+
+  /* Tap the popped surprise itself to hear its word + starting letter again! */
+  popRevealBtn.addEventListener("click", function(){
+    if(dead || !current || !revealed) return;
+    audio();
+    twinkleBellSfx(1175);
+    popRevealBtn.classList.remove("hop", "pop-in");
+    void popRevealBtn.offsetWidth;
+    popRevealBtn.classList.add("hop");
+    hootCheer();
+    speakSurprise(current, false);
+  });
+
+  /* ================= GUESS WHO'S INSIDE CHOICE HANDLER ================= */
+  function onGuessTap(item, btn){
+    if(dead || state !== "play" || mode !== "guess" || guessLocked || revealed) return;
+    audio();
+    armIdle();
+
+    if(item.id === current.id){
+      guessLocked = true;
+      btn.classList.add("correct");
+      var br = btn.getBoundingClientRect();
+      shootWandSparkles(br.left + br.width * 0.5, br.top + br.height * 0.5);
+      harpArpeggioSfx();
+      charged = true;
+      updateCues();
+      /* Auto-pop the hat with confetti right away! */
+      popHatSurprise();
+    } else {
+      btn.classList.add("wrong");
+      boingSfx();
+      peekWrap.classList.add("higher");
+      magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+      speakWrong();
+    }
+  }
+
+  /* ================= GRAND GOLDEN CURTAIN FINALE ================= */
+  function showWin(){
+    if(state === "won") return;
+    state = "won";
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    updateCues();
+
+    winTrophies.innerHTML = "";
+    collected.slice(-5).forEach(function(it){
+      var t = document.createElement("div");
+      t.className = "win-tok";
+      t.innerHTML = surpriseSVG(it.id);
+      winTrophies.appendChild(t);
+    });
+
+    var st = winStars.children;
+    for(var i = 0; i < st.length; i++){
+      st[i].classList.remove("lit");
+      (function(el, ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(st[i], 140 + i * 130);
+    }
+
+    winOverlay.hidden = false;
+    finaleFanfareSfx();
+    showerFinaleConfetti();
+
+    clearVoice(true);
+    var wc = WIN_CLIPS[winIdx % WIN_CLIPS.length];
+    winIdx++;
+    if(!hasClip(wc.replace(".mp3", ""))) wc = "hoot-amazing.mp3";
+    enqueue(wc);
+  }
+
+  function startShow(isBoot){
+    clearTimers();
+    clearVoice(true);
+    state = "play";
+    winPending = false;
+    stars = 0;
+    collected = [];
+    collectedMap = {};
+    winOverlay.hidden = true;
+    renderStars();
+    renderShelf();
+
+    if(mode === "guess"){
+      prepareGuessTrick(!!isBoot);
+    } else {
+      preparePopTrick();
+    }
+  }
+
+  /* ================= CONTROLS & PLAYFUL THEATER PROPS ================= */
+  function setMode(nextMode){
+    if(mode === nextMode && state === "play") return;
+    audio();
+    twinkleBellSfx(988);
+    mode = nextMode;
+    stage.classList.toggle("mode-pop", mode === "pop");
+    stage.classList.toggle("mode-guess", mode === "guess");
+    modePopBtn.classList.toggle("active", mode === "pop");
+    modePopBtn.setAttribute("aria-pressed", mode === "pop" ? "true" : "false");
+    modeGuessBtn.classList.toggle("active", mode === "guess");
+    modeGuessBtn.setAttribute("aria-pressed", mode === "guess" ? "true" : "false");
+
+    if(state === "won" || winPending){
+      startShow(false);
+      return;
+    }
+    clearVoice(true);
+    if(mode === "guess") prepareGuessTrick(false);
+    else preparePopTrick();
+  }
+
+  modePopBtn.addEventListener("click", function(){ setMode("pop"); });
+  modeGuessBtn.addEventListener("click", function(){ setMode("guess"); });
+
+  soundBtn.addEventListener("click", function(){
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.setAttribute("aria-label", soundOn ? "Turn Sound Off" : "Turn Sound On");
+    if(!soundOn){
+      clearVoice(true);
+    } else {
+      audio();
+      twinkleBellSfx(1046);
+    }
+  });
+
+  againBtn.addEventListener("click", function(){
+    audio();
+    starChimeSfx();
+    startShow(false);
+  });
+
+  /* Direct tap of Magician Hoot -> happy jump + transient __bellyArmed giggle! */
+  magicianHoot.addEventListener("click", function(){
+    audio();
+    hootCheer();
+    twinkleBellSfx(1318);
+    window.__bellyArmed = true;
+    setTimeout(function(){ window.__bellyArmed = false; }, 500);
+    clearVoice(true);
+    enqueue("hoot-giggle.mp3");
+  });
+
+  /* Smooth eye-tracking on Magician Hoot */
+  function trackEyes(x, y){
+    var r = magicianHoot.getBoundingClientRect();
+    if(!r.width) return;
+    var dx = Math.max(-4.5, Math.min(4.5, (x - (r.left + r.width * 0.5)) / 42));
+    var dy = Math.max(-3.5, Math.min(4.5, (y - (r.top + r.height * 0.4)) / 42));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+  }
+  stage.addEventListener("pointermove", function(e){ trackEyes(e.clientX, e.clientY); });
+  stage.addEventListener("pointerdown", function(e){ trackEyes(e.clientX, e.clientY); });
+
+  /* Playful Crimson Velvet Curtains & Glowing Footlights Easter Eggs */
+  ["curtainLeft", "curtainRight"].forEach(function(id){
+    var el = $(id);
+    el.addEventListener("click", function(){
+      audio();
+      curtainSwishSfx();
+      el.classList.add("swish");
+      setTimeout(function(){ el.classList.remove("swish"); }, 420);
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".footlight"), function(fl, idx){
+    var notes = [523, 587, 659, 784, 880, 1046, 1175];
+    fl.addEventListener("click", function(){
+      audio();
+      twinkleBellSfx(notes[idx % notes.length]);
+      fl.classList.add("flash");
+      setTimeout(function(){ fl.classList.remove("flash"); }, 320);
+    });
+  });
+
+  /* Clean Teardown */
+  function teardown(){
+    dead = true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden) clearVoice(false);
+  });
+
+  /* ================= BOOT ================= */
+  startShow(true);
+
+  /* ================= VERIFICATION SNAPSHOT ================= */
+  window.__magicGame = {
+    snapshot: function(){
+      return {
+        state: state,
+        mode: mode,
+        charged: charged,
+        revealed: revealed,
+        currentId: current ? current.id : null,
+        stars: stars,
+        collectedCount: collected.length,
+        winShown: !winOverlay.hidden
+      };
+    }
+  };
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e141">
+<script src="js/hoot-game-tail.js?v=llprev3e141"></script>
 </body>
 </html>

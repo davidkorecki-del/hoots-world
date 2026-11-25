@@ -12,7 +12,10 @@ var HW_THUMBS = {
   fishing: "assets/thumbs_v2/thumb_fishing.jpg?v=llprev3e136",
   paint: "assets/thumbs_v2/thumb_paint.jpg?v=llprev3e136",
   memory: "assets/thumbs_v2/thumb_memory.jpg?v=llprev3e139",
-  balloon: "assets/thumbs_v2/thumb_balloon.jpg?v=llprev3e139"
+  balloon: "assets/thumbs_v2/thumb_balloon.jpg?v=llprev3e139",
+  bubblepop: "assets/thumbs_v2/thumb_bubblepop.jpg?v=llprev3e141",
+  dress: "assets/thumbs_v2/thumb_dress.jpg?v=llprev3e141",
+  magic: "assets/thumbs_v2/thumb_magic.jpg?v=llprev3e141"
 }; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp (-212 KB cold load) */
 /* Hoot's World layout preview 2 — v63 shell routing + data-to-card mapping.
    Does not rewrite Muse game, tutor, or lesson internals. */
