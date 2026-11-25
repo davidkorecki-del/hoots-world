@@ -1882,6 +1882,10 @@
   });
 
   /* ================= BOOT ================= */
+  if(/(^|[?&])kid=kida(&|$)/.test(location.search)){
+    mode = "count"; maxN = 10;
+    setModeUI(mode10Btn);
+  }
   buildAmbientBubbles();
   startRound(true);
   animId = requestAnimationFrame(tick);

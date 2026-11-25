@@ -770,6 +770,10 @@ window.__HOOT_SELF_COACH__=true;
 
   window.addEventListener("pagehide",function(){ dead=true; if(voiceEl) try{voiceEl.pause();}catch(e){} });
 
+  if(/(^|[?&])kid=kida(&|$)/.test(location.search)){
+    modeSongBtn.click();
+  }
+
   window.__pianoGame={
     snapshot:function(){
       return { mode:mode, inst:inst, songIdx:songIdx, noteIdx:noteIdx, stars:stars, keyCount:keyEls.length };

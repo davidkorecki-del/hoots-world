@@ -1,8 +1,8 @@
 /* 3e53: game thumbnails inlined so the preview stays under the hosting file limit */
 var HW_THUMBS = {
-  splash: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset=".55" stop-color="#38bdf8"/><stop offset="1" stop-color="#fef08a"/></linearGradient></defs><rect width="320" height="320" rx="44" fill="url(#g)"/><circle cx="255" cy="70" r="36" fill="#ffd43b"/><path d="M30 245 Q160 190 290 245 L320 320 L0 320 Z" fill="#4ade80"/><rect x="55" y="195" width="52" height="44" rx="6" fill="#fff3bf" stroke="#17263b" stroke-width="5"/><polygon points="48,195 81,166 114,195" fill="#f03e3e" stroke="#17263b" stroke-width="5"/><circle cx="220" cy="222" r="20" fill="#fff" stroke="#17263b" stroke-width="4"/><circle cx="220" cy="194" r="14" fill="#fff" stroke="#17263b" stroke-width="4"/><path d="M55 78 a32 32 0 0 1 58 -12 a36 36 0 0 1 64 8 a28 28 0 0 1 12 52 H55 a26 26 0 0 1 0 -48 Z" fill="#312e81" stroke="#17263b" stroke-width="5"/><polygon points="122,122 98,166 120,166 106,204 148,154 124,154 140,122" fill="#ffd43b" stroke="#17263b" stroke-width="4"/></svg>'),
-  shapes: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"><defs><linearGradient id="n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070b1e"/><stop offset=".6" stop-color="#1e1b4b"/><stop offset="1" stop-color="#3b0764"/></linearGradient></defs><rect width="320" height="320" rx="44" fill="url(#n)"/><g stroke="#ffd43b" stroke-width="5" stroke-linecap="round"><line x1="160" y1="44" x2="160" y2="18"/><line x1="160" y1="186" x2="160" y2="212"/><line x1="88" y1="115" x2="62" y2="115"/><line x1="232" y1="115" x2="258" y2="115"/><line x1="108" y1="64" x2="88" y2="44"/><line x1="212" y1="64" x2="232" y2="44"/><line x1="108" y1="166" x2="88" y2="186"/><line x1="212" y1="166" x2="232" y2="186"/></g><circle cx="160" cy="115" r="52" fill="none" stroke="#ff4d6d" stroke-width="6" stroke-dasharray="10 12"/><circle cx="160" cy="115" r="78" fill="none" stroke="#38bdf8" stroke-width="5" stroke-dasharray="8 14"/><circle cx="72" cy="70" r="6" fill="#ffd43b"/><circle cx="248" cy="76" r="7" fill="#ff7eb6"/><circle cx="80" cy="160" r="6" fill="#4ade80"/><circle cx="244" cy="156" r="6" fill="#38bdf8"/><text x="160" y="132" font-size="56" text-anchor="middle">🦁</text><rect x="0" y="256" width="320" height="64" fill="#0f172a"/></svg>'),
-  real: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"><defs><linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0284c7"/><stop offset="1" stop-color="#bae6fd"/></linearGradient></defs><rect width="320" height="320" rx="44" fill="url(#r)"/><rect x="0" y="220" width="320" height="100" fill="#334155"/><g stroke="#141e30" stroke-width="6" stroke-linejoin="round"><rect x="34" y="128" width="150" height="86" rx="14" fill="#ef4444"/><rect x="174" y="146" width="76" height="68" rx="14" fill="#dc2626"/><rect x="188" y="156" width="44" height="30" rx="6" fill="#bae6fd"/><rect x="46" y="106" width="118" height="16" rx="7" fill="#fde047"/><circle cx="192" cy="132" r="11" fill="#38bdf8"/><circle cx="86" cy="216" r="24" fill="#1e293b"/><circle cx="86" cy="216" r="10" fill="#fde047"/><circle cx="206" cy="216" r="24" fill="#1e293b"/><circle cx="206" cy="216" r="10" fill="#fde047"/><path d="M235 120 Q268 86 290 66" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/></g></svg>'),
+  splash: "assets/thumbs_v2/thumb_splash.jpg?v=llprev3e144",
+  shapes: "assets/thumbs_v2/thumb_shapes.jpg?v=llprev3e144",
+  real: "assets/thumbs_v2/thumb_real.jpg?v=llprev3e144",
   rocket: "assets/rocket3d/thumb_rocket.jpg?v=llprev3e105",
   pizza: "assets/pizza_cartoon/thumb_pizza.jpg?v=llprev3e118",
   twinkle: "assets/twinkle3d/thumb_twinkle.jpg?v=llprev3e116",
@@ -1079,16 +1079,117 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     if (clip) setTimeout(function () { if (state.tab === "today") sayClip(clip); }, 700);
     return clip;
   }
+  var SB_STICKERS = ["🦉","🦖","🚀","🌈","🚒","🦋","👑","⭐","🐶","🐱","🐸","🦆","🦄","🎈","🍕","🎸","🐢","🌸"];
+  var SB_SCENES = [
+    { id:"meadow", emo:"🌿", label:"Meadow" },
+    { id:"space",  emo:"🚀", label:"Space" },
+    { id:"ocean",  emo:"🐠", label:"Ocean" }
+  ];
+  function sbKey() { return "hw.stickers.scene.v1." + ((state.profile && state.profile.id) || "kida"); }
+  function loadSbState() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(sbKey()) || "null");
+      if (raw && typeof raw === "object") return { scene: raw.scene || "meadow", items: Array.isArray(raw.items) ? raw.items : [] };
+    } catch (e) {}
+    return { scene: "meadow", items: [{ emo: "🦉", x: 50, y: 54 }] };
+  }
+  function saveSbState(st) { try { localStorage.setItem(sbKey(), JSON.stringify(st)); } catch (e) {} }
+
   function stickerBook() {
     var all = [];
     (LESSONS.little || []).forEach(function (l) { all.push({ title: l.title, done: lessonDone(l.title) }); });
     ["letters", "basics", "world"].forEach(function (pid) { hlLessons(pid).forEach(function (l) { all.push({ title: l.title, done: lessonDone(l.title) }); }); });
     var got = all.filter(function (x) { return x.done; }).length;
-    return '<div class="kh-book"><p class="kh-booklead">' + got + " of " + all.length + " stickers — finish a lesson to win its sticker!</p>" +
+    var unlocked = Math.min(SB_STICKERS.length, 8 + got);
+    var sb = loadSbState();
+    var sceneBtns = SB_SCENES.map(function (s) {
+      return '<button type="button" class="sb-scbtn' + (sb.scene === s.id ? " on" : "") + '" data-sb-scene="' + s.id + '">' + s.emo + " " + s.label + "</button>";
+    }).join("");
+    var trayBtns = SB_STICKERS.map(function (emo, idx) {
+      var ok = idx < unlocked;
+      return '<button type="button" class="sb-pick' + (ok ? "" : " locked") + '" data-sb-add="' + emo + '"' + (ok ? "" : ' disabled aria-label="Locked sticker"') + '>' + (ok ? emo : "🔒") + "</button>";
+    }).join("");
+    return '<div class="kh-book">' +
+      '<div class="sb-studio" data-sb-unlocked="' + unlocked + '">' +
+        '<div class="sb-bar"><div class="sb-scenes">' + sceneBtns + '</div>' +
+          '<div class="sb-acts"><button type="button" class="sb-act" data-sb-undo="1" aria-label="Undo sticker">↩️</button><button type="button" class="sb-act" data-sb-clear="1" aria-label="Clear scene">🧹</button></div>' +
+        '</div>' +
+        '<div class="sb-stage sc-' + esc(sb.scene) + '" aria-label="Interactive Sticker Scene"></div>' +
+        '<div class="sb-tray" aria-label="Tap a sticker to place it">' + trayBtns + '</div>' +
+      '</div>' +
+      '<p class="kh-booklead">' + got + " of " + all.length + " lesson badges — finish lessons to unlock more stickers!</p>" +
       '<p class="wc-progmap"><button type="button" class="ll-btn sm" data-wc-map="1">🗺️ World map — see your whole journey</button> <button type="button" class="ll-btn sm" data-we2-garden="1">🌸 Oops Garden</button></p>' +
       '<div class="kh-slots">' + all.map(function (x) {
         return '<button type="button" class="kh-slot' + (x.done ? " got" : "") + '"><span aria-hidden="true">' + (x.done ? stickerFor(x.title) : "?") + "</span><small>" + esc(x.title) + "</small></button>";
       }).join("") + "</div></div>";
+  }
+
+  function initStickerStudio(root) {
+    var studio = root.querySelector(".sb-studio");
+    if (!studio) return;
+    var stage = studio.querySelector(".sb-stage");
+    var sb = loadSbState();
+
+    function draw() {
+      stage.className = "sb-stage sc-" + sb.scene;
+      stage.innerHTML = "";
+      sb.items.forEach(function (it, idx) {
+        var el = document.createElement("span");
+        el.className = "sb-placed";
+        el.textContent = it.emo;
+        el.style.left = it.x + "%";
+        el.style.top = it.y + "%";
+        el.setAttribute("role", "button");
+        el.setAttribute("aria-label", "Sticker " + it.emo);
+        el.addEventListener("pointerdown", function (e) {
+          e.preventDefault();
+          el.setPointerCapture(e.pointerId);
+          el.classList.add("drag");
+          var sr = stage.getBoundingClientRect();
+          function onMove(ev) {
+            it.x = Math.max(7, Math.min(93, Math.round(((ev.clientX - sr.left) / sr.width) * 100)));
+            it.y = Math.max(10, Math.min(90, Math.round(((ev.clientY - sr.top) / sr.height) * 100)));
+            el.style.left = it.x + "%";
+            el.style.top = it.y + "%";
+          }
+          function onUp() {
+            el.classList.remove("drag");
+            el.removeEventListener("pointermove", onMove);
+            el.removeEventListener("pointerup", onUp);
+            el.removeEventListener("pointercancel", onUp);
+            saveSbState(sb);
+            hwHubPop(580);
+          }
+          el.addEventListener("pointermove", onMove);
+          el.addEventListener("pointerup", onUp);
+          el.addEventListener("pointercancel", onUp);
+        });
+        stage.appendChild(el);
+      });
+    }
+
+    studio.addEventListener("click", function (e) {
+      var sc = e.target.closest("[data-sb-scene]");
+      if (sc) {
+        sb.scene = sc.getAttribute("data-sb-scene");
+        studio.querySelectorAll("[data-sb-scene]").forEach(function (b) { b.classList.toggle("on", b === sc); });
+        saveSbState(sb); hwHubPop(480); draw(); return;
+      }
+      var add = e.target.closest("[data-sb-add]");
+      if (add && !add.disabled) {
+        var emo = add.getAttribute("data-sb-add");
+        if (sb.items.length >= 28) sb.items.shift();
+        sb.items.push({ emo: emo, x: 18 + Math.round(Math.random() * 64), y: 20 + Math.round(Math.random() * 60) });
+        saveSbState(sb); hwHubPop(660); draw(); return;
+      }
+      if (e.target.closest("[data-sb-undo]")) {
+        sb.items.pop(); saveSbState(sb); hwHubPop(360); draw(); return;
+      }
+      if (e.target.closest("[data-sb-clear]")) {
+        sb.items = []; saveSbState(sb); hwHubPop(300); draw(); return;
+      }
+    });
+    draw();
   }
   var BYE_KEY = "hootworld.bye.v1";
   function maybeGoodbye(pid) {
@@ -1314,11 +1415,55 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       classBoxHtml();
   }
 
+  var QUIET_KEY = "hw.quiet.v1";
+  var hwQuiet = false;
+  try { hwQuiet = localStorage.getItem(QUIET_KEY) === "1"; } catch (e) {}
+  if (hwQuiet) document.body.classList.add("hw-quiet-mode");
+  var __hubCtx = null;
+  function hwHubPop(freq) {
+    if (hwQuiet) return;
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!__hubCtx) __hubCtx = new AC();
+      if (__hubCtx.state === "suspended") __hubCtx.resume();
+      var o = __hubCtx.createOscillator(), g = __hubCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(freq || 520, __hubCtx.currentTime);
+      o.frequency.exponentialRampToValueAtTime((freq || 520) * 1.25, __hubCtx.currentTime + 0.08);
+      g.gain.setValueAtTime(0.001, __hubCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.08, __hubCtx.currentTime + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.001, __hubCtx.currentTime + 0.09);
+      o.connect(g); g.connect(__hubCtx.destination);
+      o.start(); o.stop(__hubCtx.currentTime + 0.1);
+    } catch (e) {}
+  }
+  document.addEventListener("click", function (e) {
+    var qt = e.target && e.target.closest && e.target.closest("[data-quiet-toggle]");
+    if (qt) {
+      hwQuiet = !hwQuiet;
+      try { localStorage.setItem(QUIET_KEY, hwQuiet ? "1" : "0"); } catch (err) {}
+      document.body.classList.toggle("hw-quiet-mode", hwQuiet);
+      qt.classList.toggle("on", hwQuiet);
+      qt.setAttribute("aria-pressed", String(hwQuiet));
+      qt.textContent = hwQuiet ? "🌙 Quiet" : "🌙";
+      if (!hwQuiet) hwHubPop(620);
+      return;
+    }
+    if (!isTeen() && e.target && e.target.closest && e.target.closest("#ll-tabs button, .kh-big, .kh-stone, .kh-gobtn")) {
+      hwHubPop(540);
+    }
+  });
+
   function kidbarHtml() {
-    return PROFILES.map(function (p) {
+    var kids = PROFILES.map(function (p) {
       var on = state.profile && state.profile.id === p.id ? " on" : "";
       return '<button type="button" data-kid="' + p.id + '" class="' + on + '" style="--k:' + p.color + '"><span class="av">' + p.emoji + "</span> " + esc(p.label) + "</button>";
     }).join("");
+    if (!isTeen()) {
+      kids += '<button type="button" class="ll-quiet-btn' + (hwQuiet ? " on" : "") + '" data-quiet-toggle="1" aria-label="Bedtime Quiet Mode" aria-pressed="' + String(hwQuiet) + '">' + (hwQuiet ? "🌙 Quiet" : "🌙") + "</button>";
+    }
+    return kids;
   }
 
   function brownHootFace() {
@@ -3107,6 +3252,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var body = $("#ll-obody");
     if (ttl) ttl.textContent = title || "";
     if (body) body.innerHTML = (inner == null ? "" : String(inner));
+    if (body && body.querySelector(".sb-studio")) initStickerStudio(body);
     if (ov) { ov.hidden = false; ov.setAttribute("aria-hidden", "false"); }
     document.body.classList.add("ll-overlay-open");
     /* Library 2: a book on screen switches the overlay to full-screen mode. */

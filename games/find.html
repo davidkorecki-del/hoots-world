@@ -800,6 +800,11 @@
     if(voiceEl) try{ voiceEl.pause(); }catch(e){}
   });
 
+  if(/(^|[?&])kid=kidb(&|$)/.test(location.search)){
+    difficulty = "easy";
+    modeEasyBtn.classList.add("active"); modeEasyBtn.setAttribute("aria-pressed","true");
+    modeTreasureBtn.classList.remove("active"); modeTreasureBtn.setAttribute("aria-pressed","false");
+  }
   startRound(true);
 
   window.__findGame = {

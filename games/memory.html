@@ -954,6 +954,12 @@ window.__HOOT_SELF_COACH__=true;
   document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= INIT ================= */
+  if(/(^|[?&])kid=kidb(&|$)/.test(location.search)){
+    pairGoal=2;
+    document.querySelectorAll(".size-btn").forEach(function(x){
+      x.classList.toggle("active", Number(x.getAttribute("data-pairs"))===2);
+    });
+  }
   startRound();
   enqueue("hoot-game-hello.mp3");
 
