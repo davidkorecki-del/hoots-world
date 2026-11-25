@@ -2,411 +2,856 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="dance";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
-
+<script>window.__HOOT_GAME_KEY__="dance";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e143"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
-
 <title>Dance Party</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
 <style>
-  :root{ --ink:#22304a; --ink-soft:#5a6b8a; --paper:#fffdf6; --sun:#ffc93c; --coral:#ff6b5e; --coral-dark:#e04a3f; --teal:#17bebb; --leaf:#57cc62; }
+  :root{
+    --ink:#1b1640;
+    --cream:#fffdf7;
+    --gold:#ffd43b;
+  }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#1d2b4f; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column; background:linear-gradient(180deg,#27356b 0%,#3a2d6e 52%,#59336e 100%); }
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(6px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:46px; height:46px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); display:grid; place-items:center; box-shadow:0 4px 0 rgba(10,16,40,.35); cursor:pointer; }
-  .round-btn:active{ transform:scale(.9); } .round-btn svg{ width:23px; height:23px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:5px 15px 5px 10px; box-shadow:0 4px 0 rgba(10,16,40,.3); font-family:"Fredoka",sans-serif; font-weight:700; font-size:21px; color:var(--ink); }
-  #starBank .star-ic{ width:24px; height:24px; } #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
-  /* dance hall */
-  #scene{ position:relative; margin:6px 10px 0; border-radius:20px; overflow:hidden; flex:1 1 auto; min-height:0; background:linear-gradient(180deg,#2c3a75 0%,#453078 62%,#33255c 100%); border:3px solid rgba(255,255,255,.35); box-shadow:inset 0 0 60px rgba(0,0,0,.35); }
-  #disco{ position:absolute; top:2px; left:50%; transform:translateX(-50%); width:74px; height:88px; z-index:2; }
-  #disco .ball{ animation:discoSpin 9s linear infinite; transform-box:fill-box; transform-origin:center; }
-  @keyframes discoSpin{ to{ transform:rotate(360deg); } }
-  .note{ position:absolute; font-size:19px; color:#ffd93b; opacity:.85; animation:noteFloat 5s ease-in-out infinite alternate; z-index:1; pointer-events:none; }
-  @keyframes noteFloat{ from{ transform:translateY(6px) rotate(-8deg);} to{ transform:translateY(-12px) rotate(10deg);} }
-  /* Hoot DJ + bubble */
-  #hootZone{ position:absolute; left:0; right:0; top:64px; z-index:3; display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 12px; }
-  #bubble{ background:var(--paper); border:3px solid #fff; border-radius:16px; box-shadow:0 4px 0 rgba(10,16,40,.3); padding:7px 13px; font-weight:800; font-size:clamp(14px,3.9vw,17.5px); line-height:1.25; text-align:center; max-width:520px; color:var(--ink); }
-  #bubble .b-big{ font-family:"Fredoka",sans-serif; color:var(--coral-dark); }
-  #hootRow{ display:flex; align-items:flex-end; gap:10px; }
-  #hootFig{ width:118px; height:124px; border:none; background:none; padding:0; cursor:pointer; }
-  #hootFig svg{ width:100%; height:100%; display:block; }
-  #hootFig.talking svg{ animation:talkBob .38s ease-in-out infinite alternate; }
-  #hootFig.celebrate svg{ animation:celebrate .8s cubic-bezier(.34,1.6,.5,1); }
-  #hootFig.do-jump svg{ animation:mJump .62s cubic-bezier(.34,1.6,.5,1); }
-  #hootFig.do-spin svg{ animation:mSpin .62s ease-in-out; }
-  #hootFig.do-wiggle svg{ animation:mWiggle .62s ease-in-out; }
-  #hootFig.do-clap svg{ animation:mClap .62s ease-in-out; }
-  #hootFig.do-stomp svg{ animation:mStomp .62s ease-in-out; }
-  #hootFig.do-wave svg{ animation:mWave .62s ease-in-out; }
-  @keyframes talkBob{ from{ transform:translateY(0) rotate(-1.5deg);} to{ transform:translateY(-4px) rotate(1.5deg);} }
-  @keyframes celebrate{ 0%{transform:translateY(0)} 35%{transform:translateY(-14px) rotate(-5deg)} 70%{transform:translateY(-4px) rotate(4deg)} 100%{transform:translateY(0)} }
-  @keyframes mJump{ 0%{transform:translateY(0)} 40%{transform:translateY(-30px)} 100%{transform:translateY(0)} }
-  @keyframes mSpin{ from{ transform:rotate(0);} to{ transform:rotate(360deg);} }
-  @keyframes mWiggle{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-9deg) translateX(-5px);} 75%{ transform:rotate(9deg) translateX(5px);} }
-  @keyframes mClap{ 0%,100%{ transform:scale(1);} 30%{ transform:scale(1.1,.92);} 60%{ transform:scale(.94,1.06);} }
-  @keyframes mStomp{ 0%,100%{ transform:translateY(0);} 30%{ transform:translateY(5px) scale(1.04,.94);} 60%{ transform:translateY(-6px);} }
-  @keyframes mWave{ 0%,100%{ transform:rotate(0);} 30%{ transform:rotate(7deg);} 65%{ transform:rotate(-7deg);} }
-  #scene.frozen #hootFig svg{ animation-play-state:paused !important; }
-  #moveWord{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(20px,5.6vw,27px); color:#ffd93b; text-shadow:0 2px 0 rgba(10,16,40,.5); min-height:32px; opacity:0; }
-  #moveWord.show{ animation:wordPop .55s cubic-bezier(.34,1.7,.5,1); opacity:1; }
-  @keyframes wordPop{ 0%{ transform:scale(.4) rotate(-6deg); opacity:0;} 100%{ transform:scale(1) rotate(0); opacity:1;} }
-  #freezeSign{ position:absolute; inset:0; z-index:5; display:none; place-items:center; background:rgba(20,30,70,.45); font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(38px,11vw,58px); color:#aee7ff; letter-spacing:.06em; text-shadow:0 4px 0 rgba(10,16,40,.6); }
-  #scene.frozen #freezeSign{ display:grid; }
-  .burst-star{ position:absolute; font-size:20px; pointer-events:none; z-index:4; animation:burstFly .8s ease-out forwards; }
-  @keyframes burstFly{ from{ transform:translate(0,0) scale(.6); opacity:1;} to{ transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(40deg); opacity:0;} }
-  /* floor tiles */
-  #floor{ position:absolute; left:10px; right:10px; bottom:10px; z-index:3; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-  .tile{ border:3px solid rgba(255,255,255,.65); border-radius:16px; min-height:64px; cursor:pointer; font-family:"Fredoka",sans-serif; font-weight:700; font-size:16.5px; color:#fff; text-shadow:0 2px 3px rgba(10,16,40,.45); box-shadow:0 5px 0 rgba(10,16,40,.35), inset 0 -10px 18px rgba(0,0,0,.18); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; padding:5px 2px; }
-  .tile small{ font-family:"Nunito",sans-serif; font-weight:900; font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; opacity:.95; }
-  .tile:active{ transform:scale(.94); }
-  .tile.lit{ filter:brightness(1.55) saturate(1.3); transform:scale(1.05); box-shadow:0 0 0 4px #fff,0 0 26px 6px rgba(255,255,255,.55); }
-  .tile.good{ box-shadow:0 0 0 4px #57cc62,0 5px 0 rgba(10,16,40,.35); }
-  /* panel */
-  #panel{ position:relative; z-index:5; padding:7px 10px max(8px,env(safe-area-inset-bottom)); }
-  #modeRow{ display:flex; gap:7px; }
-  .mode-chip{ flex:1 1 0; border:3px solid rgba(255,255,255,.4); background:rgba(255,253,246,.14); border-radius:14px; padding:5px 6px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:15px; color:#eaf2ff; cursor:pointer; text-align:center; }
-  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11px; opacity:.85; }
-  .mode-chip.sel{ border-color:var(--sun); background:var(--paper); color:var(--ink); }
-  #panelRow{ display:flex; align-items:center; gap:9px; margin-top:7px; }
-  #watchBtn{ border:3px solid #fff; background:var(--teal); color:#fff; border-radius:999px; padding:8px 16px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; cursor:pointer; box-shadow:0 4px 0 rgba(10,16,40,.3); }
-  #watchBtn:active{ transform:scale(.94); }
-  #watchBtn:disabled{ opacity:.45; }
-  #meterWrap{ flex:1 1 auto; }
-  #meterLab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; letter-spacing:.1em; color:#cfdcff; margin:0 0 3px; }
-  #meterSlots{ display:flex; gap:4px; }
-  #meterSlots i{ flex:1 1 0; height:13px; border-radius:999px; background:rgba(255,255,255,.22); border:2px solid rgba(255,255,255,.35); }
-  #meterSlots i.on{ background:var(--sun); border-color:#fff; box-shadow:0 0 8px rgba(255,201,60,.8); }
-  .overlay{ position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; background:rgba(15,22,48,.55); padding:16px; }
-  .overlay[hidden]{ display:none; }
-  .card{ background:var(--paper); border:3px solid #fff; border-radius:24px; box-shadow:0 10px 0 rgba(10,16,40,.3),0 24px 48px rgba(10,16,40,.35); padding:20px 20px 16px; max-width:430px; width:100%; text-align:center; }
-  .card h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0 0 6px; line-height:1.08; }
-  .card h1 .t1{ color:var(--coral-dark); } .card h1 .t2{ color:#6c4bd8; }
-  .card p{ font-weight:800; font-size:15.5px; line-height:1.4; color:var(--ink-soft); margin:0 0 13px; }
-  .big-play{ border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px; border-radius:999px; padding:12px 30px; cursor:pointer; box-shadow:0 6px 0 var(--coral-dark); }
-  .big-play:active{ transform:scale(.95); }
-  #winStars{ font-size:30px; color:#e8a90c; letter-spacing:4px; min-height:38px; }
-  .win-btns{ display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
-  .win-btn{ border:3px solid #fff; border-radius:999px; padding:10px 20px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:16.5px; cursor:pointer; box-shadow:0 4px 0 rgba(10,16,40,.25); }
-  #againBtn{ background:var(--leaf); color:#fff; } #winHomeBtn{ background:var(--paper); color:var(--ink); }
-  @media (max-height:700px){ #hootFig{ width:92px; height:98px; } .tile{ min-height:54px; } #hootZone{ top:56px; } }
-  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; } }
-  /* Wave 5C-4 (Big & Physical): star dancer Hoot & huge glowing 3D disco dance tiles */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #hootFig{ width:164px !important; height:174px !important; }
-    #floor{ left:22px !important; right:22px !important; bottom:14px !important; gap:14px !important; }
-    .tile{
-      min-height:98px !important; border:4px solid rgba(255,255,255,.88) !important; border-radius:24px !important;
-      font-size:24px !important; padding:10px 12px !important;
-      box-shadow:0 8px 0 rgba(10,16,40,.42), 0 14px 24px rgba(0,0,0,.28), inset 0 6px 12px rgba(255,255,255,.28) !important;
-    }
-    .tile small{ font-size:14.5px !important; }
-    #panel{ max-width:960px; margin:0 auto; width:100%; }
+  html,body{ height:100%; margin:0; overflow:hidden; }
+  body{
+    font-family:"Fredoka",system-ui,sans-serif;
+    color:#fff;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+    background:#1a1446;
+  }
+
+  #stage{
+    position:fixed;
+    inset:0;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:radial-gradient(circle at 50% 18%, #5b21b6 0%, #312e81 42%, #1e1b4b 78%, #120f2e 100%);
+    transition:filter .3s;
+  }
+  #stage.frozen{
+    background:radial-gradient(circle at 50% 18%, #0284c7 0%, #0369a1 42%, #1e3a8a 78%, #0f172a 100%);
+  }
+
+  /* ================= DISCO SPOTLIGHTS & BALL ================= */
+  #lightsLayer{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .beam{
+    position:absolute;
+    top:-20px;
+    left:50%;
+    width:180px;
+    height:110%;
+    transform-origin:50% 0%;
+    opacity:.22;
+    filter:blur(6px);
+    animation:beamSweep 5.5s ease-in-out infinite alternate;
+  }
+  .beam.b1{ background:linear-gradient(180deg,#f472b6,transparent); transform:translateX(-50%) rotate(-32deg); }
+  .beam.b2{ background:linear-gradient(180deg,#38bdf8,transparent); transform:translateX(-50%) rotate(28deg); animation-delay:-2.4s; }
+  .beam.b3{ background:linear-gradient(180deg,#fde047,transparent); transform:translateX(-50%) rotate(2deg); animation-duration:4.2s; }
+  @keyframes beamSweep{ from{transform:translateX(-50%) rotate(-36deg)} to{transform:translateX(-50%) rotate(36deg)} }
+  #stage.frozen .beam{ animation-play-state:paused; opacity:.1; }
+
+  #discoBall{
+    position:absolute;
+    top:-4px;
+    left:50%;
+    transform:translateX(-50%);
+    width:88px;
+    height:100px;
+    z-index:6;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+  }
+  #discoBall svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 0 18px rgba(255,255,255,.55)); }
+  #discoBall .facets{ transform-box:fill-box; transform-origin:center; animation:spinBall 8s linear infinite; }
+  @keyframes spinBall{ to{ transform:rotate(360deg); } }
+  #stage.frozen #discoBall .facets{ animation-play-state:paused; }
+
+  /* ================= TOP HUD ================= */
+  #hud{
+    position:relative;
+    z-index:20;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left));
+    flex:0 0 auto;
+  }
+  .hud-group{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .hud-pill{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 15px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:rgba(255,253,247,.96);
+    color:var(--ink);
+    font-size:28px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 5px 0 rgba(14,10,44,.42), 0 10px 18px rgba(0,0,0,.28);
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+    flex:0 0 auto;
+  }
+  .hud-pill.round{ width:64px; padding:0; border-radius:50%; }
+  .hud-pill:active{ transform:translateY(3px) scale(.94); }
+  .hud-pill.active{
+    background:linear-gradient(180deg,#ffe473,#ffc93c);
+    box-shadow:0 5px 0 #c98600, 0 0 0 3.5px #fff;
+  }
+  .hud-pill.freeze-on{
+    background:linear-gradient(180deg,#7dd3fc,#0284c7);
+    color:#fff;
+    box-shadow:0 5px 0 #075985, 0 0 22px #38bdf8;
+  }
+  #starBank{
+    min-height:64px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:rgba(255,253,247,.96);
+    color:var(--ink);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:25px;
+    font-weight:700;
+    box-shadow:0 5px 0 rgba(14,10,44,.42), 0 10px 18px rgba(0,0,0,.28);
+  }
+  #starBank svg{ width:28px; height:28px; display:block; }
+  #starBank.bump{ animation:starBump .45s cubic-bezier(.34,1.7,.5,1); }
+  @keyframes starBump{ 0%{transform:scale(1)} 45%{transform:scale(1.2) rotate(-4deg)} 100%{transform:scale(1)} }
+
+  /* ================= DJ HOOT STAGE ================= */
+  #danceStage{
+    position:relative;
+    z-index:10;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:12px 12px 6px;
+  }
+  #eqBars{
+    position:absolute;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    height:90px;
+    opacity:.35;
+    pointer-events:none;
+  }
+  .eq-bar{
+    width:14px;
+    border-radius:8px 8px 0 0;
+    background:linear-gradient(180deg,#f472b6,#38bdf8);
+    animation:eqPulse .55s ease-in-out infinite alternate;
+  }
+  @keyframes eqPulse{ from{height:18px} to{height:78px} }
+  #stage.frozen .eq-bar{ animation-play-state:paused; height:14px; }
+
+  #hootDancer{
+    position:relative;
+    z-index:5;
+    width:clamp(124px, 21vh, 186px);
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    filter:drop-shadow(0 12px 18px rgba(0,0,0,.42));
+  }
+  #hootDancer svg{ width:100%; height:auto; display:block; overflow:visible; }
+  #hootDancer.groove svg{ animation:grooveBob .5s ease-in-out infinite alternate; }
+  @keyframes grooveBob{ from{transform:translateY(0) rotate(-3deg)} to{transform:translateY(-8px) rotate(3deg)} }
+  #hootDancer.mv-jump svg{ animation:mvJump .6s cubic-bezier(.34,1.6,.5,1); }
+  #hootDancer.mv-spin svg{ animation:mvSpin .65s ease-in-out; }
+  #hootDancer.mv-wiggle svg{ animation:mvWiggle .6s ease-in-out; }
+  #hootDancer.mv-clap svg{ animation:mvClap .55s ease-in-out; }
+  #hootDancer.mv-stomp svg{ animation:mvStomp .55s ease-in-out; }
+  #hootDancer.mv-wave svg{ animation:mvWave .6s ease-in-out; }
+  @keyframes mvJump{ 0%,100%{transform:translateY(0) scale(1)} 42%{transform:translateY(-44px) scale(1.12)} }
+  @keyframes mvSpin{ from{transform:rotate(0) scale(1.06)} to{transform:rotate(360deg) scale(1)} }
+  @keyframes mvWiggle{ 0%,100%{transform:rotate(0)} 20%{transform:rotate(-16deg) translateX(-10px)} 50%{transform:rotate(16deg) translateX(10px)} 80%{transform:rotate(-10deg)} }
+  @keyframes mvClap{ 0%,100%{transform:scale(1)} 30%{transform:scale(1.18,.88)} 60%{transform:scale(.9,1.14)} }
+  @keyframes mvStomp{ 0%,100%{transform:translateY(0)} 30%{transform:translateY(10px) scale(1.12,.86)} 65%{transform:translateY(-14px)} }
+  @keyframes mvWave{ 0%,100%{transform:rotate(0)} 25%{transform:rotate(14deg) translateY(-8px)} 70%{transform:rotate(-14deg) translateY(-8px)} }
+  #stage.frozen #hootDancer svg{ animation-play-state:paused !important; filter:drop-shadow(0 0 18px #7dd3fc); }
+
+  /* Follow-Hoot combo orb bar */
+  #comboBar{
+    display:none;
+    align-items:center;
+    gap:10px;
+    padding:7px 16px;
+    border-radius:999px;
+    background:rgba(15,12,48,.68);
+    border:3px solid rgba(255,255,255,.45);
+    z-index:6;
+  }
+  #comboBar.show{ display:flex; }
+  .combo-orb{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:rgba(255,255,255,.16);
+    border:3px solid rgba(255,255,255,.45);
+    display:grid;
+    place-items:center;
+    font-size:24px;
+    transition:transform .2s, background .2s;
+  }
+  .combo-orb.lit{
+    background:var(--gold);
+    border-color:#fff;
+    transform:scale(1.18);
+    box-shadow:0 0 18px #fde047;
+  }
+  .combo-orb.done{
+    background:#4ade80;
+    border-color:#fff;
+  }
+
+  /* Freeze Banner (visual snowflake, zero reading) */
+  #freezeBanner{
+    position:absolute;
+    inset:0;
+    z-index:16;
+    display:none;
+    place-items:center;
+    background:rgba(14,116,144,.32);
+    pointer-events:none;
+  }
+  #stage.frozen #freezeBanner{ display:grid; }
+  #freezeBanner span{
+    font-size:clamp(84px, 18vw, 140px);
+    filter:drop-shadow(0 0 30px #bae6fd);
+    animation:icePop .5s cubic-bezier(.34,1.6,.5,1);
+  }
+  @keyframes icePop{ from{transform:scale(.4);opacity:0} to{transform:scale(1);opacity:1} }
+
+  /* ================= NEON 3D DANCE FLOOR ================= */
+  #danceFloor{
+    position:relative;
+    z-index:12;
+    flex:0 0 auto;
+    padding:10px clamp(12px, 3vw, 28px) max(14px, env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(18,14,54,.68), rgba(10,8,34,.92));
+    border-top:4px solid rgba(255,255,255,.28);
+  }
+  #tileGrid{
+    max-width:960px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:clamp(8px, 1.8vw, 16px);
+  }
+  .dance-tile{
+    position:relative;
+    min-height:clamp(86px, 15vh, 134px);
+    border-radius:24px;
+    border:4px solid rgba(255,255,255,.88);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(38px, 5.5vw, 56px);
+    box-shadow:0 8px 0 var(--shade), 0 14px 24px rgba(0,0,0,.38), inset 0 6px 12px rgba(255,255,255,.38);
+    transition:transform .12s cubic-bezier(.34,1.6,.5,1), filter .12s;
+  }
+  .dance-tile:active, .dance-tile.lit{
+    transform:translateY(4px) scale(1.06);
+    filter:brightness(1.25);
+    box-shadow:0 3px 0 var(--shade), 0 0 0 5px #fff, 0 0 30px 8px var(--glow);
+  }
+  .dance-tile.hint{
+    box-shadow:0 8px 0 var(--shade), 0 0 0 6px #fff, 0 0 32px 10px #fde047;
+    animation:tileCue .85s ease-in-out infinite alternate;
+  }
+  @keyframes tileCue{ from{transform:scale(1)} to{transform:scale(1.07)} }
+  .dance-tile .hand-cue{
+    position:absolute;
+    top:-26px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:34px;
+    pointer-events:none;
+  }
+
+  .burst-fx{ position:absolute; z-index:25; font-size:32px; pointer-events:none; }
+  .confetti{ position:absolute; z-index:35; width:12px; height:16px; border-radius:3px; pointer-events:none; }
+
+  /* Celebration Overlay */
+  #winOverlay{
+    position:absolute;
+    inset:0;
+    z-index:40;
+    background:rgba(20,16,58,.6);
+    backdrop-filter:blur(4px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  #winOverlay[hidden]{ display:none; }
+  .win-card{
+    background:var(--cream);
+    color:var(--ink);
+    border:5px solid #fff;
+    border-radius:36px;
+    padding:24px 28px;
+    text-align:center;
+    max-width:420px;
+    width:100%;
+    box-shadow:0 12px 0 rgba(16,12,48,.42), 0 26px 50px rgba(0,0,0,.4);
+  }
+  .win-icons{ font-size:46px; letter-spacing:6px; margin-bottom:8px; }
+  .win-stars{ font-size:42px; margin-bottom:14px; }
+  #playAgainBtn{
+    min-width:120px;
+    min-height:70px;
+    padding:0 32px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:linear-gradient(180deg,#f472b6,#db2777);
+    color:#fff;
+    font-size:34px;
+    cursor:pointer;
+    box-shadow:0 6px 0 #9d174d;
+  }
+
+  @media (max-width:700px){
+    #hud{ gap:6px; padding-left:8px; padding-right:8px; }
+    .hud-pill{ min-width:50px; min-height:50px; height:50px; padding:0 11px; font-size:22px; border-width:3px; }
+    .hud-pill.round{ width:50px; }
+    #starBank{ min-height:50px; font-size:19px; padding:0 11px 0 8px; border-width:3px; }
+    #discoBall{ width:70px; height:80px; top:56px; }
+    #hootDancer{ width:126px; }
+    #tileGrid{ grid-template-columns:repeat(3, 1fr); gap:10px; }
+    .dance-tile{ min-height:86px; border-radius:20px; font-size:40px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="lightsLayer" aria-hidden="true">
+    <div class="beam b1"></div>
+    <div class="beam b2"></div>
+    <div class="beam b3"></div>
+  </div>
+
+  <!-- Spinning Disco Ball -->
+  <button id="discoBall" type="button" aria-label="Disco Ball">
+    <svg viewBox="0 0 100 112">
+      <line x1="50" y1="0" x2="50" y2="28" stroke="#cbd5e1" stroke-width="4"/>
+      <g class="facets">
+        <circle cx="50" cy="60" r="34" fill="#e2e8f0" stroke="#475569" stroke-width="3.5"/>
+        <ellipse cx="50" cy="60" rx="16" ry="34" fill="none" stroke="#94a3b8" stroke-width="2.5"/>
+        <ellipse cx="50" cy="60" rx="28" ry="34" fill="none" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="16" y1="60" x2="84" y2="60" stroke="#94a3b8" stroke-width="2.5"/>
+        <line x1="20" y1="44" x2="80" y2="44" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="20" y1="76" x2="80" y2="76" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="34" y="45" width="12" height="12" fill="#fff" opacity=".85"/>
+        <rect x="54" y="62" width="11" height="11" fill="#fde047" opacity=".85"/>
+        <rect x="46" y="34" width="10" height="9" fill="#f472b6" opacity=".8"/>
+      </g>
+    </svg>
+  </button>
+
+  <!-- Top HUD -->
   <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#22304a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#22304a"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#22304a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#22304a"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
-      </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#22304a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#cfdcff"/></svg>
-      </button>
+    <div class="hud-group">
+      <button class="hud-pill active" id="modeFreeBtn" type="button" aria-label="Free Dance Party" aria-pressed="true">🪩</button>
+      <button class="hud-pill" id="modeFollowBtn" type="button" aria-label="Follow Hoot Dance" aria-pressed="false">⭐</button>
+      <button class="hud-pill round" id="freezeBtn" type="button" aria-label="Freeze Dance" aria-pressed="false">❄️</button>
+      <button class="hud-pill round" id="musicBtn" type="button" aria-label="Toggle Party Music" aria-pressed="true">🎵</button>
+      <button class="hud-pill round" id="soundBtn" type="button" aria-label="Toggle Sound">🔊</button>
     </div>
     <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l3 6 6.6.9-4.8 4.6 1.1 6.6L12 17.4l-5.9 3.1 1.1-6.6-4.8-4.6 6.6-.9z" fill="#ffc93c" stroke="#d99400" stroke-width="1.5" stroke-linejoin="round"/></svg>
       <span id="starCount">0</span>
     </div>
   </div>
 
-  <main id="scene" aria-label="Dance floor. Hoot the DJ dances under the disco ball.">
-    <svg id="disco" viewBox="0 0 100 118" aria-hidden="true"><line x1="50" y1="0" x2="50" y2="26" stroke="#9fb2c8" stroke-width="3"/><g class="ball"><circle cx="50" cy="62" r="34" fill="#8ea6c9"/><path d="M20 48 h60 M16 62 h68 M20 76 h60 M36 32 v60 M50 28 v68 M64 32 v60" stroke="#5a6b8a" stroke-width="2.4" fill="none"/><circle cx="38" cy="50" r="5" fill="#ffd93b"/><circle cx="62" cy="72" r="5" fill="#ff8fab"/><circle cx="64" cy="46" r="4" fill="#aee7ff"/><circle cx="36" cy="74" r="4" fill="#b8f1c9"/></g></svg>
-    <div id="hootZone">
-      <div id="bubble" aria-live="polite">Hi! I&rsquo;m DJ Hoot! Watch my moves, then mirror them on the glowing tiles!</div>
-      <div id="moveWord" aria-hidden="true">Jump!</div>
-      <div id="hootRow">
-        <button id="hootFig" type="button" aria-label="Hoot the DJ — tap to hear him giggle"></button>
-      </div>
+  <!-- DJ Hoot Center Stage -->
+  <div id="danceStage">
+    <div id="eqBars" aria-hidden="true">
+      <span class="eq-bar" style="animation-delay:-.1s"></span>
+      <span class="eq-bar" style="animation-delay:-.35s"></span>
+      <span class="eq-bar" style="animation-delay:-.2s"></span>
+      <span class="eq-bar" style="animation-delay:-.5s"></span>
+      <span class="eq-bar" style="animation-delay:-.15s"></span>
+      <span class="eq-bar" style="animation-delay:-.4s"></span>
+      <span class="eq-bar" style="animation-delay:-.25s"></span>
+      <span class="eq-bar" style="animation-delay:-.45s"></span>
     </div>
-    <div id="freezeSign" role="status">FREEZE!</div>
-    <div id="floor" role="group" aria-label="Dance floor colour tiles"></div>
-  </main>
 
-  <section id="panel" aria-label="Dance controls">
-    <div id="modeRow" role="group" aria-label="Choose how to play">
-      <button class="mode-chip sel" id="modeMirror" type="button">Move Mirror<small>Watch Hoot, copy the tiles!</small></button>
-      <button class="mode-chip" id="modeFree" type="button">Free Dance<small>Every tile dances &mdash; watch for FREEZE!</small></button>
-    </div>
-    <div id="panelRow">
-      <button id="watchBtn" type="button">Watch Hoot again</button>
-      <div id="meterWrap">
-        <p id="meterLab">PARTY METER &bull; 0 OF 10 STARS TO THE GRAND FINALE</p>
-        <div id="meterSlots" aria-hidden="true"></div>
-      </div>
-    </div>
-  </section>
+    <button id="hootDancer" class="groove" type="button" aria-label="DJ Hoot — tap to cheer">
+      <svg viewBox="0 0 220 225" aria-hidden="true">
+        <!-- Body -->
+        <ellipse cx="110" cy="146" rx="58" ry="54" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
+        <ellipse cx="110" cy="158" rx="38" ry="36" fill="#fdecd2"/>
+        <!-- Wings (raised in disco pose!) -->
+        <ellipse cx="46" cy="126" rx="18" ry="32" fill="#8b5226" stroke="#4a2810" stroke-width="4.5" transform="rotate(42 46 126)"/>
+        <ellipse cx="174" cy="126" rx="18" ry="32" fill="#8b5226" stroke="#4a2810" stroke-width="4.5" transform="rotate(-42 174 126)"/>
+        <!-- Disco Boots -->
+        <ellipse cx="88" cy="199" rx="15" ry="9" fill="#f43f5e" stroke="#4a2810" stroke-width="3.5"/>
+        <ellipse cx="132" cy="199" rx="15" ry="9" fill="#f43f5e" stroke="#4a2810" stroke-width="3.5"/>
+        <!-- Head -->
+        <circle cx="110" cy="96" r="49" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
+        <!-- Headphones Band & Cups -->
+        <path d="M58 92 A54 54 0 0 1 162 92" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+        <rect x="46" y="76" width="18" height="36" rx="9" fill="#f472b6" stroke="#1e1b4b" stroke-width="4"/>
+        <rect x="156" y="76" width="18" height="36" rx="9" fill="#f472b6" stroke="#1e1b4b" stroke-width="4"/>
+        <!-- Star Disco Sunglasses -->
+        <polygon points="88,72 95,85 109,87 99,96 101,110 88,103 75,110 77,96 67,87 81,85" fill="#fde047" stroke="#1e1b4b" stroke-width="3.5" stroke-linejoin="round"/>
+        <polygon points="132,72 139,85 153,87 143,96 145,110 132,103 119,110 121,96 111,87 125,85" fill="#fde047" stroke="#1e1b4b" stroke-width="3.5" stroke-linejoin="round"/>
+        <line x1="103" y1="90" x2="117" y2="90" stroke="#1e1b4b" stroke-width="4"/>
+        <!-- Happy smiling beak -->
+        <polygon points="110,104 101,118 119,118" fill="#fbbf24" stroke="#4a2810" stroke-width="3.5" stroke-linejoin="round"/>
+        <!-- Bow tie -->
+        <polygon points="110,136 92,127 92,145" fill="#a855f7" stroke="#4a2810" stroke-width="3.5" stroke-linejoin="round"/>
+        <polygon points="110,136 128,127 128,145" fill="#a855f7" stroke="#4a2810" stroke-width="3.5" stroke-linejoin="round"/>
+        <circle cx="110" cy="136" r="5.5" fill="#fde047" stroke="#4a2810" stroke-width="3"/>
+      </svg>
+    </button>
 
-  <div class="overlay" id="startOverlay">
-    <div class="card">
-      <h1><span class="t1">Dance</span> <span class="t2">Party!</span></h1>
-      <p>DJ Hoot lights up the dance-floor tiles and shows a move for every colour. Mirror his moves on the tiles, fill the Party Meter, and start the Grand Finale!</p>
-      <button class="big-play" id="playBtn" type="button">&#9654; Start the Party!</button>
-    </div>
+    <div id="comboBar" aria-label="Dance moves"></div>
+
+    <div id="freezeBanner" aria-hidden="true"><span>❄️</span></div>
   </div>
 
-  <div class="overlay" id="winOverlay" hidden>
-    <div class="card">
-      <div id="winStars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-      <h1><span class="t1">Dance Party</span> <span class="t2">Star!</span></h1>
-      <p id="winSub">You filled the whole Party Meter and the Grand Finale was spectacular! Hoot is doing his happiest dance just for you!</p>
-      <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">&#8635; Dance Again!</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
-      </div>
+  <!-- Glowing 3D Neon Dance Floor -->
+  <div id="danceFloor">
+    <div id="tileGrid"></div>
+  </div>
+
+  <!-- Celebration Overlay -->
+  <div id="winOverlay" hidden>
+    <div class="win-card">
+      <div class="win-icons">🪩 🦉 🎶</div>
+      <div class="win-stars">⭐ ⭐ ⭐</div>
+      <button id="playAgainBtn" type="button" aria-label="Dance Again">▶️</button>
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-"use strict";
-/* ================= DATA ================= */
-var TILES = [
-  { color:"red",    hex:"#ef4444", move:"jump",   moveName:"Jump",   freq:659.25 },
-  { color:"orange", hex:"#f97316", move:"spin",   moveName:"Spin",   freq:783.99 },
-  { color:"yellow", hex:"#e8b93c", move:"clap",   moveName:"Clap",   freq:880.00 },
-  { color:"green",  hex:"#57cc62", move:"stomp",  moveName:"Stomp",  freq:329.63 },
-  { color:"blue",   hex:"#38b6e3", move:"wave",   moveName:"Wave",   freq:523.25 },
-  { color:"pink",   hex:"#f472b6", move:"wiggle", moveName:"Wiggle", freq:587.33 }
-];
-var GOAL = 10;
-var HOOT_SVG = '<svg viewBox="0 0 200 210" aria-hidden="true"><path d="M30 120 L6 132 L28 142 Z" fill="#17bebb"/><path d="M170 120 L194 132 L172 142 Z" fill="#17bebb"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#22304a"/><circle cx="122" cy="72" r="11" fill="#22304a"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/><path d="M64 26 a40 40 0 0 1 72 0" stroke="#22304a" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="52" y="18" width="15" height="24" rx="7" fill="#ff6b5e"/><rect x="133" y="18" width="15" height="24" rx="7" fill="#ff6b5e"/><path d="M76 190 q-8 8 -14 6 M124 190 q8 8 14 6" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
+  "use strict";
+  var MOVES = [
+    { id:"jump",   emo:"🦘", bg:"linear-gradient(180deg,#ff6b6b,#e03131)", shade:"#991b1b", glow:"#ff6b6b", freq:261.6 },
+    { id:"spin",   emo:"🌀", bg:"linear-gradient(180deg,#4dabf7,#1971c2)", shade:"#1e3a8a", glow:"#38bdf8", freq:329.6 },
+    { id:"wiggle", emo:"🐛", bg:"linear-gradient(180deg,#69db7c,#2f9e44)", shade:"#166534", glow:"#4ade80", freq:392.0 },
+    { id:"clap",   emo:"👏", bg:"linear-gradient(180deg,#ffd43b,#f08c00)", shade:"#9a3412", glow:"#fde047", freq:440.0 },
+    { id:"stomp",  emo:"🦖", bg:"linear-gradient(180deg,#da77f2,#9c36b5)", shade:"#581c87", glow:"#e879f9", freq:523.3 },
+    { id:"wave",   emo:"👋", bg:"linear-gradient(180deg,#ff8fab,#e64980)", shade:"#9d174d", glow:"#f472b6", freq:587.3 }
+  ];
+  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-super.mp3","hoot-star.mp3"];
 
-/* ================= STATE ================= */
-var state="start"; /* start | playing | won */
-var mode="mirror"; /* mirror | free */
-var party=0, stars=0, rounds=0;
-var seq=[], seqIdx=0, phase="idle"; /* idle | demo | input | frozen | between */
-var dead=false, soundOn=true, praiseIdx=0;
-var timers=[];
-function later(fn,ms){ var id=setTimeout(function(){ timers=timers.filter(function(x){return x!==id;}); fn(); },ms); timers.push(id); return id; }
-function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+  var stage = document.getElementById("stage");
+  var tileGrid = document.getElementById("tileGrid");
+  var hootDancer = document.getElementById("hootDancer");
+  var discoBall = document.getElementById("discoBall");
+  var comboBar = document.getElementById("comboBar");
+  var starCountEl = document.getElementById("starCount");
+  var starBank = document.getElementById("starBank");
+  var modeFreeBtn = document.getElementById("modeFreeBtn");
+  var modeFollowBtn = document.getElementById("modeFollowBtn");
+  var freezeBtn = document.getElementById("freezeBtn");
+  var musicBtn = document.getElementById("musicBtn");
+  var soundBtn = document.getElementById("soundBtn");
+  var winOverlay = document.getElementById("winOverlay");
+  var playAgainBtn = document.getElementById("playAgainBtn");
 
-/* ================= ELMS ================= */
-function $(id){ return document.getElementById(id); }
-var scene=$("scene"), bubble=$("bubble"), hootFig=$("hootFig"), moveWord=$("moveWord"), floorEl=$("floor"),
-    starCount=$("starCount"), starBank=$("starBank"), meterSlots=$("meterSlots"), meterLab=$("meterLab"),
-    watchBtn=$("watchBtn"), startOverlay=$("startOverlay"), winOverlay=$("winOverlay");
-hootFig.innerHTML=HOOT_SVG;
-TILES.forEach(function(t,i){
-  var b=document.createElement("button"); b.type="button"; b.className="tile"; b.style.background=t.hex;
-  b.dataset.color=t.color; b.setAttribute("aria-label",t.color+" tile — "+t.moveName);
-  b.innerHTML=t.moveName+"<small>"+t.color+"</small>";
-  b.addEventListener("click",function(){ onTileTap(t,b); });
-  floorEl.appendChild(b); t.el=b;
-  var n=document.createElement("span"); n.className="note"; n.textContent=i%2?"\u266A":"\u266B";
-  n.style.left=(4+Math.random()*90)+"%"; n.style.top=(8+Math.random()*26)+"%"; n.style.animationDelay=(-Math.random()*4)+"s";
-  scene.appendChild(n);
-});
-(function(){ for(var i=0;i<GOAL;i++){ var d=document.createElement("i"); meterSlots.appendChild(d); } })();
-function renderMeter(){ var s=meterSlots.children; for(var i=0;i<s.length;i++) s[i].className=i<party?"on":""; meterLab.textContent="PARTY METER \u2022 "+party+" OF "+GOAL+" STARS TO THE GRAND FINALE"; }
+  var mode = "free"; // "free" | "follow"
+  var frozen = false;
+  var musicOn = true;
+  var muted = false;
+  var stars = 0;
+  var freeMoves = 0;
+  var phase = "free"; // "free" | "demo" | "copy"
+  var combo = [];
+  var step = 0;
+  var roundIdx = 0;
+  var timers = [];
+  var idleTimer = null;
+  var musicEl = null;
+  var voiceEl = null;
+  var audioCtx = null;
+  var dead = false;
 
-/* ================= SOUND FX ================= */
-var AC=null;
-function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-function tone(f0,f1,dur,type,vol,delay){ if(!soundOn) return; var ac=audio(); if(!ac) return; var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain(); o.type=type||"sine"; o.frequency.setValueAtTime(f0,t); if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.13,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05); }
-function tileSound(t){ tone(t.freq,t.freq,0.22,"triangle",0.16); tone(t.freq*2,t.freq*2,0.12,"sine",0.06,0.02); }
-function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
-function fanfareSound(){ [523,659,784,1047,784,1047,1319,1568].forEach(function(f,i){ tone(f,f,0.36,"triangle",0.15,i*0.11); }); }
-function freezeWhistle(){ tone(1568,760,0.3,"sine",0.16); }
-function wrongSound(){ tone(330,262,0.2,"sine",0.1); }
-
-/* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-   Colour call-outs use the recorded call-color clips; everything else rides on
-   the recorded hoot-* praise / hint / giggle clips. No device text-to-speech. */
-var VBASE="assets/voice/";
-var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-function getVoice(){ if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();}); voiceEl.addEventListener("error",vNext); } return voiceEl; }
-function hubQuiet(){ try{ var d=window.parent&&window.parent.document; if(!d||d===document) return false; var b=d.querySelector('.voice-btn[data-voice="off"]'); return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true")); }catch(e){ return false; } }
-function silenced(){ return !soundOn||hubQuiet(); }
-function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
-function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice(); }
-function pumpVoice(){ if(vPlaying||dead) return; var item=vQueue.shift(); if(!item) return; if(item.onStart){ try{ item.onStart(); }catch(e){} } if(silenced()){ pumpVoice(); return; } var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true); el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file; var p=el.play(); if(p&&p.catch) p.catch(function(){ vNext(); }); }
-function enqueue(file,kind){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){return;} vQueue.push({file:file,kind:kind||""}); pumpVoice(); }
-function clearPending(){ vQueue.length=0; }
-var PRAISE=["hoot-amazing.mp3","hoot-great-job.mp3","hoot-star.mp3"];
-function enqueuePraise(){ var f=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++; enqueue(f,"praise"); }
-
-/* ================= WORDS & MOVES ================= */
-function say(html){ bubble.innerHTML=html; }
-function hootReact(){ hootFig.classList.remove("celebrate"); void hootFig.offsetWidth; hootFig.classList.add("celebrate"); setTimeout(function(){ hootFig.classList.remove("celebrate"); },850); }
-function doMove(t){
-  hootFig.classList.remove("do-jump","do-spin","do-wiggle","do-clap","do-stomp","do-wave");
-  void hootFig.offsetWidth; hootFig.classList.add("do-"+t.move);
-  moveWord.textContent=t.moveName+"!"; moveWord.classList.remove("show"); void moveWord.offsetWidth; moveWord.classList.add("show");
-  tileSound(t);
-  later(function(){ hootFig.classList.remove("do-"+t.move); },660);
-}
-function lightTile(t,on){ t.el.classList.toggle("lit",!!on); }
-function sparkleBurst(){
-  var r=hootFig.getBoundingClientRect(), sr=scene.getBoundingClientRect();
-  for(var i=0;i<8;i++){ var s=document.createElement("span"); s.className="burst-star"; s.textContent=i%2?"\u2726":"\u2605"; s.style.color=i%2?"#ffd93b":"#fff"; s.style.left=(r.left-sr.left+r.width*(0.25+Math.random()*0.5))+"px"; s.style.top=(r.top-sr.top+6)+"px"; s.style.setProperty("--dx",((Math.random()*110)-55)+"px"); s.style.setProperty("--dy",(-(24+Math.random()*60))+"px"); scene.appendChild(s); (function(n){ setTimeout(function(){ n.remove(); },850); })(s); }
-}
-function tileByColor(c){ for(var i=0;i<TILES.length;i++) if(TILES[i].color===c) return TILES[i]; return TILES[0]; }
-
-/* ================= MOVE MIRROR ================= */
-function newRound(){
-  if(dead||state!=="playing"||mode!=="mirror") return;
-  var len=Math.min(2+rounds,5); seq=[]; 
-  for(var i=0;i<len;i++) seq.push(TILES[Math.floor(Math.random()*TILES.length)].color);
-  seqIdx=0; playDemo();
-}
-function playDemo(){
-  if(dead||state!=="playing") return;
-  phase="demo"; watchBtn.disabled=true; clearPending();
-  say("Watch me! I&rsquo;ll light the tiles &mdash; then YOU mirror my moves!");
-  seq.forEach(function(c,i){
-    later(function(){
-      if(dead||phase!=="demo") return;
-      var t=tileByColor(c); lightTile(t,true); doMove(t);
-      enqueue("call-color-"+c+".mp3","name");
-      later(function(){ lightTile(t,false); },620);
-    }, 500+i*980);
-  });
-  later(function(){
-    if(dead||state!=="playing"||mode!=="mirror") return;
-    phase="input"; seqIdx=0; watchBtn.disabled=false;
-    say("Your turn! Mirror me: tap the <span class='b-big'>"+seq.map(function(c){ return c.toUpperCase(); }).join(" &middot; ")+"</span> tiles in my order!");
-  }, 500+seq.length*980+250);
-}
-function onTileTap(t,btn){
-  if(state!=="playing"||dead) return; audio();
-  if(phase==="frozen"){
-    say("Shhh &mdash; Hoot is FROZEN! No tapping until he giggles!");
-    return;
-  }
-  if(mode==="free"){
-    lightTile(t,true); doMove(t); later(function(){ lightTile(t,false); },450);
-    say("<span class='b-big'>"+t.moveName+"</span> on the <span class='b-big'>"+t.color.toUpperCase()+"</span> tile! Hoot dances with you!");
-    return;
-  }
-  if(phase!=="input") return;
-  var want=seq[seqIdx];
-  if(t.color===want){
-    lightTile(t,true); doMove(t); btn.classList.add("good");
-    later(function(){ lightTile(t,false); btn.classList.remove("good"); },480);
-    seqIdx++;
-    if(seqIdx>=seq.length){
-      phase="between"; rounds++; party++; stars++;
-      starCount.textContent=stars; starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
-      starSound(); sparkleBurst(); hootReact(); renderMeter();
-      say("YOU MIRRORED ME! Every tile, in order! Star for the Party Meter!");
-      enqueuePraise();
-      if(party>=GOAL){ later(winGame,1400); return; }
-      later(newRound,1900);
-    } else {
-      say("Yes! <span class='b-big'>"+t.color.toUpperCase()+"</span>! "+(seq.length-seqIdx)+" more to mirror!");
+  function ensureCtx(){
+    if(!audioCtx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC) try{ audioCtx = new AC(); }catch(e){}
     }
-  } else {
-    wrongSound();
-    say("That was <span class='b-big'>"+t.color.toUpperCase()+"</span> &mdash; Hoot&rsquo;s next tile is a different colour. Start the mirror again, dancer!");
-    enqueue("hoot-try-again.mp3","hint");
-    seqIdx=0;
-    TILES.forEach(function(x){ lightTile(x,false); });
+    if(audioCtx && audioCtx.state === "suspended") try{ audioCtx.resume(); }catch(e){}
+    return audioCtx;
   }
-}
 
-/* ================= FREE DANCE + FREEZE ================= */
-var freezeTimer=null;
-function scheduleFreeze(){
-  cancelFreezeTimer();
-  if(mode!=="free"||state!=="playing") return;
-  freezeTimer=setTimeout(function(){
-    if(dead||state!=="playing"||mode!=="free") return;
-    phase="frozen"; scene.classList.add("frozen"); freezeWhistle();
-    say("The music stopped &mdash; FREEZE like Hoot! No tapping until he giggles!");
-    freezeTimer=setTimeout(function(){
-      if(dead) return;
-      scene.classList.remove("frozen"); phase="idle";
-      if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact();
-      say("Hee-hee! Giggle &mdash; DANCE again! Tap any tile!");
-      scheduleFreeze();
-    },2600);
-  }, 11000+Math.random()*6000);
-}
-function cancelFreezeTimer(){ if(freezeTimer){ clearTimeout(freezeTimer); freezeTimer=null; } scene.classList.remove("frozen"); if(phase==="frozen") phase="idle"; }
-
-/* ================= FLOW ================= */
-function winGame(){
-  if(dead||state!=="playing") return;
-  state="won"; phase="idle"; clearPending(); cancelFreezeTimer();
-  say("You filled the Party Meter &mdash; GRAND FINALE!");
-  enqueue("hoot-you-learned.mp3","recap"); fanfareSound(); sparkleBurst();
-  (window.__hwFastWin||later)(function(){ if(!dead&&state==="won") winOverlay.hidden=false; },400);
-}
-function setMode(m){
-  if(state!=="playing") return;
-  mode=m; clearTimers(); clearPending(); cancelFreezeTimer();
-  $("modeMirror").classList.toggle("sel",m==="mirror"); $("modeFree").classList.toggle("sel",m==="free");
-  TILES.forEach(function(x){ lightTile(x,false); });
-  if(m==="free"){ phase="idle"; watchBtn.disabled=true; say("Free Dance! Tap ANY tile &mdash; Hoot dances every move with you. But when the music stops&hellip; FREEZE!"); scheduleFreeze(); }
-  else { watchBtn.disabled=false; say("Move Mirror! Watch Hoot&rsquo;s tiles, then tap them in the same order!"); later(newRound,600); }
-}
-function resetRun(){ party=0; stars=0; rounds=0; seq=[]; seqIdx=0; starCount.textContent="0"; renderMeter(); }
-function startGame(){
-  state="playing"; startOverlay.hidden=true; winOverlay.hidden=true; resetRun();
-  say("I&rsquo;m DJ Hoot! Watch my tiles light up, then mirror my moves!");
-  if(!window.__hootHello){window.__hootHello=1;enqueue("hoot-game-hello.mp3","hello");}
-  later(newRound,900);
-}
-$("playBtn").addEventListener("click",function(){ audio(); startGame(); });
-$("againBtn").addEventListener("click",function(){ audio(); winOverlay.hidden=true; state="playing"; resetRun(); say("Encore! Watch Hoot &mdash; mirror time!"); if(mode==="mirror") later(newRound,700); else scheduleFreeze(); });
-$("winHomeBtn").addEventListener("click",function(){ winOverlay.hidden=true; startOverlay.hidden=false; state="start"; clearTimers(); cancelFreezeTimer(); });
-$("homeBtn").addEventListener("click",function(){ clearPending(); clearTimers(); cancelFreezeTimer(); state="start"; winOverlay.hidden=true; startOverlay.hidden=false; });
-$("modeMirror").addEventListener("click",function(){ if(state==="playing") setMode("mirror"); });
-$("modeFree").addEventListener("click",function(){ if(state==="playing") setMode("free"); });
-watchBtn.addEventListener("click",function(){ if(state==="playing"&&mode==="mirror"&&(phase==="input"||phase==="idle")) playDemo(); });
-hootFig.addEventListener("click",function(){ audio(); if(window.__hootSpeak) window.__hootSpeak("idle"); hootReact(); });
-$("soundBtn").addEventListener("click",function(){
-  soundOn=!soundOn;
-  $("soundOnIc").style.display=soundOn?"":"none"; $("soundOffIc").style.display=soundOn?"none":"";
-  this.setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-  if(!soundOn){ clearPending(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} vPlaying=false; vCurrent=null; hootTalking(false); } }
-  else audio();
-});
-
-/* teardown: no stale timers, freeze loops or ghost audio when the hub closes the game */
-function teardown(){ dead=true; clearPending(); clearTimers(); cancelFreezeTimer(); if(voiceEl){ try{ voiceEl.pause(); }catch(e){} } }
-window.addEventListener("pagehide",teardown);
-document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
-
-renderMeter();
-
-/* Probe/debug handle: read-only snapshot of the game state. */
-window.__danceGame={
-  snapshot:function(){
-    return { state:state, mode:mode, phase:phase, party:party, stars:stars, rounds:rounds,
-      seq:seq.slice(), seqIdx:seqIdx, winShown:!winOverlay.hidden,
-      voicePlaying:vPlaying, voiceQueue:vQueue.map(function(q){ return q.file; }) };
+  function playSynth(freq, dur){
+    if(muted) return;
+    var ctx = ensureCtx();
+    if(!ctx) return;
+    try{
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(freq, ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(freq * 1.18, ctx.currentTime + (dur || 0.2));
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur || 0.22));
+      o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + (dur || 0.22) + 0.02);
+    }catch(e){}
   }
-};
+
+  function playFanfare(){
+    [523.25, 659.25, 783.99, 1046.5].forEach(function(f, i){
+      setTimeout(function(){ playSynth(f, 0.22); }, i * 85);
+    });
+  }
+
+  function startMusic(){
+    if(dead || muted || !musicOn || frozen) return;
+    try{
+      if(!musicEl){
+        musicEl = new Audio("assets/voice/song-hoot-party-inst.mp3");
+        musicEl.loop = true;
+        musicEl.volume = 0.28;
+      }
+      if(musicEl.paused){
+        var p = musicEl.play();
+        if(p && p.catch) p.catch(function(){});
+      }
+    }catch(e){}
+  }
+  function pauseMusic(){
+    if(musicEl) try{ musicEl.pause(); }catch(e){}
+  }
+
+  function playClip(file, onEnd){
+    if(dead || muted || !file){ if(onEnd) onEnd(); return; }
+    try{
+      if(voiceEl){ voiceEl.onended = null; voiceEl.onerror = null; voiceEl.pause(); }
+      voiceEl = new Audio("assets/voice/" + file);
+      voiceEl.onended = function(){ if(onEnd && !dead) onEnd(); };
+      voiceEl.onerror = function(){ if(onEnd && !dead) onEnd(); };
+      var p = voiceEl.play();
+      if(p && p.catch) p.catch(function(){ if(onEnd && !dead) onEnd(); });
+    }catch(e){ if(onEnd) onEnd(); }
+  }
+
+  function addStar(n){
+    stars += (n || 1);
+    starCountEl.textContent = stars;
+    starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+    try{ if(window.parent && window.parent.hwAddStar) window.parent.hwAddStar(n || 1); }catch(e){}
+  }
+
+  function burstStars(el, emo){
+    var r = el.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    var cx = r.left - sr.left + r.width / 2, cy = r.top - sr.top + r.height / 2;
+    for(var i = 0; i < 6; i++){
+      var sp = document.createElement("span");
+      sp.className = "burst-fx";
+      sp.textContent = i % 2 === 0 ? "✨" : (emo || "🎵");
+      sp.style.left = cx + "px"; sp.style.top = cy + "px";
+      stage.appendChild(sp);
+      var a = (Math.PI * 2 * i / 6) + Math.random() * 0.4;
+      var d = 44 + Math.random() * 44;
+      sp.animate([
+        { transform:"translate(-50%,-50%) scale(.5)", opacity:1 },
+        { transform:"translate(calc(-50% + " + Math.round(Math.cos(a)*d) + "px),calc(-50% + " + Math.round(Math.sin(a)*d - 28) + "px)) scale(1.25)", opacity:0 }
+      ], { duration:650, easing:"ease-out" }).onfinish = function(){ this.effect && this.effect.target && this.effect.target.remove(); };
+    }
+  }
+
+  function showerConfetti(){
+    var cols = ["#ff6b6b","#ffd43b","#69db7c","#4dabf7","#f472b6","#da77f2"];
+    for(var i = 0; i < 30; i++){
+      var c = document.createElement("div");
+      c.className = "confetti";
+      c.style.background = cols[i % cols.length];
+      c.style.left = (8 + Math.random() * 84) + "%";
+      c.style.top = "-18px";
+      stage.appendChild(c);
+      c.animate([
+        { transform:"translateY(0) rotate(0deg)", opacity:1 },
+        { transform:"translateY(" + (window.innerHeight + 40) + "px) rotate(" + (240 + Math.random()*360) + "deg)", opacity:.9 }
+      ], { duration:1200 + Math.random()*700, delay:Math.random()*260, easing:"ease-in" }).onfinish = function(){ this.effect && this.effect.target && this.effect.target.remove(); };
+    }
+  }
+
+  function clearTimers(){
+    timers.forEach(clearTimeout);
+    timers = [];
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    tileGrid.querySelectorAll(".dance-tile.hint").forEach(function(t){
+      t.classList.remove("hint");
+      var h = t.querySelector(".hand-cue"); if(h) h.remove();
+    });
+  }
+
+  function doMove(moveIdx, tileEl){
+    var m = MOVES[moveIdx];
+    if(!m) return;
+    playSynth(m.freq, 0.22);
+    hootDancer.className = "";
+    void hootDancer.offsetWidth;
+    hootDancer.classList.add("mv-" + m.id);
+    setTimeout(function(){
+      if(!dead){ hootDancer.className = "groove"; }
+    }, 640);
+    var t = tileEl || tileGrid.querySelector('.dance-tile[data-idx="' + moveIdx + '"]');
+    if(t){
+      t.classList.add("lit");
+      setTimeout(function(){ t.classList.remove("lit"); }, 340);
+      burstStars(t, m.emo);
+    }
+  }
+
+  function renderComboOrbs(litIdx){
+    comboBar.innerHTML = "";
+    combo.forEach(function(mIdx, i){
+      var o = document.createElement("span");
+      o.className = "combo-orb" + (i === litIdx ? " lit" : "") + (phase === "copy" && i < step ? " done" : "");
+      o.textContent = (i === litIdx || (phase === "copy" && i < step)) ? MOVES[mIdx].emo : "⭐";
+      comboBar.appendChild(o);
+    });
+  }
+
+  function armCopyIdle(){
+    if(idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(function(){
+      if(dead || mode !== "follow" || phase !== "copy") return;
+      var expected = combo[step];
+      var t = tileGrid.querySelector('.dance-tile[data-idx="' + expected + '"]');
+      if(t){
+        t.classList.add("hint");
+        if(!t.querySelector(".hand-cue")){
+          var h = document.createElement("span");
+          h.className = "hand-cue";
+          h.textContent = "👆";
+          t.appendChild(h);
+        }
+      }
+    }, 5500);
+  }
+
+  function startFollowRound(){
+    clearTimers();
+    winOverlay.hidden = true;
+    setFrozen(false);
+    phase = "demo";
+    step = 0;
+    var len = Math.min(4, 2 + Math.floor(roundIdx / 1));
+    combo = [];
+    for(var i = 0; i < len; i++){
+      combo.push(Math.floor(Math.random() * MOVES.length));
+    }
+    comboBar.classList.add("show");
+    renderComboOrbs(-1);
+
+    combo.forEach(function(mIdx, i){
+      timers.push(setTimeout(function(){
+        if(dead || mode !== "follow") return;
+        renderComboOrbs(i);
+        doMove(mIdx);
+      }, 650 + i * 740));
+    });
+    timers.push(setTimeout(function(){
+      if(dead || mode !== "follow") return;
+      phase = "copy";
+      renderComboOrbs(-1);
+      playClip("say-your-turn.mp3");
+      armCopyIdle();
+    }, 650 + combo.length * 740 + 260));
+  }
+
+  function onTileTap(idx, tileEl){
+    startMusic();
+    if(frozen){
+      setFrozen(false);
+    }
+    if(mode === "free"){
+      doMove(idx, tileEl);
+      freeMoves++;
+      if(freeMoves % 5 === 0){
+        addStar(1);
+        playClip(PRAISE[Math.floor(Math.random() * PRAISE.length)]);
+      }
+      return;
+    }
+    if(phase !== "copy") return;
+    if(idx === combo[step]){
+      clearTimers();
+      doMove(idx, tileEl);
+      step++;
+      renderComboOrbs(-1);
+      if(step >= combo.length){
+        phase = "done";
+        addStar(1);
+        playFanfare();
+        showerConfetti();
+        roundIdx++;
+        if(roundIdx >= 3){
+          playClip("hoot-win-yay.mp3");
+          timers.push(setTimeout(function(){ if(!dead) winOverlay.hidden = false; }, 950));
+        } else {
+          playClip(PRAISE[roundIdx % PRAISE.length]);
+          timers.push(setTimeout(function(){ if(!dead && mode === "follow") startFollowRound(); }, 1350));
+        }
+      } else {
+        armCopyIdle();
+      }
+    } else {
+      playSynth(165, 0.16);
+      playClip("hoot-try-again.mp3");
+      var exp = tileGrid.querySelector('.dance-tile[data-idx="' + combo[step] + '"]');
+      if(exp){ exp.classList.add("hint"); }
+    }
+  }
+
+  function setFrozen(v){
+    frozen = !!v;
+    stage.classList.toggle("frozen", frozen);
+    freezeBtn.classList.toggle("freeze-on", frozen);
+    freezeBtn.setAttribute("aria-pressed", String(frozen));
+    if(frozen){
+      pauseMusic();
+      playSynth(880, 0.14);
+    } else {
+      startMusic();
+    }
+  }
+
+  function setMode(next){
+    clearTimers();
+    mode = next;
+    winOverlay.hidden = true;
+    setFrozen(false);
+    modeFreeBtn.classList.toggle("active", mode === "free");
+    modeFreeBtn.setAttribute("aria-pressed", String(mode === "free"));
+    modeFollowBtn.classList.toggle("active", mode === "follow");
+    modeFollowBtn.setAttribute("aria-pressed", String(mode === "follow"));
+    if(mode === "free"){
+      phase = "free";
+      comboBar.classList.remove("show");
+    } else {
+      roundIdx = 0;
+      startFollowRound();
+    }
+  }
+
+  // Build 6 glowing dance floor tiles
+  MOVES.forEach(function(m, idx){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "dance-tile";
+    b.dataset.idx = idx;
+    b.dataset.id = m.id;
+    b.style.background = m.bg;
+    b.style.setProperty("--shade", m.shade);
+    b.style.setProperty("--glow", m.glow);
+    b.setAttribute("aria-label", m.id);
+    b.textContent = m.emo;
+    b.addEventListener("pointerdown", function(e){
+      e.preventDefault();
+      onTileTap(idx, b);
+    });
+    tileGrid.appendChild(b);
+  });
+
+  modeFreeBtn.addEventListener("click", function(){ setMode("free"); });
+  modeFollowBtn.addEventListener("click", function(){ setMode("follow"); });
+  freezeBtn.addEventListener("click", function(){ setFrozen(!frozen); });
+  musicBtn.addEventListener("click", function(){
+    musicOn = !musicOn;
+    musicBtn.classList.toggle("active", musicOn);
+    musicBtn.setAttribute("aria-pressed", String(musicOn));
+    if(musicOn) startMusic();
+    else pauseMusic();
+  });
+  soundBtn.addEventListener("click", function(){
+    muted = !muted;
+    soundBtn.textContent = muted ? "🔇" : "🔊";
+    if(muted){ pauseMusic(); if(voiceEl) try{ voiceEl.pause(); }catch(e){} }
+    else if(musicOn && !frozen) startMusic();
+  });
+  discoBall.addEventListener("click", function(){
+    startMusic();
+    showerConfetti();
+    playFanfare();
+  });
+  hootDancer.addEventListener("click", function(){
+    window.__bellyArmed = true;
+    setTimeout(function(){ window.__bellyArmed = false; }, 120);
+    startMusic();
+    doMove(Math.floor(Math.random() * MOVES.length));
+    playClip("hoot-giggle.mp3");
+  });
+  playAgainBtn.addEventListener("click", function(){
+    roundIdx = 0;
+    startFollowRound();
+  });
+
+  window.addEventListener("pagehide", function(){
+    dead = true;
+    clearTimers();
+    pauseMusic();
+    if(voiceEl) try{ voiceEl.pause(); }catch(e){}
+  });
+
+  window.__danceGame = {
+    snapshot: function(){
+      return {
+        mode: mode,
+        phase: phase,
+        frozen: frozen,
+        musicOn: musicOn,
+        stars: stars,
+        freeMoves: freeMoves,
+        comboLen: combo.length,
+        step: step,
+        tileCount: tileGrid.querySelectorAll(".dance-tile").length,
+        winShown: !winOverlay.hidden
+      };
+    }
+  };
 })();
 </script>
-
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e143">
+<script src="js/hoot-game-tail.js?v=llprev3e143"></script>
 </body>
 </html>
