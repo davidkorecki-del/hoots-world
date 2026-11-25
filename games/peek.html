@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="peek";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e132"></script>
+<script src="js/hoot-game-head.js?v=llprev3e135"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -16,8 +16,6 @@
     --ink:#17324f;
     --cream:#fffdf7;
     --sun:#ffc93c;
-    --leaf:#3cc858;
-    --coral:#ff5d52;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   [hidden]{ display:none !important; }
@@ -25,353 +23,316 @@
   body{
     font-family:"Fredoka","Nunito",system-ui,sans-serif;
     color:var(--ink);
-    background:#5dc1f5;
+    background:#3c9e47;
     touch-action:none;
     user-select:none; -webkit-user-select:none;
   }
 
-  #stage{
+  /* ================= FULL-SCREEN IMMERSIVE ENCHANTED FOREST (ZERO CARDS / ZERO BOTTOM TRAY!) ================= */
+  #world{
     position:fixed; inset:0; height:100dvh; overflow:hidden;
-    display:flex; flex-direction:column; justify-content:space-between;
-    background:linear-gradient(180deg, #53bcf5 0%, #a5e4ff 36%, #d9f8de 62%, #59cc62 100%);
+    background:linear-gradient(180deg, #56c0f7 0%, #9ce2ff 24%, #b9f1c9 37%, #6dd165 40%, #48b44c 66%, #31943c 100%);
     transition:background .55s ease;
   }
-  #stage.night-mode{
-    background:linear-gradient(180deg, #102042 0%, #1d3566 42%, #1d4a3a 68%, #15382c 100%);
+  #world.night-mode{
+    background:linear-gradient(180deg, #0b1633 0%, #162954 26%, #14363b 39%, #134232 45%, #0e3226 70%, #09231b 100%);
   }
 
-  /* ================= STORYBOOK FOREST SCENERY (DAY + STARLIT NIGHT!) ================= */
-  #scenery{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
-  #forestHillsSvg{
-    position:absolute; left:0; right:0; bottom:18%;
-    width:100%; height:56%; display:block;
+  /* Atmospheric sunbeams / distant layered forest silhouettes */
+  #forestBgSvg{
+    position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; z-index:1;
     transition:filter .55s ease;
   }
-  #stage.night-mode #forestHillsSvg{ filter:brightness(.55) saturate(1.1); }
-  #stage.night-mode #forestTreeL, #stage.night-mode #forestTreeR{ filter:brightness(.58) drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
-
-  #forestTreeL{
-    position:absolute; left:-22px; bottom:28%;
-    width:clamp(118px, 20vw, 204px);
-    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
-    transition:filter .55s ease;
-  }
-  #forestTreeR{
-    position:absolute; right:-22px; bottom:28%;
-    width:clamp(124px, 21vw, 212px);
-    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
-    transition:filter .55s ease;
-  }
-
-  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; pointer-events:auto; }
-  #sunBtn{ top:74px; right:16px; width:82px; height:82px; z-index:2; transition:opacity .4s, transform .4s; }
-  #sunBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 16px rgba(255,183,3,.5)); }
-  #sunBtn .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 44s linear infinite; }
-  #sunBtn.zing .rays{ animation:sunSpin .9s cubic-bezier(.34,1.5,.5,1) 1; }
-  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
-  #stage.night-mode #sunBtn{ opacity:0; transform:scale(.5) translateY(-20px); pointer-events:none; }
-
-  /* Smiling Moon & Twinkling Night Stars (visible in Night Flashlight mode!) */
-  #moonBtn{
-    top:74px; right:18px; width:80px; height:80px; z-index:2;
-    opacity:0; transform:scale(.5) translateY(-20px); pointer-events:none;
-    transition:opacity .45s, transform .45s;
-  }
-  #stage.night-mode #moonBtn{ opacity:1; transform:scale(1) translateY(0); pointer-events:auto; }
-  #moonBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 0 18px rgba(255,236,130,.75)); }
+  #world.night-mode #forestBgSvg{ filter:brightness(.38) saturate(1.1); }
 
   #nightStars{
-    position:absolute; inset:0 0 46% 0; opacity:0; transition:opacity .55s; pointer-events:none;
+    position:absolute; inset:0 0 60% 0; z-index:2; pointer-events:none; opacity:0; transition:opacity .55s;
   }
-  #stage.night-mode #nightStars{ opacity:1; }
+  #world.night-mode #nightStars{ opacity:1; }
   .nstar{
     position:absolute; width:8px; height:8px; border-radius:50%; background:#fff8c5;
-    box-shadow:0 0 10px 3px rgba(255,244,160,.8);
-    animation:twinkle 2.2s ease-in-out infinite alternate;
+    box-shadow:0 0 12px 3px rgba(255,244,160,.85);
+    animation:twinkle 2s ease-in-out infinite alternate;
   }
-  @keyframes twinkle{ from{ opacity:.35; transform:scale(.7); } to{ opacity:1; transform:scale(1.25); } }
-
-  .cloud{ z-index:1; width:124px; height:56px; opacity:.95; animation:cloudDrift linear infinite; transition:opacity .4s; }
-  #stage.night-mode .cloud{ opacity:.22; }
-  .cloud svg{ width:100%; height:100%; display:block; transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
-  .cloud.puff svg{ transform:scale(1.24, 1.34); }
-  @keyframes cloudDrift{ from{ transform:translateX(-150px); } to{ transform:translateX(112vw); } }
+  @keyframes twinkle{ from{ opacity:.3; transform:scale(.7); } to{ opacity:1; transform:scale(1.3); } }
 
   .firefly{
-    position:absolute; z-index:3; width:34px; height:34px; border:none; background:none; padding:0;
-    cursor:pointer; pointer-events:auto; animation:ffFloat 5.5s ease-in-out infinite alternate;
+    position:absolute; z-index:9; width:34px; height:34px; border:none; background:none; padding:0;
+    cursor:pointer; animation:ffFloat 5.5s ease-in-out infinite alternate;
   }
   .firefly i{
     display:block; width:12px; height:12px; margin:11px auto; border-radius:50%;
-    background:#fff49c; box-shadow:0 0 14px 5px rgba(255,235,110,.9);
-    animation:ffGlow 1.4s ease-in-out infinite alternate;
+    background:#fff49c; box-shadow:0 0 16px 6px rgba(255,235,110,.95);
+    animation:ffGlow 1.3s ease-in-out infinite alternate;
   }
-  @keyframes ffGlow{ from{ opacity:.5; transform:scale(.8); } to{ opacity:1; transform:scale(1.25); } }
-  @keyframes ffFloat{ 0%{ transform:translate(0,0); } 50%{ transform:translate(20px,-18px); } 100%{ transform:translate(-12px,-4px); } }
+  @keyframes ffGlow{ from{ opacity:.45; transform:scale(.75); } to{ opacity:1; transform:scale(1.3); } }
+  @keyframes ffFloat{ 0%{ transform:translate(0,0); } 50%{ transform:translate(22px,-20px); } 100%{ transform:translate(-14px,-4px); } }
 
-  /* Warm Flashlight Spotlight Overlay in Night Mode! */
-  #flashBeam{
-    position:fixed; inset:0; z-index:11; pointer-events:none; opacity:0;
-    transition:opacity .35s ease;
-    background:radial-gradient(circle 140px at var(--fx, 50%) var(--fy, 68%), rgba(255,248,195,.22) 0%, rgba(16,32,66,.2) 55%, rgba(10,20,44,.62) 100%);
-  }
-  #stage.night-mode #flashBeam{ opacity:1; }
-
-  /* ================= CLEAN PICTURE-ONLY TOP BAR (ALL >=64PX) ================= */
+  /* ================= CLEAN FLOATING TOP BAR (ALL >=64PX) ================= */
   #hud{
-    position:relative; z-index:15;
+    position:fixed; top:0; left:0; right:0; z-index:22;
     display:flex; align-items:center; justify-content:space-between; gap:8px;
     padding:max(8px, env(safe-area-inset-top)) 12px 0;
     pointer-events:none;
   }
   .hud-group{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
   .mode-pill{
-    min-width:68px; height:66px; padding:0 12px; border-radius:22px;
+    min-width:68px; height:64px; padding:0 12px; border-radius:22px;
     border:4px solid #fff; background:rgba(255,253,247,.95);
-    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    box-shadow:0 5px 0 rgba(23,50,79,.24), 0 8px 18px rgba(23,50,79,.16);
     display:flex; align-items:center; justify-content:center; gap:4px;
-    font-size:26px; cursor:pointer;
-    transition:transform .16s cubic-bezier(.34,1.6,.5,1), background .15s, box-shadow .15s;
+    font-size:25px; cursor:pointer;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), background .15s;
   }
   .mode-pill:active{ transform:translateY(3px) scale(.95); }
   .mode-pill.on{
     background:linear-gradient(180deg, #ffe885 0%, #ffc93c 100%);
     border-color:#17324f;
-    box-shadow:0 5px 0 #17324f, 0 0 22px rgba(255,201,60,.82);
+    box-shadow:0 5px 0 #17324f, 0 0 22px rgba(255,201,60,.85);
     transform:translateY(-2px) scale(1.04);
   }
-
   #soundBtn{
-    width:66px; height:66px; border-radius:50%;
+    width:64px; height:64px; border-radius:50%;
     border:4px solid #fff; background:rgba(255,253,247,.96);
-    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
-    display:grid; place-items:center; cursor:pointer;
+    box-shadow:0 5px 0 rgba(23,50,79,.24); display:grid; place-items:center; cursor:pointer;
   }
   #soundBtn:active{ transform:translateY(3px) scale(.94); }
-  #soundBtn svg{ width:30px; height:30px; }
-
+  #soundBtn svg{ width:28px; height:28px; }
   #starPill{
-    height:66px; padding:0 18px 0 14px; border-radius:999px;
+    height:64px; padding:0 16px 0 12px; border-radius:999px;
     border:4px solid #fff; background:rgba(255,253,247,.96);
-    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
-    display:flex; align-items:center; gap:8px;
-    font-weight:800; font-size:26px; color:#17324f;
+    box-shadow:0 5px 0 rgba(23,50,79,.24);
+    display:flex; align-items:center; gap:7px;
+    font-weight:800; font-size:25px; color:#17324f;
   }
-  #starPill svg{ width:30px; height:30px; display:block; }
+  #starPill svg{ width:28px; height:28px; display:block; }
   #starPill.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
   @keyframes starBump{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22) rotate(-4deg); } 100%{ transform:scale(1); } }
 
-  /* ================= CENTER STAGE: PICTURE CLOUD + SAFARI HOOT ================= */
-  #centerStage{
-    position:relative; z-index:12; flex:1 1 auto; min-height:0;
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
-    padding:4px 10px 4px; gap:4px;
+  /* ================= TREE-BRANCH PERCHED HOOT (LEFT CANOPY — NOT CENTERED!) ================= */
+  #branchPerch{
+    position:fixed; left:-8px; top:max(76px, calc(env(safe-area-inset-top) + 70px)); z-index:18;
+    display:flex; align-items:flex-start; gap:8px; pointer-events:none;
   }
-
-  #orderCloud{
-    position:relative; z-index:13;
-    display:flex; align-items:center; gap:12px;
-    background:#fffdf8; border:5px solid #17324f; border-radius:36px;
-    padding:8px 14px 8px 18px;
-    box-shadow:0 8px 0 #17324f, 0 16px 32px rgba(23,50,79,.22);
-    margin-bottom:10px;
-    max-width:94vw;
+  #branchSvg{
+    position:absolute; left:0; top:68px; width:168px; height:44px; pointer-events:none;
+    filter:drop-shadow(0 5px 6px rgba(23,50,79,.25));
   }
-  #orderCloud::after{
-    content:""; position:absolute; left:50%; bottom:-16px; transform:translateX(-50%);
-    width:20px; height:20px; border-radius:50%;
-    background:#fffdf8; border:5px solid #17324f;
-    box-shadow:0 4px 0 #17324f;
-  }
-  #orderCloud.pop-in{ animation:cloudPop .46s cubic-bezier(.34,1.75,.5,1); }
-  @keyframes cloudPop{ 0%{ transform:scale(.62) translateY(14px); opacity:0; } 100%{ transform:scale(1) translateY(0); opacity:1; } }
-
-  #cloudInner{ display:flex; align-items:center; gap:10px; }
-  .cloud-animal-badge{
-    width:60px; height:60px; border-radius:20px;
-    background:#fff6d8; border:3.5px solid #f59e0b;
-    display:grid; place-items:center; padding:4px;
-  }
-  .cloud-animal-badge svg{ width:100%; height:100%; display:block; }
-  .cloud-q{
-    width:56px; height:56px; border-radius:20px;
-    background:#eff6ff; border:3.5px dashed #3b82f6;
-    display:grid; place-items:center; font-size:28px;
-  }
-  .cloud-arrow{ font-size:24px; color:#16a34a; font-weight:900; }
-  .cloud-stars{ display:flex; align-items:center; gap:4px; font-size:25px; color:#d8e4f0; }
-  .cloud-stars span.lit{ color:#ffc93c; text-shadow:0 2px 6px rgba(245,158,11,.55); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.85,.5,1); }
-  @keyframes slotFed{ 0%{ transform:scale(.45) rotate(-14deg); } 60%{ transform:scale(1.26) rotate(6deg); } 100%{ transform:scale(1) rotate(0); } }
-
-  #repeatBtn{
-    width:64px; height:64px; border-radius:50%; flex:0 0 auto;
-    border:4px solid #17324f; background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
-    box-shadow:0 5px 0 #17324f; display:grid; place-items:center; cursor:pointer;
-  }
-  #repeatBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 #17324f; }
-  #repeatBtn svg{ width:30px; height:30px; }
-
   #hootBtn{
-    position:relative; border:none; background:none; padding:0; cursor:pointer;
-    width:clamp(118px, 22vh, 172px);
-    filter:drop-shadow(0 10px 14px rgba(23,50,79,.24));
-    transform-origin:50% 94%;
-    animation:hootIdle 3.1s ease-in-out infinite;
-    margin-bottom:-6px;
+    position:relative; z-index:2; margin-left:18px;
+    border:none; background:none; padding:0; cursor:pointer; pointer-events:auto;
+    width:98px; height:102px;
+    filter:drop-shadow(0 8px 12px rgba(23,50,79,.28));
+    transform-origin:50% 90%;
+    animation:owlBob 3.2s ease-in-out infinite;
   }
-  #hootBtn svg{ width:100%; height:auto; display:block; overflow:visible; }
-  @keyframes hootIdle{ 0%,100%{ transform:translateY(0) rotate(-.8deg); } 50%{ transform:translateY(-5px) rotate(.8deg); } }
-  #hootBtn .wing-l{ transform-box:fill-box; transform-origin:85% 18%; transition:transform .2s; }
-  #hootBtn .wing-r{ transform-box:fill-box; transform-origin:15% 18%; transition:transform .2s; }
-  #hootBtn .eyelids{ transform-box:fill-box; transform-origin:center; animation:hootBlink 4.4s infinite; }
-  @keyframes hootBlink{ 0%,93%,100%{ transform:scaleY(0); } 96%{ transform:scaleY(1); } }
-  #hootBtn.happy-jump{ animation:hootHappy .52s cubic-bezier(.34,1.7,.5,1) 3; }
-  @keyframes hootHappy{ 0%,100%{ transform:translateY(0) scale(1); } 40%{ transform:translateY(-22px) scale(.96,1.06) rotate(-3deg); } 75%{ transform:translateY(2px) scale(1.05,.95); } }
-  #hootBtn.happy-jump .wing-l{ animation:flapL .22s ease-in-out infinite alternate; }
-  #hootBtn.happy-jump .wing-r{ animation:flapR .22s ease-in-out infinite alternate; }
-  @keyframes flapL{ from{ transform:rotate(0); } to{ transform:rotate(38deg); } }
-  @keyframes flapR{ from{ transform:rotate(0); } to{ transform:rotate(-38deg); } }
-  #hootBtn.head-wobble{ animation:headWobble .42s ease-in-out 2; }
-  @keyframes headWobble{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-8deg); } 75%{ transform:rotate(8deg); } }
-  #hootBtn.talking{ animation:talkPulse .22s ease-in-out infinite alternate; }
-  @keyframes talkPulse{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-3px) scale(1.02); } }
+  #hootBtn svg{ width:100%; height:100%; display:block; overflow:visible; }
+  @keyframes owlBob{ 0%,100%{ transform:translateY(0) rotate(-1deg); } 50%{ transform:translateY(-4px) rotate(1deg); } }
+  #hootBtn.talking{ animation:talkBob .2s ease-in-out infinite alternate; }
+  @keyframes talkBob{ from{ transform:scale(1); } to{ transform:scale(1.04) translateY(-3px); } }
+  #hootBtn.happy-jump{ animation:hootCheer .45s cubic-bezier(.34,1.7,.5,1) 3; }
+  @keyframes hootCheer{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-16px) rotate(-4deg); } }
 
-  /* ================= FOREST HIDING SPOTS + CHECKERED PICNIC BLANKET ================= */
-  #forestDeck{
-    position:relative; z-index:12; width:100%;
-    padding:14px 12px max(10px, env(safe-area-inset-bottom));
-    background:linear-gradient(180deg, #4ec658 0%, #37a544 55%, #2b8a38 100%);
-    border-top:6px solid #17324f;
-    box-shadow:0 -10px 26px rgba(23,50,79,.22), inset 0 6px 0 rgba(255,255,255,.28);
-    transition:background .55s ease;
+  /* Compact Picture-Only Wanted Poster / Finder Bubble Next to Hoot's Branch */
+  #finderBubble{
+    position:relative; z-index:2; margin-top:10px; pointer-events:auto;
+    display:flex; align-items:center; gap:8px;
+    background:#fffdf8; border:4.5px solid #17324f; border-radius:28px;
+    padding:6px 10px 6px 10px;
+    box-shadow:0 7px 0 #17324f, 0 12px 24px rgba(23,50,79,.24);
   }
-  #stage.night-mode #forestDeck{
-    background:linear-gradient(180deg, #1f5a3e 0%, #164430 60%, #103224 100%);
+  #finderBubble::before{
+    content:""; position:absolute; left:-11px; top:26px;
+    width:16px; height:16px; border-radius:50%;
+    background:#fffdf8; border:4px solid #17324f;
+  }
+  #finderBubble.pop-in{ animation:bubPop .42s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bubPop{ 0%{ transform:scale(.6); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  #wantedIcon{
+    width:58px; height:58px; border-radius:18px;
+    background:#fff6d6; border:3px solid #f59e0b;
+    display:grid; place-items:center; padding:3px;
+  }
+  #wantedIcon svg{ width:100%; height:100%; display:block; }
+  #repeatBtn{
+    width:64px; height:64px; border-radius:50%;
+    border:4px solid #17324f; background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
+    box-shadow:0 4px 0 #17324f; display:grid; place-items:center; cursor:pointer;
+  }
+  #repeatBtn:active{ transform:translateY(3px); box-shadow:0 1px 0 #17324f; }
+  #repeatBtn svg{ width:28px; height:28px; }
+
+  /* ================= ORGANIC FULL-SCREEN FOREST PROPS (SCATTERED IN THE LIVING CLEARING!) ================= */
+  #clearing{
+    position:absolute; inset:0; z-index:8;
   }
 
-  #spotsGrid{
-    max-width:960px; margin:0 auto;
-    display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
-    gap:clamp(10px, 2.2vw, 20px);
-    min-height:132px;
+  .forest-prop{
+    position:absolute; border:none; background:none; padding:0;
+    width:clamp(118px, 24vw, 182px); height:clamp(118px, 24vw, 182px);
+    cursor:pointer; touch-action:manipulation;
+    transform:translate(-50%, -50%);
+    transition:transform .2s cubic-bezier(.34,1.6,.5,1);
+    overflow:visible;
+  }
+  .forest-prop:active{ transform:translate(-50%, -50%) scale(.93); }
+
+  /* Ground contact shadow under every organic forest prop */
+  .prop-shadow{
+    position:absolute; left:12%; right:12%; bottom:4%; height:18%;
+    border-radius:50%; background:rgba(20,56,28,.34); pointer-events:none;
   }
 
-  .spot-btn{
-    position:relative;
-    width:clamp(102px, 27vw, 134px); height:clamp(102px, 27vw, 134px);
-    border-radius:32px;
-    border:5px solid #17324f;
-    background:radial-gradient(circle at 35% 28%, #ffffff 0%, #fffdf6 66%, #e3f5e6 100%);
-    box-shadow:0 8px 0 #17324f, 0 14px 22px rgba(23,50,79,.26), inset 0 -5px 0 #d0ebd5;
-    padding:8px; cursor:pointer; touch-action:manipulation;
-    display:grid; place-items:center;
-    transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .16s, border-color .16s, background .35s;
+  /* The hiding animal tucked BEHIND the bush/tent/log — actually peeks ears up periodically! */
+  .prop-hider{
+    position:absolute; left:50%; bottom:16%; width:76%; height:76%;
+    transform:translateX(-50%) translateY(22%) scale(.55);
+    opacity:0; pointer-events:none; z-index:2;
+    filter:drop-shadow(0 8px 12px rgba(23,50,79,.32));
+    transition:transform .42s cubic-bezier(.34,1.88,.5,1), opacity .22s;
   }
-  #stage.night-mode .spot-btn{
-    background:radial-gradient(circle at 35% 28%, #344d73 0%, #243757 70%, #1a2944 100%);
-    border-color:#0b1526;
-    box-shadow:0 8px 0 #0b1526, 0 12px 24px rgba(0,0,0,.45);
-  }
-  .spot-btn svg.spot-art{ width:100%; height:100%; display:block; filter:drop-shadow(0 4px 5px rgba(23,50,79,.16)); pointer-events:none; transition:filter .3s; }
-  #stage.night-mode .spot-btn:not(.revealed) svg.spot-art{ filter:brightness(.72) saturate(.85); }
-  .spot-btn:active{ transform:translateY(4px) scale(.95); }
+  .prop-hider svg{ width:100%; height:100%; display:block; }
 
-  /* Subtle live wiggle clue when target friend is giggling inside! */
-  .spot-btn.wiggle-clue{ animation:spotRustle .55s ease-in-out 2; }
-  @keyframes spotRustle{
+  /* Sneaky live peek-a-boo tease! Ears/head pop up slightly behind the prop then duck back down! */
+  .forest-prop.peeking-tease .prop-hider{
+    opacity:1;
+    animation:sneakyPeek 1.55s ease-in-out 1;
+  }
+  @keyframes sneakyPeek{
+    0%{ transform:translateX(-50%) translateY(22%) scale(.6); }
+    35%{ transform:translateX(-50%) translateY(-48%) scale(.88) rotate(-6deg); }
+    65%{ transform:translateX(-50%) translateY(-44%) scale(.88) rotate(5deg); }
+    100%{ transform:translateX(-50%) translateY(22%) scale(.6); }
+  }
+
+  /* When FOUND: animal springs HIGH out front in joyful PEEKABOO! */
+  .forest-prop.revealed .prop-hider{
+    opacity:1; z-index:6;
+    transform:translateX(-50%) translateY(-54%) scale(1.08);
+  }
+  .forest-prop.revealed .prop-front{
+    transform:scale(1.08, .86) translateY(8px);
+  }
+
+  /* Front bush / tent / mushroom / log layers that physically rustle & part open! */
+  .prop-front{
+    position:relative; z-index:4; width:100%; height:100%;
+    filter:drop-shadow(0 10px 14px rgba(23,50,79,.28));
+    transition:transform .32s cubic-bezier(.34,1.6,.5,1), filter .3s;
+    pointer-events:none;
+  }
+  .prop-front svg{ width:100%; height:100%; display:block; overflow:visible; }
+
+  .forest-prop.rustling .prop-front{ animation:propRustle .45s ease-in-out 2; }
+  @keyframes propRustle{
     0%,100%{ transform:rotate(0) scale(1); }
-    25%{ transform:rotate(-5deg) scale(1.05); }
-    75%{ transform:rotate(5deg) scale(1.05); }
+    25%{ transform:rotate(-7deg) scale(1.05, .96); }
+    75%{ transform:rotate(7deg) scale(1.05, .96); }
   }
-  .spot-btn.shaking{ animation:spotShake .12s ease-in-out 4 alternate; }
-  @keyframes spotShake{ from{ transform:translateX(-6px) rotate(-4deg); } to{ transform:translateX(6px) rotate(4deg); } }
 
-  /* Glowing curious eyes peeking out in Night Flashlight mode! */
-  .peek-eyes{
+  /* Glowing curious eyes peeking out in Night Flashlight Mode! */
+  .night-eyes{
     position:absolute; left:50%; top:46%; transform:translate(-50%,-50%);
-    display:none; gap:8px; pointer-events:none; z-index:4;
-    animation:eyesBlink 3.2s infinite;
+    display:none; gap:10px; z-index:5; pointer-events:none;
+    animation:eyeBlink 3.1s infinite;
   }
-  #stage.night-mode .spot-btn.has-hider:not(.revealed) .peek-eyes{ display:flex; }
-  .peek-eyes span{
-    width:13px; height:13px; border-radius:50%;
+  #world.night-mode .forest-prop.has-hider:not(.revealed) .night-eyes{ display:flex; }
+  .night-eyes span{
+    width:15px; height:15px; border-radius:50%;
     background:#fff7a8; border:2.5px solid #17324f;
-    box-shadow:0 0 12px 3px rgba(255,244,140,.95);
+    box-shadow:0 0 14px 4px rgba(255,244,140,.95);
     display:grid; place-items:center;
   }
-  .peek-eyes span::after{ content:""; width:5px; height:5px; border-radius:50%; background:#17324f; }
-  @keyframes eyesBlink{ 0%,88%,100%{ transform:translate(-50%,-50%) scaleY(1); } 94%{ transform:translate(-50%,-50%) scaleY(.1); } }
+  .night-eyes span::after{ content:""; width:5px; height:5px; border-radius:50%; background:#17324f; }
+  @keyframes eyeBlink{ 0%,88%,100%{ transform:translate(-50%,-50%) scaleY(1); } 94%{ transform:translate(-50%,-50%) scaleY(.1); } }
 
-  /* Animal springing up out of hiding spot on PEEKABOO! */
-  .spot-friend{
-    position:absolute; left:50%; top:-24px; transform:translateX(-50%) scale(0) translateY(34px);
-    width:86%; height:86%; pointer-events:none; z-index:5;
-    filter:drop-shadow(0 10px 14px rgba(23,50,79,.36));
-    transition:transform .42s cubic-bezier(.34,1.88,.5,1);
+  /* Warm Golden Nudge Glow & Bouncing Finger */
+  .forest-prop.nudge-glow .prop-front{
+    filter:drop-shadow(0 0 14px #ffd23f) drop-shadow(0 0 26px rgba(255,201,60,.95));
+    animation:propNudge .68s ease-in-out infinite alternate;
   }
-  .spot-btn.revealed{
-    background:radial-gradient(circle at 50% 35%, #fff9db 0%, #dcfce7 100%) !important;
-    border-color:#16a34a !important;
-    box-shadow:0 8px 0 #14532d, 0 0 34px rgba(255,232,120,.95) !important;
-    transform:scale(1.08);
-  }
-  .spot-btn.revealed .spot-friend{ transform:translateX(-50%) scale(1) translateY(0); }
-
-  /* Gentle idle / wrong-tap golden cue */
-  .spot-btn.nudge-glow{
-    border-color:#ffb703 !important;
-    box-shadow:0 8px 0 #17324f, 0 0 0 8px rgba(255,201,60,.72), 0 0 28px rgba(255,183,3,.95) !important;
-    animation:spotNudge .65s ease-in-out infinite alternate;
-  }
-  @keyframes spotNudge{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.06); } }
+  @keyframes propNudge{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.07); } }
   .nudge-hand{
-    position:absolute; right:-10px; bottom:-14px; font-size:36px; line-height:1;
-    pointer-events:none; z-index:7; filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));
+    position:absolute; right:4%; bottom:-6%; font-size:40px; line-height:1;
+    z-index:10; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
     animation:handTap .55s ease-in-out infinite alternate;
   }
-  @keyframes handTap{ from{ transform:translate(0,0) rotate(-10deg); } to{ transform:translate(-6px,-8px) rotate(4deg); } }
+  @keyframes handTap{ from{ transform:translate(0,0) rotate(-10deg); } to{ transform:translate(-6px,-10px) rotate(4deg); } }
 
-  /* Cozy Checkered Picnic Blanket Strip for Found Forest Friends! */
-  #picnicBlanket{
-    max-width:520px; margin:12px auto 0;
-    padding:7px 14px; border-radius:22px;
-    border:4px solid #17324f;
-    background:repeating-conic-gradient(#ff6b7a 0% 25%, #fff7f8 0% 50%) 0 0 / 22px 22px;
-    box-shadow:0 5px 0 #17324f;
-    display:flex; align-items:center; justify-content:center; gap:10px;
+  /* ================= REAL FOREGROUND PICNIC BLANKET ON THE GRASS! ================= */
+  #grassBlanket{
+    position:fixed; left:50%; bottom:max(8px, env(safe-area-inset-bottom));
+    transform:translateX(-50%); z-index:14;
+    width:min(92vw, 520px); height:84px;
+    border-radius:36px 36px 22px 22px;
+    border:5px solid #17324f;
+    background:repeating-conic-gradient(#ff6374 0% 25%, #fff8f8 0% 50%) 0 0 / 26px 26px;
+    box-shadow:0 8px 0 #17324f, 0 14px 26px rgba(23,50,79,.32);
+    display:flex; align-items:flex-end; justify-content:space-evenly;
+    padding:0 14px 6px;
+    transition:filter .5s ease;
   }
-  #picnicBlanket[hidden]{ display:none !important; }
-  .bslot{
-    width:46px; height:46px; border-radius:50%;
-    background:rgba(255,253,247,.72); border:3px dashed rgba(23,50,79,.45);
-    display:grid; place-items:center; padding:4px;
+  #grassBlanket[hidden]{ display:none !important; }
+  #world.night-mode #grassBlanket{ filter:brightness(.82); }
+  .blanket-guest{
+    width:72px; height:72px; margin-bottom:4px;
+    border-radius:50%;
+    background:rgba(255,253,247,.52); border:3px dashed rgba(23,50,79,.38);
+    display:grid; place-items:center;
+    transition:transform .35s cubic-bezier(.34,1.85,.5,1);
   }
-  .bslot.filled{
-    background:#fffdf7; border:3px solid #17324f;
-    box-shadow:0 3px 0 #17324f;
-    animation:slotFed .48s cubic-bezier(.34,1.85,.5,1);
+  .blanket-guest.seated{
+    background:none; border:none;
+    width:86px; height:86px; margin-bottom:2px;
+    filter:drop-shadow(0 6px 8px rgba(23,50,79,.32));
+    animation:guestBounce 2.2s ease-in-out infinite alternate;
   }
-  .bslot svg{ width:100%; height:100%; display:block; }
+  .blanket-guest.seated svg{ width:100%; height:100%; display:block; }
+  @keyframes guestBounce{ from{ transform:translateY(0) rotate(-3deg); } to{ transform:translateY(-6px) rotate(3deg); } }
 
-  /* Sparkles, leaves & floating emojis */
+  /* ================= FULL-SCREEN NIGHT FLASHLIGHT CONE OVERLAY ================= */
+  #nightVeil{
+    position:fixed; inset:0; z-index:15; pointer-events:none; opacity:0;
+    transition:opacity .45s ease;
+    background:radial-gradient(circle 165px at var(--fx, 50%) var(--fy, 58%),
+      rgba(255,248,195,.16) 0%,
+      rgba(255,242,170,.06) 44%,
+      rgba(8,18,40,.62) 74%,
+      rgba(5,12,28,.82) 100%);
+  }
+  #world.night-mode #nightVeil{ opacity:1; }
+
+  /* Physical Flashlight Handle Following Finger in Night Mode */
+  #torchBadge{
+    position:fixed; z-index:17; pointer-events:none; opacity:0;
+    left:var(--fx, 50%); top:var(--fy, 58%);
+    transform:translate(38px, 38px) rotate(-35deg);
+    font-size:44px; filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));
+    transition:opacity .35s;
+  }
+  #world.night-mode #torchBadge{ opacity:.95; }
+
+  /* Flying rescued friend + sparkles */
+  .fly-friend{ position:fixed; z-index:35; width:96px; height:96px; pointer-events:none; filter:drop-shadow(0 12px 16px rgba(23,50,79,.35)); }
+  .fly-friend svg{ width:100%; height:100%; display:block; }
   .fx-dot{ position:fixed; z-index:35; pointer-events:none; border-radius:50%; }
   .fx-pop{
     position:fixed; z-index:36; pointer-events:none;
-    font-family:"Fredoka",sans-serif; font-weight:800; font-size:36px;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:38px;
     color:#fff; -webkit-text-stroke:2px #17324f;
     text-shadow:0 4px 0 #17324f;
     animation:popFloat .95s cubic-bezier(.22,1,.36,1) forwards;
   }
   @keyframes popFloat{
     0%{ transform:translate(-50%, 0) scale(.4); opacity:0; }
-    25%{ transform:translate(-50%, -18px) scale(1.22); opacity:1; }
-    100%{ transform:translate(-50%, -68px) scale(1); opacity:0; }
+    25%{ transform:translate(-50%, -20px) scale(1.25); opacity:1; }
+    100%{ transform:translate(-50%, -70px) scale(1); opacity:0; }
   }
 
-  /* ================= ONE-TAP START PEEKABOO BUSH (ZERO READING!) ================= */
+  /* ================= ONE-TAP START PEEKABOO BUSH ================= */
   #startVeil{
     position:fixed; inset:0; z-index:30;
-    background:rgba(23,50,79,.24); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    background:rgba(23,50,79,.26); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
     display:flex; align-items:center; justify-content:center; padding:16px;
   }
   #goPeekBtn{
@@ -394,7 +355,7 @@
     box-shadow:0 6px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
   }
 
-  /* ================= CELEBRATION WIN OVERLAY ================= */
+  /* ================= WIN CELEBRATION OVERLAY ================= */
   #winOverlay{
     position:fixed; inset:0; z-index:45;
     background:rgba(23,50,79,.45); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
@@ -407,7 +368,7 @@
     padding:22px 20px 20px; text-align:center;
   }
   #winStars{ font-size:40px; letter-spacing:6px; color:#dbe7f3; line-height:1; }
-  #winStars span.lit{ color:#ffc93c; text-shadow:0 0 18px rgba(255,201,60,.95); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.8,.5,1); }
+  #winStars span.lit{ color:#ffc93c; text-shadow:0 0 18px rgba(255,201,60,.95); display:inline-block; animation:bubPop .45s cubic-bezier(.34,1.8,.5,1); }
   #winTitle{ font-size:clamp(26px, 6.5vw, 34px); margin:10px 0 8px; color:#17324f; }
   #winFriends{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:10px 0 18px; }
   .win-mini{ width:56px; height:56px; border-radius:50%; background:#e6faec; border:3px solid #17324f; padding:6px; }
@@ -420,114 +381,85 @@
     color:#fff; font-family:inherit; font-size:26px; font-weight:800; cursor:pointer;
     box-shadow:0 7px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
   }
-  #againBtn:active, .win-btn:active{ transform:translateY(4px); box-shadow:0 3px 0 #14532d; }
 
   @media (max-width:460px){
     #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 0; gap:4px; }
     .hud-group{ gap:5px; }
-    .mode-pill{ min-width:64px; height:64px; padding:0 8px; font-size:22px; border-radius:18px; gap:2px; }
+    .mode-pill{ min-width:64px; height:64px; padding:0 8px; font-size:21px; border-radius:18px; gap:2px; }
     #soundBtn{ width:64px; height:64px; }
     #starPill{ height:64px; padding:0 11px 0 9px; gap:5px; font-size:22px; }
     #starPill svg{ width:24px; height:24px; }
-    #orderCloud{ padding:7px 10px 7px 12px; gap:7px; }
-    #cloudInner{ gap:6px; }
-    .cloud-animal-badge{ width:48px; height:48px; border-radius:15px; padding:3px; }
-    .cloud-q{ width:46px; height:46px; border-radius:15px; font-size:24px; }
-    .cloud-arrow{ font-size:20px; }
-    .cloud-stars{ font-size:19px; gap:2px; }
-    .spot-btn{ width:clamp(98px, 28vw, 112px); height:clamp(98px, 28vw, 112px); border-radius:26px; padding:6px; }
-    #spotsGrid{ gap:10px; }
-    #hootBtn{ width:clamp(108px, 20vh, 142px); }
-    #picnicBlanket{ margin-top:8px; padding:5px 10px; gap:7px; }
-    .bslot{ width:40px; height:40px; }
-  }
-  @media (max-height:640px){
-    #hootBtn{ width:clamp(96px, 20vh, 132px); }
-    .spot-btn{ width:clamp(88px, 20vh, 116px); height:clamp(88px, 20vh, 116px); }
-    #forestDeck{ padding-top:8px; padding-bottom:8px; }
-    #picnicBlanket{ margin-top:6px; }
-    .bslot{ width:38px; height:38px; }
-  }
-  @media (prefers-reduced-motion:reduce){
-    .cloud, .firefly, #sunBtn .rays, .nstar{ animation:none !important; }
+    #branchPerch{ top:max(78px, calc(env(safe-area-inset-top) + 74px)); }
+    #hootBtn{ width:80px; height:84px; margin-left:10px; }
+    #branchSvg{ top:54px; width:132px; }
+    #finderBubble{ padding:5px 8px; gap:6px; margin-top:4px; }
+    #wantedIcon{ width:48px; height:48px; }
+    .forest-prop{ width:clamp(108px, 31vw, 134px); height:clamp(108px, 31vw, 134px); }
+    #grassBlanket{ height:74px; padding:0 8px 4px; }
+    .blanket-guest{ width:56px; height:56px; }
+    .blanket-guest.seated{ width:68px; height:68px; }
   }
 </style>
 </head>
 <body>
-<div id="stage">
-  <!-- Living Day/Night Storybook Forest Scenery -->
-  <div id="scenery" aria-hidden="true">
-    <div id="nightStars">
-      <span class="nstar" style="left:12%;top:14%;animation-delay:.1s"></span>
-      <span class="nstar" style="left:28%;top:22%;animation-delay:.7s"></span>
-      <span class="nstar" style="left:44%;top:11%;animation-delay:1.3s"></span>
-      <span class="nstar" style="left:62%;top:19%;animation-delay:.4s"></span>
-      <span class="nstar" style="left:78%;top:13%;animation-delay:1.1s"></span>
-      <span class="nstar" style="left:86%;top:27%;animation-delay:.8s"></span>
-      <span class="nstar" style="left:18%;top:32%;animation-delay:1.5s"></span>
-    </div>
+<div id="world">
+  <!-- Full-Screen Enchanted Forest Landscape SVG -->
+  <svg id="forestBgSvg" viewBox="0 0 1200 860" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <!-- Warm sunbeams filtering through the trees -->
+    <g opacity=".18" fill="#fff7b2">
+      <polygon points="940,0 1120,0 760,860 540,860"/>
+      <polygon points="720,0 850,0 440,860 280,860"/>
+    </g>
+    <!-- Smiling Sun (upper right) -->
+    <g id="bgSun" transform="translate(1070, 148)">
+      <circle r="44" fill="#ffd23f" stroke="#f59e0b" stroke-width="5"/>
+      <circle cx="-13" cy="-5" r="4.5" fill="#17324f"/><circle cx="13" cy="-5" r="4.5" fill="#17324f"/>
+      <path d="M-12 10 Q0 20 12 10" stroke="#17324f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <!-- Fluffy Clouds -->
+    <g fill="#fff" opacity=".9">
+      <ellipse cx="420" cy="128" rx="54" ry="22"/><ellipse cx="465" cy="112" rx="42" ry="28"/><ellipse cx="508" cy="128" rx="40" ry="20"/>
+      <ellipse cx="830" cy="175" rx="46" ry="18"/><ellipse cx="868" cy="162" rx="34" ry="22"/>
+    </g>
+    <!-- Distant Pine Forest Silhouette Ridge -->
+    <path d="M0 365 Q260 285 580 345 T1200 310 L1200 860 L0 860 Z" fill="#6fd468"/>
+    <g fill="#42b34c" opacity=".68">
+      <polygon points="240,320 278,220 316,320"/>
+      <polygon points="300,328 345,212 390,328"/>
+      <polygon points="790,330 834,218 878,330"/>
+      <polygon points="862,324 912,202 962,324"/>
+      <polygon points="1030,318 1075,214 1120,318"/>
+    </g>
+    <!-- Mid-ground Rolling Sunlit Clearing -->
+    <path d="M0 435 Q360 368 720 422 T1200 398 L1200 860 L0 860 Z" fill="#4fbf52"/>
+    <!-- Winding Warm Forest Footpath -->
+    <path d="M510 412 Q615 470 570 575 Q525 680 615 860 L740 860 Q645 680 685 570 Q715 468 585 412 Z" fill="#ebd29b" opacity=".52"/>
+    <!-- Foreground Lush Grass Mound & Tiny Wildflowers -->
+    <path d="M0 710 Q600 660 1200 715 L1200 860 L0 860 Z" fill="#359c3e"/>
+    <g>
+      <circle cx="110" cy="610" r="8" fill="#fff"/><circle cx="110" cy="610" r="3.8" fill="#ffd23f"/>
+      <circle cx="1090" cy="595" r="8" fill="#ffb3c6"/><circle cx="1090" cy="595" r="3.8" fill="#ffd23f"/>
+      <circle cx="980" cy="740" r="8.5" fill="#fff"/><circle cx="980" cy="740" r="4" fill="#ffd23f"/>
+      <circle cx="185" cy="760" r="8" fill="#ffe680"/><circle cx="185" cy="760" r="3.8" fill="#f97316"/>
+    </g>
+  </svg>
 
-    <button class="decor cloud" type="button" style="top:10%;animation-duration:84s;animation-delay:-26s" tabindex="-1">
-      <svg viewBox="0 0 124 56"><ellipse cx="40" cy="39" rx="31" ry="14" fill="#fff"/><ellipse cx="68" cy="28" rx="27" ry="19" fill="#fff"/><ellipse cx="92" cy="39" rx="24" ry="13" fill="#fff"/></svg>
-    </button>
-
-    <button class="decor" id="sunBtn" type="button" aria-label="Tap Mr. Sun">
-      <svg viewBox="0 0 100 100">
-        <g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round">
-          <path d="M50 3v12M50 85v12M3 50h12M85 50h12M17 17l8 8M75 75l8 8M83 17l-8 8M25 75l-8 8"/>
-        </g>
-        <circle cx="50" cy="50" r="27" fill="#ffd23f" stroke="#f09d00" stroke-width="3.5"/>
-        <circle cx="41" cy="46" r="3.4" fill="#17324f"/><circle cx="59" cy="46" r="3.4" fill="#17324f"/>
-        <path d="M40 57 Q50 65 60 57" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-      </svg>
-    </button>
-
-    <button class="decor" id="moonBtn" type="button" aria-label="Tap Moon">
-      <svg viewBox="0 0 100 100">
-        <path d="M66 18 A32 32 0 1 0 84 68 A26 26 0 1 1 66 18 Z" fill="#ffe680" stroke="#f59e0b" stroke-width="3.5" stroke-linejoin="round"/>
-        <circle cx="44" cy="48" r="3.2" fill="#17324f"/>
-        <path d="M40 59 Q48 64 55 59" stroke="#17324f" stroke-width="3" fill="none" stroke-linecap="round"/>
-      </svg>
-    </button>
-
-    <button class="firefly" type="button" style="left:16%;top:28%" aria-label="Tap firefly"><i></i></button>
-    <button class="firefly" type="button" style="right:18%;top:31%;animation-delay:-2.4s" aria-label="Tap firefly"><i></i></button>
-
-    <svg id="forestHillsSvg" viewBox="0 0 900 320" preserveAspectRatio="xMidYMax slice">
-      <path d="M0 155 Q230 68 480 138 T900 112 L900 320 L0 320 Z" fill="#77d66f"/>
-      <path d="M0 205 Q290 134 570 188 T900 166 L900 320 L0 320 Z" fill="#46b952"/>
-      <g>
-        <circle cx="215" cy="232" r="8.5" fill="#fff"/><circle cx="215" cy="232" r="4" fill="#ffd23f"/>
-        <circle cx="676" cy="226" r="8.5" fill="#ffb3c6"/><circle cx="676" cy="226" r="4" fill="#ffd23f"/>
-        <circle cx="745" cy="248" r="7.5" fill="#ffe680"/><circle cx="745" cy="248" r="3.5" fill="#f97316"/>
-      </g>
-    </svg>
-
-    <svg id="forestTreeL" viewBox="0 0 180 250">
-      <ellipse cx="90" cy="238" rx="44" ry="9" fill="rgba(23,50,79,.16)"/>
-      <rect x="76" y="176" width="28" height="62" rx="6" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
-      <path d="M22 186 L90 98 L158 186 Z" fill="#2ea043" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M34 136 L90 56 L146 136 Z" fill="#3ec456" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M48 88 L90 22 L132 88 Z" fill="#58d66b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-    </svg>
-
-    <svg id="forestTreeR" viewBox="0 0 190 250">
-      <ellipse cx="98" cy="238" rx="46" ry="9" fill="rgba(23,50,79,.16)"/>
-      <path d="M82 238 Q88 180 88 122 L108 122 Q108 180 116 238 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
-      <circle cx="62" cy="96" r="42" fill="#3eb84d" stroke="#17324f" stroke-width="4"/>
-      <circle cx="132" cy="88" r="40" fill="#2ea03d" stroke="#17324f" stroke-width="4"/>
-      <circle cx="98" cy="58" r="44" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
-      <circle cx="96" cy="96" r="36" fill="#47c456"/>
-    </svg>
+  <!-- Night Sky Stars & Glowing Fireflies -->
+  <div id="nightStars" aria-hidden="true">
+    <span class="nstar" style="left:14%;top:12%;animation-delay:.1s"></span>
+    <span class="nstar" style="left:32%;top:18%;animation-delay:.7s"></span>
+    <span class="nstar" style="left:48%;top:9%;animation-delay:1.2s"></span>
+    <span class="nstar" style="left:65%;top:16%;animation-delay:.4s"></span>
+    <span class="nstar" style="left:82%;top:11%;animation-delay:1.0s"></span>
+    <span class="nstar" style="left:90%;top:24%;animation-delay:.6s"></span>
   </div>
+  <button class="firefly" type="button" style="left:22%;top:34%" aria-label="Tap firefly"><i></i></button>
+  <button class="firefly" type="button" style="right:16%;top:32%;animation-delay:-2.2s" aria-label="Tap firefly"><i></i></button>
 
-  <!-- Flashlight Beam Overlay (activates in Night Flashlight Peekaboo mode!) -->
-  <div id="flashBeam" aria-hidden="true"></div>
-
-  <!-- Top Bar: 3 Giant Picture Mode Buttons + Sound + Star Counter -->
+  <!-- Clean Picture-Only Top Bar -->
   <div id="hud">
     <div class="hud-group" role="group" aria-label="Game modes">
-      <button type="button" class="mode-pill on" data-mode="hide" aria-label="Daytime Forest Peekaboo">
+      <button type="button" class="mode-pill on" data-mode="hide" aria-label="Sunny Forest Peekaboo">
         <span aria-hidden="true">🌿</span><span aria-hidden="true">👀</span>
       </button>
       <button type="button" class="mode-pill" data-mode="night" aria-label="Night Flashlight Peekaboo">
@@ -549,67 +481,61 @@
     </div>
   </div>
 
-  <!-- Center Stage: Picture-Only Thought Cloud + Safari Hat Hoot -->
-  <div id="centerStage">
-    <div id="orderCloud">
-      <div id="cloudInner"></div>
-      <button type="button" id="repeatBtn" aria-label="Hear Hoot again">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#fff"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.8a9 9 0 0 1 0 12.4"/></svg>
-      </button>
-    </div>
-
+  <!-- Hoot Perched on Upper-Left Tree Branch with Compact Finder Bubble! -->
+  <div id="branchPerch">
+    <svg id="branchSvg" viewBox="0 0 180 48" aria-hidden="true">
+      <path d="M0 16 Q72 28 168 18 Q174 26 164 32 Q74 44 0 36 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="152" cy="14" rx="16" ry="9" fill="#4ade80" stroke="#17324f" stroke-width="3" transform="rotate(-18 152 14)"/>
+      <ellipse cx="132" cy="36" rx="14" ry="8" fill="#22c55e" stroke="#17324f" stroke-width="3" transform="rotate(14 132 36)"/>
+    </svg>
     <button type="button" id="hootBtn" aria-label="Tap Hoot to giggle and repeat">
       <svg viewBox="0 0 220 228" aria-hidden="true">
-        <path d="M90 190 L110 218 L130 190 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-        <ellipse class="wing-l" cx="40" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(14 40 138)"/>
-        <ellipse class="wing-r" cx="180" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(-14 180 138)"/>
+        <path d="M90 190 L110 218 L130 190 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="4"/>
+        <ellipse cx="40" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(14 40 138)"/>
+        <ellipse cx="180" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(-14 180 138)"/>
         <ellipse cx="110" cy="134" rx="70" ry="73" fill="#a06a3b" stroke="#17324f" stroke-width="4.5"/>
         <ellipse cx="110" cy="152" rx="48" ry="47" fill="#fdeed3"/>
-        <path d="M92 164 q7 6 14 0 M114 164 q7 6 14 0 M103 178 q7 6 14 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-        <!-- Cute Explorer Binoculars Hanging on Hoot's Chest! -->
-        <path d="M84 114 L94 134 M136 114 L126 134" stroke="#17324f" stroke-width="3.5" stroke-linecap="round"/>
         <circle cx="96" cy="140" r="11" fill="#38bdf8" stroke="#17324f" stroke-width="3.5"/>
         <circle cx="124" cy="140" r="11" fill="#38bdf8" stroke="#17324f" stroke-width="3.5"/>
         <rect x="104" y="136" width="12" height="7" fill="#17324f"/>
-        <circle cx="93" cy="137" r="3.2" fill="#e0f2fe"/><circle cx="121" cy="137" r="3.2" fill="#e0f2fe"/>
-        <!-- Head -->
         <circle cx="110" cy="80" r="56" fill="#a06a3b" stroke="#17324f" stroke-width="4.5"/>
-        <!-- Adorable Safari Explorer Hat! -->
         <ellipse cx="110" cy="34" rx="64" ry="13" fill="#e6be8a" stroke="#17324f" stroke-width="4"/>
         <path d="M68 32 Q74 4 110 4 Q146 4 152 32 Z" fill="#f3d5a5" stroke="#17324f" stroke-width="4"/>
         <path d="M70 28 Q110 34 150 28" stroke="#ff5d52" stroke-width="6" fill="none"/>
-        <!-- Facial Discs & Eye-Tracking Pupils -->
         <ellipse cx="86" cy="80" rx="25" ry="27" fill="#fdeed3" stroke="#17324f" stroke-width="3"/>
         <ellipse cx="134" cy="80" rx="25" ry="27" fill="#fdeed3" stroke="#17324f" stroke-width="3"/>
         <g id="hootPupils">
-          <circle cx="86" cy="80" r="12.5" fill="#17324f"/>
-          <circle cx="134" cy="80" r="12.5" fill="#17324f"/>
-          <circle cx="90" cy="75" r="4.5" fill="#fff"/>
-          <circle cx="138" cy="75" r="4.5" fill="#fff"/>
-        </g>
-        <g class="eyelids">
-          <ellipse cx="86" cy="80" rx="24" ry="26" fill="#a06a3b"/>
-          <ellipse cx="134" cy="80" rx="24" ry="26" fill="#a06a3b"/>
+          <circle cx="86" cy="80" r="12.5" fill="#17324f"/><circle cx="134" cy="80" r="12.5" fill="#17324f"/>
+          <circle cx="90" cy="75" r="4.5" fill="#fff"/><circle cx="138" cy="75" r="4.5" fill="#fff"/>
         </g>
         <circle cx="59" cy="100" r="9.5" fill="#ffb59d" opacity=".9"/>
         <circle cx="161" cy="100" r="9.5" fill="#ffb59d" opacity=".9"/>
         <path d="M97 93 Q110 87 123 93 Q118 106 110 109 Q102 106 97 93 Z" fill="#ff9f1c" stroke="#17324f" stroke-width="3.2"/>
-        <path d="M84 202 q-8 8 -14 6 M84 202 q-2 10 -8 12 M136 202 q8 8 14 6 M136 202 q2 10 8 12" stroke="#ff9f1c" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+        <path d="M84 202 q-8 8 -14 6 M136 202 q8 8 14 6" stroke="#ff9f1c" stroke-width="5.5" fill="none" stroke-linecap="round"/>
       </svg>
     </button>
+    <div id="finderBubble">
+      <div id="wantedIcon"></div>
+      <button type="button" id="repeatBtn" aria-label="Hear Hoot again">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#fff"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.8a9 9 0 0 1 0 12.4"/></svg>
+      </button>
+    </div>
   </div>
 
-  <!-- Forest Hiding Spots + Checkered Picnic Blanket -->
-  <div id="forestDeck">
-    <div id="spotsGrid" aria-label="Forest hiding spots"></div>
-    <div id="picnicBlanket" aria-label="Friends found on the picnic blanket"></div>
-  </div>
+  <!-- Full-Screen Living Forest Clearing (Organic Props Placed Right in the Grass!) -->
+  <div id="clearing" aria-label="Forest hiding spots"></div>
 
-  <!-- Picture-First One-Tap Peekaboo Bush Start (Zero Reading!) -->
+  <!-- Real Checkered Picnic Blanket Spread Right on the Foreground Grass! -->
+  <div id="grassBlanket" aria-label="Forest friends sitting on the picnic blanket"></div>
+
+  <!-- Night Flashlight Darkness Cone & Handle -->
+  <div id="nightVeil" aria-hidden="true"></div>
+  <div id="torchBadge" aria-hidden="true">🔦</div>
+
+  <!-- Picture-First Start Bush -->
   <div id="startVeil">
     <button type="button" id="goPeekBtn" aria-label="Play Peekaboo Forest">
       <svg width="136" height="98" viewBox="0 0 136 98" aria-hidden="true">
-        <!-- Cute bunny ears peeking above a berry bush! -->
         <ellipse cx="52" cy="24" rx="9" ry="20" fill="#fffdf8" stroke="#17324f" stroke-width="3.5" transform="rotate(-10 52 24)"/>
         <ellipse cx="52" cy="26" rx="4" ry="12" fill="#ff9ebb" transform="rotate(-10 52 26)"/>
         <ellipse cx="84" cy="24" rx="9" ry="20" fill="#fffdf8" stroke="#17324f" stroke-width="3.5" transform="rotate(10 84 24)"/>
@@ -619,8 +545,6 @@
         <circle cx="68" cy="54" r="30" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
         <circle cx="44" cy="62" r="5" fill="#ff5d52" stroke="#17324f" stroke-width="2"/>
         <circle cx="88" cy="68" r="5" fill="#ff5d52" stroke="#17324f" stroke-width="2"/>
-        <circle cx="68" cy="46" r="5" fill="#ffc93c" stroke="#17324f" stroke-width="2"/>
-        <!-- Curious eyes peeking out! -->
         <circle cx="58" cy="66" r="6" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="58" cy="66" r="2.6" fill="#17324f"/>
         <circle cx="78" cy="66" r="6" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="66" r="2.6" fill="#17324f"/>
       </svg>
@@ -628,7 +552,7 @@
     </button>
   </div>
 
-  <!-- Picture-First Win Celebration -->
+  <!-- Win Celebration Overlay -->
   <div id="winOverlay" hidden>
     <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
       <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
@@ -645,58 +569,54 @@
 (function(){
   "use strict";
 
-  function wrapSvg(inner, cls){ return '<svg class="' + (cls || '') + '" viewBox="0 0 120 120" aria-hidden="true">' + inner + '</svg>'; }
+  function wrapSvg(inner){ return '<svg viewBox="0 0 120 120" aria-hidden="true">' + inner + '</svg>'; }
 
-  /* ================= 6 ADORABLE PEEKABOO FOREST FRIENDS ================= */
   var FRIENDS = [
-    { id:"bear", name:"Bear", fx:"🍯", color:"#a06a3b", sfx:"hum",
+    { id:"bear", name:"Bear", fx:"🍯", color:"#a06a3b",
       svg: wrapSvg('<circle cx="32" cy="34" r="14" fill="#8a5a2b" stroke="#17324f" stroke-width="3.5"/><circle cx="88" cy="34" r="14" fill="#8a5a2b" stroke="#17324f" stroke-width="3.5"/><circle cx="32" cy="34" r="6" fill="#e5b173"/><circle cx="88" cy="34" r="6" fill="#e5b173"/><circle cx="60" cy="66" r="37" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="77" rx="18" ry="14" fill="#f7deb0" stroke="#17324f" stroke-width="2.5"/><circle cx="46" cy="58" r="5" fill="#17324f"/><circle cx="74" cy="58" r="5" fill="#17324f"/><circle cx="48" cy="56" r="1.8" fill="#fff"/><circle cx="76" cy="56" r="1.8" fill="#fff"/><ellipse cx="60" cy="71" rx="7.5" ry="5.5" fill="#3a200d"/><path d="M60 76 q0 6 -7 6 M60 76 q0 6 7 6" stroke="#3a200d" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="34" cy="72" r="5.5" fill="#ff9ebb" opacity=".75"/><circle cx="86" cy="72" r="5.5" fill="#ff9ebb" opacity=".75"/>') },
-    { id:"bunny", name:"Bunny", fx:"🥕", color:"#ff8fab", sfx:"hop",
+    { id:"bunny", name:"Bunny", fx:"🥕", color:"#ff8fab",
       svg: wrapSvg('<ellipse cx="42" cy="25" rx="10" ry="23" fill="#fffdf8" stroke="#17324f" stroke-width="3.5"/><ellipse cx="42" cy="27" rx="4.6" ry="14" fill="#ff9ebb"/><ellipse cx="78" cy="25" rx="10" ry="23" fill="#fffdf8" stroke="#17324f" stroke-width="3.5"/><ellipse cx="78" cy="27" rx="4.6" ry="14" fill="#ff9ebb"/><circle cx="60" cy="76" r="34" fill="#fffdf8" stroke="#17324f" stroke-width="4"/><circle cx="47" cy="70" r="4.8" fill="#17324f"/><circle cx="73" cy="70" r="4.8" fill="#17324f"/><ellipse cx="60" cy="80" rx="5.5" ry="4.2" fill="#ff5d8f"/><path d="M60 84 q0 5 -5 5 M60 84 q0 5 5 5" stroke="#17324f" stroke-width="2.8" fill="none" stroke-linecap="round"/><rect x="55" y="90" width="10" height="8" rx="2" fill="#fff" stroke="#17324f" stroke-width="2"/><circle cx="36" cy="82" r="6" fill="#ffb3c6"/><circle cx="84" cy="82" r="6" fill="#ffb3c6"/>') },
-    { id:"fox", name:"Fox", fx:"✨", color:"#f97316", sfx:"chirp",
+    { id:"fox", name:"Fox", fx:"✨", color:"#f97316",
       svg: wrapSvg('<path d="M26 52 L18 14 L50 32 Z" fill="#f97316" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><path d="M94 52 L102 14 L70 32 Z" fill="#f97316" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><path d="M29 44 L26 26 L42 36 Z" fill="#fed7aa"/><path d="M91 44 L94 26 L78 36 Z" fill="#fed7aa"/><circle cx="60" cy="66" r="36" fill="#fb923c" stroke="#17324f" stroke-width="4"/><path d="M34 80 q26 26 52 0 q-6 22 -26 22 q-20 0 -26 -22 Z" fill="#fffdf8"/><circle cx="46" cy="60" r="4.8" fill="#17324f"/><circle cx="74" cy="60" r="4.8" fill="#17324f"/><ellipse cx="60" cy="78" rx="7" ry="5.5" fill="#17324f"/>') },
-    { id:"frog", name:"Frog", fx:"💦", color:"#4ade80", sfx:"ribbit",
+    { id:"frog", name:"Frog", fx:"💦", color:"#4ade80",
       svg: wrapSvg('<circle cx="38" cy="36" r="14" fill="#4cc95a" stroke="#17324f" stroke-width="3.5"/><circle cx="82" cy="36" r="14" fill="#4cc95a" stroke="#17324f" stroke-width="3.5"/><circle cx="38" cy="36" r="8.5" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="82" cy="36" r="8.5" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="38" cy="36" r="4.5" fill="#17324f"/><circle cx="82" cy="36" r="4.5" fill="#17324f"/><ellipse cx="60" cy="76" rx="39" ry="31" fill="#57cc62" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="88" rx="22" ry="15" fill="#dcfce7"/><path d="M38 72 q22 16 44 0" stroke="#17324f" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="31" cy="79" r="6" fill="#ff8fab"/><circle cx="89" cy="79" r="6" fill="#ff8fab"/>') },
-    { id:"hedgehog", name:"Hedgehog", fx:"🍓", color:"#b07b42", sfx:"hop",
+    { id:"hedgehog", name:"Hedgehog", fx:"🍓", color:"#b07b42",
       svg: wrapSvg('<path d="M16 74 L10 52 L28 46 L26 26 L46 32 L60 16 L74 32 L94 26 L92 46 L110 52 L104 74 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><ellipse cx="60" cy="74" rx="34" ry="27" fill="#f3d5a5" stroke="#17324f" stroke-width="4"/><circle cx="47" cy="68" r="4.8" fill="#17324f"/><circle cx="73" cy="68" r="4.8" fill="#17324f"/><circle cx="49" cy="66" r="1.6" fill="#fff"/><circle cx="75" cy="66" r="1.6" fill="#fff"/><ellipse cx="60" cy="78" rx="6.5" ry="5" fill="#17324f"/><circle cx="35" cy="78" r="5.5" fill="#ff9ebb" opacity=".8"/><circle cx="85" cy="78" r="5.5" fill="#ff9ebb" opacity=".8"/>') },
-    { id:"squirrel", name:"Squirrel", fx:"🌰", color:"#ec9042", sfx:"chirp",
+    { id:"squirrel", name:"Squirrel", fx:"🌰", color:"#ec9042",
       svg: wrapSvg('<path d="M84 96 q32 -6 28 -38 q-2 -24 -26 -30 q10 16 2 28 q10 22 -4 40 Z" fill="#c96a2b" stroke="#17324f" stroke-width="3.8"/><path d="M36 38 L28 12 L52 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><path d="M78 38 L86 12 L62 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><circle cx="57" cy="63" r="31" fill="#ec9042" stroke="#17324f" stroke-width="4"/><ellipse cx="57" cy="77" rx="17" ry="18" fill="#fef0d5"/><circle cx="46" cy="56" r="4.6" fill="#17324f"/><circle cx="68" cy="56" r="4.6" fill="#17324f"/><ellipse cx="57" cy="65" rx="5.5" ry="4" fill="#6b3410"/><ellipse cx="57" cy="95" rx="10" ry="12" fill="#8b5a2b" stroke="#17324f" stroke-width="3"/>') }
   ];
 
-  /* ================= 6 STORYBOOK FOREST HIDING SPOTS ================= */
-  var SPOTS = [
-    { id:"bush", name:"Berry Bush",
-      svg: wrapSvg('<circle cx="34" cy="74" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/><circle cx="86" cy="74" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/><circle cx="60" cy="62" r="31" fill="#55cf64" stroke="#17324f" stroke-width="4"/><circle cx="38" cy="68" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="74" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="60" cy="48" r="6" fill="#ffc93c" stroke="#17324f" stroke-width="2.5"/><path d="M20 96 h80" stroke="#17324f" stroke-width="5" stroke-linecap="round"/>', "spot-art") },
-    { id:"log", name:"Hollow Log",
-      svg: wrapSvg('<rect x="14" y="48" width="90" height="44" rx="20" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="30" cy="70" rx="16" ry="22" fill="#4a2e12" stroke="#17324f" stroke-width="4"/><ellipse cx="30" cy="70" rx="9" ry="13" fill="#231407"/><path d="M54 62 h36 M60 76 h26" stroke="#784b22" stroke-width="4" stroke-linecap="round"/><path d="M72 48 q4 -16 14 -16 q10 0 14 16 Z" fill="#ff5d52" stroke="#17324f" stroke-width="3"/><circle cx="82" cy="40" r="3" fill="#fff"/>', "spot-art") },
-    { id:"mushroom", name:"Toadstool",
-      svg: wrapSvg('<path d="M44 64 L76 64 L80 100 Q60 106 40 100 Z" fill="#fff4d8" stroke="#17324f" stroke-width="4"/><path d="M12 66 C14 26 42 18 60 18 C78 18 106 26 108 66 Z" fill="#ff5d52" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><circle cx="42" cy="42" r="9" fill="#fffdf8"/><circle cx="76" cy="38" r="8" fill="#fffdf8"/><circle cx="60" cy="54" r="6" fill="#fffdf8"/><path d="M52 100 V80 A8 8 0 0 1 68 80 V100 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="3.2"/>', "spot-art") },
-    { id:"tent", name:"Cozy Tent",
-      svg: wrapSvg('<path d="M12 100 L60 22 L108 100 Z" fill="#ffd23f" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 22 L84 100 L108 100 Z" fill="#ff7aa2" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M44 100 L60 58 L76 100 Z" fill="#2d3b55" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 12 v12 M60 12 l16 5 -16 5 Z" fill="#4ade80" stroke="#17324f" stroke-width="2.8" stroke-linejoin="round"/>', "spot-art") },
-    { id:"trunk", name:"Oak Tree",
-      svg: wrapSvg('<path d="M36 106 L42 36 Q44 18 60 16 Q76 18 78 36 L84 106 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/><circle cx="34" cy="28" r="18" fill="#3ec456" stroke="#17324f" stroke-width="3.8"/><circle cx="86" cy="24" r="19" fill="#2ea043" stroke="#17324f" stroke-width="3.8"/><circle cx="60" cy="18" r="18" fill="#55cf64" stroke="#17324f" stroke-width="3.8"/><ellipse cx="60" cy="70" rx="16" ry="20" fill="#2b1908" stroke="#17324f" stroke-width="3.5"/>', "spot-art") },
-    { id:"flowers", name:"Flower Patch",
-      svg: wrapSvg('<path d="M16 100 Q60 66 104 100 Z" fill="#4ade80" stroke="#17324f" stroke-width="4"/><path d="M34 86 V54 M60 84 V44 M86 86 V56" stroke="#15803d" stroke-width="5" stroke-linecap="round"/><circle cx="34" cy="48" r="14" fill="#ff7aa2" stroke="#17324f" stroke-width="3.2"/><circle cx="34" cy="48" r="6" fill="#ffd23f"/><circle cx="60" cy="36" r="16" fill="#c084fc" stroke="#17324f" stroke-width="3.2"/><circle cx="60" cy="36" r="7" fill="#ffd23f"/><circle cx="86" cy="50" r="14" fill="#38bdf8" stroke="#17324f" stroke-width="3.2"/><circle cx="86" cy="50" r="6" fill="#ffd23f"/>', "spot-art") }
+  /* Organic full-screen clearing coordinates (desktop landscape + portrait friendly!) */
+  var PROPS = [
+    { id:"bush", name:"Berry Bush", x:18, y:62, mx:22, my:51,
+      svg: wrapSvg('<circle cx="34" cy="76" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/><circle cx="86" cy="76" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/><circle cx="60" cy="64" r="32" fill="#55cf64" stroke="#17324f" stroke-width="4"/><circle cx="38" cy="68" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="74" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="60" cy="48" r="6" fill="#ffc93c" stroke="#17324f" stroke-width="2.5"/>') },
+    { id:"tent", name:"Cozy Tent", x:47, y:49, mx:76, my:47,
+      svg: wrapSvg('<path d="M10 102 L60 18 L110 102 Z" fill="#ffd23f" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 18 L84 102 L110 102 Z" fill="#ff7aa2" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M44 102 L60 56 L76 102 Z" fill="#24324a" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 10 v12 M60 10 l18 6 -18 6 Z" fill="#4ade80" stroke="#17324f" stroke-width="2.8" stroke-linejoin="round"/>') },
+    { id:"mushroom", name:"Toadstool House", x:78, y:52, mx:24, my:70,
+      svg: wrapSvg('<path d="M42 64 L78 64 L82 102 Q60 108 38 102 Z" fill="#fff4d8" stroke="#17324f" stroke-width="4"/><path d="M10 66 C12 24 42 16 60 16 C78 16 108 24 110 66 Z" fill="#ff5d52" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><circle cx="40" cy="40" r="9.5" fill="#fffdf8"/><circle cx="78" cy="36" r="8.5" fill="#fffdf8"/><circle cx="60" cy="54" r="6" fill="#fffdf8"/><path d="M51 102 V80 A9 9 0 0 1 69 80 V102 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="3.2"/>') },
+    { id:"log", name:"Hollow Log", x:32, y:72, mx:76, my:69,
+      svg: wrapSvg('<rect x="12" y="50" width="94" height="44" rx="20" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="28" cy="72" rx="16" ry="22" fill="#4a2e12" stroke="#17324f" stroke-width="4"/><ellipse cx="28" cy="72" rx="9" ry="13" fill="#231407"/><path d="M52 64 h38 M58 78 h28" stroke="#784b22" stroke-width="4" stroke-linecap="round"/><path d="M72 50 q4 -17 15 -17 q11 0 15 17 Z" fill="#ff5d52" stroke="#17324f" stroke-width="3"/><circle cx="83" cy="42" r="3" fill="#fff"/>') },
+    { id:"flowers", name:"Flower Mound", x:63, y:70, mx:50, my:58,
+      svg: wrapSvg('<path d="M12 102 Q60 66 108 102 Z" fill="#4ade80" stroke="#17324f" stroke-width="4"/><path d="M34 88 V54 M60 86 V42 M86 88 V56" stroke="#15803d" stroke-width="5" stroke-linecap="round"/><circle cx="34" cy="48" r="14" fill="#ff7aa2" stroke="#17324f" stroke-width="3.2"/><circle cx="34" cy="48" r="6" fill="#ffd23f"/><circle cx="60" cy="34" r="16" fill="#c084fc" stroke="#17324f" stroke-width="3.2"/><circle cx="60" cy="34" r="7" fill="#ffd23f"/><circle cx="86" cy="50" r="14" fill="#38bdf8" stroke="#17324f" stroke-width="3.2"/><circle cx="86" cy="50" r="6" fill="#ffd23f"/>') },
+    { id:"trunk", name:"Hollow Oak", x:87, y:70, mx:50, my:77,
+      svg: wrapSvg('<path d="M34 108 L40 36 Q42 16 60 14 Q78 16 80 36 L86 108 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/><circle cx="32" cy="28" r="18" fill="#3ec456" stroke="#17324f" stroke-width="3.8"/><circle cx="88" cy="24" r="19" fill="#2ea043" stroke="#17324f" stroke-width="3.8"/><circle cx="60" cy="18" r="18" fill="#55cf64" stroke="#17324f" stroke-width="3.8"/><ellipse cx="60" cy="70" rx="16" ry="20" fill="#2b1908" stroke="#17324f" stroke-width="3.5"/>') }
   ];
 
   function $(id){ return document.getElementById(id); }
-  var stage = $("stage"), hootBtn = $("hootBtn"), hootPupils = $("hootPupils"),
-      orderCloud = $("orderCloud"), cloudInner = $("cloudInner"), spotsGrid = $("spotsGrid"),
-      picnicBlanket = $("picnicBlanket"), starCountEl = $("starCount"), starPill = $("starPill"),
+  var world = $("world"), clearing = $("clearing"), grassBlanket = $("grassBlanket"),
+      hootBtn = $("hootBtn"), hootPupils = $("hootPupils"), finderBubble = $("finderBubble"),
+      wantedIcon = $("wantedIcon"), starCountEl = $("starCount"), starPill = $("starPill"),
       startVeil = $("startVeil"), winOverlay = $("winOverlay"), winFriends = $("winFriends"),
       winStars = $("winStars");
 
-  /* ================= STATE ================= */
-  var state = "start";        /* start | playing | won */
-  var mode = "hide";          /* hide | night | surprise */
-  var GOAL = 4;
+  var state = "start", mode = "hide", GOAL = 4;
   var soundOn = true, dead = false, inputLock = false;
   var stars = 0, roundTok = 0;
   var queue = [], targetFriend = null, foundFriends = [];
-  var spotMap = {};           /* spotId -> friendObj or null */
-  var idleTimer = null, wiggleTimer = null;
+  var propMap = {};
+  var peekTimer = null, idleTimer = null;
 
-  /* ================= WEBAUDIO SOUND EFFECTS ================= */
+  /* ================= WEBAUDIO SFX ================= */
   var AC = null;
   function audio(){
     if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; } }
@@ -717,7 +637,7 @@
     o.start(t); o.stop(t + dur + 0.04);
   }
   function sfxPop(){ tone(520, 980, 0.14, "sine", 0.12); }
-  function sfxRustle(){ tone(190, 320, 0.08, "triangle", 0.09, 0); tone(280, 170, 0.09, "triangle", 0.09, 0.07); }
+  function sfxRustle(){ tone(190, 340, 0.08, "triangle", 0.09, 0); tone(290, 165, 0.09, "triangle", 0.09, 0.07); }
   function sfxPeekaboo(){ tone(523, 659, 0.11, "triangle", 0.12, 0); tone(659, 1046, 0.2, "triangle", 0.13, 0.11); }
   function sfxBoing(){ tone(240, 410, 0.13, "triangle", 0.10); tone(410, 210, 0.16, "triangle", 0.09, 0.11); }
   function sfxStar(){ tone(880, 880, 0.08, "triangle", 0.10); tone(1175, 1175, 0.10, "triangle", 0.10, 0.07); tone(1568, 1568, 0.16, "triangle", 0.09, 0.14); }
@@ -744,18 +664,11 @@
   }
   function clearVoice(){
     vQueue.length = 0;
-    if(voiceEl){
-      voiceEl.__govWait = false; voiceEl.__govNext = null;
-      try{ voiceEl.pause(); }catch(e){}
-    }
+    if(voiceEl){ voiceEl.__govWait = false; voiceEl.__govNext = null; try{ voiceEl.pause(); }catch(e){} }
     vPlaying = false;
     hootBtn.classList.remove("talking");
   }
-  function vNext(){
-    vPlaying = false;
-    hootBtn.classList.remove("talking");
-    pumpVoice();
-  }
+  function vNext(){ vPlaying = false; hootBtn.classList.remove("talking"); pumpVoice(); }
   function pumpVoice(){
     if(vPlaying || dead) return;
     var file = vQueue.shift();
@@ -764,10 +677,7 @@
     var el = getVoiceEl();
     vPlaying = true;
     hootBtn.classList.add("talking");
-    if(/hoot-giggle/i.test(file)){
-      window.__bellyArmed = true;
-      setTimeout(function(){ window.__bellyArmed = false; }, 600);
-    }
+    if(/hoot-giggle/i.test(file)){ window.__bellyArmed = true; setTimeout(function(){ window.__bellyArmed = false; }, 600); }
     el.setAttribute("src", VBASE + file);
     el.src = VBASE + file;
     var pr = el.play();
@@ -801,51 +711,36 @@
     }
   }
   function speakFound(friend, isOdd){
-    var customKey = "hoot-peek-" + friend.id;
-    if(hasVoice(customKey)){
-      sayClips([customKey + ".mp3"], true);
-      return;
-    }
-    var ck = childKey();
-    var cheer = (isOdd && ck === "kida") ? "great-job-kida.mp3"
-              : (isOdd && ck === "kidb") ? "great-job-kidb.mp3"
-              : "hoot-amazing.mp3";
-    var seq = ["word-" + friend.id + ".mp3"];
-    if(friend.id === "frog") seq.push("sound-ribbit.mp3");
-    seq.push(cheer);
-    sayClips(seq, true);
+    var ck = "hoot-peek-" + friend.id;
+    if(hasVoice(ck)){ sayClips([ck + ".mp3"], true); return; }
+    var k = childKey();
+    var cheer = (isOdd && k === "kida") ? "great-job-kida.mp3" : (isOdd && k === "kidb") ? "great-job-kidb.mp3" : "hoot-amazing.mp3";
+    sayClips(["word-" + friend.id + ".mp3", cheer], true);
   }
 
-  /* ================= HELPERS & VISUAL FX ================= */
+  /* ================= HELPERS & FX ================= */
   function shuffle(a){
     a = a.slice();
     for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
     return a;
   }
-  function lookAtPoint(x, y){
-    var r = hootBtn.getBoundingClientRect();
-    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.36;
-    var dx = Math.max(-6, Math.min(6, (x - cx) / 30));
-    var dy = Math.max(-5, Math.min(6, (y - cy) / 30));
-    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
-  }
   function burstLeaves(cx, cy, colorHex, count){
     var cols = [colorHex || "#4ade80", "#ffc93c", "#ffffff", "#ff7aa2"];
-    for(var i = 0; i < (count || 12); i++){
+    for(var i = 0; i < (count || 14); i++){
       var d = document.createElement("div");
       d.className = "fx-dot";
-      var sz = 9 + Math.random() * 10;
+      var sz = 10 + Math.random() * 10;
       d.style.width = sz + "px"; d.style.height = sz + "px";
       d.style.left = (cx - sz / 2) + "px"; d.style.top = (cy - sz / 2) + "px";
       d.style.background = cols[i % cols.length];
       d.style.border = "2px solid #17324f";
       document.body.appendChild(d);
-      var ang = (Math.PI * 2 * i) / (count || 12) + Math.random() * 0.4;
-      var dist = 42 + Math.random() * 64;
+      var ang = (Math.PI * 2 * i) / (count || 14) + Math.random() * 0.4;
+      var dist = 44 + Math.random() * 70;
       if(d.animate){
         d.animate([
           { transform:"translate(0,0) scale(1)", opacity:1 },
-          { transform:"translate(" + (Math.cos(ang)*dist).toFixed(1) + "px," + (Math.sin(ang)*dist + 16).toFixed(1) + "px) scale(.2)", opacity:0 }
+          { transform:"translate(" + (Math.cos(ang)*dist).toFixed(1) + "px," + (Math.sin(ang)*dist + 18).toFixed(1) + "px) scale(.2)", opacity:0 }
         ], { duration:560 + Math.random() * 240, easing:"cubic-bezier(.2,.8,.3,1)" });
       }
       (function(el){ setTimeout(function(){ el.remove(); }, 820); })(d);
@@ -853,8 +748,7 @@
   }
   function popBadge(cx, cy, text){
     var p = document.createElement("div");
-    p.className = "fx-pop";
-    p.textContent = text;
+    p.className = "fx-pop"; p.textContent = text;
     p.style.left = cx + "px"; p.style.top = cy + "px";
     document.body.appendChild(p);
     setTimeout(function(){ p.remove(); }, 980);
@@ -863,11 +757,9 @@
     var w = window.innerWidth, cols = ["#ffc93c","#4ade80","#ff6b7a","#38bdf8","#a855f7"];
     for(var i = 0; i < 28; i++){
       var c = document.createElement("div");
-      c.className = "fx-dot";
-      c.style.width = "13px"; c.style.height = "13px"; c.style.borderRadius = "4px";
+      c.className = "fx-dot"; c.style.width = "13px"; c.style.height = "13px"; c.style.borderRadius = "4px";
       c.style.background = cols[i % cols.length];
-      c.style.left = (w * 0.15 + Math.random() * w * 0.7) + "px";
-      c.style.top = "18%";
+      c.style.left = (w * 0.15 + Math.random() * w * 0.7) + "px"; c.style.top = "18%";
       document.body.appendChild(c);
       var dx = (Math.random() - 0.5) * 320, dy = 240 + Math.random() * 340, rot = (Math.random() - 0.5) * 520;
       if(c.animate){
@@ -880,28 +772,26 @@
     }
   }
 
-  /* Move flashlight beam smoothly as Zane moves/taps anywhere in Night Mode! */
-  stage.addEventListener("pointermove", function(e){
-    lookAtPoint(e.clientX, e.clientY);
+  /* Smooth eye tracking + physical Night Flashlight spotlight following finger! */
+  function moveLight(x, y){
+    var r = hootBtn.getBoundingClientRect();
+    var dx = Math.max(-5, Math.min(5, (x - (r.left + r.width / 2)) / 36));
+    var dy = Math.max(-4, Math.min(5, (y - (r.top + r.height * 0.36)) / 36));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
     if(mode === "night"){
-      stage.style.setProperty("--fx", e.clientX + "px");
-      stage.style.setProperty("--fy", e.clientY + "px");
+      world.style.setProperty("--fx", x + "px");
+      world.style.setProperty("--fy", y + "px");
     }
-  });
-  stage.addEventListener("pointerdown", function(e){
-    lookAtPoint(e.clientX, e.clientY);
-    if(mode === "night"){
-      stage.style.setProperty("--fx", e.clientX + "px");
-      stage.style.setProperty("--fy", e.clientY + "px");
-    }
-  });
+  }
+  world.addEventListener("pointermove", function(e){ moveLight(e.clientX, e.clientY); });
+  world.addEventListener("pointerdown", function(e){ moveLight(e.clientX, e.clientY); });
 
-  /* ================= LIVE RUSTLE CLUE & GENTLE IDLE POINTER ================= */
-  function clearTimers(){
+  /* ================= LIVE SNEAKY PEEK TEASE + IDLE NUDGE ================= */
+  function clearClues(){
+    if(peekTimer){ clearInterval(peekTimer); peekTimer = null; }
     if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
-    if(wiggleTimer){ clearInterval(wiggleTimer); wiggleTimer = null; }
-    Array.prototype.forEach.call(spotsGrid.querySelectorAll(".spot-btn"), function(b){
-      b.classList.remove("nudge-glow", "wiggle-clue");
+    Array.prototype.forEach.call(clearing.querySelectorAll(".forest-prop"), function(b){
+      b.classList.remove("nudge-glow", "peeking-tease");
       var h = b.querySelector(".nudge-hand"); if(h) h.remove();
     });
   }
@@ -911,91 +801,112 @@
     h.className = "nudge-hand"; h.setAttribute("aria-hidden", "true"); h.textContent = "👆";
     el.appendChild(h);
   }
-  function findTargetSpotBtn(){
+  function targetPropBtn(){
     if(!targetFriend) return null;
-    var btns = spotsGrid.querySelectorAll(".spot-btn");
+    var btns = clearing.querySelectorAll(".forest-prop");
     for(var i = 0; i < btns.length; i++){
-      var f = spotMap[btns[i].getAttribute("data-spot")];
+      var f = propMap[btns[i].getAttribute("data-prop")];
       if(f && f.id === targetFriend.id) return btns[i];
     }
     return null;
   }
+  function triggerSneakyPeek(){
+    if(state !== "playing" || dead || inputLock) return;
+    var tb = targetPropBtn();
+    if(!tb) return;
+    tb.classList.remove("peeking-tease", "rustling");
+    void tb.offsetWidth;
+    tb.classList.add("peeking-tease", "rustling");
+  }
   function armClues(){
-    clearTimers();
+    clearClues();
     if(state !== "playing" || dead || mode === "surprise") return;
-    /* Subtle rustling wiggle every 3.4s on the spot where the animal is giggling! */
-    wiggleTimer = setInterval(function(){
-      if(state !== "playing" || dead || inputLock) return;
-      var tb = findTargetSpotBtn();
-      if(tb){
-        tb.classList.remove("wiggle-clue"); void tb.offsetWidth; tb.classList.add("wiggle-clue");
-      }
-    }, 3400);
-    /* Gentle golden halo + bouncing finger after 6.4s */
+    /* Every 2.8 seconds, the hiding friend actually peeks ears/head up behind the real bush/tent/log! */
+    setTimeout(triggerSneakyPeek, 1200);
+    peekTimer = setInterval(triggerSneakyPeek, 2900);
     idleTimer = setTimeout(function(){
       if(state !== "playing" || dead || inputLock) return;
-      var tb = findTargetSpotBtn();
+      var tb = targetPropBtn();
       if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); }
       if(!vPlaying) speakPrompt(false);
-    }, 6400);
+    }, 6200);
   }
 
-  /* ================= CLOUD & PICNIC BLANKET RENDERING ================= */
-  function renderCloud(pop){
-    cloudInner.innerHTML = "";
+  /* ================= RENDER FINDER BUBBLE & REAL FOREGROUND PICNIC BLANKET ================= */
+  function renderFinder(pop){
     if(mode === "surprise"){
-      cloudInner.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:30px;padding:4px 6px;"><span>🌿</span><span>👆</span><span>👀</span></div>';
+      wantedIcon.innerHTML = '<span style="font-size:32px;line-height:1">🎉</span>';
     } else if(targetFriend){
-      var starsHtml = '<div class="cloud-stars">';
-      for(var i = 0; i < GOAL; i++){
-        starsHtml += '<span class="' + (i < foundFriends.length ? 'lit' : '') + '">★</span>';
-      }
-      starsHtml += '</div>';
-      var qIcon = mode === "night" ? "🔦" : "👀";
-      cloudInner.innerHTML =
-        '<div class="cloud-animal-badge">' + targetFriend.svg + '</div>' +
-        '<span class="cloud-arrow">➜</span>' +
-        '<div class="cloud-q">' + qIcon + '</div>' +
-        starsHtml;
+      wantedIcon.innerHTML = targetFriend.svg;
     }
-    if(pop){
-      orderCloud.classList.remove("pop-in"); void orderCloud.offsetWidth; orderCloud.classList.add("pop-in");
-    }
+    if(pop){ finderBubble.classList.remove("pop-in"); void finderBubble.offsetWidth; finderBubble.classList.add("pop-in"); }
   }
   function renderBlanket(){
-    if(mode === "surprise"){
-      picnicBlanket.hidden = true;
-      return;
-    }
-    picnicBlanket.hidden = false;
-    picnicBlanket.innerHTML = "";
+    if(mode === "surprise"){ grassBlanket.hidden = true; return; }
+    grassBlanket.hidden = false;
+    grassBlanket.innerHTML = "";
     for(var i = 0; i < GOAL; i++){
-      var sl = document.createElement("div");
-      var fr = foundFriends[i];
-      sl.className = "bslot" + (fr ? " filled" : "");
-      if(fr) sl.innerHTML = fr.svg;
-      picnicBlanket.appendChild(sl);
+      var slot = document.createElement("div");
+      var f = foundFriends[i];
+      slot.className = "blanket-guest" + (f ? " seated" : "");
+      if(f) slot.innerHTML = f.svg;
+      grassBlanket.appendChild(slot);
     }
   }
 
-  /* ================= BUILD HIDING SPOTS & HANDLE PEEK TAPS ================= */
-  function buildSpots(spotList, assignments){
-    spotMap = assignments || {};
-    spotsGrid.innerHTML = "";
-    spotList.forEach(function(sp){
-      var hider = spotMap[sp.id] || null;
+  function layoutProps(){
+    var portrait = window.innerHeight > window.innerWidth;
+    Array.prototype.forEach.call(clearing.querySelectorAll(".forest-prop"), function(btn){
+      var pid = btn.getAttribute("data-prop");
+      var pr = PROPS.filter(function(p){ return p.id === pid; })[0];
+      if(!pr) return;
+      btn.style.left = (portrait ? pr.mx : pr.x) + "%";
+      btn.style.top = (portrait ? pr.my : pr.y) + "%";
+    });
+  }
+  window.addEventListener("resize", layoutProps);
+
+  function buildClearing(propList, assignments){
+    propMap = assignments || {};
+    clearing.innerHTML = "";
+    propList.forEach(function(pr){
+      var hider = propMap[pr.id] || null;
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "spot-btn" + (hider ? " has-hider" : "");
-      btn.setAttribute("data-spot", sp.id);
-      btn.setAttribute("aria-label", sp.name);
+      btn.className = "forest-prop" + (hider ? " has-hider" : "");
+      btn.setAttribute("data-prop", pr.id);
+      btn.setAttribute("aria-label", pr.name);
       btn.innerHTML =
-        sp.svg +
-        '<div class="peek-eyes" aria-hidden="true"><span></span><span></span></div>' +
-        '<div class="spot-friend">' + (hider ? hider.svg : '') + '</div>';
-      btn.addEventListener("click", function(){ onSpotTap(btn, sp); });
-      spotsGrid.appendChild(btn);
+        '<div class="prop-shadow"></div>' +
+        '<div class="prop-hider">' + (hider ? hider.svg : '') + '</div>' +
+        '<div class="prop-front">' + pr.svg + '</div>' +
+        '<div class="night-eyes" aria-hidden="true"><span></span><span></span></div>';
+      btn.addEventListener("click", function(){ onPropTap(btn, pr); });
+      clearing.appendChild(btn);
     });
+    layoutProps();
+  }
+
+  function flyToBlanket(friend, fromRect, seatIdx, cb){
+    var seat = grassBlanket.children[seatIdx];
+    if(!seat){ if(cb) cb(); return; }
+    var fly = document.createElement("div");
+    fly.className = "fly-friend"; fly.innerHTML = friend.svg;
+    var x0 = fromRect.left + fromRect.width / 2 - 48, y0 = fromRect.top - 10;
+    var sr = seat.getBoundingClientRect();
+    var x1 = sr.left + sr.width / 2 - 48, y1 = sr.top + sr.height / 2 - 48;
+    fly.style.left = x0 + "px"; fly.style.top = y0 + "px";
+    document.body.appendChild(fly);
+    var done = false;
+    function end(){ if(done) return; done = true; fly.remove(); if(cb) cb(); }
+    if(fly.animate){
+      var a = fly.animate([
+        { transform:"translate(0,0) scale(1.05)" },
+        { transform:"translate(" + ((x1-x0)*0.5).toFixed(1) + "px," + ((y1-y0)*0.5 - 70).toFixed(1) + "px) scale(1.1) rotate(8deg)", offset:0.5 },
+        { transform:"translate(" + (x1-x0).toFixed(1) + "px," + (y1-y0).toFixed(1) + "px) scale(.85)" }
+      ], { duration:520, easing:"cubic-bezier(.26,.72,.36,1)" });
+      a.onfinish = end; setTimeout(end, 600);
+    } else setTimeout(end, 100);
   }
 
   function awardStar(){
@@ -1005,113 +916,108 @@
     sfxStar();
   }
 
-  function onSpotTap(btn, sp){
+  function onPropTap(btn, pr){
     if(state !== "playing" || inputLock || dead) return;
     audio();
     var r = btn.getBoundingClientRect();
     var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    if(mode === "night"){
-      stage.style.setProperty("--fx", cx + "px");
-      stage.style.setProperty("--fy", cy + "px");
-    }
+    moveLight(cx, cy);
 
-    var hider = spotMap[sp.id];
-
+    var hider = propMap[pr.id];
     if(mode === "surprise"){
       sfxRustle();
-      btn.classList.remove("shaking"); void btn.offsetWidth; btn.classList.add("shaking");
+      btn.classList.remove("rustling"); void btn.offsetWidth; btn.classList.add("rustling");
       setTimeout(function(){
         if(dead || !hider) return;
         sfxPeekaboo();
         btn.classList.add("revealed");
-        burstLeaves(cx, r.top + 16, hider.color, 12);
-        popBadge(cx, r.top + 4, hider.fx);
+        burstLeaves(cx, r.top + 18, hider.color, 14);
+        popBadge(cx, r.top, hider.fx);
         var ck = "hoot-peek-" + hider.id;
         sayClips([hasVoice(ck) ? (ck + ".mp3") : ("word-" + hider.id + ".mp3")], true);
-        setTimeout(function(){ if(!dead) btn.classList.remove("revealed"); }, 1600);
+        setTimeout(function(){ if(!dead) btn.classList.remove("revealed"); }, 1650);
       }, 220);
       return;
     }
 
-    clearTimers();
+    clearClues();
     if(!targetFriend) return;
 
     if(!hider || hider.id !== targetFriend.id){
       inputLock = true;
       sfxRustle();
-      btn.classList.remove("shaking"); void btn.offsetWidth; btn.classList.add("shaking");
+      btn.classList.remove("rustling"); void btn.offsetWidth; btn.classList.add("rustling");
       setTimeout(function(){
         if(dead) return;
         sfxBoing();
         var critters = ["🦋", "🐞", "🍃", "🌼"];
-        popBadge(cx, r.top + 10, critters[Math.floor(Math.random() * critters.length)]);
-        hootBtn.classList.remove("head-wobble"); void hootBtn.offsetWidth; hootBtn.classList.add("head-wobble");
+        popBadge(cx, r.top + 8, critters[Math.floor(Math.random() * critters.length)]);
         sayClips([hasVoice("hoot-peek-empty") ? "hoot-peek-empty.mp3" : "hoot-try-again.mp3"], true);
         inputLock = false;
-        var tb = findTargetSpotBtn();
-        if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); }
-      }, 280);
+        var tb = targetPropBtn();
+        if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); triggerSneakyPeek(); }
+      }, 260);
       return;
     }
 
-    /* FOUND THE HIDING FRIEND -> PEEKABOO!! */
+    /* FOUND!! Animal springs out behind the real prop, celebrates, then hops right onto the grass picnic blanket! */
     inputLock = true;
     sfxRustle();
-    btn.classList.remove("shaking"); void btn.offsetWidth; btn.classList.add("shaking");
+    btn.classList.remove("rustling"); void btn.offsetWidth; btn.classList.add("rustling");
     setTimeout(function(){
       if(dead) return;
       sfxPeekaboo();
       btn.classList.add("revealed");
-      foundFriends.push(targetFriend);
       awardStar();
       burstLeaves(cx, r.top + 14, targetFriend.color, 18);
-      popBadge(cx, r.top - 4, targetFriend.fx);
+      popBadge(cx, r.top - 10, targetFriend.fx);
       hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
-      renderCloud(false);
-      renderBlanket();
-      speakFound(targetFriend, foundFriends.length % 2 === 1);
+      var foundNow = targetFriend;
+      speakFound(foundNow, (foundFriends.length + 1) % 2 === 1);
 
       var tok = ++roundTok;
       setTimeout(function(){
         if(dead || tok !== roundTok) return;
-        hootBtn.classList.remove("happy-jump");
-        if(foundFriends.length >= GOAL){
-          showWinCelebration();
-        } else {
-          presentNextRound(false);
-        }
-      }, 1750);
-    }, 260);
+        btn.classList.remove("revealed");
+        var seatIdx = foundFriends.length;
+        flyToBlanket(foundNow, r, seatIdx, function(){
+          if(dead || tok !== roundTok) return;
+          foundFriends.push(foundNow);
+          renderBlanket();
+          setTimeout(function(){
+            if(dead || tok !== roundTok) return;
+            hootBtn.classList.remove("happy-jump");
+            if(foundFriends.length >= GOAL) showWinCelebration();
+            else presentNextRound(false);
+          }, 650);
+        });
+      }, 1050);
+    }, 240);
   }
 
   function presentNextRound(withHello){
     state = "playing";
     inputLock = false;
-    stage.classList.toggle("night-mode", mode === "night");
+    world.classList.toggle("night-mode", mode === "night");
 
     if(mode === "surprise"){
-      var shFriends = shuffle(FRIENDS);
-      var mapAll = {};
-      SPOTS.forEach(function(sp, idx){ mapAll[sp.id] = shFriends[idx % shFriends.length]; });
-      buildSpots(SPOTS, mapAll);
-      renderCloud(true);
+      var shF = shuffle(FRIENDS);
+      var mAll = {};
+      PROPS.forEach(function(pr, idx){ mAll[pr.id] = shF[idx % shF.length]; });
+      buildClearing(PROPS, mAll);
+      renderFinder(true);
       renderBlanket();
       speakPrompt(!!withHello);
       return;
     }
 
-    var remaining = queue.filter(function(f){ return foundFriends.indexOf(f) < 0; });
-    targetFriend = remaining[0] || FRIENDS[0];
-
-    /* Show 3 big cozy hiding spots per round (extra clear for ages 2-3!) — 1 holds our target friend! */
-    var chosenSpots = shuffle(SPOTS).slice(0, 3);
+    var rem = queue.filter(function(f){ return foundFriends.indexOf(f) < 0; });
+    targetFriend = rem[0] || FRIENDS[0];
     var map = {};
-    var hideIdx = Math.floor(Math.random() * chosenSpots.length);
-    chosenSpots.forEach(function(sp, idx){
-      map[sp.id] = (idx === hideIdx) ? targetFriend : null;
-    });
-    buildSpots(chosenSpots, map);
-    renderCloud(true);
+    var hideProp = PROPS[Math.floor(Math.random() * PROPS.length)];
+    PROPS.forEach(function(pr){ map[pr.id] = (pr.id === hideProp.id) ? targetFriend : null; });
+    buildClearing(PROPS, map);
+    renderFinder(true);
     renderBlanket();
     speakPrompt(!!withHello);
     armClues();
@@ -1123,10 +1029,7 @@
     showerConfetti();
     winFriends.innerHTML = "";
     foundFriends.forEach(function(f){
-      var d = document.createElement("div");
-      d.className = "win-mini";
-      d.innerHTML = f.svg;
-      winFriends.appendChild(d);
+      var d = document.createElement("div"); d.className = "win-mini"; d.innerHTML = f.svg; winFriends.appendChild(d);
     });
     var stEls = winStars.children;
     for(var i = 0; i < stEls.length; i++){
@@ -1137,7 +1040,6 @@
     sayClips([hasVoice("hoot-peek-win") ? "hoot-peek-win.mp3" : "hoot-win-yay.mp3"], true);
   }
 
-  /* ================= CONTROLS & LIVING SCENE TAPS ================= */
   function syncModePills(){
     Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
       b.classList.toggle("on", b.getAttribute("data-mode") === mode);
@@ -1145,7 +1047,7 @@
   }
   function beginSession(selectedMode, withHello){
     roundTok++;
-    clearTimers();
+    clearClues();
     foundFriends = [];
     queue = shuffle(FRIENDS).slice(0, GOAL);
     hootBtn.classList.remove("happy-jump");
@@ -1156,31 +1058,19 @@
     presentNextRound(withHello);
   }
 
-  $("goPeekBtn").addEventListener("click", function(){
-    audio(); sfxPop();
-    beginSession("hide", true);
-  });
-  $("againBtn").addEventListener("click", function(){
-    audio(); sfxPop();
-    beginSession(mode === "surprise" ? "hide" : mode, false);
-  });
+  $("goPeekBtn").addEventListener("click", function(){ audio(); sfxPop(); beginSession("hide", true); });
+  $("againBtn").addEventListener("click", function(){ audio(); sfxPop(); beginSession(mode === "surprise" ? "hide" : mode, false); });
   Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
     b.addEventListener("click", function(){
-      audio(); sfxPop();
-      startVeil.hidden = true;
-      winOverlay.hidden = true;
+      audio(); sfxPop(); startVeil.hidden = true; winOverlay.hidden = true;
       beginSession(b.getAttribute("data-mode"), false);
     });
   });
-
-  $("repeatBtn").addEventListener("click", function(){
-    audio();
-    if(state === "playing") speakPrompt(false);
-  });
+  $("repeatBtn").addEventListener("click", function(){ audio(); if(state === "playing") speakPrompt(false); });
   hootBtn.addEventListener("click", function(){
     audio();
     var r = hootBtn.getBoundingClientRect();
-    popBadge(r.left + r.width / 2, r.top + 20, "🎵");
+    popBadge(r.left + r.width / 2, r.top + 16, "🎵");
     hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
     setTimeout(function(){ hootBtn.classList.remove("happy-jump"); }, 900);
     sayClips(["hoot-giggle.mp3"], true);
@@ -1188,44 +1078,25 @@
       setTimeout(function(){ if(state === "playing" && !vPlaying) speakPrompt(false); }, 1150);
     }
   });
-
   $("soundBtn").addEventListener("click", function(){
     soundOn = !soundOn;
     $("sndOnSvg").style.display = soundOn ? "block" : "none";
     $("sndOffSvg").style.display = soundOn ? "none" : "block";
-    if(!soundOn) clearVoice();
-    else { audio(); sfxPop(); }
-  });
-  $("sunBtn").addEventListener("click", function(){
-    audio(); $("sunBtn").classList.remove("zing"); void $("sunBtn").offsetWidth; $("sunBtn").classList.add("zing"); sfxStar();
-  });
-  $("moonBtn").addEventListener("click", function(){
-    audio(); sfxStar();
-    var r = $("moonBtn").getBoundingClientRect();
-    burstLeaves(r.left + 40, r.top + 40, "#ffe680", 10);
+    if(!soundOn) clearVoice(); else { audio(); sfxPop(); }
   });
   Array.prototype.forEach.call(document.querySelectorAll(".firefly"), function(ff){
     ff.addEventListener("click", function(){
-      audio(); sfxPop();
-      var r = ff.getBoundingClientRect();
-      burstLeaves(r.left + 17, r.top + 17, "#fff49c", 8);
-    });
-  });
-  Array.prototype.forEach.call(document.querySelectorAll(".cloud"), function(cl){
-    cl.addEventListener("click", function(){
-      audio(); sfxPop();
-      cl.classList.remove("puff"); void cl.offsetWidth; cl.classList.add("puff");
-      setTimeout(function(){ cl.classList.remove("puff"); }, 400);
+      audio(); sfxPop(); var r = ff.getBoundingClientRect(); burstLeaves(r.left + 17, r.top + 17, "#fff49c", 8);
     });
   });
 
-  window.addEventListener("pagehide", function(){ dead = true; clearTimers(); clearVoice(); });
+  window.addEventListener("pagehide", function(){ dead = true; clearClues(); clearVoice(); });
   document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(); });
 
-  /* Pre-populate lush forest clearing behind the Start Peekaboo Bush! */
-  targetFriend = FRIENDS[1]; /* Bunny */
-  buildSpots(SPOTS.slice(0, 3), { bush: FRIENDS[1] });
-  renderCloud(false);
+  /* Pre-populate full-screen enchanted forest clearing behind the Start Bush! */
+  targetFriend = FRIENDS[1];
+  buildClearing(PROPS, { bush: FRIENDS[1] });
+  renderFinder(false);
   renderBlanket();
 
   window.__peekGame = {
@@ -1234,7 +1105,7 @@
         state: state, mode: mode, stars: stars,
         target: targetFriend ? targetFriend.id : null,
         foundCount: foundFriends.length, goal: GOAL,
-        nightMode: stage.classList.contains("night-mode"),
+        nightMode: world.classList.contains("night-mode"),
         winShown: !winOverlay.hidden, voicePlaying: vPlaying
       };
     }
@@ -1242,7 +1113,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e132">
-<script src="js/hoot-game-tail.js?v=llprev3e132"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e135">
+<script src="js/hoot-game-tail.js?v=llprev3e135"></script>
 </body>
 </html>
