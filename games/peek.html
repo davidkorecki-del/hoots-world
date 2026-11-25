@@ -2,316 +2,640 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="peek";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
-
+<script>window.__HOOT_GAME_KEY__="peek";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e132"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
-
 <title>Peekaboo Forest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
-    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62;
+    --ink:#17324f;
+    --cream:#fffdf7;
+    --sun:#ffc93c;
+    --leaf:#3cc858;
+    --coral:#ff5d52;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#9fdc9a; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
-    background:linear-gradient(180deg,#8fd0f5 0%,#bfe8c9 26%,#7cc46a 27%,#5da84e 62%,#478c3c 100%); }
-
-  /* ---------- living forest decor ---------- */
-  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
-  #sun{ top:70px; right:8px; width:74px; height:74px; z-index:1; }
-  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
-  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
-  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
-  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
-  #sun:active{ transform:scale(.93); }
-  .bigtree{ position:absolute; z-index:1; pointer-events:none; transform-origin:50% 100%; animation:treeSway 5.5s ease-in-out infinite alternate; }
-  @keyframes treeSway{ from{ transform:rotate(-1.2deg);} to{ transform:rotate(1.2deg);} }
-  .firefly{ position:absolute; z-index:3; width:26px; height:26px; border:none; background:none; padding:0; cursor:pointer; animation:flyFloat 6s ease-in-out infinite alternate; }
-  .firefly i{ display:block; width:9px; height:9px; margin:8px auto; border-radius:50%; background:#fff7ae; box-shadow:0 0 10px 4px rgba(255,240,150,.85); animation:glowPulse 1.6s ease-in-out infinite alternate; }
-  @keyframes glowPulse{ from{ opacity:.55; transform:scale(.8);} to{ opacity:1; transform:scale(1.15);} }
-  @keyframes flyFloat{ 0%{ transform:translate(0,0);} 50%{ transform:translate(18px,-22px);} 100%{ transform:translate(-10px,-6px);} }
-  .firefly.zing i{ animation:glowPulse .18s ease-in-out 6 alternate; }
-  .leaf-fall{ position:absolute; z-index:2; font-size:19px; pointer-events:none; animation:leafFall linear infinite; opacity:.85; }
-  @keyframes leafFall{ 0%{ transform:translate(0,-30px) rotate(0deg);} 100%{ transform:translate(-34px,46vh) rotate(300deg);} }
-
-  /* ---------- HUD ---------- */
-  #hud{ position:relative; z-index:8; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
-  .round-btn:active{ transform:scale(.9); }
-  .round-btn svg{ width:25px; height:25px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
-  #starBank .star-ic{ width:25px; height:25px; display:block; }
-  #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
-
-  /* ---------- target card ---------- */
-  #targetCard{ position:relative; z-index:8; margin:8px auto 0; width:fit-content; max-width:calc(100vw - 20px); display:none; align-items:center; gap:11px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; padding:7px 14px 7px 10px; box-shadow:0 5px 0 rgba(23,50,79,.15),0 12px 24px rgba(23,50,79,.14); }
-  #targetQ{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:42px; line-height:.95; color:#478c3c; width:56px; height:56px; display:grid; place-items:center; background:#e4f5dc; border-radius:15px; border:3px dashed #7cc46a; flex:0 0 auto; }
-  #targetCard.new-target #targetQ{ animation:letterIn .55s cubic-bezier(.34,1.7,.5,1); }
-  @keyframes letterIn{ 0%{transform:scale(.3) rotate(-14deg)} 100%{transform:scale(1) rotate(0)} }
-  .tc-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; line-height:1.15; }
-  #targetName{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:var(--ink); line-height:1.1; }
-  #progressDots{ display:flex; gap:5px; margin-top:4px; }
-  #progressDots i{ width:11px; height:11px; border-radius:50%; background:#d5e8cd; display:block; transition:background .2s,transform .2s; }
-  #progressDots i.on{ background:var(--sun); transform:scale(1.25); }
-  #hearBtn{ flex:0 0 auto; width:46px; height:46px; border-radius:50%; border:3px solid #7cc46a; background:#e4f5dc; display:grid; place-items:center; cursor:pointer; box-shadow:0 3px 0 rgba(23,50,79,.15); transition:transform .12s; }
-  #hearBtn:active{ transform:scale(.88); }
-  #hearBtn svg{ width:23px; height:23px; }
-
-  /* ---------- hiding spots ---------- */
-  #scene{ position:relative; z-index:3; flex:1 1 auto; min-height:0; }
-  .spot{ position:absolute; z-index:4; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,29vw,140px); }
-  .spot .cover{ display:block; width:100%; position:relative; z-index:2; transition:transform .18s; filter:drop-shadow(0 6px 8px rgba(20,60,20,.3)); }
-  .spot .cover svg{ width:100%; display:block; overflow:visible; }
-  .spot:active .cover{ transform:scale(.94) rotate(-2deg); }
-  .spot .peeker{ position:absolute; z-index:1; left:50%; bottom:52%; font-size:clamp(44px,12.5vw,60px); line-height:1; transform:translate(-50%,38%) scale(.4); opacity:0; transition:transform .38s cubic-bezier(.34,1.6,.5,1),opacity .25s; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(20,60,20,.3)); }
-  .spot.revealed .peeker{ transform:translate(-50%,0) scale(1); opacity:1; }
-  .spot.rustle .cover{ animation:rustleShake .45s ease-in-out 2; }
-  @keyframes rustleShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-4deg) translateX(-3px);} 75%{ transform:rotate(4deg) translateX(3px);} }
-  .spot.empty-spot{ pointer-events:none; opacity:.55; }
-  .leaf-particle{ position:absolute; z-index:9; pointer-events:none; font-size:18px; }
-  #echoNote{ position:absolute; z-index:9; pointer-events:none; font-size:30px; opacity:0; }
-
-  /* ---------- ground row: Hoot + picnic blanket ---------- */
-  #groundRow{ position:relative; z-index:5; display:flex; align-items:flex-end; justify-content:space-between; gap:6px; padding:0 8px max(6px,env(safe-area-inset-bottom)); }
-  #hootZone{ display:flex; align-items:flex-end; gap:7px; min-width:0; }
-  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(112px,29vw,178px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
-  #hootFig svg{ width:100%; display:block; overflow:visible; }
-  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(-1.1deg);} 50%{ transform:translateY(-6px) rotate(1.1deg);} }
-  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
-  @keyframes hootJump{ 0%{transform:translateY(0) scale(1,1)} 35%{transform:translateY(-26px) scale(.96,1.05) rotate(-4deg)} 70%{transform:translateY(0) scale(1.06,.92)} 100%{transform:translateY(0) scale(1,1)} }
-  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
-  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
-  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
-  @keyframes hootTalk{ 0%{ transform:translateY(0) scale(1,1);} 100%{ transform:translateY(-4px) scale(1.03,.97);} }
-  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
-  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
-  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
-  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
-  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
-  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
-  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
-  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
-  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
-  @keyframes blink{ 0%,91%,100%{ transform:scaleY(1);} 94%,96%{ transform:scaleY(.08);} }
-  #bubbleCol{ display:flex; flex-direction:column; align-items:flex-start; gap:5px; margin-bottom:26px; min-width:0; }
-  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:18px; box-shadow:0 5px 0 rgba(23,50,79,.13),0 12px 24px rgba(23,50,79,.16); padding:9px 13px; font-weight:800; font-size:clamp(14.5px,4vw,18.5px); line-height:1.3; max-width:min(38vw,280px); }
-  #bubble:after{ content:""; position:absolute; left:-8px; bottom:16px; width:15px; height:15px; background:var(--paper); transform:rotate(45deg); }
-  #bubble .b-big{ color:#478c3c; font-family:"Fredoka",sans-serif; }
-  #hootName{ background:#478c3c; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.06em; padding:3px 11px; border-radius:999px; border:2px solid #fff; box-shadow:0 3px 8px rgba(23,50,79,.2); }
-  #blanketZone{ display:flex; flex-direction:column; align-items:center; gap:3px; flex:0 0 auto; }
-  #blanket{ position:relative; width:clamp(128px,33vw,168px); height:clamp(86px,20vw,108px); border-radius:12px; border:3px solid #fff; box-shadow:0 8px 16px rgba(20,60,20,.3); cursor:pointer; padding:5px;
-    background:
-      repeating-linear-gradient(0deg, rgba(224,52,43,.85) 0 16px, rgba(255,253,246,.92) 16px 32px),
-      repeating-linear-gradient(90deg, rgba(224,52,43,.55) 0 16px, rgba(255,253,246,.4) 16px 32px);
-    background-blend-mode:multiply; display:flex; flex-wrap:wrap; align-content:flex-start; gap:2px; }
-  #blanket .guest{ font-size:clamp(24px,6.4vw,32px); line-height:1.05; animation:guestIn .5s cubic-bezier(.34,1.7,.5,1); filter:drop-shadow(0 2px 3px rgba(0,0,0,.25)); }
-  @keyframes guestIn{ 0%{ transform:scale(.2) rotate(-20deg);} 100%{ transform:scale(1) rotate(0);} }
-  #blanket.bounce{ animation:blanketBounce .5s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes blanketBounce{ 0%{transform:scale(1)} 40%{transform:scale(1.07,.93)} 100%{transform:scale(1)} }
-  #blanketLabel{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:12.5px; color:var(--ink); background:rgba(255,253,246,.92); border-radius:999px; padding:2px 10px; border:2px solid #fff; }
-  .fly-friend{ position:absolute; z-index:12; font-size:46px; pointer-events:none; filter:drop-shadow(0 5px 6px rgba(20,60,20,.3)); }
-
-  /* ---------- start panel ---------- */
-  #startPanel{ position:absolute; z-index:10; left:50%; top:44%; transform:translate(-50%,-50%); width:min(92vw,430px); background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:18px 20px 16px; text-align:center; }
-  #startPanel[hidden]{ display:none; }
-  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(27px,7.4vw,38px); margin:0; color:var(--ink); }
-  #startPanel h1 .t-pk{ color:#478c3c; } #startPanel h1 .t-fr{ color:#e2703a; }
-  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.4; margin:8px 0 0; }
-  .mode-row{ display:flex; gap:9px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
-  .mode-chip{ border:3px solid #d5e8cd; background:#fff; color:var(--ink); font-family:"Fredoka",sans-serif; font-weight:600; font-size:16px; padding:10px 16px; border-radius:999px; cursor:pointer; transition:transform .12s; }
-  .mode-chip:active{ transform:scale(.94); }
-  .mode-chip.selected{ background:var(--sun); border-color:#fff; box-shadow:0 4px 0 rgba(23,50,79,.16); }
-  .mode-chip small{ display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:11.5px; color:var(--ink-soft); }
-  #howRow{ display:flex; align-items:center; justify-content:center; gap:8px; margin:12px 0 2px; }
-  .how-step{ display:flex; flex-direction:column; align-items:center; gap:2px; min-width:64px; }
-  .how-ic{ font-size:28px; line-height:1; filter:drop-shadow(0 2px 0 rgba(23,50,79,.12)); }
-  .how-lab{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:11px; color:var(--ink-soft); line-height:1.15; }
-  .how-arrow{ font-size:20px; color:#478c3c; font-weight:700; }
-  .spot.cue-all .cover{ animation:cuePulse 1s ease-in-out infinite; }
-  @keyframes cuePulse{ 50%{ transform:scale(1.08); filter:drop-shadow(0 0 10px #fff3a0); } }
-  .spot.cue-target{ z-index:6; }
-  #peekHand{ position:absolute; right:-6px; top:36%; z-index:8; font-size:34px; line-height:1; pointer-events:none; animation:handBob .7s ease-in-out infinite; filter:drop-shadow(0 2px 0 #fff); }
-  @keyframes handBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(8px);} }
-  #playBtn{ margin-top:16px; border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; padding:14px 44px; border-radius:999px; cursor:pointer; box-shadow:0 7px 0 #d84a3f,0 16px 30px rgba(255,107,94,.4); transition:transform .12s; animation:playPulse 1.6s ease-in-out infinite; }
-  #playBtn:active{ transform:translateY(4px); box-shadow:0 3px 0 #d84a3f; }
-  @keyframes playPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.05);} }
-
-  /* ---------- win overlay ---------- */
-  #winOverlay{ position:absolute; inset:0; z-index:11; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
-  #winOverlay[hidden]{ display:none; }
-  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 14px 40px rgba(23,50,79,.35); padding:18px 20px 16px; text-align:center; width:min(92vw,440px); max-height:100%; overflow:hidden; animation:winIn .5s cubic-bezier(.34,1.6,.5,1); }
-  @keyframes winIn{ from{ transform:scale(.7) translateY(30px); opacity:0;} to{ transform:scale(1) translateY(0); opacity:1;} }
-  #winStars{ font-size:27px; letter-spacing:4px; color:#d5e8cd; }
-  #winStars .lit{ color:var(--sun); text-shadow:0 2px 0 #e8a90c; }
-  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:6px 0 0; }
-  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:16px; line-height:1.45; margin:8px 0 0; }
-  #winFaces{ display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin-top:11px; font-size:32px; }
-  .win-btns{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-  .win-btn{ border:3px solid #fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:12px 26px; border-radius:999px; cursor:pointer; transition:transform .12s; }
-  .win-btn:active{ transform:translateY(3px); }
-  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 6px 0 #3da347,0 12px 24px rgba(87,204,98,.35); }
-  #winHomeBtn{ background:#fff; color:var(--ink); border-color:#d5e8cd; box-shadow:0 5px 0 rgba(23,50,79,.14); }
-  .confetti{ position:absolute; z-index:12; width:11px; height:15px; border-radius:3px; pointer-events:none; }
-
-  @media (max-width:430px){
-    #bubble{ font-size:13.5px; padding:8px 10px; }
-    #blanketLabel{ font-size:11px; padding:2px 7px; }
+  [hidden]{ display:none !important; }
+  html,body{ height:100%; margin:0; overflow:hidden; }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#5dc1f5;
+    touch-action:none;
+    user-select:none; -webkit-user-select:none;
   }
-  @media (max-height:560px){
-    #hootFig{ width:clamp(80px,24vh,104px); }
-    #blanket{ width:110px; height:70px; } #blanket .guest{ font-size:20px; }
-    .spot{ width:clamp(66px,18vh,88px); } .spot .peeker{ font-size:32px; }
-    #targetQ{ width:42px; height:42px; font-size:32px; }
-    #targetName{ font-size:16px; }
-    #targetCard{ margin-top:4px; padding:5px 10px 5px 7px; }
-    #hearBtn{ width:38px; height:38px; }
-    #hud{ padding-top:6px; } .round-btn{ width:42px; height:42px; }
-    #starBank{ font-size:18px; padding:4px 12px 4px 8px; }
-    #bubble{ margin-bottom:0; font-size:12.5px; max-width:30vw; padding:7px 10px; }
-    #bubbleCol{ margin-bottom:8px; }
-    #sun{ width:54px; height:54px; top:48px; }
-    #startPanel{ top:50%; padding:12px 16px 10px; }
-    #playBtn{ font-size:20px; padding:10px 34px; margin-top:10px; }
+
+  #stage{
+    position:fixed; inset:0; height:100dvh; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:space-between;
+    background:linear-gradient(180deg, #53bcf5 0%, #a5e4ff 36%, #d9f8de 62%, #59cc62 100%);
+    transition:background .55s ease;
+  }
+  #stage.night-mode{
+    background:linear-gradient(180deg, #102042 0%, #1d3566 42%, #1d4a3a 68%, #15382c 100%);
+  }
+
+  /* ================= STORYBOOK FOREST SCENERY (DAY + STARLIT NIGHT!) ================= */
+  #scenery{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+  #forestHillsSvg{
+    position:absolute; left:0; right:0; bottom:18%;
+    width:100%; height:56%; display:block;
+    transition:filter .55s ease;
+  }
+  #stage.night-mode #forestHillsSvg{ filter:brightness(.55) saturate(1.1); }
+  #stage.night-mode #forestTreeL, #stage.night-mode #forestTreeR{ filter:brightness(.58) drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
+
+  #forestTreeL{
+    position:absolute; left:-22px; bottom:28%;
+    width:clamp(118px, 20vw, 204px);
+    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
+    transition:filter .55s ease;
+  }
+  #forestTreeR{
+    position:absolute; right:-22px; bottom:28%;
+    width:clamp(124px, 21vw, 212px);
+    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
+    transition:filter .55s ease;
+  }
+
+  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; pointer-events:auto; }
+  #sunBtn{ top:74px; right:16px; width:82px; height:82px; z-index:2; transition:opacity .4s, transform .4s; }
+  #sunBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 16px rgba(255,183,3,.5)); }
+  #sunBtn .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 44s linear infinite; }
+  #sunBtn.zing .rays{ animation:sunSpin .9s cubic-bezier(.34,1.5,.5,1) 1; }
+  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
+  #stage.night-mode #sunBtn{ opacity:0; transform:scale(.5) translateY(-20px); pointer-events:none; }
+
+  /* Smiling Moon & Twinkling Night Stars (visible in Night Flashlight mode!) */
+  #moonBtn{
+    top:74px; right:18px; width:80px; height:80px; z-index:2;
+    opacity:0; transform:scale(.5) translateY(-20px); pointer-events:none;
+    transition:opacity .45s, transform .45s;
+  }
+  #stage.night-mode #moonBtn{ opacity:1; transform:scale(1) translateY(0); pointer-events:auto; }
+  #moonBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 0 18px rgba(255,236,130,.75)); }
+
+  #nightStars{
+    position:absolute; inset:0 0 46% 0; opacity:0; transition:opacity .55s; pointer-events:none;
+  }
+  #stage.night-mode #nightStars{ opacity:1; }
+  .nstar{
+    position:absolute; width:8px; height:8px; border-radius:50%; background:#fff8c5;
+    box-shadow:0 0 10px 3px rgba(255,244,160,.8);
+    animation:twinkle 2.2s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle{ from{ opacity:.35; transform:scale(.7); } to{ opacity:1; transform:scale(1.25); } }
+
+  .cloud{ z-index:1; width:124px; height:56px; opacity:.95; animation:cloudDrift linear infinite; transition:opacity .4s; }
+  #stage.night-mode .cloud{ opacity:.22; }
+  .cloud svg{ width:100%; height:100%; display:block; transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud.puff svg{ transform:scale(1.24, 1.34); }
+  @keyframes cloudDrift{ from{ transform:translateX(-150px); } to{ transform:translateX(112vw); } }
+
+  .firefly{
+    position:absolute; z-index:3; width:34px; height:34px; border:none; background:none; padding:0;
+    cursor:pointer; pointer-events:auto; animation:ffFloat 5.5s ease-in-out infinite alternate;
+  }
+  .firefly i{
+    display:block; width:12px; height:12px; margin:11px auto; border-radius:50%;
+    background:#fff49c; box-shadow:0 0 14px 5px rgba(255,235,110,.9);
+    animation:ffGlow 1.4s ease-in-out infinite alternate;
+  }
+  @keyframes ffGlow{ from{ opacity:.5; transform:scale(.8); } to{ opacity:1; transform:scale(1.25); } }
+  @keyframes ffFloat{ 0%{ transform:translate(0,0); } 50%{ transform:translate(20px,-18px); } 100%{ transform:translate(-12px,-4px); } }
+
+  /* Warm Flashlight Spotlight Overlay in Night Mode! */
+  #flashBeam{
+    position:fixed; inset:0; z-index:11; pointer-events:none; opacity:0;
+    transition:opacity .35s ease;
+    background:radial-gradient(circle 140px at var(--fx, 50%) var(--fy, 68%), rgba(255,248,195,.22) 0%, rgba(16,32,66,.2) 55%, rgba(10,20,44,.62) 100%);
+  }
+  #stage.night-mode #flashBeam{ opacity:1; }
+
+  /* ================= CLEAN PICTURE-ONLY TOP BAR (ALL >=64PX) ================= */
+  #hud{
+    position:relative; z-index:15;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:max(8px, env(safe-area-inset-top)) 12px 0;
+    pointer-events:none;
+  }
+  .hud-group{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
+  .mode-pill{
+    min-width:68px; height:66px; padding:0 12px; border-radius:22px;
+    border:4px solid #fff; background:rgba(255,253,247,.95);
+    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    display:flex; align-items:center; justify-content:center; gap:4px;
+    font-size:26px; cursor:pointer;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), background .15s, box-shadow .15s;
+  }
+  .mode-pill:active{ transform:translateY(3px) scale(.95); }
+  .mode-pill.on{
+    background:linear-gradient(180deg, #ffe885 0%, #ffc93c 100%);
+    border-color:#17324f;
+    box-shadow:0 5px 0 #17324f, 0 0 22px rgba(255,201,60,.82);
+    transform:translateY(-2px) scale(1.04);
+  }
+
+  #soundBtn{
+    width:66px; height:66px; border-radius:50%;
+    border:4px solid #fff; background:rgba(255,253,247,.96);
+    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    display:grid; place-items:center; cursor:pointer;
+  }
+  #soundBtn:active{ transform:translateY(3px) scale(.94); }
+  #soundBtn svg{ width:30px; height:30px; }
+
+  #starPill{
+    height:66px; padding:0 18px 0 14px; border-radius:999px;
+    border:4px solid #fff; background:rgba(255,253,247,.96);
+    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    display:flex; align-items:center; gap:8px;
+    font-weight:800; font-size:26px; color:#17324f;
+  }
+  #starPill svg{ width:30px; height:30px; display:block; }
+  #starPill.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBump{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22) rotate(-4deg); } 100%{ transform:scale(1); } }
+
+  /* ================= CENTER STAGE: PICTURE CLOUD + SAFARI HOOT ================= */
+  #centerStage{
+    position:relative; z-index:12; flex:1 1 auto; min-height:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    padding:4px 10px 4px; gap:4px;
+  }
+
+  #orderCloud{
+    position:relative; z-index:13;
+    display:flex; align-items:center; gap:12px;
+    background:#fffdf8; border:5px solid #17324f; border-radius:36px;
+    padding:8px 14px 8px 18px;
+    box-shadow:0 8px 0 #17324f, 0 16px 32px rgba(23,50,79,.22);
+    margin-bottom:10px;
+    max-width:94vw;
+  }
+  #orderCloud::after{
+    content:""; position:absolute; left:50%; bottom:-16px; transform:translateX(-50%);
+    width:20px; height:20px; border-radius:50%;
+    background:#fffdf8; border:5px solid #17324f;
+    box-shadow:0 4px 0 #17324f;
+  }
+  #orderCloud.pop-in{ animation:cloudPop .46s cubic-bezier(.34,1.75,.5,1); }
+  @keyframes cloudPop{ 0%{ transform:scale(.62) translateY(14px); opacity:0; } 100%{ transform:scale(1) translateY(0); opacity:1; } }
+
+  #cloudInner{ display:flex; align-items:center; gap:10px; }
+  .cloud-animal-badge{
+    width:60px; height:60px; border-radius:20px;
+    background:#fff6d8; border:3.5px solid #f59e0b;
+    display:grid; place-items:center; padding:4px;
+  }
+  .cloud-animal-badge svg{ width:100%; height:100%; display:block; }
+  .cloud-q{
+    width:56px; height:56px; border-radius:20px;
+    background:#eff6ff; border:3.5px dashed #3b82f6;
+    display:grid; place-items:center; font-size:28px;
+  }
+  .cloud-arrow{ font-size:24px; color:#16a34a; font-weight:900; }
+  .cloud-stars{ display:flex; align-items:center; gap:4px; font-size:25px; color:#d8e4f0; }
+  .cloud-stars span.lit{ color:#ffc93c; text-shadow:0 2px 6px rgba(245,158,11,.55); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.85,.5,1); }
+  @keyframes slotFed{ 0%{ transform:scale(.45) rotate(-14deg); } 60%{ transform:scale(1.26) rotate(6deg); } 100%{ transform:scale(1) rotate(0); } }
+
+  #repeatBtn{
+    width:64px; height:64px; border-radius:50%; flex:0 0 auto;
+    border:4px solid #17324f; background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
+    box-shadow:0 5px 0 #17324f; display:grid; place-items:center; cursor:pointer;
+  }
+  #repeatBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 #17324f; }
+  #repeatBtn svg{ width:30px; height:30px; }
+
+  #hootBtn{
+    position:relative; border:none; background:none; padding:0; cursor:pointer;
+    width:clamp(118px, 22vh, 172px);
+    filter:drop-shadow(0 10px 14px rgba(23,50,79,.24));
+    transform-origin:50% 94%;
+    animation:hootIdle 3.1s ease-in-out infinite;
+    margin-bottom:-6px;
+  }
+  #hootBtn svg{ width:100%; height:auto; display:block; overflow:visible; }
+  @keyframes hootIdle{ 0%,100%{ transform:translateY(0) rotate(-.8deg); } 50%{ transform:translateY(-5px) rotate(.8deg); } }
+  #hootBtn .wing-l{ transform-box:fill-box; transform-origin:85% 18%; transition:transform .2s; }
+  #hootBtn .wing-r{ transform-box:fill-box; transform-origin:15% 18%; transition:transform .2s; }
+  #hootBtn .eyelids{ transform-box:fill-box; transform-origin:center; animation:hootBlink 4.4s infinite; }
+  @keyframes hootBlink{ 0%,93%,100%{ transform:scaleY(0); } 96%{ transform:scaleY(1); } }
+  #hootBtn.happy-jump{ animation:hootHappy .52s cubic-bezier(.34,1.7,.5,1) 3; }
+  @keyframes hootHappy{ 0%,100%{ transform:translateY(0) scale(1); } 40%{ transform:translateY(-22px) scale(.96,1.06) rotate(-3deg); } 75%{ transform:translateY(2px) scale(1.05,.95); } }
+  #hootBtn.happy-jump .wing-l{ animation:flapL .22s ease-in-out infinite alternate; }
+  #hootBtn.happy-jump .wing-r{ animation:flapR .22s ease-in-out infinite alternate; }
+  @keyframes flapL{ from{ transform:rotate(0); } to{ transform:rotate(38deg); } }
+  @keyframes flapR{ from{ transform:rotate(0); } to{ transform:rotate(-38deg); } }
+  #hootBtn.head-wobble{ animation:headWobble .42s ease-in-out 2; }
+  @keyframes headWobble{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-8deg); } 75%{ transform:rotate(8deg); } }
+  #hootBtn.talking{ animation:talkPulse .22s ease-in-out infinite alternate; }
+  @keyframes talkPulse{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-3px) scale(1.02); } }
+
+  /* ================= FOREST HIDING SPOTS + CHECKERED PICNIC BLANKET ================= */
+  #forestDeck{
+    position:relative; z-index:12; width:100%;
+    padding:14px 12px max(10px, env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, #4ec658 0%, #37a544 55%, #2b8a38 100%);
+    border-top:6px solid #17324f;
+    box-shadow:0 -10px 26px rgba(23,50,79,.22), inset 0 6px 0 rgba(255,255,255,.28);
+    transition:background .55s ease;
+  }
+  #stage.night-mode #forestDeck{
+    background:linear-gradient(180deg, #1f5a3e 0%, #164430 60%, #103224 100%);
+  }
+
+  #spotsGrid{
+    max-width:960px; margin:0 auto;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+    gap:clamp(10px, 2.2vw, 20px);
+    min-height:132px;
+  }
+
+  .spot-btn{
+    position:relative;
+    width:clamp(102px, 27vw, 134px); height:clamp(102px, 27vw, 134px);
+    border-radius:32px;
+    border:5px solid #17324f;
+    background:radial-gradient(circle at 35% 28%, #ffffff 0%, #fffdf6 66%, #e3f5e6 100%);
+    box-shadow:0 8px 0 #17324f, 0 14px 22px rgba(23,50,79,.26), inset 0 -5px 0 #d0ebd5;
+    padding:8px; cursor:pointer; touch-action:manipulation;
+    display:grid; place-items:center;
+    transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .16s, border-color .16s, background .35s;
+  }
+  #stage.night-mode .spot-btn{
+    background:radial-gradient(circle at 35% 28%, #344d73 0%, #243757 70%, #1a2944 100%);
+    border-color:#0b1526;
+    box-shadow:0 8px 0 #0b1526, 0 12px 24px rgba(0,0,0,.45);
+  }
+  .spot-btn svg.spot-art{ width:100%; height:100%; display:block; filter:drop-shadow(0 4px 5px rgba(23,50,79,.16)); pointer-events:none; transition:filter .3s; }
+  #stage.night-mode .spot-btn:not(.revealed) svg.spot-art{ filter:brightness(.72) saturate(.85); }
+  .spot-btn:active{ transform:translateY(4px) scale(.95); }
+
+  /* Subtle live wiggle clue when target friend is giggling inside! */
+  .spot-btn.wiggle-clue{ animation:spotRustle .55s ease-in-out 2; }
+  @keyframes spotRustle{
+    0%,100%{ transform:rotate(0) scale(1); }
+    25%{ transform:rotate(-5deg) scale(1.05); }
+    75%{ transform:rotate(5deg) scale(1.05); }
+  }
+  .spot-btn.shaking{ animation:spotShake .12s ease-in-out 4 alternate; }
+  @keyframes spotShake{ from{ transform:translateX(-6px) rotate(-4deg); } to{ transform:translateX(6px) rotate(4deg); } }
+
+  /* Glowing curious eyes peeking out in Night Flashlight mode! */
+  .peek-eyes{
+    position:absolute; left:50%; top:46%; transform:translate(-50%,-50%);
+    display:none; gap:8px; pointer-events:none; z-index:4;
+    animation:eyesBlink 3.2s infinite;
+  }
+  #stage.night-mode .spot-btn.has-hider:not(.revealed) .peek-eyes{ display:flex; }
+  .peek-eyes span{
+    width:13px; height:13px; border-radius:50%;
+    background:#fff7a8; border:2.5px solid #17324f;
+    box-shadow:0 0 12px 3px rgba(255,244,140,.95);
+    display:grid; place-items:center;
+  }
+  .peek-eyes span::after{ content:""; width:5px; height:5px; border-radius:50%; background:#17324f; }
+  @keyframes eyesBlink{ 0%,88%,100%{ transform:translate(-50%,-50%) scaleY(1); } 94%{ transform:translate(-50%,-50%) scaleY(.1); } }
+
+  /* Animal springing up out of hiding spot on PEEKABOO! */
+  .spot-friend{
+    position:absolute; left:50%; top:-24px; transform:translateX(-50%) scale(0) translateY(34px);
+    width:86%; height:86%; pointer-events:none; z-index:5;
+    filter:drop-shadow(0 10px 14px rgba(23,50,79,.36));
+    transition:transform .42s cubic-bezier(.34,1.88,.5,1);
+  }
+  .spot-btn.revealed{
+    background:radial-gradient(circle at 50% 35%, #fff9db 0%, #dcfce7 100%) !important;
+    border-color:#16a34a !important;
+    box-shadow:0 8px 0 #14532d, 0 0 34px rgba(255,232,120,.95) !important;
+    transform:scale(1.08);
+  }
+  .spot-btn.revealed .spot-friend{ transform:translateX(-50%) scale(1) translateY(0); }
+
+  /* Gentle idle / wrong-tap golden cue */
+  .spot-btn.nudge-glow{
+    border-color:#ffb703 !important;
+    box-shadow:0 8px 0 #17324f, 0 0 0 8px rgba(255,201,60,.72), 0 0 28px rgba(255,183,3,.95) !important;
+    animation:spotNudge .65s ease-in-out infinite alternate;
+  }
+  @keyframes spotNudge{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.06); } }
+  .nudge-hand{
+    position:absolute; right:-10px; bottom:-14px; font-size:36px; line-height:1;
+    pointer-events:none; z-index:7; filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));
+    animation:handTap .55s ease-in-out infinite alternate;
+  }
+  @keyframes handTap{ from{ transform:translate(0,0) rotate(-10deg); } to{ transform:translate(-6px,-8px) rotate(4deg); } }
+
+  /* Cozy Checkered Picnic Blanket Strip for Found Forest Friends! */
+  #picnicBlanket{
+    max-width:520px; margin:12px auto 0;
+    padding:7px 14px; border-radius:22px;
+    border:4px solid #17324f;
+    background:repeating-conic-gradient(#ff6b7a 0% 25%, #fff7f8 0% 50%) 0 0 / 22px 22px;
+    box-shadow:0 5px 0 #17324f;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  #picnicBlanket[hidden]{ display:none !important; }
+  .bslot{
+    width:46px; height:46px; border-radius:50%;
+    background:rgba(255,253,247,.72); border:3px dashed rgba(23,50,79,.45);
+    display:grid; place-items:center; padding:4px;
+  }
+  .bslot.filled{
+    background:#fffdf7; border:3px solid #17324f;
+    box-shadow:0 3px 0 #17324f;
+    animation:slotFed .48s cubic-bezier(.34,1.85,.5,1);
+  }
+  .bslot svg{ width:100%; height:100%; display:block; }
+
+  /* Sparkles, leaves & floating emojis */
+  .fx-dot{ position:fixed; z-index:35; pointer-events:none; border-radius:50%; }
+  .fx-pop{
+    position:fixed; z-index:36; pointer-events:none;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:36px;
+    color:#fff; -webkit-text-stroke:2px #17324f;
+    text-shadow:0 4px 0 #17324f;
+    animation:popFloat .95s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes popFloat{
+    0%{ transform:translate(-50%, 0) scale(.4); opacity:0; }
+    25%{ transform:translate(-50%, -18px) scale(1.22); opacity:1; }
+    100%{ transform:translate(-50%, -68px) scale(1); opacity:0; }
+  }
+
+  /* ================= ONE-TAP START PEEKABOO BUSH (ZERO READING!) ================= */
+  #startVeil{
+    position:fixed; inset:0; z-index:30;
+    background:rgba(23,50,79,.24); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  #goPeekBtn{
+    width:min(86vw, 304px); min-height:202px;
+    border:6px solid #17324f; border-radius:42px;
+    background:linear-gradient(180deg, #fffdf7 0%, #dff8e5 100%);
+    box-shadow:0 12px 0 #17324f, 0 24px 48px rgba(23,50,79,.38);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+    padding:20px; cursor:pointer;
+    animation:goPulse 1.25s ease-in-out infinite alternate;
+  }
+  @keyframes goPulse{ from{ transform:scale(1); } to{ transform:scale(1.05); } }
+  #goPeekBtn:active{ transform:translateY(5px) scale(.97); box-shadow:0 7px 0 #17324f; }
+  .go-play-pill{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:184px; min-height:72px; padding:10px 28px; border-radius:999px;
+    border:5px solid #17324f;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-size:32px; font-weight:800;
+    box-shadow:0 6px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+
+  /* ================= CELEBRATION WIN OVERLAY ================= */
+  #winOverlay{
+    position:fixed; inset:0; z-index:45;
+    background:rgba(23,50,79,.45); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  #winCard{
+    width:min(92vw, 440px);
+    background:#fffdf8; border:6px solid #17324f; border-radius:36px;
+    box-shadow:0 12px 0 #17324f, 0 28px 60px rgba(23,50,79,.4);
+    padding:22px 20px 20px; text-align:center;
+  }
+  #winStars{ font-size:40px; letter-spacing:6px; color:#dbe7f3; line-height:1; }
+  #winStars span.lit{ color:#ffc93c; text-shadow:0 0 18px rgba(255,201,60,.95); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.8,.5,1); }
+  #winTitle{ font-size:clamp(26px, 6.5vw, 34px); margin:10px 0 8px; color:#17324f; }
+  #winFriends{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:10px 0 18px; }
+  .win-mini{ width:56px; height:56px; border-radius:50%; background:#e6faec; border:3px solid #17324f; padding:6px; }
+  .win-mini svg{ width:100%; height:100%; display:block; }
+  .win-btns{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+  #againBtn, .win-btn{
+    min-width:190px; min-height:72px; padding:12px 28px; border-radius:999px;
+    border:5px solid #17324f;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:inherit; font-size:26px; font-weight:800; cursor:pointer;
+    box-shadow:0 7px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+  #againBtn:active, .win-btn:active{ transform:translateY(4px); box-shadow:0 3px 0 #14532d; }
+
+  @media (max-width:460px){
+    #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 0; gap:4px; }
+    .hud-group{ gap:5px; }
+    .mode-pill{ min-width:64px; height:64px; padding:0 8px; font-size:22px; border-radius:18px; gap:2px; }
+    #soundBtn{ width:64px; height:64px; }
+    #starPill{ height:64px; padding:0 11px 0 9px; gap:5px; font-size:22px; }
+    #starPill svg{ width:24px; height:24px; }
+    #orderCloud{ padding:7px 10px 7px 12px; gap:7px; }
+    #cloudInner{ gap:6px; }
+    .cloud-animal-badge{ width:48px; height:48px; border-radius:15px; padding:3px; }
+    .cloud-q{ width:46px; height:46px; border-radius:15px; font-size:24px; }
+    .cloud-arrow{ font-size:20px; }
+    .cloud-stars{ font-size:19px; gap:2px; }
+    .spot-btn{ width:clamp(98px, 28vw, 112px); height:clamp(98px, 28vw, 112px); border-radius:26px; padding:6px; }
+    #spotsGrid{ gap:10px; }
+    #hootBtn{ width:clamp(108px, 20vh, 142px); }
+    #picnicBlanket{ margin-top:8px; padding:5px 10px; gap:7px; }
+    .bslot{ width:40px; height:40px; }
+  }
+  @media (max-height:640px){
+    #hootBtn{ width:clamp(96px, 20vh, 132px); }
+    .spot-btn{ width:clamp(88px, 20vh, 116px); height:clamp(88px, 20vh, 116px); }
+    #forestDeck{ padding-top:8px; padding-bottom:8px; }
+    #picnicBlanket{ margin-top:6px; }
+    .bslot{ width:38px; height:38px; }
   }
   @media (prefers-reduced-motion:reduce){
-    #hootFig,.bigtree,.firefly,.leaf-fall{ animation:none !important; }
-  }
-.spot .peek-part{position:absolute;z-index:0;left:50%;bottom:78%;transform:translateX(-50%);font-size:clamp(46px,13.5vw,66px);line-height:1;height:.62em;overflow:hidden;pointer-events:none;animation:pkW 2.4s ease-in-out infinite;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 3px 1px rgba(23,50,79,.25))}.spot[data-kind="pine"] .peek-part,.spot[data-kind="tree"] .peek-part,.spot[data-kind="bush"] .peek-part{bottom:46%;z-index:3}.spot[data-kind="log"] .peek-part,.spot[data-kind="shroom"] .peek-part{bottom:60%}.spot.revealed .peek-part{display:none}.spot .peek-part.pk-hint{animation:pkHint .55s ease-in-out 3}@keyframes pkW{0%,68%,100%{transform:translateX(-50%) translateY(0) rotate(0)}78%{transform:translateX(-50%) translateY(-8px) rotate(-7deg)}88%{transform:translateX(-50%) translateY(-8px) rotate(7deg)}}@keyframes pkHint{50%{transform:translateX(-50%) translateY(-18px) scale(1.25)}}@media (prefers-reduced-motion:reduce){.spot .peek-part{animation:none}}@media (max-height:560px){.spot .peek-part{font-size:34px}}
-  /* Wave 5C-3 (Big & Physical): lush oversized hiding bushes/trees/logs & large picnic blanket */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    .spot{ width:clamp(150px,22vh,188px) !important; }
-    .spot .cover{ filter:drop-shadow(0 10px 12px rgba(20,60,20,.34)) !important; }
-    .spot .peeker{ font-size:clamp(60px,9vh,76px) !important; }
-    #blanket{ width:clamp(184px,24vw,224px) !important; height:clamp(108px,15vh,130px) !important; border-width:4px !important; }
-    #blanket .guest{ font-size:38px !important; }
-    #blanketLabel{ font-size:15px !important; padding:4px 12px !important; }
-    #targetCard{ border:4px solid #fff !important; box-shadow:0 7px 0 rgba(20,60,20,.18) !important; padding:8px 18px !important; }
+    .cloud, .firefly, #sunBtn .rays, .nstar{ animation:none !important; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <!-- living forest -->
-  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
-    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.6" fill="#17324f"/><circle cx="59" cy="46" r="3.6" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/><circle cx="65" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/></svg>
-  </button>
-  <svg class="bigtree" style="left:-14px;top:19%;width:120px" viewBox="0 0 120 170" aria-hidden="true"><rect x="52" y="104" width="16" height="66" rx="6" fill="#8a5a33"/><circle cx="60" cy="62" r="46" fill="#3da347"/><circle cx="30" cy="84" r="30" fill="#57cc62"/><circle cx="90" cy="84" r="30" fill="#57cc62"/><circle cx="46" cy="46" r="9" fill="#ff6b5e"/><circle cx="76" cy="66" r="9" fill="#ff6b5e"/><circle cx="58" cy="88" r="9" fill="#ff6b5e"/></svg>
-  <svg class="bigtree" style="right:-10px;top:23%;width:100px;animation-delay:-2.6s" viewBox="0 0 120 170" aria-hidden="true"><rect x="52" y="104" width="16" height="66" rx="6" fill="#8a5a33"/><circle cx="60" cy="62" r="46" fill="#2f8f3a"/><circle cx="30" cy="84" r="30" fill="#478c3c"/><circle cx="90" cy="84" r="30" fill="#478c3c"/><circle cx="50" cy="52" r="8" fill="#c39bff"/><circle cx="74" cy="80" r="8" fill="#c39bff"/></svg>
-  <span class="leaf-fall" style="left:22%;animation-duration:11s" aria-hidden="true">🍃</span>
-  <span class="leaf-fall" style="left:64%;animation-duration:14s;animation-delay:-6s" aria-hidden="true">🍂</span>
-  <span class="leaf-fall" style="left:84%;animation-duration:12s;animation-delay:-3s" aria-hidden="true">🍃</span>
-  <button class="firefly" type="button" style="left:16%;top:30%" aria-label="Firefly — tap for a glow"><i></i></button>
-  <button class="firefly" type="button" style="left:48%;top:22%;animation-delay:-2s" aria-label="Firefly — tap for a glow"><i></i></button>
-  <button class="firefly" type="button" style="right:14%;top:38%;animation-delay:-4s" aria-label="Firefly — tap for a glow"><i></i></button>
-  <button class="firefly" type="button" style="left:34%;top:52%;animation-delay:-1s" aria-label="Firefly — tap for a glow"><i></i></button>
+  <!-- Living Day/Night Storybook Forest Scenery -->
+  <div id="scenery" aria-hidden="true">
+    <div id="nightStars">
+      <span class="nstar" style="left:12%;top:14%;animation-delay:.1s"></span>
+      <span class="nstar" style="left:28%;top:22%;animation-delay:.7s"></span>
+      <span class="nstar" style="left:44%;top:11%;animation-delay:1.3s"></span>
+      <span class="nstar" style="left:62%;top:19%;animation-delay:.4s"></span>
+      <span class="nstar" style="left:78%;top:13%;animation-delay:1.1s"></span>
+      <span class="nstar" style="left:86%;top:27%;animation-delay:.8s"></span>
+      <span class="nstar" style="left:18%;top:32%;animation-delay:1.5s"></span>
+    </div>
 
-  <!-- HUD -->
+    <button class="decor cloud" type="button" style="top:10%;animation-duration:84s;animation-delay:-26s" tabindex="-1">
+      <svg viewBox="0 0 124 56"><ellipse cx="40" cy="39" rx="31" ry="14" fill="#fff"/><ellipse cx="68" cy="28" rx="27" ry="19" fill="#fff"/><ellipse cx="92" cy="39" rx="24" ry="13" fill="#fff"/></svg>
+    </button>
+
+    <button class="decor" id="sunBtn" type="button" aria-label="Tap Mr. Sun">
+      <svg viewBox="0 0 100 100">
+        <g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round">
+          <path d="M50 3v12M50 85v12M3 50h12M85 50h12M17 17l8 8M75 75l8 8M83 17l-8 8M25 75l-8 8"/>
+        </g>
+        <circle cx="50" cy="50" r="27" fill="#ffd23f" stroke="#f09d00" stroke-width="3.5"/>
+        <circle cx="41" cy="46" r="3.4" fill="#17324f"/><circle cx="59" cy="46" r="3.4" fill="#17324f"/>
+        <path d="M40 57 Q50 65 60 57" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button class="decor" id="moonBtn" type="button" aria-label="Tap Moon">
+      <svg viewBox="0 0 100 100">
+        <path d="M66 18 A32 32 0 1 0 84 68 A26 26 0 1 1 66 18 Z" fill="#ffe680" stroke="#f59e0b" stroke-width="3.5" stroke-linejoin="round"/>
+        <circle cx="44" cy="48" r="3.2" fill="#17324f"/>
+        <path d="M40 59 Q48 64 55 59" stroke="#17324f" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button class="firefly" type="button" style="left:16%;top:28%" aria-label="Tap firefly"><i></i></button>
+    <button class="firefly" type="button" style="right:18%;top:31%;animation-delay:-2.4s" aria-label="Tap firefly"><i></i></button>
+
+    <svg id="forestHillsSvg" viewBox="0 0 900 320" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 155 Q230 68 480 138 T900 112 L900 320 L0 320 Z" fill="#77d66f"/>
+      <path d="M0 205 Q290 134 570 188 T900 166 L900 320 L0 320 Z" fill="#46b952"/>
+      <g>
+        <circle cx="215" cy="232" r="8.5" fill="#fff"/><circle cx="215" cy="232" r="4" fill="#ffd23f"/>
+        <circle cx="676" cy="226" r="8.5" fill="#ffb3c6"/><circle cx="676" cy="226" r="4" fill="#ffd23f"/>
+        <circle cx="745" cy="248" r="7.5" fill="#ffe680"/><circle cx="745" cy="248" r="3.5" fill="#f97316"/>
+      </g>
+    </svg>
+
+    <svg id="forestTreeL" viewBox="0 0 180 250">
+      <ellipse cx="90" cy="238" rx="44" ry="9" fill="rgba(23,50,79,.16)"/>
+      <rect x="76" y="176" width="28" height="62" rx="6" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
+      <path d="M22 186 L90 98 L158 186 Z" fill="#2ea043" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M34 136 L90 56 L146 136 Z" fill="#3ec456" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M48 88 L90 22 L132 88 Z" fill="#58d66b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+    </svg>
+
+    <svg id="forestTreeR" viewBox="0 0 190 250">
+      <ellipse cx="98" cy="238" rx="46" ry="9" fill="rgba(23,50,79,.16)"/>
+      <path d="M82 238 Q88 180 88 122 L108 122 Q108 180 116 238 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
+      <circle cx="62" cy="96" r="42" fill="#3eb84d" stroke="#17324f" stroke-width="4"/>
+      <circle cx="132" cy="88" r="40" fill="#2ea03d" stroke="#17324f" stroke-width="4"/>
+      <circle cx="98" cy="58" r="44" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
+      <circle cx="96" cy="96" r="36" fill="#47c456"/>
+    </svg>
+  </div>
+
+  <!-- Flashlight Beam Overlay (activates in Night Flashlight Peekaboo mode!) -->
+  <div id="flashBeam" aria-hidden="true"></div>
+
+  <!-- Top Bar: 3 Giant Picture Mode Buttons + Sound + Star Counter -->
   <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+    <div class="hud-group" role="group" aria-label="Game modes">
+      <button type="button" class="mode-pill on" data-mode="hide" aria-label="Daytime Forest Peekaboo">
+        <span aria-hidden="true">🌿</span><span aria-hidden="true">👀</span>
       </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
+      <button type="button" class="mode-pill" data-mode="night" aria-label="Night Flashlight Peekaboo">
+        <span aria-hidden="true">🔦</span><span aria-hidden="true">🌙</span>
+      </button>
+      <button type="button" class="mode-pill" data-mode="surprise" aria-label="Peekaboo Surprise Toybox">
+        <span aria-hidden="true">🎉</span><span aria-hidden="true">🐾</span>
       </button>
     </div>
-    <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      <span id="starCount">0</span>
+    <div class="hud-group">
+      <button type="button" id="soundBtn" aria-label="Sound on or off">
+        <svg id="sndOnSvg" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.8a9 9 0 0 1 0 12.4"/></svg>
+        <svg id="sndOffSvg" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#cbd5e1"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <div id="starPill" aria-label="Stars earned">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l3 6 6.6 1-4.8 4.6 1.1 6.6L12 17.5 6.1 20.6l1.1-6.6L2.4 9.4l6.6-1z" fill="#ffc93c" stroke="#d98a00" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span id="starCount">0</span>
+      </div>
     </div>
   </div>
 
-  <!-- target card -->
-  <div id="targetCard">
-    <div id="targetQ">?</div>
-    <div>
-      <div class="tc-label">Who&rsquo;s hiding? Find the…</div>
-      <div id="targetName">Bunny!</div>
-      <div id="progressDots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <!-- Center Stage: Picture-Only Thought Cloud + Safari Hat Hoot -->
+  <div id="centerStage">
+    <div id="orderCloud">
+      <div id="cloudInner"></div>
+      <button type="button" id="repeatBtn" aria-label="Hear Hoot again">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#fff"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.8a9 9 0 0 1 0 12.4"/></svg>
+      </button>
     </div>
-    <button id="hearBtn" type="button" aria-label="Hear Hoot&rsquo;s clue again">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
+
+    <button type="button" id="hootBtn" aria-label="Tap Hoot to giggle and repeat">
+      <svg viewBox="0 0 220 228" aria-hidden="true">
+        <path d="M90 190 L110 218 L130 190 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
+        <ellipse class="wing-l" cx="40" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(14 40 138)"/>
+        <ellipse class="wing-r" cx="180" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(-14 180 138)"/>
+        <ellipse cx="110" cy="134" rx="70" ry="73" fill="#a06a3b" stroke="#17324f" stroke-width="4.5"/>
+        <ellipse cx="110" cy="152" rx="48" ry="47" fill="#fdeed3"/>
+        <path d="M92 164 q7 6 14 0 M114 164 q7 6 14 0 M103 178 q7 6 14 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        <!-- Cute Explorer Binoculars Hanging on Hoot's Chest! -->
+        <path d="M84 114 L94 134 M136 114 L126 134" stroke="#17324f" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="96" cy="140" r="11" fill="#38bdf8" stroke="#17324f" stroke-width="3.5"/>
+        <circle cx="124" cy="140" r="11" fill="#38bdf8" stroke="#17324f" stroke-width="3.5"/>
+        <rect x="104" y="136" width="12" height="7" fill="#17324f"/>
+        <circle cx="93" cy="137" r="3.2" fill="#e0f2fe"/><circle cx="121" cy="137" r="3.2" fill="#e0f2fe"/>
+        <!-- Head -->
+        <circle cx="110" cy="80" r="56" fill="#a06a3b" stroke="#17324f" stroke-width="4.5"/>
+        <!-- Adorable Safari Explorer Hat! -->
+        <ellipse cx="110" cy="34" rx="64" ry="13" fill="#e6be8a" stroke="#17324f" stroke-width="4"/>
+        <path d="M68 32 Q74 4 110 4 Q146 4 152 32 Z" fill="#f3d5a5" stroke="#17324f" stroke-width="4"/>
+        <path d="M70 28 Q110 34 150 28" stroke="#ff5d52" stroke-width="6" fill="none"/>
+        <!-- Facial Discs & Eye-Tracking Pupils -->
+        <ellipse cx="86" cy="80" rx="25" ry="27" fill="#fdeed3" stroke="#17324f" stroke-width="3"/>
+        <ellipse cx="134" cy="80" rx="25" ry="27" fill="#fdeed3" stroke="#17324f" stroke-width="3"/>
+        <g id="hootPupils">
+          <circle cx="86" cy="80" r="12.5" fill="#17324f"/>
+          <circle cx="134" cy="80" r="12.5" fill="#17324f"/>
+          <circle cx="90" cy="75" r="4.5" fill="#fff"/>
+          <circle cx="138" cy="75" r="4.5" fill="#fff"/>
+        </g>
+        <g class="eyelids">
+          <ellipse cx="86" cy="80" rx="24" ry="26" fill="#a06a3b"/>
+          <ellipse cx="134" cy="80" rx="24" ry="26" fill="#a06a3b"/>
+        </g>
+        <circle cx="59" cy="100" r="9.5" fill="#ffb59d" opacity=".9"/>
+        <circle cx="161" cy="100" r="9.5" fill="#ffb59d" opacity=".9"/>
+        <path d="M97 93 Q110 87 123 93 Q118 106 110 109 Q102 106 97 93 Z" fill="#ff9f1c" stroke="#17324f" stroke-width="3.2"/>
+        <path d="M84 202 q-8 8 -14 6 M84 202 q-2 10 -8 12 M136 202 q8 8 14 6 M136 202 q2 10 8 12" stroke="#ff9f1c" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      </svg>
     </button>
   </div>
 
-  <!-- forest floor -->
-  <div id="scene">
-    <div id="spotLayer"></div>
-    <div id="echoNote" aria-hidden="true">🎵</div>
+  <!-- Forest Hiding Spots + Checkered Picnic Blanket -->
+  <div id="forestDeck">
+    <div id="spotsGrid" aria-label="Forest hiding spots"></div>
+    <div id="picnicBlanket" aria-label="Friends found on the picnic blanket"></div>
   </div>
 
-  <!-- Hoot + picnic blanket -->
-  <div id="groundRow">
-    <div id="hootZone">
-      <button id="hootFig" type="button" aria-label="Hoot — tap to hear the last peekaboo call again">
-        <svg viewBox="0 0 200 210" aria-hidden="true">
-          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
-          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
-          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
-          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
-          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
-          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
-          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
-          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
-          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
-          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
-          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
-          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div id="bubbleCol">
-        <div id="bubble">Shhh… everyone is hiding! Tap <span class="b-big">Play</span> and let&rsquo;s find them together!</div>
-        <span id="hootName">HOOT</span>
-      </div>
-    </div>
-    <div id="blanketZone">
-      <div id="blanket" role="button" tabindex="0" aria-label="The picnic blanket — tap and Hoot names everyone sitting on it"></div>
-      <span id="blanketLabel">Picnic Blanket</span>
-    </div>
+  <!-- Picture-First One-Tap Peekaboo Bush Start (Zero Reading!) -->
+  <div id="startVeil">
+    <button type="button" id="goPeekBtn" aria-label="Play Peekaboo Forest">
+      <svg width="136" height="98" viewBox="0 0 136 98" aria-hidden="true">
+        <!-- Cute bunny ears peeking above a berry bush! -->
+        <ellipse cx="52" cy="24" rx="9" ry="20" fill="#fffdf8" stroke="#17324f" stroke-width="3.5" transform="rotate(-10 52 24)"/>
+        <ellipse cx="52" cy="26" rx="4" ry="12" fill="#ff9ebb" transform="rotate(-10 52 26)"/>
+        <ellipse cx="84" cy="24" rx="9" ry="20" fill="#fffdf8" stroke="#17324f" stroke-width="3.5" transform="rotate(10 84 24)"/>
+        <ellipse cx="84" cy="26" rx="4" ry="12" fill="#ff9ebb" transform="rotate(10 84 26)"/>
+        <circle cx="36" cy="64" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/>
+        <circle cx="100" cy="64" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/>
+        <circle cx="68" cy="54" r="30" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
+        <circle cx="44" cy="62" r="5" fill="#ff5d52" stroke="#17324f" stroke-width="2"/>
+        <circle cx="88" cy="68" r="5" fill="#ff5d52" stroke="#17324f" stroke-width="2"/>
+        <circle cx="68" cy="46" r="5" fill="#ffc93c" stroke="#17324f" stroke-width="2"/>
+        <!-- Curious eyes peeking out! -->
+        <circle cx="58" cy="66" r="6" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="58" cy="66" r="2.6" fill="#17324f"/>
+        <circle cx="78" cy="66" r="6" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="66" r="2.6" fill="#17324f"/>
+      </svg>
+      <span class="go-play-pill">▶</span>
+    </button>
   </div>
 
-  <!-- start panel -->
-  <div id="startPanel">
-    <h1><span class="t-pk">Peekaboo</span> <span class="t-fr">Forest</span></h1>
-    <p>Hoot&rsquo;s friends are hiding! I will say who to find. Tap a hiding spot, and they sit on the picnic blanket!</p>
-    <div id="howRow" aria-hidden="true">
-      <div class="how-step"><span class="how-ic">🌳</span><span class="how-lab">Friends hide</span></div>
-      <span class="how-arrow">→</span>
-      <div class="how-step"><span class="how-ic">👆</span><span class="how-lab">Tap to peek</span></div>
-      <span class="how-arrow">→</span>
-      <div class="how-step"><span class="how-ic">🧺</span><span class="how-lab">Fill the blanket</span></div>
-    </div>
-    <div class="mode-row" role="group" aria-label="Choose how to play">
-      <button class="mode-chip selected" id="modeHunt" type="button">Who&rsquo;s Hiding?<small>Hoot calls — you find!</small></button>
-      <button class="mode-chip" id="modePeek" type="button">Peek Play<small>Tap any spot — surprise!</small></button>
-    </div>
-    <button id="playBtn" type="button">▶ Play</button>
-  </div>
-
-  <!-- win overlay -->
+  <!-- Picture-First Win Celebration -->
   <div id="winOverlay" hidden>
     <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
-      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <h2 id="winTitle">The blanket is full!</h2>
-      <p id="winRecap"></p>
-      <div id="winFaces"></div>
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <h2 id="winTitle">Peekaboo Picnic!</h2>
+      <div id="winFriends"></div>
       <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+        <button type="button" id="againBtn" aria-label="Play again">▶ 👀</button>
       </div>
     </div>
   </div>
@@ -320,554 +644,605 @@
 <script>
 (function(){
   "use strict";
-  /* ================= DATA ================= */
-  var ANIMALS = [
-    { id:"fox",      name:"Fox",      face:"\uD83E\uDD8A", clue:"pointy orange ears and a big bushy tail with a white tip", fact:"A fox&rsquo;s big ears can hear a tiny mouse under the grass!", note:330 },
-    { id:"bunny",    name:"Bunny",    face:"\uD83D\uDC30", clue:"very long ears, a twitchy nose, and hop-hop-hops",          fact:"Bunnies wiggle their noses almost all the time!",                  note:392 },
-    { id:"bear",     name:"Bear Cub", face:"\uD83D\uDC3B", clue:"round brown ears and a soft tan muzzle",                      fact:"Bear cubs are born tiny, then grow and grow!",                     note:262 },
-    { id:"squirrel", name:"Squirrel", face:"\uD83D\uDC3F\uFE0F", clue:"a huge curly tail and quick little paws",              fact:"Squirrels plant trees by forgetting where they buried acorns!",    note:440 },
-    { id:"hedgehog", name:"Hedgehog", face:"\uD83E\uDD94", clue:"small and round, covered in spiky spines",                    fact:"A hedgehog rolls into a tight spiky ball to stay safe!",          note:294 },
-    { id:"frog",     name:"Frog",     face:"\uD83D\uDC38", clue:"green and bouncy, with big round eyes right on top",          fact:"Frogs blink to help swallow their lunch!",                        note:349 }
-  ];
-  var BY_ID = {}; ANIMALS.forEach(function(a){ BY_ID[a.id]=a; });
-  var DECOYS = [
-    { face:"\uD83E\uDD8B", line:"Just a butterfly fluttering by — no friend here!" },
-    { face:"\uD83C\uDF44", line:"Just a mushroom — no friend hiding here!" },
-    { face:"\uD83D\uDC26", line:"Just a little bird — tweet tweet! No friend here!" },
-    { face:"\uD83C\uDF42", line:"Only crunchy leaves — nobody here!" }
-  ];
-  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
-  /* Per-game line table — easy to review. New lines use the existing voice path (clip if present, else temporary speech fallback once the shared coach is in). */
-  var HOOT_LINES = {
-    intro: "Friends are hiding in the trees and bushes! I will say who to find. Tap a hiding spot — they sit on the picnic blanket!",
-    idle: "Tap a tree, a bush, or a log to peek!",
-    wrong: "Keep looking! Tap another hiding spot.",
-    praise: "Peekaboo! They sit on the picnic blanket!"
-  };
-  var idleTimer=null, firstRoundCue=true;
-  function bumpIdle(){
-    if(idleTimer) clearTimeout(idleTimer);
-    idleTimer=setTimeout(function(){
-      if(dead||state!=="hunt") return;
-      if(mode==="hunt"&&target) say("Tap a tree, a bush, or a log to look for the <span class='b-big'>"+target.name+"</span>!");
-      else say(HOOT_LINES.idle);
-    },8000);
-  }
-  function clearCues(){
-    firstRoundCue=false;
-    spotEls.forEach(function(el){ el.classList.remove("cue-all","cue-target"); var h=el.querySelector("#peekHand, .peek-hand"); if(h) h.remove(); });
-    var orphan=document.getElementById("peekHand"); if(orphan) orphan.remove();
-  }
-  function placeHand(el){
-    spotEls.forEach(function(s){ s.classList.remove("cue-target"); var h=s.querySelector(".peek-hand"); if(h) h.remove(); });
-    if(!el) return;
-    el.classList.add("cue-target");
-    var hand=document.createElement("span"); hand.className="peek-hand"; hand.id="peekHand"; hand.setAttribute("aria-hidden","true"); hand.textContent="👆";
-    el.appendChild(hand);
-  }
-  function cueFirstRound(){
-    if(!firstRoundCue) return;
-    spotEls.forEach(function(el){ el.classList.add("cue-all"); });
-    var idx=-1;
-    if(mode==="hunt"&&target){
-      spotContents.forEach(function(c,i){ if(c&&c.type==="animal"&&c.id===target.id) idx=i; });
-    } else {
-      spotContents.forEach(function(c,i){ if(idx<0&&c&&c.type==="animal") idx=i; });
-    }
-    if(idx>=0) placeHand(spotEls[idx]);
-  }
-  var GOAL = ANIMALS.length;
 
-  var COVERS = {
-    pine:"<svg viewBox='0 0 120 130' aria-hidden='true'><rect x='54' y='104' width='12' height='24' rx='4' fill='#8a5a33'/><path d='M60 2 L98 62 H74 L106 108 H14 L46 62 H22 Z' fill='#2f8f3a'/><circle cx='44' cy='70' r='5.5' fill='#ff6b5e'/><circle cx='76' cy='88' r='5.5' fill='#ffc93c'/><circle cx='60' cy='46' r='5.5' fill='#ff8fab'/></svg>",
-    tree:"<svg viewBox='0 0 120 130' aria-hidden='true'><rect x='52' y='88' width='16' height='40' rx='6' fill='#8a5a33'/><circle cx='60' cy='52' r='38' fill='#3da347'/><circle cx='32' cy='70' r='24' fill='#57cc62'/><circle cx='88' cy='70' r='24' fill='#57cc62'/><circle cx='46' cy='44' r='6' fill='#ff6b5e'/><circle cx='74' cy='60' r='6' fill='#ff6b5e'/></svg>",
-    bush:"<svg viewBox='0 0 130 90' aria-hidden='true'><ellipse cx='38' cy='58' rx='34' ry='28' fill='#478c3c'/><ellipse cx='70' cy='46' rx='36' ry='32' fill='#57cc62'/><ellipse cx='102' cy='60' rx='28' ry='24' fill='#3da347'/><circle cx='52' cy='40' r='5' fill='#ff8fab'/><circle cx='84' cy='34' r='5' fill='#ff8fab'/><circle cx='70' cy='58' r='5' fill='#ffd93b'/></svg>",
-    bush2:"<svg viewBox='0 0 130 90' aria-hidden='true'><ellipse cx='40' cy='56' rx='32' ry='27' fill='#2f8f3a'/><ellipse cx='72' cy='48' rx='34' ry='30' fill='#478c3c'/><ellipse cx='102' cy='62' rx='26' ry='22' fill='#57cc62'/><circle cx='58' cy='38' r='5' fill='#c39bff'/><circle cx='90' cy='44' r='5' fill='#c39bff'/></svg>",
-    log:"<svg viewBox='0 0 140 84' aria-hidden='true'><rect x='6' y='30' width='128' height='42' rx='21' fill='#a9713c'/><ellipse cx='16' cy='51' rx='11' ry='21' fill='#e8c188'/><ellipse cx='16' cy='51' rx='6' ry='12' fill='#c98d4e'/><path d='M40 38 h70 M34 56 h84' stroke='#8a5a2b' stroke-width='4' opacity='.5' stroke-linecap='round'/><path d='M96 30 q-2 -16 8 -22 M104 8 q10 -4 14 4 q-8 6 -14 -4Z' fill='#57cc62'/><circle cx='52' cy='22' r='9' fill='#ff8fab'/><path d='M52 31 v10' stroke='#3da347' stroke-width='3.4'/></svg>",
-    shroom:"<svg viewBox='0 0 130 96' aria-hidden='true'><path d='M28 58 Q28 26 65 26 Q102 26 102 58 Q65 70 28 58Z' fill='#e0342b'/><circle cx='48' cy='42' r='7' fill='#fff'/><circle cx='80' cy='38' r='5.5' fill='#fff'/><circle cx='66' cy='52' r='4.5' fill='#fff'/><rect x='56' y='58' width='18' height='30' rx='7' fill='#fdeed3'/><path d='M14 88 q10 -12 22 -4 M96 88 q10 -12 20 -4' stroke='#3da347' stroke-width='4' fill='none' stroke-linecap='round'/><path d='M104 62 q2 -18 14 -22 M110 44 q8 -6 13 0 q-6 7 -13 0Z' fill='#57cc62'/></svg>"
-  };
-  var SPOT_DEFS = [
-    { kind:"pine",   style:"left:1%;top:2%" },
-    { kind:"bush",   style:"left:35%;top:0%" },
-    { kind:"tree",   style:"right:1%;top:3%" },
-    { kind:"log",    style:"left:3%;bottom:3%" },
-    { kind:"shroom", style:"left:38%;bottom:1%" },
-    { kind:"bush2",  style:"right:3%;bottom:5%" }
+  function wrapSvg(inner, cls){ return '<svg class="' + (cls || '') + '" viewBox="0 0 120 120" aria-hidden="true">' + inner + '</svg>'; }
+
+  /* ================= 6 ADORABLE PEEKABOO FOREST FRIENDS ================= */
+  var FRIENDS = [
+    { id:"bear", name:"Bear", fx:"🍯", color:"#a06a3b", sfx:"hum",
+      svg: wrapSvg('<circle cx="32" cy="34" r="14" fill="#8a5a2b" stroke="#17324f" stroke-width="3.5"/><circle cx="88" cy="34" r="14" fill="#8a5a2b" stroke="#17324f" stroke-width="3.5"/><circle cx="32" cy="34" r="6" fill="#e5b173"/><circle cx="88" cy="34" r="6" fill="#e5b173"/><circle cx="60" cy="66" r="37" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="77" rx="18" ry="14" fill="#f7deb0" stroke="#17324f" stroke-width="2.5"/><circle cx="46" cy="58" r="5" fill="#17324f"/><circle cx="74" cy="58" r="5" fill="#17324f"/><circle cx="48" cy="56" r="1.8" fill="#fff"/><circle cx="76" cy="56" r="1.8" fill="#fff"/><ellipse cx="60" cy="71" rx="7.5" ry="5.5" fill="#3a200d"/><path d="M60 76 q0 6 -7 6 M60 76 q0 6 7 6" stroke="#3a200d" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="34" cy="72" r="5.5" fill="#ff9ebb" opacity=".75"/><circle cx="86" cy="72" r="5.5" fill="#ff9ebb" opacity=".75"/>') },
+    { id:"bunny", name:"Bunny", fx:"🥕", color:"#ff8fab", sfx:"hop",
+      svg: wrapSvg('<ellipse cx="42" cy="25" rx="10" ry="23" fill="#fffdf8" stroke="#17324f" stroke-width="3.5"/><ellipse cx="42" cy="27" rx="4.6" ry="14" fill="#ff9ebb"/><ellipse cx="78" cy="25" rx="10" ry="23" fill="#fffdf8" stroke="#17324f" stroke-width="3.5"/><ellipse cx="78" cy="27" rx="4.6" ry="14" fill="#ff9ebb"/><circle cx="60" cy="76" r="34" fill="#fffdf8" stroke="#17324f" stroke-width="4"/><circle cx="47" cy="70" r="4.8" fill="#17324f"/><circle cx="73" cy="70" r="4.8" fill="#17324f"/><ellipse cx="60" cy="80" rx="5.5" ry="4.2" fill="#ff5d8f"/><path d="M60 84 q0 5 -5 5 M60 84 q0 5 5 5" stroke="#17324f" stroke-width="2.8" fill="none" stroke-linecap="round"/><rect x="55" y="90" width="10" height="8" rx="2" fill="#fff" stroke="#17324f" stroke-width="2"/><circle cx="36" cy="82" r="6" fill="#ffb3c6"/><circle cx="84" cy="82" r="6" fill="#ffb3c6"/>') },
+    { id:"fox", name:"Fox", fx:"✨", color:"#f97316", sfx:"chirp",
+      svg: wrapSvg('<path d="M26 52 L18 14 L50 32 Z" fill="#f97316" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><path d="M94 52 L102 14 L70 32 Z" fill="#f97316" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><path d="M29 44 L26 26 L42 36 Z" fill="#fed7aa"/><path d="M91 44 L94 26 L78 36 Z" fill="#fed7aa"/><circle cx="60" cy="66" r="36" fill="#fb923c" stroke="#17324f" stroke-width="4"/><path d="M34 80 q26 26 52 0 q-6 22 -26 22 q-20 0 -26 -22 Z" fill="#fffdf8"/><circle cx="46" cy="60" r="4.8" fill="#17324f"/><circle cx="74" cy="60" r="4.8" fill="#17324f"/><ellipse cx="60" cy="78" rx="7" ry="5.5" fill="#17324f"/>') },
+    { id:"frog", name:"Frog", fx:"💦", color:"#4ade80", sfx:"ribbit",
+      svg: wrapSvg('<circle cx="38" cy="36" r="14" fill="#4cc95a" stroke="#17324f" stroke-width="3.5"/><circle cx="82" cy="36" r="14" fill="#4cc95a" stroke="#17324f" stroke-width="3.5"/><circle cx="38" cy="36" r="8.5" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="82" cy="36" r="8.5" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="38" cy="36" r="4.5" fill="#17324f"/><circle cx="82" cy="36" r="4.5" fill="#17324f"/><ellipse cx="60" cy="76" rx="39" ry="31" fill="#57cc62" stroke="#17324f" stroke-width="4"/><ellipse cx="60" cy="88" rx="22" ry="15" fill="#dcfce7"/><path d="M38 72 q22 16 44 0" stroke="#17324f" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="31" cy="79" r="6" fill="#ff8fab"/><circle cx="89" cy="79" r="6" fill="#ff8fab"/>') },
+    { id:"hedgehog", name:"Hedgehog", fx:"🍓", color:"#b07b42", sfx:"hop",
+      svg: wrapSvg('<path d="M16 74 L10 52 L28 46 L26 26 L46 32 L60 16 L74 32 L94 26 L92 46 L110 52 L104 74 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="3.8" stroke-linejoin="round"/><ellipse cx="60" cy="74" rx="34" ry="27" fill="#f3d5a5" stroke="#17324f" stroke-width="4"/><circle cx="47" cy="68" r="4.8" fill="#17324f"/><circle cx="73" cy="68" r="4.8" fill="#17324f"/><circle cx="49" cy="66" r="1.6" fill="#fff"/><circle cx="75" cy="66" r="1.6" fill="#fff"/><ellipse cx="60" cy="78" rx="6.5" ry="5" fill="#17324f"/><circle cx="35" cy="78" r="5.5" fill="#ff9ebb" opacity=".8"/><circle cx="85" cy="78" r="5.5" fill="#ff9ebb" opacity=".8"/>') },
+    { id:"squirrel", name:"Squirrel", fx:"🌰", color:"#ec9042", sfx:"chirp",
+      svg: wrapSvg('<path d="M84 96 q32 -6 28 -38 q-2 -24 -26 -30 q10 16 2 28 q10 22 -4 40 Z" fill="#c96a2b" stroke="#17324f" stroke-width="3.8"/><path d="M36 38 L28 12 L52 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><path d="M78 38 L86 12 L62 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><circle cx="57" cy="63" r="31" fill="#ec9042" stroke="#17324f" stroke-width="4"/><ellipse cx="57" cy="77" rx="17" ry="18" fill="#fef0d5"/><circle cx="46" cy="56" r="4.6" fill="#17324f"/><circle cx="68" cy="56" r="4.6" fill="#17324f"/><ellipse cx="57" cy="65" rx="5.5" ry="4" fill="#6b3410"/><ellipse cx="57" cy="95" rx="10" ry="12" fill="#8b5a2b" stroke="#17324f" stroke-width="3"/>') }
   ];
+
+  /* ================= 6 STORYBOOK FOREST HIDING SPOTS ================= */
+  var SPOTS = [
+    { id:"bush", name:"Berry Bush",
+      svg: wrapSvg('<circle cx="34" cy="74" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/><circle cx="86" cy="74" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/><circle cx="60" cy="62" r="31" fill="#55cf64" stroke="#17324f" stroke-width="4"/><circle cx="38" cy="68" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="74" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="60" cy="48" r="6" fill="#ffc93c" stroke="#17324f" stroke-width="2.5"/><path d="M20 96 h80" stroke="#17324f" stroke-width="5" stroke-linecap="round"/>', "spot-art") },
+    { id:"log", name:"Hollow Log",
+      svg: wrapSvg('<rect x="14" y="48" width="90" height="44" rx="20" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="30" cy="70" rx="16" ry="22" fill="#4a2e12" stroke="#17324f" stroke-width="4"/><ellipse cx="30" cy="70" rx="9" ry="13" fill="#231407"/><path d="M54 62 h36 M60 76 h26" stroke="#784b22" stroke-width="4" stroke-linecap="round"/><path d="M72 48 q4 -16 14 -16 q10 0 14 16 Z" fill="#ff5d52" stroke="#17324f" stroke-width="3"/><circle cx="82" cy="40" r="3" fill="#fff"/>', "spot-art") },
+    { id:"mushroom", name:"Toadstool",
+      svg: wrapSvg('<path d="M44 64 L76 64 L80 100 Q60 106 40 100 Z" fill="#fff4d8" stroke="#17324f" stroke-width="4"/><path d="M12 66 C14 26 42 18 60 18 C78 18 106 26 108 66 Z" fill="#ff5d52" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><circle cx="42" cy="42" r="9" fill="#fffdf8"/><circle cx="76" cy="38" r="8" fill="#fffdf8"/><circle cx="60" cy="54" r="6" fill="#fffdf8"/><path d="M52 100 V80 A8 8 0 0 1 68 80 V100 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="3.2"/>', "spot-art") },
+    { id:"tent", name:"Cozy Tent",
+      svg: wrapSvg('<path d="M12 100 L60 22 L108 100 Z" fill="#ffd23f" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 22 L84 100 L108 100 Z" fill="#ff7aa2" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M44 100 L60 58 L76 100 Z" fill="#2d3b55" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 12 v12 M60 12 l16 5 -16 5 Z" fill="#4ade80" stroke="#17324f" stroke-width="2.8" stroke-linejoin="round"/>', "spot-art") },
+    { id:"trunk", name:"Oak Tree",
+      svg: wrapSvg('<path d="M36 106 L42 36 Q44 18 60 16 Q76 18 78 36 L84 106 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/><circle cx="34" cy="28" r="18" fill="#3ec456" stroke="#17324f" stroke-width="3.8"/><circle cx="86" cy="24" r="19" fill="#2ea043" stroke="#17324f" stroke-width="3.8"/><circle cx="60" cy="18" r="18" fill="#55cf64" stroke="#17324f" stroke-width="3.8"/><ellipse cx="60" cy="70" rx="16" ry="20" fill="#2b1908" stroke="#17324f" stroke-width="3.5"/>', "spot-art") },
+    { id:"flowers", name:"Flower Patch",
+      svg: wrapSvg('<path d="M16 100 Q60 66 104 100 Z" fill="#4ade80" stroke="#17324f" stroke-width="4"/><path d="M34 86 V54 M60 84 V44 M86 86 V56" stroke="#15803d" stroke-width="5" stroke-linecap="round"/><circle cx="34" cy="48" r="14" fill="#ff7aa2" stroke="#17324f" stroke-width="3.2"/><circle cx="34" cy="48" r="6" fill="#ffd23f"/><circle cx="60" cy="36" r="16" fill="#c084fc" stroke="#17324f" stroke-width="3.2"/><circle cx="60" cy="36" r="7" fill="#ffd23f"/><circle cx="86" cy="50" r="14" fill="#38bdf8" stroke="#17324f" stroke-width="3.2"/><circle cx="86" cy="50" r="6" fill="#ffd23f"/>', "spot-art") }
+  ];
+
+  function $(id){ return document.getElementById(id); }
+  var stage = $("stage"), hootBtn = $("hootBtn"), hootPupils = $("hootPupils"),
+      orderCloud = $("orderCloud"), cloudInner = $("cloudInner"), spotsGrid = $("spotsGrid"),
+      picnicBlanket = $("picnicBlanket"), starCountEl = $("starCount"), starPill = $("starPill"),
+      startVeil = $("startVeil"), winOverlay = $("winOverlay"), winFriends = $("winFriends"),
+      winStars = $("winStars");
 
   /* ================= STATE ================= */
-  var state = "start";           /* start | hunt | won */
-  var mode = "hunt";             /* hunt | peek */
-  var findOrder = [], foundIds = [], target = null;
-  var spotContents = [];         /* per spot: {type:'animal'|'decoy'|'empty', id} */
-  var stars = 0;
-  var lastEcho = null;           /* {id,name,note} of the most recent find */
-  var inputLock = false, wonRound = false, dead = false;
-  var soundOn = true, praiseIdx = 0, wrongStreak = 0;
+  var state = "start";        /* start | playing | won */
+  var mode = "hide";          /* hide | night | surprise */
+  var GOAL = 4;
+  var soundOn = true, dead = false, inputLock = false;
+  var stars = 0, roundTok = 0;
+  var queue = [], targetFriend = null, foundFriends = [];
+  var spotMap = {};           /* spotId -> friendObj or null */
+  var idleTimer = null, wiggleTimer = null;
 
-  /* ================= ELMS ================= */
-  function $(id){ return document.getElementById(id); }
-  var stage=$("stage"), scene=$("scene"), spotLayer=$("spotLayer"), bubble=$("bubble"), hootFig=$("hootFig"),
-      targetCard=$("targetCard"), targetName=$("targetName"),
-      dots=$("progressDots").children, starCount=$("starCount"), starBank=$("starBank"),
-      blanket=$("blanket"), echoNote=$("echoNote"),
-      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"),
-      winFaces=$("winFaces"), winTitle=$("winTitle"), winStars=$("winStars");
-  var spotEls = [];
-  SPOT_DEFS.forEach(function(def,i){
-    var b=document.createElement("button"); b.type="button"; b.className="spot";
-    b.setAttribute("style",def.style); b.setAttribute("data-kind",def.kind);
-    b.setAttribute("aria-label","A hiding spot — tap to peek");
-    b.innerHTML="<span class='peeker' aria-hidden='true'></span><span class='cover'>"+COVERS[def.kind]+"</span>";
-    b.addEventListener("click",function(){ onSpotTap(b,i); });
-    spotLayer.appendChild(b); spotEls.push(b);
-  });
-
-  /* ================= SOUND FX (WebAudio tones) ================= */
-  var AC=null;
-  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
-  function tone(f0,f1,dur,type,vol,delay){
-    if(!soundOn) return; var ac=audio(); if(!ac) return;
-    var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
-    o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
-    if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
+  /* ================= WEBAUDIO SOUND EFFECTS ================= */
+  var AC = null;
+  function audio(){
+    if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; } }
+    if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
+    return AC;
   }
-  function noiseBurst(dur,freq,vol,delay){
-    if(!soundOn) return; var ac=audio(); if(!ac) return;
-    var t=ac.currentTime+(delay||0), len=Math.max(1,(dur*ac.sampleRate)|0);
-    var buf=ac.createBuffer(1,len,ac.sampleRate), d=buf.getChannelData(0);
-    for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
-    var src=ac.createBufferSource(); src.buffer=buf;
-    var f=ac.createBiquadFilter(); f.type="bandpass"; f.frequency.value=freq||1600; f.Q.value=0.8;
-    var g=ac.createGain(); g.gain.setValueAtTime(vol||0.1,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    src.connect(f); f.connect(g); g.connect(ac.destination); src.start(t);
-  }
-  function rustleSound(){ noiseBurst(0.22,1800,0.12); noiseBurst(0.18,1200,0.09,0.07); }
-  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.1); tone(1560,1560,0.12,"sine",0.1,0.07); }
-  function starSound(){ tone(990,990,0.08,"triangle",0.1); tone(1320,1320,0.1,"triangle",0.1,0.06); tone(1760,1760,0.14,"triangle",0.09,0.12); }
-  /* The Peekaboo Echo: one clear bell note, unique to each friend. */
-  function echoSound(freq){
+  function tone(f0, f1, dur, type, vol, delay){
     if(!soundOn) return;
-    tone(freq,freq,0.55,"sine",0.16);
-    tone(freq*2,freq*2,0.4,"sine",0.06);
-    tone(freq*3,freq*3,0.22,"sine",0.03);
-    var hr=hootFig.getBoundingClientRect(), sr=stage.getBoundingClientRect();
-    echoNote.style.left=(hr.left-sr.left+hr.width*0.6)+"px";
-    echoNote.style.top=(hr.top-sr.top-8)+"px";
-    echoNote.style.opacity="1";
-    if(echoNote.animate) echoNote.animate([
-      {transform:"translateY(0) scale(.7)",opacity:1},
-      {transform:"translateY(-52px) scale(1.2)",opacity:0}
-    ],{duration:900,easing:"ease-out"});
-    setTimeout(function(){ echoNote.style.opacity="0"; },920);
+    var ac = audio(); if(!ac) return;
+    var t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(f0, t);
+    if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 20), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.04);
   }
+  function sfxPop(){ tone(520, 980, 0.14, "sine", 0.12); }
+  function sfxRustle(){ tone(190, 320, 0.08, "triangle", 0.09, 0); tone(280, 170, 0.09, "triangle", 0.09, 0.07); }
+  function sfxPeekaboo(){ tone(523, 659, 0.11, "triangle", 0.12, 0); tone(659, 1046, 0.2, "triangle", 0.13, 0.11); }
+  function sfxBoing(){ tone(240, 410, 0.13, "triangle", 0.10); tone(410, 210, 0.16, "triangle", 0.09, 0.11); }
+  function sfxStar(){ tone(880, 880, 0.08, "triangle", 0.10); tone(1175, 1175, 0.10, "triangle", 0.10, 0.07); tone(1568, 1568, 0.16, "triangle", 0.09, 0.14); }
 
-  /* ================= HOOT'S VOICE — one line at a time, chained on 'ended' =================
-     Every clip goes through this single queue on a single Audio element.
-     A line that has started always finishes: the next clip is only loaded
-     from the 'ended' event, never from a timer, and pending (not yet
-     started) lines can be replaced when the game moves on. The hub's
-     injected voice governor arbitrates this element against every other
-     voice in the app the same way. No device text-to-speech anywhere.
-     Animal names have no recorded clips, so Hoot names friends in his
-     bubble while the recorded giggle/praise/recap clips carry his voice. */
-  var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
-  function getVoice(){
+  /* ================= STUDIO HOOT VOICE QUEUE ================= */
+  var VBASE = "assets/voice/";
+  var voiceEl = null, vQueue = [], vPlaying = false;
+  function getVoiceEl(){
     if(!voiceEl){
-      voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
-      voiceEl.addEventListener("error",vNext);
+      voiceEl = new Audio();
+      voiceEl.preload = "auto";
+      voiceEl.addEventListener("ended", vNext);
+      voiceEl.addEventListener("error", vNext);
     }
     return voiceEl;
   }
-  function hubQuiet(){
+  function hubMuted(){
     try{
-      var d=window.parent&&window.parent.document;
-      if(!d||d===document) return false;
-      var b=d.querySelector('.voice-btn[data-voice="off"]');
-      return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
+      var d = window.parent && window.parent.document;
+      if(!d || d === document) return false;
+      var b = d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
     }catch(e){ return false; }
   }
-  function silenced(){ return !soundOn||hubQuiet(); }
-  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
+  function clearVoice(){
+    vQueue.length = 0;
+    if(voiceEl){
+      voiceEl.__govWait = false; voiceEl.__govNext = null;
+      try{ voiceEl.pause(); }catch(e){}
+    }
+    vPlaying = false;
+    hootBtn.classList.remove("talking");
+  }
   function vNext(){
-    if(!vPlaying){ pumpVoice(); return; }
-    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
-  }
-  function pumpVoice(){
-    if(vPlaying||dead) return;
-    var item=vQueue.shift(); if(!item) return;
-    if(item.onStart){ try{ item.onStart(); }catch(e){} }
-    if(silenced()){ pumpVoice(); return; }
-    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
-    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
-    var p=el.play();
-    if(p&&p.catch) p.catch(function(){ vNext(); });
-  }
-  function enqueue(file,kind,target,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){try{if(onStart)onStart();}catch(e){}return;}
-    vQueue.push({file:file,kind:kind||"",target:target||"",onStart:onStart||null});
+    vPlaying = false;
+    hootBtn.classList.remove("talking");
     pumpVoice();
   }
-  function clearPending(){ vQueue.length=0; }
-  function enqueueCallout(a,full){
-    var playing=vCurrent&&vCurrent.kind==="callout"&&vCurrent.target===a.id;
-    var pending=vQueue.some(function(q){ return q.kind==="callout"&&q.target===a.id; });
-    if(playing||pending) return;
-    enqueue("find-peek-"+a.id+".mp3","callout",a.id,function(){
-      if(full) say("Find the <span class='b-big'>"+a.name+"</span>! 👀");
-      else say("Who&rsquo;s hiding? Find the <span class='b-big'>"+a.name+"</span>!");
-      targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
-    });
-  }
-
-  /* ================= HOOT'S FACE / WORDS ================= */
-  function say(html){ bubble.innerHTML=html; }
-  function hootReact(cls,ms){
-    hootFig.classList.remove("celebrate","shake");
-    void hootFig.offsetWidth;
-    hootFig.classList.add(cls);
-    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
-  }
-
-  /* ================= HELPERS ================= */
-  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-  function listWords(arr){
-    if(arr.length<=1) return arr.join("");
-    return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1];
-  }
-  function leavesBurst(el){
-    var sr=stage.getBoundingClientRect(), r=el.getBoundingClientRect();
-    var cx=r.left-sr.left+r.width/2, cy=r.top-sr.top+r.height*0.4;
-    var glyphs=["\uD83C\uDF43","\uD83C\uDF3F","\uD83C\uDF42"];
-    for(var i=0;i<6;i++){
-      var p=document.createElement("span"); p.className="leaf-particle"; p.textContent=glyphs[i%3];
-      p.style.left=cx+"px"; p.style.top=cy+"px"; stage.appendChild(p);
-      var dx=(Math.random()-0.5)*120, dy=30+Math.random()*50;
-      if(p.animate) p.animate([
-        {transform:"translate(-50%,-50%) rotate(0deg)",opacity:1},
-        {transform:"translate(calc(-50% + "+dx+"px),"+dy+"px) rotate("+(Math.random()*260-130)+"deg)",opacity:0}
-      ],{duration:760+Math.random()*260,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(e2){ setTimeout(function(){ e2.remove(); },1100); })(p);
+  function pumpVoice(){
+    if(vPlaying || dead) return;
+    var file = vQueue.shift();
+    if(!file) return;
+    if(!soundOn || hubMuted()){ pumpVoice(); return; }
+    var el = getVoiceEl();
+    vPlaying = true;
+    hootBtn.classList.add("talking");
+    if(/hoot-giggle/i.test(file)){
+      window.__bellyArmed = true;
+      setTimeout(function(){ window.__bellyArmed = false; }, 600);
     }
+    el.setAttribute("src", VBASE + file);
+    el.src = VBASE + file;
+    var pr = el.play();
+    if(pr && pr.catch) pr.catch(function(){ vNext(); });
   }
-  function confetti(n){
-    var sr=stage.getBoundingClientRect();
-    var colors=["#ff6b5e","#ffc93c","#57cc62","#ff8fab","#4aa8e0","#c39bff"];
-    for(var i=0;i<(n||26);i++){
-      var c=document.createElement("div"); c.className="confetti";
-      c.style.background=colors[i%colors.length];
-      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.3)+"px";
-      stage.appendChild(c);
-      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
-      if(c.animate) c.animate([
-        {transform:"translate(0,0) rotate(0deg)",opacity:1},
-        {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
-      ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
-      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+  function sayClips(list, replace){
+    if(replace) clearVoice();
+    (list || []).forEach(function(f){ if(f) vQueue.push(f.indexOf(".mp3") > -1 ? f : f + ".mp3"); });
+    pumpVoice();
+  }
+  function childKey(){
+    try{ return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null; }catch(e){ return null; }
+  }
+  function hasVoice(id){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+  }
+  function speakPrompt(withHello){
+    var prefix = [];
+    if(withHello){
+      var ck = childKey();
+      prefix.push(ck === "kida" ? "hi-kida.mp3" : ck === "kidb" ? "hi-kidb.mp3" : "hoot-game-hello.mp3");
     }
-  }
-
-  /* ================= HUD / BLANKET ================= */
-  function updateHUD(){
-    starCount.textContent=stars;
-    for(var i=0;i<dots.length;i++) dots[i].classList.toggle("on", i<foundIds.length);
-  }
-  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
-  function addGuest(a){
-    var g=document.createElement("span"); g.className="guest"; g.textContent=a.face;
-    g.setAttribute("aria-label",a.name);
-    blanket.appendChild(g);
-    blanket.classList.remove("bounce"); void blanket.offsetWidth; blanket.classList.add("bounce");
-    starSound();
-  }
-
-  /* ================= SPOTS ================= */
-  function assignSpots(){
-    var remaining=ANIMALS.filter(function(a){ return foundIds.indexOf(a.id)<0; });
-    var order=shuffle(spotEls.map(function(_,i){ return i; }));
-    spotContents=spotEls.map(function(){ return {type:"decoy", decoy:DECOYS[Math.floor(Math.random()*DECOYS.length)]}; });
-    if(mode==="peek"){
-      remaining.forEach(function(a,i){ spotContents[order[i]]={type:"animal", id:a.id}; });
-      for(var j=remaining.length;j<spotContents.length;j++) spotContents[order[j]]={type:"empty"};
-    } else {
-      remaining.forEach(function(a,i){ spotContents[order[i]]={type:"animal", id:a.id}; });
-    }
-    spotEls.forEach(function(el,i){
-      el.classList.remove("revealed","empty-spot");
-      el.querySelector(".peeker").textContent="";
-      el.setAttribute("aria-label","A hiding spot — tap to peek");
-    });
-  }
-  /* 3e43: the hidden animal's ears peek out of its hiding spot, so a child can MATCH the picture on the card instead of guessing */
-  function __peekClear(){ document.querySelectorAll(".peek-part").forEach(function(x){ x.remove(); }); }
-  function __peekAdd(i,face){ var sp=spotEls[i]; if(!sp) return null; var e=document.createElement("span"); e.className="peek-part"; e.setAttribute("aria-hidden","true"); e.textContent=face; sp.appendChild(e); sp.setAttribute("aria-label","Something is peeking out here — tap to peek"); return e; }
-  function __peekShow(){ __peekClear(); if(mode!=="hunt"||!target) return; var ti=-1, others=[];
-    spotContents.forEach(function(c,i){ if(c&&c.type==="animal"){ if(c.id===target.id) ti=i; else others.push(i); } });
-    if(ti>=0) __peekAdd(ti,target.face).setAttribute("data-pk-target","1");
-    /* later rounds: another animal peeks too, so the child has to match, not just spot ears */
-    var extra=foundIds.length>=4?2:foundIds.length>=2?1:0; shuffle(others).slice(0,extra).forEach(function(i){ __peekAdd(i,BY_ID[spotContents[i].id].face); }); }
-  function __peekHint(){ var t=document.querySelector(".peek-part[data-pk-target]"); if(!t) return; t.classList.remove("pk-hint"); void t.offsetWidth; t.classList.add("pk-hint"); }
-  function presentTarget(){
-    target=findOrder[foundIds.length];
-    if(!target){ winGame(); return; }
-    targetName.textContent=target.name+"!";
-    var tq=document.getElementById("targetQ"); if(tq) tq.textContent=target.face;
-    targetCard.style.display="flex";
-    targetCard.classList.remove("new-target"); void targetCard.offsetWidth; targetCard.classList.add("new-target");
-    say("Find the <span class='b-big'>"+target.name+"</span>! 👀");
-    enqueueCallout(target,true);
-    __peekShow();
-    updateHUD();
-    cueFirstRound();
-    bumpIdle();
-  }
-  function onSpotTap(el,i){
-    if(state!=="hunt"||inputLock||dead) return;
-    var c=spotContents[i];
-    audio();
-    bumpIdle();
-    spotEls.forEach(function(el){ el.classList.remove("cue-all"); });
-    el.classList.remove("rustle"); void el.offsetWidth; el.classList.add("rustle");
-    rustleSound(); leavesBurst(el);
-    if(!c||c.type==="empty"){
-      say("Rustle rustle… nobody is hiding there any more! Try another spot!");
-      bumpIdle();
-      return;
-    }
-    var peeker=el.querySelector(".peeker");
-    if(c.type==="decoy"){
-      peeker.textContent=c.decoy.face;
-      el.classList.add("revealed");
-      if(mode==="hunt"&&target){
-        wrongStreak++; __peekHint();
-        say(c.decoy.line+" We need the <span class='b-big'>"+target.name+"</span> — look for the peeking ears!");
-        if(firstRoundCue&&target){ var hi=-1; spotContents.forEach(function(sc,si){ if(sc&&sc.type==="animal"&&sc.id===target.id) hi=si; }); if(hi>=0) placeHand(spotEls[hi]); }
-        if(wrongStreak>=2){
-          var hintPlaying=vCurrent&&vCurrent.kind==="hint";
-          var hintPending=vQueue.some(function(q){ return q.kind==="hint"; });
-          if(!hintPlaying&&!hintPending) enqueue("hoot-try-again.mp3","hint",target.id,null);
-          wrongStreak=0;
-        }
+    if(mode === "surprise"){
+      sayClips(prefix.concat([hasVoice("hoot-peek-surprise") ? "hoot-peek-surprise.mp3" : "hoot-ready-go.mp3"]), true);
+    } else if(targetFriend){
+      if(mode === "night" && hasVoice("hoot-peek-night")){
+        sayClips(prefix.concat(["hoot-peek-night.mp3", "peek-where-" + targetFriend.id + ".mp3"]), true);
       } else {
-        say(c.decoy.line+" Tap another spot!");
+        sayClips(prefix.concat(["peek-where-" + targetFriend.id + ".mp3"]), true);
       }
-      setTimeout(function(){ el.classList.remove("revealed"); peeker.textContent=""; },1100);
-      return;
     }
-    /* an animal! */
-    var a=BY_ID[c.id];
-    if(mode==="hunt"&&target&&a.id!==target.id){
-      peeker.textContent=a.face;
-      el.classList.add("revealed");
-      wrongStreak++; __peekHint();
-      say("Peekaboo — that&rsquo;s the <span class='b-big'>"+a.name+"</span>! "+" But we need the <span class='b-big'>"+target.name+"</span> — look for the peeking ears!");
-      if(wrongStreak>=2){
-        var hp=vCurrent&&vCurrent.kind==="hint";
-        var hq=vQueue.some(function(q){ return q.kind==="hint"; });
-        if(!hp&&!hq) enqueue("hoot-try-again.mp3","hint",target.id,null);
-        wrongStreak=0;
-      }
-      setTimeout(function(){ el.classList.remove("revealed"); peeker.textContent=""; },1500);
-      return;
-    }
-    foundFriend(el,a,i);
   }
-  function foundFriend(el,a,i){
-    inputLock=true; wrongStreak=0; __peekClear();
-    var peeker=el.querySelector(".peeker");
-    peeker.textContent=a.face;
-    el.classList.add("revealed");
-    hootReact("celebrate",1600);
-    echoSound(a.note);
-    lastEcho={ id:a.id, name:a.name, note:a.note };
-    say("<span class='b-big'>PEEKABOO!</span> It&rsquo;s the "+a.name+"! "+a.fact+" They sit on the picnic blanket!");
-    clearPending();
-    enqueue("word-"+a.id+".mp3","name","",null); /* 3e51: says who was found */
-    clearCues();
-    praiseIdx++;
-    enqueue(PRAISE[praiseIdx%PRAISE.length],"praise",a.id,null);
-    var fr=el.getBoundingClientRect();
+  function speakFound(friend, isOdd){
+    var customKey = "hoot-peek-" + friend.id;
+    if(hasVoice(customKey)){
+      sayClips([customKey + ".mp3"], true);
+      return;
+    }
+    var ck = childKey();
+    var cheer = (isOdd && ck === "kida") ? "great-job-kida.mp3"
+              : (isOdd && ck === "kidb") ? "great-job-kidb.mp3"
+              : "hoot-amazing.mp3";
+    var seq = ["word-" + friend.id + ".mp3"];
+    if(friend.id === "frog") seq.push("sound-ribbit.mp3");
+    seq.push(cheer);
+    sayClips(seq, true);
+  }
+
+  /* ================= HELPERS & VISUAL FX ================= */
+  function shuffle(a){
+    a = a.slice();
+    for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function lookAtPoint(x, y){
+    var r = hootBtn.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.36;
+    var dx = Math.max(-6, Math.min(6, (x - cx) / 30));
+    var dy = Math.max(-5, Math.min(6, (y - cy) / 30));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+  }
+  function burstLeaves(cx, cy, colorHex, count){
+    var cols = [colorHex || "#4ade80", "#ffc93c", "#ffffff", "#ff7aa2"];
+    for(var i = 0; i < (count || 12); i++){
+      var d = document.createElement("div");
+      d.className = "fx-dot";
+      var sz = 9 + Math.random() * 10;
+      d.style.width = sz + "px"; d.style.height = sz + "px";
+      d.style.left = (cx - sz / 2) + "px"; d.style.top = (cy - sz / 2) + "px";
+      d.style.background = cols[i % cols.length];
+      d.style.border = "2px solid #17324f";
+      document.body.appendChild(d);
+      var ang = (Math.PI * 2 * i) / (count || 12) + Math.random() * 0.4;
+      var dist = 42 + Math.random() * 64;
+      if(d.animate){
+        d.animate([
+          { transform:"translate(0,0) scale(1)", opacity:1 },
+          { transform:"translate(" + (Math.cos(ang)*dist).toFixed(1) + "px," + (Math.sin(ang)*dist + 16).toFixed(1) + "px) scale(.2)", opacity:0 }
+        ], { duration:560 + Math.random() * 240, easing:"cubic-bezier(.2,.8,.3,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 820); })(d);
+    }
+  }
+  function popBadge(cx, cy, text){
+    var p = document.createElement("div");
+    p.className = "fx-pop";
+    p.textContent = text;
+    p.style.left = cx + "px"; p.style.top = cy + "px";
+    document.body.appendChild(p);
+    setTimeout(function(){ p.remove(); }, 980);
+  }
+  function showerConfetti(){
+    var w = window.innerWidth, cols = ["#ffc93c","#4ade80","#ff6b7a","#38bdf8","#a855f7"];
+    for(var i = 0; i < 28; i++){
+      var c = document.createElement("div");
+      c.className = "fx-dot";
+      c.style.width = "13px"; c.style.height = "13px"; c.style.borderRadius = "4px";
+      c.style.background = cols[i % cols.length];
+      c.style.left = (w * 0.15 + Math.random() * w * 0.7) + "px";
+      c.style.top = "18%";
+      document.body.appendChild(c);
+      var dx = (Math.random() - 0.5) * 320, dy = 240 + Math.random() * 340, rot = (Math.random() - 0.5) * 520;
+      if(c.animate){
+        c.animate([
+          { transform:"translate(0,0) rotate(0deg)", opacity:1 },
+          { transform:"translate(" + dx + "px," + dy + "px) rotate(" + rot + "deg)", opacity:0 }
+        ], { duration:1150 + Math.random() * 650, easing:"cubic-bezier(.2,.7,.3,1)" });
+      }
+      (function(el){ setTimeout(function(){ el.remove(); }, 1850); })(c);
+    }
+  }
+
+  /* Move flashlight beam smoothly as Zane moves/taps anywhere in Night Mode! */
+  stage.addEventListener("pointermove", function(e){
+    lookAtPoint(e.clientX, e.clientY);
+    if(mode === "night"){
+      stage.style.setProperty("--fx", e.clientX + "px");
+      stage.style.setProperty("--fy", e.clientY + "px");
+    }
+  });
+  stage.addEventListener("pointerdown", function(e){
+    lookAtPoint(e.clientX, e.clientY);
+    if(mode === "night"){
+      stage.style.setProperty("--fx", e.clientX + "px");
+      stage.style.setProperty("--fy", e.clientY + "px");
+    }
+  });
+
+  /* ================= LIVE RUSTLE CLUE & GENTLE IDLE POINTER ================= */
+  function clearTimers(){
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(wiggleTimer){ clearInterval(wiggleTimer); wiggleTimer = null; }
+    Array.prototype.forEach.call(spotsGrid.querySelectorAll(".spot-btn"), function(b){
+      b.classList.remove("nudge-glow", "wiggle-clue");
+      var h = b.querySelector(".nudge-hand"); if(h) h.remove();
+    });
+  }
+  function addHandTo(el){
+    if(!el || el.querySelector(".nudge-hand")) return;
+    var h = document.createElement("span");
+    h.className = "nudge-hand"; h.setAttribute("aria-hidden", "true"); h.textContent = "👆";
+    el.appendChild(h);
+  }
+  function findTargetSpotBtn(){
+    if(!targetFriend) return null;
+    var btns = spotsGrid.querySelectorAll(".spot-btn");
+    for(var i = 0; i < btns.length; i++){
+      var f = spotMap[btns[i].getAttribute("data-spot")];
+      if(f && f.id === targetFriend.id) return btns[i];
+    }
+    return null;
+  }
+  function armClues(){
+    clearTimers();
+    if(state !== "playing" || dead || mode === "surprise") return;
+    /* Subtle rustling wiggle every 3.4s on the spot where the animal is giggling! */
+    wiggleTimer = setInterval(function(){
+      if(state !== "playing" || dead || inputLock) return;
+      var tb = findTargetSpotBtn();
+      if(tb){
+        tb.classList.remove("wiggle-clue"); void tb.offsetWidth; tb.classList.add("wiggle-clue");
+      }
+    }, 3400);
+    /* Gentle golden halo + bouncing finger after 6.4s */
+    idleTimer = setTimeout(function(){
+      if(state !== "playing" || dead || inputLock) return;
+      var tb = findTargetSpotBtn();
+      if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); }
+      if(!vPlaying) speakPrompt(false);
+    }, 6400);
+  }
+
+  /* ================= CLOUD & PICNIC BLANKET RENDERING ================= */
+  function renderCloud(pop){
+    cloudInner.innerHTML = "";
+    if(mode === "surprise"){
+      cloudInner.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:30px;padding:4px 6px;"><span>🌿</span><span>👆</span><span>👀</span></div>';
+    } else if(targetFriend){
+      var starsHtml = '<div class="cloud-stars">';
+      for(var i = 0; i < GOAL; i++){
+        starsHtml += '<span class="' + (i < foundFriends.length ? 'lit' : '') + '">★</span>';
+      }
+      starsHtml += '</div>';
+      var qIcon = mode === "night" ? "🔦" : "👀";
+      cloudInner.innerHTML =
+        '<div class="cloud-animal-badge">' + targetFriend.svg + '</div>' +
+        '<span class="cloud-arrow">➜</span>' +
+        '<div class="cloud-q">' + qIcon + '</div>' +
+        starsHtml;
+    }
+    if(pop){
+      orderCloud.classList.remove("pop-in"); void orderCloud.offsetWidth; orderCloud.classList.add("pop-in");
+    }
+  }
+  function renderBlanket(){
+    if(mode === "surprise"){
+      picnicBlanket.hidden = true;
+      return;
+    }
+    picnicBlanket.hidden = false;
+    picnicBlanket.innerHTML = "";
+    for(var i = 0; i < GOAL; i++){
+      var sl = document.createElement("div");
+      var fr = foundFriends[i];
+      sl.className = "bslot" + (fr ? " filled" : "");
+      if(fr) sl.innerHTML = fr.svg;
+      picnicBlanket.appendChild(sl);
+    }
+  }
+
+  /* ================= BUILD HIDING SPOTS & HANDLE PEEK TAPS ================= */
+  function buildSpots(spotList, assignments){
+    spotMap = assignments || {};
+    spotsGrid.innerHTML = "";
+    spotList.forEach(function(sp){
+      var hider = spotMap[sp.id] || null;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "spot-btn" + (hider ? " has-hider" : "");
+      btn.setAttribute("data-spot", sp.id);
+      btn.setAttribute("aria-label", sp.name);
+      btn.innerHTML =
+        sp.svg +
+        '<div class="peek-eyes" aria-hidden="true"><span></span><span></span></div>' +
+        '<div class="spot-friend">' + (hider ? hider.svg : '') + '</div>';
+      btn.addEventListener("click", function(){ onSpotTap(btn, sp); });
+      spotsGrid.appendChild(btn);
+    });
+  }
+
+  function awardStar(){
+    stars++;
+    starCountEl.textContent = String(stars);
+    starPill.classList.remove("bump"); void starPill.offsetWidth; starPill.classList.add("bump");
+    sfxStar();
+  }
+
+  function onSpotTap(btn, sp){
+    if(state !== "playing" || inputLock || dead) return;
+    audio();
+    var r = btn.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    if(mode === "night"){
+      stage.style.setProperty("--fx", cx + "px");
+      stage.style.setProperty("--fy", cy + "px");
+    }
+
+    var hider = spotMap[sp.id];
+
+    if(mode === "surprise"){
+      sfxRustle();
+      btn.classList.remove("shaking"); void btn.offsetWidth; btn.classList.add("shaking");
+      setTimeout(function(){
+        if(dead || !hider) return;
+        sfxPeekaboo();
+        btn.classList.add("revealed");
+        burstLeaves(cx, r.top + 16, hider.color, 12);
+        popBadge(cx, r.top + 4, hider.fx);
+        var ck = "hoot-peek-" + hider.id;
+        sayClips([hasVoice(ck) ? (ck + ".mp3") : ("word-" + hider.id + ".mp3")], true);
+        setTimeout(function(){ if(!dead) btn.classList.remove("revealed"); }, 1600);
+      }, 220);
+      return;
+    }
+
+    clearTimers();
+    if(!targetFriend) return;
+
+    if(!hider || hider.id !== targetFriend.id){
+      inputLock = true;
+      sfxRustle();
+      btn.classList.remove("shaking"); void btn.offsetWidth; btn.classList.add("shaking");
+      setTimeout(function(){
+        if(dead) return;
+        sfxBoing();
+        var critters = ["🦋", "🐞", "🍃", "🌼"];
+        popBadge(cx, r.top + 10, critters[Math.floor(Math.random() * critters.length)]);
+        hootBtn.classList.remove("head-wobble"); void hootBtn.offsetWidth; hootBtn.classList.add("head-wobble");
+        sayClips([hasVoice("hoot-peek-empty") ? "hoot-peek-empty.mp3" : "hoot-try-again.mp3"], true);
+        inputLock = false;
+        var tb = findTargetSpotBtn();
+        if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); }
+      }, 280);
+      return;
+    }
+
+    /* FOUND THE HIDING FRIEND -> PEEKABOO!! */
+    inputLock = true;
+    sfxRustle();
+    btn.classList.remove("shaking"); void btn.offsetWidth; btn.classList.add("shaking");
     setTimeout(function(){
       if(dead) return;
-      el.classList.remove("revealed"); peeker.textContent="";
-      el.classList.add("empty-spot");
-      spotContents[i]={type:"empty"};
-      flyToBlanket(a,fr,function(){
-        if(dead) return;
-        foundIds.push(a.id); stars++; bumpStars();
-        addGuest(a); updateHUD();
-        inputLock=false;
-        if(foundIds.length>=GOAL){ winGame(); return; }
-        if(mode==="hunt"){ assignSpots(); presentTarget(); }
-        else say("Who else is hiding? Tap another spot — peekaboo!");
-      });
-    },1250);
-  }
-  function flyToBlanket(a,fromRect,done){
-    var fly=document.createElement("div"); fly.className="fly-friend"; fly.textContent=a.face;
-    var sr=stage.getBoundingClientRect(), br=blanket.getBoundingClientRect();
-    var x0=fromRect.left+fromRect.width/2-sr.left-23, y0=fromRect.top-sr.top-10;
-    var x1=br.left+br.width/2-sr.left-23, y1=br.top+br.height/2-sr.top-23;
-    fly.style.left=x0+"px"; fly.style.top=y0+"px";
-    stage.appendChild(fly);
-    var finished=false;
-    function finish(){ if(finished) return; finished=true; fly.remove(); done(); }
-    if(fly.animate){
-      var anim=fly.animate([
-        {transform:"translate(0,0) scale(1) rotate(0deg)",opacity:1},
-        {transform:"translate("+(x1-x0)*0.5+"px,"+((y1-y0)*0.4-70)+"px) scale(1.15) rotate(-8deg)",opacity:1,offset:0.55},
-        {transform:"translate("+(x1-x0)+"px,"+(y1-y0)+"px) scale(.6) rotate(5deg)",opacity:.95}
-      ],{duration:720,easing:"cubic-bezier(.3,.6,.4,1)"});
-      anim.onfinish=finish;
-      setTimeout(finish,920);
-    } else setTimeout(finish,120);
+      sfxPeekaboo();
+      btn.classList.add("revealed");
+      foundFriends.push(targetFriend);
+      awardStar();
+      burstLeaves(cx, r.top + 14, targetFriend.color, 18);
+      popBadge(cx, r.top - 4, targetFriend.fx);
+      hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
+      renderCloud(false);
+      renderBlanket();
+      speakFound(targetFriend, foundFriends.length % 2 === 1);
+
+      var tok = ++roundTok;
+      setTimeout(function(){
+        if(dead || tok !== roundTok) return;
+        hootBtn.classList.remove("happy-jump");
+        if(foundFriends.length >= GOAL){
+          showWinCelebration();
+        } else {
+          presentNextRound(false);
+        }
+      }, 1750);
+    }, 260);
   }
 
-  /* ================= WIN ================= */
-  function winGame(){
-    if(wonRound) return; wonRound=true; state="won";
-    targetCard.style.display="none";
-    updateHUD();
-    var names=ANIMALS.filter(function(a){ return foundIds.indexOf(a.id)>=0; }).map(function(a){ return a.name; });
-    vQueue=vQueue.filter(function(q){ return q.kind==="praise"||q.kind==="giggle"; });
-    enqueue("hoot-you-learned.mp3","recap","",function(){
-      say("You found <span class='b-big'>everyone</span>! "+listWords(names)+" — all sitting on the picnic blanket!");
+  function presentNextRound(withHello){
+    state = "playing";
+    inputLock = false;
+    stage.classList.toggle("night-mode", mode === "night");
+
+    if(mode === "surprise"){
+      var shFriends = shuffle(FRIENDS);
+      var mapAll = {};
+      SPOTS.forEach(function(sp, idx){ mapAll[sp.id] = shFriends[idx % shFriends.length]; });
+      buildSpots(SPOTS, mapAll);
+      renderCloud(true);
+      renderBlanket();
+      speakPrompt(!!withHello);
+      return;
+    }
+
+    var remaining = queue.filter(function(f){ return foundFriends.indexOf(f) < 0; });
+    targetFriend = remaining[0] || FRIENDS[0];
+
+    /* Show 3 big cozy hiding spots per round (extra clear for ages 2-3!) — 1 holds our target friend! */
+    var chosenSpots = shuffle(SPOTS).slice(0, 3);
+    var map = {};
+    var hideIdx = Math.floor(Math.random() * chosenSpots.length);
+    chosenSpots.forEach(function(sp, idx){
+      map[sp.id] = (idx === hideIdx) ? targetFriend : null;
     });
-    winTitle.textContent="The blanket is full!";
-    winRecap.innerHTML="Peekaboo — you found them ALL! On the blanket: <b>"+listWords(names)+"</b>. What sharp eyes you have!";
-    winFaces.textContent=ANIMALS.map(function(a){ return a.face; }).join(" ");
-    var starEls=winStars.children;
-    for(var i=0;i<starEls.length;i++){
-      starEls[i].classList.remove("lit");
-      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*160);
-    }
-    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(30); sparkleSound(); } },400);
+    buildSpots(chosenSpots, map);
+    renderCloud(true);
+    renderBlanket();
+    speakPrompt(!!withHello);
+    armClues();
   }
 
-  /* ================= FLOW ================= */
-  function startRound(){
-    clearPending();
-    foundIds=[]; stars=0; wonRound=false; inputLock=false; wrongStreak=0; lastEcho=null;
-    blanket.innerHTML="";
-    winOverlay.hidden=true; startPanel.hidden=true;
-    state="hunt";
-    findOrder=shuffle(ANIMALS.slice());
-    assignSpots();
-    firstRoundCue=true;
-    if(mode==="hunt"){
-      say(HOOT_LINES.intro);
-      enqueue("hoot-game-hello.mp3","hello","",function(){ say(HOOT_LINES.intro); });
-      presentTarget();
-    } else {
-      targetCard.style.display="none";
-      say("Tap <span class='b-big'>ANY</span> tree, bush, or log to peek! Friends will sit on the picnic blanket.");
-      enqueue("hoot-game-hello.mp3","hello","",null);
-      cueFirstRound();
+  function showWinCelebration(){
+    state = "won";
+    inputLock = false;
+    showerConfetti();
+    winFriends.innerHTML = "";
+    foundFriends.forEach(function(f){
+      var d = document.createElement("div");
+      d.className = "win-mini";
+      d.innerHTML = f.svg;
+      winFriends.appendChild(d);
+    });
+    var stEls = winStars.children;
+    for(var i = 0; i < stEls.length; i++){
+      stEls[i].classList.remove("lit");
+      (function(el, ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(stEls[i], 140 + i * 140);
     }
-    updateHUD();
-    bumpIdle();
-  }
-  function resetToStart(){
-    clearPending();
-    state="start"; foundIds=[]; stars=0; wonRound=false; inputLock=false; target=null; lastEcho=null;
-    blanket.innerHTML="";
-    winOverlay.hidden=true; startPanel.hidden=false;
-    targetCard.style.display="none";
-    spotEls.forEach(function(el){ el.classList.remove("revealed","empty-spot"); el.querySelector(".peeker").textContent=""; });
-    updateHUD();
-    say("Shhh… everyone is hiding! Tap <span class='b-big'>Play</span> and let&rsquo;s find them together!");
-    hootFig.classList.add("wave");
-    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+    winOverlay.hidden = false;
+    sayClips([hasVoice("hoot-peek-win") ? "hoot-peek-win.mp3" : "hoot-win-yay.mp3"], true);
   }
 
-  /* ================= PEEKABOO ECHO — TAP HOOT ================= */
-  function hootTap(){
-    audio();
-    if(lastEcho&&(state==="hunt")){
-      echoSound(lastEcho.note);
-      hootReact("celebrate",900);
-      say("🎵 That&rsquo;s the <span class='b-big'>"+lastEcho.name+"</span>&rsquo;s peekaboo call! "+(mode==="hunt"&&target?("Now — who&rsquo;s hiding? Find the <span class='b-big'>"+target.name+"</span>!"):"Who else is hiding?"));
-      return;
-    }
-    if(state==="hunt"&&mode==="hunt"&&target){ enqueueCallout(target); }
+  /* ================= CONTROLS & LIVING SCENE TAPS ================= */
+  function syncModePills(){
+    Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
+      b.classList.toggle("on", b.getAttribute("data-mode") === mode);
+    });
   }
-  hootFig.addEventListener("click",hootTap);
-  $("hearBtn").addEventListener("click",function(){
-    audio();
-    if(mode==="hunt"&&target){ clearPending(); enqueueCallout(target); }
+  function beginSession(selectedMode, withHello){
+    roundTok++;
+    clearTimers();
+    foundFriends = [];
+    queue = shuffle(FRIENDS).slice(0, GOAL);
+    hootBtn.classList.remove("happy-jump");
+    winOverlay.hidden = true;
+    startVeil.hidden = true;
+    mode = selectedMode || mode || "hide";
+    syncModePills();
+    presentNextRound(withHello);
+  }
+
+  $("goPeekBtn").addEventListener("click", function(){
+    audio(); sfxPop();
+    beginSession("hide", true);
   });
-  function blanketTap(){
-    audio();
-    blanket.classList.remove("bounce"); void blanket.offsetWidth; blanket.classList.add("bounce");
-    if(!foundIds.length){
-      say("The blanket is empty! Find a hiding friend and they will come and sit here!");
-      return;
-    }
-    var names=foundIds.map(function(id){ return BY_ID[id].name; });
-    say("On the blanket: <span class='b-big'>"+listWords(names)+"</span>! "+(foundIds.length>=GOAL?"Everyone is here!":"Who is still hiding?"));
-    if(lastEcho) echoSound(lastEcho.note);
-  }
-  blanket.addEventListener("click",blanketTap);
-  blanket.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); blanketTap(); } });
-
-  /* ================= LIVING FOREST TAPS ================= */
-  $("sun").addEventListener("click",function(){
-    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
-    sparkleSound();
-    if(state==="start") say("Mr. Sun peeks through the leaves to watch us play!");
+  $("againBtn").addEventListener("click", function(){
+    audio(); sfxPop();
+    beginSession(mode === "surprise" ? "hide" : mode, false);
   });
-  document.querySelectorAll(".firefly").forEach(function(f){
-    f.addEventListener("click",function(){
-      audio(); tone(1500,1900,0.12,"sine",0.08); tone(1700,2100,0.1,"sine",0.06,0.1);
-      f.classList.remove("zing"); void f.offsetWidth; f.classList.add("zing");
-      setTimeout(function(){ f.classList.remove("zing"); },1200);
+  Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
+    b.addEventListener("click", function(){
+      audio(); sfxPop();
+      startVeil.hidden = true;
+      winOverlay.hidden = true;
+      beginSession(b.getAttribute("data-mode"), false);
     });
   });
 
-  /* ================= CONTROLS ================= */
-  $("soundBtn").addEventListener("click",function(){
-    soundOn=!soundOn;
-    $("soundOnIc").style.display=soundOn?"block":"none";
-    $("soundOffIc").style.display=soundOn?"none":"block";
-    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-    if(!soundOn){ clearPending(); }
-    else { audio(); tone(660,660,0.1,"triangle",0.12); if(state==="hunt"&&mode==="hunt"&&target) enqueueCallout(target); }
+  $("repeatBtn").addEventListener("click", function(){
+    audio();
+    if(state === "playing") speakPrompt(false);
   });
-  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
-  $("modeHunt").addEventListener("click",function(){ mode="hunt"; $("modeHunt").classList.add("selected"); $("modePeek").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
-  $("modePeek").addEventListener("click",function(){ mode="peek"; $("modePeek").classList.add("selected"); $("modeHunt").classList.remove("selected"); tone(660,660,0.1,"triangle",0.1); });
-  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startRound(); });
-  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+  hootBtn.addEventListener("click", function(){
+    audio();
+    var r = hootBtn.getBoundingClientRect();
+    popBadge(r.left + r.width / 2, r.top + 20, "🎵");
+    hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
+    setTimeout(function(){ hootBtn.classList.remove("happy-jump"); }, 900);
+    sayClips(["hoot-giggle.mp3"], true);
+    if(state === "playing" && mode !== "surprise"){
+      setTimeout(function(){ if(state === "playing" && !vPlaying) speakPrompt(false); }, 1150);
+    }
+  });
 
-  /* ================= LEAVING THE GAME ================= */
-  function teardown(){ dead=true; clearPending(); hootTalking(false); }
-  window.addEventListener("pagehide",teardown);
-  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+  $("soundBtn").addEventListener("click", function(){
+    soundOn = !soundOn;
+    $("sndOnSvg").style.display = soundOn ? "block" : "none";
+    $("sndOffSvg").style.display = soundOn ? "none" : "block";
+    if(!soundOn) clearVoice();
+    else { audio(); sfxPop(); }
+  });
+  $("sunBtn").addEventListener("click", function(){
+    audio(); $("sunBtn").classList.remove("zing"); void $("sunBtn").offsetWidth; $("sunBtn").classList.add("zing"); sfxStar();
+  });
+  $("moonBtn").addEventListener("click", function(){
+    audio(); sfxStar();
+    var r = $("moonBtn").getBoundingClientRect();
+    burstLeaves(r.left + 40, r.top + 40, "#ffe680", 10);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".firefly"), function(ff){
+    ff.addEventListener("click", function(){
+      audio(); sfxPop();
+      var r = ff.getBoundingClientRect();
+      burstLeaves(r.left + 17, r.top + 17, "#fff49c", 8);
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".cloud"), function(cl){
+    cl.addEventListener("click", function(){
+      audio(); sfxPop();
+      cl.classList.remove("puff"); void cl.offsetWidth; cl.classList.add("puff");
+      setTimeout(function(){ cl.classList.remove("puff"); }, 400);
+    });
+  });
 
-  /* ================= INIT ================= */
-  updateHUD();
-  hootFig.classList.add("wave");
-  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
+  window.addEventListener("pagehide", function(){ dead = true; clearTimers(); clearVoice(); });
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(); });
 
-  /* Probe/debug handle: read-only snapshot of the round state. */
-  window.__peekGame={
-    snapshot:function(){
-      return { state:state, mode:mode, stars:stars, found:foundIds.slice(),
-        target:target?target.id:null, lastEcho:lastEcho?lastEcho.id:null,
-        spots:spotContents.map(function(c){ return c.type+(c.id?":"+c.id:""); }),
-        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
-        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+  /* Pre-populate lush forest clearing behind the Start Peekaboo Bush! */
+  targetFriend = FRIENDS[1]; /* Bunny */
+  buildSpots(SPOTS.slice(0, 3), { bush: FRIENDS[1] });
+  renderCloud(false);
+  renderBlanket();
+
+  window.__peekGame = {
+    snapshot: function(){
+      return {
+        state: state, mode: mode, stars: stars,
+        target: targetFriend ? targetFriend.id : null,
+        foundCount: foundFriends.length, goal: GOAL,
+        nightMode: stage.classList.contains("night-mode"),
+        winShown: !winOverlay.hidden, voicePlaying: vPlaying
+      };
     }
   };
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e132">
+<script src="js/hoot-game-tail.js?v=llprev3e132"></script>
 </body>
 </html>
