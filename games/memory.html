@@ -2,288 +2,561 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="memory";</script>
-<script src="js/hoot-game-head.js?v=llprev3e79"></script>
+<script>
+window.__HOOT_GAME_KEY__="memory";
+window.__HOOT_SELF_COACH__=true;
+</script>
+<script src="js/hoot-game-head.js?v=llprev3e139"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
-
 <title>Memory Match Meadow</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --ink:#17324f; --ink-soft:#3d5a78; --paper:#fffdf6;
-    --sun:#ffc93c; --coral:#ff6b5e; --teal:#17bebb; --leaf:#57cc62;
+    --ink:#1b3526;
+    --cream:#fffdf6;
+    --sun:#ffc93c;
+    --coral:#ff6b5e;
+    --leaf:#4bc85b;
+    --clover:#2b994a;
+    --wood:#b57234;
+    --wood-dark:#764316;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ height:100%; }
-  body{ margin:0; font-family:"Nunito",system-ui,sans-serif; color:var(--ink); overflow:hidden; background:#aee7ff; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
-  #stage{ position:fixed; inset:0; height:100dvh; overflow:hidden; display:flex; flex-direction:column;
-    background:linear-gradient(180deg,#6ec9f7 0%,#a5e3ff 26%,#cdeffd 44%,#b9e39a 72%,#8edd7e 100%); }
+  html,body{ height:100%; width:100%; margin:0; padding:0; overflow:hidden; }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#84db73;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+  }
 
-  .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; font-family:inherit; }
-  #sun{ top:64px; right:8px; width:74px; height:74px; z-index:1; }
-  #sun svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(232,169,12,.35)); }
-  #sun .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 46s linear infinite; }
-  @keyframes sunSpin{ to{ transform:rotate(360deg); } }
-  #sun.zing .rays{ animation:sunSpin 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
-  #sun:active{ transform:scale(.93); }
-  .cloud{ z-index:1; width:104px; height:46px; opacity:.95; animation:drift linear infinite; }
-  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 5px 8px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
-  .cloud.puff svg{ transform:scale(1.22,1.35); }
-  @keyframes drift{ from{ transform:translateX(-140px); } to{ transform:translateX(112vw); } }
-  .bfly{ z-index:2; width:40px; height:32px; animation:flutter 7s ease-in-out infinite alternate; }
+  /* ================= SUNLIT CLOVER MEADOW STAGE ================= */
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:
+      radial-gradient(circle at 82% 8%, rgba(255,244,178,.85) 0%, rgba(255,244,178,0) 34%),
+      linear-gradient(180deg, #87dbff 0%, #c8f1ff 16%, #99e57c 18%, #6fd15c 52%, #4cb848 100%);
+  }
+
+  /* Soft decorative meadow hills & clover tufts */
+  #meadowBg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  /* Fluttering butterflies & blooming daisies */
+  .meadow-prop{
+    position:absolute;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    z-index:3;
+  }
+  .bfly{
+    width:46px; height:38px;
+    animation:bflyDrift 7.5s ease-in-out infinite alternate;
+  }
   .bfly svg{ width:100%; height:100%; display:block; overflow:visible; }
-  .bfly .bw{ transform-box:fill-box; animation:bflap .22s ease-in-out infinite alternate; }
-  .bfly .bw-l{ transform-origin:100% 50%; } .bfly .bw-r{ transform-origin:0% 50%; }
-  @keyframes bflap{ from{ transform:rotate(14deg);} to{ transform:rotate(-18deg);} }
-  @keyframes flutter{ 0%{ transform:translate(0,0) rotate(-4deg);} 50%{ transform:translate(26px,-18px) rotate(5deg);} 100%{ transform:translate(-14px,-8px) rotate(-3deg);} }
-  .flower{ z-index:1; width:36px; height:48px; bottom:5px; transform-origin:50% 100%; animation:sway 3.4s ease-in-out infinite alternate; }
-  .flower svg{ width:100%; height:100%; display:block; overflow:visible; }
-  .flower.bloom svg{ animation:bloomPop .55s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes sway{ from{ transform:rotate(-4deg);} to{ transform:rotate(4deg);} }
-  @keyframes bloomPop{ 0%{ transform:scale(1);} 45%{ transform:scale(1.45) rotate(-7deg);} 100%{ transform:scale(1);} }
-  #grass{ position:absolute; left:0; right:0; bottom:0; height:64px; z-index:1; pointer-events:none; }
-  .grassBlade{ transform-box:fill-box; transform-origin:50% 100%; animation:sway 3s ease-in-out infinite alternate; }
+  .bfly .bw{ transform-box:fill-box; animation:wingBeat .22s ease-in-out infinite alternate; }
+  .bfly .bw-l{ transform-origin:100% 50%; }
+  .bfly .bw-r{ transform-origin:0% 50%; }
+  @keyframes wingBeat{ from{transform:rotate(14deg)} to{transform:rotate(-20deg)} }
+  @keyframes bflyDrift{
+    0%{ transform:translate(0,0) rotate(-4deg); }
+    50%{ transform:translate(24px,-18px) rotate(6deg); }
+    100%{ transform:translate(-16px,-6px) rotate(-3deg); }
+  }
+  .bfly.spin{ animation:bflySpin .65s ease-in-out 1; }
+  @keyframes bflySpin{ from{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.28)} to{transform:rotate(360deg) scale(1)} }
 
-  #hud{ position:relative; z-index:6; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:max(8px,env(safe-area-inset-top)) 10px 0; }
-  .hud-btns{ display:flex; gap:8px; }
-  .round-btn{ width:50px; height:50px; border-radius:50%; border:3px solid #fff; background:rgba(255,253,246,.96); color:var(--ink); display:grid; place-items:center; box-shadow:0 4px 0 rgba(23,50,79,.18),0 8px 16px rgba(23,50,79,.12); cursor:pointer; transition:transform .12s ease; }
-  .round-btn:active{ transform:scale(.9); }
-  .round-btn svg{ width:25px; height:25px; }
-  #starBank{ display:flex; align-items:center; gap:7px; background:rgba(255,253,246,.96); border:3px solid #fff; border-radius:999px; padding:6px 16px 6px 10px; box-shadow:0 4px 0 rgba(23,50,79,.14),0 8px 16px rgba(23,50,79,.1); font-family:"Fredoka",sans-serif; font-weight:700; font-size:22px; }
-  #starBank .star-ic{ width:25px; height:25px; display:block; }
-  #starBank.bump{ animation:bump .45s cubic-bezier(.34,1.8,.5,1); }
-  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.18) rotate(-3deg)} 100%{transform:scale(1)} }
+  .daisy{
+    width:46px; height:58px;
+    bottom:6px;
+    transform-origin:50% 100%;
+    animation:sway 3.6s ease-in-out infinite alternate;
+  }
+  .daisy svg{ width:100%; height:100%; display:block; overflow:visible; }
+  @keyframes sway{ from{transform:rotate(-4deg)} to{transform:rotate(4deg)} }
+  .daisy.bloom svg{ animation:bloomPop .5s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes bloomPop{ 0%{transform:scale(1)} 45%{transform:scale(1.42) rotate(-8deg)} 100%{transform:scale(1)} }
 
-  #meterCard{ position:relative; z-index:6; margin:8px auto 0; width:fit-content; max-width:calc(100vw - 20px); display:flex; align-items:center; gap:11px; background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:20px; padding:7px 16px 7px 12px; box-shadow:0 5px 0 rgba(23,50,79,.15),0 12px 24px rgba(23,50,79,.14); }
-  .mc-label{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:14.5px; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; line-height:1.15; }
-  #pairDots{ display:flex; gap:5px; margin-top:4px; }
-  #pairDots i{ width:12px; height:12px; border-radius:50%; background:#dbe7f2; display:block; transition:background .2s,transform .2s; }
-  #pairDots i.on{ background:var(--leaf); transform:scale(1.25); }
-  #pairText{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; color:#2c7a3b; }
+  /* ================= TOP HUD (>=64px PICTURE CONTROLS) ================= */
+  #hud{
+    position:relative;
+    z-index:12;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 6px max(10px, env(safe-area-inset-left));
+    flex:0 0 auto;
+  }
+  .hud-group{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .hud-pill{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 15px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:rgba(255,253,246,.96);
+    color:var(--ink);
+    font-family:"Fredoka",sans-serif;
+    font-weight:700;
+    font-size:24px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    cursor:pointer;
+    box-shadow:0 5px 0 rgba(25,74,39,.22), 0 10px 18px rgba(25,74,39,.14);
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1), background .15s;
+  }
+  .hud-pill:active{ transform:translateY(3px) scale(.94); }
+  .hud-pill.round{ width:64px; padding:0; border-radius:50%; font-size:27px; }
+  .hud-pill.size-btn.active{
+    background:linear-gradient(180deg,#ffe473,#ffc93c);
+    box-shadow:0 5px 0 #c98600, 0 0 0 3.5px var(--ink);
+  }
+  #hintBtn{
+    background:linear-gradient(180deg,#fff3a6,#ffd140);
+    box-shadow:0 5px 0 #c98600;
+  }
+  #starBank{
+    min-height:64px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:rgba(255,253,246,.96);
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:25px;
+    font-weight:700;
+    box-shadow:0 5px 0 rgba(25,74,39,.22);
+  }
+  #starBank svg{ width:28px; height:28px; display:block; }
+  #starBank.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBump{ 0%{transform:scale(1)} 45%{transform:scale(1.2) rotate(-4deg)} 100%{transform:scale(1)} }
 
-  #playArea{ position:relative; z-index:3; flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px 10px; }
-  #grid{ display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(3,1fr); gap:9px; width:100%; max-width:520px; height:100%; max-height:520px; }
-  .card{ position:relative; border:none; background:none; padding:0; cursor:pointer; perspective:600px; min-height:0; height:100%; width:100%; }
-  .card .inner{ position:absolute; inset:0; transform-style:preserve-3d; transition:transform .45s cubic-bezier(.34,1.3,.5,1); display:block; }
+  /* ================= MAIN MEADOW WORKSPACE ================= */
+  #meadowMain{
+    position:relative;
+    z-index:6;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:4px 12px max(10px, env(safe-area-inset-bottom));
+    gap:10px;
+  }
+
+  /* Compact Progress Flower Strip */
+  #pairTray{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,253,246,.94);
+    border:4px solid #fff;
+    border-radius:999px;
+    padding:6px 14px;
+    box-shadow:0 5px 0 rgba(25,74,39,.18);
+    flex:0 0 auto;
+  }
+  .pair-bud{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:#dcefd8;
+    border:2.5px solid #fff;
+    display:grid;
+    place-items:center;
+    font-size:18px;
+    color:transparent;
+    transition:transform .3s cubic-bezier(.34,1.7,.5,1), background .25s;
+  }
+  .pair-bud.lit{
+    background:linear-gradient(180deg,#ffe578,#ffb703);
+    color:var(--ink);
+    transform:scale(1.18);
+    box-shadow:0 3px 0 #c98600;
+  }
+
+  /* Wooden Garden Quilt Card Board */
+  #boardWrap{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #boardFrame{
+    position:relative;
+    padding:12px;
+    border-radius:30px;
+    background:linear-gradient(145deg, rgba(255,253,246,.34), rgba(255,253,246,.16));
+    border:4px solid rgba(255,255,255,.55);
+    box-shadow:0 12px 28px rgba(18,74,35,.22), inset 0 2px 6px rgba(255,255,255,.4);
+    width:min(94vw, 720px);
+    height:min(100%, 560px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #grid{
+    display:grid;
+    gap:12px;
+    width:100%;
+    height:100%;
+  }
+  #grid.g-4{ grid-template-columns:repeat(2, 1fr); grid-template-rows:repeat(2, 1fr); max-width:440px; max-height:440px; }
+  #grid.g-6{ grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(2, 1fr); max-width:600px; max-height:430px; }
+  #grid.g-12{ grid-template-columns:repeat(4, 1fr); grid-template-rows:repeat(3, 1fr); max-width:680px; max-height:520px; }
+
+  /* 3D Glossy Clover-Leaf Flip Cards */
+  .card{
+    position:relative;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    perspective:800px;
+    width:100%;
+    height:100%;
+    min-width:68px;
+    min-height:68px;
+  }
+  .card .inner{
+    position:absolute;
+    inset:0;
+    transform-style:preserve-3d;
+    transition:transform .44s cubic-bezier(.34,1.35,.5,1);
+    display:block;
+  }
   .card.up .inner{ transform:rotateY(180deg); }
-  .face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; overflow:hidden; }
-  .face.back{ background:linear-gradient(150deg,#57cc62,#2e9e5b); border:3px solid #fff; box-shadow:inset 0 0 0 3px rgba(255,255,255,.25), 0 5px 12px rgba(23,80,40,.3); }
-  .face.back svg{ width:52%; height:52%; opacity:.95; }
-  .face.back .q{ font-family:"Fredoka",sans-serif; font-weight:700; color:#fff; font-size:20px; text-shadow:0 2px 0 rgba(0,0,0,.2); line-height:1; }
-  .face.front{ background:#fffdf6; border:3px solid #ffd166; transform:rotateY(180deg); box-shadow:0 5px 12px rgba(23,50,79,.18); }
-  .face.front .animal{ font-size:clamp(30px,9vw,52px); line-height:1.05; }
-  .face.front .aname{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(11px,3.2vw,15px); color:var(--ink); }
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    border-radius:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  /* Embossed Clover-Leaf Back */
+  .face.back{
+    background:
+      radial-gradient(circle at 28% 22%, rgba(255,255,255,.32) 0%, rgba(255,255,255,0) 48%),
+      linear-gradient(155deg, #52cf67 0%, #2a9b4c 68%, #1e7c3c 100%);
+    border:5px solid #fff;
+    box-shadow:0 7px 0 #186430, 0 12px 20px rgba(15,62,30,.28), inset 0 0 0 3px rgba(255,255,255,.22);
+  }
+  .face.back svg{
+    width:58%;
+    height:58%;
+    max-width:86px;
+    max-height:86px;
+    filter:drop-shadow(0 4px 5px rgba(14,66,30,.28));
+  }
+  .card:not(.up):active .face.back{ transform:translateY(3px) scale(.96); }
+
+  /* Sunlit Storybook Animal Front */
+  .face.front{
+    transform:rotateY(180deg);
+    background:radial-gradient(circle at 50% 35%, #ffffff 0%, #fff9e6 100%);
+    border:5px solid #ffd166;
+    box-shadow:0 7px 0 #d4961a, 0 12px 22px rgba(20,54,30,.2);
+  }
+  .face.front .medallion{
+    width:82%;
+    height:82%;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    box-shadow:inset 0 -5px 10px rgba(0,0,0,.07);
+  }
+  .face.front .an-emo{
+    font-size:clamp(42px, 8.5vw, 76px);
+    line-height:1;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.14));
+  }
+  #grid.g-12 .face.front .an-emo{ font-size:clamp(34px, 6.2vw, 58px); }
+
   .card.matched{ cursor:default; }
-  .card.matched .face.front{ border-color:var(--sun); background:#fff6d8; box-shadow:0 0 0 3px rgba(255,201,60,.55), 0 0 22px 4px rgba(255,201,60,.55); }
-  .card.wiggle .inner{ animation:cardWiggle .5s ease-in-out 2; }
-  @keyframes cardWiggle{ 0%,100%{ transform:rotateY(180deg) rotate(0);} 25%{ transform:rotateY(180deg) rotate(-5deg) scale(1.04);} 75%{ transform:rotateY(180deg) rotate(5deg) scale(1.04);} }
-  .card.hintpulse .face.back{ animation:hintPulse .5s ease-in-out 3; }
-  @keyframes hintPulse{ 0%,100%{ box-shadow:inset 0 0 0 3px rgba(255,255,255,.25), 0 5px 12px rgba(23,80,40,.3);} 50%{ box-shadow:0 0 0 5px rgba(255,201,60,.9), 0 0 26px 8px rgba(255,201,60,.75);} }
-  #echoSvg{ position:absolute; inset:0; z-index:5; pointer-events:none; overflow:visible; }
-  #echoSvg path{ fill:none; stroke:#ffc93c; stroke-width:5; stroke-linecap:round; stroke-dasharray:2 14; filter:drop-shadow(0 0 6px rgba(255,201,60,.95)); animation:echoFlow .5s linear infinite; }
-  @keyframes echoFlow{ to{ stroke-dashoffset:-16; } }
-  #echoSvg circle{ fill:#ffe27a; filter:drop-shadow(0 0 7px rgba(255,201,60,1)); }
+  .card.matched .face.front{
+    border-color:#ffbe0b;
+    background:linear-gradient(180deg,#fffbe3,#fff0ad);
+    box-shadow:0 0 0 4px rgba(255,201,60,.65), 0 7px 0 #c98600, 0 0 26px rgba(255,201,60,.65);
+  }
+  .card.matched .an-emo{ animation:matchBounce .55s cubic-bezier(.34,1.7,.5,1) 2; }
+  @keyframes matchBounce{ 0%,100%{transform:scale(1)} 45%{transform:scale(1.24) rotate(-6deg)} }
 
-  #groundRow{ position:relative; z-index:4; display:flex; align-items:flex-end; justify-content:flex-start; gap:6px; padding:0 8px max(6px,env(safe-area-inset-bottom)); }
-  #hootZone{ display:flex; align-items:flex-end; gap:7px; min-width:0; }
-  #hootFig{ position:relative; border:none; background:none; padding:0; cursor:pointer; width:clamp(104px,27vw,168px); flex:0 0 auto; filter:drop-shadow(0 8px 10px rgba(23,50,79,.25)); animation:hootBob 3.2s ease-in-out infinite; transform-origin:50% 92%; }
-  #hootFig svg{ width:100%; display:block; overflow:visible; }
-  @keyframes hootBob{ 0%,100%{ transform:translateY(0) rotate(-1.1deg);} 50%{ transform:translateY(-6px) rotate(1.1deg);} }
-  #hootFig.celebrate{ animation:hootJump .55s cubic-bezier(.34,1.6,.5,1) 3; }
-  @keyframes hootJump{ 0%{transform:translateY(0) scale(1,1)} 35%{transform:translateY(-26px) scale(.96,1.05) rotate(-4deg)} 70%{transform:translateY(0) scale(1.06,.92)} 100%{transform:translateY(0) scale(1,1)} }
-  #hootFig.shake{ animation:hootShake .5s ease-in-out 2; }
-  @keyframes hootShake{ 0%,100%{ transform:rotate(0);} 25%{ transform:rotate(-5deg);} 75%{ transform:rotate(5deg);} }
-  #hootFig.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
-  @keyframes hootTalk{ 0%{ transform:translateY(0) scale(1,1);} 100%{ transform:translateY(-4px) scale(1.03,.97);} }
-  #hootFig.wave .wing-r{ animation:wingWave .45s ease-in-out 6 alternate; }
-  #hootFig .wing-r{ transform-box:fill-box; transform-origin:15% 12%; }
-  @keyframes wingWave{ from{ transform:rotate(0);} to{ transform:rotate(-38deg);} }
-  #hootFig.celebrate .wing-l{ animation:wingFlapL .28s ease-in-out infinite alternate; }
-  #hootFig.celebrate .wing-r{ animation:wingFlapR .28s ease-in-out infinite alternate; }
-  #hootFig .wing-l{ transform-box:fill-box; transform-origin:85% 12%; }
-  @keyframes wingFlapL{ from{ transform:rotate(0);} to{ transform:rotate(30deg);} }
-  @keyframes wingFlapR{ from{ transform:rotate(0);} to{ transform:rotate(-30deg);} }
-  #hootFig .eyes{ transform-box:fill-box; transform-origin:center; animation:blink 4.6s infinite; }
-  @keyframes blink{ 0%,91%,100%{ transform:scaleY(1);} 94%,96%{ transform:scaleY(.08);} }
-  #bubbleCol{ display:flex; flex-direction:column; align-items:flex-start; gap:5px; margin-bottom:26px; min-width:0; }
-  #bubble{ position:relative; background:var(--paper); border:3px solid #fff; border-radius:18px; box-shadow:0 5px 0 rgba(23,50,79,.13),0 12px 24px rgba(23,50,79,.16); padding:9px 13px; font-weight:800; font-size:clamp(14.5px,4vw,18.5px); line-height:1.3; max-width:min(54vw,300px); }
-  #bubble:after{ content:""; position:absolute; left:-8px; bottom:16px; width:15px; height:15px; background:var(--paper); transform:rotate(45deg); }
-  #bubble .b-an{ color:#2c7a3b; font-family:"Fredoka",sans-serif; }
-  #hootName{ background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.06em; padding:3px 11px; border-radius:999px; border:2px solid #fff; box-shadow:0 3px 8px rgba(23,50,79,.2); }
+  .card.wiggle .inner{ animation:wrongWiggle .44s ease-in-out 2; }
+  @keyframes wrongWiggle{ 0%,100%{transform:rotateY(180deg) rotate(0)} 30%{transform:rotateY(180deg) rotate(-5deg)} 70%{transform:rotateY(180deg) rotate(5deg)} }
 
-  #startPanel{ position:absolute; z-index:8; left:50%; top:44%; transform:translate(-50%,-50%); width:min(92vw,430px); background:rgba(255,253,246,.97); border:3px solid #fff; border-radius:26px; box-shadow:0 10px 0 rgba(23,50,79,.12),0 24px 48px rgba(23,50,79,.25); padding:18px 20px 16px; text-align:center; }
-  #startPanel[hidden]{ display:none; }
-  #startPanel h1{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.8vw,36px); margin:0; color:var(--ink); }
-  #startPanel h1 .t-mem{ color:#2c7a3b; } #startPanel h1 .t-mead{ color:#e2703a; }
-  #startPanel p{ font-weight:800; color:var(--ink-soft); font-size:15.5px; line-height:1.4; margin:8px 0 0; }
-  #playBtn{ margin-top:16px; border:3px solid #fff; background:var(--coral); color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:24px; padding:14px 44px; border-radius:999px; cursor:pointer; box-shadow:0 7px 0 #d84a3f,0 16px 30px rgba(255,107,94,.4); transition:transform .12s; animation:playPulse 1.6s ease-in-out infinite; }
-  #playBtn:active{ transform:translateY(4px); box-shadow:0 3px 0 #d84a3f; }
-  @keyframes playPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.05);} }
+  .card.hint-glow .face.back{
+    animation:hintGlow .55s ease-in-out 3;
+  }
+  @keyframes hintGlow{
+    0%,100%{ box-shadow:0 7px 0 #186430, 0 0 0 0 rgba(255,224,102,0); }
+    50%{ box-shadow:0 7px 0 #c98600, 0 0 0 7px rgba(255,224,102,.95), 0 0 28px rgba(255,224,102,.95); }
+  }
 
-  #winOverlay{ position:absolute; inset:0; z-index:9; display:flex; align-items:center; justify-content:center; background:rgba(23,50,79,.38); padding:14px; }
+  /* Golden Firefly Sparkle Arc on Match */
+  #arcSvg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:10;
+    pointer-events:none;
+    overflow:visible;
+  }
+  #arcSvg path{
+    fill:none;
+    stroke:#ffe066;
+    stroke-width:6;
+    stroke-linecap:round;
+    stroke-dasharray:3 14;
+    filter:drop-shadow(0 0 8px rgba(255,201,60,1));
+    animation:arcFlow .45s linear infinite;
+  }
+  @keyframes arcFlow{ to{ stroke-dashoffset:-17; } }
+
+  /* Flower-Crown Hoot Meadow Buddy */
+  #hootMeadow{
+    position:absolute;
+    left:clamp(8px, 2vw, 24px);
+    bottom:max(6px, env(safe-area-inset-bottom));
+    z-index:9;
+    width:clamp(84px, 12vw, 134px);
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    filter:drop-shadow(0 10px 12px rgba(15,62,30,.28));
+    animation:hootSway 3.4s ease-in-out infinite;
+    transform-origin:50% 90%;
+  }
+  @keyframes hootSway{ 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-6px) rotate(1.5deg)} }
+  #hootMeadow.celebrate{ animation:hootHop .5s cubic-bezier(.34,1.65,.5,1) 3; }
+  @keyframes hootHop{ 0%,100%{transform:translateY(0)} 45%{transform:translateY(-22px) rotate(-5deg)} }
+  #hootMeadow.talking{ animation:hootTalk .2s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ from{transform:translateY(0)} to{transform:translateY(-4px)} }
+  #hootMeadow svg{ width:100%; height:auto; display:block; overflow:visible; }
+
+  /* ================= WIN CELEBRATION OVERLAY ================= */
+  #winOverlay{
+    position:absolute;
+    inset:0;
+    z-index:25;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(18,54,32,.44);
+    padding:16px;
+  }
   #winOverlay[hidden]{ display:none; }
-  #winCard{ background:var(--paper); border:3px solid #fff; border-radius:26px; box-shadow:0 14px 40px rgba(23,50,79,.35); padding:18px 20px 16px; text-align:center; width:min(92vw,440px); max-height:100%; overflow:hidden; animation:winIn .5s cubic-bezier(.34,1.6,.5,1); }
-  @keyframes winIn{ from{ transform:scale(.7) translateY(30px); opacity:0;} to{ transform:scale(1) translateY(0); opacity:1;} }
-  #winStars{ font-size:27px; letter-spacing:4px; color:#dbe7f2; }
-  #winStars .lit{ color:var(--sun); text-shadow:0 2px 0 #e8a90c; }
-  #winCard h2{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,34px); margin:6px 0 0; }
-  #winRecap{ font-weight:800; color:var(--ink-soft); font-size:16px; line-height:1.45; margin:8px 0 0; }
-  #winChips{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:11px; }
-  .chip{ width:42px; height:42px; display:grid; place-items:center; background:#fff6d8; border:2px solid #ffd166; border-radius:50%; font-size:22px; box-shadow:0 2px 6px rgba(23,50,79,.2); }
-  .win-btns{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-  .win-btn{ border:3px solid #fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; padding:12px 26px; border-radius:999px; cursor:pointer; transition:transform .12s; }
-  .win-btn:active{ transform:translateY(3px); }
-  #againBtn{ background:var(--leaf); color:#fff; box-shadow:0 6px 0 #3da347,0 12px 24px rgba(87,204,98,.35); }
-  #winHomeBtn{ background:#fff; color:var(--ink); border-color:#dbe7f2; box-shadow:0 5px 0 rgba(23,50,79,.14); }
-  .confetti{ position:absolute; z-index:10; width:11px; height:15px; border-radius:3px; pointer-events:none; }
+  #winCard{
+    background:var(--cream);
+    border:6px solid #fff;
+    border-radius:36px;
+    box-shadow:0 14px 0 rgba(18,74,35,.25), 0 28px 54px rgba(12,48,24,.4);
+    padding:22px 26px 20px;
+    text-align:center;
+    width:min(90vw, 400px);
+    animation:winPop .45s cubic-bezier(.34,1.6,.5,1);
+  }
+  @keyframes winPop{ from{transform:scale(.6) translateY(28px); opacity:0} to{transform:scale(1) translateY(0); opacity:1} }
+  #winStars{ font-size:40px; letter-spacing:6px; color:#d2ebd0; }
+  #winStars .lit{ color:var(--sun); text-shadow:0 3px 0 #d99400; }
+  #winRow{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:14px 0 20px;
+  }
+  .win-chip{
+    width:54px;
+    height:54px;
+    border-radius:50%;
+    background:#fff6d1;
+    border:3.5px solid #ffc93c;
+    display:grid;
+    place-items:center;
+    font-size:32px;
+    box-shadow:0 4px 0 #d99400;
+  }
+  .win-btns{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+  }
+  .win-act{
+    min-width:118px;
+    min-height:72px;
+    padding:0 24px;
+    border-radius:999px;
+    border:4px solid #fff;
+    font-family:"Fredoka",sans-serif;
+    font-size:30px;
+    font-weight:700;
+    cursor:pointer;
+    color:#fff;
+  }
+  #againBtn{ background:linear-gradient(180deg,#6ce078,#3db84d); box-shadow:0 7px 0 #238030; }
+  #levelUpBtn{ background:linear-gradient(180deg,#ffd447,#f59e0b); color:var(--ink); box-shadow:0 7px 0 #b45309; }
+  .win-act:active{ transform:translateY(3px) scale(.95); }
 
-  @media (max-width:430px){
-    #bubble{ font-size:13.5px; padding:8px 10px; }
-    #grid{ gap:7px; }
-  }
-  @media (max-height:560px){
-    #hootFig{ width:clamp(76px,23vh,100px); }
-    #hud{ padding-top:6px; } .round-btn{ width:42px; height:42px; }
-    #starBank{ font-size:18px; padding:4px 12px 4px 8px; }
-    #meterCard{ margin-top:4px; padding:4px 12px 4px 9px; }
-    #pairText{ font-size:19px; }
-    #bubble{ font-size:12.5px; max-width:40vw; padding:7px 10px; }
-    #bubbleCol{ margin-bottom:6px; }
-    #sun{ width:54px; height:54px; top:46px; }
-    #grass{ height:38px; }
-    .face.front .animal{ font-size:26px; }
-    .face.front .aname{ font-size:10.5px; }
-    #startPanel{ top:50%; padding:12px 16px 10px; }
-    #playBtn{ font-size:20px; padding:10px 34px; margin-top:10px; }
-  }
-  @media (prefers-reduced-motion:reduce){
-    .cloud,.bfly,#hootFig,.flower,#sun .rays{ animation:none !important; }
-    .card .inner{ transition:none; }
-  }
-  /* Wave 5A: iPad landscape side-rail + full-width memory card grid */
-  @media (orientation:landscape) and (min-width:768px) and (min-height:541px){
-    #stage{
-      display:grid !important;
-      grid-template-columns:276px minmax(0,1fr);
-      grid-template-rows:auto minmax(0,1fr);
-      align-items:stretch;
+  .confetti{ position:absolute; z-index:28; width:12px; height:16px; border-radius:3px; pointer-events:none; }
+
+  /* ================= RESPONSIVE PORTRAIT & LANDSCAPE ================= */
+  @media (orientation:landscape) and (min-width:740px){
+    #meadowMain{
+      flex-direction:row;
+      align-items:center;
+      justify-content:center;
+      padding:6px 24px 16px clamp(136px, 16vw, 180px);
     }
-    #meterCard{ grid-column:1; grid-row:1; margin:12px 10px 0 !important; width:auto !important; max-width:none !important; justify-content:center; }
-    #groundRow{ grid-column:1; grid-row:2; align-items:flex-end; padding:8px 10px max(12px,env(safe-area-inset-bottom)) !important; }
-    #hootZone{ flex-direction:column; align-items:flex-start; gap:8px; width:100%; }
-    #hootFig{ width:116px !important; }
-    #bubble{ max-width:248px !important; }
-    #hud{ grid-column:2; grid-row:1; padding:8px 14px 4px !important; }
-    #playArea{ grid-column:2; grid-row:2; padding:8px 20px max(14px,env(safe-area-inset-bottom)) !important; }
-    #grid{ max-width:min(860px,100%) !important; max-height:min(640px,100%) !important; gap:16px !important; }
-    /* Wave 5C-1 (Big & Physical): glossy 3D tactile memory cards with saturated backs & huge art */
-    .card .face{
-      border:5px solid #fff !important; border-radius:26px !important;
-      box-shadow:0 8px 0 rgba(23,50,79,.18), 0 14px 24px rgba(23,50,79,.12) !important;
+    #pairTray{
+      flex-direction:column;
+      padding:12px 8px;
     }
-    .card .face.front svg{ width:76% !important; height:76% !important; max-width:136px !important; max-height:136px !important; filter:drop-shadow(0 5px 6px rgba(23,50,79,.16)); }
-    .card .face.front .cname{ font-size:18px !important; font-weight:700 !important; }
-    .card.matched .face.front{ box-shadow:0 0 0 5px #ffd93b, 0 8px 0 #c98a00, 0 0 26px rgba(255,217,59,.6) !important; }
+    #boardWrap{
+      height:100%;
+    }
+    #boardFrame{
+      width:min(72vw, 720px);
+      height:min(76vh, 560px);
+    }
+  }
+
+  @media (max-width:560px){
+    .hud-pill{ min-width:54px; min-height:54px; height:54px; padding:0 10px; font-size:19px; }
+    .hud-pill.round{ width:54px; font-size:22px; }
+    #starBank{ min-height:54px; padding:0 12px 0 9px; font-size:20px; }
+    #boardFrame{ padding:8px; border-radius:22px; width:100%; height:min(100%, 440px); }
+    #grid{ gap:8px; }
+    #grid.g-6{ grid-template-columns:repeat(2, 1fr); grid-template-rows:repeat(3, 1fr); max-width:320px; }
+    #grid.g-12{ grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(4, 1fr); max-width:360px; }
+    .face{ border-radius:18px; border-width:4px !important; }
+    #hootMeadow{ width:76px; left:6px; bottom:4px; }
+    #meadowMain{ padding-bottom:68px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <button class="decor" id="sun" type="button" aria-label="Sun — tap for a sparkle">
-    <svg viewBox="0 0 100 100" aria-hidden="true"><g class="rays" stroke="#ffb703" stroke-width="6" stroke-linecap="round"><path d="M50 2v12M50 86v12M2 50h12M86 50h12M16 16l8 8M76 76l8 8M84 16l-8 8M24 76l-8 8"/></g><circle cx="50" cy="50" r="27" fill="#ffc93c" stroke="#f0a500" stroke-width="3"/><circle cx="41" cy="46" r="3.6" fill="#17324f"/><circle cx="59" cy="46" r="3.6" fill="#17324f"/><path d="M40 58 Q50 66 60 58" stroke="#17324f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/><circle cx="65" cy="55" r="4.4" fill="#ffb59d" opacity=".85"/></svg>
-  </button>
-  <button class="decor cloud" type="button" style="top:10%;animation-duration:80s;animation-delay:-34s" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
-  <button class="decor cloud" type="button" style="top:4%;animation-duration:112s;animation-delay:-84s;width:140px" aria-label="Cloud — tap for a puff"><svg viewBox="0 0 120 54" aria-hidden="true"><ellipse cx="38" cy="38" rx="30" ry="14" fill="#fff"/><ellipse cx="66" cy="28" rx="26" ry="19" fill="#fff"/><ellipse cx="90" cy="39" rx="24" ry="13" fill="#fff"/></svg></button>
-  <button class="decor bfly" type="button" style="left:10%;top:34%" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#ff8fab"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#ffb3c8"/></g><ellipse cx="20" cy="17" rx="2.6" ry="8" fill="#17324f"/></svg></button>
-  <button class="decor bfly" type="button" style="right:9%;top:30%;animation-delay:-3.5s" aria-label="Butterfly — tap for a twirl"><svg viewBox="0 0 40 32" aria-hidden="true"><g class="bw bw-l"><ellipse cx="10" cy="11" rx="9" ry="7" fill="#7fd4ff"/><ellipse cx="11" cy="23" rx="7" ry="5.5" fill="#aee7ff"/></g><g class="bw bw-r"><ellipse cx="30" cy="11" rx="9" ry="7" fill="#7fd4ff"/><ellipse cx="29" cy="23" rx="7" ry="5.5" fill="#aee7ff"/></g><ellipse cx="20" cy="17" rx="2.6" ry="8" fill="#17324f"/></svg></button>
-  <svg id="grass" viewBox="0 0 400 64" preserveAspectRatio="none" aria-hidden="true">
-    <g stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round">
-      <path class="grassBlade" d="M14 64 Q10 30 18 8"/><path class="grassBlade" style="animation-delay:-.7s" d="M44 64 Q48 34 40 14"/>
-      <path class="grassBlade" style="animation-delay:-1.3s" d="M96 64 Q92 28 102 6"/><path class="grassBlade" style="animation-delay:-.4s" d="M150 64 Q156 36 146 16"/>
-      <path class="grassBlade" style="animation-delay:-2s" d="M210 64 Q206 30 216 10"/><path class="grassBlade" style="animation-delay:-1s" d="M268 64 Q274 34 262 14"/>
-      <path class="grassBlade" style="animation-delay:-1.7s" d="M322 64 Q318 28 330 8"/><path class="grassBlade" style="animation-delay:-.2s" d="M372 64 Q378 36 366 16"/>
-    </g>
+  <!-- Rolling Clover Meadow SVG -->
+  <svg id="meadowBg" viewBox="0 0 1200 760" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 148 Q260 92 580 142 T1200 132 L1200 220 L0 220 Z" fill="#8be068"/>
+    <path d="M0 164 Q360 124 720 158 T1200 148 L1200 760 L0 760 Z" fill="#68ce58" opacity=".45"/>
+    <ellipse cx="180" cy="480" rx="160" ry="60" fill="#82de6c" opacity=".35"/>
+    <ellipse cx="980" cy="540" rx="180" ry="70" fill="#82de6c" opacity=".35"/>
   </svg>
-  <button class="decor flower" type="button" style="left:3%" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q20 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="#ff8fab"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#ffc93c"/></svg></button>
-  <button class="decor flower" type="button" style="right:3%;animation-delay:-1.8s" aria-label="Flower — tap to bloom"><svg viewBox="0 0 44 58" aria-hidden="true"><path d="M22 58 Q24 40 22 28" stroke="#3da347" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="#c39bff"><circle cx="22" cy="10" r="7"/><circle cx="12" cy="17" r="7"/><circle cx="32" cy="17" r="7"/><circle cx="16" cy="25" r="7"/><circle cx="28" cy="25" r="7"/></g><circle cx="22" cy="18" r="6" fill="#fff"/></svg></button>
 
+  <!-- Living Meadow Butterflies & Daisies -->
+  <button class="meadow-prop bfly" type="button" style="left:8%;top:18%" aria-label="Pink Butterfly">
+    <svg viewBox="0 0 46 38" aria-hidden="true"><g class="bw bw-l"><ellipse cx="12" cy="13" rx="10" ry="8" fill="#ff85a8" stroke="#8a2046" stroke-width="2"/><ellipse cx="13" cy="26" rx="8" ry="6" fill="#ffb3c8" stroke="#8a2046" stroke-width="2"/></g><g class="bw bw-r"><ellipse cx="34" cy="13" rx="10" ry="8" fill="#ff85a8" stroke="#8a2046" stroke-width="2"/><ellipse cx="33" cy="26" rx="8" ry="6" fill="#ffb3c8" stroke="#8a2046" stroke-width="2"/></g><ellipse cx="23" cy="20" rx="3" ry="9" fill="#1b3526"/></svg>
+  </button>
+  <button class="meadow-prop bfly" type="button" style="right:7%;top:22%;animation-delay:-3.2s" aria-label="Blue Butterfly">
+    <svg viewBox="0 0 46 38" aria-hidden="true"><g class="bw bw-l"><ellipse cx="12" cy="13" rx="10" ry="8" fill="#6ccdff" stroke="#185d87" stroke-width="2"/><ellipse cx="13" cy="26" rx="8" ry="6" fill="#aee7ff" stroke="#185d87" stroke-width="2"/></g><g class="bw bw-r"><ellipse cx="34" cy="13" rx="10" ry="8" fill="#6ccdff" stroke="#185d87" stroke-width="2"/><ellipse cx="33" cy="26" rx="8" ry="6" fill="#aee7ff" stroke="#185d87" stroke-width="2"/></g><ellipse cx="23" cy="20" rx="3" ry="9" fill="#1b3526"/></svg>
+  </button>
+  <button class="meadow-prop daisy" type="button" style="right:3%" aria-label="Meadow Daisy">
+    <svg viewBox="0 0 48 62" aria-hidden="true"><path d="M24 62 Q22 44 24 28" stroke="#258038" stroke-width="4.5" fill="none" stroke-linecap="round"/><g fill="#fffdf6" stroke="#d8e3d5" stroke-width="1.5"><circle cx="24" cy="11" r="7.5"/><circle cx="13" cy="18" r="7.5"/><circle cx="35" cy="18" r="7.5"/><circle cx="17" cy="28" r="7.5"/><circle cx="31" cy="28" r="7.5"/></g><circle cx="24" cy="20" r="6.5" fill="#ffc93c"/></svg>
+  </button>
+
+  <!-- Top HUD -->
   <div id="hud">
-    <div class="hud-btns">
-      <button class="round-btn" id="soundBtn" type="button" aria-label="Turn sound off">
-        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#17324f"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.2 6a9 9 0 0 1 0 12"/></svg>
-        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe7f2" stroke="#17324f"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
-      </button>
-      <button class="round-btn" id="homeBtn" type="button" aria-label="Back to the start screen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#17324f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10v9h12v-9" fill="#aee7ff"/></svg>
-      </button>
+    <div class="hud-group">
+      <button class="hud-pill size-btn" type="button" data-pairs="2" aria-label="Easy 4 Cards">🍀 4</button>
+      <button class="hud-pill size-btn active" type="button" data-pairs="3" aria-label="Medium 6 Cards">🌼 6</button>
+      <button class="hud-pill size-btn" type="button" data-pairs="6" aria-label="Big 12 Cards">🌻 12</button>
+      <button class="hud-pill round" id="hintBtn" type="button" aria-label="Firefly Peek Hint">✨</button>
+      <button class="hud-pill round" id="soundBtn" type="button" aria-label="Toggle Sound">🔊</button>
     </div>
     <div id="starBank" aria-label="Stars collected">
-      <svg class="star-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="#ffc93c" stroke="#e8a90c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l3 6 6.6.9-4.8 4.6 1.1 6.6L12 17.4l-5.9 3.1 1.1-6.6-4.8-4.6 6.6-.9z" fill="#ffc93c" stroke="#d99400" stroke-width="1.5" stroke-linejoin="round"/></svg>
       <span id="starCount">0</span>
     </div>
   </div>
 
-  <div id="meterCard">
-    <div>
-      <div class="mc-label">Pairs found</div>
-      <div id="pairDots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-    <div id="pairText">0 / 6</div>
-  </div>
-
-  <div id="playArea">
-    <div id="grid"></div>
-    <svg id="echoSvg" aria-hidden="true"></svg>
-  </div>
-
-  <div id="groundRow">
-    <div id="hootZone">
-      <button id="hootFig" type="button" aria-label="Hoot — tap to hear how to play again">
-        <svg viewBox="0 0 200 210" aria-hidden="true">
-          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
-          <ellipse class="wing-l" cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
-          <ellipse class="wing-r" cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
-          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
-          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
-          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
-          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
-          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
-          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
-          <g class="eyes"><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/></g>
-          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
-          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
-          <path d="M84 132 q6 6 12 0 M104 132 q6 6 12 0 M94 148 q6 6 12 0" stroke="#d9b98a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-          <path d="M76 190 q-8 8 -14 6 M76 190 q-2 10 -8 12 M124 190 q8 8 14 6 M124 190 q2 10 8 12" stroke="#ff9f1c" stroke-width="5" fill="none" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div id="bubbleCol">
-        <div id="bubble">Hi! I&rsquo;m Hoot! Tap <span class="b-an">Play</span> and let&rsquo;s find the animal pairs hiding in my meadow!</div>
-        <span id="hootName">HOOT</span>
+  <!-- Meadow Workspace -->
+  <div id="meadowMain">
+    <div id="pairTray" aria-label="Matched pairs progress"></div>
+    <div id="boardWrap">
+      <div id="boardFrame">
+        <div id="grid" class="g-6"></div>
+        <svg id="arcSvg" aria-hidden="true"></svg>
       </div>
     </div>
   </div>
 
-  <div id="startPanel">
-    <h1><span class="t-mem">Memory Match</span> <span class="t-mead">Meadow</span></h1>
-    <p>The meadow animals are hiding under the cards — two of each! Flip two cards at a time and find all 6 pairs. Hoot remembers with you!</p>
-    <button id="playBtn" type="button">▶ Play</button>
-  </div>
+  <!-- Flower-Crown Hoot Meadow Buddy -->
+  <button id="hootMeadow" type="button" aria-label="Hoot with a daisy flower crown — tap for a hint or giggle">
+    <svg viewBox="0 0 200 205" aria-hidden="true">
+      <ellipse cx="100" cy="126" rx="60" ry="60" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
+      <ellipse cx="100" cy="142" rx="40" ry="40" fill="#fdecd2"/>
+      <path d="M84 134 q8 7 16 0 M100 134 q8 7 16 0 M92 150 q8 7 16 0" stroke="#d9b485" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="42" cy="130" rx="18" ry="34" fill="#8b5226" stroke="#4a2810" stroke-width="4" transform="rotate(14 42 130)"/>
+      <ellipse cx="158" cy="130" rx="18" ry="34" fill="#8b5226" stroke="#4a2810" stroke-width="4" transform="rotate(-14 158 130)"/>
+      <circle cx="100" cy="76" r="49" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
+      <path d="M56 50 Q44 20 68 30 Z" fill="#8b5226" stroke="#4a2810" stroke-width="3.5"/>
+      <path d="M144 50 Q156 20 132 30 Z" fill="#8b5226" stroke="#4a2810" stroke-width="3.5"/>
+      <ellipse cx="79" cy="78" rx="22" ry="24" fill="#fdecd2"/>
+      <ellipse cx="121" cy="78" rx="22" ry="24" fill="#fdecd2"/>
+      <circle cx="79" cy="76" r="11" fill="#1b3526"/><circle cx="121" cy="76" r="11" fill="#1b3526"/>
+      <circle cx="83" cy="72" r="4" fill="#fff"/><circle cx="125" cy="72" r="4" fill="#fff"/>
+      <circle cx="57" cy="95" r="8" fill="#ff9e8a" opacity=".82"/><circle cx="143" cy="95" r="8" fill="#ff9e8a" opacity=".82"/>
+      <path d="M90 90 Q100 84 110 90 Q106 104 100 106 Q94 104 90 90 Z" fill="#ffab1f" stroke="#b56200" stroke-width="2.5"/>
+      <!-- Daisy Flower Crown -->
+      <path d="M58 40 Q100 22 142 40" stroke="#3aa848" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <g>
+        <circle cx="72" cy="34" r="10" fill="#fffdf6" stroke="#d4e0d0" stroke-width="2"/><circle cx="72" cy="34" r="4.5" fill="#ffc93c"/>
+        <circle cx="100" cy="27" r="11.5" fill="#ff9ebb" stroke="#d45582" stroke-width="2"/><circle cx="100" cy="27" r="5" fill="#ffe066"/>
+        <circle cx="128" cy="34" r="10" fill="#fffdf6" stroke="#d4e0d0" stroke-width="2"/><circle cx="128" cy="34" r="4.5" fill="#ffc93c"/>
+      </g>
+      <path d="M78 188 q-8 8 -14 6 M78 188 q-2 10 -8 12 M122 188 q8 8 14 6 M122 188 q2 10 8 12" stroke="#ffab1f" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </button>
 
+  <!-- Win Celebration Overlay -->
   <div id="winOverlay" hidden>
-    <div id="winCard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
-      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <h2 id="winTitle">Super Memory!</h2>
-      <p id="winRecap"></p>
-      <div id="winChips"></div>
+    <div id="winCard" role="dialog" aria-modal="true" aria-label="You matched every friend!">
+      <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span></div>
+      <div id="winRow"></div>
       <div class="win-btns">
-        <button class="win-btn" id="againBtn" type="button">↻ Play Again</button>
-        <button class="win-btn" id="winHomeBtn" type="button">Start Screen</button>
+        <button class="win-act" id="againBtn" type="button" aria-label="Play Again">↻ ▶</button>
+        <button class="win-act" id="levelUpBtn" type="button" aria-label="Bigger Meadow">🌻+</button>
       </div>
     </div>
   </div>
@@ -292,55 +565,84 @@
 <script>
 (function(){
   "use strict";
-  var ANIMALS=[
-    {id:"fox", face:"🦊", name:"Fox", plural:"foxes", fact:"Foxes say yip at night!"},
-    {id:"bunny", face:"🐰", name:"Bunny", plural:"bunnies", fact:"Bunnies hop with super-strong back legs!"},
-    {id:"lion", face:"🦁", name:"Lion", plural:"lions", fact:"A lion&rsquo;s roar can be heard far, far away!"},
-    {id:"frog", face:"🐸", name:"Frog", plural:"frogs", fact:"Frogs catch flies with long, sticky tongues!"},
-    {id:"butterfly", face:"🦋", name:"Butterfly", plural:"butterflies", fact:"Butterflies taste their food with their feet!"},
-    {id:"turtle", face:"🐢", name:"Turtle", plural:"turtles", fact:"A turtle&rsquo;s shell is its cosy home!"}
-  ];
-  var GOAL=6;
-  var CARD_BACK="<svg viewBox='0 0 60 60' aria-hidden='true'><g fill='#fff'><circle cx='30' cy='16' r='8'/><circle cx='17' cy='26' r='8'/><circle cx='43' cy='26' r='8'/><circle cx='22' cy='37' r='8'/><circle cx='38' cy='37' r='8'/></g><circle cx='30' cy='27' r='7' fill='#ffc93c'/></svg>";
 
-  var state="start";
-  var pairs=0, stars=0, first=null, lock=false, dead=false;
-  var soundOn=true, praiseIdx=0;
-  var seenPos={};
-  var flipSeq=0;
+  var ANIMALS=[
+    {id:"cat",emo:"🐱",bg:"#ffe5d9",word:"word-cat",snd:"sound-meow"},
+    {id:"dog",emo:"🐶",bg:"#fff0cc",word:"word-dog",snd:"sound-woof"},
+    {id:"frog",emo:"🐸",bg:"#dcf7dc",word:"word-frog",snd:"sound-ribbit"},
+    {id:"duck",emo:"🦆",bg:"#fff6c7",word:"word-duck",snd:"sound-quack"},
+    {id:"cow",emo:"🐮",bg:"#e8eef7",word:"word-cow",snd:"sound-moo"},
+    {id:"pig",emo:"🐷",bg:"#ffe0ee",word:"word-pig",snd:"sound-oink"},
+    {id:"sheep",emo:"🐑",bg:"#eef5ff",word:"word-sheep",snd:"sound-baa"},
+    {id:"lion",emo:"🦁",bg:"#ffebd1",word:"word-lion",snd:null},
+    {id:"bear",emo:"🐻",bg:"#f3e3d3",word:"word-bear",snd:null},
+    {id:"bunny",emo:"🐰",bg:"#ffeaf4",word:"word-bunny",snd:null},
+    {id:"fox",emo:"🦊",bg:"#ffe4d4",word:"word-fox",snd:null},
+    {id:"butterfly",emo:"🦋",bg:"#e3f4ff",word:"word-butterfly",snd:null}
+  ];
+
+  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-super.mp3","hoot-yay-2.mp3"];
+  var CLOVER_SVG='<svg viewBox="0 0 80 80" aria-hidden="true">'
+    +'<circle cx="40" cy="24" r="15" fill="#92f29b"/><circle cx="24" cy="40" r="15" fill="#92f29b"/>'
+    +'<circle cx="56" cy="40" r="15" fill="#92f29b"/><circle cx="40" cy="56" r="15" fill="#92f29b"/>'
+    +'<circle cx="40" cy="40" r="11" fill="#ffe066" stroke="#fff" stroke-width="3"/></svg>';
+
+  var pairGoal=3; /* default 6 cards (3 pairs) — ideal for Zane (3) & Riley (2) */
+  var state="play"; /* play | checking | won */
+  var cards=[], firstCard=null, matchedCount=0, stars=0, praiseIdx=0;
+  var soundOn=true, dead=false, idleTimer=null;
 
   function $(id){ return document.getElementById(id); }
-  var stage=$("stage"), grid=$("grid"), bubble=$("bubble"), hootFig=$("hootFig"),
-      starCount=$("starCount"), starBank=$("starBank"), pairText=$("pairText"),
-      pairDots=$("pairDots").children, echoSvg=$("echoSvg"), playArea=$("playArea"),
-      startPanel=$("startPanel"), winOverlay=$("winOverlay"), winRecap=$("winRecap"),
-      winChips=$("winChips"), winStars=$("winStars");
+  var stage=$("stage"), grid=$("grid"), boardFrame=$("boardFrame"),
+      arcSvg=$("arcSvg"), pairTray=$("pairTray"),
+      starCount=$("starCount"), starBank=$("starBank"),
+      hootMeadow=$("hootMeadow"), winOverlay=$("winOverlay"),
+      winStars=$("winStars"), winRow=$("winRow"),
+      hintBtn=$("hintBtn"), soundBtn=$("soundBtn"),
+      levelUpBtn=$("levelUpBtn");
 
+  /* ================= SOUND FX ================= */
   var AC=null;
-  function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } } if(AC&&AC.state==="suspended") AC.resume(); return AC; }
+  function audio(){
+    if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } }
+    if(AC&&AC.state==="suspended") AC.resume();
+    return AC;
+  }
   function tone(f0,f1,dur,type,vol,delay){
-    if(!soundOn) return; var ac=audio(); if(!ac) return;
+    if(!soundOn) return;
+    var ac=audio(); if(!ac) return;
     var t=ac.currentTime+(delay||0), o=ac.createOscillator(), g=ac.createGain();
     o.type=type||"sine"; o.frequency.setValueAtTime(f0,t);
     if(f1&&f1!==f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
-    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.14,t+0.015);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||0.12,t+0.015);
     g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
     o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.05);
   }
-  function flipSound(){ tone(520,760,0.09,"triangle",0.16); }
-  function matchSound(){ tone(523,523,0.16,"triangle",0.15); tone(659,659,0.16,"triangle",0.15,0.12); tone(784,784,0.3,"triangle",0.15,0.24); }
-  function missSound(){ tone(300,180,0.22,"sine",0.12); }
-  function sparkleSound(){ tone(1180,1180,0.09,"sine",0.1); tone(1560,1560,0.12,"sine",0.1,0.07); }
-  function poofSound(){ tone(220,120,0.16,"triangle",0.1); }
+  function flipSfx(){ tone(460,720,0.08,"sine",0.1); }
+  function matchSfx(){ tone(660,660,0.09,"triangle",0.12); tone(880,880,0.1,"triangle",0.12,0.07); tone(1320,1320,0.16,"triangle",0.11,0.15); }
+  function missSfx(){ tone(340,260,0.14,"sine",0.09); }
+  function hintSfx(){ tone(980,1480,0.12,"sine",0.09); }
+  function starSfx(){ tone(880,880,0.08,"triangle",0.1); tone(1175,1175,0.08,"triangle",0.1,0.06); tone(1568,1568,0.14,"triangle",0.1,0.12); }
 
-  /* HOOT'S VOICE — one line at a time, chained on 'ended' (see Bubble Number
-     Pop for the full note). Only clips already recorded in assets/voice. */
+  /* ================= STUDIO HOOT VOICE ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  var voiceEl=null, vQueue=[], vPlaying=false;
+  function hasClip(id){
+    try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H) return !!H[id]; }catch(e){}
+    return true;
+  }
   function getVoice(){
     if(!voiceEl){
       voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){var e=voiceEl;if(e.__hwT&&Date.now()-e.__hwT<400){if(!e.paused&&!e.ended)return;if(!e.__hwRetry){e.__hwRetry=1;try{e.currentTime=0;}catch(x){}var p=e.play();if(p&&p.catch)p.catch(function(){vNext();});return;}}vNext();});
+      voiceEl.addEventListener("ended",function(){
+        var e=voiceEl;
+        if(e.__hwT && Date.now()-e.__hwT<350){
+          if(!e.paused && !e.ended) return;
+          if(!e.__hwRetry){ e.__hwRetry=1; try{e.currentTime=0;}catch(x){} var p=e.play(); if(p&&p.catch) p.catch(vNext); return; }
+        }
+        vNext();
+      });
       voiceEl.addEventListener("error",vNext);
     }
     return voiceEl;
@@ -353,276 +655,319 @@
       return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
     }catch(e){ return false; }
   }
-  function silenced(){ return !soundOn||hubQuiet(); }
-  function hootTalking(on){ hootFig.classList.toggle("talking",!!on); }
-  function vNext(){
-    if(!vPlaying){ pumpVoice(); return; }
-    vPlaying=false; vCurrent=null; hootTalking(false); pumpVoice();
-  }
+  function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; hootMeadow.classList.remove("talking"); pumpVoice(); }
   function pumpVoice(){
     if(vPlaying||dead) return;
     var item=vQueue.shift(); if(!item) return;
-    if(item.onStart){ try{ item.onStart(); }catch(e){} }
-    if(silenced()){ pumpVoice(); return; }
-    var el=getVoice(); vPlaying=true; vCurrent=item; hootTalking(true);
-    el.__hwT=Date.now();el.__hwRetry=0;el.src=VBASE+item.file;
+    if(!soundOn||hubQuiet()){ pumpVoice(); return; }
+    var el=getVoice();
+    vPlaying=true; hootMeadow.classList.add("talking");
+    if(item.giggle) window.__bellyArmed=true;
+    el.__hwT=Date.now(); el.__hwRetry=0;
+    el.src=VBASE+item.file;
     var p=el.play();
-    if(p&&p.catch) p.catch(function(){ vNext(); });
+    if(item.giggle) setTimeout(function(){ window.__bellyArmed=false; }, 120);
+    if(p&&p.catch) p.catch(vNext);
   }
-  function enqueue(file,kind,onStart){if(window.__hwNameFix){file=window.__hwNameFix(file,kind);}if(!file){return;}
-    vQueue.push({file:file,kind:kind||"",onStart:onStart||null});
+  function clearVoice(stop){
+    vQueue.length=0;
+    if(stop && voiceEl){
+      voiceEl.__hwT=0; voiceEl.__hwRetry=1;
+      try{ voiceEl.pause(); }catch(e){}
+      vPlaying=false; hootMeadow.classList.remove("talking");
+    }
+  }
+  function enqueue(file,opts){
+    if(!file) return;
+    vQueue.push({file:file, giggle:!!(opts&&opts.giggle)});
     pumpVoice();
   }
-  function clearPending(){ vQueue.length=0; }
-
-  function say(html){ bubble.innerHTML=html; }
-  function hootReact(cls,ms){
-    hootFig.classList.remove("celebrate","shake");
-    void hootFig.offsetWidth;
-    hootFig.classList.add(cls);
-    setTimeout(function(){ hootFig.classList.remove(cls); },ms||1200);
+  function speakAnimal(an){
+    if(!an || !an.word || !hasClip(an.word)) return;
+    clearVoice(true);
+    enqueue(an.word+".mp3");
+  }
+  function speakMatch(an){
+    clearVoice(true);
+    if(an && an.snd && hasClip(an.snd)) enqueue(an.snd+".mp3");
+    else if(an && an.word && hasClip(an.word)) enqueue(an.word+".mp3");
+    var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
+    if(!hasClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
+    enqueue(pr);
   }
 
-  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-  function animalById(id){ for(var i=0;i<ANIMALS.length;i++) if(ANIMALS[i].id===id) return ANIMALS[i]; return null; }
-  function confetti(){
+  /* ================= HELPERS ================= */
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+
+  function showSparkleArc(elA, elB){
+    var br=boardFrame.getBoundingClientRect();
+    var a=elA.getBoundingClientRect(), b=elB.getBoundingClientRect();
+    var x1=a.left-br.left+a.width/2, y1=a.top-br.top+a.height/2;
+    var x2=b.left-br.left+b.width/2, y2=b.top-br.top+b.height/2;
+    var mx=(x1+x2)/2, my=Math.min(y1,y2)-42;
+    arcSvg.innerHTML='<path d="M'+x1+' '+y1+' Q '+mx+' '+my+' '+x2+' '+y2+'"/><circle cx="'+x1+'" cy="'+y1+'" r="9" fill="#ffe066"/><circle cx="'+x2+'" cy="'+y2+'" r="9" fill="#ffe066"/>';
+    setTimeout(function(){ arcSvg.innerHTML=""; }, 900);
+  }
+
+  function spawnConfetti(n){
     var sr=stage.getBoundingClientRect();
-    var cols=["#ff6b5e","#ffc93c","#57cc62","#4fb6e8","#c39bff","#ff8fab"];
-    for(var i=0;i<26;i++){
-      var c=document.createElement("div"); c.className="confetti";
+    var cols=["#ff6b5e","#ffc93c","#4bc85b","#38bdf8","#c084fc","#ff85a8"];
+    for(var i=0;i<(n||36);i++){
+      var c=document.createElement("div");
+      c.className="confetti";
       c.style.background=cols[i%cols.length];
-      c.style.left=(sr.width/2-6)+"px"; c.style.top=(sr.height*0.32)+"px";
+      c.style.left=(sr.width*0.5)+"px"; c.style.top=(sr.height*0.32)+"px";
       stage.appendChild(c);
-      var dx=(Math.random()-0.5)*sr.width*0.8, dy=120+Math.random()*sr.height*0.4, rot=(Math.random()*2-1)*340;
+      var dx=(Math.random()-0.5)*sr.width*0.86, dy=130+Math.random()*sr.height*0.46, rot=(Math.random()*2-1)*380;
       if(c.animate){
         c.animate([
-          {transform:"translate(0,0) rotate(0deg)",opacity:1},
-          {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)",opacity:0}
-        ],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});
+          {transform:"translate(0,0) rotate(0deg)", opacity:1},
+          {transform:"translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)", opacity:0}
+        ],{duration:1100+Math.random()*650, easing:"cubic-bezier(.2,.7,.3,1)"});
       }
-      (function(el){ setTimeout(function(){ el.remove(); },1900); })(c);
+      (function(el){ setTimeout(function(){ el.remove(); }, 1850); })(c);
     }
   }
 
-  function updateHUD(){
-    starCount.textContent=stars;
-    pairText.textContent=pairs+" / "+GOAL;
-    for(var i=0;i<pairDots.length;i++) pairDots[i].classList.toggle("on", i<pairs);
+  /* ================= IDLE FIREFLY HINT ================= */
+  function clearIdle(){ if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; } }
+  function armIdle(){
+    clearIdle();
+    if(dead || state!=="play") return;
+    idleTimer=setTimeout(function(){
+      if(dead || state!=="play") return;
+      pulsePairHint();
+    }, 11000);
   }
-  function bumpStars(){ starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump"); }
-
-  /* Hoot's Memory Echo: a glowing trail from the second card back to its twin. */
-  function memoryEcho(fromCard,toCard){
-    var pr=playArea.getBoundingClientRect();
-    var a=fromCard.getBoundingClientRect(), b=toCard.getBoundingClientRect();
-    var x1=a.left-pr.left+a.width/2, y1=a.top-pr.top+a.height/2;
-    var x2=b.left-pr.left+b.width/2, y2=b.top-pr.top+b.height/2;
-    echoSvg.setAttribute("viewBox","0 0 "+pr.width+" "+pr.height);
-    echoSvg.style.width=pr.width+"px"; echoSvg.style.height=pr.height+"px";
-    var mx=(x1+x2)/2, my=Math.min(y1,y2)-Math.max(36,Math.abs(x2-x1)*0.22);
-    echoSvg.innerHTML="<path d='M"+x1+" "+y1+" Q"+mx+" "+my+" "+x2+" "+y2+"'/><circle r='6'><animateMotion dur='0.85s' repeatCount='2' path='M"+x1+" "+y1+" Q"+mx+" "+my+" "+x2+" "+y2+"'/></circle>";
-    clearTimeout(memoryEcho._t);
-    memoryEcho._t=setTimeout(function(){ echoSvg.innerHTML=""; },1900);
-  }
-
-  function buildDeck(){
-    grid.innerHTML=""; seenPos={}; first=null; lock=false;
-    var deck=shuffle(ANIMALS.concat(ANIMALS));
-    deck.forEach(function(a){
-      var card=document.createElement("button");
-      card.type="button"; card.className="card";
-      card.dataset.animal=a.id;
-      card.setAttribute("aria-label","Hidden meadow card");
-      card.innerHTML="<span class='inner'><span class='face back'>"+CARD_BACK+"<span class='q'>?</span></span>"+
-        "<span class='face front'><span class='animal' aria-hidden='true'>"+a.face+"</span><span class='aname'>"+a.name+"</span></span></span>";
-      card.addEventListener("click",function(){ onCardTap(card); });
-      grid.appendChild(card);
+  function pulsePairHint(){
+    var targetId=firstCard ? firstCard.dataset.id : null;
+    var unmatched=cards.filter(function(c){ return !c.classList.contains("matched"); });
+    if(!unmatched.length) return;
+    if(!targetId) targetId=unmatched[0].dataset.id;
+    var pair=unmatched.filter(function(c){ return c.dataset.id===targetId && !c.classList.contains("up"); });
+    pair.forEach(function(c){
+      c.classList.remove("hint-glow"); void c.offsetWidth; c.classList.add("hint-glow");
+      setTimeout(function(){ c.classList.remove("hint-glow"); }, 1650);
     });
+    hintSfx();
   }
-  function startGame(){
-    clearPending(); flipSeq++;
-    pairs=0; stars=0; praiseIdx=0;
-    winOverlay.hidden=true; startPanel.hidden=true;
-    state="playing";
-    buildDeck(); updateHUD();
-    say("Flip two cards! If they match, the animals stay out to play. Find all <span class='b-an'>6 pairs</span>!");
-    enqueue("hoot-game-hello.mp3","hello",null);
-  }
-  function winGame(){
-    state="won";
-    clearPending();
-    enqueue("hoot-you-learned.mp3","recap",function(){
-      say("You found every pair — foxes, bunnies, lions, frogs, butterflies and turtles! What a super memory!");
-    });
-    winRecap.innerHTML="You found all <b>6 pairs</b>! The whole meadow is out playing — foxes, bunnies, lions, frogs, butterflies and turtles!";
-    winChips.innerHTML="";
-    ANIMALS.forEach(function(a){ var chip=document.createElement("span"); chip.className="chip"; chip.textContent=a.face; winChips.appendChild(chip); });
-    var starEls=winStars.children;
-    for(var i=0;i<starEls.length;i++){
-      starEls[i].classList.remove("lit");
-      (function(el,d){ setTimeout(function(){ el.classList.add("lit"); },d); })(starEls[i],200+i*150);
+
+  /* ================= BOARD BUILD & PLAY ================= */
+  var roundAnimals=[];
+  function renderPairTray(){
+    pairTray.innerHTML="";
+    for(var i=0;i<pairGoal;i++){
+      var b=document.createElement("span");
+      b.className="pair-bud"+(i<matchedCount?" lit":"");
+      b.textContent=i<matchedCount?"🌼":"";
+      pairTray.appendChild(b);
     }
-    (window.__hwFastWin||setTimeout)(function(){ if(state==="won"&&!dead){ winOverlay.hidden=false; confetti(); sparkleSound(); } },300);
-  }
-  function resetToStart(){
-    clearPending(); flipSeq++;
-    state="start"; pairs=0; stars=0; first=null; lock=false;
-    winOverlay.hidden=true; startPanel.hidden=false;
-    grid.innerHTML=""; echoSvg.innerHTML="";
-    updateHUD();
-    say("Hi! I&rsquo;m Hoot! Tap <span class='b-an'>Play</span> and let&rsquo;s find the animal pairs hiding in my meadow!");
-    hootFig.classList.add("wave");
-    setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
   }
 
-  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3"];
-  function remember(card){
-    var id=card.dataset.animal;
-    if(!seenPos[id]) seenPos[id]=[];
-    if(seenPos[id].indexOf(card)<0) seenPos[id].push(card);
+  function startRound(){
+    clearIdle();
+    clearVoice(true);
+    state="play";
+    firstCard=null;
+    matchedCount=0;
+    winOverlay.hidden=true;
+    arcSvg.innerHTML="";
+
+    roundAnimals=shuffle(ANIMALS.slice()).slice(0, pairGoal);
+    var deck=shuffle(roundAnimals.concat(roundAnimals));
+    grid.className="g-"+(pairGoal*2);
+    grid.innerHTML="";
+    cards=[];
+
+    deck.forEach(function(an){
+      var btn=document.createElement("button");
+      btn.type="button";
+      btn.className="card";
+      btn.dataset.id=an.id;
+      btn.setAttribute("aria-label","Memory card");
+      btn.innerHTML='<span class="inner">'
+        +'<span class="face back">'+CLOVER_SVG+'</span>'
+        +'<span class="face front"><span class="medallion" style="background:'+an.bg+'"><span class="an-emo" aria-hidden="true">'+an.emo+'</span></span></span>'
+        +'</span>';
+      btn.addEventListener("pointerdown",function(e){
+        e.preventDefault();
+        onCardTap(btn, an);
+      });
+      grid.appendChild(btn);
+      cards.push(btn);
+    });
+
+    renderPairTray();
+    armIdle();
   }
-  function onCardTap(card){
-    if(state!=="playing"||lock||dead) return;
-    if(card.classList.contains("up")||card.classList.contains("matched")) return;
+
+  function onCardTap(btn, an){
     audio();
-    flipSound();
-    card.classList.add("up");
-    card.setAttribute("aria-label",animalById(card.dataset.animal).name+" card");
-    remember(card);
-    if(!first){
-      first=card;
-      var a1=animalById(card.dataset.animal);
-      say("A <span class='b-an'>"+a1.name+"</span>! "+a1.face+" Can you find the other "+a1.name+"?");
+    if(dead || state!=="play") return;
+    if(btn.classList.contains("up") || btn.classList.contains("matched")) return;
+    clearIdle();
+    btn.classList.add("up");
+    flipSfx();
+
+    if(!firstCard){
+      firstCard=btn;
+      speakAnimal(an);
+      armIdle();
       return;
     }
-    var firstCard=first; first=null;
-    if(firstCard.dataset.animal===card.dataset.animal){ onMatch(firstCard,card); }
-    else { onMiss(firstCard,card); }
+
+    state="checking";
+    var prev=firstCard;
+    firstCard=null;
+
+    if(prev.dataset.id === btn.dataset.id){
+      /* MATCH! */
+      matchedCount++;
+      stars++;
+      starCount.textContent=stars;
+      starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+      prev.classList.add("matched");
+      btn.classList.add("matched");
+      matchSfx();
+      showSparkleArc(prev, btn);
+      hootMeadow.classList.remove("celebrate"); void hootMeadow.offsetWidth; hootMeadow.classList.add("celebrate");
+      renderPairTray();
+      speakMatch(an);
+
+      setTimeout(function(){
+        if(dead) return;
+        if(matchedCount>=pairGoal){
+          showWin();
+        } else {
+          state="play";
+          armIdle();
+        }
+      }, 650);
+    } else {
+      /* NOT A MATCH — kind generous peek window for toddlers! */
+      speakAnimal(an);
+      setTimeout(function(){
+        if(dead) return;
+        missSfx();
+        prev.classList.add("wiggle");
+        btn.classList.add("wiggle");
+      }, 360);
+      setTimeout(function(){
+        if(dead) return;
+        prev.classList.remove("up","wiggle");
+        btn.classList.remove("up","wiggle");
+        state="play";
+        armIdle();
+      }, 1150);
+    }
   }
-  function onMatch(c1,c2){
-    lock=true;
-    var a=animalById(c2.dataset.animal);
-    matchSound();
-    (function(){var h=(function(){var P={};try{P=window.parent||{};}catch(e){}return P.HOOT_HAVE||{};})(),w="word-"+a.id;if(h[w]) enqueue(w+".mp3","name","",null);})(); /* 3e44: Hoot names the pair */
-    memoryEcho(c2,c1);
-    var seq=flipSeq;
-    setTimeout(function(){
-      if(dead||state!=="playing"||seq!==flipSeq) return;
-      c1.classList.add("matched"); c2.classList.add("matched");
-      delete seenPos[a.id];
-      pairs++; stars++; bumpStars(); updateHUD();
-      hootReact("celebrate",1500);
-      say("Two <span class='b-an'>"+a.plural+"</span>! "+a.fact+" "+(pairs>=GOAL?"That&rsquo;s every pair!":"<span class='b-an'>"+(GOAL-pairs)+"</span> pair"+(GOAL-pairs===1?"":"s")+" still hiding!"));
-      clearPending();
-      praiseIdx++;
-      enqueue(PRAISE[praiseIdx%PRAISE.length],"praise",null);
-      lock=false;
-      if(pairs>=GOAL){ lock=true; (window.__hwFastWin||setTimeout)(function(){ if(!dead&&state==="playing") winGame(); },300); }
-    },560);
-  }
-  function onMiss(c1,c2){
-    lock=true;
-    missSound();
-    var seq=++flipSeq;
-    var a1=animalById(c1.dataset.animal), a2=animalById(c2.dataset.animal);
-    var hintCard=null, hintAnimal=null;
-    [a1,a2].forEach(function(a){
-      if(hintCard) return;
-      var list=seenPos[a.id]||[];
-      for(var i=0;i<list.length;i++){
-        if(list[i]!==c1&&list[i]!==c2&&!list[i].classList.contains("matched")){ hintCard=list[i]; hintAnimal=a; break; }
-      }
+
+  function showWin(){
+    state="won";
+    clearIdle();
+    winRow.innerHTML="";
+    roundAnimals.forEach(function(an){
+      var s=document.createElement("span");
+      s.className="win-chip";
+      s.textContent=an.emo;
+      winRow.appendChild(s);
     });
-    c1.classList.add("wiggle"); c2.classList.add("wiggle");
-    hootReact("shake",1100);
-    if(hintCard){
-      say("Not a pair — a <span class='b-an'>"+a1.name+"</span> and a <span class='b-an'>"+a2.name+"</span>. Remember — the <span class='b-an'>"+hintAnimal.name.toLowerCase()+"</span> was over here!");
-      clearPending();
-      enqueue("hoot-look-closely.mp3","hint",function(){ if(hintCard) hintCard.classList.add("hintpulse"); });
-      setTimeout(function(){ if(hintCard) hintCard.classList.remove("hintpulse"); },1700);
-    } else {
-      say("Not a pair — a <span class='b-an'>"+a1.name+"</span> and a <span class='b-an'>"+a2.name+"</span>. Remember where they&rsquo;re hiding!");
-      var hintPlaying=vCurrent&&vCurrent.kind==="hint";
-      var hintPending=vQueue.some(function(q){ return q.kind==="hint"; });
-      if(!hintPlaying&&!hintPending) enqueue("hoot-try-again.mp3","hint",null);
+    var st=winStars.children;
+    for(var i=0;i<st.length;i++){
+      st[i].classList.remove("lit");
+      (function(el,ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(st[i], 180+i*180);
     }
-    setTimeout(function(){
-      if(dead||seq!==flipSeq) return;
-      c1.classList.remove("up","wiggle"); c2.classList.remove("up","wiggle");
-      c1.setAttribute("aria-label","Hidden meadow card"); c2.setAttribute("aria-label","Hidden meadow card");
-      lock=false;
-    },1250);
+    levelUpBtn.style.display=(pairGoal<6)?"inline-flex":"none";
+    levelUpBtn.textContent=(pairGoal===2)?"🌼 6":"🌻 12";
+    winOverlay.hidden=false;
+    spawnConfetti(42);
+    starSfx();
+    enqueue(hasClip("hoot-win-yay")?"hoot-win-yay.mp3":"hoot-amazing.mp3");
   }
 
-  hootFig.addEventListener("click",function(){
+  /* ================= CONTROLS ================= */
+  document.querySelectorAll(".size-btn").forEach(function(b){
+    b.addEventListener("click",function(){
+      audio(); flipSfx();
+      pairGoal=Number(b.getAttribute("data-pairs"))||3;
+      document.querySelectorAll(".size-btn").forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      startRound();
+    });
+  });
+  hintBtn.addEventListener("click",function(){
     audio();
-    if(state==="playing"){
-      say("Tap two cards, superstar! If the animals match, they stay out to play. You have found <span class='b-an'>"+pairs+"</span> of 6 pairs!");
-      if(!vPlaying) enqueue("hoot-ask-hoot.mp3","explain",null);
-    } else {
-      if(!vPlaying) if(window.__hootSpeak) window.__hootSpeak("idle");
-      hootReact("celebrate",1100);
+    if(state==="play") pulsePairHint();
+  });
+  soundBtn.addEventListener("click",function(){
+    soundOn=!soundOn;
+    soundBtn.textContent=soundOn?"🔊":"🔇";
+    if(!soundOn) clearVoice(true); else{ audio(); flipSfx(); }
+  });
+  $("againBtn").addEventListener("click",function(){
+    audio(); starSfx();
+    startRound();
+  });
+  levelUpBtn.addEventListener("click",function(){
+    audio(); starSfx();
+    pairGoal=(pairGoal===2)?3:6;
+    document.querySelectorAll(".size-btn").forEach(function(x){
+      x.classList.toggle("active", Number(x.getAttribute("data-pairs"))===pairGoal);
+    });
+    startRound();
+  });
+
+  var lastHootTap=0;
+  hootMeadow.addEventListener("click",function(){
+    audio();
+    hootMeadow.classList.remove("celebrate"); void hootMeadow.offsetWidth; hootMeadow.classList.add("celebrate");
+    if(state==="play") pulsePairHint();
+    var now=Date.now();
+    if(now-lastHootTap>8000){
+      lastHootTap=now;
+      clearVoice(true);
+      enqueue("hoot-giggle.mp3",{giggle:true});
     }
   });
 
-  $("sun").addEventListener("click",function(){
-    audio(); var s=$("sun"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
-    sparkleSound();
-    if(state==="start") say("That&rsquo;s Mr. Sun, watching over the meadow!");
-  });
-  document.querySelectorAll(".cloud").forEach(function(c){
-    c.addEventListener("click",function(){ audio(); c.classList.add("puff"); poofSound(); setTimeout(function(){ c.classList.remove("puff"); },300); });
-  });
   document.querySelectorAll(".bfly").forEach(function(bf){
     bf.addEventListener("click",function(){
-      audio(); sparkleSound();
-      if(bf.animate) bf.animate([{transform:"rotate(0deg) scale(1)"},{transform:"rotate(360deg) scale(1.25)"}],{duration:560,easing:"ease-in-out"});
-      if(state==="playing") say("That butterfly is one of our meadow pairs — but the card butterflies are hiding under the cards!");
+      audio(); hintSfx();
+      bf.classList.remove("spin"); void bf.offsetWidth; bf.classList.add("spin");
+      setTimeout(function(){ bf.classList.remove("spin"); }, 700);
     });
   });
-  document.querySelectorAll(".flower").forEach(function(f,i){
-    f.addEventListener("click",function(){
-      audio(); f.classList.add("bloom"); tone(620+i*90,880+i*90,0.16,"sine",0.11);
-      setTimeout(function(){ f.classList.remove("bloom"); },580);
+  document.querySelectorAll(".daisy").forEach(function(d){
+    d.addEventListener("click",function(){
+      audio(); flipSfx();
+      d.classList.remove("bloom"); void d.offsetWidth; d.classList.add("bloom");
+      setTimeout(function(){ d.classList.remove("bloom"); }, 520);
     });
   });
 
-  $("soundBtn").addEventListener("click",function(){
-    soundOn=!soundOn;
-    $("soundOnIc").style.display=soundOn?"block":"none";
-    $("soundOffIc").style.display=soundOn?"none":"block";
-    $("soundBtn").setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on");
-    if(!soundOn){ clearPending(); }
-    else { audio(); tone(660,660,0.1,"triangle",0.12); }
-  });
-  $("homeBtn").addEventListener("click",function(){ audio(); tone(520,520,0.09,"triangle",0.1); resetToStart(); });
-  $("playBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startGame(); });
-  $("againBtn").addEventListener("click",function(){ audio(); tone(740,740,0.1,"triangle",0.12); startGame(); });
-  $("winHomeBtn").addEventListener("click",function(){ audio(); resetToStart(); });
+  window.addEventListener("pagehide",function(){ dead=true; clearIdle(); clearVoice(true); });
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
-  function teardown(){ dead=true; flipSeq++; clearPending(); hootTalking(false); }
-  window.addEventListener("pagehide",teardown);
-  document.addEventListener("visibilitychange",function(){ if(document.hidden) clearPending(); });
+  /* ================= INIT ================= */
+  startRound();
+  enqueue("hoot-game-hello.mp3");
 
-  updateHUD();
-  hootFig.classList.add("wave");
-  setTimeout(function(){ hootFig.classList.remove("wave"); },2900);
-
-  /* Probe/debug handle: read-only snapshot of the round state. */
   window.__memoryGame={
     snapshot:function(){
-      return { state:state, pairs:pairs, stars:stars, lock:lock,
-        upCards:grid.querySelectorAll(".card.up").length,
-        matchedCards:grid.querySelectorAll(".card.matched").length,
-        totalCards:grid.querySelectorAll(".card").length,
-        winShown:!winOverlay.hidden, voicePlaying:vPlaying,
-        voiceQueue:vQueue.map(function(q){ return q.file; }) };
+      return {
+        state:state, pairGoal:pairGoal, matched:matchedCount, stars:stars,
+        cardCount:cards.length, winShown:!winOverlay.hidden
+      };
     }
   };
 })();
 </script>
-
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e79">
-<script src="js/hoot-game-tail.js?v=llprev3e79"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e139">
+<script src="js/hoot-game-tail.js?v=llprev3e139"></script>
 </body>
 </html>
