@@ -20,7 +20,11 @@ var HW_THUMBS = {
   band: "assets/thumbs_v2/thumb_band.jpg?v=llprev3e142",
   friends: "assets/thumbs_v2/thumb_friends.jpg?v=llprev3e143",
   find: "assets/thumbs_v2/thumb_find.jpg?v=llprev3e143",
-  dance: "assets/thumbs_v2/thumb_dance.jpg?v=llprev3e143"
+  dance: "assets/thumbs_v2/thumb_dance.jpg?v=llprev3e143",
+  treehouse: "assets/thumbs_v2/thumb_treehouse.jpg?v=llprev3e146",
+  train: "assets/thumbs_v2/thumb_train.jpg?v=llprev3e146",
+  dino: "assets/thumbs_v2/thumb_dino.jpg?v=llprev3e146",
+  storymaker: "assets/thumbs_v2/thumb_storymaker.jpg?v=llprev3e146"
 }; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp (-212 KB cold load) */
 /* Hoot's World layout preview 2 — v63 shell routing + data-to-card mapping.
    Does not rewrite Muse game, tutor, or lesson internals. */
@@ -45,6 +49,10 @@ var HW_THUMBS = {
   ];
 
   var GAMES = [
+    { key: "treehouse", title: "My Treehouse Hoot", cat: "Toybox", emo: "🏡", color: "#D97706" },
+    { key: "train", title: "Wooden Train Builder", cat: "Trains", emo: "🚂", color: "#DC2626" },
+    { key: "dino", title: "Dino Dig Museum", cat: "Dinos", emo: "🦕", color: "#16A34A" },
+    { key: "storymaker", title: "Family Storybooks", cat: "Stories", emo: "📖", color: "#7C3AED" },
     { key: "balloon", title: "Balloon ABC Pop", cat: "Letters", emo: "🎈", color: "#E0457B" },
     { key: "dress", title: "Dress Up Friends", cat: "Pretend", emo: "👗", color: "#3A56D4" },
     { key: "real", title: "Town Rescue Patrol", cat: "Rescue", emo: "🚒", color: "#EF4444" },
@@ -939,8 +947,30 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   document.addEventListener("visibilitychange", function () { if (document.hidden) stopOnBackground(); });
   window.addEventListener("pagehide", function () { stopAllVoices(); });
 
+  /* v146: Hoot's Living Island view toggle (persisted in localStorage hw.homeview.v1, defaults to "island" for Zane & Riley ONLY; never touches Kaitlyn) */
+  var HOME_VIEW_KEY = "hw.homeview.v1";
+  function getHomeView() {
+    try { return localStorage.getItem(HOME_VIEW_KEY) === "classic" ? "classic" : "island"; }
+    catch (e) { return "island"; }
+  }
+  function setHomeView(v) {
+    var next = v === "classic" ? "classic" : "island";
+    try { localStorage.setItem(HOME_VIEW_KEY, next); } catch (e) {}
+    if (window.HootIsland && window.HootIsland.closeModal) {
+      try { window.HootIsland.closeModal(); } catch (e) {}
+    }
+    render();
+  }
+  function isIslandHomeActive() {
+    return !!(state.profile && !isTeen() && isKidBand() && state.tab === "today" && window.HootIsland && getHomeView() === "island");
+  }
+
   function renderKidHome() {
-    var p = state.profile, plan = currentPlan();
+    var p = state.profile;
+    if (!isTeen() && window.HootIsland && getHomeView() === "island") {
+      return '<div class="ll-kidbar" id="ll-kidbar">' + kidbarHtml() + '</div>' + window.HootIsland.renderHtml(p);
+    }
+    var plan = currentPlan();
     rememberDay(plan);
     var nextIdx = -1;
     plan.forEach(function (it, i) { if (nextIdx < 0 && isRequiredStop(it) && !stoneDone(it)) nextIdx = i; });
@@ -973,6 +1003,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
       : '<div class="kh-alldone" role="status"><span aria-hidden="true">🎉</span><b>All done for today!</b></div>';
     var lockBtn = function (emo, label, color) { return '<button type="button" class="kh-big locked" data-kh="locked" style="--b:' + color + '" aria-label="' + label + ' opens when today\'s path is done"><span aria-hidden="true">' + emo + '</span><b>' + label + '</b><i class="kh-lock" aria-hidden="true">🔒</i></button>'; };
     var html = '<div class="ll-kidbar" id="ll-kidbar">' + kidbarHtml() + "</div>" +
+      (window.HootIsland && !isTeen() ? '<div class="kh-island-bar"><button type="button" class="kh-island-btn" data-home-view="island"><span aria-hidden="true">🏝️</span><b>Island View</b></button></div>' : "") +
       '<section class="kh-hero' + (magic ? " sky-" + sky + " season-" + season : "") + '">' + (magic ? decorHtml(season) + (sky === "night" ? '<span class="kh-moon" aria-hidden="true">🌙</span>' : "") + (bday ? '<span class="kh-balloons" aria-hidden="true">🎈🎈</span>' : "") : "") +
       '<button type="button" class="kh-hoot' + (sky === "night" && magic ? " sleepy" : "") + '" data-kh="hoot" aria-label="Say hello to Hoot">' + brownHootFace() + (magic ? (bday ? PARTY_HAT : sky === "night" ? NIGHT_CAP : "") : "") + "</button>" +
       '<p class="kh-bubble">' + esc(line) + "</p>" + (bye ? HG.songBtn({ key: "song-goodbye", title: "Goodbye song", emo: "👋" }, "pg-songbtn kh-bye") : "") + "</section>" +
@@ -1472,9 +1503,10 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
   }
 
 
-  /* v145: Flickable Storybook Game Library (Hero Snap Carousel + Horizontal Shelves + Grid Toggle) */
+  /* v146: Flickable Storybook Game Library (Hero Snap Carousel + Horizontal Shelves + Grid Toggle) */
   var GAME_SHELVES = [
-    { id:"worlds",  emo:"🌟", label:"Big Worlds",        keys:["pizza","rocket","twinkle","real","splash","shapes"] },
+    { id:"toybox",  emo:"🧸", label:"Toybox & Worlds",   keys:["treehouse","train","dino","storymaker","pizza","rocket"] },
+    { id:"worlds",  emo:"🌟", label:"Big Adventures",    keys:["twinkle","real","splash","shapes"] },
     { id:"learn",   emo:"🔤", label:"ABC, 123 & Puzzles",keys:["balloon","fishing","bubblepop","memory","find"] },
     { id:"create",  emo:"🎨", label:"Music, Art & Magic",keys:["paint","piano","band","dance","dress","magic"] },
     { id:"animals", emo:"🐾", label:"Animals & Friends", keys:["feed","animals","peek","friends"] }
@@ -2723,13 +2755,17 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     var g = state.gameOpen; state.gameOpen = null;
     if (g && state.profile) logAdd(state.profile.id, { type: "game", title: g.title, ms: Date.now() - g.t0 });
   }
-  document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("#game-close")) { logGameClose(); setTimeout(finishPendingStone, 60); } }, true);
+  document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("#game-close")) { logGameClose(); setTimeout(finishPendingStone, 60); setTimeout(function () { try { window.dispatchEvent(new Event("focus")); } catch (x) {} }, 80); } }, true);
   document.addEventListener("hoot-lesson-done", function () { if (state.tab === "today" && !document.body.classList.contains("ll-overlay-open")) render(); });
 
   function render() {
     try { if (window.HootGames && !document.querySelector(".pg-singing.kh-bye")) window.HootGames.stopSing(); } catch (e) {}
     var app = $("#ll-app");
     if (!app || !state.profile) return;
+    var islandOn = isIslandHomeActive();
+    if (!islandOn && window.HootIsland && window.HootIsland.closeModal) {
+      try { window.HootIsland.closeModal(); } catch (e) {}
+    }
     var html = "";
     if (state.tab === "today") html = renderToday();
     else if (state.tab === "games") html = renderGames();
@@ -2742,11 +2778,28 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     app.innerHTML = html;
     applyBand();
     document.body.classList.remove("ll-tab-days", "ll-tab-grownups", "ll-tab-learn");
+    document.body.classList.toggle("ll-island-home", islandOn);
     if (state.tab === "days") document.body.classList.add("ll-tab-days");
     if (state.tab === "grownups") document.body.classList.add("ll-tab-grownups");
     if (state.tab === "learn") document.body.classList.add("ll-tab-learn");
     $$("#ll-tabs button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === state.tab); });
     bumpStars();
+    if (islandOn && window.HootIsland && window.HootIsland.mount) {
+      window.HootIsland.mount(app, {
+        openGame: function (key) { openGame(key); },
+        openTab: function (tabId) {
+          var allow = tabId === "games" ? (freeMode(state.profile.id) !== "off") : true;
+          setTab(tabId, allow);
+        },
+        openStickers: function () {
+          nextView = { kind: "stickers", title: "My stickers" };
+          openShellOverlay("My stickers", stickerBook());
+        },
+        openStory: function () { openStory(); },
+        switchToClassic: function () { setHomeView("classic"); },
+        profile: state.profile
+      });
+    }
     if (state.tab === "games") initGameCarousel(app);
     afterRender();
   }
@@ -2801,9 +2854,9 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
   }
 
-  function setTab(id) {
+  function setTab(id, force) {
     closeOverlay();
-    if ((id === "games" || id === "learn") && !playUnlocked()) id = "today"; /* 3e38: path first */
+    if (!force && (id === "games" || id === "learn") && !playUnlocked()) id = "today"; /* 3e38: path first */
     state.tab = id;
     render();
     window.scrollTo(0, 0);
@@ -3775,6 +3828,8 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
     }
     var kid = t.getAttribute("data-kid");
     if (kid) { setProfile(kid); return; }
+    var hv = t.getAttribute("data-home-view");
+    if (hv && !isTeen()) { setHomeView(hv); return; }
     if (t.getAttribute("data-kh") === "hoot") {
       var nk2 = nameKeyOf(state.profile), pool = nk2 && isLittleBand() ? ["hi-" + nk2, "hoot-giggle", "hoot-welcome", "hoot-giggle"] : ["hoot-welcome"];
       sayClip(pool[Math.floor(Math.random() * pool.length)]); hootTrick(t); return;

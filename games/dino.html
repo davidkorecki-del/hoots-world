@@ -1,0 +1,3146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>
+window.__HOOT_GAME_KEY__="dino";
+window.__HOOT_SELF_COACH__=true;
+</script>
+<script src="js/hoot-game-head.js?v=llprev3e146"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>Dino Dig &amp; Fossil Museum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --sky-top:#47b8ff;
+    --sky-mid:#9de0ff;
+    --sky-warm:#ffe7b3;
+    --mesa-far:#e39b66;
+    --mesa-mid:#cf7542;
+    --mesa-near:#b55b2c;
+    --sand-hi:#f6d496;
+    --sand-mid:#e2b267;
+    --sand-deep:#c4863c;
+    --wood-hi:#a96a38;
+    --wood-deep:#6b3b18;
+    --cream:#fffdf6;
+    --bone:#fff9ea;
+    --bone-stroke:#6c4623;
+    --gold:#ffd84d;
+    --gold-deep:#c98200;
+    --ink:#3d2410;
+    --trex:#22c55e;
+    --brachio:#38bdf8;
+    --tricera:#fb923c;
+    --stego:#a855f7;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
+  html,body{
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+  }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#57c2ff;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* ================= FULLSCREEN WORLD STAGE ================= */
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, #43b5ff 0%, #8cdbff 38%, #ffe3ad 68%, #f1b672 100%);
+    transition:background .65s ease;
+  }
+  #stage[data-phase="assemble"],
+  #stage[data-phase="revived"]{
+    background:linear-gradient(180deg, #fff8e4 0%, #ffefc7 48%, #f2ddb1 76%, #dfc08c 100%);
+  }
+
+  /* ================= BACKDROPS (DESERT CANYON vs SUNNY MUSEUM) ================= */
+  .backdrop{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    transition:opacity .55s ease, transform .55s ease;
+  }
+  #desertBg{ opacity:1; }
+  #museumBg{ opacity:0; }
+  #stage[data-phase="assemble"] #desertBg,
+  #stage[data-phase="revived"] #desertBg{
+    opacity:0;
+  }
+  #stage[data-phase="assemble"] #museumBg,
+  #stage[data-phase="revived"] #museumBg{
+    opacity:1;
+  }
+  .backdrop svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  .cloud-drift{
+    animation:cloudDrift 28s linear infinite;
+  }
+  .cloud-drift-slow{
+    animation:cloudDrift 42s linear infinite reverse;
+  }
+  @keyframes cloudDrift{
+    0%{ transform:translateX(-20px); }
+    50%{ transform:translateX(28px); }
+    100%{ transform:translateX(-20px); }
+  }
+  .sun-spin{
+    transform-origin:1090px 92px;
+    animation:sunSpin 30s linear infinite;
+  }
+  @keyframes sunSpin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+
+  /* ================= TOP HUD (4 BIG DINO PILLS + STARS + SOUND) ================= */
+  #hud{
+    position:relative;
+    z-index:20;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left));
+    pointer-events:none;
+  }
+  #dinoBar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  .dino-pill{
+    position:relative;
+    min-width:66px;
+    min-height:66px;
+    width:68px;
+    height:68px;
+    padding:5px;
+    border-radius:22px;
+    border:4px solid #fffdf5;
+    background:var(--pill-bg, #22c55e);
+    box-shadow:0 5px 0 var(--pill-shadow, #15803d), 0 8px 18px rgba(61,36,16,.24);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1), box-shadow .16s, filter .16s;
+  }
+  .dino-pill svg{
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.18));
+  }
+  .dino-pill:active{
+    transform:translateY(3px) scale(.93);
+  }
+  .dino-pill.active{
+    transform:translateY(-3px) scale(1.08);
+    border-color:#ffd84d;
+    box-shadow:0 6px 0 var(--pill-shadow, #15803d), 0 0 0 4px rgba(255,216,77,.62), 0 10px 22px rgba(61,36,16,.28);
+  }
+  .dino-pill .crown-badge{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #fff3a1 0%, #ffb703 100%);
+    border:2.5px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.28);
+    display:grid;
+    place-items:center;
+    font-size:14px;
+    line-height:1;
+    opacity:0;
+    transform:scale(.3);
+    transition:opacity .28s, transform .38s cubic-bezier(.34,1.9,.5,1);
+    pointer-events:none;
+  }
+  .dino-pill.revived .crown-badge{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  .hud-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  #starPill{
+    min-height:64px;
+    height:64px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #fff6d6 0%, #ffe299 100%);
+    box-shadow:0 5px 0 #c98200, 0 8px 18px rgba(61,36,16,.2);
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    color:var(--ink);
+  }
+  #starPill.bump{ animation:starBump .46s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBump{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.18) rotate(-4deg); }
+    100%{ transform:scale(1); }
+  }
+  .star-glyph{
+    font-size:28px;
+    line-height:1;
+    color:#f59e0b;
+    filter:drop-shadow(0 2px 0 rgba(255,255,255,.85));
+  }
+  #starNum{
+    font-size:26px;
+    font-weight:700;
+    line-height:1;
+    min-width:20px;
+    text-align:center;
+  }
+  .hud-trophies{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    margin-left:2px;
+  }
+  .mini-t{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    border:2px solid #c98200;
+    background:rgba(255,255,255,.65);
+    transition:transform .3s cubic-bezier(.34,1.8,.5,1), background .25s;
+  }
+  .mini-t.lit{
+    background:var(--t-col, #22c55e);
+    border-color:#fff;
+    box-shadow:0 0 8px var(--t-col, #22c55e);
+    transform:scale(1.2);
+  }
+
+  #soundBtn{
+    min-width:64px;
+    min-height:64px;
+    width:66px;
+    height:66px;
+    border-radius:50%;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #ff9f43 0%, #e66b17 100%);
+    box-shadow:0 5px 0 #9f4308, 0 8px 18px rgba(61,36,16,.24);
+    color:#fff;
+    font-size:28px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+  }
+  #soundBtn:active{ transform:translateY(3px) scale(.93); }
+
+  /* ================= MAIN ARENA ================= */
+  #arena{
+    position:relative;
+    z-index:10;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    max-width:1160px;
+    margin:0 auto;
+    padding:4px clamp(10px, 2.2vw, 24px) 6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2.2vw, 26px);
+  }
+
+  /* Paleontologist Hoot Buddy */
+  #hootWrap{
+    position:relative;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    align-self:flex-end;
+    padding-bottom:6px;
+    z-index:14;
+  }
+  #hootBtn{
+    width:clamp(124px, 16vw, 184px);
+    height:clamp(138px, 17.8vw, 204px);
+    min-width:64px;
+    min-height:64px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    position:relative;
+    filter:drop-shadow(0 10px 14px rgba(61,36,16,.28));
+    transition:transform .2s cubic-bezier(.34,1.65,.5,1);
+    animation:hootIdle 3.2s ease-in-out infinite;
+  }
+  #hootBtn svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+  }
+  #hootBtn.cheer{
+    animation:hootCheer .65s cubic-bezier(.34,1.8,.5,1) 2 !important;
+  }
+  #hootBtn.brushing #hootBrushArm{
+    animation:hootBrushSweep .24s ease-in-out infinite alternate;
+  }
+  @keyframes hootIdle{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-5px) rotate(-1.5deg); }
+  }
+  @keyframes hootCheer{
+    0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
+    40%{ transform:translateY(-22px) scale(1.1) rotate(-6deg); }
+    72%{ transform:translateY(-6px) scale(1.03) rotate(5deg); }
+  }
+  @keyframes hootBrushSweep{
+    from{ transform:rotate(-16deg) translate(0, 0); }
+    to{ transform:rotate(14deg) translate(6px, -4px); }
+  }
+  #hootBrushArm{
+    transform-origin:165px 150px;
+  }
+
+  /* Play Stage Container (holds Dig Site OR Museum Pedestal) */
+  #playStage{
+    position:relative;
+    flex:1 1 auto;
+    min-width:0;
+    height:100%;
+    max-width:780px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ================= PHASE 1: TACTILE SAND-SCRAPING DIG PIT ================= */
+  #digScene{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #digPitFrame{
+    position:relative;
+    width:min(100%, 720px, calc((100dvh - 196px) * 1.428));
+    max-width:100%;
+    max-height:100%;
+    aspect-ratio:600 / 420;
+    border-radius:30px;
+    padding:12px;
+    background:linear-gradient(180deg, #b8743c 0%, #8e5224 55%, #6d3a15 100%);
+    border:5px solid #ffdca0;
+    box-shadow:
+      0 10px 0 #582d0e,
+      0 20px 36px rgba(61,36,16,.36),
+      inset 0 3px 6px rgba(255,244,210,.55);
+  }
+  /* Wooden corner stakes */
+  .pit-stake{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 32%, #f4d39c 0%, #b5733b 65%, #75421a 100%);
+    border:2.5px solid #592e0f;
+    box-shadow:0 3px 5px rgba(0,0,0,.3);
+    z-index:6;
+    pointer-events:none;
+  }
+  .pit-stake.tl{ top:-7px; left:-7px; }
+  .pit-stake.tr{ top:-7px; right:-7px; }
+  .pit-stake.bl{ bottom:-7px; left:-7px; }
+  .pit-stake.br{ bottom:-7px; right:-7px; }
+
+  #digPitInner{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:20px;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse 80% 70% at 50% 50%, #e7bf82 0%, #c89151 64%, #9c662e 100%);
+    box-shadow:inset 0 8px 22px rgba(68,36,12,.55);
+    touch-action:none;
+    cursor:grab;
+  }
+  #digPitInner:active{ cursor:grabbing; }
+
+  #bonesUnderlay{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    z-index:1;
+  }
+  .buried-bone{
+    transition:opacity .35s ease, transform .45s cubic-bezier(.34,1.8,.5,1);
+    transform-box:fill-box;
+    transform-origin:center;
+  }
+  .buried-bone.found{
+    opacity:0;
+    transform:scale(1.38);
+  }
+  .bone-halo{
+    animation:haloPulse 2.2s ease-in-out infinite alternate;
+  }
+  @keyframes haloPulse{
+    from{ opacity:.45; }
+    to{ opacity:.95; }
+  }
+
+  #sandCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index:2;
+    touch-action:none;
+  }
+  #dustCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index:3;
+    pointer-events:none;
+  }
+
+  /* Gentle idle rubbing cue over buried bone */
+  #digHint{
+    position:absolute;
+    z-index:5;
+    pointer-events:none;
+    font-size:44px;
+    line-height:1;
+    filter:drop-shadow(0 5px 8px rgba(61,36,16,.45));
+    opacity:0;
+    transition:opacity .3s ease;
+    transform:translate(-50%, -50%);
+  }
+  #digHint.show{
+    opacity:1;
+    animation:scrubHint 1.5s ease-in-out infinite;
+  }
+  @keyframes scrubHint{
+    0%,100%{ transform:translate(-68%, -50%) rotate(-12deg) scale(1); }
+    50%{ transform:translate(-26%, -40%) rotate(14deg) scale(1.1); }
+  }
+
+  /* ================= PHASE 2 & 3: SUNNY FOSSIL MUSEUM PEDESTAL ================= */
+  #museumScene{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    padding-bottom:4px;
+  }
+
+  #pedestalStage{
+    position:relative;
+    width:min(100%, 640px);
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+  }
+
+  /* Rainbow magic revival aura behind skeleton / revived dino */
+  #rainbowAura{
+    position:absolute;
+    left:50%;
+    top:44%;
+    width:min(88%, 470px);
+    aspect-ratio:1/1;
+    transform:translate(-50%, -50%) scale(.2);
+    border-radius:50%;
+    background:conic-gradient(
+      from 0deg,
+      rgba(255,95,109,.78),
+      rgba(255,195,113,.78),
+      rgba(255,240,102,.78),
+      rgba(74,222,128,.78),
+      rgba(56,189,248,.78),
+      rgba(168,85,247,.78),
+      rgba(244,114,182,.78),
+      rgba(255,95,109,.78)
+    );
+    filter:blur(16px);
+    opacity:0;
+    pointer-events:none;
+    z-index:1;
+  }
+  #rainbowAura.active{
+    animation:rainbowBurst 1.4s cubic-bezier(.2,.9,.3,1) forwards, rainbowSpin 7s linear infinite;
+  }
+  @keyframes rainbowBurst{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(.2); }
+    35%{ opacity:.92; transform:translate(-50%,-50%) scale(1.14); }
+    100%{ opacity:.42; transform:translate(-50%,-50%) scale(.96); }
+  }
+  @keyframes rainbowSpin{
+    from{ filter:blur(16px) hue-rotate(0deg); }
+    to{ filter:blur(16px) hue-rotate(360deg); }
+  }
+
+  /* Skeleton Assembly SVG Canvas */
+  #skeletonWrap{
+    position:relative;
+    z-index:4;
+    width:min(100%, 540px);
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    margin-bottom:-8px;
+  }
+  #skeletonSvg{
+    width:100%;
+    height:auto;
+    max-height:100%;
+    aspect-ratio:540 / 380;
+    display:block;
+    overflow:visible;
+  }
+  .skel-slot{
+    cursor:pointer;
+    transition:filter .2s ease;
+  }
+  .skel-slot .slot-ghost{
+    opacity:.34;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .skel-slot.suggest .slot-ghost{
+    opacity:.72;
+    animation:slotGlow 1.15s ease-in-out infinite alternate;
+  }
+  .skel-slot.hover-hot .slot-ghost{
+    opacity:.98;
+    filter:drop-shadow(0 0 14px #ffd84d);
+  }
+  @keyframes slotGlow{
+    from{ filter:drop-shadow(0 0 4px rgba(255,212,60,.5)); }
+    to{ filter:drop-shadow(0 0 16px rgba(255,196,24,.98)); }
+  }
+  .skel-slot .slot-solid{
+    opacity:0;
+    transform-box:fill-box;
+    transform-origin:center;
+    transform:scale(.4);
+    pointer-events:none;
+  }
+  .skel-slot.placed .slot-ghost{
+    opacity:0;
+  }
+  .skel-slot.placed .slot-solid{
+    opacity:1;
+    transform:scale(1);
+    animation:boneSnapPop .5s cubic-bezier(.34,1.85,.5,1);
+  }
+  @keyframes boneSnapPop{
+    0%{ transform:scale(.45) rotate(-10deg); opacity:.3; }
+    60%{ transform:scale(1.16) rotate(4deg); opacity:1; }
+    100%{ transform:scale(1) rotate(0deg); opacity:1; }
+  }
+
+  /* Living Revived Cartoon Dinosaur */
+  #livingDinoBtn{
+    position:relative;
+    z-index:5;
+    width:min(94%, 470px);
+    flex:1 1 auto;
+    min-height:0;
+    max-height:390px;
+    border:none;
+    background:none;
+    padding:0;
+    margin-bottom:-12px;
+    cursor:pointer;
+    outline:none;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    filter:drop-shadow(0 12px 18px rgba(61,36,16,.26));
+  }
+  #livingDinoBtn svg{
+    width:100%;
+    height:auto;
+    max-height:100%;
+    aspect-ratio:360 / 280;
+    display:block;
+    overflow:visible;
+  }
+  #livingDinoBtn.revive-pop{
+    animation:dinoRevivePop .72s cubic-bezier(.34,1.75,.5,1);
+  }
+  #livingDinoBtn.stomping{
+    animation:dinoStomp .78s cubic-bezier(.34,1.65,.5,1) 2;
+  }
+  @keyframes dinoRevivePop{
+    0%{ transform:scale(.22) translateY(45px) rotate(-10deg); opacity:0; }
+    62%{ transform:scale(1.12) translateY(-14px) rotate(4deg); opacity:1; }
+    100%{ transform:scale(1) translateY(0) rotate(0deg); opacity:1; }
+  }
+  @keyframes dinoStomp{
+    0%,100%{ transform:translateX(0) translateY(0) rotate(0deg); }
+    25%{ transform:translateX(-16px) translateY(-18px) rotate(-5deg) scale(1.05); }
+    50%{ transform:translateX(0) translateY(2px) rotate(0deg) scale(1.02,.95); }
+    75%{ transform:translateX(16px) translateY(-16px) rotate(5deg) scale(1.05); }
+  }
+
+  /* Roar speech wave badge (pure visual symbol, zero text wall) */
+  #roarBurst{
+    position:absolute;
+    top:8%;
+    right:6%;
+    z-index:8;
+    pointer-events:none;
+    opacity:0;
+    transform:scale(.4);
+    font-size:42px;
+    line-height:1;
+    filter:drop-shadow(0 4px 10px rgba(255,140,0,.55));
+  }
+  #roarBurst.show{
+    animation:roarWave 1.1s cubic-bezier(.25,1.5,.5,1);
+  }
+  @keyframes roarWave{
+    0%{ opacity:0; transform:scale(.35) rotate(-12deg); }
+    25%{ opacity:1; transform:scale(1.22) rotate(8deg); }
+    70%{ opacity:1; transform:scale(1.05) rotate(-4deg); }
+    100%{ opacity:0; transform:scale(1.3) translateY(-18px) rotate(10deg); }
+  }
+
+  /* Stone Museum Pedestal */
+  #stonePedestal{
+    position:relative;
+    z-index:3;
+    flex:0 0 auto;
+    width:min(94%, 560px);
+    height:clamp(54px, 8.6vh, 78px);
+    border-radius:20px 20px 10px 10px;
+    background:linear-gradient(180deg, #fffaf0 0%, #ebd8b4 30%, #cfa972 100%);
+    border:4px solid #fffdf8;
+    box-shadow:
+      0 8px 0 #946b38,
+      0 16px 26px rgba(61,36,16,.28),
+      inset 0 4px 8px rgba(255,255,255,.8);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #pedestalPlaque{
+    min-width:110px;
+    height:34px;
+    padding:0 16px;
+    border-radius:12px;
+    background:linear-gradient(180deg, #ffe784 0%, #eab308 100%);
+    border:3px solid #fff9d6;
+    box-shadow:0 3px 0 #a16207, inset 0 1px 3px rgba(255,255,255,.75);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:20px;
+    font-weight:700;
+    color:#5c3405;
+  }
+  .plaque-dot{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    background:rgba(92,52,5,.22);
+    transition:background .25s, transform .3s cubic-bezier(.34,1.9,.5,1);
+  }
+  .plaque-dot.on{
+    background:#16a34a;
+    box-shadow:0 0 8px #4ade80;
+    transform:scale(1.22);
+  }
+
+  /* Big glowing Next Dino / Roar action button in Revived phase */
+  #reviveActions{
+    position:absolute;
+    right:0;
+    bottom:clamp(62px, 10vh, 92px);
+    z-index:12;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-end;
+  }
+  .action-fab{
+    min-width:74px;
+    min-height:74px;
+    padding:0 18px;
+    border-radius:999px;
+    border:4px solid #fffdf5;
+    font-family:"Fredoka",sans-serif;
+    font-size:32px;
+    font-weight:700;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1);
+  }
+  .action-fab:active{ transform:translateY(3px) scale(.92); }
+  #roarFab{
+    background:linear-gradient(180deg, #ffd84d 0%, #f59e0b 100%);
+    color:#542800;
+    box-shadow:0 6px 0 #b45309, 0 10px 20px rgba(61,36,16,.28);
+  }
+  #nextDinoBtn{
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff;
+    box-shadow:0 6px 0 #14532d, 0 0 22px rgba(74,222,128,.65), 0 10px 22px rgba(61,36,16,.3);
+    animation:nextPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes nextPulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.07); }
+  }
+
+  /* ================= BOTTOM MUSEUM BONE TRAY & TROPHY SHELF ================= */
+  #bottomDock{
+    position:relative;
+    z-index:18;
+    flex:0 0 auto;
+    height:calc(92px + env(safe-area-inset-bottom));
+    padding:8px max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background:linear-gradient(180deg, #a86432 0%, #7d431b 32%, #592d0e 100%);
+    border-top:5px solid #ffd84d;
+    box-shadow:inset 0 3px 0 rgba(255,248,200,.72), 0 -6px 20px rgba(45,22,6,.38);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #boneTray{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(8px, 2vw, 18px);
+    width:100%;
+    max-width:620px;
+  }
+  .bone-tile{
+    position:relative;
+    flex:0 0 auto;
+    width:74px;
+    height:74px;
+    min-width:66px;
+    min-height:66px;
+    padding:6px;
+    border-radius:20px;
+    border:4px dashed rgba(255,232,160,.45);
+    background:rgba(45,20,6,.36);
+    display:grid;
+    place-items:center;
+    cursor:default;
+    outline:none;
+    touch-action:none;
+    transition:transform .18s cubic-bezier(.34,1.7,.5,1), background .25s, border-color .25s, box-shadow .25s;
+  }
+  .bone-tile svg{
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    opacity:.26;
+    filter:grayscale(1) brightness(1.4);
+    transition:opacity .28s, filter .28s, transform .28s;
+  }
+  .bone-tile.found{
+    border-style:solid;
+    border-color:#ffd84d;
+    background:radial-gradient(circle at 35% 30%, #fffef8 0%, #ffefc2 100%);
+    box-shadow:0 4px 0 #b87300, 0 6px 14px rgba(32,14,4,.42);
+    animation:tileFoundPop .48s cubic-bezier(.34,1.85,.5,1);
+  }
+  .bone-tile.found svg{
+    opacity:1;
+    filter:drop-shadow(0 2px 3px rgba(92,52,16,.24));
+  }
+  #stage[data-phase="assemble"] .bone-tile.found:not(.placed){
+    cursor:grab;
+    box-shadow:0 5px 0 #b87300, 0 0 18px rgba(255,216,77,.82);
+  }
+  #stage[data-phase="assemble"] .bone-tile.found:not(.placed):active{
+    transform:scale(.92);
+    cursor:grabbing;
+  }
+  .bone-tile.hint-next{
+    animation:tileHintBob 1.1s ease-in-out infinite;
+  }
+  @keyframes tileHintBob{
+    0%,100%{ transform:translateY(0) scale(1); }
+    50%{ transform:translateY(-6px) scale(1.08); }
+  }
+  @keyframes tileFoundPop{
+    0%{ transform:scale(.45) translateY(-20px); }
+    65%{ transform:scale(1.16) translateY(-3px); }
+    100%{ transform:scale(1) translateY(0); }
+  }
+  .bone-tile.placed{
+    border-color:#4ade80;
+    background:linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%);
+    box-shadow:0 3px 0 #15803d;
+    opacity:.88;
+    cursor:default;
+  }
+  .bone-tile.placed svg{
+    opacity:.45;
+  }
+  .bone-check{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-size:32px;
+    color:#15803d;
+    font-weight:900;
+    opacity:0;
+    transform:scale(.3);
+    pointer-events:none;
+    transition:opacity .25s, transform .35s cubic-bezier(.34,1.9,.5,1);
+  }
+  .bone-tile.placed .bone-check{
+    opacity:1;
+    transform:scale(1);
+  }
+  .tile-hand{
+    position:absolute;
+    top:-26px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:30px;
+    line-height:1;
+    pointer-events:none;
+    display:none;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.38));
+    animation:handBounce .85s ease-in-out infinite;
+  }
+  .bone-tile.show-hand .tile-hand{ display:block; }
+  @keyframes handBounce{
+    0%,100%{ transform:translate(-50%, 0); }
+    50%{ transform:translate(-50%, -9px); }
+  }
+
+  /* Golden Museum Trophy Shelf (shown during Revived celebration!) */
+  #trophyShelf{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2.4vw, 22px);
+    width:100%;
+    max-width:620px;
+  }
+  .trophy-cup{
+    position:relative;
+    flex:0 0 auto;
+    width:74px;
+    height:74px;
+    min-width:66px;
+    min-height:66px;
+    padding:6px;
+    border-radius:20px;
+    border:4px solid rgba(255,224,130,.38);
+    background:rgba(45,20,6,.42);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1);
+  }
+  .trophy-cup:active{ transform:scale(.92); }
+  .trophy-cup svg{
+    width:100%;
+    height:100%;
+    display:block;
+    opacity:.28;
+    filter:grayscale(1) brightness(1.3);
+  }
+  .trophy-cup.earned{
+    border-color:#ffd84d;
+    background:radial-gradient(circle at 38% 28%, #fffbe0 0%, #ffd84d 58%, #e59400 100%);
+    box-shadow:0 4px 0 #9c5b00, 0 0 18px rgba(255,216,77,.78);
+  }
+  .trophy-cup.earned svg{
+    opacity:1;
+    filter:drop-shadow(0 2px 3px rgba(82,42,4,.35));
+  }
+  .trophy-cup.just-won{
+    animation:trophyJump .65s cubic-bezier(.34,1.9,.5,1) 2;
+  }
+  @keyframes trophyJump{
+    0%,100%{ transform:scale(1) rotate(0deg); }
+    45%{ transform:scale(1.22) translateY(-10px) rotate(-6deg); }
+  }
+  .trophy-star{
+    position:absolute;
+    top:-8px;
+    right:-6px;
+    font-size:20px;
+    line-height:1;
+    opacity:0;
+    pointer-events:none;
+  }
+  .trophy-cup.earned .trophy-star{ opacity:1; }
+
+  /* ================= DRAGGED BONE GHOST & FLYING FX LAYER ================= */
+  #fxLayer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:35;
+    overflow:hidden;
+  }
+  #dragGhost{
+    position:fixed;
+    left:0;
+    top:0;
+    width:118px;
+    height:118px;
+    margin:-59px 0 0 -59px;
+    pointer-events:none;
+    z-index:45;
+    filter:drop-shadow(0 12px 16px rgba(61,36,16,.38)) drop-shadow(0 0 14px rgba(255,216,77,.85));
+    transform:scale(1.12);
+  }
+  #dragGhost svg{ width:100%; height:100%; display:block; }
+
+  .fly-bone{
+    position:fixed;
+    width:104px;
+    height:104px;
+    margin:-52px 0 0 -52px;
+    pointer-events:none;
+    z-index:42;
+    filter:drop-shadow(0 0 14px rgba(255,216,77,.95));
+  }
+  .fly-bone svg{ width:100%; height:100%; display:block; }
+
+  .fx-spark{
+    position:absolute;
+    font-size:26px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 0 8px rgba(255,220,90,.95));
+  }
+  .fx-conf{
+    position:absolute;
+    width:13px;
+    height:13px;
+    border-radius:4px;
+    pointer-events:none;
+  }
+
+  /* ================= RESPONSIVE: iPHONE PORTRAIT (390x844) ================= */
+  @media (max-width:640px){
+    #hud{
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:6px;
+      padding:max(10px, env(safe-area-inset-top)) 8px 2px;
+    }
+    #dinoBar{
+      gap:6px;
+    }
+    .dino-pill{
+      min-width:64px;
+      min-height:64px;
+      width:64px;
+      height:64px;
+      border-radius:18px;
+      padding:4px;
+    }
+    #soundBtn{
+      min-width:64px;
+      min-height:64px;
+      width:64px;
+      height:64px;
+      font-size:25px;
+    }
+    .hud-right{
+      gap:6px;
+    }
+    #starPill{
+      order:3;
+      min-height:40px;
+      height:40px;
+      padding:0 12px 0 9px;
+      border-width:3px;
+      box-shadow:0 3px 0 #c98200;
+    }
+    .star-glyph{ font-size:21px; }
+    #starNum{ font-size:20px; }
+
+    #arena{
+      flex-direction:column;
+      justify-content:flex-end;
+      gap:2px;
+      padding:2px 10px 10px;
+    }
+    #hootWrap{
+      align-self:center;
+      padding-bottom:0;
+      margin-bottom:-12px;
+    }
+    #hootBtn{
+      width:106px;
+      height:114px;
+    }
+    #playStage{
+      width:100%;
+      flex:0 1 auto;
+      height:auto;
+      min-height:0;
+    }
+    #stage[data-phase="assemble"] #playStage,
+    #stage[data-phase="revived"] #playStage{
+      flex:1 1 auto;
+      height:100%;
+    }
+    #digPitFrame{
+      width:100%;
+      max-width:370px;
+      padding:8px;
+      border-radius:24px;
+    }
+    #digPitInner{ border-radius:16px; }
+
+    #skeletonWrap{
+      width:100%;
+      max-width:360px;
+      margin-bottom:-10px;
+    }
+    #livingDinoBtn{
+      width:96%;
+      max-width:340px;
+      margin-bottom:-12px;
+    }
+    #stonePedestal{
+      width:96%;
+      height:52px;
+    }
+    #reviveActions{
+      position:relative;
+      right:auto;
+      bottom:auto;
+      flex-direction:row;
+      justify-content:center;
+      margin-top:8px;
+      gap:14px;
+    }
+    .action-fab{
+      min-width:68px;
+      min-height:68px;
+      height:68px;
+      padding:0 18px;
+      font-size:28px;
+    }
+
+    #bottomDock{
+      height:calc(86px + env(safe-area-inset-bottom));
+      padding:6px 8px max(6px, env(safe-area-inset-bottom));
+    }
+    .bone-tile, .trophy-cup{
+      width:68px;
+      height:68px;
+      min-width:64px;
+      min-height:64px;
+      border-radius:16px;
+    }
+  }
+
+  /* Compact desktop / iPad landscape height tuning */
+  @media (min-width:641px) and (max-height:790px){
+    #hootBtn{
+      width:clamp(112px, 14vw, 152px);
+      height:clamp(124px, 15.6vw, 168px);
+    }
+    #digPitFrame{
+      width:min(100%, 650px);
+    }
+    #bottomDock{
+      height:calc(88px + env(safe-area-inset-bottom));
+    }
+    .bone-tile, .trophy-cup{
+      width:70px;
+      height:70px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01s !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage" data-phase="dig">
+  <!-- ============ DESERT CANYON BACKDROP (PHASE 1) ============ -->
+  <div id="desertBg" class="backdrop" aria-hidden="true">
+    <svg viewBox="0 0 1280 820" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="desSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3eb2ff"/>
+          <stop offset="48%" stop-color="#9fe2ff"/>
+          <stop offset="82%" stop-color="#ffe7b5"/>
+          <stop offset="100%" stop-color="#f7c883"/>
+        </linearGradient>
+        <linearGradient id="mesaFarG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ebad74"/>
+          <stop offset="100%" stop-color="#d48048"/>
+        </linearGradient>
+        <linearGradient id="mesaNearG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d87a43"/>
+          <stop offset="100%" stop-color="#a84e22"/>
+        </linearGradient>
+        <linearGradient id="desGround" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f2c47d"/>
+          <stop offset="45%" stop-color="#e3a656"/>
+          <stop offset="100%" stop-color="#c47f35"/>
+        </linearGradient>
+      </defs>
+      <rect width="1280" height="820" fill="url(#desSky)"/>
+
+      <!-- Glowing Desert Sun -->
+      <g class="sun-spin">
+        <g stroke="#fff2a6" stroke-width="8" stroke-linecap="round" opacity=".82">
+          <line x1="1090" y1="22" x2="1090" y2="40"/>
+          <line x1="1090" y1="144" x2="1090" y2="162"/>
+          <line x1="1020" y1="92" x2="1038" y2="92"/>
+          <line x1="1142" y1="92" x2="1160" y2="92"/>
+          <line x1="1040" y1="42" x2="1053" y2="55"/>
+          <line x1="1127" y1="129" x2="1140" y2="142"/>
+          <line x1="1140" y1="42" x2="1127" y2="55"/>
+          <line x1="1053" y1="129" x2="1040" y2="142"/>
+        </g>
+      </g>
+      <circle cx="1090" cy="92" r="44" fill="#ffe066" stroke="#fff7c2" stroke-width="6"/>
+
+      <!-- Puffy Desert Clouds -->
+      <g class="cloud-drift" fill="#ffffff" opacity=".88">
+        <ellipse cx="220" cy="118" rx="68" ry="26"/>
+        <circle cx="192" cy="104" r="30"/>
+        <circle cx="236" cy="98" r="36"/>
+        <circle cx="272" cy="110" r="24"/>
+      </g>
+      <g class="cloud-drift-slow" fill="#ffffff" opacity=".78">
+        <ellipse cx="740" cy="96" rx="58" ry="22"/>
+        <circle cx="718" cy="86" r="26"/>
+        <circle cx="758" cy="82" r="30"/>
+      </g>
+
+      <!-- Far Canyon Mesas -->
+      <path d="M0,455 L95,335 L260,335 L330,420 L480,420 L545,355 L725,355 L785,435 L955,435 L1035,320 L1215,320 L1280,415 L1280,580 L0,580 Z" fill="url(#mesaFarG)"/>
+      <!-- Stratified sandstone stripes -->
+      <path d="M90,375 H285 M535,388 H745 M1020,360 H1245" stroke="#f7cf9c" stroke-width="6" stroke-linecap="round" opacity=".45"/>
+
+      <!-- Near Terracotta Canyon Buttes -->
+      <path d="M0,490 L55,405 L185,405 L245,515 L440,515 L970,510 L1065,415 L1215,415 L1280,495 L1280,620 L0,620 Z" fill="url(#mesaNearG)"/>
+
+      <!-- Warm Desert Floor -->
+      <path d="M0,535 Q320,495 640,525 T1280,515 L1280,820 L0,820 Z" fill="url(#desGround)"/>
+      <path d="M0,620 Q390,585 780,618 T1280,600 L1280,820 L0,820 Z" fill="#d99748" opacity=".48"/>
+
+      <!-- Friendly Storybook Cacti -->
+      <g transform="translate(88,430)" stroke="#1e5c2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="18" y="0" width="26" height="106" rx="13" fill="#3da352"/>
+        <path d="M18,52 H6 Q0,52 0,44 V26 Q0,18 8,18 Q16,18 16,26 V40" fill="#3da352"/>
+        <path d="M44,62 H56 Q62,62 62,54 V34 Q62,26 54,26 Q46,26 46,34 V48" fill="#3da352"/>
+        <circle cx="31" cy="3" r="6" fill="#ff7eb6" stroke="#b82568" stroke-width="2.5"/>
+      </g>
+      <g transform="translate(1152,445) scale(.86)" stroke="#1e5c2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="18" y="0" width="26" height="98" rx="13" fill="#3da352"/>
+        <path d="M18,46 H6 Q0,46 0,38 V22 Q0,14 8,14 Q16,14 16,22 V34" fill="#3da352"/>
+        <path d="M44,58 H56 Q62,58 62,50 V32 Q62,24 54,24 Q46,24 46,32 V44" fill="#3da352"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ SUNNY FOSSIL MUSEUM HALL BACKDROP (PHASE 2 & 3) ============ -->
+  <div id="museumBg" class="backdrop" aria-hidden="true">
+    <svg viewBox="0 0 1280 820" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="musWall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fffaf0"/>
+          <stop offset="65%" stop-color="#f6e7c8"/>
+          <stop offset="100%" stop-color="#e5c898"/>
+        </linearGradient>
+        <linearGradient id="musFloor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d9ae74"/>
+          <stop offset="100%" stop-color="#b48046"/>
+        </linearGradient>
+        <linearGradient id="sunBeam" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fff8c4" stop-opacity=".72"/>
+          <stop offset="100%" stop-color="#fff8c4" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect width="1280" height="820" fill="url(#musWall)"/>
+
+      <!-- Arched Skylight Windows -->
+      <g>
+        <path d="M170,380 V180 A110,110 0 0 1 390,180 V380 Z" fill="#bde9ff" stroke="#e2c28d" stroke-width="14"/>
+        <path d="M530,380 V155 A110,110 0 0 1 750,155 V380 Z" fill="#c7eeff" stroke="#e2c28d" stroke-width="14"/>
+        <path d="M890,380 V180 A110,110 0 0 1 1110,180 V380 Z" fill="#bde9ff" stroke="#e2c28d" stroke-width="14"/>
+        <!-- Window mullions -->
+        <g stroke="#e2c28d" stroke-width="8">
+          <line x1="280" y1="70" x2="280" y2="380"/><line x1="170" y1="245" x2="390" y2="245"/>
+          <line x1="640" y1="45" x2="640" y2="380"/><line x1="530" y1="230" x2="750" y2="230"/>
+          <line x1="1000" y1="70" x2="1000" y2="380"/><line x1="890" y1="245" x2="1110" y2="245"/>
+        </g>
+      </g>
+
+      <!-- Warm Skylight Sunbeams -->
+      <polygon points="520,0 760,0 910,640 370,640" fill="url(#sunBeam)"/>
+
+      <!-- Classical Cream Museum Columns -->
+      <g fill="#fdf5e4" stroke="#d5b37c" stroke-width="4">
+        <rect x="44" y="95" width="76" height="470" rx="8"/>
+        <rect x="30" y="74" width="104" height="28" rx="8" fill="#f3dfb6"/>
+        <rect x="1160" y="95" width="76" height="470" rx="8"/>
+        <rect x="1146" y="74" width="104" height="28" rx="8" fill="#f3dfb6"/>
+      </g>
+
+      <!-- Decorative Prehistoric Wall Banners -->
+      <path d="M442,90 H492 V265 L467,242 L442,265 Z" fill="#e86f38" stroke="#ffd84d" stroke-width="4"/>
+      <path d="M788,90 H838 V265 L813,242 L788,265 Z" fill="#2ea86f" stroke="#ffd84d" stroke-width="4"/>
+
+      <!-- Polished Museum Floor -->
+      <rect x="0" y="555" width="1280" height="265" fill="url(#musFloor)"/>
+      <line x1="0" y1="555" x2="1280" y2="555" stroke="#fff4d6" stroke-width="6"/>
+      <!-- Warm tile perspective hints -->
+      <g stroke="#f5d9a8" stroke-width="3" opacity=".32">
+        <line x1="180" y1="555" x2="60" y2="820"/>
+        <line x1="420" y1="555" x2="360" y2="820"/>
+        <line x1="640" y1="555" x2="640" y2="820"/>
+        <line x1="860" y1="555" x2="920" y2="820"/>
+        <line x1="1100" y1="555" x2="1220" y2="820"/>
+      </g>
+
+      <!-- Potted Lush Prehistoric Ferns -->
+      <g transform="translate(86,460)">
+        <path d="M45,55 Q12,18 5,5 Q36,20 52,48 Z" fill="#2f9e44"/>
+        <path d="M54,50 Q42,6 54,-8 Q68,12 62,48 Z" fill="#37b24d"/>
+        <path d="M62,55 Q95,18 106,8 Q82,30 68,54 Z" fill="#2b8a3e"/>
+        <path d="M24,52 H88 L78,108 H34 Z" fill="#c76832" stroke="#7d3b15" stroke-width="4"/>
+        <rect x="18" y="44" width="76" height="14" rx="6" fill="#de7f44" stroke="#7d3b15" stroke-width="4"/>
+      </g>
+      <g transform="translate(1082,460)">
+        <path d="M45,55 Q12,18 5,5 Q36,20 52,48 Z" fill="#2f9e44"/>
+        <path d="M54,50 Q42,6 54,-8 Q68,12 62,48 Z" fill="#37b24d"/>
+        <path d="M62,55 Q95,18 106,8 Q82,30 68,54 Z" fill="#2b8a3e"/>
+        <path d="M24,52 H88 L78,108 H34 Z" fill="#c76832" stroke="#7d3b15" stroke-width="4"/>
+        <rect x="18" y="44" width="76" height="14" rx="6" fill="#de7f44" stroke="#7d3b15" stroke-width="4"/>
+      </g>
+
+      <!-- Red Velvet Museum Stanchion Ropes -->
+      <g>
+        <path d="M250,535 Q335,580 420,535" fill="none" stroke="#c92a49" stroke-width="10" stroke-linecap="round"/>
+        <path d="M860,535 Q945,580 1030,535" fill="none" stroke="#c92a49" stroke-width="10" stroke-linecap="round"/>
+        <g fill="#f5c436" stroke="#9c6800" stroke-width="3">
+          <rect x="244" y="530" width="12" height="72" rx="4"/><circle cx="250" cy="526" r="10"/>
+          <rect x="414" y="530" width="12" height="72" rx="4"/><circle cx="420" cy="526" r="10"/>
+          <rect x="854" y="530" width="12" height="72" rx="4"/><circle cx="860" cy="526" r="10"/>
+          <rect x="1024" y="530" width="12" height="72" rx="4"/><circle cx="1030" cy="526" r="10"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ TOP HUD: 4 BIG VISUAL DINO PILLS + STARS + SOUND ============ -->
+  <header id="hud">
+    <nav id="dinoBar" aria-label="Choose a dinosaur">
+      <button class="dino-pill active" data-dino="trex" type="button" aria-label="T-Rex" aria-pressed="true" style="--pill-bg:linear-gradient(180deg,#4ade80,#16a34a);--pill-shadow:#14532d">
+        <span class="pill-art"></span>
+        <span class="crown-badge" aria-hidden="true">👑</span>
+      </button>
+      <button class="dino-pill" data-dino="brachio" type="button" aria-label="Brachiosaurus" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#7dd3fc,#0284c7);--pill-shadow:#0c4a6e">
+        <span class="pill-art"></span>
+        <span class="crown-badge" aria-hidden="true">👑</span>
+      </button>
+      <button class="dino-pill" data-dino="tricera" type="button" aria-label="Triceratops" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#fdba74,#ea580c);--pill-shadow:#9a3412">
+        <span class="pill-art"></span>
+        <span class="crown-badge" aria-hidden="true">👑</span>
+      </button>
+      <button class="dino-pill" data-dino="stego" type="button" aria-label="Stegosaurus" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#c084fc,#7e22ce);--pill-shadow:#4c1d95">
+        <span class="pill-art"></span>
+        <span class="crown-badge" aria-hidden="true">👑</span>
+      </button>
+    </nav>
+
+    <div class="hud-right">
+      <div id="starPill" aria-label="Stars earned">
+        <span class="star-glyph" aria-hidden="true">★</span>
+        <span id="starNum">0</span>
+        <span class="hud-trophies" aria-hidden="true">
+          <span class="mini-t" data-t="trex" style="--t-col:#22c55e"></span>
+          <span class="mini-t" data-t="brachio" style="--t-col:#38bdf8"></span>
+          <span class="mini-t" data-t="tricera" style="--t-col:#fb923c"></span>
+          <span class="mini-t" data-t="stego" style="--t-col:#a855f7"></span>
+        </span>
+      </div>
+      <button id="soundBtn" type="button" aria-label="Toggle Sound">🔊</button>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ARENA: PALEONTOLOGIST HOOT + DIG PIT / MUSEUM ============ -->
+  <main id="arena">
+    <!-- Paleontologist Hoot with Safari Pith Helmet & Fossil Brush -->
+    <div id="hootWrap">
+      <button id="hootBtn" type="button" aria-label="Paleontologist Hoot">
+        <svg viewBox="0 0 220 242" aria-hidden="true">
+          <defs>
+            <linearGradient id="hootFeather" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c38448"/>
+              <stop offset="100%" stop-color="#8b5528"/>
+            </linearGradient>
+            <linearGradient id="pithHat" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#faecc9"/>
+              <stop offset="65%" stop-color="#e3c68a"/>
+              <stop offset="100%" stop-color="#c5a05f"/>
+            </linearGradient>
+            <linearGradient id="brushWood" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#d98b43"/>
+              <stop offset="100%" stop-color="#8a4b19"/>
+            </linearGradient>
+          </defs>
+          <!-- Ground shadow -->
+          <ellipse cx="106" cy="229" rx="64" ry="10" fill="rgba(61,36,16,.24)"/>
+
+          <!-- Cute orange owl feet -->
+          <g fill="#f59e0b" stroke="#854d0e" stroke-width="3.2" stroke-linejoin="round">
+            <path d="M74,212 L62,226 L75,224 L82,228 L88,214 Z"/>
+            <path d="M138,212 L150,226 L137,224 L130,228 L124,214 Z"/>
+          </g>
+
+          <!-- Chubby Owl Body -->
+          <ellipse cx="106" cy="144" rx="68" ry="74" fill="url(#hootFeather)" stroke="#5b3414" stroke-width="4.5"/>
+
+          <!-- Left Wing (resting on hip) -->
+          <path d="M44,128 Q16,154 32,190 Q52,194 62,166 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+
+          <!-- Cream Feathered Belly -->
+          <ellipse cx="106" cy="166" rx="45" ry="44" fill="#fff4d8"/>
+          <path d="M84,158 Q92,166 100,158 M112,158 Q120,166 128,158 M96,178 Q106,186 116,178" fill="none" stroke="#dfb982" stroke-width="3.5" stroke-linecap="round"/>
+
+          <!-- Red Explorer Bandana -->
+          <path d="M56,126 Q106,144 156,126 L146,144 Q106,162 66,144 Z" fill="#e64937" stroke="#7d1f16" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M106,146 L94,166 L118,166 Z" fill="#e64937" stroke="#7d1f16" stroke-width="3.2" stroke-linejoin="round"/>
+          <circle cx="106" cy="146" r="6" fill="#ffd84d" stroke="#7d1f16" stroke-width="2.5"/>
+
+          <!-- Ear Tufts peeking under Safari Pith Helmet -->
+          <path d="M52,78 L38,52 L72,66 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M160,78 L174,52 L140,66 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+
+          <!-- Big Iconic Owl Eye Discs -->
+          <circle cx="80" cy="100" r="27" fill="#fffdf7" stroke="#5b3414" stroke-width="4"/>
+          <circle cx="132" cy="100" r="27" fill="#fffdf7" stroke="#5b3414" stroke-width="4"/>
+          <g id="hootPupils">
+            <circle cx="83" cy="100" r="13.5" fill="#2c190a"/>
+            <circle cx="135" cy="100" r="13.5" fill="#2c190a"/>
+            <circle cx="88" cy="94" r="5" fill="#fff"/>
+            <circle cx="140" cy="94" r="5" fill="#fff"/>
+            <circle cx="78" cy="106" r="2.6" fill="#fff"/>
+            <circle cx="130" cy="106" r="2.6" fill="#fff"/>
+          </g>
+
+          <!-- Rosy Cheeks & Happy Orange Beak -->
+          <ellipse cx="56" cy="116" rx="10" ry="6" fill="#ff8fab" opacity=".78"/>
+          <ellipse cx="156" cy="116" rx="10" ry="6" fill="#ff8fab" opacity=".78"/>
+          <path d="M96,110 L116,110 L106,127 Z" fill="#ff9f1c" stroke="#7c3d09" stroke-width="3.2" stroke-linejoin="round"/>
+
+          <!-- Safari Pith Helmet -->
+          <g>
+            <path d="M46,66 C48,22 164,22 166,66 Z" fill="url(#pithHat)" stroke="#6d471d" stroke-width="4"/>
+            <circle cx="106" cy="24" r="7" fill="#e3c68a" stroke="#6d471d" stroke-width="3.5"/>
+            <path d="M48,58 Q106,66 164,58 L166,68 Q106,76 46,68 Z" fill="#8b4d1e" stroke="#5b3010" stroke-width="3"/>
+            <ellipse cx="106" cy="70" rx="76" ry="15" fill="url(#pithHat)" stroke="#6d471d" stroke-width="4"/>
+            <path d="M52,69 Q106,77 160,69" fill="none" stroke="#fff7df" stroke-width="3" opacity=".8"/>
+          </g>
+
+          <!-- Right Wing Holding Paleontologist Fossil Brush -->
+          <g id="hootBrushArm">
+            <path d="M164,126 Q196,144 182,182 Q162,186 154,158 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+            <!-- Wooden Brush Handle -->
+            <g transform="translate(174,116) rotate(22)">
+              <rect x="-7" y="14" width="14" height="58" rx="7" fill="url(#brushWood)" stroke="#5b3414" stroke-width="3.2"/>
+              <rect x="-11" y="4" width="22" height="12" rx="3" fill="#d4d4d8" stroke="#52525b" stroke-width="3"/>
+              <!-- Soft Golden Bristles -->
+              <path d="M-13,4 L-17,-20 Q0,-26 17,-20 L13,4 Z" fill="#f7d374" stroke="#855814" stroke-width="3.2" stroke-linejoin="round"/>
+              <line x1="-6" y1="-20" x2="-5" y2="2" stroke="#c9932c" stroke-width="2.4"/>
+              <line x1="0" y1="-22" x2="0" y2="2" stroke="#c9932c" stroke-width="2.4"/>
+              <line x1="6" y1="-20" x2="5" y2="2" stroke="#c9932c" stroke-width="2.4"/>
+            </g>
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Center Play Stage -->
+    <div id="playStage">
+      <!-- PHASE 1: TACTILE SAND-SCRAPING EXCAVATION -->
+      <section id="digScene" aria-label="Fossil Dig Site">
+        <div id="digPitFrame">
+          <span class="pit-stake tl" aria-hidden="true"></span>
+          <span class="pit-stake tr" aria-hidden="true"></span>
+          <span class="pit-stake bl" aria-hidden="true"></span>
+          <span class="pit-stake br" aria-hidden="true"></span>
+
+          <div id="digPitInner">
+            <!-- Buried Glowing Bones Layer (logical 600x420) -->
+            <svg id="bonesUnderlay" viewBox="0 0 600 420" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <!-- Thick Textured Sand Canvas (destination-out fat brush) -->
+            <canvas id="sandCanvas" width="600" height="420"></canvas>
+            <!-- Flying Sand Dust & Golden Sparkle Hints Canvas -->
+            <canvas id="dustCanvas" width="600" height="420"></canvas>
+            <!-- Idle rubbing finger hint -->
+            <div id="digHint" aria-hidden="true">👆</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHASE 2 & 3: SUNNY FOSSIL MUSEUM PEDESTAL -->
+      <section id="museumScene" aria-label="Fossil Museum Pedestal" hidden>
+        <div id="pedestalStage">
+          <div id="rainbowAura" aria-hidden="true"></div>
+          <div id="roarBurst" aria-hidden="true">💥🎶</div>
+
+          <!-- Phase 2: Interactive Skeleton Silhouette Assembly -->
+          <div id="skeletonWrap">
+            <svg id="skeletonSvg" viewBox="0 0 540 380" aria-label="Dinosaur Skeleton"></svg>
+          </div>
+
+          <!-- Phase 3: Living Smiling Animated Cartoon Dinosaur -->
+          <button id="livingDinoBtn" type="button" aria-label="Tap dinosaur to roar" hidden></button>
+
+          <!-- Carved Stone Museum Pedestal -->
+          <div id="stonePedestal">
+            <div id="pedestalPlaque">
+              <span id="plaqueEmoji" aria-hidden="true">🦖</span>
+              <span class="plaque-dot" data-dot="0"></span>
+              <span class="plaque-dot" data-dot="1"></span>
+              <span class="plaque-dot" data-dot="2"></span>
+              <span class="plaque-dot" data-dot="3"></span>
+            </div>
+          </div>
+
+          <!-- Phase 3 Action Buttons: Roar Again + Next Dinosaur -->
+          <div id="reviveActions" hidden>
+            <button id="roarFab" class="action-fab" type="button" aria-label="Roar">🔊</button>
+            <button id="nextDinoBtn" class="action-fab" type="button" aria-label="Next Dinosaur">
+              <span id="nextDinoIcon" aria-hidden="true">🦕</span>
+              <span aria-hidden="true">▶</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ BOTTOM MUSEUM BONE TRAY / GOLDEN TROPHY SHELF ============ -->
+  <footer id="bottomDock">
+    <div id="boneTray" aria-label="Museum Bone Tray">
+      <button class="bone-tile" data-part="skull" type="button" aria-label="Skull bone">
+        <span class="tile-hand" aria-hidden="true">👆</span>
+        <span class="tile-svg"></span>
+        <span class="bone-check" aria-hidden="true">✓</span>
+      </button>
+      <button class="bone-tile" data-part="ribcage" type="button" aria-label="Ribcage bone">
+        <span class="tile-hand" aria-hidden="true">👆</span>
+        <span class="tile-svg"></span>
+        <span class="bone-check" aria-hidden="true">✓</span>
+      </button>
+      <button class="bone-tile" data-part="legs" type="button" aria-label="Legs bone">
+        <span class="tile-hand" aria-hidden="true">👆</span>
+        <span class="tile-svg"></span>
+        <span class="bone-check" aria-hidden="true">✓</span>
+      </button>
+      <button class="bone-tile" data-part="tail" type="button" aria-label="Tail bone">
+        <span class="tile-hand" aria-hidden="true">👆</span>
+        <span class="tile-svg"></span>
+        <span class="bone-check" aria-hidden="true">✓</span>
+      </button>
+    </div>
+
+    <div id="trophyShelf" aria-label="Museum Trophy Shelf" hidden>
+      <button class="trophy-cup" data-dino="trex" type="button" aria-label="T-Rex Trophy">
+        <span class="trophy-art"></span>
+        <span class="trophy-star" aria-hidden="true">⭐</span>
+      </button>
+      <button class="trophy-cup" data-dino="brachio" type="button" aria-label="Brachiosaurus Trophy">
+        <span class="trophy-art"></span>
+        <span class="trophy-star" aria-hidden="true">⭐</span>
+      </button>
+      <button class="trophy-cup" data-dino="tricera" type="button" aria-label="Triceratops Trophy">
+        <span class="trophy-art"></span>
+        <span class="trophy-star" aria-hidden="true">⭐</span>
+      </button>
+      <button class="trophy-cup" data-dino="stego" type="button" aria-label="Stegosaurus Trophy">
+        <span class="trophy-art"></span>
+        <span class="trophy-star" aria-hidden="true">⭐</span>
+      </button>
+    </div>
+  </footer>
+</div>
+
+<!-- Dragging Ghost & Sparkle/Confetti FX Layer -->
+<div id="dragGhost" hidden></div>
+<div id="fxLayer" aria-hidden="true"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================================
+     DINOSAUR CATALOG & CUSTOM STORYBOOK SVG ARTWORK (BONES + LIVING DINOS)
+     ============================================================================ */
+  var DINO_ORDER = ["trex", "brachio", "tricera", "stego"];
+  var PARTS = ["skull", "ribcage", "legs", "tail"];
+
+  var DINOS = {
+    trex: {
+      id: "trex",
+      emoji: "🦖",
+      color: "#22c55e",
+      dark: "#15803d",
+      light: "#86efac",
+      belly: "#d9f99d",
+      roarPitch: 130
+    },
+    brachio: {
+      id: "brachio",
+      emoji: "🦕",
+      color: "#38bdf8",
+      dark: "#0284c7",
+      light: "#bae6fd",
+      belly: "#e0f2fe",
+      roarPitch: 195
+    },
+    tricera: {
+      id: "tricera",
+      emoji: "🦏",
+      color: "#fb923c",
+      dark: "#c2410c",
+      light: "#fed7aa",
+      belly: "#fef08a",
+      roarPitch: 155
+    },
+    stego: {
+      id: "stego",
+      emoji: "🐊",
+      color: "#a855f7",
+      dark: "#6b21a8",
+      light: "#e9d5ff",
+      belly: "#f5d0fe",
+      roarPitch: 225
+    }
+  };
+
+  /* 4 Dig-Site Buried Bone Positions in Logical 600x420 Canvas Coordinates */
+  var DIG_SLOTS = {
+    skull:   { x: 162, y: 118, w: 176, h: 146, rot: -10 },
+    ribcage: { x: 434, y: 120, w: 184, h: 146, rot: 8 },
+    legs:    { x: 172, y: 302, w: 178, h: 148, rot: 7 },
+    tail:    { x: 432, y: 300, w: 188, h: 144, rot: -8 }
+  };
+
+  /* Skeleton Assembly Coordinates per Dino in Museum SVG (540x380) */
+  var SKEL_LAYOUT = {
+    trex: {
+      tail:    { x: 40,  y: 174, w: 174, h: 128 },
+      legs:    { x: 172, y: 214, w: 174, h: 158 },
+      ribcage: { x: 172, y: 118, w: 192, h: 146 },
+      skull:   { x: 292, y: 48,  w: 184, h: 152 }
+    },
+    brachio: {
+      tail:    { x: 34,  y: 198, w: 178, h: 120 },
+      legs:    { x: 170, y: 218, w: 196, h: 154 },
+      ribcage: { x: 170, y: 136, w: 196, h: 138 },
+      skull:   { x: 304, y: 28,  w: 170, h: 186 }
+    },
+    tricera: {
+      tail:    { x: 34,  y: 200, w: 166, h: 114 },
+      legs:    { x: 156, y: 224, w: 198, h: 146 },
+      ribcage: { x: 156, y: 134, w: 198, h: 138 },
+      skull:   { x: 304, y: 98,  w: 196, h: 168 }
+    },
+    stego: {
+      tail:    { x: 34,  y: 184, w: 184, h: 134 },
+      legs:    { x: 166, y: 224, w: 192, h: 146 },
+      ribcage: { x: 162, y: 88,  w: 214, h: 174 },
+      skull:   { x: 334, y: 154, w: 158, h: 126 }
+    }
+  };
+
+  /* Crisp Custom Bone SVG Markup (viewBox 0 0 180 150) */
+  function boneSvg(dinoId, part){
+    var fill = "#fff9ec";
+    var shade = "#f1dfc0";
+    var stroke = "#6e4722";
+
+    if(part === "skull"){
+      if(dinoId === "trex"){
+        return '<svg viewBox="0 0 180 150">'
+          + '<path d="M26,72 C24,30 62,18 118,22 C152,24 168,42 166,68 C164,84 146,88 124,88 L114,98 L104,88 L94,98 L84,88 L74,96 L64,86 C42,88 28,84 26,72 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="6" stroke-linejoin="round"/>'
+          + '<path d="M40,104 Q94,104 144,96 C148,118 126,132 82,130 C52,128 36,118 40,104 Z" fill="'+shade+'" stroke="'+stroke+'" stroke-width="5.5" stroke-linejoin="round"/>'
+          + '<circle cx="80" cy="52" r="15" fill="#7c522b" stroke="'+stroke+'" stroke-width="4.5"/>'
+          + '<ellipse cx="138" cy="48" rx="9" ry="6" fill="#7c522b"/>'
+          + '<path d="M58,104 L66,94 L74,104 M84,104 L92,94 L100,104 M110,103 L118,93 L126,102" fill="none" stroke="'+stroke+'" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>'
+          + '</svg>';
+      }
+      if(dinoId === "brachio"){
+        return '<svg viewBox="0 0 180 150">'
+          + '<path d="M44,142 C46,96 64,58 92,38" fill="none" stroke="'+stroke+'" stroke-width="26" stroke-linecap="round"/>'
+          + '<path d="M44,142 C46,96 64,58 92,38" fill="none" stroke="'+fill+'" stroke-width="15" stroke-linecap="round"/>'
+          + '<g fill="'+shade+'" stroke="'+stroke+'" stroke-width="4">'
+          + '<ellipse cx="47" cy="120" rx="13" ry="8" transform="rotate(-12 47 120)"/>'
+          + '<ellipse cx="56" cy="92" rx="12" ry="8" transform="rotate(-24 56 92)"/>'
+          + '<ellipse cx="72" cy="66" rx="11" ry="7" transform="rotate(-34 72 66)"/>'
+          + '</g>'
+          + '<path d="M80,44 C82,14 114,10 130,26 C148,28 164,38 162,56 C160,72 132,76 102,72 C84,70 78,58 80,44 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="6" stroke-linejoin="round"/>'
+          + '<circle cx="114" cy="40" r="11" fill="#7c522b" stroke="'+stroke+'" stroke-width="4"/>'
+          + '<circle cx="144" cy="46" r="5" fill="#7c522b"/>'
+          + '</svg>';
+      }
+      if(dinoId === "tricera"){
+        return '<svg viewBox="0 0 180 150">'
+          + '<path d="M22,68 C16,28 48,14 78,34 C94,44 96,74 78,98 C54,116 26,102 22,68 Z" fill="'+shade+'" stroke="'+stroke+'" stroke-width="6" stroke-linejoin="round"/>'
+          + '<path d="M36,52 Q48,44 58,54 M38,76 Q52,72 62,82" fill="none" stroke="'+stroke+'" stroke-width="4" stroke-linecap="round"/>'
+          + '<path d="M72,56 C96,48 134,54 158,76 C164,96 144,114 108,112 C80,110 64,92 72,56 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="6" stroke-linejoin="round"/>'
+          + '<path d="M90,54 L144,24 L106,68 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5.5" stroke-linejoin="round"/>'
+          + '<path d="M76,48 L120,16 L90,58 Z" fill="'+shade+'" stroke="'+stroke+'" stroke-width="5" stroke-linejoin="round"/>'
+          + '<path d="M138,68 L168,48 L152,80 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5" stroke-linejoin="round"/>'
+          + '<circle cx="102" cy="80" r="11" fill="#7c522b" stroke="'+stroke+'" stroke-width="4"/>'
+          + '</svg>';
+      }
+      /* stego skull */
+      return '<svg viewBox="0 0 180 150">'
+        + '<path d="M24,104 Q62,84 96,78" fill="none" stroke="'+stroke+'" stroke-width="22" stroke-linecap="round"/>'
+        + '<path d="M24,104 Q62,84 96,78" fill="none" stroke="'+fill+'" stroke-width="12" stroke-linecap="round"/>'
+        + '<polygon points="44,74 58,44 72,72" fill="'+shade+'" stroke="'+stroke+'" stroke-width="5" stroke-linejoin="round"/>'
+        + '<path d="M84,64 C104,48 144,54 162,74 C166,92 146,106 112,104 C88,102 76,84 84,64 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="6" stroke-linejoin="round"/>'
+        + '<circle cx="116" cy="74" r="10" fill="#7c522b" stroke="'+stroke+'" stroke-width="4"/>'
+        + '<circle cx="144" cy="80" r="4.5" fill="#7c522b"/>'
+        + '</svg>';
+    }
+
+    if(part === "ribcage"){
+      var plates = "";
+      if(dinoId === "stego"){
+        plates = '<polygon points="40,54 58,14 78,48" fill="'+shade+'" stroke="'+stroke+'" stroke-width="5" stroke-linejoin="round"/>'
+          + '<polygon points="74,46 96,8 118,46" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5" stroke-linejoin="round"/>'
+          + '<polygon points="112,50 134,18 150,56" fill="'+shade+'" stroke="'+stroke+'" stroke-width="5" stroke-linejoin="round"/>';
+      }
+      var tinyArms = (dinoId === "trex")
+        ? '<path d="M134,94 L156,108 L148,122" fill="none" stroke="'+stroke+'" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M134,94 L156,108 L148,122" fill="none" stroke="'+fill+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>'
+        : "";
+      return '<svg viewBox="0 0 180 150">'
+        + plates
+        + '<path d="M22,68 Q90,34 158,64" fill="none" stroke="'+stroke+'" stroke-width="20" stroke-linecap="round"/>'
+        + '<path d="M22,68 Q90,34 158,64" fill="none" stroke="'+fill+'" stroke-width="11" stroke-linecap="round"/>'
+        + '<g fill="none" stroke-linecap="round">'
+        + '<path d="M44,64 Q36,106 54,122" stroke="'+stroke+'" stroke-width="16"/><path d="M44,64 Q36,106 54,122" stroke="'+fill+'" stroke-width="8"/>'
+        + '<path d="M72,56 Q64,114 82,132" stroke="'+stroke+'" stroke-width="16"/><path d="M72,56 Q64,114 82,132" stroke="'+fill+'" stroke-width="8"/>'
+        + '<path d="M102,54 Q96,114 114,132" stroke="'+stroke+'" stroke-width="16"/><path d="M102,54 Q96,114 114,132" stroke="'+fill+'" stroke-width="8"/>'
+        + '<path d="M130,60 Q126,104 142,118" stroke="'+stroke+'" stroke-width="16"/><path d="M130,60 Q126,104 142,118" stroke="'+fill+'" stroke-width="8"/>'
+        + '</g>'
+        + tinyArms
+        + '</svg>';
+    }
+
+    if(part === "legs"){
+      if(dinoId === "trex"){
+        return '<svg viewBox="0 0 180 150">'
+          + '<g stroke-linecap="round" stroke-linejoin="round">'
+          + '<path d="M62,24 L48,74 L74,118 L46,128 M74,118 L84,130 M74,118 L100,124" fill="none" stroke="'+stroke+'" stroke-width="22"/>'
+          + '<path d="M62,24 L48,74 L74,118 L46,128 M74,118 L84,130 M74,118 L100,124" fill="none" stroke="'+shade+'" stroke-width="12"/>'
+          + '<path d="M114,24 L100,74 L126,118 L98,128 M126,118 L136,130 M126,118 L152,124" fill="none" stroke="'+stroke+'" stroke-width="24"/>'
+          + '<path d="M114,24 L100,74 L126,118 L98,128 M126,118 L136,130 M126,118 L152,124" fill="none" stroke="'+fill+'" stroke-width="14"/>'
+          + '<ellipse cx="88" cy="24" rx="46" ry="14" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5.5"/>'
+          + '</g></svg>';
+      }
+      /* Quadruped legs for Brachio / Tricera / Stego */
+      return '<svg viewBox="0 0 180 150">'
+        + '<g stroke-linecap="round" stroke-linejoin="round">'
+        + '<path d="M46,24 L42,124 M30,128 H58" fill="none" stroke="'+stroke+'" stroke-width="24"/>'
+        + '<path d="M46,24 L42,124 M30,128 H58" fill="none" stroke="'+fill+'" stroke-width="13"/>'
+        + '<path d="M132,24 L136,124 M120,128 H150" fill="none" stroke="'+stroke+'" stroke-width="24"/>'
+        + '<path d="M132,24 L136,124 M120,128 H150" fill="none" stroke="'+fill+'" stroke-width="13"/>'
+        + '<path d="M76,34 L74,116 M106,34 L108,116" fill="none" stroke="'+stroke+'" stroke-width="18"/>'
+        + '<path d="M76,34 L74,116 M106,34 L108,116" fill="none" stroke="'+shade+'" stroke-width="9"/>'
+        + '<circle cx="46" cy="24" r="14" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>'
+        + '<circle cx="132" cy="24" r="14" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>'
+        + '</g></svg>';
+    }
+
+    /* tail */
+    var spikes = "";
+    if(dinoId === "stego"){
+      spikes = '<path d="M44,82 L24,46 L58,72 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="4.5" stroke-linejoin="round"/>'
+        + '<path d="M64,92 L50,52 L78,84 Z" fill="'+shade+'" stroke="'+stroke+'" stroke-width="4.5" stroke-linejoin="round"/>'
+        + '<path d="M36,92 L12,72 L46,102 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="4.5" stroke-linejoin="round"/>';
+    }
+    return '<svg viewBox="0 0 180 150">'
+      + spikes
+      + '<path d="M158,56 C120,56 96,94 56,96 C38,96 24,88 18,78" fill="none" stroke="'+stroke+'" stroke-width="24" stroke-linecap="round"/>'
+      + '<path d="M158,56 C120,56 96,94 56,96 C38,96 24,88 18,78" fill="none" stroke="'+fill+'" stroke-width="13" stroke-linecap="round"/>'
+      + '<g fill="'+shade+'" stroke="'+stroke+'" stroke-width="4">'
+      + '<circle cx="144" cy="58" r="12"/><circle cx="116" cy="72" r="10"/><circle cx="88" cy="88" r="8.5"/><circle cx="62" cy="95" r="7"/>'
+      + '</g></svg>';
+  }
+
+  /* Full-Color Smiling Animated Storybook Dinosaur SVGs (viewBox 0 0 360 280) */
+  function livingDinoSvg(dinoId){
+    var d = DINOS[dinoId];
+    var ink = "#2b1d12";
+
+    if(dinoId === "trex"){
+      return '<svg viewBox="0 0 360 280">'
+        + '<ellipse cx="180" cy="260" rx="115" ry="14" fill="rgba(61,36,16,.2)"/>'
+        /* Tail */
+        + '<path d="M135,180 C82,196 42,184 22,148 C48,158 84,154 128,142 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Back leg */
+        + '<path d="M152,186 C140,224 148,252 172,254 L190,254 C194,242 184,234 176,232 L182,192 Z" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Body */
+        + '<path d="M118,162 C116,110 156,82 204,90 C236,96 248,136 234,182 C220,214 150,214 118,162 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Bright lime belly */
+        + '<path d="M168,128 C206,128 228,154 218,186 C200,204 166,204 150,188 C158,166 160,144 168,128 Z" fill="'+d.belly+'"/>'
+        /* Cute spine ridges */
+        + '<g fill="#fde047" stroke="'+ink+'" stroke-width="4" stroke-linejoin="round">'
+        + '<polygon points="134,116 116,104 142,98"/><polygon points="154,96 142,78 168,84"/><polygon points="180,86 174,66 196,76"/>'
+        + '</g>'
+        /* Front chunky stomping leg */
+        + '<path d="M178,184 C168,224 176,254 206,256 L228,256 C232,242 218,234 208,232 L212,186 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Cute tiny waving T-Rex arms */
+        + '<path d="M222,146 L252,138 M252,138 L258,132 M252,138 L259,144" fill="none" stroke="'+ink+'" stroke-width="13" stroke-linecap="round"/>'
+        + '<path d="M222,146 L252,138" fill="none" stroke="'+d.color+'" stroke-width="6" stroke-linecap="round"/>'
+        /* Big Friendly Head */
+        + '<path d="M188,88 C186,34 234,20 286,28 C322,34 338,58 330,84 C324,102 292,110 256,108 L254,118 C280,122 308,118 314,108 C316,126 292,136 250,132 C214,128 190,114 188,88 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Smiling toothy grin */
+        + '<path d="M254,108 Q292,114 322,94" fill="none" stroke="'+ink+'" stroke-width="5" stroke-linecap="round"/>'
+        + '<polygon points="268,108 276,120 284,108" fill="#fff" stroke="'+ink+'" stroke-width="3.5" stroke-linejoin="round"/>'
+        + '<polygon points="292,106 300,117 306,103" fill="#fff" stroke="'+ink+'" stroke-width="3.5" stroke-linejoin="round"/>'
+        /* Big Joyful Storybook Eye + Rosy Cheek */
+        + '<circle cx="248" cy="64" r="19" fill="#fff" stroke="'+ink+'" stroke-width="4.5"/>'
+        + '<circle cx="253" cy="64" r="10.5" fill="#1e1b4b"/>'
+        + '<circle cx="257" cy="59" r="4" fill="#fff"/>'
+        + '<circle cx="304" cy="58" r="5" fill="'+d.dark+'"/>'
+        + '<ellipse cx="238" cy="88" rx="11" ry="6.5" fill="#ff8fab" opacity=".82"/>'
+        + '</svg>';
+    }
+
+    if(dinoId === "brachio"){
+      return '<svg viewBox="0 0 360 280">'
+        + '<ellipse cx="180" cy="260" rx="120" ry="14" fill="rgba(61,36,16,.2)"/>'
+        /* Graceful tail */
+        + '<path d="M116,196 C66,216 32,204 18,176 C44,186 76,178 112,162 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Back legs */
+        + '<rect x="134" y="188" width="32" height="66" rx="14" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6"/>'
+        + '<rect x="218" y="182" width="32" height="72" rx="14" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6"/>'
+        /* Round Sauropod Body + Tall Sweeping Neck */
+        + '<path d="M104,174 C104,126 154,108 206,116 C220,82 232,38 258,28 C286,18 322,36 320,62 C318,82 292,88 268,84 C258,116 258,154 252,188 C234,214 114,214 104,174 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Soft Belly & Cute Spots */
+        + '<ellipse cx="182" cy="186" rx="54" ry="22" fill="'+d.belly+'"/>'
+        + '<circle cx="146" cy="144" r="12" fill="#0284c7" opacity=".45"/>'
+        + '<circle cx="182" cy="134" r="16" fill="#0284c7" opacity=".45"/>'
+        + '<circle cx="218" cy="150" r="10" fill="#0284c7" opacity=".45"/>'
+        /* Front legs */
+        + '<rect x="116" y="184" width="36" height="72" rx="16" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+        + '<rect x="200" y="176" width="36" height="80" rx="16" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+        /* Happy Face on Long Neck */
+        + '<circle cx="278" cy="52" r="15" fill="#fff" stroke="'+ink+'" stroke-width="4.5"/>'
+        + '<circle cx="282" cy="52" r="8.5" fill="#1e1b4b"/>'
+        + '<circle cx="285" cy="48" r="3.4" fill="#fff"/>'
+        + '<ellipse cx="268" cy="70" rx="9" ry="5.5" fill="#ff8fab" opacity=".82"/>'
+        + '<path d="M286,70 Q302,78 314,66" fill="none" stroke="'+ink+'" stroke-width="4.5" stroke-linecap="round"/>'
+        + '</svg>';
+    }
+
+    if(dinoId === "tricera"){
+      return '<svg viewBox="0 0 360 280">'
+        + '<ellipse cx="180" cy="260" rx="122" ry="14" fill="rgba(61,36,16,.2)"/>'
+        /* Stout tail */
+        + '<path d="M102,188 C62,200 32,190 22,168 C46,174 72,166 102,152 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Back legs */
+        + '<rect x="128" y="188" width="34" height="66" rx="14" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6"/>'
+        + '<rect x="218" y="188" width="34" height="66" rx="14" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6"/>'
+        /* Sturdy Body */
+        + '<ellipse cx="176" cy="166" rx="84" ry="56" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+        + '<ellipse cx="176" cy="196" rx="56" ry="20" fill="'+d.belly+'"/>'
+        /* Front legs */
+        + '<rect x="108" y="186" width="38" height="68" rx="15" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+        + '<rect x="196" y="186" width="38" height="68" rx="15" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+        /* Iconic Scalloped Golden Frill */
+        + '<path d="M214,132 C194,84 226,46 266,68 C294,82 292,134 264,162 C238,176 218,158 214,132 Z" fill="#facc15" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* 3 Cream Horns */
+        + '<path d="M258,106 L312,68 L272,122 Z" fill="#fffbeb" stroke="'+ink+'" stroke-width="5" stroke-linejoin="round"/>'
+        + '<path d="M242,96 L284,56 L256,112 Z" fill="#fef3c7" stroke="'+ink+'" stroke-width="5" stroke-linejoin="round"/>'
+        /* Head & Smiling Beak */
+        + '<path d="M232,120 C264,104 314,114 332,146 C336,168 312,184 274,182 C240,180 222,156 232,120 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+        /* Nose Horn */
+        + '<path d="M308,128 L340,104 L322,142 Z" fill="#fffbeb" stroke="'+ink+'" stroke-width="5" stroke-linejoin="round"/>'
+        /* Happy Eye & Smile */
+        + '<circle cx="272" cy="140" r="15" fill="#fff" stroke="'+ink+'" stroke-width="4.5"/>'
+        + '<circle cx="276" cy="140" r="8.5" fill="#1e1b4b"/>'
+        + '<circle cx="279" cy="136" r="3.4" fill="#fff"/>'
+        + '<ellipse cx="264" cy="160" rx="10" ry="6" fill="#ff8fab" opacity=".82"/>'
+        + '<path d="M288,166 Q306,174 322,162" fill="none" stroke="'+ink+'" stroke-width="4.5" stroke-linecap="round"/>'
+        + '</svg>';
+    }
+
+    /* stego */
+    return '<svg viewBox="0 0 360 280">'
+      + '<ellipse cx="180" cy="260" rx="122" ry="14" fill="rgba(61,36,16,.2)"/>'
+      /* Diamond Back Plates */
+      + '<g stroke="'+ink+'" stroke-width="5" stroke-linejoin="round">'
+      + '<polygon points="104,142 114,96 138,128" fill="#f472b6"/>'
+      + '<polygon points="134,118 156,64 182,110" fill="#fbbf24"/>'
+      + '<polygon points="174,108 202,54 226,112" fill="#f472b6"/>'
+      + '<polygon points="218,120 242,78 260,130" fill="#fbbf24"/>'
+      + '</g>'
+      /* Tail Spikes (Thagomizer) */
+      + '<g fill="#fde047" stroke="'+ink+'" stroke-width="4.5" stroke-linejoin="round">'
+      + '<path d="M46,168 L22,132 L62,158 Z"/>'
+      + '<path d="M64,174 L48,136 L78,164 Z"/>'
+      + '</g>'
+      /* Tail */
+      + '<path d="M114,186 C72,198 38,186 24,162 C52,170 84,164 118,148 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+      /* Back legs */
+      + '<rect x="134" y="188" width="32" height="66" rx="14" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6"/>'
+      + '<rect x="218" y="192" width="32" height="62" rx="14" fill="'+d.dark+'" stroke="'+ink+'" stroke-width="6"/>'
+      /* Arched Body */
+      + '<path d="M98,178 C98,116 146,96 196,98 C242,100 268,134 268,178 C268,210 106,214 98,178 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+      + '<ellipse cx="182" cy="192" rx="58" ry="19" fill="'+d.belly+'"/>'
+      /* Front legs */
+      + '<rect x="114" y="186" width="36" height="68" rx="15" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+      + '<rect x="200" y="190" width="36" height="64" rx="15" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6"/>'
+      /* Cute Smiling Head */
+      + '<path d="M254,158 C272,134 316,136 334,158 C338,178 318,196 284,194 C260,192 248,176 254,158 Z" fill="'+d.color+'" stroke="'+ink+'" stroke-width="6" stroke-linejoin="round"/>'
+      + '<circle cx="288" cy="162" r="14" fill="#fff" stroke="'+ink+'" stroke-width="4.5"/>'
+      + '<circle cx="292" cy="162" r="8" fill="#1e1b4b"/>'
+      + '<circle cx="295" cy="158" r="3.2" fill="#fff"/>'
+      + '<ellipse cx="280" cy="179" rx="9" ry="5.5" fill="#ff8fab" opacity=".82"/>'
+      + '<path d="M298,180 Q314,187 326,176" fill="none" stroke="'+ink+'" stroke-width="4.5" stroke-linecap="round"/>'
+      + '</svg>';
+  }
+
+  /* ============================================================================
+     STATE & DOM REFERENCES
+     ============================================================================ */
+  var $ = function(id){ return document.getElementById(id); };
+  var stage = $("stage");
+  var hootBtn = $("hootBtn");
+  var hootPupils = $("hootPupils");
+  var soundBtn = $("soundBtn");
+  var starPill = $("starPill");
+  var starNum = $("starNum");
+
+  var digScene = $("digScene");
+  var digPitInner = $("digPitInner");
+  var bonesUnderlay = $("bonesUnderlay");
+  var sandCanvas = $("sandCanvas");
+  var dustCanvas = $("dustCanvas");
+  var sandCtx = sandCanvas.getContext("2d", { willReadFrequently: true });
+  var dustCtx = dustCanvas.getContext("2d");
+  var digHint = $("digHint");
+
+  var museumScene = $("museumScene");
+  var rainbowAura = $("rainbowAura");
+  var roarBurst = $("roarBurst");
+  var skeletonWrap = $("skeletonWrap");
+  var skeletonSvg = $("skeletonSvg");
+  var livingDinoBtn = $("livingDinoBtn");
+  var plaqueEmoji = $("plaqueEmoji");
+  var reviveActions = $("reviveActions");
+  var roarFab = $("roarFab");
+  var nextDinoBtn = $("nextDinoBtn");
+  var nextDinoIcon = $("nextDinoIcon");
+
+  var boneTray = $("boneTray");
+  var trophyShelf = $("trophyShelf");
+  var dragGhost = $("dragGhost");
+  var fxLayer = $("fxLayer");
+
+  var dinoPills = Array.prototype.slice.call(document.querySelectorAll(".dino-pill"));
+  var boneTiles = Array.prototype.slice.call(document.querySelectorAll(".bone-tile"));
+  var trophyCups = Array.prototype.slice.call(document.querySelectorAll(".trophy-cup"));
+  var plaqueDots = Array.prototype.slice.call(document.querySelectorAll(".plaque-dot"));
+
+  var dinoId = "trex";
+  var phase = "dig"; /* "dig" | "assemble" | "revived" */
+  var foundMap = {};
+  var placedMap = {};
+  var revivedMap = {};
+  var bonesFound = 0;
+  var bonesPlaced = 0;
+  var revivedCount = 0;
+  var stars = 0;
+  var soundOn = true;
+  var dead = false;
+
+  var timers = [];
+  var idleTimer = null;
+  var winClipIdx = 0;
+
+  /* Scrubbing & dust particle state */
+  var BRUSH_RADIUS = 56;
+  var UNCOVER_THRESHOLD = 0.55;
+  var isScrubbing = false;
+  var lastPt = null;
+  var lastCheckAt = 0;
+  var lastBrushSfxAt = 0;
+  var particles = [];
+  var dustRaf = 0;
+  var brushArmTimer = null;
+
+  /* Dragging bone state in Phase 2 */
+  var dragState = null;
+
+  /* ============================================================================
+     VERIFIED STUDIO VOICE QUEUE & WEB AUDIO SFX (STUDIO MP3 CLIPS ONLY)
+     ============================================================================ */
+  var VOICE_PRAISE = [
+    "hoot-amazing.mp3",
+    "hoot-win-yay.mp3",
+    "hoot-great-job.mp3",
+    "hoot-yay-2.mp3"
+  ];
+  var audioCtx = null;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var voiceQueue = [];
+  var voicePlaying = false;
+
+  function getAudioCtx(){
+    if(!soundOn) return null;
+    try{
+      if(!audioCtx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if(AC) audioCtx = new AC();
+      }
+      if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    }catch(e){}
+    return audioCtx;
+  }
+
+  function clearVoice(stopCurrent){
+    voiceQueue.length = 0;
+    if(stopCurrent){
+      voicePlaying = false;
+      try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
+    }
+  }
+
+  function pumpVoice(){
+    if(dead || !soundOn || voicePlaying || !voiceQueue.length) return;
+    var clip = voiceQueue.shift();
+    voicePlaying = true;
+    voiceEl.src = "assets/voice/" + clip;
+    var p = voiceEl.play();
+    if(p && p.catch){
+      p.catch(function(){
+        voicePlaying = false;
+        pumpVoice();
+      });
+    }
+  }
+  voiceEl.addEventListener("ended", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+  voiceEl.addEventListener("error", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+
+  function enqueueVoice(clip, interrupt){
+    if(dead || !soundOn || !clip) return;
+    if(interrupt) clearVoice(true);
+    voiceQueue.push(clip);
+    pumpVoice();
+  }
+
+  /* Soft tactile sand brushing sound (gentle bandpass noise burst) */
+  var noiseBuf = null;
+  function brushSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var now = Date.now();
+    if(now - lastBrushSfxAt < 85) return;
+    lastBrushSfxAt = now;
+    try{
+      if(!noiseBuf){
+        var len = Math.floor(ctx.sampleRate * 0.14);
+        noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+        var data = noiseBuf.getChannelData(0);
+        for(var i = 0; i < len; i++){
+          data[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * (i / len));
+        }
+      }
+      var src = ctx.createBufferSource();
+      src.buffer = noiseBuf;
+      var filt = ctx.createBiquadFilter();
+      filt.type = "bandpass";
+      filt.frequency.value = 1150 + Math.random() * 450;
+      filt.Q.value = 1.4;
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.065, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+      src.connect(filt);
+      filt.connect(gain);
+      gain.connect(ctx.destination);
+      src.start();
+    }catch(e){}
+  }
+
+  /* Golden discovery chime when bone pops out of sand */
+  function bonePopSfx(count){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var base = [523.25, 587.33, 659.25, 783.99][(count - 1) % 4];
+    var notes = [base, base * 1.25, base * 1.5, base * 2];
+    var t = ctx.currentTime;
+    notes.forEach(function(freq, idx){
+      try{
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, t + idx * 0.065);
+        gain.gain.setValueAtTime(0.001, t + idx * 0.065);
+        gain.gain.linearRampToValueAtTime(0.16, t + idx * 0.065 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.065 + 0.34);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + idx * 0.065);
+        osc.stop(t + idx * 0.065 + 0.36);
+      }catch(e){}
+    });
+  }
+
+  /* Satisfying woody-bone clack + chime when snapping onto skeleton */
+  function boneSnapSfx(count){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      /* Crisp woody clack */
+      var clack = ctx.createOscillator();
+      var cg = ctx.createGain();
+      clack.type = "sine";
+      clack.frequency.setValueAtTime(340, t);
+      clack.frequency.exponentialRampToValueAtTime(140, t + 0.065);
+      cg.gain.setValueAtTime(0.24, t);
+      cg.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      clack.connect(cg);
+      cg.connect(ctx.destination);
+      clack.start(t);
+      clack.stop(t + 0.08);
+
+      /* Ascending sparkle bell */
+      var pitches = [523.25, 659.25, 783.99, 1046.5];
+      var f = pitches[(count - 1) % 4];
+      var bell = ctx.createOscillator();
+      var bg = ctx.createGain();
+      bell.type = "triangle";
+      bell.frequency.setValueAtTime(f, t + 0.04);
+      bg.gain.setValueAtTime(0.18, t + 0.04);
+      bg.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+      bell.connect(bg);
+      bg.connect(ctx.destination);
+      bell.start(t + 0.04);
+      bell.stop(t + 0.45);
+    }catch(e){}
+  }
+
+  /* Friendly Playful Cartoon Dinosaur Roar (Web Audio!) */
+  function dinoRoarSfx(id){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var d = DINOS[id] || DINOS.trex;
+    var t = ctx.currentTime;
+    try{
+      var osc1 = ctx.createOscillator();
+      var osc2 = ctx.createOscillator();
+      var lfo = ctx.createOscillator();
+      var lfoGain = ctx.createGain();
+      var filt = ctx.createBiquadFilter();
+      var gain = ctx.createGain();
+
+      osc1.type = "sawtooth";
+      osc2.type = "triangle";
+      osc1.frequency.setValueAtTime(d.roarPitch * 1.15, t);
+      osc1.frequency.linearRampToValueAtTime(d.roarPitch * 1.65, t + 0.14);
+      osc1.frequency.exponentialRampToValueAtTime(d.roarPitch * 0.72, t + 0.62);
+
+      osc2.frequency.setValueAtTime(d.roarPitch * 0.58, t);
+      osc2.frequency.exponentialRampToValueAtTime(d.roarPitch * 0.42, t + 0.62);
+
+      /* Playful growl vibrato */
+      lfo.type = "sine";
+      lfo.frequency.value = 26;
+      lfoGain.gain.value = 18;
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc1.frequency);
+
+      /* Warm friendly formant sweep */
+      filt.type = "bandpass";
+      filt.Q.value = 2.1;
+      filt.frequency.setValueAtTime(480, t);
+      filt.frequency.linearRampToValueAtTime(1120, t + 0.18);
+      filt.frequency.exponentialRampToValueAtTime(340, t + 0.64);
+
+      gain.gain.setValueAtTime(0.001, t);
+      gain.gain.linearRampToValueAtTime(0.24, t + 0.07);
+      gain.gain.setValueAtTime(0.22, t + 0.34);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.68);
+
+      osc1.connect(filt);
+      osc2.connect(filt);
+      filt.connect(gain);
+      gain.connect(ctx.destination);
+
+      lfo.start(t);
+      osc1.start(t);
+      osc2.start(t);
+      lfo.stop(t + 0.7);
+      osc1.stop(t + 0.7);
+      osc2.stop(t + 0.7);
+    }catch(e){}
+  }
+
+  /* Rainbow Revival Harp Glissando Fanfare */
+  function revivalFanfareSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var scale = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1318.5];
+    var t = ctx.currentTime;
+    scale.forEach(function(freq, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, t + i * 0.055);
+        g.gain.setValueAtTime(0.14, t + i * 0.055);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.055 + 0.42);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.055);
+        osc.stop(t + i * 0.055 + 0.44);
+      }catch(e){}
+    });
+  }
+
+  function clickPopSfx(freq){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq || 660, t);
+      osc.frequency.exponentialRampToValueAtTime((freq || 660) * 1.25, t + 0.08);
+      g.gain.setValueAtTime(0.14, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.15);
+    }catch(e){}
+  }
+
+  /* ============================================================================
+     TIMERS & VISUAL FX HELPERS
+     ============================================================================ */
+  function later(fn, ms){
+    var id = setTimeout(function(){
+      if(!dead) fn();
+    }, ms);
+    timers.push(id);
+    return id;
+  }
+
+  function clearTimers(){
+    while(timers.length) clearTimeout(timers.pop());
+  }
+
+  function hootCheer(){
+    hootBtn.classList.remove("cheer");
+    void hootBtn.offsetWidth;
+    hootBtn.classList.add("cheer");
+  }
+
+  function spawnSparkles(cx, cy, count){
+    var glyphs = ["✨", "⭐", "🌟", "💛"];
+    var n = count || 10;
+    for(var i = 0; i < n; i++){
+      var el = document.createElement("span");
+      el.className = "fx-spark";
+      el.textContent = glyphs[i % glyphs.length];
+      el.style.left = cx + "px";
+      el.style.top = cy + "px";
+      fxLayer.appendChild(el);
+      var ang = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+      var dist = 42 + Math.random() * 72;
+      var dx = Math.cos(ang) * dist;
+      var dy = Math.sin(ang) * dist - 16;
+      if(el.animate){
+        el.animate([
+          { transform: "translate(-50%,-50%) scale(.4) rotate(0deg)", opacity: 1 },
+          { transform: "translate(calc(-50% + " + dx.toFixed(0) + "px), calc(-50% + " + dy.toFixed(0) + "px)) scale(1.25) rotate(120deg)", opacity: 0 }
+        ], { duration: 680 + Math.random() * 260, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 980); })(el);
+    }
+  }
+
+  function showerConfetti(count){
+    var cols = ["#ff595e", "#ffca3a", "#8ac926", "#1982c4", "#a855f7", "#fb923c", "#f472b6"];
+    var n = count || 42;
+    var vw = window.innerWidth;
+    for(var i = 0; i < n; i++){
+      var c = document.createElement("div");
+      c.className = "fx-conf";
+      c.style.background = cols[i % cols.length];
+      c.style.left = (Math.random() * vw).toFixed(0) + "px";
+      c.style.top = (-20 - Math.random() * 90).toFixed(0) + "px";
+      c.style.width = (10 + Math.random() * 8).toFixed(0) + "px";
+      c.style.height = (10 + Math.random() * 10).toFixed(0) + "px";
+      fxLayer.appendChild(c);
+      var drift = (Math.random() - 0.5) * 180;
+      var fall = window.innerHeight + 120;
+      if(c.animate){
+        c.animate([
+          { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+          { transform: "translate(" + drift.toFixed(0) + "px," + fall + "px) rotate(" + (360 + Math.random() * 420).toFixed(0) + "deg)", opacity: .88 }
+        ], { duration: 1500 + Math.random() * 1100, delay: Math.random() * 320, easing: "cubic-bezier(.2,.6,.4,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 3000); })(c);
+    }
+  }
+
+  function flyBoneToRect(part, fromX, fromY, toRect, onArrive){
+    var fly = document.createElement("div");
+    fly.className = "fly-bone";
+    fly.innerHTML = boneSvg(dinoId, part);
+    fly.style.left = fromX + "px";
+    fly.style.top = fromY + "px";
+    fxLayer.appendChild(fly);
+
+    var tx = toRect.left + toRect.width * 0.5 - fromX;
+    var ty = toRect.top + toRect.height * 0.5 - fromY;
+    if(fly.animate){
+      var anim = fly.animate([
+        { transform: "translate(0,0) scale(1.18) rotate(-8deg)", opacity: 1 },
+        { transform: "translate(" + (tx * 0.5).toFixed(0) + "px," + (ty * 0.5 - 48).toFixed(0) + "px) scale(1.28) rotate(8deg)", opacity: 1 },
+        { transform: "translate(" + tx.toFixed(0) + "px," + ty.toFixed(0) + "px) scale(.62) rotate(0deg)", opacity: .92 }
+      ], { duration: 480, easing: "cubic-bezier(.32,.96,.42,1)", fill: "forwards" });
+      anim.onfinish = function(){
+        fly.remove();
+        if(onArrive) onArrive();
+      };
+    } else {
+      fly.remove();
+      if(onArrive) onArrive();
+    }
+  }
+
+  /* ============================================================================
+     IDLE HELPER (5s BOUNCING 👆 CUE FOR TODDLERS)
+     ============================================================================ */
+  function hideIdleHints(){
+    digHint.classList.remove("show");
+    boneTiles.forEach(function(t){ t.classList.remove("show-hand", "hint-next"); });
+  }
+
+  function armIdle(){
+    hideIdleHints();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(dead || phase === "revived") return;
+    idleTimer = setTimeout(function(){
+      if(dead) return;
+      if(phase === "dig"){
+        var target = null;
+        for(var i = 0; i < PARTS.length; i++){
+          if(!foundMap[PARTS[i]]){ target = PARTS[i]; break; }
+        }
+        if(target){
+          var slot = DIG_SLOTS[target];
+          digHint.style.left = ((slot.x / 600) * 100).toFixed(1) + "%";
+          digHint.style.top = ((slot.y / 420) * 100).toFixed(1) + "%";
+          digHint.classList.add("show");
+        }
+      } else if(phase === "assemble"){
+        var nextTile = null;
+        for(var j = 0; j < boneTiles.length; j++){
+          var p = boneTiles[j].dataset.part;
+          if(foundMap[p] && !placedMap[p]){ nextTile = boneTiles[j]; break; }
+        }
+        if(nextTile){
+          nextTile.classList.add("show-hand", "hint-next");
+        }
+      }
+    }, 5000);
+  }
+
+  /* ============================================================================
+     PHASE 1: LAYERED DESERT SAND CANVAS + TACTILE SCRUBBING
+     ============================================================================ */
+  function paintSandLayer(){
+    var w = 600, h = 420;
+    sandCtx.globalCompositeOperation = "source-over";
+    sandCtx.clearRect(0, 0, w, h);
+
+    /* Base rich desert sand gradient */
+    var grad = sandCtx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, "#f5d393");
+    grad.addColorStop(0.45, "#e6b468");
+    grad.addColorStop(1, "#cc8e44");
+    sandCtx.fillStyle = grad;
+    sandCtx.fillRect(0, 0, w, h);
+
+    /* Soft wind-blown sand dune ripples */
+    sandCtx.strokeStyle = "rgba(255, 244, 212, 0.34)";
+    sandCtx.lineWidth = 10;
+    sandCtx.lineCap = "round";
+    for(var ry = 38; ry < h; ry += 62){
+      sandCtx.beginPath();
+      sandCtx.moveTo(-10, ry);
+      sandCtx.bezierCurveTo(160, ry - 18, 380, ry + 18, 610, ry - 6);
+      sandCtx.stroke();
+    }
+
+    /* Textured sand speckles & tiny smooth desert pebbles */
+    var seed = dinoId.charCodeAt(0) * 97 + 13;
+    function rand(){
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    }
+    for(var i = 0; i < 420; i++){
+      var sx = rand() * w;
+      var sy = rand() * h;
+      var sr = 1.2 + rand() * 3.2;
+      sandCtx.fillStyle = (i % 3 === 0)
+        ? "rgba(255, 248, 224, 0.48)"
+        : (i % 3 === 1 ? "rgba(164, 102, 38, 0.28)" : "rgba(196, 134, 62, 0.36)");
+      sandCtx.beginPath();
+      sandCtx.arc(sx, sy, sr, 0, Math.PI * 2);
+      sandCtx.fill();
+    }
+    /* Smooth pebbles */
+    for(var p = 0; p < 22; p++){
+      var px = 26 + rand() * (w - 52);
+      var py = 26 + rand() * (h - 52);
+      sandCtx.fillStyle = p % 2 === 0 ? "#c98b47" : "#b37332";
+      sandCtx.beginPath();
+      sandCtx.ellipse(px, py, 5 + rand() * 5, 3 + rand() * 3.5, rand() * Math.PI, 0, Math.PI * 2);
+      sandCtx.fill();
+    }
+
+    /* Subtle warm dashed fossil-glint circles over each buried bone so Riley knows where to rub! */
+    PARTS.forEach(function(part){
+      var s = DIG_SLOTS[part];
+      var rg = sandCtx.createRadialGradient(s.x, s.y, 6, s.x, s.y, 66);
+      rg.addColorStop(0, "rgba(255, 244, 178, 0.42)");
+      rg.addColorStop(1, "rgba(255, 244, 178, 0)");
+      sandCtx.fillStyle = rg;
+      sandCtx.beginPath();
+      sandCtx.arc(s.x, s.y, 66, 0, Math.PI * 2);
+      sandCtx.fill();
+    });
+  }
+
+  function renderBuriedBones(){
+    var html = '<defs><radialGradient id="bHalo"><stop offset="0%" stop-color="#fff4a8" stop-opacity=".95"/><stop offset="65%" stop-color="#ffd84d" stop-opacity=".35"/><stop offset="100%" stop-color="#ffd84d" stop-opacity="0"/></radialGradient></defs>';
+    /* Decorative faint sandstone fossil ammonites in bedrock */
+    html += '<g opacity=".18" fill="none" stroke="#6c3f18" stroke-width="4">'
+      + '<circle cx="300" cy="212" r="24"/><circle cx="300" cy="212" r="14"/><circle cx="300" cy="212" r="6"/>'
+      + '<circle cx="52" cy="214" r="16"/><circle cx="552" cy="212" r="18"/>'
+      + '</g>';
+
+    PARTS.forEach(function(part){
+      var s = DIG_SLOTS[part];
+      var left = s.x - s.w * 0.5;
+      var top = s.y - s.h * 0.5;
+      html += '<g class="buried-bone' + (foundMap[part] ? ' found' : '') + '" data-bone="' + part + '" transform="rotate(' + s.rot + ' ' + s.x + ' ' + s.y + ')">'
+        + '<ellipse class="bone-halo" cx="' + s.x + '" cy="' + s.y + '" rx="' + (s.w * 0.54) + '" ry="' + (s.h * 0.52) + '" fill="url(#bHalo)"/>'
+        + '<svg x="' + left + '" y="' + top + '" width="' + s.w + '" height="' + s.h + '" viewBox="0 0 180 150">'
+        + boneSvg(dinoId, part).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")
+        + '</svg></g>';
+    });
+    bonesUnderlay.innerHTML = html;
+  }
+
+  function canvasPointFromEvent(e){
+    var r = sandCanvas.getBoundingClientRect();
+    if(!r.width || !r.height) return { x: 300, y: 210 };
+    return {
+      x: ((e.clientX - r.left) / r.width) * 600,
+      y: ((e.clientY - r.top) / r.height) * 420
+    };
+  }
+
+  function eraseSandAt(x1, y1, x2, y2){
+    sandCtx.save();
+    sandCtx.globalCompositeOperation = "destination-out";
+
+    /* Interpolate soft circles along stroke for silky smooth toddler scrubbing */
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var dist = Math.hypot(dx, dy);
+    var steps = Math.max(1, Math.ceil(dist / 12));
+    for(var i = 0; i <= steps; i++){
+      var t = i / steps;
+      var cx = x1 + dx * t;
+      var cy = y1 + dy * t;
+      var rg = sandCtx.createRadialGradient(cx, cy, BRUSH_RADIUS * 0.55, cx, cy, BRUSH_RADIUS);
+      rg.addColorStop(0, "rgba(0,0,0,1)");
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      sandCtx.fillStyle = rg;
+      sandCtx.beginPath();
+      sandCtx.arc(cx, cy, BRUSH_RADIUS, 0, Math.PI * 2);
+      sandCtx.fill();
+    }
+    sandCtx.restore();
+
+    /* Kick up flying golden sand dust particles */
+    for(var k = 0; k < 5; k++){
+      if(particles.length > 90) particles.shift();
+      var ang = Math.random() * Math.PI * 2;
+      var spd = 1.6 + Math.random() * 4.2;
+      particles.push({
+        x: x2 + (Math.random() - 0.5) * 28,
+        y: y2 + (Math.random() - 0.5) * 28,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 1.4,
+        r: 3.5 + Math.random() * 5.5,
+        life: 1,
+        col: k % 2 === 0 ? "#ffe5a3" : "#d99b4a"
+      });
+    }
+
+    /* Animate Hoot's brush arm */
+    hootBtn.classList.add("brushing");
+    if(brushArmTimer) clearTimeout(brushArmTimer);
+    brushArmTimer = setTimeout(function(){ hootBtn.classList.remove("brushing"); }, 220);
+
+    brushSfx();
+  }
+
+  /* Check uncovered ratio of each buried bone (~55% threshold pops bone out!) */
+  function checkBoneDiscovery(forceNow){
+    if(phase !== "dig") return;
+    var now = Date.now();
+    if(!forceNow && now - lastCheckAt < 75) return;
+    lastCheckAt = now;
+
+    PARTS.forEach(function(part){
+      if(foundMap[part]) return;
+      var s = DIG_SLOTS[part];
+      var x0 = Math.max(0, Math.floor(s.x - s.w * 0.42));
+      var y0 = Math.max(0, Math.floor(s.y - s.h * 0.42));
+      var bw = Math.min(600 - x0, Math.floor(s.w * 0.84));
+      var bh = Math.min(420 - y0, Math.floor(s.h * 0.84));
+      var img = sandCtx.getImageData(x0, y0, bw, bh).data;
+
+      var total = 0;
+      var cleared = 0;
+      /* Sample every 6px for ultra-fast 60fps performance */
+      for(var py = 0; py < bh; py += 6){
+        for(var px = 0; px < bw; px += 6){
+          total++;
+          var alpha = img[(py * bw + px) * 4 + 3];
+          if(alpha < 95) cleared++;
+        }
+      }
+      if(total > 0 && (cleared / total) >= UNCOVER_THRESHOLD){
+        discoverBone(part, false);
+      }
+    });
+  }
+
+  function discoverBone(part, instant){
+    if(foundMap[part] || phase !== "dig") return;
+    foundMap[part] = true;
+    bonesFound++;
+
+    /* Softly sweep remaining sand over that bone */
+    var s = DIG_SLOTS[part];
+    sandCtx.save();
+    sandCtx.globalCompositeOperation = "destination-out";
+    var rg = sandCtx.createRadialGradient(s.x, s.y, 40, s.x, s.y, 108);
+    rg.addColorStop(0, "rgba(0,0,0,1)");
+    rg.addColorStop(1, "rgba(0,0,0,0)");
+    sandCtx.fillStyle = rg;
+    sandCtx.beginPath();
+    sandCtx.arc(s.x, s.y, 108, 0, Math.PI * 2);
+    sandCtx.fill();
+    sandCtx.restore();
+
+    var bgNode = bonesUnderlay.querySelector('[data-bone="' + part + '"]');
+    if(bgNode) bgNode.classList.add("found");
+
+    var tile = boneTray.querySelector('[data-part="' + part + '"]');
+    var pitRect = sandCanvas.getBoundingClientRect();
+    var startX = pitRect.left + (s.x / 600) * pitRect.width;
+    var startY = pitRect.top + (s.y / 420) * pitRect.height;
+
+    if(instant){
+      if(tile) tile.classList.add("found");
+    } else {
+      bonePopSfx(bonesFound);
+      hootCheer();
+      spawnSparkles(startX, startY, 12);
+      enqueueVoice("name-number-" + bonesFound + ".mp3", true);
+
+      if(tile){
+        var tr = tile.getBoundingClientRect();
+        flyBoneToRect(part, startX, startY, tr, function(){
+          tile.classList.add("found");
+          spawnSparkles(tr.left + tr.width * 0.5, tr.top + tr.height * 0.5, 6);
+        });
+      }
+    }
+
+    armIdle();
+
+    /* When all 4 bones are found -> transition smoothly to Phase 2 Sunny Fossil Museum! */
+    if(bonesFound >= 4){
+      if(instant){
+        enterAssemblePhase();
+      } else {
+        later(function(){
+          enqueueVoice("hoot-great-job.mp3", false);
+        }, 420);
+        later(function(){
+          if(phase === "dig" && bonesFound >= 4){
+            enterAssemblePhase();
+          }
+        }, 950);
+      }
+    }
+  }
+
+  /* Continuous Lightweight Dust + Buried Shimmer Loop */
+  function tickDust(ts){
+    if(dead) return;
+    dustRaf = requestAnimationFrame(tickDust);
+    if(phase !== "dig"){
+      if(particles.length){
+        particles.length = 0;
+        dustCtx.clearRect(0, 0, 600, 420);
+      }
+      return;
+    }
+
+    dustCtx.clearRect(0, 0, 600, 420);
+
+    /* Subtle shimmering star glints over still-buried bones */
+    var t = (ts || 0) * 0.003;
+    PARTS.forEach(function(part, idx){
+      if(foundMap[part]) return;
+      var s = DIG_SLOTS[part];
+      var pulse = 0.5 + 0.5 * Math.sin(t + idx * 1.6);
+      var gx = s.x + Math.cos(t * 0.7 + idx) * 18;
+      var gy = s.y + Math.sin(t * 0.9 + idx) * 12;
+      var sz = 5 + pulse * 6;
+      dustCtx.save();
+      dustCtx.translate(gx, gy);
+      dustCtx.fillStyle = "rgba(255, 250, 196, " + (0.35 + pulse * 0.6).toFixed(2) + ")";
+      dustCtx.beginPath();
+      dustCtx.moveTo(0, -sz);
+      dustCtx.quadraticCurveTo(2, -2, sz, 0);
+      dustCtx.quadraticCurveTo(2, 2, 0, sz);
+      dustCtx.quadraticCurveTo(-2, 2, -sz, 0);
+      dustCtx.quadraticCurveTo(-2, -2, 0, -sz);
+      dustCtx.fill();
+      dustCtx.restore();
+    });
+
+    /* Flying sand dust particles */
+    for(var i = particles.length - 1; i >= 0; i--){
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.16;
+      p.life -= 0.042;
+      if(p.life <= 0){
+        particles.splice(i, 1);
+        continue;
+      }
+      dustCtx.globalAlpha = Math.max(0, p.life);
+      dustCtx.fillStyle = p.col;
+      dustCtx.beginPath();
+      dustCtx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+      dustCtx.fill();
+    }
+    dustCtx.globalAlpha = 1;
+  }
+
+  /* Sand Canvas Pointer Handlers (Mouse & Touch) */
+  sandCanvas.addEventListener("pointerdown", function(e){
+    if(dead || phase !== "dig") return;
+    e.preventDefault();
+    getAudioCtx();
+    hideIdleHints();
+    isScrubbing = true;
+    try{ sandCanvas.setPointerCapture(e.pointerId); }catch(err){}
+    var pt = canvasPointFromEvent(e);
+    lastPt = pt;
+    eraseSandAt(pt.x, pt.y, pt.x + 0.5, pt.y + 0.5);
+    checkBoneDiscovery(true);
+    armIdle();
+  });
+
+  sandCanvas.addEventListener("pointermove", function(e){
+    if(dead || !isScrubbing || phase !== "dig") return;
+    e.preventDefault();
+    var pt = canvasPointFromEvent(e);
+    if(lastPt){
+      eraseSandAt(lastPt.x, lastPt.y, pt.x, pt.y);
+    }
+    lastPt = pt;
+    checkBoneDiscovery(false);
+  });
+
+  function stopScrub(e){
+    if(!isScrubbing) return;
+    isScrubbing = false;
+    lastPt = null;
+    try{ if(e && e.pointerId != null) sandCanvas.releasePointerCapture(e.pointerId); }catch(err){}
+    checkBoneDiscovery(true);
+    armIdle();
+  }
+  sandCanvas.addEventListener("pointerup", stopScrub);
+  sandCanvas.addEventListener("pointercancel", stopScrub);
+
+  /* ============================================================================
+     PHASE 2: SUNNY FOSSIL MUSEUM — SNAP SKELETON TOGETHER (TAP OR DRAG)
+     ============================================================================ */
+  function renderSkeletonBoard(){
+    var layout = SKEL_LAYOUT[dinoId];
+    var html = '<defs>'
+      + '<filter id="slotGlowF" x="-30%" y="-30%" width="160%" height="160%">'
+      + '<feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffd84d" flood-opacity=".85"/>'
+      + '</filter></defs>';
+
+    /* Soft Museum Spotlight Halo behind skeleton */
+    html += '<ellipse cx="270" cy="200" rx="220" ry="150" fill="rgba(255,244,186,.5)"/>';
+
+    /* Render in layered visual back-to-front order */
+    ["tail", "legs", "ribcage", "skull"].forEach(function(part){
+      var box = layout[part];
+      var inner = boneSvg(dinoId, part).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
+      var placed = !!placedMap[part];
+      html += '<g class="skel-slot' + (placed ? ' placed' : '') + '" data-slot="' + part + '">'
+        + '<svg class="slot-ghost" x="' + box.x + '" y="' + box.y + '" width="' + box.w + '" height="' + box.h + '" viewBox="0 0 180 150">'
+        + '<g opacity=".85" filter="url(#slotGlowF)">' + inner + '</g>'
+        + '</svg>'
+        + '<svg class="slot-solid" x="' + box.x + '" y="' + box.y + '" width="' + box.w + '" height="' + box.h + '" viewBox="0 0 180 150">'
+        + inner
+        + '</svg>'
+        + '</g>';
+    });
+    skeletonSvg.innerHTML = html;
+    updateSuggestedSlot();
+  }
+
+  function updateSuggestedSlot(){
+    var slots = skeletonSvg.querySelectorAll(".skel-slot");
+    var picked = false;
+    for(var i = 0; i < slots.length; i++){
+      var part = slots[i].getAttribute("data-slot");
+      var isPlaced = !!placedMap[part];
+      slots[i].classList.toggle("placed", isPlaced);
+      slots[i].classList.remove("suggest", "hover-hot");
+      if(!isPlaced && !picked){
+        slots[i].classList.add("suggest");
+        picked = true;
+      }
+    }
+    plaqueDots.forEach(function(dot, idx){
+      dot.classList.toggle("on", idx < bonesPlaced);
+    });
+  }
+
+  function enterAssemblePhase(){
+    phase = "assemble";
+    stage.setAttribute("data-phase", "assemble");
+    digScene.hidden = true;
+    museumScene.hidden = false;
+    skeletonWrap.hidden = false;
+    livingDinoBtn.hidden = true;
+    reviveActions.hidden = true;
+    rainbowAura.classList.remove("active");
+    boneTray.hidden = false;
+    trophyShelf.hidden = true;
+
+    plaqueEmoji.textContent = DINOS[dinoId].emoji;
+    boneTiles.forEach(function(tile){
+      var p = tile.dataset.part;
+      tile.classList.toggle("found", !!foundMap[p]);
+      tile.classList.toggle("placed", !!placedMap[p]);
+    });
+
+    renderSkeletonBoard();
+    armIdle();
+  }
+
+  function snapBonePart(part, originX, originY){
+    if(dead || phase !== "assemble" || !foundMap[part] || placedMap[part]) return;
+    placedMap[part] = true;
+    bonesPlaced++;
+    hideIdleHints();
+
+    var tile = boneTray.querySelector('[data-part="' + part + '"]');
+    if(tile) tile.classList.add("placed");
+
+    var slotEl = skeletonSvg.querySelector('[data-slot="' + part + '"]');
+    var sr = slotEl ? slotEl.getBoundingClientRect() : skeletonWrap.getBoundingClientRect();
+
+    boneSnapSfx(bonesPlaced);
+    hootCheer();
+
+    if(originX != null && originY != null && sr.width > 0){
+      flyBoneToRect(part, originX, originY, sr, function(){
+        spawnSparkles(sr.left + sr.width * 0.5, sr.top + sr.height * 0.5, 10);
+      });
+    } else if(sr.width > 0){
+      spawnSparkles(sr.left + sr.width * 0.5, sr.top + sr.height * 0.5, 10);
+    }
+
+    updateSuggestedSlot();
+
+    if(bonesPlaced < 4){
+      enqueueVoice("name-number-" + bonesPlaced + ".mp3", true);
+      armIdle();
+    } else {
+      /* 4th bone snapped in -> RAINBOW MAGIC REVIVAL! */
+      reviveDinosaur();
+    }
+  }
+
+  /* ============================================================================
+     PHASE 3: RAINBOW MAGIC REVIVAL & ROAR TO LIFE!
+     ============================================================================ */
+  function reviveDinosaur(){
+    phase = "revived";
+    revivedCount++;
+    stars++;
+    revivedMap[dinoId] = true;
+
+    stage.setAttribute("data-phase", "revived");
+    updateHudProgress(true);
+
+    /* Next dinosaur icon on the glowing Next button */
+    var nextIdx = (DINO_ORDER.indexOf(dinoId) + 1) % DINO_ORDER.length;
+    var nextId = DINO_ORDER[nextIdx];
+    nextDinoIcon.textContent = DINOS[nextId].emoji;
+    nextDinoBtn.dataset.nextDino = nextId;
+
+    /* Rainbow Aura + Transform Skeleton into Smiling Animated Cartoon Dino */
+    rainbowAura.classList.remove("active");
+    void rainbowAura.offsetWidth;
+    rainbowAura.classList.add("active");
+
+    skeletonWrap.hidden = true;
+    livingDinoBtn.innerHTML = livingDinoSvg(dinoId);
+    livingDinoBtn.hidden = false;
+    livingDinoBtn.classList.remove("revive-pop", "stomping");
+    void livingDinoBtn.offsetWidth;
+    livingDinoBtn.classList.add("revive-pop");
+
+    reviveActions.hidden = false;
+    boneTray.hidden = true;
+    trophyShelf.hidden = false;
+
+    /* Mark earned trophy & jump animation */
+    trophyCups.forEach(function(cup){
+      var id = cup.dataset.dino;
+      var earned = !!revivedMap[id];
+      cup.classList.toggle("earned", earned);
+      cup.classList.remove("just-won");
+      if(id === dinoId){
+        void cup.offsetWidth;
+        cup.classList.add("just-won");
+      }
+    });
+
+    /* Confetti, Sparkles, Fanfare, Dino Roar & Hoot Celebration! */
+    revivalFanfareSfx();
+    showerConfetti(48);
+    var br = livingDinoBtn.getBoundingClientRect();
+    spawnSparkles(br.left + br.width * 0.5, br.top + br.height * 0.45, 16);
+    hootCheer();
+
+    later(function(){
+      triggerDinoRoar(true);
+    }, 360);
+
+    later(function(){
+      var clip = VOICE_PRAISE[winClipIdx % VOICE_PRAISE.length];
+      winClipIdx++;
+      enqueueVoice(clip, true);
+    }, 980);
+  }
+
+  function triggerDinoRoar(fromRevival){
+    if(dead || phase !== "revived") return;
+    getAudioCtx();
+    dinoRoarSfx(dinoId);
+    livingDinoBtn.classList.remove("revive-pop", "stomping");
+    void livingDinoBtn.offsetWidth;
+    livingDinoBtn.classList.add("stomping");
+
+    roarBurst.classList.remove("show");
+    void roarBurst.offsetWidth;
+    roarBurst.classList.add("show");
+
+    hootCheer();
+    var br = livingDinoBtn.getBoundingClientRect();
+    if(br.width) spawnSparkles(br.left + br.width * 0.55, br.top + br.height * 0.35, 10);
+    if(!fromRevival){
+      enqueueVoice("hoot-star.mp3", true);
+    }
+  }
+
+  /* ============================================================================
+     BONE TRAY: TAP-TO-SNAP + MAGNETIC DRAG-AND-DROP
+     ============================================================================ */
+  boneTiles.forEach(function(tile){
+    tile.addEventListener("pointerdown", function(e){
+      if(dead || phase !== "assemble") return;
+      var part = tile.dataset.part;
+      if(!foundMap[part] || placedMap[part]) return;
+      e.preventDefault();
+      getAudioCtx();
+      hideIdleHints();
+
+      dragState = {
+        part: part,
+        tile: tile,
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        moved: false
+      };
+      try{ tile.setPointerCapture(e.pointerId); }catch(err){}
+    });
+
+    tile.addEventListener("pointermove", function(e){
+      if(!dragState || dragState.tile !== tile) return;
+      var dist = Math.hypot(e.clientX - dragState.startX, e.clientY - dragState.startY);
+      if(!dragState.moved && dist > 10){
+        dragState.moved = true;
+        dragGhost.innerHTML = boneSvg(dinoId, dragState.part);
+        dragGhost.hidden = false;
+        clickPopSfx(580);
+      }
+      if(dragState.moved){
+        dragGhost.style.left = e.clientX + "px";
+        dragGhost.style.top = e.clientY + "px";
+
+        /* Magnetic highlight when hovering anywhere near the museum pedestal */
+        var pr = museumScene.getBoundingClientRect();
+        var near = e.clientY < pr.bottom + 24;
+        var slotEl = skeletonSvg.querySelector('[data-slot="' + dragState.part + '"]');
+        if(slotEl) slotEl.classList.toggle("hover-hot", near);
+      }
+    });
+
+    function finishTileDrag(e){
+      if(!dragState || dragState.tile !== tile) return;
+      var ds = dragState;
+      dragState = null;
+      dragGhost.hidden = true;
+      try{ tile.releasePointerCapture(ds.pointerId); }catch(err){}
+
+      var slotEl = skeletonSvg.querySelector('[data-slot="' + ds.part + '"]');
+      if(slotEl) slotEl.classList.remove("hover-hot");
+
+      var tr = tile.getBoundingClientRect();
+      if(!ds.moved){
+        /* Super toddler-friendly: single TAP magnetically snaps bone right into place! */
+        snapBonePart(ds.part, tr.left + tr.width * 0.5, tr.top + tr.height * 0.5);
+      } else {
+        /* Generous magnetic snap if released anywhere above the bottom dock */
+        var dockTop = boneTray.getBoundingClientRect().top;
+        if(e.clientY < dockTop + 18){
+          snapBonePart(ds.part, e.clientX, e.clientY);
+        } else {
+          armIdle();
+        }
+      }
+    }
+
+    tile.addEventListener("pointerup", finishTileDrag);
+    tile.addEventListener("pointercancel", function(){
+      if(!dragState || dragState.tile !== tile) return;
+      dragState = null;
+      dragGhost.hidden = true;
+      armIdle();
+    });
+
+    /* Also support standard click (for keyboard & automated tests) */
+    tile.addEventListener("click", function(){
+      if(dead || phase !== "assemble") return;
+      var part = tile.dataset.part;
+      if(!foundMap[part] || placedMap[part]) return;
+      getAudioCtx();
+      var tr = tile.getBoundingClientRect();
+      snapBonePart(part, tr.left + tr.width * 0.5, tr.top + tr.height * 0.5);
+    });
+  });
+
+  /* Allow tapping directly on a glowing silhouette slot on the skeleton too! */
+  skeletonSvg.addEventListener("click", function(e){
+    if(dead || phase !== "assemble") return;
+    var g = e.target && e.target.closest ? e.target.closest(".skel-slot") : null;
+    if(!g) return;
+    var part = g.getAttribute("data-slot");
+    if(part && foundMap[part] && !placedMap[part]){
+      getAudioCtx();
+      var tile = boneTray.querySelector('[data-part="' + part + '"]');
+      var tr = tile ? tile.getBoundingClientRect() : null;
+      snapBonePart(part, tr ? tr.left + tr.width * 0.5 : null, tr ? tr.top + tr.height * 0.5 : null);
+    }
+  });
+
+  /* ============================================================================
+     LOAD / SWITCH DINOSAUR & HUD UPDATES
+     ============================================================================ */
+  function updateHudProgress(animateStar){
+    starNum.textContent = String(stars);
+    if(animateStar){
+      starPill.classList.remove("bump");
+      void starPill.offsetWidth;
+      starPill.classList.add("bump");
+    }
+    dinoPills.forEach(function(btn){
+      var id = btn.dataset.dino;
+      var isAct = id === dinoId;
+      btn.classList.toggle("active", isAct);
+      btn.setAttribute("aria-pressed", isAct ? "true" : "false");
+      btn.classList.toggle("revived", !!revivedMap[id]);
+    });
+    document.querySelectorAll(".mini-t").forEach(function(dot){
+      dot.classList.toggle("lit", !!revivedMap[dot.dataset.t]);
+    });
+  }
+
+  function startDino(id){
+    if(!DINOS[id]) id = "trex";
+    clearTimers();
+    clearVoice(true);
+    dinoId = id;
+    phase = "dig";
+    foundMap = {};
+    placedMap = {};
+    bonesFound = 0;
+    bonesPlaced = 0;
+    particles.length = 0;
+
+    stage.setAttribute("data-phase", "dig");
+    digScene.hidden = false;
+    museumScene.hidden = true;
+    boneTray.hidden = false;
+    trophyShelf.hidden = true;
+    rainbowAura.classList.remove("active");
+
+    /* Populate bone tray icons tailored to this dinosaur */
+    boneTiles.forEach(function(tile){
+      var part = tile.dataset.part;
+      tile.classList.remove("found", "placed", "show-hand", "hint-next");
+      tile.querySelector(".tile-svg").innerHTML = boneSvg(dinoId, part);
+    });
+
+    renderBuriedBones();
+    paintSandLayer();
+    updateHudProgress(false);
+    armIdle();
+  }
+
+  /* Populate static pill & trophy mini-dino artwork */
+  dinoPills.forEach(function(btn){
+    var id = btn.dataset.dino;
+    btn.querySelector(".pill-art").innerHTML = livingDinoSvg(id);
+    btn.addEventListener("click", function(){
+      getAudioCtx();
+      clickPopSfx(740);
+      startDino(id);
+    });
+  });
+
+  trophyCups.forEach(function(cup){
+    var id = cup.dataset.dino;
+    cup.querySelector(".trophy-art").innerHTML = livingDinoSvg(id);
+    cup.addEventListener("click", function(){
+      getAudioCtx();
+      if(revivedMap[id]){
+        dinoRoarSfx(id);
+        cup.classList.remove("just-won");
+        void cup.offsetWidth;
+        cup.classList.add("just-won");
+        var r = cup.getBoundingClientRect();
+        spawnSparkles(r.left + r.width * 0.5, r.top + r.height * 0.4, 8);
+      } else {
+        clickPopSfx(680);
+        startDino(id);
+      }
+    });
+  });
+
+  livingDinoBtn.addEventListener("click", function(){ triggerDinoRoar(false); });
+  roarFab.addEventListener("click", function(){ triggerDinoRoar(false); });
+
+  nextDinoBtn.addEventListener("click", function(){
+    getAudioCtx();
+    clickPopSfx(820);
+    var targetId = nextDinoBtn.dataset.nextDino || "brachio";
+    startDino(targetId);
+  });
+
+  soundBtn.addEventListener("click", function(){
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.setAttribute("aria-label", soundOn ? "Turn Sound Off" : "Turn Sound On");
+    if(!soundOn){
+      clearVoice(true);
+    } else {
+      getAudioCtx();
+      clickPopSfx(880);
+    }
+  });
+
+  /* Direct tap on Paleontologist Hoot -> happy bounce + transient __bellyArmed giggle! */
+  hootBtn.addEventListener("click", function(){
+    getAudioCtx();
+    hootCheer();
+    clickPopSfx(980);
+    window.__bellyArmed = true;
+    setTimeout(function(){ window.__bellyArmed = false; }, 500);
+    enqueueVoice("hoot-giggle.mp3", true);
+  });
+
+  /* Smooth eye-tracking on Paleontologist Hoot */
+  function trackEyes(x, y){
+    var r = hootBtn.getBoundingClientRect();
+    if(!r.width) return;
+    var dx = Math.max(-4.5, Math.min(4.5, (x - (r.left + r.width * 0.5)) / 48));
+    var dy = Math.max(-3.5, Math.min(4.5, (y - (r.top + r.height * 0.42)) / 48));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+  }
+  stage.addEventListener("pointermove", function(e){ trackEyes(e.clientX, e.clientY); });
+  stage.addEventListener("pointerdown", function(e){ trackEyes(e.clientX, e.clientY); });
+
+  /* Clean Teardown */
+  function teardown(){
+    dead = true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(dustRaf) cancelAnimationFrame(dustRaf);
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden) clearVoice(false);
+  });
+
+  /* ============================================================================
+     BOOT & PUBLIC TEST HOOK (window.__dinoGame)
+     ============================================================================ */
+  startDino("trex");
+  dustRaf = requestAnimationFrame(tickDust);
+
+  function snapshot(){
+    return {
+      dinoId: dinoId,
+      phase: phase,
+      bonesFound: bonesFound,
+      bonesPlaced: bonesPlaced,
+      revivedCount: revivedCount,
+      stars: stars
+    };
+  }
+
+  window.__dinoGame = {
+    snapshot: snapshot,
+    uncoverAllForTest: function(){
+      if(phase === "dig"){
+        sandCtx.clearRect(0, 0, 600, 420);
+        PARTS.forEach(function(part){
+          if(!foundMap[part]) discoverBone(part, true);
+        });
+      }
+      return snapshot();
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e146">
+<script src="js/hoot-game-tail.js?v=llprev3e146"></script>
+</body>
+</html>
