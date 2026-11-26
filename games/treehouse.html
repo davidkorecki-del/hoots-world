@@ -1,0 +1,2513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>
+window.__HOOT_GAME_KEY__="treehouse";
+window.__HOOT_SELF_COACH__=true;
+</script>
+<script src="js/hoot-game-head.js?v=llprev3e159"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>Hoot's Pretend-Play Treehouse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --wood-hi:#b8743b;
+    --wood-mid:#8f5122;
+    --wood-deep:#5c3011;
+    --cream:#fffdf5;
+    --gold:#ffd84d;
+    --gold-deep:#c98200;
+    --ink:#3d2410;
+    --leaf:#22c55e;
+    --leaf-deep:#15803d;
+    --sky:#38bdf8;
+    --sky-deep:#0369a1;
+    --berry:#f472b6;
+    --warm:#fb923c;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
+  html,body{
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+  }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#7ec850;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* ================= FULLSCREEN TREEHOUSE WORLD STAGE ================= */
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, #ffefc7 0%, #f6d49b 50%, #c88a4b 100%);
+    transition:background .6s ease;
+  }
+  #stage[data-room="yard"]{
+    background:linear-gradient(180deg, #4cc3ff 0%, #9ce2ff 45%, #7bd865 72%, #4ea83b 100%);
+  }
+
+  /* ================= PIXAR-ILLUSTRATED BACKDROPS (INSIDE vs YARD) ================= */
+  .backdrop{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    transition:opacity .55s ease, transform .55s ease;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+  }
+  .backdrop::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+  #insideBg{
+    opacity:1;
+    background-image:url("assets/treehouse3d/bg_rooms.jpg"), linear-gradient(180deg, #ffefc7 0%, #f4cf95 45%, #c98643 100%);
+  }
+  #insideBg::after{
+    background:radial-gradient(ellipse at 50% 42%, rgba(255,248,225,.08) 30%, rgba(68,36,12,.26) 100%);
+  }
+  #yardBg{
+    opacity:0;
+    background-image:url("assets/treehouse3d/bg_yard.jpg"), linear-gradient(180deg, #4cc3ff 0%, #a5e6ff 42%, #86df6d 70%, #4ea83b 100%);
+  }
+  #yardBg::after{
+    background:radial-gradient(ellipse at 50% 35%, rgba(255,253,230,.08) 35%, rgba(28,74,24,.18) 100%);
+  }
+  #stage[data-room="yard"] #insideBg{ opacity:0; }
+  #stage[data-room="yard"] #yardBg{ opacity:1; }
+
+  /* Subtle animated sky / sunbeam ambient SVG layer */
+  .ambient-svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:2;
+    transition:opacity .55s ease;
+  }
+  #yardAmbient{ opacity:0; }
+  #stage[data-room="yard"] #yardAmbient{ opacity:1; }
+  #stage[data-room="yard"] #insideAmbient{ opacity:0; }
+
+  .cloud-drift{ animation:cloudDrift 28s linear infinite; }
+  .cloud-drift-slow{ animation:cloudDrift 40s linear infinite reverse; }
+  @keyframes cloudDrift{
+    0%{ transform:translateX(-22px); }
+    50%{ transform:translateX(28px); }
+    100%{ transform:translateX(-22px); }
+  }
+  .sun-spin{ transform-origin:1080px 90px; animation:sunSpin 32s linear infinite; }
+  @keyframes sunSpin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+
+  /* Cozy Starry Nightlight Overlay (Inside Room only when Lamp = Night!) */
+  #nightOverlay{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    pointer-events:none;
+    opacity:0;
+    background:
+      radial-gradient(circle at 72% 34%, rgba(255,224,122,.28) 0%, rgba(255,214,102,.08) 26%, rgba(16,22,64,.56) 72%),
+      linear-gradient(180deg, rgba(16,22,66,.52) 0%, rgba(28,32,88,.38) 100%);
+    transition:opacity .55s ease;
+  }
+  #stage[data-room="inside"][data-night="true"] #nightOverlay{
+    opacity:1;
+  }
+  .night-star{
+    position:absolute;
+    color:#fff4a8;
+    font-size:18px;
+    text-shadow:0 0 10px rgba(255,232,120,.95);
+    animation:twinkleStar 2.4s ease-in-out infinite;
+  }
+  @keyframes twinkleStar{
+    0%,100%{ opacity:.35; transform:scale(.82); }
+    50%{ opacity:1; transform:scale(1.18); }
+  }
+
+  /* ================= TOP HUD (BIG ROOM SWITCHERS + JOY + SOUND) ================= */
+  #hud{
+    position:relative;
+    z-index:20;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px max(72px, env(safe-area-inset-left));
+    pointer-events:none;
+  }
+  #roomBar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  .room-btn{
+    position:relative;
+    min-width:72px;
+    min-height:68px;
+    height:68px;
+    padding:0 16px;
+    border-radius:24px;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #ffba5a 0%, #e07a22 100%);
+    box-shadow:0 5px 0 #9a4a0c, 0 8px 18px rgba(61,36,16,.24);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    font-size:34px;
+    line-height:1;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1), box-shadow .16s, filter .16s;
+  }
+  #roomYardBtn{
+    background:linear-gradient(180deg, #5ce076 0%, #22a847 100%);
+    box-shadow:0 5px 0 #136e2c, 0 8px 18px rgba(22,74,34,.24);
+  }
+  .room-btn:active{ transform:translateY(3px) scale(.94); }
+  .room-btn.active{
+    transform:translateY(-2px) scale(1.06);
+    border-color:#ffd84d;
+    box-shadow:0 6px 0 #9a4a0c, 0 0 0 4px rgba(255,216,77,.72), 0 10px 22px rgba(61,36,16,.28);
+  }
+  #roomYardBtn.active{
+    box-shadow:0 6px 0 #136e2c, 0 0 0 4px rgba(255,216,77,.72), 0 10px 22px rgba(22,74,34,.28);
+  }
+
+  .hud-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  #joyPill{
+    min-height:64px;
+    height:64px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #fff7d6 0%, #ffe094 100%);
+    box-shadow:0 5px 0 #c98200, 0 8px 18px rgba(61,36,16,.2);
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:var(--ink);
+  }
+  #joyPill.bump{ animation:joyBump .46s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes joyBump{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.16) rotate(-4deg); }
+    100%{ transform:scale(1); }
+  }
+  .joy-glyph{
+    font-size:26px;
+    line-height:1;
+    filter:drop-shadow(0 2px 0 rgba(255,255,255,.85));
+  }
+  #joyNum{
+    font-size:24px;
+    font-weight:700;
+    line-height:1;
+    min-width:18px;
+    text-align:center;
+  }
+
+  #soundBtn{
+    min-width:64px;
+    min-height:64px;
+    width:66px;
+    height:66px;
+    border-radius:50%;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #ff9f43 0%, #e66b17 100%);
+    box-shadow:0 5px 0 #9f4308, 0 8px 18px rgba(61,36,16,.24);
+    color:#fff;
+    font-size:28px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+  }
+  #soundBtn:active{ transform:translateY(3px) scale(.93); }
+
+  /* ================= MAIN INTERACTIVE PLAY ARENA ================= */
+  #arena{
+    position:relative;
+    z-index:10;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 14px 10px;
+  }
+
+  .room-scene{
+    position:relative;
+    width:100%;
+    max-width:960px;
+    height:100%;
+    max-height:560px;
+    display:grid;
+    gap:14px;
+  }
+
+  /* Inside Treehouse: 2x2 cozy room pods */
+  #insideScene{
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+  }
+
+  /* Sunny Backyard: 3 generous play pods (Slide, Swing, Garden) */
+  #yardScene{
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:1fr;
+    align-items:stretch;
+  }
+
+  /* ================= HOTSPOT ZONE PODS ================= */
+  .zone-pod{
+    position:relative;
+    min-width:64px;
+    min-height:64px;
+    border-radius:28px;
+    border:3.5px solid rgba(255,253,245,.82);
+    background:linear-gradient(180deg, rgba(255,252,240,.36) 0%, rgba(255,242,214,.26) 100%);
+    box-shadow:0 7px 0 rgba(92,48,17,.26), 0 12px 24px rgba(45,22,6,.20), inset 0 2px 0 rgba(255,255,255,.68);
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:visible;
+    cursor:pointer;
+    outline:none;
+    padding:8px;
+    transition:transform .18s cubic-bezier(.34,1.65,.5,1), box-shadow .2s, border-color .2s, background .35s;
+  }
+  .zone-pod:active{
+    transform:scale(.97);
+  }
+  #stage[data-room="inside"][data-night="true"] .zone-pod{
+    background:linear-gradient(180deg, rgba(44,50,104,.58) 0%, rgba(30,36,82,.56) 100%);
+    border-color:rgba(255,236,162,.62);
+  }
+  #stage[data-room="inside"][data-night="true"] #zoneBed{
+    background:radial-gradient(circle at 75% 24%, rgba(255,232,140,.46) 0%, rgba(56,52,118,.62) 72%);
+    box-shadow:0 8px 0 rgba(20,18,52,.42), 0 0 28px rgba(255,226,120,.45), inset 0 2px 0 rgba(255,244,194,.6);
+  }
+
+  /* Magnetic drag hover highlight */
+  .zone-pod.drop-hot{
+    transform:scale(1.045);
+    border-color:#ffd84d !important;
+    box-shadow:0 8px 0 rgba(164,104,0,.48), 0 0 0 6px rgba(255,216,77,.82), 0 0 32px rgba(255,216,77,.88) !important;
+  }
+
+  /* Gentle idle pulsing glow */
+  .zone-pod.hint-glow{
+    border-color:#ffd84d;
+    animation:zonePulse 1.35s ease-in-out infinite;
+  }
+  @keyframes zonePulse{
+    0%,100%{ box-shadow:0 8px 0 rgba(92,48,17,.28), 0 0 0 2px rgba(255,216,77,.45); }
+    50%{ box-shadow:0 8px 0 rgba(92,48,17,.28), 0 0 0 7px rgba(255,216,77,.88), 0 0 24px rgba(255,216,77,.75); }
+  }
+
+  /* Idle bouncing pointer hand */
+  .zone-hand{
+    position:absolute;
+    top:-16px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:34px;
+    line-height:1;
+    z-index:25;
+    pointer-events:none;
+    display:none;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.34));
+    animation:handBob .85s ease-in-out infinite;
+  }
+  .zone-pod.hint-glow .zone-hand{ display:block; }
+  @keyframes handBob{
+    0%,100%{ transform:translate(-50%, 0); }
+    50%{ transform:translate(-50%, -10px); }
+  }
+
+  /* Corner emoji icon badge for instant 2yo visual clarity */
+  .zone-badge{
+    position:absolute;
+    top:8px;
+    left:10px;
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    background:rgba(255,253,245,.92);
+    border:2.5px solid #fff;
+    box-shadow:0 3px 8px rgba(61,36,16,.2);
+    display:grid;
+    place-items:center;
+    font-size:24px;
+    line-height:1;
+    pointer-events:none;
+    z-index:8;
+  }
+
+  .zone-art{
+    width:100%;
+    height:100%;
+    max-width:300px;
+    max-height:220px;
+    display:block;
+    pointer-events:none;
+    filter:drop-shadow(0 6px 10px rgba(61,36,16,.18));
+  }
+  #yardScene .zone-art{
+    max-width:280px;
+    max-height:360px;
+  }
+
+  /* ================= PLACED FRIEND ACTOR ON STAGE ================= */
+  .zone-actor{
+    position:absolute;
+    width:clamp(84px, 12vw, 118px);
+    height:clamp(84px, 12vw, 118px);
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    z-index:12;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .35s cubic-bezier(.34,1.65,.5,1);
+    filter:drop-shadow(0 6px 10px rgba(45,22,6,.28));
+  }
+  .zone-actor svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .zone-actor.idle-bob{
+    animation:actorBob 2.4s ease-in-out infinite;
+  }
+  @keyframes actorBob{
+    0%,100%{ transform:translate(-50%, -50%) scale(1); }
+    50%{ transform:translate(-50%, -55%) scale(1.03); }
+  }
+
+  /* Zone-specific actor placement & fun animations */
+  #zoneBath .zone-actor{
+    top:39%;
+    left:48%;
+    z-index:10;
+  }
+  #zoneBath.splashing .zone-actor{
+    animation:bathSplash .65s cubic-bezier(.34,1.7,.5,1) 2;
+  }
+  @keyframes bathSplash{
+    0%,100%{ transform:translate(-50%, -50%) rotate(0deg) scale(1); }
+    35%{ transform:translate(-50%, -62%) rotate(-8deg) scale(1.1); }
+    70%{ transform:translate(-50%, -44%) rotate(8deg) scale(.95); }
+  }
+  /* Soap suds overlay in front of friend in tub */
+  .tub-suds-front{
+    position:absolute;
+    left:50%;
+    bottom:14%;
+    transform:translateX(-50%);
+    width:72%;
+    height:34%;
+    pointer-events:none;
+    z-index:13;
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  #zoneBath.has-friend .tub-suds-front{ opacity:1; }
+
+  #zoneBed .zone-actor{
+    top:42%;
+    left:42%;
+    z-index:10;
+  }
+  #zoneBed.tucked .zone-actor{
+    animation:sleepBreathe 2.8s ease-in-out infinite;
+  }
+  @keyframes sleepBreathe{
+    0%,100%{ transform:translate(-50%, -50%) rotate(-12deg) scale(1); }
+    50%{ transform:translate(-50%, -53%) rotate(-10deg) scale(1.04); }
+  }
+  .bed-blanket-front{
+    position:absolute;
+    left:16%;
+    bottom:15%;
+    width:62%;
+    height:38%;
+    pointer-events:none;
+    z-index:13;
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity .35s ease, transform .42s cubic-bezier(.34,1.6,.5,1);
+  }
+  #zoneBed.tucked .bed-blanket-front{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* Dedicated >=64px Nightlight Lamp Toggle Button inside Bed Zone */
+  #lampBtn{
+    position:absolute;
+    top:8px;
+    right:8px;
+    min-width:64px;
+    min-height:64px;
+    width:66px;
+    height:66px;
+    border-radius:50%;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #ffe57f 0%, #ffb300 100%);
+    box-shadow:0 4px 0 #b87300, 0 6px 14px rgba(61,36,16,.24);
+    font-size:30px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    z-index:18;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1), background .35s, box-shadow .35s;
+  }
+  #lampBtn:active{ transform:scale(.92); }
+  #stage[data-night="true"] #lampBtn{
+    background:linear-gradient(180deg, #6366f1 0%, #3730a3 100%);
+    box-shadow:0 4px 0 #1e1b4b, 0 0 18px rgba(255,226,120,.85);
+  }
+
+  /* Picnic Table & interactive snack targets */
+  #zoneTable .zone-actor{
+    top:34%;
+    left:50%;
+  }
+  #zoneTable.munching .zone-actor{
+    animation:munchJoy .5s cubic-bezier(.34,1.8,.5,1) 2;
+  }
+  @keyframes munchJoy{
+    0%,100%{ transform:translate(-50%, -50%) scale(1); }
+    45%{ transform:translate(-50%, -58%) scale(1.13) rotate(-5deg); }
+  }
+  .snack-tray{
+    position:absolute;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    z-index:15;
+    pointer-events:auto;
+  }
+  .snack-chip{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #fffef8 0%, #ffefc7 100%);
+    border:3px solid #fff;
+    box-shadow:0 4px 0 rgba(164,98,32,.42), 0 6px 12px rgba(61,36,16,.2);
+    display:grid;
+    place-items:center;
+    font-size:28px;
+    line-height:1;
+    cursor:pointer;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1);
+  }
+  .snack-chip:active{ transform:scale(.88); }
+  .snack-chip.pop{ animation:snackPop .42s cubic-bezier(.34,1.9,.5,1); }
+  @keyframes snackPop{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.26) translateY(-6px); }
+  }
+
+  /* Magic Doorbell Zone */
+  #zoneDoor .zone-actor{
+    top:54%;
+    left:26%;
+    width:clamp(74px, 10vw, 102px);
+    height:clamp(74px, 10vw, 102px);
+  }
+  #doorPanel{
+    transform-origin:112px 115px;
+    transition:transform .42s cubic-bezier(.34,1.5,.5,1);
+  }
+  #zoneDoor.door-open #doorPanel{
+    transform:scaleX(.26);
+  }
+  #doorBellGlow{
+    transition:transform .2s;
+  }
+  #zoneDoor.ringing #doorBellGlow{
+    animation:bellRing .16s ease-in-out 4;
+  }
+  @keyframes bellRing{
+    0%,100%{ transform:translateX(0); }
+    50%{ transform:translateX(3px); }
+  }
+  #doorToyPop{
+    position:absolute;
+    left:56%;
+    top:52%;
+    transform:translate(-50%, -50%) scale(.2);
+    font-size:clamp(54px, 7.5vw, 76px);
+    line-height:1;
+    z-index:16;
+    opacity:0;
+    pointer-events:none;
+    filter:drop-shadow(0 8px 14px rgba(45,22,6,.32));
+    transition:opacity .28s ease, transform .45s cubic-bezier(.34,1.95,.5,1);
+  }
+  #zoneDoor.door-open #doorToyPop{
+    opacity:1;
+    transform:translate(-50%, -50%) scale(1.08);
+    animation:toyBounce 1.4s ease-in-out infinite .42s;
+  }
+  @keyframes toyBounce{
+    0%,100%{ transform:translate(-50%, -50%) scale(1.06) rotate(-4deg); }
+    50%{ transform:translate(-50%, -62%) scale(1.14) rotate(5deg); }
+  }
+
+  /* ================= YARD ZONES: SLIDE, SWING, GARDEN ================= */
+  #zoneSlide .zone-actor{
+    left:28%;
+    top:24%;
+    transition:left .75s cubic-bezier(.42,0,.38,1), top .75s cubic-bezier(.55,.05,.65,.95), transform .75s ease;
+  }
+  #zoneSlide.sliding .zone-actor{
+    left:74%;
+    top:74%;
+    transform:translate(-50%, -50%) rotate(18deg) scale(1.08);
+  }
+  #zoneSlide.landed .zone-actor{
+    left:74%;
+    top:74%;
+    animation:landBounce .5s cubic-bezier(.34,1.9,.5,1);
+  }
+  @keyframes landBounce{
+    0%{ transform:translate(-50%, -50%) scale(1.18, .85); }
+    50%{ transform:translate(-50%, -68%) scale(.95, 1.12); }
+    100%{ transform:translate(-50%, -50%) scale(1); }
+  }
+
+  /* Tree Swing pendulum wrapper */
+  #swingRig{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform-origin:50% 10%;
+  }
+  #zoneSwing.swinging #swingRig{
+    animation:swingArc 1.55s ease-in-out infinite;
+  }
+  #zoneSwing.swing-boost #swingRig{
+    animation:swingArcBig 1.18s ease-in-out 3;
+  }
+  @keyframes swingArc{
+    0%,100%{ transform:rotate(-13deg); }
+    50%{ transform:rotate(13deg); }
+  }
+  @keyframes swingArcBig{
+    0%,100%{ transform:rotate(-22deg); }
+    50%{ transform:rotate(22deg); }
+  }
+  #zoneSwing .zone-actor{
+    top:57%;
+    left:50%;
+  }
+
+  /* Magic Flower Garden */
+  #zoneGarden .zone-actor{
+    top:34%;
+    left:26%;
+    width:clamp(74px, 10vw, 100px);
+    height:clamp(74px, 10vw, 100px);
+  }
+  #wateringCanG{
+    transform-origin:205px 88px;
+    transition:transform .38s cubic-bezier(.34,1.5,.5,1);
+  }
+  #zoneGarden.pouring #wateringCanG{
+    transform:rotate(-38deg) translate(-16px, 10px);
+  }
+  .flower-stem{
+    transform-box:fill-box;
+    transform-origin:bottom center;
+    transform:scaleY(.22);
+    transition:transform .62s cubic-bezier(.34,1.75,.5,1);
+  }
+  #zoneGarden[data-garden="1"] .f-stage-1{ transform:scaleY(.72); }
+  #zoneGarden[data-garden="2"] .f-stage-1{ transform:scaleY(1); }
+  #zoneGarden[data-garden="2"] .f-stage-2{ transform:scaleY(.88); }
+  #zoneGarden[data-garden="3"] .flower-stem{ transform:scaleY(1.06); }
+
+  .garden-butterfly{
+    position:absolute;
+    font-size:28px;
+    line-height:1;
+    pointer-events:none;
+    z-index:16;
+    opacity:0;
+    transition:opacity .4s ease;
+  }
+  #zoneGarden[data-garden="2"] .b-one,
+  #zoneGarden[data-garden="3"] .garden-butterfly{
+    opacity:1;
+    animation:flutterFly 3.2s ease-in-out infinite;
+  }
+  .b-one{ left:22%; top:24%; }
+  .b-two{ left:68%; top:18%; animation-delay:-1.4s !important; }
+  @keyframes flutterFly{
+    0%,100%{ transform:translate(0, 0) rotate(-10deg) scale(1); }
+    25%{ transform:translate(18px, -16px) rotate(12deg) scale(1.1); }
+    50%{ transform:translate(-8px, -24px) rotate(-8deg) scale(.96); }
+    75%{ transform:translate(-20px, -10px) rotate(10deg) scale(1.08); }
+  }
+
+  /* ================= BOTTOM PLAYABLE FRIENDS DOCK ================= */
+  #bottomDock{
+    position:relative;
+    z-index:20;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2.4vw, 22px);
+    padding:8px 12px max(10px, env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(138,78,32,.88) 0%, rgba(92,48,17,.96) 100%);
+    border-top:4px solid #ffd88a;
+    box-shadow:0 -6px 20px rgba(45,20,4,.32);
+  }
+  .friend-tile{
+    position:relative;
+    min-width:68px;
+    min-height:68px;
+    width:78px;
+    height:78px;
+    padding:5px;
+    border-radius:22px;
+    border:4px solid #fffdf5;
+    background:radial-gradient(circle at 35% 28%, #fffef8 0%, #ffefc7 100%);
+    box-shadow:0 5px 0 #9c5b00, 0 8px 16px rgba(32,14,4,.34);
+    display:grid;
+    place-items:center;
+    cursor:grab;
+    outline:none;
+    touch-action:none;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1), box-shadow .18s, border-color .18s;
+  }
+  .friend-tile svg{
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    filter:drop-shadow(0 2px 3px rgba(61,36,16,.22));
+  }
+  .friend-tile:active{
+    transform:scale(.93);
+    cursor:grabbing;
+  }
+  .friend-tile.selected{
+    transform:translateY(-6px) scale(1.1);
+    border-color:#ffd84d;
+    box-shadow:0 7px 0 #b87300, 0 0 0 4px rgba(255,216,77,.82), 0 12px 22px rgba(32,14,4,.38);
+  }
+  .friend-tile.placed::after{
+    content:"✨";
+    position:absolute;
+    top:-8px;
+    right:-6px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #fff3a1 0%, #ffb703 100%);
+    border:2px solid #fff;
+    font-size:13px;
+    display:grid;
+    place-items:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.28);
+    pointer-events:none;
+  }
+  .hoot-speak-dot{
+    position:absolute;
+    bottom:-6px;
+    left:-6px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    border:2px solid #fff;
+    color:#fff;
+    font-size:12px;
+    display:grid;
+    place-items:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.28);
+    pointer-events:none;
+  }
+  .friend-tile.cheering{
+    animation:hootCheerPop .55s cubic-bezier(.34,1.85,.5,1);
+  }
+  @keyframes hootCheerPop{
+    0%,100%{ transform:translateY(-6px) scale(1.1); }
+    45%{ transform:translateY(-14px) scale(1.2) rotate(-5deg); }
+  }
+
+  /* ================= DRAGGED FRIEND GHOST & FLOATING FX LAYER ================= */
+  #fxLayer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:35;
+    overflow:hidden;
+  }
+  #dragGhost{
+    position:fixed;
+    left:0;
+    top:0;
+    width:112px;
+    height:112px;
+    margin:-56px 0 0 -56px;
+    pointer-events:none;
+    z-index:45;
+    filter:drop-shadow(0 14px 18px rgba(45,22,6,.38)) drop-shadow(0 0 14px rgba(255,216,77,.85));
+    transform:scale(1.12);
+  }
+  #dragGhost svg{ width:100%; height:100%; display:block; }
+
+  .fx-float{
+    position:absolute;
+    font-size:28px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.22));
+  }
+  .fx-bubble{
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    border:2px solid rgba(255,255,255,.88);
+    background:radial-gradient(circle at 30% 28%, rgba(255,255,255,.92) 0%, rgba(165,243,252,.52) 45%, rgba(244,114,182,.35) 85%, rgba(255,255,255,.2) 100%);
+    box-shadow:inset 0 0 8px rgba(255,255,255,.85), 0 4px 10px rgba(56,189,248,.28);
+  }
+  .fx-drop{
+    position:absolute;
+    width:10px;
+    height:16px;
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    background:linear-gradient(180deg, #bae6fd 0%, #38bdf8 100%);
+    box-shadow:0 0 6px rgba(56,189,248,.75);
+    pointer-events:none;
+  }
+
+  /* ================= RESPONSIVE: iPHONE PORTRAIT (390x844) ================= */
+  @media (max-width:640px){
+    #hud{
+      padding:max(8px, env(safe-area-inset-top)) 8px 4px 66px;
+      gap:6px;
+    }
+    #roomBar{ gap:6px; }
+    .room-btn{
+      min-width:68px;
+      min-height:68px;
+      height:68px;
+      padding:0 12px;
+      border-radius:20px;
+      font-size:30px;
+    }
+    .hud-right{ gap:6px; }
+    #joyPill{
+      min-height:54px;
+      height:54px;
+      padding:0 10px 0 8px;
+      border-width:3px;
+    }
+    .joy-glyph{ font-size:21px; }
+    #joyNum{ font-size:19px; }
+    #soundBtn{
+      min-width:64px;
+      min-height:64px;
+      width:64px;
+      height:64px;
+      font-size:24px;
+    }
+
+    #arena{
+      padding:6px 10px 8px;
+    }
+    .room-scene{
+      gap:10px;
+      max-height:none;
+    }
+    #insideScene{
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:1fr 1fr;
+    }
+    /* Yard on portrait phone: Slide & Swing on top row, full-width Garden below -> HUGE tappable zones, ZERO cramp! */
+    #yardScene{
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:1.15fr 1fr;
+    }
+    #zoneGarden{
+      grid-column:1 / span 2;
+    }
+
+    .zone-pod{
+      border-radius:22px;
+      padding:6px;
+    }
+    .zone-badge{
+      width:34px;
+      height:34px;
+      font-size:19px;
+      top:6px;
+      left:6px;
+      border-radius:11px;
+    }
+    #lampBtn{
+      top:6px;
+      right:6px;
+      min-width:64px;
+      min-height:64px;
+      width:64px;
+      height:64px;
+      font-size:26px;
+    }
+    .zone-actor{
+      width:78px;
+      height:78px;
+    }
+    #zoneDoor .zone-actor{
+      width:68px;
+      height:68px;
+    }
+    .snack-tray{
+      bottom:6px;
+      gap:6px;
+    }
+    .snack-chip{
+      width:44px;
+      height:44px;
+      font-size:23px;
+    }
+
+    #bottomDock{
+      gap:10px;
+      padding:8px 8px max(8px, env(safe-area-inset-bottom));
+    }
+    .friend-tile{
+      min-width:66px;
+      min-height:66px;
+      width:72px;
+      height:72px;
+      border-radius:18px;
+      padding:4px;
+    }
+  }
+
+  /* ================= RESPONSIVE: iPAD LANDSCAPE (1024x768) ================= */
+  @media (min-width:700px) and (max-height:820px){
+    #arena{
+      padding:6px 18px 8px;
+    }
+    .room-scene{
+      max-height:520px;
+      gap:14px;
+    }
+    .zone-art{
+      max-height:200px;
+    }
+    #yardScene .zone-art{
+      max-height:330px;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="stage" data-room="inside" data-night="false">
+  <!-- Pixar 3D Backdrops -->
+  <div id="insideBg" class="backdrop" aria-hidden="true"></div>
+  <div id="yardBg" class="backdrop" aria-hidden="true"></div>
+
+  <!-- Ambient Sunbeams (Inside) -->
+  <svg id="insideAmbient" class="ambient-svg" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="sunBeam" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#fff7c2" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="#fff7c2" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <polygon points="180,0 380,0 640,760 320,760" fill="url(#sunBeam)"/>
+    <polygon points="620,0 780,0 1040,760 800,760" fill="url(#sunBeam)" opacity=".7"/>
+  </svg>
+
+  <!-- Ambient Clouds & Sun (Yard) -->
+  <svg id="yardAmbient" class="ambient-svg" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="sun-spin" opacity=".75">
+      <circle cx="1080" cy="90" r="46" fill="#ffe47a"/>
+      <g stroke="#fff3a8" stroke-width="8" stroke-linecap="round">
+        <line x1="1080" y1="18" x2="1080" y2="32"/>
+        <line x1="1080" y1="148" x2="1080" y2="162"/>
+        <line x1="1008" y1="90" x2="1022" y2="90"/>
+        <line x1="1138" y1="90" x2="1152" y2="90"/>
+        <line x1="1028" y1="38" x2="1038" y2="48"/>
+        <line x1="1122" y1="132" x2="1132" y2="142"/>
+        <line x1="1132" y1="38" x2="1122" y2="48"/>
+        <line x1="1038" y1="132" x2="1028" y2="142"/>
+      </g>
+    </g>
+    <g class="cloud-drift" fill="rgba(255,255,255,.78)">
+      <ellipse cx="220" cy="96" rx="54" ry="26"/>
+      <ellipse cx="262" cy="84" rx="42" ry="28"/>
+      <ellipse cx="182" cy="94" rx="34" ry="20"/>
+    </g>
+    <g class="cloud-drift-slow" fill="rgba(255,255,255,.68)">
+      <ellipse cx="760" cy="116" rx="60" ry="24"/>
+      <ellipse cx="808" cy="104" rx="44" ry="26"/>
+      <ellipse cx="716" cy="114" rx="36" ry="18"/>
+    </g>
+  </svg>
+
+  <!-- Starry Nightlight Atmosphere (Inside Night Mode) -->
+  <div id="nightOverlay" aria-hidden="true">
+    <span class="night-star" style="left:12%;top:16%;animation-delay:0s">✦</span>
+    <span class="night-star" style="left:28%;top:12%;animation-delay:.7s;font-size:14px">★</span>
+    <span class="night-star" style="left:48%;top:18%;animation-delay:1.2s">✦</span>
+    <span class="night-star" style="left:66%;top:14%;animation-delay:.3s;font-size:20px">★</span>
+    <span class="night-star" style="left:86%;top:22%;animation-delay:1.6s">✦</span>
+    <span class="night-star" style="left:18%;top:64%;animation-delay:.9s;font-size:15px">★</span>
+    <span class="night-star" style="left:82%;top:66%;animation-delay:.4s">✦</span>
+  </div>
+
+  <!-- TOP HUD -->
+  <header id="hud">
+    <nav id="roomBar" aria-label="Treehouse Rooms">
+      <button id="roomInsideBtn" class="room-btn active" type="button" data-room="inside" aria-label="Inside Treehouse" aria-pressed="true">🏠</button>
+      <button id="roomYardBtn" class="room-btn" type="button" data-room="yard" aria-label="Sunny Backyard" aria-pressed="false">🌳</button>
+    </nav>
+    <div class="hud-right">
+      <div id="joyPill" aria-label="Fun Moments">
+        <span class="joy-glyph" aria-hidden="true">✨</span>
+        <span id="joyNum">0</span>
+      </div>
+      <button id="soundBtn" type="button" aria-label="Turn Sound Off">🔊</button>
+    </div>
+  </header>
+
+  <!-- MAIN PRETEND-PLAY STAGE -->
+  <main id="arena">
+    <!-- ========== INSIDE TREEHOUSE SCENE ========== -->
+    <section id="insideScene" class="room-scene" data-scene="inside" aria-label="Inside Treehouse">
+      <!-- 1. Bubble Bathtub Zone -->
+      <div id="zoneBath" class="zone-pod" role="button" tabindex="0" data-zone="bath" aria-label="Bubble Bathtub">
+        <span class="zone-badge" aria-hidden="true">🛁</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <svg class="zone-art" viewBox="0 0 280 200" aria-hidden="true">
+          <defs>
+            <linearGradient id="tubBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="70%" stop-color="#e8f6ff"/>
+              <stop offset="100%" stop-color="#cbe6f7"/>
+            </linearGradient>
+            <linearGradient id="tubWater" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#67e8f9"/>
+              <stop offset="50%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#67e8f9"/>
+            </linearGradient>
+          </defs>
+          <!-- Brass Faucet -->
+          <path d="M226 94 L226 52 C226 36 202 36 202 54" fill="none" stroke="#eab308" stroke-width="11" stroke-linecap="round"/>
+          <circle cx="202" cy="57" r="6" fill="#fde047"/>
+          <path d="M198 65 Q202 82 206 96" stroke="#7dd3fc" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+          <!-- Tub water ellipse -->
+          <ellipse cx="140" cy="106" rx="92" ry="20" fill="url(#tubWater)"/>
+          <!-- Floating cute rubber ducky -->
+          <g transform="translate(186 78)">
+            <ellipse cx="14" cy="18" rx="14" ry="10" fill="#fde047" stroke="#ca8a04" stroke-width="2"/>
+            <circle cx="22" cy="8" r="9" fill="#fde047" stroke="#ca8a04" stroke-width="2"/>
+            <polygon points="29,7 36,10 29,13" fill="#f97316"/>
+            <circle cx="24" cy="6" r="2" fill="#3d2410"/>
+          </g>
+          <!-- Back foam bubbles -->
+          <g fill="#ffffff" opacity=".92">
+            <circle cx="76" cy="96" r="14"/>
+            <circle cx="98" cy="92" r="17"/>
+            <circle cx="126" cy="94" r="15"/>
+            <circle cx="154" cy="93" r="16"/>
+            <circle cx="180" cy="96" r="13"/>
+          </g>
+          <!-- Clawfoot Tub Shell -->
+          <path d="M40 104 L240 104 C238 152 212 174 140 174 C68 174 42 152 40 104 Z" fill="url(#tubBody)" stroke="#7cb6d9" stroke-width="4"/>
+          <rect x="32" y="96" width="216" height="16" rx="8" fill="#ffffff" stroke="#7cb6d9" stroke-width="3.5"/>
+          <!-- Golden Claw Feet -->
+          <path d="M74 170 L64 188 L78 188" fill="none" stroke="#eab308" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M206 170 L216 188 L202 188" fill="none" stroke="#eab308" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Gloss highlight -->
+          <path d="M62 126 Q98 148 148 150" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".75"/>
+        </svg>
+        <div class="zone-actor" data-actor="bath"></div>
+        <!-- Foreground foam suds that tuck around the friend in the tub -->
+        <svg class="tub-suds-front" viewBox="0 0 220 76" aria-hidden="true">
+          <g fill="#ffffff" stroke="#bae6fd" stroke-width="2.5">
+            <circle cx="34" cy="44" r="20"/>
+            <circle cx="64" cy="36" r="24"/>
+            <circle cx="102" cy="40" r="26"/>
+            <circle cx="142" cy="36" r="24"/>
+            <circle cx="178" cy="44" r="20"/>
+            <circle cx="84" cy="24" r="14"/>
+            <circle cx="128" cy="22" r="15"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- 2. Cozy Bed & Nightlight Zone -->
+      <div id="zoneBed" class="zone-pod" role="button" tabindex="0" data-zone="bed" aria-label="Cozy Bed">
+        <span class="zone-badge" aria-hidden="true">🛏️</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <button id="lampBtn" type="button" aria-label="Switch Day and Nightlight" aria-pressed="false">☀️</button>
+        <svg class="zone-art" viewBox="0 0 280 200" aria-hidden="true">
+          <defs>
+            <linearGradient id="woodBed" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c47b3f"/>
+              <stop offset="100%" stop-color="#7c4116"/>
+            </linearGradient>
+            <linearGradient id="quiltGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#a855f7"/>
+              <stop offset="50%" stop-color="#ec4899"/>
+              <stop offset="100%" stop-color="#fb923c"/>
+            </linearGradient>
+          </defs>
+          <!-- Headboard & Posts -->
+          <rect x="26" y="54" width="18" height="128" rx="9" fill="url(#woodBed)" stroke="#5c3011" stroke-width="3"/>
+          <circle cx="35" cy="48" r="11" fill="#ffd84d" stroke="#b87300" stroke-width="3"/>
+          <path d="M40 72 Q125 48 214 72 L214 134 L40 134 Z" fill="#a8632d" stroke="#5c3011" stroke-width="3"/>
+          <!-- Fluffy Cloud Pillow -->
+          <rect x="52" y="88" width="76" height="42" rx="20" fill="#fffdf6" stroke="#cbd5e1" stroke-width="3"/>
+          <path d="M68 100 Q90 94 112 100" fill="none" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
+          <!-- Mattress & Base Quilt -->
+          <rect x="38" y="122" width="194" height="44" rx="16" fill="#fff7ed" stroke="#d97706" stroke-width="3"/>
+          <path d="M112 120 L226 120 C232 120 236 126 236 134 L236 164 L112 164 Z" fill="url(#quiltGrad)" stroke="#7e22ce" stroke-width="3"/>
+          <!-- Patchwork star on quilt -->
+          <text x="164" y="151" font-size="24" text-anchor="middle">⭐</text>
+          <!-- Bed Frame & Footboard -->
+          <rect x="24" y="156" width="222" height="22" rx="10" fill="url(#woodBed)" stroke="#5c3011" stroke-width="3"/>
+          <rect x="228" y="102" width="18" height="80" rx="9" fill="url(#woodBed)" stroke="#5c3011" stroke-width="3"/>
+          <circle cx="237" cy="96" r="10" fill="#ffd84d" stroke="#b87300" stroke-width="3"/>
+        </svg>
+        <div class="zone-actor" data-actor="bed"></div>
+        <!-- Tucked Blanket Overlay when friend snuggles into bed -->
+        <svg class="bed-blanket-front" viewBox="0 0 190 90" aria-hidden="true">
+          <defs>
+            <linearGradient id="tuckQuilt" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#c084fc"/>
+              <stop offset="55%" stop-color="#f472b6"/>
+              <stop offset="100%" stop-color="#fbbf24"/>
+            </linearGradient>
+          </defs>
+          <path d="M14 26 Q95 4 176 26 L182 82 Q95 90 8 82 Z" fill="url(#tuckQuilt)" stroke="#fffdf5" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M18 28 Q95 8 172 28" fill="none" stroke="#fff7ed" stroke-width="8" stroke-linecap="round"/>
+          <text x="95" y="64" font-size="26" text-anchor="middle">🌙</text>
+        </svg>
+      </div>
+
+      <!-- 3. Picnic Kitchen Table Zone -->
+      <div id="zoneTable" class="zone-pod" role="button" tabindex="0" data-zone="table" aria-label="Picnic Kitchen Table">
+        <span class="zone-badge" aria-hidden="true">🍎</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <svg class="zone-art" viewBox="0 0 280 200" aria-hidden="true">
+          <defs>
+            <linearGradient id="oakTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#e39d5b"/>
+              <stop offset="100%" stop-color="#a85e24"/>
+            </linearGradient>
+          </defs>
+          <!-- Table Legs -->
+          <rect x="64" y="132" width="18" height="58" rx="7" fill="#7c4116" stroke="#4f270b" stroke-width="3"/>
+          <rect x="198" y="132" width="18" height="58" rx="7" fill="#7c4116" stroke="#4f270b" stroke-width="3"/>
+          <!-- Cozy Wooden Tabletop -->
+          <ellipse cx="140" cy="126" rx="116" ry="30" fill="url(#oakTop)" stroke="#6b3710" stroke-width="4"/>
+          <!-- Checkered Picnic Runner -->
+          <path d="M96 98 L184 98 L194 156 L86 156 Z" fill="#fef2f2" stroke="#ef4444" stroke-width="3"/>
+          <rect x="108" y="102" width="22" height="22" fill="#f87171" opacity=".75"/>
+          <rect x="150" y="102" width="22" height="22" fill="#f87171" opacity=".75"/>
+          <rect x="129" y="124" width="22" height="22" fill="#f87171" opacity=".75"/>
+          <!-- Little Plate -->
+          <ellipse cx="140" cy="118" rx="34" ry="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+        </svg>
+        <div class="zone-actor" data-actor="table"></div>
+        <!-- 3 Yummy Tappable Picnic Snacks -->
+        <div class="snack-tray">
+          <span class="snack-chip" data-snack="🍎" aria-hidden="true">🍎</span>
+          <span class="snack-chip" data-snack="🧁" aria-hidden="true">🧁</span>
+          <span class="snack-chip" data-snack="🥛" aria-hidden="true">🥛</span>
+        </div>
+      </div>
+
+      <!-- 4. Magic Doorbell Zone -->
+      <div id="zoneDoor" class="zone-pod" role="button" tabindex="0" data-zone="door" aria-label="Magic Doorbell">
+        <span class="zone-badge" aria-hidden="true">🔔</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <svg class="zone-art" viewBox="0 0 280 200" aria-hidden="true">
+          <defs>
+            <linearGradient id="doorWood" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d97706"/>
+              <stop offset="100%" stop-color="#92400e"/>
+            </linearGradient>
+            <radialGradient id="magicGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff8b8"/>
+              <stop offset="60%" stop-color="#ffd84d"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </radialGradient>
+          </defs>
+          <!-- Arched Treehouse Doorframe -->
+          <path d="M98 184 L98 86 C98 34 218 34 218 86 L218 184 Z" fill="#5c3011" stroke="#3d1e09" stroke-width="5"/>
+          <!-- Warm golden interior behind open door -->
+          <path d="M110 180 L110 88 C110 48 206 48 206 88 L206 180 Z" fill="url(#magicGlow)"/>
+          <!-- Swinging Wooden Door Panel -->
+          <g id="doorPanel">
+            <path d="M110 180 L110 88 C110 48 206 48 206 88 L206 180 Z" fill="url(#doorWood)" stroke="#6b3710" stroke-width="4"/>
+            <line x1="142" y1="54" x2="142" y2="178" stroke="#78350f" stroke-width="3" opacity=".55"/>
+            <line x1="174" y1="54" x2="174" y2="178" stroke="#78350f" stroke-width="3" opacity=".55"/>
+            <!-- Cute round porthole window -->
+            <circle cx="158" cy="92" r="20" fill="#bae6fd" stroke="#fef3c7" stroke-width="5"/>
+            <path d="M150 84 Q158 78 166 86" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <!-- Shiny Brass Doorknob -->
+            <circle cx="188" cy="128" r="9" fill="#fde047" stroke="#b45309" stroke-width="3"/>
+          </g>
+          <!-- Glowing Magic Doorbell on Right Jamb -->
+          <g id="doorBellGlow">
+            <rect x="224" y="96" width="32" height="46" rx="14" fill="#fffbeb" stroke="#d97706" stroke-width="3.5"/>
+            <circle cx="240" cy="119" r="11" fill="#facc15" stroke="#b45309" stroke-width="3"/>
+            <circle cx="237" cy="115" r="3" fill="#ffffff"/>
+          </g>
+          <!-- Leafy Arch Garland -->
+          <g fill="#22c55e" stroke="#15803d" stroke-width="2">
+            <ellipse cx="122" cy="44" rx="14" ry="8" transform="rotate(-25 122 44)"/>
+            <ellipse cx="158" cy="36" rx="16" ry="9"/>
+            <ellipse cx="194" cy="44" rx="14" ry="8" transform="rotate(25 194 44)"/>
+          </g>
+          <circle cx="158" cy="36" r="6" fill="#f472b6"/>
+        </svg>
+        <div id="doorToyPop" aria-hidden="true">🦆</div>
+        <div class="zone-actor" data-actor="door"></div>
+      </div>
+    </section>
+
+    <!-- ========== SUNNY BACKYARD SCENE ========== -->
+    <section id="yardScene" class="room-scene" data-scene="yard" aria-label="Sunny Backyard" hidden>
+      <!-- 1. Rainbow Slide Zone -->
+      <div id="zoneSlide" class="zone-pod" role="button" tabindex="0" data-zone="slide" aria-label="Rainbow Slide">
+        <span class="zone-badge" aria-hidden="true">🛝</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <svg class="zone-art" viewBox="0 0 260 280" aria-hidden="true">
+          <!-- Wooden Ladder Support -->
+          <line x1="48" y1="68" x2="48" y2="252" stroke="#92400e" stroke-width="11" stroke-linecap="round"/>
+          <line x1="86" y1="68" x2="86" y2="252" stroke="#92400e" stroke-width="11" stroke-linecap="round"/>
+          <g stroke="#d97706" stroke-width="7" stroke-linecap="round">
+            <line x1="48" y1="104" x2="86" y2="104"/>
+            <line x1="48" y1="142" x2="86" y2="142"/>
+            <line x1="48" y1="180" x2="86" y2="180"/>
+            <line x1="48" y1="218" x2="86" y2="218"/>
+          </g>
+          <!-- Top Platform -->
+          <rect x="38" y="58" width="66" height="16" rx="8" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+          <!-- Gleaming Rainbow Slide Chute -->
+          <path d="M90 66 C130 66 138 202 224 212" fill="none" stroke="#ef4444" stroke-width="34" stroke-linecap="round"/>
+          <path d="M90 66 C130 66 138 202 224 212" fill="none" stroke="#facc15" stroke-width="22" stroke-linecap="round"/>
+          <path d="M90 66 C130 66 138 202 224 212" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+          <!-- Side Safety Rail -->
+          <path d="M84 54 C126 54 134 190 220 200" fill="none" stroke="#fffdf5" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+          <!-- Soft Grass Landing Cushion -->
+          <ellipse cx="194" cy="244" rx="52" ry="18" fill="#4ade80" stroke="#16a34a" stroke-width="3"/>
+        </svg>
+        <div class="zone-actor" data-actor="slide"></div>
+      </div>
+
+      <!-- 2. Tree Swing Zone -->
+      <div id="zoneSwing" class="zone-pod" role="button" tabindex="0" data-zone="swing" aria-label="Tree Swing">
+        <span class="zone-badge" aria-hidden="true">🪢</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <div id="swingRig">
+          <svg class="zone-art" viewBox="0 0 260 280" aria-hidden="true">
+            <!-- Sturdy Oak Tree Branch -->
+            <path d="M10 38 Q130 16 250 38" fill="none" stroke="#78350f" stroke-width="22" stroke-linecap="round"/>
+            <g fill="#22c55e" stroke="#15803d" stroke-width="2.5">
+              <circle cx="42" cy="24" r="18"/>
+              <circle cx="218" cy="24" r="18"/>
+              <circle cx="130" cy="18" r="14"/>
+            </g>
+            <!-- Twin Braided Swing Ropes -->
+            <line x1="88" y1="32" x2="88" y2="196" stroke="#d97706" stroke-width="7" stroke-dasharray="10 4" stroke-linecap="round"/>
+            <line x1="172" y1="32" x2="172" y2="196" stroke="#d97706" stroke-width="7" stroke-dasharray="10 4" stroke-linecap="round"/>
+            <!-- Carved Wooden Swing Seat -->
+            <rect x="64" y="192" width="132" height="22" rx="11" fill="#b45309" stroke="#5c3011" stroke-width="4"/>
+            <path d="M78 198 L182 198" stroke="#fde68a" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+          </svg>
+          <div class="zone-actor" data-actor="swing"></div>
+        </div>
+      </div>
+
+      <!-- 3. Magic Flower Garden Zone -->
+      <div id="zoneGarden" class="zone-pod" role="button" tabindex="0" data-zone="garden" data-garden="1" aria-label="Magic Flower Garden">
+        <span class="zone-badge" aria-hidden="true">🌻</span>
+        <span class="zone-hand" aria-hidden="true">👆</span>
+        <span class="garden-butterfly b-one" aria-hidden="true">🦋</span>
+        <span class="garden-butterfly b-two" aria-hidden="true">🦋</span>
+        <svg class="zone-art" viewBox="0 0 280 240" aria-hidden="true">
+          <!-- Garden Soil Mound -->
+          <ellipse cx="140" cy="212" rx="116" ry="24" fill="#854d0e" stroke="#5c3011" stroke-width="4"/>
+          <ellipse cx="140" cy="206" rx="102" ry="14" fill="#a16207"/>
+
+          <!-- 3 Growing Smiling Sunflowers -->
+          <!-- Left Sunflower (Stage 2) -->
+          <g class="flower-stem f-stage-2">
+            <path d="M84 206 Q76 164 84 128" fill="none" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+            <ellipse cx="68" cy="166" rx="16" ry="8" fill="#22c55e" transform="rotate(-24 68 166)"/>
+            <g transform="translate(84 114)">
+              <g fill="#facc15" stroke="#eab308" stroke-width="2">
+                <ellipse cx="0" cy="-22" rx="8" ry="14"/>
+                <ellipse cx="0" cy="22" rx="8" ry="14"/>
+                <ellipse cx="-22" cy="0" rx="14" ry="8"/>
+                <ellipse cx="22" cy="0" rx="14" ry="8"/>
+                <ellipse cx="-16" cy="-16" rx="10" ry="10"/>
+                <ellipse cx="16" cy="-16" rx="10" ry="10"/>
+                <ellipse cx="-16" cy="16" rx="10" ry="10"/>
+                <ellipse cx="16" cy="16" rx="10" ry="10"/>
+              </g>
+              <circle cx="0" cy="0" r="16" fill="#92400e"/>
+              <circle cx="-5" cy="-3" r="2.6" fill="#fff"/>
+              <circle cx="5" cy="-3" r="2.6" fill="#fff"/>
+              <path d="M-6 5 Q0 11 6 5" fill="none" stroke="#fde047" stroke-width="2.8" stroke-linecap="round"/>
+            </g>
+          </g>
+
+          <!-- Center Giant Sunflower (Stage 1 -> 3) -->
+          <g class="flower-stem f-stage-1">
+            <path d="M142 206 Q146 154 142 104" fill="none" stroke="#15803d" stroke-width="11" stroke-linecap="round"/>
+            <ellipse cx="122" cy="160" rx="18" ry="9" fill="#22c55e" transform="rotate(-20 122 160)"/>
+            <ellipse cx="162" cy="148" rx="18" ry="9" fill="#22c55e" transform="rotate(20 162 148)"/>
+            <g transform="translate(142 90)">
+              <g fill="#fde047" stroke="#f59e0b" stroke-width="2">
+                <ellipse cx="0" cy="-28" rx="10" ry="17"/>
+                <ellipse cx="0" cy="28" rx="10" ry="17"/>
+                <ellipse cx="-28" cy="0" rx="17" ry="10"/>
+                <ellipse cx="28" cy="0" rx="17" ry="10"/>
+                <ellipse cx="-20" cy="-20" rx="12" ry="12"/>
+                <ellipse cx="20" cy="-20" rx="12" ry="12"/>
+                <ellipse cx="-20" cy="20" rx="12" ry="12"/>
+                <ellipse cx="20" cy="20" rx="12" ry="12"/>
+              </g>
+              <circle cx="0" cy="0" r="20" fill="#78350f"/>
+              <circle cx="-6" cy="-4" r="3" fill="#fff"/>
+              <circle cx="6" cy="-4" r="3" fill="#fff"/>
+              <circle cx="-11" cy="2" r="3.5" fill="#fb7185" opacity=".7"/>
+              <circle cx="11" cy="2" r="3.5" fill="#fb7185" opacity=".7"/>
+              <path d="M-7 6 Q0 13 7 6" fill="none" stroke="#fde047" stroke-width="3" stroke-linecap="round"/>
+            </g>
+          </g>
+
+          <!-- Right Sunflower (Stage 3) -->
+          <g class="flower-stem f-stage-3">
+            <path d="M198 206 Q204 166 198 134" fill="none" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+            <ellipse cx="214" cy="170" rx="16" ry="8" fill="#22c55e" transform="rotate(24 214 170)"/>
+            <g transform="translate(198 122)">
+              <g fill="#fb923c" stroke="#ea580c" stroke-width="2">
+                <ellipse cx="0" cy="-20" rx="8" ry="13"/>
+                <ellipse cx="0" cy="20" rx="8" ry="13"/>
+                <ellipse cx="-20" cy="0" rx="13" ry="8"/>
+                <ellipse cx="20" cy="0" rx="13" ry="8"/>
+                <ellipse cx="-14" cy="-14" rx="9" ry="9"/>
+                <ellipse cx="14" cy="-14" rx="9" ry="9"/>
+                <ellipse cx="-14" cy="14" rx="9" ry="9"/>
+                <ellipse cx="14" cy="14" rx="9" ry="9"/>
+              </g>
+              <circle cx="0" cy="0" r="15" fill="#92400e"/>
+              <circle cx="-5" cy="-3" r="2.5" fill="#fff"/>
+              <circle cx="5" cy="-3" r="2.5" fill="#fff"/>
+              <path d="M-5 4 Q0 10 5 4" fill="none" stroke="#fde047" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
+          </g>
+
+          <!-- Glossy Turquoise Watering Can -->
+          <g id="wateringCanG">
+            <path d="M222 52 C246 52 248 92 222 92" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round"/>
+            <path d="M188 76 L160 54 L154 62 L186 88 Z" fill="#38bdf8" stroke="#0369a1" stroke-width="3" stroke-linejoin="round"/>
+            <ellipse cx="154" cy="56" rx="6" ry="10" transform="rotate(-35 154 56)" fill="#fde047" stroke="#b45309" stroke-width="2.5"/>
+            <rect x="184" y="54" width="44" height="44" rx="12" fill="#38bdf8" stroke="#0369a1" stroke-width="3.5"/>
+            <ellipse cx="206" cy="56" rx="16" ry="6" fill="#bae6fd" stroke="#0369a1" stroke-width="2.5"/>
+            <circle cx="206" cy="76" r="8" fill="#fef08a"/>
+          </g>
+        </svg>
+        <div class="zone-actor" data-actor="garden"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM DOCK: 4 DRAGGABLE & TAPPABLE FRIENDS -->
+  <footer id="bottomDock" aria-label="Treehouse Friends">
+    <button id="friend-hoot" class="friend-tile selected" type="button" data-friend="hoot" aria-label="Hoot the Owl" aria-pressed="true">
+      <span class="friend-art"></span>
+      <span class="hoot-speak-dot" aria-hidden="true">🔊</span>
+    </button>
+    <button id="friend-pip" class="friend-tile" type="button" data-friend="pip" aria-label="Pip the Bunny" aria-pressed="false">
+      <span class="friend-art"></span>
+    </button>
+    <button id="friend-barnaby" class="friend-tile" type="button" data-friend="barnaby" aria-label="Barnaby Bear" aria-pressed="false">
+      <span class="friend-art"></span>
+    </button>
+    <button id="friend-ruby" class="friend-tile" type="button" data-friend="ruby" aria-label="Ruby Fox" aria-pressed="false">
+      <span class="friend-art"></span>
+    </button>
+  </footer>
+
+  <!-- DRAGGING GHOST & FLOATING FX -->
+  <div id="dragGhost" hidden aria-hidden="true"></div>
+  <div id="fxLayer" aria-hidden="true"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================================
+     DOM REFERENCES & CORE STATE
+     ============================================================================ */
+  var stage = document.getElementById("stage");
+  var insideScene = document.getElementById("insideScene");
+  var yardScene = document.getElementById("yardScene");
+  var roomInsideBtn = document.getElementById("roomInsideBtn");
+  var roomYardBtn = document.getElementById("roomYardBtn");
+  var joyPill = document.getElementById("joyPill");
+  var joyNum = document.getElementById("joyNum");
+  var soundBtn = document.getElementById("soundBtn");
+  var lampBtn = document.getElementById("lampBtn");
+  var doorToyPop = document.getElementById("doorToyPop");
+  var dragGhost = document.getElementById("dragGhost");
+  var fxLayer = document.getElementById("fxLayer");
+
+  var zoneEls = {
+    bath: document.getElementById("zoneBath"),
+    bed: document.getElementById("zoneBed"),
+    table: document.getElementById("zoneTable"),
+    door: document.getElementById("zoneDoor"),
+    slide: document.getElementById("zoneSlide"),
+    swing: document.getElementById("zoneSwing"),
+    garden: document.getElementById("zoneGarden")
+  };
+  var friendTiles = Array.prototype.slice.call(document.querySelectorAll(".friend-tile"));
+
+  var INSIDE_ZONES = ["bath", "bed", "table", "door"];
+  var YARD_ZONES = ["slide", "swing", "garden"];
+  var DOOR_TOYS = [
+    { id: "duck", glyph: "🦆" },
+    { id: "teddy", glyph: "🧸" },
+    { id: "ball", glyph: "⚽" },
+    { id: "cupcake", glyph: "🧁" },
+    { id: "balloon", glyph: "🎈" }
+  ];
+
+  var room = "inside";
+  var nightMode = false;
+  var activeFriend = "hoot";
+  var placements = {
+    bath: null,
+    bed: null,
+    table: null,
+    door: null,
+    slide: null,
+    swing: null,
+    garden: null
+  };
+  var playCount = 0;
+  var gardenStage = 1;
+  var doorToyIdx = 0;
+  var lastToy = null;
+  var lastZone = null;
+  var snackCycleIdx = 0;
+  var hasInteracted = false;
+  var soundOn = true;
+  var dead = false;
+
+  var timers = [];
+  var idleTimer = null;
+  var idleVoiceTimer = null;
+  var idleVoiceReminded = false;
+  var dragState = null;
+
+  /* ============================================================================
+     PIXAR-QUALITY EXPRESSIVE CHARACTER SVGs (HOOT, PIP, BARNABY, RUBY)
+     ============================================================================ */
+  var FRIEND_VOICES = {
+    hoot: { custom: "hoot-th-welcome", fallback: "hoot-welcome" },
+    pip: { custom: null, fallback: "word-bunny" },
+    barnaby: { custom: null, fallback: "word-bear" },
+    ruby: { custom: null, fallback: "word-fox" }
+  };
+
+  function friendSvg(id){
+    if(id === "pip"){
+      return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+        + '<defs><radialGradient id="pipFur" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#fffdf9"/><stop offset="100%" stop-color="#f3dfc8"/></radialGradient></defs>'
+        /* Long floppy bunny ears */
+        + '<ellipse cx="40" cy="28" rx="12" ry="26" transform="rotate(-14 40 28)" fill="url(#pipFur)" stroke="#b08968" stroke-width="3"/>'
+        + '<ellipse cx="40" cy="29" rx="6" ry="18" transform="rotate(-14 40 29)" fill="#fbcfe8"/>'
+        + '<ellipse cx="80" cy="28" rx="12" ry="26" transform="rotate(14 80 28)" fill="url(#pipFur)" stroke="#b08968" stroke-width="3"/>'
+        + '<ellipse cx="80" cy="29" rx="6" ry="18" transform="rotate(14 80 29)" fill="#fbcfe8"/>'
+        /* Cozy body & sky-blue scarf */
+        + '<ellipse cx="60" cy="92" rx="28" ry="22" fill="url(#pipFur)" stroke="#b08968" stroke-width="3"/>'
+        + '<ellipse cx="60" cy="96" rx="16" ry="14" fill="#fffaf0"/>'
+        + '<path d="M36 78 Q60 90 84 78 L80 88 Q60 98 40 88 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2.5"/>'
+        /* Head */
+        + '<circle cx="60" cy="58" r="28" fill="url(#pipFur)" stroke="#b08968" stroke-width="3"/>'
+        /* Big Pixar eyes */
+        + '<circle cx="48" cy="54" r="6.5" fill="#2c1810"/>'
+        + '<circle cx="72" cy="54" r="6.5" fill="#2c1810"/>'
+        + '<circle cx="46" cy="52" r="2.4" fill="#fff"/>'
+        + '<circle cx="70" cy="52" r="2.4" fill="#fff"/>'
+        /* Rosy cheeks, pink nose & smile */
+        + '<ellipse cx="38" cy="63" rx="6" ry="4" fill="#f9a8d4" opacity=".75"/>'
+        + '<ellipse cx="82" cy="63" rx="6" ry="4" fill="#f9a8d4" opacity=".75"/>'
+        + '<ellipse cx="60" cy="62" rx="4.5" ry="3.2" fill="#f472b6"/>'
+        + '<path d="M54 67 Q60 72 66 67" fill="none" stroke="#7c4a2d" stroke-width="2.6" stroke-linecap="round"/>'
+        /* Cute paws */
+        + '<circle cx="38" cy="94" r="8" fill="#fffdf9" stroke="#b08968" stroke-width="2.5"/>'
+        + '<circle cx="82" cy="94" r="8" fill="#fffdf9" stroke="#b08968" stroke-width="2.5"/>'
+        + '</svg>';
+    }
+    if(id === "barnaby"){
+      return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+        + '<defs><radialGradient id="bearFur" cx="38%" cy="28%" r="72%"><stop offset="0%" stop-color="#d49256"/><stop offset="100%" stop-color="#8f5122"/></radialGradient></defs>'
+        /* Round bear ears */
+        + '<circle cx="33" cy="33" r="14" fill="url(#bearFur)" stroke="#5c3011" stroke-width="3"/>'
+        + '<circle cx="33" cy="33" r="7.5" fill="#f6cfa0"/>'
+        + '<circle cx="87" cy="33" r="14" fill="url(#bearFur)" stroke="#5c3011" stroke-width="3"/>'
+        + '<circle cx="87" cy="33" r="7.5" fill="#f6cfa0"/>'
+        /* Body & green overalls */
+        + '<ellipse cx="60" cy="92" rx="31" ry="23" fill="url(#bearFur)" stroke="#5c3011" stroke-width="3"/>'
+        + '<path d="M36 82 L84 82 L88 106 Q60 116 32 106 Z" fill="#22c55e" stroke="#15803d" stroke-width="2.8"/>'
+        + '<circle cx="46" cy="88" r="3.5" fill="#fde047"/>'
+        + '<circle cx="74" cy="88" r="3.5" fill="#fde047"/>'
+        /* Head */
+        + '<circle cx="60" cy="56" r="29" fill="url(#bearFur)" stroke="#5c3011" stroke-width="3"/>'
+        /* Butterscotch muzzle */
+        + '<ellipse cx="60" cy="64" rx="14" ry="10.5" fill="#fde6c4"/>'
+        + '<ellipse cx="60" cy="60" rx="5.5" ry="3.8" fill="#3d2410"/>'
+        + '<path d="M54 67 Q60 72 66 67" fill="none" stroke="#3d2410" stroke-width="2.6" stroke-linecap="round"/>'
+        /* Shiny eyes & rosy cheeks */
+        + '<circle cx="47" cy="51" r="6" fill="#2c1810"/>'
+        + '<circle cx="73" cy="51" r="6" fill="#2c1810"/>'
+        + '<circle cx="45.2" cy="49" r="2.2" fill="#fff"/>'
+        + '<circle cx="71.2" cy="49" r="2.2" fill="#fff"/>'
+        + '<ellipse cx="38" cy="60" rx="5.5" ry="3.5" fill="#fb7185" opacity=".55"/>'
+        + '<ellipse cx="82" cy="60" rx="5.5" ry="3.5" fill="#fb7185" opacity=".55"/>'
+        /* Bear paws */
+        + '<circle cx="34" cy="94" r="9" fill="url(#bearFur)" stroke="#5c3011" stroke-width="2.5"/>'
+        + '<circle cx="86" cy="94" r="9" fill="url(#bearFur)" stroke="#5c3011" stroke-width="2.5"/>'
+        + '</svg>';
+    }
+    if(id === "ruby"){
+      return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+        + '<defs><radialGradient id="foxFur" cx="40%" cy="28%" r="72%"><stop offset="0%" stop-color="#ff8c3b"/><stop offset="100%" stop-color="#d94e14"/></radialGradient></defs>'
+        /* Bushy fox tail peeking out */
+        + '<path d="M84 96 C108 92 114 70 98 64 C90 74 84 82 78 90 Z" fill="url(#foxFur)" stroke="#9a3412" stroke-width="2.8"/>'
+        + '<path d="M104 72 C108 66 102 62 96 66 C98 72 100 74 104 72 Z" fill="#fffdf9"/>'
+        /* Pointy fox ears */
+        + '<polygon points="28,48 34,14 54,36" fill="url(#foxFur)" stroke="#9a3412" stroke-width="3" stroke-linejoin="round"/>'
+        + '<polygon points="34,42 37,22 48,36" fill="#fde68a"/>'
+        + '<polygon points="92,48 86,14 66,36" fill="url(#foxFur)" stroke="#9a3412" stroke-width="3" stroke-linejoin="round"/>'
+        + '<polygon points="86,42 83,22 72,36" fill="#fde68a"/>'
+        /* Body & lavender bandana */
+        + '<ellipse cx="60" cy="92" rx="27" ry="22" fill="url(#foxFur)" stroke="#9a3412" stroke-width="3"/>'
+        + '<ellipse cx="60" cy="96" rx="15" ry="14" fill="#fffdf9"/>'
+        + '<polygon points="40,78 80,78 60,94" fill="#a855f7" stroke="#6b21a8" stroke-width="2.5" stroke-linejoin="round"/>'
+        /* Fox head & white cheek fluff */
+        + '<ellipse cx="60" cy="56" rx="31" ry="26" fill="url(#foxFur)" stroke="#9a3412" stroke-width="3"/>'
+        + '<path d="M30 60 Q45 54 60 68 Q75 54 90 60 Q82 80 60 82 Q38 80 30 60 Z" fill="#fffdf9"/>'
+        /* Shiny eyes, button nose, smile */
+        + '<circle cx="47" cy="51" r="6" fill="#2c1810"/>'
+        + '<circle cx="73" cy="51" r="6" fill="#2c1810"/>'
+        + '<circle cx="45.2" cy="49" r="2.2" fill="#fff"/>'
+        + '<circle cx="71.2" cy="49" r="2.2" fill="#fff"/>'
+        + '<ellipse cx="60" cy="64" rx="4.8" ry="3.4" fill="#2c1810"/>'
+        + '<path d="M54 70 Q60 75 66 70" fill="none" stroke="#7c2d12" stroke-width="2.5" stroke-linecap="round"/>'
+        + '</svg>';
+    }
+    /* Default: Hoot the Owl! */
+    return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+      + '<defs><radialGradient id="hootFeather" cx="40%" cy="28%" r="72%"><stop offset="0%" stop-color="#c97d42"/><stop offset="100%" stop-color="#7c421a"/></radialGradient></defs>'
+      /* Cute owl ear tufts */
+      + '<polygon points="28,38 26,14 48,26" fill="url(#hootFeather)" stroke="#52290d" stroke-width="3" stroke-linejoin="round"/>'
+      + '<polygon points="92,38 94,14 72,26" fill="url(#hootFeather)" stroke="#52290d" stroke-width="3" stroke-linejoin="round"/>'
+      /* Little orange owl feet */
+      + '<ellipse cx="46" cy="108" rx="9" ry="5" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>'
+      + '<ellipse cx="74" cy="108" rx="9" ry="5" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>'
+      /* Fluffy wings */
+      + '<ellipse cx="26" cy="76" rx="12" ry="22" transform="rotate(16 26 76)" fill="#8c4b1e" stroke="#52290d" stroke-width="3"/>'
+      + '<ellipse cx="94" cy="76" rx="12" ry="22" transform="rotate(-16 94 76)" fill="#8c4b1e" stroke="#52290d" stroke-width="3"/>'
+      /* Round owl body */
+      + '<ellipse cx="60" cy="66" rx="36" ry="42" fill="url(#hootFeather)" stroke="#52290d" stroke-width="3"/>'
+      /* Cream feathered belly */
+      + '<ellipse cx="60" cy="82" rx="23" ry="22" fill="#fff4d6"/>'
+      + '<path d="M48 76 Q52 80 56 76 M64 76 Q68 80 72 76 M56 86 Q60 90 64 86" fill="none" stroke="#d4a373" stroke-width="2.5" stroke-linecap="round"/>'
+      /* Big golden Pixar owl eyes */
+      + '<circle cx="45" cy="48" r="14.5" fill="#fffdf6" stroke="#b45309" stroke-width="2.8"/>'
+      + '<circle cx="75" cy="48" r="14.5" fill="#fffdf6" stroke="#b45309" stroke-width="2.8"/>'
+      + '<circle cx="46" cy="48" r="8" fill="#2c1810"/>'
+      + '<circle cx="74" cy="48" r="8" fill="#2c1810"/>'
+      + '<circle cx="43.5" cy="45" r="3" fill="#fff"/>'
+      + '<circle cx="71.5" cy="45" r="3" fill="#fff"/>'
+      /* Cute golden beak & rosy cheeks */
+      + '<polygon points="53,55 67,55 60,66" fill="#fbbf24" stroke="#b45309" stroke-width="2.5" stroke-linejoin="round"/>'
+      + '<ellipse cx="33" cy="59" rx="5.5" ry="3.5" fill="#fb7185" opacity=".55"/>'
+      + '<ellipse cx="87" cy="59" rx="5.5" ry="3.5" fill="#fb7185" opacity=".55"/>'
+      + '</svg>';
+  }
+
+  /* ============================================================================
+     HOOT_HAVE-GATED VOICE QUEUE + WEB AUDIO SYNTH SFX (PURE AUDIO MP3s!)
+     ============================================================================ */
+  var audioCtx = null;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var voiceQueue = [];
+  var voicePlaying = false;
+  var audioUnlocked = false;
+  var pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
+  }
+
+  function getAudioCtx(){
+    if(!soundOn) return null;
+    try{
+      if(!audioCtx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if(AC) audioCtx = new AC();
+      }
+      if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    }catch(e){}
+    return audioCtx;
+  }
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    getAudioCtx();
+    try{
+      if(!voicePlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              enqueueVoice(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
+  function clearVoice(stopCurrent){
+    voiceQueue.length = 0;
+    if(stopCurrent){
+      voicePlaying = false;
+      try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
+    }
+  }
+
+  function pumpVoice(){
+    if(dead || !soundOn || voicePlaying || !voiceQueue.length) return;
+    var clip = voiceQueue.shift();
+    voicePlaying = true;
+    voiceEl.muted = false;
+    voiceEl.src = "assets/voice/" + clip;
+    var p = voiceEl.play();
+    if(p && p.catch){
+      p.catch(function(){
+        voicePlaying = false;
+        if(!audioUnlocked && !pendingBootClip) pendingBootClip = clip;
+        pumpVoice();
+      });
+    }
+  }
+  voiceEl.addEventListener("ended", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+  voiceEl.addEventListener("error", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+
+  function enqueueVoice(clip, interrupt){
+    if(dead || !soundOn || !clip) return;
+    if(clip.indexOf(".mp3") < 0) clip = clip + ".mp3";
+    if(interrupt) clearVoice(true);
+    voiceQueue.push(clip);
+    pumpVoice();
+  }
+
+  function playTreehouseVoice(customId, fallbackId, isBoot){
+    var clip = resolveClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && !hasInteracted){
+              enqueueVoice(clip, true);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    enqueueVoice(clip, true);
+  }
+
+  function speakRoomGuide(isBoot){
+    if(room === "inside"){
+      playTreehouseVoice("hoot-th-welcome", "hoot-welcome", isBoot);
+    } else {
+      playTreehouseVoice("hoot-th-yard", "hoot-super", isBoot);
+    }
+  }
+
+  /* ================= WEB AUDIO TACTILE SOUND EFFECTS ================= */
+  function popClickSfx(freq){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq || 620, t);
+      osc.frequency.exponentialRampToValueAtTime((freq || 620) * 1.32, t + 0.08);
+      g.gain.setValueAtTime(0.14, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.14);
+    }catch(e){}
+  }
+
+  function splashBubbleSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [340, 480, 640, 820].forEach(function(f, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, t + i * 0.065);
+        osc.frequency.exponentialRampToValueAtTime(f * 1.65, t + i * 0.065 + 0.09);
+        g.gain.setValueAtTime(0.15, t + i * 0.065);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.065 + 0.12);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.065);
+        osc.stop(t + i * 0.065 + 0.14);
+      }catch(e){}
+    });
+  }
+
+  function lullabyChimeSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [523.25, 659.25, 783.99, 659.25, 523.25].forEach(function(f, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(f, t + i * 0.14);
+        g.gain.setValueAtTime(0.001, t + i * 0.14);
+        g.gain.linearRampToValueAtTime(0.13, t + i * 0.14 + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.14 + 0.42);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.14);
+        osc.stop(t + i * 0.14 + 0.45);
+      }catch(e){}
+    });
+  }
+
+  function lampClickSfx(toNight){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    var notes = toNight ? [784, 587, 440] : [440, 587, 880];
+    notes.forEach(function(f, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, t + i * 0.055);
+        g.gain.setValueAtTime(0.12, t + i * 0.055);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.055 + 0.24);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.055);
+        osc.stop(t + i * 0.055 + 0.26);
+      }catch(e){}
+    });
+  }
+
+  function munchSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [0, 0.15, 0.3].forEach(function(off, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(i === 2 ? 780 : (300 + i * 60), t + off);
+        osc.frequency.exponentialRampToValueAtTime(i === 2 ? 1040 : 120, t + off + 0.1);
+        g.gain.setValueAtTime(0.2, t + off);
+        g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.12);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + off);
+        osc.stop(t + off + 0.13);
+      }catch(e){}
+    });
+  }
+
+  function doorbellSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    /* Classic warm two-tone Ding-Dong bell */
+    [{ f: 659.25, at: 0, dur: 0.45 }, { f: 523.25, at: 0.22, dur: 0.65 }].forEach(function(n){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(n.f, t + n.at);
+        g.gain.setValueAtTime(0.22, t + n.at);
+        g.gain.exponentialRampToValueAtTime(0.001, t + n.at + n.dur);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + n.at);
+        osc.stop(t + n.at + n.dur + 0.02);
+      }catch(e){}
+    });
+  }
+
+  function slideSwooshSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(940, t);
+      osc.frequency.exponentialRampToValueAtTime(340, t + 0.56);
+      osc.frequency.exponentialRampToValueAtTime(520, t + 0.72);
+      g.gain.setValueAtTime(0.18, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.75);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.78);
+    }catch(e){}
+  }
+
+  function swingSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [440, 554.37, 659.25].forEach(function(f, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, t + i * 0.08);
+        g.gain.setValueAtTime(0.13, t + i * 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.25);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.08);
+        osc.stop(t + i * 0.08 + 0.27);
+      }catch(e){}
+    });
+  }
+
+  function waterGrowSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [523.25, 587.33, 659.25, 783.99, 987.77, 1046.5].forEach(function(f, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(f, t + i * 0.065);
+        g.gain.setValueAtTime(0.15, t + i * 0.065);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.065 + 0.34);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.065);
+        osc.stop(t + i * 0.065 + 0.36);
+      }catch(e){}
+    });
+  }
+
+  /* ============================================================================
+     TIMERS & VISUAL FX HELPERS
+     ============================================================================ */
+  function later(fn, ms){
+    var id = setTimeout(function(){
+      if(!dead) fn();
+    }, ms);
+    timers.push(id);
+    return id;
+  }
+
+  function clearTimers(){
+    while(timers.length) clearTimeout(timers.pop());
+  }
+
+  function bumpJoy(){
+    playCount++;
+    joyNum.textContent = String(playCount);
+    joyPill.classList.remove("bump");
+    void joyPill.offsetWidth;
+    joyPill.classList.add("bump");
+  }
+
+  function zoneCenter(z){
+    var el = zoneEls[z];
+    if(!el) return { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    var r = el.getBoundingClientRect();
+    return { x: r.left + r.width * 0.5, y: r.top + r.height * 0.5, rect: r };
+  }
+
+  function spawnFloatingGlyphs(cx, cy, glyphs, count, rise){
+    var n = count || 8;
+    for(var i = 0; i < n; i++){
+      var el = document.createElement("span");
+      el.className = "fx-float";
+      el.textContent = glyphs[i % glyphs.length];
+      el.style.left = (cx + (Math.random() - 0.5) * 60).toFixed(0) + "px";
+      el.style.top = (cy + (Math.random() - 0.5) * 30).toFixed(0) + "px";
+      fxLayer.appendChild(el);
+      var dx = (Math.random() - 0.5) * 110;
+      var dy = -(rise || 90) - Math.random() * 55;
+      if(el.animate){
+        el.animate([
+          { transform: "translate(-50%,-50%) scale(.45) rotate(0deg)", opacity: 1 },
+          { transform: "translate(calc(-50% + " + dx.toFixed(0) + "px), calc(-50% + " + dy.toFixed(0) + "px)) scale(1.25) rotate(" + ((Math.random() - 0.5) * 40).toFixed(0) + "deg)", opacity: 0 }
+        ], { duration: 850 + Math.random() * 350, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 1250); })(el);
+    }
+  }
+
+  function spawnSoapBubbles(cx, cy, count){
+    var n = count || 14;
+    for(var i = 0; i < n; i++){
+      var b = document.createElement("div");
+      b.className = "fx-bubble";
+      var sz = 16 + Math.random() * 24;
+      b.style.width = sz.toFixed(0) + "px";
+      b.style.height = sz.toFixed(0) + "px";
+      b.style.left = (cx + (Math.random() - 0.5) * 110).toFixed(0) + "px";
+      b.style.top = (cy + (Math.random() - 0.5) * 30).toFixed(0) + "px";
+      fxLayer.appendChild(b);
+      var drift = (Math.random() - 0.5) * 90;
+      var up = -100 - Math.random() * 120;
+      if(b.animate){
+        b.animate([
+          { transform: "translate(-50%,-50%) scale(.3)", opacity: .95 },
+          { transform: "translate(calc(-50% + " + drift.toFixed(0) + "px), calc(-50% + " + up.toFixed(0) + "px)) scale(1.15)", opacity: 0 }
+        ], { duration: 1000 + Math.random() * 500, delay: i * 35, easing: "ease-out", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 1850); })(b);
+    }
+  }
+
+  function spawnWaterDrops(cx, cy, count){
+    var n = count || 12;
+    for(var i = 0; i < n; i++){
+      var d = document.createElement("div");
+      d.className = "fx-drop";
+      d.style.left = (cx + (Math.random() - 0.5) * 80).toFixed(0) + "px";
+      d.style.top = (cy - 40 + (Math.random() - 0.5) * 20).toFixed(0) + "px";
+      fxLayer.appendChild(d);
+      var dx = -24 + (Math.random() - 0.5) * 36;
+      var dy = 80 + Math.random() * 65;
+      if(d.animate){
+        d.animate([
+          { transform: "translate(-50%,-50%) scale(.7)", opacity: 1 },
+          { transform: "translate(calc(-50% + " + dx.toFixed(0) + "px), calc(-50% + " + dy.toFixed(0) + "px)) scale(1.1)", opacity: 0 }
+        ], { duration: 540 + Math.random() * 220, delay: i * 32, easing: "ease-in", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 950); })(d);
+    }
+  }
+
+  /* ============================================================================
+     IDLE HELPER (VISUAL PULSE + GENTLE SPOKEN REMINDER)
+     ============================================================================ */
+  function clearIdleHints(){
+    Object.keys(zoneEls).forEach(function(k){
+      if(zoneEls[k]) zoneEls[k].classList.remove("hint-glow");
+    });
+  }
+
+  function showIdleHint(){
+    if(dead) return;
+    clearIdleHints();
+    var list = room === "inside" ? INSIDE_ZONES : YARD_ZONES;
+    var pick = list[0];
+    for(var i = 0; i < list.length; i++){
+      if(!placements[list[i]]){ pick = list[i]; break; }
+    }
+    if(zoneEls[pick]) zoneEls[pick].classList.add("hint-glow");
+  }
+
+  function armIdle(fastVisual){
+    clearIdleHints();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+    if(dead) return;
+    idleTimer = setTimeout(showIdleHint, fastVisual ? 2200 : 5200);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(dead) return;
+        idleVoiceReminded = true;
+        playTreehouseVoice("hoot-th-idle", "hoot-tap-big-btn", false);
+      }, 11500);
+    }
+  }
+
+  /* ============================================================================
+     FRIEND SELECTION & STAGE PLACEMENT
+     ============================================================================ */
+  function updateFriendDockUI(){
+    var placedSet = {};
+    Object.keys(placements).forEach(function(z){
+      if(placements[z]) placedSet[placements[z]] = true;
+    });
+    friendTiles.forEach(function(tile){
+      var fid = tile.dataset.friend;
+      var isSel = fid === activeFriend;
+      tile.classList.toggle("selected", isSel);
+      tile.setAttribute("aria-pressed", isSel ? "true" : "false");
+      tile.classList.toggle("placed", !!placedSet[fid]);
+    });
+  }
+
+  function renderZoneActor(z){
+    var el = zoneEls[z];
+    if(!el) return;
+    var actor = el.querySelector(".zone-actor");
+    if(!actor) return;
+    var fid = placements[z];
+    if(fid){
+      actor.innerHTML = friendSvg(fid);
+      actor.classList.add("idle-bob");
+      el.classList.add("has-friend");
+    } else {
+      actor.innerHTML = "";
+      actor.classList.remove("idle-bob");
+      el.classList.remove("has-friend");
+      if(z === "bed") el.classList.remove("tucked");
+      if(z === "swing") el.classList.remove("swinging", "swing-boost");
+    }
+  }
+
+  function placeFriendInZone(fid, z){
+    /* Remove this friend from any previous zone so each friend is in one place at a time */
+    Object.keys(placements).forEach(function(otherZ){
+      if(otherZ !== z && placements[otherZ] === fid){
+        placements[otherZ] = null;
+        renderZoneActor(otherZ);
+      }
+    });
+    placements[z] = fid;
+    renderZoneActor(z);
+    updateFriendDockUI();
+  }
+
+  function selectFriend(fid, speak){
+    if(!FRIEND_VOICES[fid]) return;
+    var wasAlreadyHoot = (fid === "hoot" && activeFriend === "hoot");
+    activeFriend = fid;
+    updateFriendDockUI();
+
+    var tile = document.getElementById("friend-" + fid);
+    if(tile){
+      tile.classList.remove("cheering");
+      void tile.offsetWidth;
+      tile.classList.add("cheering");
+    }
+    popClickSfx(fid === "hoot" ? 760 : (fid === "pip" ? 860 : (fid === "barnaby" ? 520 : 690)));
+
+    if(speak){
+      if(fid === "hoot"){
+        /* Tap Hoot to repeat current room guide! */
+        speakRoomGuide(false);
+        if(wasAlreadyHoot){
+          var r = tile ? tile.getBoundingClientRect() : null;
+          if(r && r.width) spawnFloatingGlyphs(r.left + r.width * 0.5, r.top, ["💛", "✨", "🎵"], 6, 65);
+        }
+      } else {
+        var fv = FRIEND_VOICES[fid];
+        playTreehouseVoice(fv.custom, fv.fallback, false);
+      }
+    }
+  }
+
+  /* ============================================================================
+     ROOM SWITCHING (INSIDE TREEHOUSE <-> SUNNY BACKYARD)
+     ============================================================================ */
+  function setRoom(nextRoom, silent){
+    var target = (nextRoom === "yard") ? "yard" : "inside";
+    var changed = (room !== target);
+    room = target;
+    stage.setAttribute("data-room", room);
+    insideScene.hidden = (room !== "inside");
+    yardScene.hidden = (room !== "yard");
+
+    roomInsideBtn.classList.toggle("active", room === "inside");
+    roomInsideBtn.setAttribute("aria-pressed", room === "inside" ? "true" : "false");
+    roomYardBtn.classList.toggle("active", room === "yard");
+    roomYardBtn.setAttribute("aria-pressed", room === "yard" ? "true" : "false");
+
+    if(changed && !silent){
+      hasInteracted = true;
+      idleVoiceReminded = false;
+      popClickSfx(room === "yard" ? 780 : 620);
+      speakRoomGuide(false);
+    }
+    armIdle(false);
+    return snapshot();
+  }
+
+  /* ============================================================================
+     INTERACTIVE PRETEND-PLAY ZONES (ALL 7 ZONES + NIGHTLIGHT LAMP!)
+     ============================================================================ */
+  function toggleLamp(){
+    unlockAudioOnce();
+    getAudioCtx();
+    hasInteracted = true;
+    nightMode = !nightMode;
+    stage.setAttribute("data-night", nightMode ? "true" : "false");
+    lampBtn.textContent = nightMode ? "🌙" : "☀️";
+    lampBtn.setAttribute("aria-pressed", nightMode ? "true" : "false");
+    lampClickSfx(nightMode);
+    var r = lampBtn.getBoundingClientRect();
+    spawnFloatingGlyphs(
+      r.left + r.width * 0.5,
+      r.top + r.height * 0.5,
+      nightMode ? ["🌙", "⭐", "✨"] : ["☀️", "✨", "💛"],
+      8,
+      70
+    );
+    bumpJoy();
+    armIdle(false);
+  }
+
+  function triggerZone(z, opts){
+    opts = opts || {};
+    if(dead) return snapshot();
+    if(z === "lamp"){
+      if(room !== "inside") setRoom("inside", true);
+      toggleLamp();
+      return snapshot();
+    }
+    if(!zoneEls[z]) return snapshot();
+
+    /* Auto-switch room if triggered programmatically from the other room */
+    if(INSIDE_ZONES.indexOf(z) >= 0 && room !== "inside") setRoom("inside", true);
+    if(YARD_ZONES.indexOf(z) >= 0 && room !== "yard") setRoom("yard", true);
+
+    hasInteracted = true;
+    idleVoiceReminded = false;
+    lastZone = z;
+    clearIdleHints();
+
+    var fid = opts.friendId || activeFriend || "hoot";
+    placeFriendInZone(fid, z);
+    bumpJoy();
+
+    var el = zoneEls[z];
+    var ctr = zoneCenter(z);
+
+    if(z === "bath"){
+      splashBubbleSfx();
+      el.classList.remove("splashing");
+      void el.offsetWidth;
+      el.classList.add("splashing");
+      spawnSoapBubbles(ctr.x, ctr.y - 10, 15);
+      spawnFloatingGlyphs(ctr.x, ctr.y - 20, ["🫧", "💧", "✨"], 7, 85);
+      playTreehouseVoice("hoot-th-bath", "hoot-giggle", false);
+      later(function(){ el.classList.remove("splashing"); }, 1350);
+    } else if(z === "bed"){
+      lullabyChimeSfx();
+      el.classList.add("tucked");
+      spawnFloatingGlyphs(ctr.x - 10, ctr.y - 24, ["💤", "🌙", "⭐", "💛"], 8, 95);
+      playTreehouseVoice("hoot-th-bed", "hoot-super", false);
+    } else if(z === "table"){
+      var snacks = ["🍎", "🧁", "🥛"];
+      var chosenSnack = opts.snack || snacks[snackCycleIdx % snacks.length];
+      snackCycleIdx++;
+      munchSfx();
+      el.classList.remove("munching");
+      void el.offsetWidth;
+      el.classList.add("munching");
+      var chip = el.querySelector('.snack-chip[data-snack="' + chosenSnack + '"]');
+      if(chip){
+        chip.classList.remove("pop");
+        void chip.offsetWidth;
+        chip.classList.add("pop");
+      }
+      spawnFloatingGlyphs(ctr.x, ctr.y - 18, [chosenSnack, "💛", "💗", "✨"], 9, 95);
+      playTreehouseVoice("hoot-th-snack", "hoot-yay-2", false);
+      later(function(){ el.classList.remove("munching"); }, 1100);
+    } else if(z === "door"){
+      var toy = DOOR_TOYS[doorToyIdx % DOOR_TOYS.length];
+      doorToyIdx++;
+      lastToy = toy.id;
+      doorToyPop.textContent = toy.glyph;
+      doorbellSfx();
+      el.classList.remove("ringing", "door-open");
+      void el.offsetWidth;
+      el.classList.add("ringing", "door-open");
+      spawnFloatingGlyphs(ctr.x + 14, ctr.y - 10, [toy.glyph, "✨", "⭐", "🎉"], 10, 105);
+      playTreehouseVoice("hoot-th-doorbell", "hoot-amazing", false);
+      later(function(){ el.classList.remove("ringing"); }, 750);
+    } else if(z === "slide"){
+      slideSwooshSfx();
+      el.classList.remove("sliding", "landed");
+      void el.offsetWidth;
+      /* Start at top of rainbow slide, then zoom smoothly down! */
+      later(function(){
+        el.classList.add("sliding");
+        spawnFloatingGlyphs(ctr.x, ctr.y, ["🌈", "✨", "⭐", "💛"], 10, 85);
+      }, 60);
+      later(function(){
+        el.classList.remove("sliding");
+        el.classList.add("landed");
+        popClickSfx(880);
+        spawnFloatingGlyphs(ctr.x + 30, ctr.y + 40, ["⭐", "✨", "🎉"], 8, 70);
+      }, 830);
+      playTreehouseVoice("hoot-th-slide", "hoot-yay-2", false);
+    } else if(z === "swing"){
+      swingSfx();
+      el.classList.add("swinging");
+      el.classList.remove("swing-boost");
+      void el.offsetWidth;
+      el.classList.add("swing-boost");
+      spawnFloatingGlyphs(ctr.x, ctr.y - 16, ["✨", "💛", "🍃", "🎵"], 8, 95);
+      playTreehouseVoice(null, "hoot-giggle", false);
+      later(function(){ el.classList.remove("swing-boost"); }, 3500);
+    } else if(z === "garden"){
+      gardenStage = (gardenStage % 3) + 1;
+      el.setAttribute("data-garden", String(gardenStage));
+      waterGrowSfx();
+      el.classList.remove("pouring");
+      void el.offsetWidth;
+      el.classList.add("pouring");
+      spawnWaterDrops(ctr.x + 26, ctr.y - 10, 14);
+      spawnFloatingGlyphs(ctr.x, ctr.y - 18, ["🌻", "🦋", "✨", "🌼"], 9, 105);
+      playTreehouseVoice("hoot-th-garden", "hoot-great-job", false);
+      later(function(){ el.classList.remove("pouring"); }, 1100);
+    }
+
+    armIdle(false);
+    return snapshot();
+  }
+
+  /* ============================================================================
+     MAGNETIC DRAG-AND-DROP + SUPER-FORGIVING TAP CONTROLS
+     ============================================================================ */
+  function findHoveredZone(clientX, clientY){
+    var list = room === "inside" ? INSIDE_ZONES : YARD_ZONES;
+    var best = null;
+    var bestDist = 99999;
+    for(var i = 0; i < list.length; i++){
+      var z = list[i];
+      var el = zoneEls[z];
+      if(!el) continue;
+      var r = el.getBoundingClientRect();
+      if(!r.width || !r.height) continue;
+      /* Generous 24px magnetic halo around every hotspot for 2yo fingers */
+      if(clientX >= r.left - 24 && clientX <= r.right + 24 && clientY >= r.top - 24 && clientY <= r.bottom + 24){
+        var cx = r.left + r.width * 0.5;
+        var cy = r.top + r.height * 0.5;
+        var d = Math.hypot(clientX - cx, clientY - cy);
+        if(d < bestDist){
+          bestDist = d;
+          best = z;
+        }
+      }
+    }
+    return best;
+  }
+
+  function clearDropHighlights(){
+    Object.keys(zoneEls).forEach(function(z){
+      if(zoneEls[z]) zoneEls[z].classList.remove("drop-hot");
+    });
+  }
+
+  /* Populate 4 Pixar Friend Tiles & wire Tap + Drag */
+  friendTiles.forEach(function(tile){
+    var fid = tile.dataset.friend;
+    tile.querySelector(".friend-art").innerHTML = friendSvg(fid);
+
+    tile.addEventListener("pointerdown", function(e){
+      if(dead) return;
+      e.preventDefault();
+      unlockAudioOnce();
+      getAudioCtx();
+      clearIdleHints();
+      dragState = {
+        friendId: fid,
+        tile: tile,
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        moved: false
+      };
+      try{ tile.setPointerCapture(e.pointerId); }catch(err){}
+    });
+
+    tile.addEventListener("pointermove", function(e){
+      if(!dragState || dragState.tile !== tile) return;
+      var dist = Math.hypot(e.clientX - dragState.startX, e.clientY - dragState.startY);
+      if(!dragState.moved && dist > 10){
+        dragState.moved = true;
+        activeFriend = dragState.friendId;
+        updateFriendDockUI();
+        dragGhost.innerHTML = friendSvg(dragState.friendId);
+        dragGhost.hidden = false;
+        popClickSfx(720);
+      }
+      if(dragState.moved){
+        dragGhost.style.left = e.clientX + "px";
+        dragGhost.style.top = e.clientY + "px";
+        clearDropHighlights();
+        var hz = findHoveredZone(e.clientX, e.clientY);
+        if(hz && zoneEls[hz]) zoneEls[hz].classList.add("drop-hot");
+      }
+    });
+
+    function endFriendDrag(e){
+      if(!dragState || dragState.tile !== tile) return;
+      var ds = dragState;
+      dragState = null;
+      dragGhost.hidden = true;
+      clearDropHighlights();
+      try{ tile.releasePointerCapture(ds.pointerId); }catch(err){}
+
+      if(!ds.moved){
+        /* Single tap picks friend (and tapping Hoot repeats room guide!) */
+        selectFriend(ds.friendId, true);
+        armIdle(false);
+      } else {
+        var dropZ = findHoveredZone(e.clientX, e.clientY);
+        if(dropZ){
+          triggerZone(dropZ, { friendId: ds.friendId });
+        } else {
+          selectFriend(ds.friendId, false);
+          armIdle(false);
+        }
+      }
+    }
+
+    tile.addEventListener("pointerup", endFriendDrag);
+    tile.addEventListener("pointercancel", function(){
+      if(!dragState || dragState.tile !== tile) return;
+      dragState = null;
+      dragGhost.hidden = true;
+      clearDropHighlights();
+      armIdle(false);
+    });
+
+    /* Keyboard / synthetic click support */
+    tile.addEventListener("click", function(e){
+      if(e.detail > 0) return; /* pointerup already handled pointer tap */
+      unlockAudioOnce();
+      getAudioCtx();
+      selectFriend(fid, true);
+      armIdle(false);
+    });
+  });
+
+  /* Wire all 7 Interactive Zone Pods (Tap directly to invite active friend OR replay!) */
+  Object.keys(zoneEls).forEach(function(z){
+    var el = zoneEls[z];
+    if(!el) return;
+
+    el.addEventListener("click", function(e){
+      if(dead) return;
+      if(e.target && e.target.closest && e.target.closest("#lampBtn")) return;
+      unlockAudioOnce();
+      getAudioCtx();
+      var snackEl = e.target && e.target.closest ? e.target.closest(".snack-chip") : null;
+      var chosenSnack = snackEl ? snackEl.getAttribute("data-snack") : null;
+      triggerZone(z, { snack: chosenSnack });
+    });
+
+    el.addEventListener("keydown", function(e){
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        unlockAudioOnce();
+        getAudioCtx();
+        triggerZone(z, {});
+      }
+    });
+  });
+
+  /* Nightlight Lamp Button */
+  lampBtn.addEventListener("click", function(e){
+    e.stopPropagation();
+    toggleLamp();
+  });
+
+  /* Room Switch Buttons */
+  roomInsideBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    getAudioCtx();
+    setRoom("inside", false);
+  });
+  roomYardBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    getAudioCtx();
+    setRoom("yard", false);
+  });
+
+  /* Sound Toggle Button */
+  soundBtn.addEventListener("click", function(){
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.setAttribute("aria-label", soundOn ? "Turn Sound Off" : "Turn Sound On");
+    if(!soundOn){
+      clearVoice(true);
+    } else {
+      unlockAudioOnce();
+      getAudioCtx();
+      popClickSfx(840);
+      speakRoomGuide(false);
+    }
+  });
+
+  /* ============================================================================
+     CLEAN TEARDOWN
+     ============================================================================ */
+  function teardown(){
+    dead = true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden) clearVoice(false);
+  });
+
+  /* ============================================================================
+     BOOT & PUBLIC TEST HOOK (window.__treehouseGame)
+     ============================================================================ */
+  function snapshot(){
+    return {
+      room: room,
+      nightMode: nightMode,
+      activeFriend: activeFriend,
+      placements: Object.assign({}, placements),
+      playCount: playCount,
+      gardenStage: gardenStage,
+      lastToy: lastToy,
+      lastZone: lastZone,
+      soundOn: soundOn
+    };
+  }
+
+  /* Start with Hoot welcoming the child inside the cozy treehouse! */
+  updateFriendDockUI();
+  setRoom("inside", true);
+  speakRoomGuide(true);
+  armIdle(true);
+
+  window.__treehouseGame = {
+    snapshot: snapshot,
+    setRoom: function(r){
+      return setRoom(r, false);
+    },
+    triggerZoneForTest: function(z){
+      return triggerZone(z, {});
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e159">
+<script src="js/hoot-game-tail.js?v=llprev3e159"></script>
+</body>
+</html>

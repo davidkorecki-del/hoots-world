@@ -1,0 +1,3531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>
+window.__HOOT_GAME_KEY__="construction";
+window.__HOOT_SELF_COACH__=true;
+</script>
+<script src="js/hoot-game-head.js?v=llprev3e159"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>Hoot's Construction Yard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --sky-top:#38bdf8;
+    --sky-mid:#8be0ff;
+    --sky-warm:#ffebb3;
+    --earth-hi:#e8b36b;
+    --earth-mid:#c98a42;
+    --earth-deep:#8c5420;
+    --cat-hi:#ffe047;
+    --cat-mid:#f5b700;
+    --cat-deep:#c47f00;
+    --steel-hi:#64748b;
+    --steel-deep:#334155;
+    --asphalt-hi:#525b68;
+    --asphalt-deep:#2d3440;
+    --cream:#fffdf6;
+    --gold:#ffd84d;
+    --gold-deep:#c27803;
+    --ink:#3b2310;
+    --red:#ef4444;
+    --orange:#f97316;
+    --green:#22c55e;
+    --blue:#3b82f6;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
+  html,body{
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+  }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#47b8ff;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* ================= FULLSCREEN PIXAR CONSTRUCTION YARD STAGE ================= */
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, #38bdf8 0%, #8be0ff 36%, #ffe6a8 68%, #d99b52 100%);
+  }
+
+  .backdrop{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+  }
+  #yardBg{
+    background-image:
+      url("assets/construction3d/bg_yard.jpg"),
+      linear-gradient(180deg, #38bdf8 0%, #8be0ff 36%, #ffe6a8 68%, #d99b52 100%);
+  }
+  #yardBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(ellipse at 50% 42%, rgba(255,250,230,.06) 34%, rgba(68,36,8,.24) 100%);
+  }
+
+  #skyAmbient{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:2;
+    overflow:hidden;
+  }
+  #skyAmbient svg{
+    width:100%;
+    height:100%;
+    display:block;
+    opacity:.42;
+  }
+  .cloud-float{ animation:cloudDrift 34s linear infinite; }
+  .cloud-float-slow{ animation:cloudDrift 48s linear infinite reverse; }
+  @keyframes cloudDrift{
+    0%{ transform:translateX(-24px); }
+    50%{ transform:translateX(32px); }
+    100%{ transform:translateX(-24px); }
+  }
+  .sun-rays{
+    transform-origin:1090px 92px;
+    animation:sunSpin 36s linear infinite;
+  }
+  @keyframes sunSpin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+
+  /* ================= TOP HUD (3 BIG PHASE PILLS + STARS + SOUND) ================= */
+  #hud{
+    position:relative;
+    z-index:20;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left));
+    pointer-events:none;
+  }
+  #phaseBar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  .phase-pill{
+    position:relative;
+    width:70px;
+    height:70px;
+    min-width:68px;
+    min-height:68px;
+    padding:5px;
+    border-radius:22px;
+    border:4px solid #fffdf5;
+    background:var(--pill-bg, linear-gradient(180deg, #ffe047 0%, #f59e0b 100%));
+    box-shadow:0 5px 0 var(--pill-shadow, #b45309), 0 8px 18px rgba(59,35,16,.24);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1), box-shadow .16s, filter .16s;
+  }
+  .phase-pill svg{
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.18));
+  }
+  .phase-pill:active{ transform:translateY(3px) scale(.93); }
+  .phase-pill.active{
+    transform:translateY(-3px) scale(1.07);
+    border-color:#ffd84d;
+    box-shadow:0 6px 0 var(--pill-shadow, #b45309), 0 0 0 4px rgba(255,216,77,.7), 0 10px 22px rgba(59,35,16,.28);
+  }
+  .phase-pill .done-badge{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    border:2.5px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.28);
+    display:grid;
+    place-items:center;
+    color:#fff;
+    font-size:15px;
+    font-weight:900;
+    line-height:1;
+    opacity:0;
+    transform:scale(.3);
+    transition:opacity .28s, transform .38s cubic-bezier(.34,1.9,.5,1);
+    pointer-events:none;
+  }
+  .phase-pill.done .done-badge{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  .hud-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  #starPill{
+    min-width:76px;
+    min-height:68px;
+    height:70px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #fff6d6 0%, #ffe299 100%);
+    box-shadow:0 5px 0 #c27803, 0 8px 18px rgba(59,35,16,.22);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    color:var(--ink);
+  }
+  #starPill.bump{ animation:starBump .48s cubic-bezier(.34,1.85,.5,1); }
+  @keyframes starBump{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.2) rotate(-5deg); }
+    100%{ transform:scale(1); }
+  }
+  .star-glyph{
+    font-size:30px;
+    line-height:1;
+    filter:drop-shadow(0 2px 0 rgba(255,255,255,.85));
+  }
+  #starNum{
+    font-size:28px;
+    font-weight:700;
+    line-height:1;
+    min-width:20px;
+    text-align:center;
+  }
+
+  #soundBtn{
+    width:70px;
+    height:70px;
+    min-width:68px;
+    min-height:68px;
+    border-radius:50%;
+    border:4px solid #fffdf5;
+    background:linear-gradient(180deg, #ff9f43 0%, #e66b17 100%);
+    box-shadow:0 5px 0 #9f4308, 0 8px 18px rgba(59,35,16,.24);
+    color:#fff;
+    font-size:28px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+  }
+  #soundBtn:active{ transform:translateY(3px) scale(.93); }
+
+  /* ================= MAIN ARENA ================= */
+  #arena{
+    position:relative;
+    z-index:10;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    max-width:1180px;
+    margin:0 auto;
+    padding:4px clamp(10px, 2vw, 24px) 6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2vw, 24px);
+  }
+
+  /* Construction Hard-Hat Hoot Buddy */
+  #hootWrap{
+    position:relative;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    align-self:flex-end;
+    padding-bottom:6px;
+    z-index:14;
+  }
+  #hootBtn{
+    width:clamp(124px, 15.5vw, 178px);
+    height:clamp(136px, 17vw, 196px);
+    min-width:72px;
+    min-height:72px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    position:relative;
+    filter:drop-shadow(0 10px 14px rgba(59,35,16,.3));
+    transition:transform .2s cubic-bezier(.34,1.65,.5,1);
+    animation:hootIdle 3.2s ease-in-out infinite;
+  }
+  #hootBtn svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+  }
+  #hootBtn.cheer{
+    animation:hootCheer .62s cubic-bezier(.34,1.85,.5,1) 2 !important;
+  }
+  @keyframes hootIdle{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-5px) rotate(-1.6deg); }
+  }
+  @keyframes hootCheer{
+    0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
+    42%{ transform:translateY(-22px) scale(1.1) rotate(-6deg); }
+    74%{ transform:translateY(-5px) scale(1.03) rotate(5deg); }
+  }
+
+  /* Play Stage Card */
+  #playStage{
+    position:relative;
+    flex:1 1 auto;
+    min-width:0;
+    height:100%;
+    max-width:860px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .scene-card{
+    position:relative;
+    width:100%;
+    height:100%;
+    max-height:560px;
+    border-radius:30px;
+    overflow:hidden;
+    border:5px solid #ffd84d;
+    background:rgba(255, 250, 236, 0.24);
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    box-shadow:
+      0 10px 0 #a16207,
+      0 20px 36px rgba(59,35,16,.34),
+      inset 0 3px 0 rgba(255,255,255,.72);
+    display:flex;
+    flex-direction:column;
+  }
+  /* Subtle safety hazard stripe trim along top inner rim */
+  .scene-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:10px;
+    z-index:20;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+      -45deg,
+      #ffd84d 0 14px,
+      #334155 14px 28px
+    );
+    opacity:.88;
+  }
+
+  /* ================= PHASE 1: YELLOW EXCAVATOR SCOOP ================= */
+  #phaseExcavator{
+    background:linear-gradient(180deg, rgba(139,224,255,.46) 0%, rgba(255,235,180,.42) 48%, rgba(212,155,84,.88) 54%, rgba(164,104,44,.95) 100%);
+  }
+  #excavatorWorld{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    height:100%;
+    touch-action:none;
+  }
+  #exSceneSvg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    z-index:3;
+  }
+  /* Articulated excavator joints */
+  #exBoomGroup{
+    transform-origin:226px 268px;
+    transition:transform .38s cubic-bezier(.34,1.35,.5,1);
+  }
+  #exArmGroup{
+    transform-origin:350px 158px;
+    transition:transform .36s cubic-bezier(.34,1.35,.5,1);
+  }
+  #exBucketGroup{
+    transform-origin:424px 236px;
+    transition:transform .28s cubic-bezier(.34,1.4,.5,1);
+  }
+  #exExhaustPuff{
+    opacity:0;
+    transform-box:fill-box;
+    transform-origin:center;
+  }
+  #exExhaustPuff.puff{
+    animation:smokePuff .65s ease-out forwards;
+  }
+  @keyframes smokePuff{
+    0%{ opacity:.92; transform:translate(0,0) scale(.5); }
+    100%{ opacity:0; transform:translate(-18px,-36px) scale(1.7); }
+  }
+  #p1TruckGroup{
+    transform-origin:680px 318px;
+  }
+  #p1TruckGroup.bounce{
+    animation:truckBounce .46s cubic-bezier(.34,1.7,.5,1);
+  }
+  @keyframes truckBounce{
+    0%,100%{ transform:translateY(0) scale(1,1); }
+    35%{ transform:translateY(6px) scale(1.03,.95); }
+    70%{ transform:translateY(-5px) scale(.99,1.03); }
+  }
+
+  /* Draggable bucket handle overlay so dragging OR tapping works naturally */
+  #exDragHandle{
+    position:absolute;
+    left:47%;
+    top:47%;
+    width:82px;
+    height:82px;
+    margin:-41px 0 0 -41px;
+    border-radius:50%;
+    border:4px dashed rgba(255,232,120,.85);
+    background:radial-gradient(circle, rgba(255,216,77,.28) 0%, rgba(255,216,77,0) 70%);
+    z-index:8;
+    cursor:grab;
+    touch-action:none;
+    display:grid;
+    place-items:center;
+    font-size:28px;
+    transition:opacity .25s ease, transform .2s ease;
+    animation:handlePulse 2s ease-in-out infinite;
+  }
+  #exDragHandle:active{ cursor:grabbing; transform:scale(1.1); }
+  #exDragHandle.busy{ opacity:0; pointer-events:none; }
+  @keyframes handlePulse{
+    0%,100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(255,216,77,.5); }
+    50%{ transform:scale(1.07); box-shadow:0 0 0 12px rgba(255,216,77,0); }
+  }
+
+  /* Interactive glowing dirt & boulder mounds (>=76px touch target!) */
+  #moundsRow{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:4%;
+    z-index:10;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-evenly;
+    padding:0 12px;
+    gap:8px;
+    pointer-events:none;
+  }
+  .dirt-mound{
+    position:relative;
+    pointer-events:auto;
+    width:clamp(80px, 16vw, 128px);
+    height:clamp(76px, 13vw, 108px);
+    min-width:74px;
+    min-height:72px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    touch-action:none;
+    transition:transform .24s cubic-bezier(.34,1.7,.5,1), opacity .35s ease;
+  }
+  .dirt-mound svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+    filter:drop-shadow(0 6px 8px rgba(59,35,16,.34));
+  }
+  .dirt-mound:not(.scooped){
+    animation:moundGlow 1.7s ease-in-out infinite alternate;
+  }
+  .dirt-mound:not(.scooped):active{
+    transform:scale(.9);
+  }
+  .dirt-mound.hot{
+    transform:scale(1.14);
+    filter:drop-shadow(0 0 18px #ffd84d);
+  }
+  .dirt-mound.scooped{
+    opacity:.22;
+    transform:scale(.72) translateY(14px);
+    pointer-events:none;
+    animation:none;
+  }
+  @keyframes moundGlow{
+    from{ filter:drop-shadow(0 0 6px rgba(255,216,77,.48)); }
+    to{ filter:drop-shadow(0 0 18px rgba(255,216,77,.98)); }
+  }
+  .mound-num{
+    position:absolute;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #fff9d6 0%, #ffd84d 100%);
+    border:2.5px solid #fff;
+    box-shadow:0 3px 0 #b45309;
+    display:grid;
+    place-items:center;
+    font-size:17px;
+    font-weight:900;
+    color:#5c2d06;
+    pointer-events:none;
+  }
+  .dirt-mound.scooped .mound-num{ display:none; }
+  .mound-hand{
+    position:absolute;
+    top:-24px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:34px;
+    line-height:1;
+    pointer-events:none;
+    display:none;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.38));
+    animation:handBounce .85s ease-in-out infinite;
+  }
+  .dirt-mound.show-hand .mound-hand{ display:block; }
+
+  @keyframes handBounce{
+    0%,100%{ transform:translate(-50%, 0); }
+    50%{ transform:translate(-50%, -10px); }
+  }
+
+  /* ================= PHASE 2: DUMP & STEAMROLL ROAD ================= */
+  #phaseRoller{
+    background:linear-gradient(180deg, rgba(139,224,255,.46) 0%, rgba(254,240,192,.44) 48%, rgba(163,216,108,.85) 54%, rgba(114,173,68,.94) 100%);
+  }
+  #rollerWorld{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:18px 0 0;
+  }
+  #rollerUpper{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+  }
+
+  /* Interactive Dump Truck in Phase 2A */
+  #p2DumpBtn{
+    position:absolute;
+    right:7%;
+    bottom:-18px;
+    width:clamp(190px, 34vw, 290px);
+    height:clamp(145px, 26vw, 220px);
+    min-width:120px;
+    min-height:110px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    z-index:8;
+    transition:transform .55s cubic-bezier(.34,1.3,.5,1), opacity .45s ease;
+    filter:drop-shadow(0 10px 14px rgba(59,35,16,.3));
+  }
+  #p2DumpBtn svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+  }
+  #p2DumpBtn.glow-cue{
+    animation:truckPulse 1.35s ease-in-out infinite;
+  }
+  @keyframes truckPulse{
+    0%,100%{ transform:scale(1); filter:drop-shadow(0 0 8px rgba(255,216,77,.6)); }
+    50%{ transform:scale(1.05); filter:drop-shadow(0 0 22px rgba(255,216,77,1)); }
+  }
+  #p2DumpBed{
+    transform-origin:116px 142px;
+    transition:transform .55s cubic-bezier(.28,1.32,.46,1);
+  }
+  #p2DumpBtn.tipping #p2DumpBed{
+    transform:rotate(-44deg);
+  }
+  #p2DumpBtn.parked{
+    transform:translateX(120%) scale(.88);
+    opacity:0;
+    pointer-events:none;
+  }
+  #dumpHand{
+    position:absolute;
+    top:-8px;
+    left:46%;
+    font-size:40px;
+    line-height:1;
+    pointer-events:none;
+    display:none;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
+    animation:handBounce .85s ease-in-out infinite;
+  }
+  #p2DumpBtn.show-hand #dumpHand{ display:block; }
+
+  /* Interactive Road Strip (Rub OR Tap anywhere!) */
+  #roadZone{
+    position:relative;
+    flex:0 0 auto;
+    width:100%;
+    height:clamp(146px, 34%, 198px);
+    background:linear-gradient(180deg, #b88b58 0%, #8c5f32 100%);
+    border-top:5px solid #e2b878;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px 14px 16px;
+    touch-action:none;
+    cursor:pointer;
+  }
+  #roadTrack{
+    position:relative;
+    width:100%;
+    height:100%;
+    min-height:112px;
+    border-radius:26px;
+    overflow:hidden;
+    border:4px solid #fff6d6;
+    background:linear-gradient(180deg, #8b5a2b 0%, #6d421c 100%);
+    box-shadow:inset 0 8px 18px rgba(34,18,6,.55), 0 6px 14px rgba(59,35,16,.28);
+    touch-action:none;
+  }
+  /* Bumpy pothole & poured rocks underlay */
+  #roadBumpyLayer{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    z-index:2;
+  }
+  #roadRocksGroup{
+    opacity:0;
+    transform:translateY(-24px);
+    transition:opacity .45s ease, transform .5s cubic-bezier(.34,1.4,.5,1);
+  }
+  #roadTrack.rocks-poured #roadRocksGroup{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* Smooth rolled dark asphalt overlay (expands width 0% -> 100%!) */
+  #roadSmoothOverlay{
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:0%;
+    z-index:4;
+    overflow:hidden;
+    background:linear-gradient(180deg, #4b5563 0%, #374151 45%, #1f2937 100%);
+    border-right:5px solid #ffd84d;
+    box-shadow:inset 0 4px 10px rgba(255,255,255,.16);
+    transition:width .16s ease-out;
+  }
+  #roadSmoothOverlay::after{
+    content:"";
+    position:absolute;
+    left:14px;
+    right:14px;
+    top:50%;
+    height:10px;
+    margin-top:-5px;
+    background:repeating-linear-gradient(90deg, #ffd84d 0 36px, transparent 36px 64px);
+    border-radius:5px;
+    opacity:.95;
+  }
+  #roadSmoothOverlay.complete{
+    border-right-color:transparent;
+    box-shadow:inset 0 0 28px rgba(255,216,77,.55);
+  }
+
+  /* Yellow Pixar Steamroller riding across the road */
+  #steamrollerWrap{
+    position:absolute;
+    left:4%;
+    bottom:26%;
+    width:clamp(146px, 24vw, 206px);
+    height:clamp(112px, 18.5vw, 158px);
+    z-index:11;
+    pointer-events:none;
+    transform:translateX(-140%);
+    opacity:0;
+    transition:left .16s ease-out, transform .5s cubic-bezier(.34,1.4,.5,1), opacity .35s ease;
+    filter:drop-shadow(0 8px 12px rgba(34,20,6,.36));
+  }
+  #steamrollerWrap.ready{
+    transform:translateX(-18%);
+    opacity:1;
+  }
+  #steamrollerWrap.rolling{
+    animation:rollerRumble .22s ease-in-out infinite alternate;
+  }
+  @keyframes rollerRumble{
+    from{ margin-bottom:0px; }
+    to{ margin-bottom:4px; }
+  }
+  #steamrollerWrap svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+  }
+  #rollerDrum{
+    transform-box:fill-box;
+    transform-origin:center;
+  }
+  #steamrollerWrap.rolling #rollerDrum{
+    animation:drumSpin .42s linear infinite;
+  }
+  @keyframes drumSpin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+
+  /* Swipe / Rub hand hint across the bumpy road */
+  #rollHint{
+    position:absolute;
+    left:52%;
+    top:48%;
+    z-index:12;
+    font-size:44px;
+    line-height:1;
+    pointer-events:none;
+    opacity:0;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));
+    transition:opacity .28s ease;
+  }
+  #rollHint.show{
+    opacity:1;
+    animation:rollSwipe 1.45s ease-in-out infinite;
+  }
+  @keyframes rollSwipe{
+    0%{ transform:translate(-75px, -50%) rotate(-12deg) scale(1); }
+    50%{ transform:translate(65px, -50%) rotate(10deg) scale(1.12); }
+    100%{ transform:translate(-75px, -50%) rotate(-12deg) scale(1); }
+  }
+
+  /* ================= PHASE 3 & FINALE: CRANE RAINBOW BRIDGE ================= */
+  #phaseCrane{
+    background:linear-gradient(180deg, rgba(139,224,255,.52) 0%, rgba(255,244,204,.46) 52%, rgba(56,189,248,.82) 66%, rgba(14,116,144,.94) 100%);
+  }
+  #craneWorld{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    height:100%;
+  }
+  #craneSceneSvg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index:4;
+  }
+
+  /* Animated Crane Trolley + Cable + Hook */
+  #craneTrolleyGroup{
+    transition:transform .46s cubic-bezier(.32,1.18,.44,1);
+  }
+  #craneCableLine{
+    transition:y2 .34s cubic-bezier(.32,1.18,.44,1);
+  }
+  #craneHookGroup{
+    transition:transform .34s cubic-bezier(.32,1.18,.44,1);
+  }
+
+  /* Bridge Slots */
+  .bridge-slot{
+    cursor:pointer;
+    transition:filter .2s ease;
+  }
+  .bridge-slot .slot-ghost{
+    opacity:.68;
+    transition:opacity .25s ease;
+  }
+  .bridge-slot.suggest .slot-ghost{
+    opacity:1;
+    animation:slotGlow 1.1s ease-in-out infinite alternate;
+  }
+  .bridge-slot.hover-hot .slot-ghost{
+    opacity:1;
+    filter:drop-shadow(0 0 16px #ffd84d);
+  }
+  @keyframes slotGlow{
+    from{ filter:drop-shadow(0 0 4px rgba(255,216,77,.55)); }
+    to{ filter:drop-shadow(0 0 18px rgba(255,216,77,1)); }
+  }
+  .bridge-slot .slot-solid{
+    opacity:0;
+    transform-box:fill-box;
+    transform-origin:center;
+    transform:scale(.45) translateY(-28px);
+    pointer-events:none;
+  }
+  .bridge-slot.placed .slot-ghost{ opacity:0; }
+  .bridge-slot.placed .slot-solid{
+    opacity:1;
+    transform:scale(1) translateY(0);
+    animation:blockSnapPop .52s cubic-bezier(.34,1.8,.5,1);
+  }
+  @keyframes blockSnapPop{
+    0%{ transform:scale(.5) translateY(-32px) rotate(-6deg); opacity:.4; }
+    62%{ transform:scale(1.1) translateY(3px) rotate(3deg); opacity:1; }
+    100%{ transform:scale(1) translateY(0) rotate(0deg); opacity:1; }
+  }
+
+  /* Rainbow Aura & Parade Lane on Bridge in Grand Finale! */
+  #bridgeRainbowGlow{
+    opacity:0;
+    transition:opacity .7s ease;
+  }
+  #stage[data-phase="finale"] #bridgeRainbowGlow{
+    opacity:1;
+    animation:rainbowPulse 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes rainbowPulse{
+    from{ filter:drop-shadow(0 0 10px rgba(255,216,77,.6)); }
+    to{ filter:drop-shadow(0 0 26px rgba(255,255,255,.95)); }
+  }
+
+  #paradeLayer{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:min(44%, 25vw);
+    height:clamp(88px, 14vw, 126px);
+    z-index:12;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .parade-track{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:flex-end;
+    gap:34px;
+    width:max-content;
+    padding-bottom:6px;
+    animation:paradeDrive 8.4s linear infinite;
+  }
+  @keyframes paradeDrive{
+    0%{ transform:translateX(-100%); }
+    100%{ transform:translateX(110vw); }
+  }
+  .parade-vehicle{
+    pointer-events:auto;
+    width:clamp(108px, 17vw, 152px);
+    height:clamp(84px, 13.5vw, 118px);
+    min-width:74px;
+    min-height:74px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    position:relative;
+    filter:drop-shadow(0 8px 10px rgba(34,20,6,.3));
+    animation:vehicleBob .52s ease-in-out infinite alternate;
+  }
+  .parade-vehicle:nth-child(2){ animation-delay:.16s; }
+  .parade-vehicle:nth-child(3){ animation-delay:.32s; }
+  .parade-vehicle.honk-jump{
+    animation:vehicleHonk .55s cubic-bezier(.34,1.9,.5,1) !important;
+  }
+  @keyframes vehicleBob{
+    from{ transform:translateY(0); }
+    to{ transform:translateY(-5px); }
+  }
+  @keyframes vehicleHonk{
+    0%,100%{ transform:translateY(0) scale(1); }
+    45%{ transform:translateY(-22px) scale(1.14) rotate(-5deg); }
+    75%{ transform:translateY(-6px) scale(1.04) rotate(4deg); }
+  }
+  .parade-vehicle svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+  }
+
+  /* Honk burst badge */
+  #honkBurst{
+    position:absolute;
+    top:12%;
+    left:50%;
+    transform:translateX(-50%) scale(.4);
+    z-index:18;
+    pointer-events:none;
+    font-size:48px;
+    line-height:1;
+    opacity:0;
+    filter:drop-shadow(0 6px 12px rgba(255,140,0,.6));
+  }
+  #honkBurst.show{
+    animation:honkWave 1.05s cubic-bezier(.25,1.55,.5,1);
+  }
+  @keyframes honkWave{
+    0%{ opacity:0; transform:translateX(-50%) scale(.35) rotate(-10deg); }
+    28%{ opacity:1; transform:translateX(-50%) scale(1.24) rotate(8deg); }
+    72%{ opacity:1; transform:translateX(-50%) scale(1.06) rotate(-4deg); }
+    100%{ opacity:0; transform:translateX(-50%) translateY(-22px) scale(1.32) rotate(10deg); }
+  }
+
+  /* ================= BOTTOM TOOL & BLOCK DOCK ================= */
+  #bottomDock{
+    position:relative;
+    z-index:18;
+    flex:0 0 auto;
+    height:calc(98px + env(safe-area-inset-bottom));
+    padding:8px max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background:linear-gradient(180deg, #9c5b24 0%, #744016 36%, #4f290c 100%);
+    border-top:5px solid #ffd84d;
+    box-shadow:inset 0 3px 0 rgba(255,248,200,.72), 0 -6px 20px rgba(45,22,6,.38);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .dock-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2.2vw, 20px);
+    width:100%;
+    max-width:660px;
+  }
+
+  /* Phase 1 dock: visual scoop counter buttons */
+  .scoop-badge{
+    position:relative;
+    width:76px;
+    height:76px;
+    min-width:68px;
+    min-height:68px;
+    border-radius:20px;
+    border:4px dashed rgba(255,232,160,.62);
+    background:rgba(45,20,6,.42);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    font-size:32px;
+    line-height:1;
+    transition:transform .18s cubic-bezier(.34,1.7,.5,1), background .25s, border-color .25s, box-shadow .25s;
+  }
+  .scoop-badge:active{ transform:scale(.92); }
+  .scoop-badge.filled{
+    border-style:solid;
+    border-color:#ffd84d;
+    background:radial-gradient(circle at 35% 30%, #fffef8 0%, #ffe699 100%);
+    box-shadow:0 4px 0 #b87300, 0 0 16px rgba(255,216,77,.8);
+    animation:tilePop .45s cubic-bezier(.34,1.85,.5,1);
+    cursor:default;
+  }
+  .scoop-badge .badge-chk{
+    position:absolute;
+    top:-7px;
+    right:-7px;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:#16a34a;
+    border:2.5px solid #fff;
+    color:#fff;
+    font-size:15px;
+    font-weight:900;
+    display:grid;
+    place-items:center;
+    opacity:0;
+    transform:scale(.3);
+    transition:opacity .25s, transform .35s cubic-bezier(.34,1.9,.5,1);
+  }
+  .scoop-badge.filled .badge-chk{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  /* Phase 2 dock: Big glowing Dump ⬇️ or Roll 🚜➡️ CTA + Road Gauge */
+  .dock-cta{
+    min-width:118px;
+    min-height:74px;
+    height:76px;
+    padding:0 24px;
+    border-radius:999px;
+    border:4px solid #fffdf5;
+    font-family:"Fredoka",sans-serif;
+    font-size:34px;
+    font-weight:700;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1);
+  }
+  .dock-cta:active{ transform:translateY(3px) scale(.93); }
+  #tipBtn{
+    background:linear-gradient(180deg, #ffd84d 0%, #f59e0b 100%);
+    color:#4a2204;
+    box-shadow:0 6px 0 #b45309, 0 0 22px rgba(255,216,77,.85);
+    animation:ctaPulse 1.35s ease-in-out infinite;
+  }
+  #rollTapBtn{
+    background:linear-gradient(180deg, #ffe047 0%, #eab308 100%);
+    color:#4a2204;
+    box-shadow:0 6px 0 #a16207, 0 0 22px rgba(255,216,77,.85);
+    animation:ctaPulse 1.35s ease-in-out infinite;
+  }
+  @keyframes ctaPulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.06); }
+  }
+
+  #rollMeterWrap{
+    flex:1 1 auto;
+    max-width:260px;
+    height:34px;
+    border-radius:999px;
+    border:4px solid #fffdf5;
+    background:rgba(36,18,6,.55);
+    overflow:hidden;
+    box-shadow:inset 0 3px 6px rgba(0,0,0,.45);
+    position:relative;
+  }
+  #rollMeterFill{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, #facc15 0%, #4ade80 100%);
+    box-shadow:0 0 12px rgba(74,222,128,.75);
+    transition:width .18s ease-out;
+  }
+
+  /* Phase 3 dock: Big colorful Bridge Block tiles (>=74px) */
+  .block-tile{
+    position:relative;
+    flex:0 0 auto;
+    width:78px;
+    height:76px;
+    min-width:70px;
+    min-height:70px;
+    padding:5px;
+    border-radius:20px;
+    border:4px solid #fffdf5;
+    background:var(--blk-bg, linear-gradient(180deg, #f87171 0%, #dc2626 100%));
+    box-shadow:0 5px 0 var(--blk-shadow, #991b1b), 0 0 18px rgba(255,216,77,.72);
+    display:grid;
+    place-items:center;
+    cursor:grab;
+    outline:none;
+    touch-action:none;
+    transition:transform .18s cubic-bezier(.34,1.7,.5,1), opacity .25s, box-shadow .25s;
+  }
+  .block-tile:active{ transform:scale(.92); cursor:grabbing; }
+  .block-tile svg{
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+  }
+  .block-tile.hint-next{
+    animation:tileHintBob 1.1s ease-in-out infinite;
+  }
+  @keyframes tileHintBob{
+    0%,100%{ transform:translateY(0) scale(1); }
+    50%{ transform:translateY(-6px) scale(1.08); }
+  }
+  @keyframes tilePop{
+    0%{ transform:scale(.5); }
+    65%{ transform:scale(1.16); }
+    100%{ transform:scale(1); }
+  }
+  .block-tile.placed{
+    border-color:#4ade80;
+    background:linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%);
+    box-shadow:0 3px 0 #15803d;
+    opacity:.75;
+    cursor:default;
+    pointer-events:none;
+    animation:none;
+  }
+  .block-tile.placed svg{ opacity:.32; }
+  .block-tile .tile-check{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-size:34px;
+    color:#15803d;
+    font-weight:900;
+    opacity:0;
+    transform:scale(.3);
+    pointer-events:none;
+    transition:opacity .25s, transform .35s cubic-bezier(.34,1.9,.5,1);
+  }
+  .block-tile.placed .tile-check{
+    opacity:1;
+    transform:scale(1);
+  }
+  .tile-hand{
+    position:absolute;
+    top:-28px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:32px;
+    line-height:1;
+    pointer-events:none;
+    display:none;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.4));
+    animation:handBounce .85s ease-in-out infinite;
+  }
+  .block-tile.show-hand .tile-hand{ display:block; }
+
+  /* Finale dock: Big glowing 📣 Honk + 🏗️ Build Again buttons */
+  #honkBtn{
+    background:linear-gradient(180deg, #ffd84d 0%, #f59e0b 100%);
+    color:#542800;
+    box-shadow:0 6px 0 #b45309, 0 0 22px rgba(255,216,77,.82);
+  }
+  #againBtn{
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff;
+    box-shadow:0 6px 0 #14532d, 0 0 26px rgba(74,222,128,.85);
+    animation:ctaPulse 1.45s ease-in-out infinite;
+  }
+
+  /* ================= DRAGGED GHOST & FLYING FX LAYER ================= */
+  #fxLayer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:35;
+    overflow:hidden;
+  }
+  #dragGhost{
+    position:fixed;
+    left:0;
+    top:0;
+    width:116px;
+    height:106px;
+    margin:-53px 0 0 -58px;
+    pointer-events:none;
+    z-index:45;
+    filter:drop-shadow(0 12px 16px rgba(59,35,16,.38)) drop-shadow(0 0 14px rgba(255,216,77,.9));
+    transform:scale(1.1);
+  }
+  #dragGhost svg{ width:100%; height:100%; display:block; }
+
+  .fx-spark{
+    position:absolute;
+    font-size:28px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 0 8px rgba(255,220,90,.95));
+  }
+  .fx-dust{
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+  }
+  .fx-conf{
+    position:absolute;
+    border-radius:4px;
+    pointer-events:none;
+  }
+
+  /* ================= RESPONSIVE: iPHONE PORTRAIT (390x844) ================= */
+  @media (max-width:640px){
+    #hud{
+      gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 6px 2px;
+    }
+    #phaseBar{ gap:6px; }
+    .phase-pill{
+      width:68px;
+      height:68px;
+      min-width:68px;
+      min-height:68px;
+      border-radius:18px;
+      padding:4px;
+    }
+    .hud-right{ gap:6px; }
+    #starPill{
+      min-width:70px;
+      min-height:68px;
+      height:68px;
+      padding:0 10px 0 8px;
+      gap:4px;
+    }
+    .star-glyph{ font-size:24px; }
+    #starNum{ font-size:22px; }
+    #soundBtn{
+      width:68px;
+      height:68px;
+      min-width:68px;
+      min-height:68px;
+      font-size:24px;
+    }
+
+    #arena{
+      flex-direction:column;
+      justify-content:flex-start;
+      gap:4px;
+      padding:14px 8px 8px;
+    }
+    #hootWrap{
+      align-self:flex-start;
+      padding-bottom:0;
+      margin-top:10px;
+      margin-left:6px;
+    }
+    #hootBtn{
+      width:96px;
+      height:102px;
+    }
+    #hootBtn.cheer{
+      animation:hootCheerCompact .62s cubic-bezier(.34,1.85,.5,1) 2 !important;
+    }
+    @keyframes hootCheerCompact{
+      0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
+      42%{ transform:translateY(-8px) scale(1.05) rotate(-5deg); }
+      74%{ transform:translateY(-2px) scale(1.02) rotate(4deg); }
+    }
+    #playStage{
+      width:100%;
+      flex:1 1 auto;
+      height:auto;
+      min-height:0;
+    }
+    .scene-card{
+      border-radius:24px;
+      max-height:100%;
+    }
+
+    .dirt-mound{
+      width:78px;
+      height:74px;
+      min-width:72px;
+      min-height:70px;
+    }
+    #moundsRow{
+      bottom:4%;
+      padding:0 4px;
+      gap:4px;
+    }
+    #exDragHandle{
+      width:74px;
+      height:74px;
+      margin:-37px 0 0 -37px;
+    }
+
+    #roadZone{
+      height:152px;
+      padding:10px 8px 12px;
+    }
+    #p2DumpBtn{
+      width:190px;
+      height:142px;
+      right:4%;
+      bottom:-14px;
+    }
+    #steamrollerWrap{
+      width:138px;
+      height:108px;
+      bottom:28%;
+    }
+
+    #bottomDock{
+      height:calc(92px + env(safe-area-inset-bottom));
+      padding:6px 8px max(6px, env(safe-area-inset-bottom));
+    }
+    .dock-row{ gap:8px; }
+    .scoop-badge{
+      width:70px;
+      height:70px;
+      min-width:68px;
+      min-height:68px;
+      border-radius:16px;
+      font-size:28px;
+    }
+    .block-tile{
+      width:72px;
+      height:70px;
+      min-width:68px;
+      min-height:68px;
+      border-radius:16px;
+    }
+    .dock-cta{
+      min-width:104px;
+      min-height:70px;
+      height:70px;
+      padding:0 18px;
+      font-size:28px;
+    }
+    #rollMeterWrap{
+      max-width:160px;
+      height:28px;
+    }
+  }
+
+  /* Compact iPad / Desktop landscape height tuning */
+  @media (min-width:641px) and (max-height:790px){
+    #hootBtn{
+      width:clamp(112px, 14vw, 152px);
+      height:clamp(124px, 15.6vw, 168px);
+    }
+    .scene-card{
+      max-height:530px;
+    }
+    #bottomDock{
+      height:calc(94px + env(safe-area-inset-bottom));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01s !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage" data-phase="excavator">
+  <!-- Shared Pixar Construction SVG Gradients (always mounted so Safari/WebKit resolves url(#...) across all phases!) -->
+  <svg id="sharedDefs" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none" aria-hidden="true">
+    <defs>
+      <linearGradient id="catYellow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffe761"/>
+        <stop offset="52%" stop-color="#f5b700"/>
+        <stop offset="100%" stop-color="#cc8400"/>
+      </linearGradient>
+      <linearGradient id="catOrange" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fb923c"/>
+        <stop offset="100%" stop-color="#c2410c"/>
+      </linearGradient>
+      <linearGradient id="cabGlass" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#e0f2fe"/>
+        <stop offset="60%" stop-color="#7dd3fc"/>
+        <stop offset="100%" stop-color="#38bdf8"/>
+      </linearGradient>
+      <linearGradient id="steelGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#94a3b8"/>
+        <stop offset="100%" stop-color="#475569"/>
+      </linearGradient>
+      <linearGradient id="dirtFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#c68642"/>
+        <stop offset="100%" stop-color="#7c471b"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ============ PIXAR CONSTRUCTION YARD BACKDROP ============ -->
+  <div id="yardBg" class="backdrop" aria-hidden="true"></div>
+
+  <!-- Ambient drifting clouds & warm golden sun -->
+  <div id="skyAmbient" aria-hidden="true">
+    <svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMin slice">
+      <g class="sun-rays" fill="none" stroke="#fff7c2" stroke-width="8" stroke-linecap="round">
+        <line x1="1090" y1="22" x2="1090" y2="42"/>
+        <line x1="1090" y1="142" x2="1090" y2="162"/>
+        <line x1="1020" y1="92" x2="1040" y2="92"/>
+        <line x1="1140" y1="92" x2="1160" y2="92"/>
+        <line x1="1040" y1="42" x2="1055" y2="57"/>
+        <line x1="1125" y1="127" x2="1140" y2="142"/>
+        <line x1="1140" y1="42" x2="1125" y2="57"/>
+        <line x1="1055" y1="127" x2="1040" y2="142"/>
+      </g>
+      <circle cx="1090" cy="92" r="36" fill="#ffe566"/>
+      <g class="cloud-float" fill="#ffffff">
+        <ellipse cx="210" cy="94" rx="54" ry="26"/>
+        <ellipse cx="250" cy="84" rx="42" ry="28"/>
+        <ellipse cx="288" cy="96" rx="38" ry="20"/>
+      </g>
+      <g class="cloud-float-slow" fill="#ffffff">
+        <ellipse cx="760" cy="112" rx="60" ry="26"/>
+        <ellipse cx="810" cy="98" rx="46" ry="30"/>
+        <ellipse cx="854" cy="112" rx="40" ry="22"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ TOP HUD: 3 BIG VISUAL PHASE PILLS + STARS + SOUND ============ -->
+  <header id="hud">
+    <nav id="phaseBar" aria-label="Construction steps">
+      <button class="phase-pill active" data-phase-btn="excavator" type="button" aria-label="Scoop dirt" aria-pressed="true" style="--pill-bg:linear-gradient(180deg,#ffe047,#f59e0b);--pill-shadow:#b45309">
+        <svg viewBox="0 0 80 80" aria-hidden="true">
+          <rect x="12" y="54" width="38" height="12" rx="6" fill="#334155" stroke="#1e293b" stroke-width="2.5"/>
+          <circle cx="20" cy="60" r="3.5" fill="#94a3b8"/><circle cx="31" cy="60" r="3.5" fill="#94a3b8"/><circle cx="42" cy="60" r="3.5" fill="#94a3b8"/>
+          <rect x="14" y="34" width="32" height="21" rx="6" fill="#facc15" stroke="#78350f" stroke-width="2.5"/>
+          <rect x="26" y="38" width="16" height="11" rx="3" fill="#bae6fd" stroke="#0369a1" stroke-width="2"/>
+          <path d="M44,44 L58,20 L70,38" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M64,38 L75,44 L67,54 L59,46 Z" fill="#475569" stroke="#1e293b" stroke-width="2"/>
+        </svg>
+        <span class="done-badge" aria-hidden="true">✓</span>
+      </button>
+
+      <button class="phase-pill" data-phase-btn="roller" type="button" aria-label="Roll road" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#fb923c,#ea580c);--pill-shadow:#9a3412">
+        <svg viewBox="0 0 80 80" aria-hidden="true">
+          <rect x="10" y="61" width="60" height="7" rx="3.5" fill="#334155"/>
+          <rect x="14" y="35" width="34" height="22" rx="6" fill="#facc15" stroke="#78350f" stroke-width="2.5"/>
+          <rect x="19" y="22" width="20" height="15" rx="4" fill="#bae6fd" stroke="#78350f" stroke-width="2.5"/>
+          <rect x="16" y="19" width="26" height="5" rx="2.5" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+          <circle cx="22" cy="57" r="9" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><circle cx="22" cy="57" r="4" fill="#facc15"/>
+          <circle cx="57" cy="52" r="13" fill="#94a3b8" stroke="#334155" stroke-width="3"/><circle cx="57" cy="52" r="5" fill="#f59e0b"/>
+        </svg>
+        <span class="done-badge" aria-hidden="true">✓</span>
+      </button>
+
+      <button class="phase-pill" data-phase-btn="crane" type="button" aria-label="Build bridge" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#60a5fa,#2563eb);--pill-shadow:#1e3a8a">
+        <svg viewBox="0 0 80 80" aria-hidden="true">
+          <path d="M12,62 Q40,34 68,62" fill="none" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+          <path d="M18,62 Q40,42 62,62" fill="none" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
+          <path d="M24,62 Q40,49 56,62" fill="none" stroke="#22c55e" stroke-width="5" stroke-linecap="round"/>
+          <rect x="15" y="14" width="7" height="46" rx="2" fill="#facc15" stroke="#78350f" stroke-width="2"/>
+          <rect x="12" y="14" width="54" height="7" rx="2" fill="#facc15" stroke="#78350f" stroke-width="2"/>
+          <line x1="50" y1="21" x2="50" y2="34" stroke="#334155" stroke-width="2.5"/>
+          <path d="M46,34 Q50,42 54,34" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="done-badge" aria-hidden="true">✓</span>
+      </button>
+    </nav>
+
+    <div class="hud-right">
+      <div id="starPill" aria-label="Stars earned">
+        <span class="star-glyph" aria-hidden="true">⭐</span>
+        <span id="starNum">0</span>
+      </div>
+      <button id="soundBtn" type="button" aria-label="Turn Sound Off">🔊</button>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ARENA: HARD-HAT HOOT + 3-PHASE STAGE ============ -->
+  <main id="arena">
+    <!-- Construction Hard-Hat Hoot Buddy (eyes follow pointer, tap repeats voice guide!) -->
+    <div id="hootWrap">
+      <button id="hootBtn" type="button" aria-label="Construction Hoot">
+        <svg viewBox="0 0 220 242" aria-hidden="true">
+          <defs>
+            <linearGradient id="hootBodyG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c68649"/>
+              <stop offset="100%" stop-color="#8b5528"/>
+            </linearGradient>
+            <linearGradient id="hardHatG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fff078"/>
+              <stop offset="55%" stop-color="#facc15"/>
+              <stop offset="100%" stop-color="#d97706"/>
+            </linearGradient>
+            <linearGradient id="vestG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fb923c"/>
+              <stop offset="100%" stop-color="#ea580c"/>
+            </linearGradient>
+          </defs>
+          <!-- Ground shadow -->
+          <ellipse cx="110" cy="230" rx="64" ry="10" fill="rgba(59,35,16,.26)"/>
+
+          <!-- Cute orange owl feet -->
+          <g fill="#f59e0b" stroke="#854d0e" stroke-width="3.2" stroke-linejoin="round">
+            <path d="M78,212 L66,226 L79,224 L86,228 L92,214 Z"/>
+            <path d="M142,212 L154,226 L141,224 L134,228 L128,214 Z"/>
+          </g>
+
+          <!-- Chubby Owl Body -->
+          <ellipse cx="110" cy="148" rx="68" ry="72" fill="url(#hootBodyG)" stroke="#5b3414" stroke-width="4.5"/>
+
+          <!-- Left & Right Wings -->
+          <path d="M48,132 Q18,158 34,192 Q54,196 64,168 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M172,132 Q202,158 186,192 Q166,196 156,168 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+
+          <!-- Cream Feathered Belly -->
+          <ellipse cx="110" cy="170" rx="44" ry="42" fill="#fff4d8"/>
+
+          <!-- High-Vis Construction Safety Vest with Reflective Stripes -->
+          <path d="M56,136 Q82,152 94,148 L92,208 Q64,198 52,168 Z" fill="url(#vestG)" stroke="#7c2d12" stroke-width="3.2" stroke-linejoin="round"/>
+          <path d="M164,136 Q138,152 126,148 L128,208 Q156,198 168,168 Z" fill="url(#vestG)" stroke="#7c2d12" stroke-width="3.2" stroke-linejoin="round"/>
+          <path d="M60,164 L90,170 M64,180 L88,185" stroke="#e2f8ff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M160,164 L130,170 M156,180 L132,185" stroke="#e2f8ff" stroke-width="5" stroke-linecap="round"/>
+
+          <!-- Ear Tufts peeking under Yellow Hard Hat -->
+          <path d="M56,82 L42,58 L74,70 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M164,82 L178,58 L146,70 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+
+          <!-- Big Iconic Owl Eyes -->
+          <circle cx="84" cy="106" r="27" fill="#fffdf7" stroke="#5b3414" stroke-width="4"/>
+          <circle cx="136" cy="106" r="27" fill="#fffdf7" stroke="#5b3414" stroke-width="4"/>
+          <g id="hootPupils">
+            <circle cx="86" cy="106" r="13.5" fill="#2c1808"/>
+            <circle cx="138" cy="106" r="13.5" fill="#2c1808"/>
+            <circle cx="91" cy="100" r="5" fill="#fff"/>
+            <circle cx="143" cy="100" r="5" fill="#fff"/>
+            <circle cx="82" cy="112" r="2.5" fill="#fff" opacity=".8"/>
+            <circle cx="134" cy="112" r="2.5" fill="#fff" opacity=".8"/>
+          </g>
+
+          <!-- Warm Rosy Cheeks & Happy Smiling Beak -->
+          <ellipse cx="56" cy="124" rx="11" ry="6.5" fill="#fda4af" opacity=".72"/>
+          <ellipse cx="164" cy="124" rx="11" ry="6.5" fill="#fda4af" opacity=".72"/>
+          <path d="M98,118 Q110,112 122,118 L110,136 Z" fill="#f59e0b" stroke="#78350f" stroke-width="3.2" stroke-linejoin="round"/>
+
+          <!-- Glossy Yellow Pixar Construction Hard Hat -->
+          <path d="M48,78 C50,30 80,18 110,18 C140,18 170,30 172,78 Z" fill="url(#hardHatG)" stroke="#78350f" stroke-width="4.2" stroke-linejoin="round"/>
+          <!-- Hard Hat Center Rib -->
+          <path d="M98,20 C104,12 116,12 122,20 L124,74 L96,74 Z" fill="#fef08a" stroke="#92400e" stroke-width="3" stroke-linejoin="round"/>
+          <!-- Hard Hat Visor Brim -->
+          <path d="M36,78 Q110,94 184,78 Q186,68 170,68 Q110,80 50,68 Q34,68 36,78 Z" fill="#eab308" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+          <!-- Cute Star Badge on Hard Hat -->
+          <circle cx="110" cy="48" r="12" fill="#fffdf5" stroke="#b45309" stroke-width="2.5"/>
+          <path d="M110,39 L112.5,45 L119,45.5 L114,49.8 L115.5,56 L110,52.5 L104.5,56 L106,49.8 L101,45.5 L107.5,45 Z" fill="#f59e0b"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Main 3-Phase Interactive Play Stage -->
+    <section id="playStage" aria-label="Construction yard play area">
+
+      <!-- ================================================================
+           PHASE 1: YELLOW EXCAVATOR SCOOP
+           ================================================================ -->
+      <div id="phaseExcavator" class="scene-card">
+        <div id="excavatorWorld">
+          <svg id="exSceneSvg" viewBox="0 0 840 480" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+            <!-- Sunny Dirt Construction Ground -->
+            <path d="M0,310 Q220,285 430,308 T840,296 L840,480 L0,480 Z" fill="#c98a42"/>
+            <path d="M0,336 Q260,318 520,338 T840,328 L840,480 L0,480 Z" fill="#a86a2a" opacity=".62"/>
+            <!-- Safety Traffic Cones in background -->
+            <g transform="translate(52,272)">
+              <polygon points="16,0 28,36 4,36" fill="#f97316" stroke="#7c2d12" stroke-width="2.5" stroke-linejoin="round"/>
+              <rect x="9" y="15" width="14" height="6" fill="#fff"/>
+              <rect x="0" y="34" width="32" height="6" rx="3" fill="#ea580c" stroke="#7c2d12" stroke-width="2"/>
+            </g>
+
+            <!-- ========== ANIMATED PIXAR YELLOW EXCAVATOR ========== -->
+            <g id="excavatorRig">
+              <!-- Ground shadow -->
+              <ellipse cx="182" cy="356" rx="112" ry="16" fill="rgba(59,35,16,.28)"/>
+
+              <!-- Articulated Main Boom + Dipper Arm + Bucket -->
+              <g id="exBoomGroup">
+                <!-- Hydraulic Piston -->
+                <line x1="210" y1="292" x2="305" y2="218" stroke="#cbd5e1" stroke-width="11" stroke-linecap="round"/>
+                <line x1="210" y1="292" x2="262" y2="250" stroke="#334155" stroke-width="15" stroke-linecap="round"/>
+                <!-- Main Yellow Boom -->
+                <path d="M214,272 L322,146 Q336,134 356,148 L364,166 L244,284 Z" fill="url(#catYellow)" stroke="#78350f" stroke-width="5" stroke-linejoin="round"/>
+                <circle cx="226" cy="268" r="11" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+
+                <!-- Articulated Dipper Arm -->
+                <g id="exArmGroup">
+                  <path d="M342,150 L432,232 L416,248 L334,174 Z" fill="url(#catYellow)" stroke="#78350f" stroke-width="5" stroke-linejoin="round"/>
+                  <circle cx="350" cy="158" r="10" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+
+                  <!-- Steel Toothed Scoop Bucket -->
+                  <g id="exBucketGroup">
+                    <!-- Scooped Dirt Lump inside bucket (toggled during lift!) -->
+                    <g id="exBucketDirt" opacity="0">
+                      <path d="M402,258 Q428,218 462,252 Q442,276 408,272 Z" fill="url(#dirtFill)" stroke="#5b3414" stroke-width="3"/>
+                      <circle cx="424" cy="244" r="9" fill="#9ca3af" stroke="#4b5563" stroke-width="2"/>
+                      <circle cx="444" cy="248" r="7" fill="#d6b48c" stroke="#78350f" stroke-width="2"/>
+                    </g>
+                    <!-- Bucket Shell -->
+                    <path d="M416,232 L468,248 Q476,276 446,294 L402,278 Q396,256 416,232 Z" fill="url(#steelGrad)" stroke="#1e293b" stroke-width="4.5" stroke-linejoin="round"/>
+                    <!-- Bucket Teeth -->
+                    <path d="M448,292 L460,302 M458,284 L472,292 M466,272 L480,278" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="424" cy="236" r="8" fill="#ffd84d" stroke="#78350f" stroke-width="3"/>
+                  </g>
+                </g>
+              </g>
+
+              <!-- Exhaust Pipe & Smoke Puff -->
+              <rect x="96" y="198" width="12" height="36" rx="5" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+              <g id="exExhaustPuff" fill="#fff">
+                <circle cx="102" cy="184" r="12"/>
+                <circle cx="90" cy="176" r="9"/>
+                <circle cx="112" cy="174" r="8"/>
+              </g>
+
+              <!-- Excavator Engine Rear + Rounded Cab -->
+              <rect x="82" y="232" width="154" height="74" rx="22" fill="url(#catYellow)" stroke="#78350f" stroke-width="5"/>
+              <!-- Safety stripe on engine -->
+              <rect x="90" y="278" width="66" height="14" rx="5" fill="#334155"/>
+              <path d="M98,278 L108,292 M116,278 L126,292 M134,278 L144,292" stroke="#ffd84d" stroke-width="5"/>
+              <!-- Tall Pixar Glass Cab -->
+              <path d="M138,162 L212,162 Q232,162 238,186 L242,248 L138,248 Z" fill="url(#catYellow)" stroke="#78350f" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M150,174 L208,174 Q222,174 226,192 L228,236 L150,236 Z" fill="url(#cabGlass)" stroke="#0369a1" stroke-width="3.5" stroke-linejoin="round"/>
+              <!-- Friendly Pixar Eyes on Excavator Window -->
+              <circle cx="182" cy="204" r="11" fill="#fff" stroke="#1e293b" stroke-width="2.5"/>
+              <circle cx="208" cy="204" r="11" fill="#fff" stroke="#1e293b" stroke-width="2.5"/>
+              <circle cx="186" cy="204" r="5.5" fill="#1e293b"/>
+              <circle cx="212" cy="204" r="5.5" fill="#1e293b"/>
+              <circle cx="188" cy="201" r="2.2" fill="#fff"/>
+              <circle cx="214" cy="201" r="2.2" fill="#fff"/>
+              <!-- Cute Headlight Smile -->
+              <path d="M180,264 Q198,276 216,264" fill="none" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+
+              <!-- Heavy Caterpillar Tracks -->
+              <rect x="74" y="302" width="184" height="48" rx="24" fill="#334155" stroke="#0f172a" stroke-width="5"/>
+              <rect x="86" y="313" width="160" height="26" rx="13" fill="#475569"/>
+              <circle cx="102" cy="326" r="12" fill="#facc15" stroke="#1e293b" stroke-width="3.5"/>
+              <circle cx="144" cy="326" r="10" fill="#cbd5e1" stroke="#1e293b" stroke-width="3"/>
+              <circle cx="186" cy="326" r="10" fill="#cbd5e1" stroke="#1e293b" stroke-width="3"/>
+              <circle cx="228" cy="326" r="12" fill="#facc15" stroke="#1e293b" stroke-width="3.5"/>
+            </g>
+
+            <!-- ========== PARKED DUMP TRUCK (FILLING UP ON RIGHT!) ========== -->
+            <g id="p1TruckGroup">
+              <!-- Ground shadow -->
+              <ellipse cx="672" cy="356" rx="124" ry="16" fill="rgba(59,35,16,.28)"/>
+
+              <!-- Dirt Mound Inside Dump Truck Bed (grows with each scoop!) -->
+              <g id="truckDirtPile1" opacity="0">
+                <path d="M558,248 Q604,208 656,248 Z" fill="url(#dirtFill)" stroke="#5b3414" stroke-width="3.5"/>
+                <circle cx="592" cy="236" r="9" fill="#9ca3af" stroke="#475569" stroke-width="2.5"/>
+              </g>
+              <g id="truckDirtPile2" opacity="0">
+                <path d="M602,248 Q650,196 704,248 Z" fill="url(#dirtFill)" stroke="#5b3414" stroke-width="3.5"/>
+                <circle cx="654" cy="222" r="11" fill="#d1d5db" stroke="#475569" stroke-width="2.5"/>
+              </g>
+              <g id="truckDirtPile3" opacity="0">
+                <path d="M572,244 Q634,178 696,244 Z" fill="url(#dirtFill)" stroke="#5b3414" stroke-width="3.5"/>
+                <circle cx="622" cy="206" r="11" fill="#9ca3af" stroke="#475569" stroke-width="2.5"/>
+                <circle cx="662" cy="212" r="9" fill="#e5c192" stroke="#78350f" stroke-width="2"/>
+              </g>
+              <g id="truckDirtPile4" opacity="0">
+                <path d="M590,236 Q638,162 688,236 Z" fill="#d99b52" stroke="#5b3414" stroke-width="3.5"/>
+                <circle cx="638" cy="186" r="13" fill="#ffd84d" stroke="#b45309" stroke-width="3"/>
+              </g>
+
+              <!-- Dump Truck Bed -->
+              <path d="M538,238 L708,238 L700,308 L554,308 Z" fill="url(#catOrange)" stroke="#7c2d12" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M562,254 L692,254 M566,274 L688,274 M570,294 L684,294" stroke="#fed7aa" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+              <!-- Truck Chassis -->
+              <rect x="556" y="304" width="228" height="24" rx="8" fill="#334155" stroke="#0f172a" stroke-width="4"/>
+              <!-- Truck Cab -->
+              <path d="M708,224 L762,224 Q784,224 790,248 L796,308 L708,308 Z" fill="url(#catYellow)" stroke="#78350f" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M720,238 L760,238 Q774,238 778,254 L780,276 L720,276 Z" fill="url(#cabGlass)" stroke="#0369a1" stroke-width="3.5" stroke-linejoin="round"/>
+              <!-- Friendly Truck Eyes & Smile -->
+              <circle cx="744" cy="257" r="9" fill="#fff" stroke="#1e293b" stroke-width="2.2"/>
+              <circle cx="766" cy="257" r="9" fill="#fff" stroke="#1e293b" stroke-width="2.2"/>
+              <circle cx="747" cy="257" r="4.5" fill="#1e293b"/>
+              <circle cx="769" cy="257" r="4.5" fill="#1e293b"/>
+              <path d="M744,292 Q760,302 776,292" fill="none" stroke="#78350f" stroke-width="3.8" stroke-linecap="round"/>
+              <!-- Big Chunky Rubber Tires -->
+              <circle cx="604" cy="330" r="28" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+              <circle cx="604" cy="330" r="13" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+              <circle cx="744" cy="330" r="28" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+              <circle cx="744" cy="330" r="13" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+            </g>
+          </svg>
+
+          <!-- Draggable Bucket Handle (lets toddlers drag OR tap mounds!) -->
+          <div id="exDragHandle" role="button" tabindex="0" aria-label="Drag excavator bucket">🚜</div>
+
+          <!-- Interactive Glowing Dirt & Boulder Mounds (populated dynamically: 4 for Zane, 3 for Riley) -->
+          <div id="moundsRow" aria-label="Dirt mounds to scoop"></div>
+        </div>
+      </div>
+
+      <!-- ================================================================
+           PHASE 2: DUMP & STEAMROLL ROAD
+           ================================================================ -->
+      <div id="phaseRoller" class="scene-card" hidden>
+        <div id="rollerWorld">
+          <div id="rollerUpper">
+            <!-- Big Glowing Interactive Dump Truck (Sub-step 2A) -->
+            <button id="p2DumpBtn" type="button" class="glow-cue" aria-label="Tap dump truck to pour rocks">
+              <span id="dumpHand" aria-hidden="true">👇</span>
+              <svg viewBox="0 0 300 220" aria-hidden="true">
+                <ellipse cx="156" cy="202" rx="116" ry="12" fill="rgba(59,35,16,.24)"/>
+                <!-- Tilting Dump Bed (pivots around 116, 142) -->
+                <g id="p2DumpBed">
+                  <!-- Piled Rocks inside bed -->
+                  <path d="M126,90 Q176,40 236,90 Z" fill="#9c6632" stroke="#5b3414" stroke-width="4"/>
+                  <circle cx="158" cy="74" r="14" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+                  <circle cx="188" cy="64" r="16" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+                  <circle cx="212" cy="78" r="13" fill="#a8a29e" stroke="#44403c" stroke-width="3"/>
+                  <circle cx="174" cy="84" r="12" fill="#e5c192" stroke="#78350f" stroke-width="2.5"/>
+                  <!-- Orange Steel Bed (faces left to pour into dip!) -->
+                  <path d="M104,84 L264,84 L250,148 L118,148 Z" fill="url(#catOrange)" stroke="#7c2d12" stroke-width="5" stroke-linejoin="round"/>
+                  <path d="M124,104 L248,104 M128,124 L244,124" stroke="#fed7aa" stroke-width="4.5" stroke-linecap="round" opacity=".75"/>
+                </g>
+                <!-- Truck Chassis -->
+                <rect x="40" y="146" width="222" height="22" rx="8" fill="#334155" stroke="#0f172a" stroke-width="4"/>
+                <!-- Truck Cab (facing left) -->
+                <path d="M114,76 L64,76 Q42,76 36,100 L32,150 L114,150 Z" fill="url(#catYellow)" stroke="#78350f" stroke-width="5" stroke-linejoin="round"/>
+                <path d="M102,90 L66,90 Q52,90 48,106 L46,126 L102,126 Z" fill="url(#cabGlass)" stroke="#0369a1" stroke-width="3.5" stroke-linejoin="round"/>
+                <!-- Happy Eyes & Smile -->
+                <circle cx="62" cy="108" r="8.5" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+                <circle cx="84" cy="108" r="8.5" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+                <circle cx="59" cy="108" r="4.2" fill="#1e293b"/>
+                <circle cx="81" cy="108" r="4.2" fill="#1e293b"/>
+                <path d="M48,136 Q66,146 84,136" fill="none" stroke="#78350f" stroke-width="3.8" stroke-linecap="round"/>
+                <!-- Big Rubber Wheels -->
+                <circle cx="86" cy="174" r="26" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+                <circle cx="86" cy="174" r="12" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+                <circle cx="212" cy="174" r="26" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+                <circle cx="212" cy="174" r="12" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+              </svg>
+            </button>
+
+            <!-- Cute Yellow Pixar Steamroller (rides left-to-right across the road!) -->
+            <div id="steamrollerWrap" aria-hidden="true">
+              <svg viewBox="0 0 220 165">
+                <ellipse cx="110" cy="152" rx="88" ry="10" fill="rgba(34,18,6,.26)"/>
+                <!-- Chimney -->
+                <rect x="116" y="42" width="12" height="28" rx="5" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+                <!-- Yellow Cab Roof & Glass -->
+                <rect x="28" y="34" width="66" height="48" rx="12" fill="url(#cabGlass)" stroke="#78350f" stroke-width="4.5"/>
+                <rect x="20" y="24" width="82" height="14" rx="7" fill="url(#catYellow)" stroke="#78350f" stroke-width="4"/>
+                <!-- Friendly Eyes in Cab -->
+                <circle cx="52" cy="57" r="9" fill="#fff" stroke="#1e293b" stroke-width="2.2"/>
+                <circle cx="74" cy="57" r="9" fill="#fff" stroke="#1e293b" stroke-width="2.2"/>
+                <circle cx="56" cy="57" r="4.5" fill="#1e293b"/>
+                <circle cx="78" cy="57" r="4.5" fill="#1e293b"/>
+                <!-- Main Yellow Body -->
+                <rect x="22" y="76" width="126" height="46" rx="16" fill="url(#catYellow)" stroke="#78350f" stroke-width="5"/>
+                <!-- Hazard stripe -->
+                <rect x="34" y="92" width="64" height="14" rx="5" fill="#334155"/>
+                <path d="M42,92 L52,106 M60,92 L70,106 M78,92 L88,106" stroke="#ffd84d" stroke-width="5"/>
+                <!-- Steel Yoke holding Front Drum -->
+                <path d="M138,94 L176,118" stroke="#475569" stroke-width="13" stroke-linecap="round"/>
+                <!-- Rear Rubber Tire -->
+                <circle cx="54" cy="126" r="24" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+                <circle cx="54" cy="126" r="11" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+                <!-- Giant Heavy Spinning Steel Steamroller Drum -->
+                <g id="rollerDrum">
+                  <circle cx="174" cy="118" r="34" fill="url(#steelGrad)" stroke="#1e293b" stroke-width="5"/>
+                  <circle cx="174" cy="118" r="24" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>
+                  <line x1="174" y1="94" x2="174" y2="142" stroke="#475569" stroke-width="4"/>
+                  <line x1="150" y1="118" x2="198" y2="118" stroke="#475569" stroke-width="4"/>
+                  <circle cx="174" cy="118" r="10" fill="#f59e0b" stroke="#78350f" stroke-width="3"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Interactive Bumpy-to-Smooth Road Track -->
+          <div id="roadZone">
+            <div id="roadTrack" role="button" tabindex="0" aria-label="Rub or tap to roll the road smooth">
+              <svg id="roadBumpyLayer" viewBox="0 0 800 140" preserveAspectRatio="none" aria-hidden="true">
+                <!-- Muddy bumpy road bed -->
+                <rect x="0" y="0" width="800" height="140" fill="#8b5a2b"/>
+                <path d="M0,38 Q120,16 240,42 T480,32 T720,44 L800,34 L800,140 L0,140 Z" fill="#71441d"/>
+                <!-- Deep Pothole Dip before rocks are poured -->
+                <ellipse cx="410" cy="78" rx="220" ry="34" fill="#4f2d11" opacity=".75"/>
+                <path d="M210,74 Q410,114 610,74" fill="none" stroke="#c68a4d" stroke-width="5" stroke-dasharray="14 10"/>
+                <!-- Poured Lumpy Gravel & Boulders (appear once truck dumps!) -->
+                <g id="roadRocksGroup">
+                  <path d="M24,96 Q90,34 170,84 Q250,24 340,78 Q420,20 510,82 Q600,26 690,82 Q745,42 784,96 L784,132 L24,132 Z" fill="#a87645" stroke="#5c3a1a" stroke-width="4"/>
+                  <circle cx="105" cy="72" r="16" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+                  <circle cx="185" cy="86" r="14" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>
+                  <circle cx="275" cy="64" r="18" fill="#a8a29e" stroke="#44403c" stroke-width="3"/>
+                  <circle cx="362" cy="84" r="15" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+                  <circle cx="448" cy="62" r="19" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+                  <circle cx="538" cy="86" r="15" fill="#a8a29e" stroke="#44403c" stroke-width="3"/>
+                  <circle cx="624" cy="66" r="17" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+                  <circle cx="712" cy="82" r="15" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>
+                </g>
+              </svg>
+
+              <!-- Smooth Flattened Asphalt Overlay -->
+              <div id="roadSmoothOverlay"></div>
+              <div id="rollHint" aria-hidden="true">👉</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================
+           PHASE 3 & FINALE: CRANE RAINBOW BRIDGE BUILDER + PARADE
+           ================================================================ -->
+      <div id="phaseCrane" class="scene-card" hidden>
+        <div id="craneWorld">
+          <svg id="craneSceneSvg" viewBox="0 0 840 480" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="riverG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#0369a1"/>
+              </linearGradient>
+              <linearGradient id="rainbowArchG" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#ef4444"/>
+                <stop offset="33%" stop-color="#f59e0b"/>
+                <stop offset="66%" stop-color="#22c55e"/>
+                <stop offset="100%" stop-color="#3b82f6"/>
+              </linearGradient>
+              <filter id="bridgeGlowF" x="-25%" y="-25%" width="150%" height="150%">
+                <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#ffd84d" flood-opacity=".9"/>
+              </filter>
+            </defs>
+
+            <!-- Sparkling River Below the Bridge -->
+            <rect x="0" y="346" width="840" height="134" fill="url(#riverG)"/>
+            <path d="M60,388 Q120,376 180,388 T300,388 T420,388 T540,388 T660,388 T780,388" fill="none" stroke="#bae6fd" stroke-width="6" stroke-linecap="round" opacity=".68"/>
+            <path d="M110,432 Q170,420 230,432 T350,432 T470,432 T590,432 T710,432" fill="none" stroke="#e0f2fe" stroke-width="5" stroke-linecap="round" opacity=".52"/>
+
+            <!-- Left & Right Paved Road Abutments -->
+            <path d="M0,290 L144,290 L166,480 L0,480 Z" fill="#8c5a2b" stroke="#5c3715" stroke-width="4"/>
+            <rect x="0" y="282" width="154" height="32" rx="6" fill="#374151" stroke="#1f2937" stroke-width="4"/>
+            <line x1="18" y1="298" x2="128" y2="298" stroke="#ffd84d" stroke-width="5" stroke-dasharray="18 14"/>
+
+            <path d="M696,290 L840,290 L840,480 L674,480 Z" fill="#8c5a2b" stroke="#5c3715" stroke-width="4"/>
+            <rect x="686" y="282" width="154" height="32" rx="6" fill="#374151" stroke="#1f2937" stroke-width="4"/>
+            <line x1="712" y1="298" x2="822" y2="298" stroke="#ffd84d" stroke-width="5" stroke-dasharray="18 14"/>
+
+            <!-- Rainbow Celebration Glow behind completed Bridge -->
+            <g id="bridgeRainbowGlow">
+              <path d="M134,300 Q420,120 706,300" fill="none" stroke="url(#rainbowArchG)" stroke-width="34" stroke-linecap="round" opacity=".48"/>
+              <path d="M148,300 Q420,152 692,300" fill="none" stroke="#fff9c4" stroke-width="10" stroke-linecap="round" opacity=".75"/>
+            </g>
+
+            <!-- ========== TALL YELLOW PIXAR TOWER CRANE ========== -->
+            <g id="towerCrane">
+              <!-- Crane Mast Base on Left Bank -->
+              <rect x="44" y="256" width="64" height="30" rx="8" fill="#475569" stroke="#1e293b" stroke-width="4"/>
+              <!-- Tall Yellow Lattice Mast -->
+              <rect x="60" y="42" width="32" height="218" fill="url(#catYellow)" stroke="#78350f" stroke-width="4"/>
+              <path d="M62,72 L90,98 M90,72 L62,98 M62,118 L90,144 M90,118 L62,144 M62,164 L90,190 M90,164 L62,190 M62,210 L90,236 M90,210 L62,236" stroke="#92400e" stroke-width="3.5"/>
+              <!-- Operator Cab -->
+              <rect x="88" y="88" width="44" height="36" rx="8" fill="url(#catYellow)" stroke="#78350f" stroke-width="3.5"/>
+              <rect x="96" y="95" width="28" height="20" rx="5" fill="url(#cabGlass)" stroke="#0369a1" stroke-width="2.5"/>
+              <!-- Counterweight & Top Apex -->
+              <polygon points="76,12 52,44 100,44" fill="#facc15" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+              <rect x="14" y="54" width="46" height="26" rx="6" fill="#475569" stroke="#1e293b" stroke-width="3.5"/>
+              <!-- Long Horizontal Crane Jib Arm -->
+              <rect x="26" y="44" width="760" height="22" rx="6" fill="url(#catYellow)" stroke="#78350f" stroke-width="4"/>
+              <path d="M110,46 L134,64 M158,46 L182,64 M206,46 L230,64 M254,46 L278,64 M302,46 L326,64 M350,46 L374,64 M398,46 L422,64 M446,46 L470,64 M494,46 L518,64 M542,46 L566,64 M590,46 L614,64 M638,46 L662,64 M686,46 L710,64 M734,46 L758,64" stroke="#92400e" stroke-width="3"/>
+              <!-- Support Stay Cable -->
+              <line x1="76" y1="16" x2="640" y2="44" stroke="#334155" stroke-width="3.5"/>
+              <line x1="76" y1="16" x2="26" y2="54" stroke="#334155" stroke-width="3.5"/>
+
+              <!-- Moving Crane Trolley + Cable + Hook -->
+              <g id="craneTrolleyGroup" transform="translate(420, 0)">
+                <rect x="-24" y="64" width="48" height="18" rx="6" fill="#ea580c" stroke="#7c2d12" stroke-width="3.5"/>
+                <circle cx="-12" cy="73" r="4" fill="#ffd84d"/>
+                <circle cx="12" cy="73" r="4" fill="#ffd84d"/>
+                <line id="craneCableLine" x1="0" y1="82" x2="0" y2="156" stroke="#1e293b" stroke-width="4"/>
+                <g id="craneHookGroup" transform="translate(0, 156)">
+                  <rect x="-14" y="-8" width="28" height="18" rx="5" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+                  <path d="M-8,-6 L-2,8 M2,-6 L8,8" stroke="#1e293b" stroke-width="3"/>
+                  <path d="M0,10 L0,20 C0,32 16,32 16,20 C16,14 10,12 7,15" fill="none" stroke="#334155" stroke-width="5.5" stroke-linecap="round"/>
+                  <!-- Carried Block Preview on Hook during animation -->
+                  <g id="hookCarriedBlock" transform="translate(-52, 24)"></g>
+                </g>
+              </g>
+            </g>
+
+            <!-- Bridge Silhouette & Placed Rainbow Blocks (injected dynamically for 3 or 4 slots) -->
+            <g id="bridgeSlotsLayer"></g>
+          </svg>
+
+          <!-- Honk musical note visual burst -->
+          <div id="honkBurst" aria-hidden="true">📣🎶</div>
+
+          <!-- Grand Finale Celebration Parade driving across the finished Rainbow Bridge! -->
+          <div id="paradeLayer" hidden>
+            <div class="parade-track" id="paradeTrack">
+              <!-- Vehicle 1: Hard-Hat Hoot in Construction Jeep -->
+              <button class="parade-vehicle" type="button" aria-label="Honk Hoot's construction jeep">
+                <svg viewBox="0 0 160 120" aria-hidden="true">
+                  <!-- Hoot sitting happily in the open jeep -->
+                  <ellipse cx="82" cy="48" rx="22" ry="20" fill="#b4753d" stroke="#5b3414" stroke-width="3"/>
+                  <circle cx="74" cy="44" r="8" fill="#fff" stroke="#5b3414" stroke-width="2"/><circle cx="76" cy="44" r="4" fill="#1e293b"/>
+                  <circle cx="90" cy="44" r="8" fill="#fff" stroke="#5b3414" stroke-width="2"/><circle cx="92" cy="44" r="4" fill="#1e293b"/>
+                  <polygon points="79,50 85,50 82,56" fill="#f59e0b"/>
+                  <path d="M62,34 C64,16 100,16 102,34 Z" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+                  <rect x="58" y="32" width="48" height="6" rx="3" fill="#eab308" stroke="#78350f" stroke-width="2.5"/>
+                  <!-- Bright Construction Jeep Body -->
+                  <rect x="26" y="58" width="108" height="36" rx="14" fill="#22c55e" stroke="#14532d" stroke-width="4"/>
+                  <rect x="34" y="72" width="92" height="10" rx="5" fill="#ffd84d"/>
+                  <circle cx="52" cy="96" r="16" fill="#1e293b" stroke="#0f172a" stroke-width="3.5"/><circle cx="52" cy="96" r="7" fill="#ffd84d"/>
+                  <circle cx="110" cy="96" r="16" fill="#1e293b" stroke="#0f172a" stroke-width="3.5"/><circle cx="110" cy="96" r="7" fill="#ffd84d"/>
+                </svg>
+              </button>
+
+              <!-- Vehicle 2: Smiling Yellow Dump Truck -->
+              <button class="parade-vehicle" type="button" aria-label="Honk dump truck">
+                <svg viewBox="0 0 160 120" aria-hidden="true">
+                  <path d="M16,46 L94,46 L88,84 L24,84 Z" fill="#f97316" stroke="#7c2d12" stroke-width="4" stroke-linejoin="round"/>
+                  <path d="M94,38 L128,38 Q142,38 146,56 L148,86 L94,86 Z" fill="#facc15" stroke="#78350f" stroke-width="4" stroke-linejoin="round"/>
+                  <rect x="102" y="46" width="32" height="22" rx="6" fill="#bae6fd" stroke="#0369a1" stroke-width="2.5"/>
+                  <circle cx="114" cy="57" r="4.5" fill="#1e293b"/><circle cx="126" cy="57" r="4.5" fill="#1e293b"/>
+                  <rect x="24" y="82" width="122" height="12" rx="5" fill="#334155"/>
+                  <circle cx="50" cy="96" r="16" fill="#1e293b" stroke="#0f172a" stroke-width="3.5"/><circle cx="50" cy="96" r="7" fill="#facc15"/>
+                  <circle cx="120" cy="96" r="16" fill="#1e293b" stroke="#0f172a" stroke-width="3.5"/><circle cx="120" cy="96" r="7" fill="#facc15"/>
+                </svg>
+              </button>
+
+              <!-- Vehicle 3: Cheerful Yellow Steamroller -->
+              <button class="parade-vehicle" type="button" aria-label="Honk steamroller">
+                <svg viewBox="0 0 160 120" aria-hidden="true">
+                  <rect x="28" y="28" width="46" height="34" rx="8" fill="#bae6fd" stroke="#78350f" stroke-width="3.5"/>
+                  <rect x="22" y="22" width="58" height="10" rx="5" fill="#facc15" stroke="#78350f" stroke-width="3"/>
+                  <circle cx="44" cy="45" r="4.5" fill="#1e293b"/><circle cx="58" cy="45" r="4.5" fill="#1e293b"/>
+                  <rect x="24" y="60" width="84" height="30" rx="12" fill="#facc15" stroke="#78350f" stroke-width="4"/>
+                  <circle cx="46" cy="94" r="16" fill="#1e293b" stroke="#0f172a" stroke-width="3.5"/><circle cx="46" cy="94" r="7" fill="#facc15"/>
+                  <circle cx="124" cy="88" r="22" fill="#94a3b8" stroke="#1e293b" stroke-width="4"/><circle cx="124" cy="88" r="8" fill="#f59e0b"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ BOTTOM DOCK (ADAPTS PER PHASE — ALL BUTTONS >= 68px!) ============ -->
+  <footer id="bottomDock">
+    <!-- Phase 1 Dock: Dirt Scoop Progress Badges -->
+    <div id="dockExcavator" class="dock-row" aria-label="Dirt scoops"></div>
+
+    <!-- Phase 2 Dock: Big Dump Button / Steamroll Button + Progress Bar -->
+    <div id="dockRoller" class="dock-row" hidden>
+      <button id="tipBtn" class="dock-cta" type="button" aria-label="Tip dump truck">⬇️ 🪨</button>
+      <button id="rollTapBtn" class="dock-cta" type="button" aria-label="Roll road forward" hidden>🚜 ➡️</button>
+      <div id="rollMeterWrap" aria-label="Road progress" hidden>
+        <div id="rollMeterFill"></div>
+      </div>
+    </div>
+
+    <!-- Phase 3 Dock: Colorful Bridge Block Tiles (Tap OR Drag!) -->
+    <div id="dockCrane" class="dock-row" hidden aria-label="Bridge blocks"></div>
+
+    <!-- Grand Finale Dock: Big Glowing Honk + Build Again -->
+    <div id="dockFinale" class="dock-row" hidden>
+      <button id="honkBtn" class="dock-cta" type="button" aria-label="Honk horn">📣</button>
+      <button id="againBtn" class="dock-cta" type="button" aria-label="Build again">🏗️</button>
+    </div>
+  </footer>
+</div>
+
+<!-- Dragged Block Ghost & Sparkle/Confetti Layer -->
+<div id="dragGhost" hidden aria-hidden="true"></div>
+<div id="fxLayer" aria-hidden="true"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ================= AGE-ADAPTIVE PROFILE (RILEY = kidb, ZANE = default) ================= */
+  var IS_RILEY = false;
+  try{
+    var sp = new URLSearchParams(window.location.search || "");
+    IS_RILEY = sp.get("kid") === "kidb";
+  }catch(e){}
+
+  var MOUND_COUNT = IS_RILEY ? 3 : 4;
+  var BLOCK_COUNT = IS_RILEY ? 3 : 4;
+
+  /* ================= DOM REFERENCES ================= */
+  var stage = $("stage");
+  var starPill = $("starPill");
+  var starNum = $("starNum");
+  var soundBtn = $("soundBtn");
+  var hootBtn = $("hootBtn");
+  var hootPupils = $("hootPupils");
+  var phasePills = Array.prototype.slice.call(document.querySelectorAll(".phase-pill"));
+
+  /* Phase 1 */
+  var phaseExcavator = $("phaseExcavator");
+  var excavatorWorld = $("excavatorWorld");
+  var exBoomGroup = $("exBoomGroup");
+  var exArmGroup = $("exArmGroup");
+  var exBucketGroup = $("exBucketGroup");
+  var exBucketDirt = $("exBucketDirt");
+  var exExhaustPuff = $("exExhaustPuff");
+  var p1TruckGroup = $("p1TruckGroup");
+  var exDragHandle = $("exDragHandle");
+  var moundsRow = $("moundsRow");
+  var dockExcavator = $("dockExcavator");
+
+  /* Phase 2 */
+  var phaseRoller = $("phaseRoller");
+  var p2DumpBtn = $("p2DumpBtn");
+  var roadZone = $("roadZone");
+  var roadTrack = $("roadTrack");
+  var roadSmoothOverlay = $("roadSmoothOverlay");
+  var steamrollerWrap = $("steamrollerWrap");
+  var rollHint = $("rollHint");
+  var dockRoller = $("dockRoller");
+  var tipBtn = $("tipBtn");
+  var rollTapBtn = $("rollTapBtn");
+  var rollMeterWrap = $("rollMeterWrap");
+  var rollMeterFill = $("rollMeterFill");
+
+  /* Phase 3 & Finale */
+  var phaseCrane = $("phaseCrane");
+  var craneSceneSvg = $("craneSceneSvg");
+  var craneTrolleyGroup = $("craneTrolleyGroup");
+  var craneCableLine = $("craneCableLine");
+  var craneHookGroup = $("craneHookGroup");
+  var hookCarriedBlock = $("hookCarriedBlock");
+  var bridgeSlotsLayer = $("bridgeSlotsLayer");
+  var paradeLayer = $("paradeLayer");
+  var honkBurst = $("honkBurst");
+  var dockCrane = $("dockCrane");
+  var dockFinale = $("dockFinale");
+  var honkBtn = $("honkBtn");
+  var againBtn = $("againBtn");
+
+  var dragGhost = $("dragGhost");
+  var fxLayer = $("fxLayer");
+
+  /* ================= GAME STATE ================= */
+  var phase = "excavator"; /* "excavator" | "roller" | "crane" | "finale" */
+  var rollerSubStep = "dump"; /* "dump" | "roll" | "done" */
+  var phaseDone = { excavator: false, roller: false, crane: false };
+  var moundsScoopedMap = {};
+  var moundsScooped = 0;
+  var excavatorBusy = false;
+  var rollProgress = 0;
+  var isRollingDrag = false;
+  var lastRollX = 0;
+  var lastRollSfxAt = 0;
+  var blocksPlacedMap = {};
+  var blocksPlaced = 0;
+  var craneBusy = false;
+  var stars = 0;
+  var completedRuns = 0;
+  var honkCount = 0;
+
+  var soundOn = true;
+  var dead = false;
+  var hasInteracted = false;
+  var idleVoiceReminded = false;
+  var timers = [];
+  var idleTimer = null;
+  var idleVoiceTimer = null;
+  var blockDragState = null;
+  var bucketDragState = null;
+
+  /* Bridge Block Palette (shape + number + Pixar gradient) */
+  var ALL_BLOCKS = [
+    { id: "b1", num: "1", shape: "circle",   bg: "linear-gradient(180deg,#f87171,#dc2626)", shadow: "#991b1b", fill: "#ef4444", rim: "#fca5a5", stroke: "#7f1d1d" },
+    { id: "b2", num: "2", shape: "triangle", bg: "linear-gradient(180deg,#fbbf24,#ea580c)", shadow: "#9a3412", fill: "#f97316", rim: "#fed7aa", stroke: "#7c2d12" },
+    { id: "b3", num: "3", shape: "square",   bg: "linear-gradient(180deg,#4ade80,#16a34a)", shadow: "#14532d", fill: "#22c55e", rim: "#bbf7d0", stroke: "#14532d" },
+    { id: "b4", num: "4", shape: "star",     bg: "linear-gradient(180deg,#60a5fa,#2563eb)", shadow: "#1e3a8a", fill: "#3b82f6", rim: "#bfdbfe", stroke: "#1e3a8a" }
+  ];
+  var ACTIVE_BLOCKS = ALL_BLOCKS.slice(0, BLOCK_COUNT);
+
+  /* ================= HOOT_HAVE-GATED STUDIO VOICE QUEUE (ZERO SYNTHESIS!) ================= */
+  var audioCtx = null;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var voiceQueue = [];
+  var voicePlaying = false;
+  var audioUnlocked = false;
+  var pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
+  function resolveConClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
+  }
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    getAudioCtx();
+    try{
+      if(!voicePlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              enqueueVoice(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
+  function getAudioCtx(){
+    if(!soundOn) return null;
+    try{
+      if(!audioCtx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if(AC) audioCtx = new AC();
+      }
+      if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    }catch(e){}
+    return audioCtx;
+  }
+
+  function clearVoice(stopCurrent){
+    voiceQueue.length = 0;
+    if(stopCurrent){
+      voicePlaying = false;
+      try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
+    }
+  }
+
+  function pumpVoice(){
+    if(dead || !soundOn || voicePlaying || !voiceQueue.length) return;
+    var clip = voiceQueue.shift();
+    voicePlaying = true;
+    voiceEl.muted = false;
+    voiceEl.src = "assets/voice/" + clip;
+    var p = voiceEl.play();
+    if(p && p.catch){
+      p.catch(function(){
+        voicePlaying = false;
+        if(!audioUnlocked && !pendingBootClip) pendingBootClip = clip;
+        pumpVoice();
+      });
+    }
+  }
+  voiceEl.addEventListener("ended", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+  voiceEl.addEventListener("error", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+
+  function enqueueVoice(clip, interrupt){
+    if(dead || !soundOn || !clip) return;
+    if(clip.indexOf(".mp3") < 0) clip = clip + ".mp3";
+    if(interrupt) clearVoice(true);
+    voiceQueue.push(clip);
+    pumpVoice();
+  }
+
+  function playConGuide(customId, fallbackId, isBoot){
+    var clip = resolveConClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && phase === "excavator" && !hasInteracted){
+              enqueueVoice(clip, true);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    enqueueVoice(clip, true);
+  }
+
+  function speakCurrentPhaseGuide(isBoot){
+    if(phase === "excavator"){
+      if(isBoot){
+        playConGuide("hoot-con-welcome", "hoot-welcome", true);
+      } else {
+        playConGuide("hoot-con-dig", "hoot-tap-big-btn", false);
+      }
+    } else if(phase === "roller"){
+      if(rollerSubStep === "dump"){
+        playConGuide("hoot-con-dump", "hoot-tap-big-btn", false);
+      } else {
+        playConGuide("hoot-con-roll", "hoot-tap-big-btn", false);
+      }
+    } else if(phase === "crane"){
+      playConGuide("hoot-con-crane", "hoot-tap-big-btn", false);
+    } else if(phase === "finale"){
+      playConGuide("hoot-con-win", "hoot-win-yay", false);
+    }
+  }
+
+  /* ================= WEB AUDIO PIXAR CONSTRUCTION SFX ================= */
+  var crunchBuf = null;
+  function getNoiseBuf(ctx){
+    if(crunchBuf) return crunchBuf;
+    var len = Math.floor(ctx.sampleRate * 0.28);
+    crunchBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+    var d = crunchBuf.getChannelData(0);
+    for(var i = 0; i < len; i++){
+      d[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * (i / len));
+    }
+    return crunchBuf;
+  }
+
+  function clickPopSfx(freq){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq || 660, t);
+      osc.frequency.exponentialRampToValueAtTime((freq || 660) * 1.28, t + 0.08);
+      g.gain.setValueAtTime(0.14, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.15);
+    }catch(e){}
+  }
+
+  /* Crunchy dirt scoop + warm diesel excavator rumble */
+  function excavatorScoopSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      /* Warm diesel rumble */
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(92, t);
+      osc.frequency.linearRampToValueAtTime(132, t + 0.22);
+      osc.frequency.exponentialRampToValueAtTime(78, t + 0.42);
+      var lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 340;
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.linearRampToValueAtTime(0.14, t + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.44);
+      osc.connect(lp); lp.connect(g); g.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.46);
+
+      /* Gravelly dirt crunch noise */
+      var src = ctx.createBufferSource();
+      src.buffer = getNoiseBuf(ctx);
+      var bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.setValueAtTime(720, t);
+      bp.frequency.linearRampToValueAtTime(420, t + 0.26);
+      bp.Q.value = 1.2;
+      var ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.16, t + 0.04);
+      ng.gain.exponentialRampToValueAtTime(0.001, t + 0.30);
+      src.connect(bp); bp.connect(ng); ng.connect(ctx.destination);
+      src.start(t + 0.04);
+    }catch(e){}
+  }
+
+  /* Dirt drop into truck bed + ascending chime */
+  function dirtDropSfx(count){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    var notes = [523.25, 587.33, 659.25, 783.99];
+    var f = notes[(count - 1) % notes.length];
+    try{
+      var thud = ctx.createOscillator();
+      var tg = ctx.createGain();
+      thud.type = "triangle";
+      thud.frequency.setValueAtTime(180, t);
+      thud.frequency.exponentialRampToValueAtTime(68, t + 0.14);
+      tg.gain.setValueAtTime(0.24, t);
+      tg.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      thud.connect(tg); tg.connect(ctx.destination);
+      thud.start(t); thud.stop(t + 0.18);
+
+      var bell = ctx.createOscillator();
+      var bg = ctx.createGain();
+      bell.type = "triangle";
+      bell.frequency.setValueAtTime(f, t + 0.06);
+      bg.gain.setValueAtTime(0.18, t + 0.06);
+      bg.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+      bell.connect(bg); bg.connect(ctx.destination);
+      bell.start(t + 0.06); bell.stop(t + 0.44);
+    }catch(e){}
+  }
+
+  /* Dump truck hydraulic tilt + cascading gravel rocks */
+  function dumpPourSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      /* Hydraulic lift */
+      var hyd = ctx.createOscillator();
+      var hg = ctx.createGain();
+      hyd.type = "triangle";
+      hyd.frequency.setValueAtTime(220, t);
+      hyd.frequency.linearRampToValueAtTime(380, t + 0.34);
+      hg.gain.setValueAtTime(0.12, t);
+      hg.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+      hyd.connect(hg); hg.connect(ctx.destination);
+      hyd.start(t); hyd.stop(t + 0.4);
+
+      /* Cascading gravel stones */
+      [0.14, 0.24, 0.34, 0.44].forEach(function(off, i){
+        var src = ctx.createBufferSource();
+        src.buffer = getNoiseBuf(ctx);
+        var bp = ctx.createBiquadFilter();
+        bp.type = "bandpass";
+        bp.frequency.value = 600 + i * 160;
+        var g = ctx.createGain();
+        g.gain.setValueAtTime(0.14, t + off);
+        g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.18);
+        src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+        src.start(t + off);
+      });
+    }catch(e){}
+  }
+
+  /* Gentle steamroller engine purr + golden sparkle */
+  function rollerPurrSfx(pct){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var now = Date.now();
+    if(now - lastRollSfxAt < 110) return;
+    lastRollSfxAt = now;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var lp = ctx.createBiquadFilter();
+      var g = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(76 + (pct * 0.35), t);
+      lp.type = "lowpass";
+      lp.frequency.value = 240;
+      g.gain.setValueAtTime(0.09, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+      osc.connect(lp); lp.connect(g); g.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.15);
+
+      var spk = ctx.createOscillator();
+      var sg = ctx.createGain();
+      spk.type = "sine";
+      spk.frequency.setValueAtTime(520 + pct * 4.2, t);
+      sg.gain.setValueAtTime(0.055, t);
+      sg.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      spk.connect(sg); sg.connect(ctx.destination);
+      spk.start(t); spk.stop(t + 0.15);
+    }catch(e){}
+  }
+
+  /* Chunky crane block clack + ascending chime */
+  function blockSnapSfx(count){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var clack = ctx.createOscillator();
+      var cg = ctx.createGain();
+      clack.type = "sine";
+      clack.frequency.setValueAtTime(310, t);
+      clack.frequency.exponentialRampToValueAtTime(118, t + 0.08);
+      cg.gain.setValueAtTime(0.26, t);
+      cg.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      clack.connect(cg); cg.connect(ctx.destination);
+      clack.start(t); clack.stop(t + 0.1);
+
+      var pitches = [523.25, 659.25, 783.99, 1046.5];
+      var f = pitches[(count - 1) % pitches.length];
+      var bell = ctx.createOscillator();
+      var bg = ctx.createGain();
+      bell.type = "triangle";
+      bell.frequency.setValueAtTime(f, t + 0.04);
+      bg.gain.setValueAtTime(0.2, t + 0.04);
+      bg.gain.exponentialRampToValueAtTime(0.001, t + 0.44);
+      bell.connect(bg); bg.connect(ctx.destination);
+      bell.start(t + 0.04); bell.stop(t + 0.46);
+    }catch(e){}
+  }
+
+  /* Joyful double construction truck horn ("HONK HONK!") */
+  function truckHonkSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [0, 0.24].forEach(function(off, idx){
+      try{
+        var dur = idx === 0 ? 0.16 : 0.26;
+        [349.23, 440.0].forEach(function(freq){
+          var osc = ctx.createOscillator();
+          var filt = ctx.createBiquadFilter();
+          var g = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(freq, t + off);
+          filt.type = "bandpass";
+          filt.frequency.value = 920;
+          filt.Q.value = 1.6;
+          g.gain.setValueAtTime(0.001, t + off);
+          g.gain.linearRampToValueAtTime(0.14, t + off + 0.02);
+          g.gain.setValueAtTime(0.13, t + off + dur - 0.04);
+          g.gain.exponentialRampToValueAtTime(0.001, t + off + dur);
+          osc.connect(filt); filt.connect(g); g.connect(ctx.destination);
+          osc.start(t + off); osc.stop(t + off + dur + 0.02);
+        });
+      }catch(e){}
+    });
+  }
+
+  /* Triumphant celebratory rainbow bridge fanfare */
+  function finaleFanfareSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5, 1318.5];
+    var times = [0, 0.09, 0.18, 0.28, 0.42, 0.52, 0.64];
+    var t = ctx.currentTime;
+    notes.forEach(function(freq, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, t + times[i]);
+        g.gain.setValueAtTime(0.16, t + times[i]);
+        g.gain.exponentialRampToValueAtTime(0.001, t + times[i] + 0.44);
+        osc.connect(g); g.connect(ctx.destination);
+        osc.start(t + times[i]); osc.stop(t + times[i] + 0.46);
+      }catch(e){}
+    });
+  }
+
+  /* ================= TIMERS & VISUAL FX ================= */
+  function later(fn, ms){
+    var id = setTimeout(function(){
+      if(!dead) fn();
+    }, ms);
+    timers.push(id);
+    return id;
+  }
+  function clearTimers(){
+    while(timers.length) clearTimeout(timers.pop());
+  }
+
+  function hootCheer(){
+    hootBtn.classList.remove("cheer");
+    void hootBtn.offsetWidth;
+    hootBtn.classList.add("cheer");
+  }
+
+  function spawnSparkles(cx, cy, count){
+    var glyphs = ["✨", "⭐", "🌟", "💛"];
+    var n = count || 10;
+    for(var i = 0; i < n; i++){
+      var el = document.createElement("span");
+      el.className = "fx-spark";
+      el.textContent = glyphs[i % glyphs.length];
+      el.style.left = cx + "px";
+      el.style.top = cy + "px";
+      fxLayer.appendChild(el);
+      var ang = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+      var dist = 40 + Math.random() * 68;
+      var dx = Math.cos(ang) * dist;
+      var dy = Math.sin(ang) * dist - 18;
+      if(el.animate){
+        el.animate([
+          { transform: "translate(-50%,-50%) scale(.4) rotate(0deg)", opacity: 1 },
+          { transform: "translate(calc(-50% + " + dx.toFixed(0) + "px), calc(-50% + " + dy.toFixed(0) + "px)) scale(1.22) rotate(120deg)", opacity: 0 }
+        ], { duration: 640 + Math.random() * 240, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 940); })(el);
+    }
+  }
+
+  function spawnDustBurst(cx, cy, count){
+    var cols = ["#e5b372", "#c68642", "#9c5e24", "#fde68a"];
+    var n = count || 12;
+    for(var i = 0; i < n; i++){
+      var el = document.createElement("div");
+      el.className = "fx-dust";
+      var sz = 10 + Math.random() * 14;
+      el.style.width = sz.toFixed(0) + "px";
+      el.style.height = sz.toFixed(0) + "px";
+      el.style.background = cols[i % cols.length];
+      el.style.left = cx + "px";
+      el.style.top = cy + "px";
+      fxLayer.appendChild(el);
+      var ang = -Math.PI * Math.random();
+      var dist = 34 + Math.random() * 64;
+      var dx = Math.cos(ang) * dist;
+      var dy = Math.sin(ang) * dist - 14;
+      if(el.animate){
+        el.animate([
+          { transform: "translate(-50%,-50%) scale(.5)", opacity: .95 },
+          { transform: "translate(calc(-50% + " + dx.toFixed(0) + "px), calc(-50% + " + dy.toFixed(0) + "px)) scale(1.3)", opacity: 0 }
+        ], { duration: 540 + Math.random() * 220, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 820); })(el);
+    }
+  }
+
+  function showerConfetti(count){
+    var cols = ["#ef4444", "#facc15", "#22c55e", "#3b82f6", "#f97316", "#a855f7", "#f472b6"];
+    var n = count || 52;
+    var vw = window.innerWidth;
+    for(var i = 0; i < n; i++){
+      var c = document.createElement("div");
+      c.className = "fx-conf";
+      c.style.background = cols[i % cols.length];
+      c.style.left = (Math.random() * vw).toFixed(0) + "px";
+      c.style.top = (-20 - Math.random() * 90).toFixed(0) + "px";
+      c.style.width = (10 + Math.random() * 9).toFixed(0) + "px";
+      c.style.height = (10 + Math.random() * 10).toFixed(0) + "px";
+      fxLayer.appendChild(c);
+      var drift = (Math.random() - 0.5) * 180;
+      var fall = window.innerHeight + 120;
+      if(c.animate){
+        c.animate([
+          { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+          { transform: "translate(" + drift.toFixed(0) + "px," + fall + "px) rotate(" + (360 + Math.random() * 420).toFixed(0) + "deg)", opacity: .9 }
+        ], { duration: 1500 + Math.random() * 1100, delay: Math.random() * 340, easing: "cubic-bezier(.2,.6,.4,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 3000); })(c);
+    }
+  }
+
+  /* ================= IDLE VISUAL & VOICE HELPER ================= */
+  function hideIdleHints(){
+    moundsRow.querySelectorAll(".dirt-mound").forEach(function(m){ m.classList.remove("show-hand"); });
+    p2DumpBtn.classList.remove("show-hand");
+    rollHint.classList.remove("show");
+    dockCrane.querySelectorAll(".block-tile").forEach(function(t){ t.classList.remove("show-hand", "hint-next"); });
+  }
+
+  function showPhaseVisualCue(){
+    if(dead) return;
+    if(phase === "excavator"){
+      var mounds = moundsRow.querySelectorAll(".dirt-mound");
+      for(var i = 0; i < mounds.length; i++){
+        if(!moundsScoopedMap[i]){
+          mounds[i].classList.add("show-hand");
+          break;
+        }
+      }
+    } else if(phase === "roller"){
+      if(rollerSubStep === "dump"){
+        p2DumpBtn.classList.add("show-hand");
+      } else if(rollerSubStep === "roll"){
+        rollHint.classList.add("show");
+      }
+    } else if(phase === "crane"){
+      var tiles = dockCrane.querySelectorAll(".block-tile");
+      for(var j = 0; j < tiles.length; j++){
+        var id = tiles[j].dataset.blockId;
+        if(!blocksPlacedMap[id]){
+          tiles[j].classList.add("show-hand", "hint-next");
+          break;
+        }
+      }
+    }
+  }
+
+  function armIdle(fastVisual){
+    hideIdleHints();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+    if(dead || phase === "finale") return;
+    var delay = fastVisual ? 1200 : 2800;
+    idleTimer = setTimeout(showPhaseVisualCue, delay);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(dead || phase === "finale") return;
+        idleVoiceReminded = true;
+        speakCurrentPhaseGuide(false);
+      }, 9500);
+    }
+  }
+
+  /* ================= HUD UPDATE ================= */
+  function updateHud(animateStar){
+    starNum.textContent = String(stars);
+    if(animateStar){
+      starPill.classList.remove("bump");
+      void starPill.offsetWidth;
+      starPill.classList.add("bump");
+    }
+    phasePills.forEach(function(btn){
+      var p = btn.dataset.phaseBtn;
+      var active = (phase === p) || (phase === "finale" && p === "crane");
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+      btn.classList.toggle("done", !!phaseDone[p]);
+    });
+  }
+
+  /* ================= SHARED SVG ART HELPERS ================= */
+  function dirtMoundSvg(idx){
+    var rockTint = ["#94a3b8", "#cbd5e1", "#a8a29e", "#d6d3d1"][idx % 4];
+    return '<svg viewBox="0 0 130 106">'
+      + '<ellipse cx="65" cy="94" rx="56" ry="10" fill="rgba(59,35,16,.28)"/>'
+      + '<path d="M10,92 Q24,28 65,24 Q106,28 120,92 Z" fill="url(#dirtFill)" stroke="#5b3414" stroke-width="4.5" stroke-linejoin="round"/>'
+      + '<path d="M26,86 Q44,44 68,42 Q88,44 102,86" fill="none" stroke="#e5b372" stroke-width="4" stroke-linecap="round" opacity=".55"/>'
+      + '<circle cx="44" cy="64" r="11" fill="' + rockTint + '" stroke="#334155" stroke-width="3"/>'
+      + '<circle cx="86" cy="68" r="10" fill="#e5c192" stroke="#78350f" stroke-width="2.5"/>'
+      + '<circle cx="66" cy="44" r="12" fill="' + rockTint + '" stroke="#334155" stroke-width="3"/>'
+      + '<path d="M98,20 L101,27 L108,30 L101,33 L98,40 L95,33 L88,30 L95,27 Z" fill="#fff9c4"/>'
+      + '</svg>';
+  }
+
+  function blockShapeGlyph(shape){
+    if(shape === "circle") return '<circle cx="52" cy="40" r="15" fill="#fffdf5" opacity=".95"/>';
+    if(shape === "triangle") return '<polygon points="52,23 68,54 36,54" fill="#fffdf5" opacity=".95"/>';
+    if(shape === "square") return '<rect x="38" y="26" width="28" height="28" rx="5" fill="#fffdf5" opacity=".95"/>';
+    return '<polygon points="52,22 57,34 70,35 60,44 63,56 52,49 41,56 44,44 34,35 47,34" fill="#fffdf5" opacity=".95"/>';
+  }
+
+  function bridgeBlockInnerSvg(blk){
+    return '<rect x="6" y="8" width="92" height="64" rx="14" fill="' + blk.fill + '" stroke="' + blk.stroke + '" stroke-width="4.5"/>'
+      + '<rect x="12" y="14" width="80" height="14" rx="6" fill="' + blk.rim + '" opacity=".55"/>'
+      + '<rect x="10" y="60" width="84" height="8" rx="4" fill="#1f2937" opacity=".28"/>'
+      + blockShapeGlyph(blk.shape)
+      + '<text x="52" y="47" text-anchor="middle" font-family="Fredoka,Nunito,sans-serif" font-size="22" font-weight="900" fill="' + blk.stroke + '">' + blk.num + '</text>';
+  }
+
+  function bridgeBlockSvg(blk){
+    return '<svg viewBox="0 0 104 80">' + bridgeBlockInnerSvg(blk) + '</svg>';
+  }
+
+  /* ============================================================================
+     PHASE 1: YELLOW EXCAVATOR SCOOP
+     ============================================================================ */
+  function buildPhase1(){
+    moundsRow.innerHTML = "";
+    dockExcavator.innerHTML = "";
+
+    for(var i = 0; i < MOUND_COUNT; i++){
+      (function(idx){
+        /* Interactive glowing dirt mound */
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dirt-mound";
+        btn.dataset.mound = String(idx);
+        btn.setAttribute("aria-label", "Scoop dirt pile " + (idx + 1));
+        btn.innerHTML = '<span class="mound-hand" aria-hidden="true">👇</span>'
+          + dirtMoundSvg(idx)
+          + '<span class="mound-num">' + (idx + 1) + '</span>';
+        btn.addEventListener("click", function(){
+          unlockAudioOnce();
+          scoopMound(idx, false);
+        });
+        moundsRow.appendChild(btn);
+
+        /* Dock scoop counter badge (tapping badge also scoops!) */
+        var badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "scoop-badge";
+        badge.dataset.badge = String(idx);
+        badge.setAttribute("aria-label", "Dirt scoop " + (idx + 1));
+        badge.innerHTML = '<span aria-hidden="true">🪨</span><span class="badge-chk" aria-hidden="true">✓</span>';
+        badge.addEventListener("click", function(){
+          unlockAudioOnce();
+          if(!moundsScoopedMap[idx]) scoopMound(idx, false);
+        });
+        dockExcavator.appendChild(badge);
+      })(i);
+    }
+
+    resetExcavatorPose();
+    updateTruckDirtPiles();
+  }
+
+  function resetExcavatorPose(){
+    exBoomGroup.style.transform = "rotate(0deg)";
+    exArmGroup.style.transform = "rotate(0deg)";
+    exBucketGroup.style.transform = "rotate(0deg)";
+    exBucketDirt.setAttribute("opacity", "0");
+    exDragHandle.classList.remove("busy");
+  }
+
+  function updateTruckDirtPiles(){
+    for(var n = 1; n <= 4; n++){
+      var pile = $("truckDirtPile" + n);
+      if(pile){
+        var show = (n <= moundsScooped) || (IS_RILEY && moundsScooped >= 3 && n === 4);
+        pile.setAttribute("opacity", show ? "1" : "0");
+      }
+    }
+  }
+
+  function scoopMound(idx, instant){
+    if(dead || phase !== "excavator" || moundsScoopedMap[idx]) return;
+    if(!instant && excavatorBusy) return;
+
+    hasInteracted = true;
+    idleVoiceReminded = false;
+    hideIdleHints();
+    moundsScoopedMap[idx] = true;
+    moundsScooped++;
+
+    var moundBtn = moundsRow.querySelector('[data-mound="' + idx + '"]');
+    var badgeBtn = dockExcavator.querySelector('[data-badge="' + idx + '"]');
+
+    if(instant){
+      if(moundBtn) moundBtn.classList.add("scooped");
+      if(badgeBtn) badgeBtn.classList.add("filled");
+      updateTruckDirtPiles();
+      return;
+    }
+
+    excavatorBusy = true;
+    exDragHandle.classList.add("busy");
+    excavatorScoopSfx();
+
+    /* Exhaust smoke puff */
+    exExhaustPuff.classList.remove("puff");
+    void exExhaustPuff.offsetWidth;
+    exExhaustPuff.classList.add("puff");
+
+    /* Step 1: Swing boom & arm down into the glowing dirt mound */
+    var reachAngle = 14 + idx * 5;
+    exBoomGroup.style.transform = "rotate(" + reachAngle + "deg)";
+    exArmGroup.style.transform = "rotate(" + (18 + idx * 4) + "deg)";
+    exBucketGroup.style.transform = "rotate(34deg)";
+
+    var mr = moundBtn ? moundBtn.getBoundingClientRect() : null;
+    later(function(){
+      if(moundBtn) moundBtn.classList.add("scooped");
+      exBucketDirt.setAttribute("opacity", "1");
+      if(mr) spawnDustBurst(mr.left + mr.width * 0.5, mr.top + mr.height * 0.45, 14);
+
+      /* Step 2: Lift full bucket high and swing over the Dump Truck bed */
+      exBoomGroup.style.transform = "rotate(-16deg)";
+      exArmGroup.style.transform = "rotate(-26deg)";
+      exBucketGroup.style.transform = "rotate(-12deg)";
+    }, 280);
+
+    later(function(){
+      /* Step 3: Dump dirt right into the Dump Truck bed! */
+      exBoomGroup.style.transform = "rotate(6deg)";
+      exArmGroup.style.transform = "rotate(-44deg)";
+      exBucketGroup.style.transform = "rotate(-62deg)";
+      exBucketDirt.setAttribute("opacity", "0");
+
+      updateTruckDirtPiles();
+      if(badgeBtn) badgeBtn.classList.add("filled");
+
+      p1TruckGroup.classList.remove("bounce");
+      void p1TruckGroup.offsetWidth;
+      p1TruckGroup.classList.add("bounce");
+
+      var wr = excavatorWorld.getBoundingClientRect();
+      spawnDustBurst(wr.left + wr.width * 0.74, wr.top + wr.height * 0.46, 10);
+      spawnSparkles(wr.left + wr.width * 0.74, wr.top + wr.height * 0.42, 10);
+
+      dirtDropSfx(moundsScooped);
+      hootCheer();
+
+      /* Hoot counts aloud (name-number-1..4 / 1..3 for Riley) */
+      enqueueVoice("name-number-" + moundsScooped + ".mp3", true);
+    }, 640);
+
+    later(function(){
+      resetExcavatorPose();
+      excavatorBusy = false;
+
+      if(moundsScooped >= MOUND_COUNT){
+        phaseDone.excavator = true;
+        updateHud(false);
+        playConGuide("hoot-con-scoop", "hoot-great-job", false);
+        later(function(){
+          if(phase === "excavator") enterPhase("roller", false);
+        }, 1450);
+      } else {
+        armIdle(false);
+      }
+    }, 1020);
+  }
+
+  /* Drag excavator bucket handle to any mound OR tap handle to scoop next mound! */
+  exDragHandle.addEventListener("pointerdown", function(e){
+    if(dead || phase !== "excavator" || excavatorBusy) return;
+    e.preventDefault();
+    unlockAudioOnce();
+    hasInteracted = true;
+    hideIdleHints();
+    bucketDragState = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, moved: false };
+    try{ exDragHandle.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  exDragHandle.addEventListener("pointermove", function(e){
+    if(!bucketDragState) return;
+    var dist = Math.hypot(e.clientX - bucketDragState.startX, e.clientY - bucketDragState.startY);
+    if(dist > 12) bucketDragState.moved = true;
+    if(bucketDragState.moved){
+      var wr = excavatorWorld.getBoundingClientRect();
+      var px = Math.max(12, Math.min(88, ((e.clientX - wr.left) / wr.width) * 100));
+      var py = Math.max(20, Math.min(86, ((e.clientY - wr.top) / wr.height) * 100));
+      exDragHandle.style.left = px.toFixed(1) + "%";
+      exDragHandle.style.top = py.toFixed(1) + "%";
+
+      /* Highlight mound under finger and scoop immediately when close! */
+      var mounds = moundsRow.querySelectorAll(".dirt-mound");
+      for(var i = 0; i < mounds.length; i++){
+        var idx = Number(mounds[i].dataset.mound);
+        if(moundsScoopedMap[idx]) continue;
+        var r = mounds[i].getBoundingClientRect();
+        var hit = e.clientX >= r.left - 24 && e.clientX <= r.right + 24 && e.clientY >= r.top - 24 && e.clientY <= r.bottom + 24;
+        mounds[i].classList.toggle("hot", hit);
+        if(hit){
+          mounds[i].classList.remove("hot");
+          bucketDragState = null;
+          exDragHandle.style.left = "47%";
+          exDragHandle.style.top = "47%";
+          try{ exDragHandle.releasePointerCapture(e.pointerId); }catch(err){}
+          scoopMound(idx, false);
+          return;
+        }
+      }
+    }
+  });
+  function endBucketDrag(e){
+    if(!bucketDragState) return;
+    var wasMoved = bucketDragState.moved;
+    bucketDragState = null;
+    exDragHandle.style.left = "47%";
+    exDragHandle.style.top = "47%";
+    moundsRow.querySelectorAll(".dirt-mound").forEach(function(m){ m.classList.remove("hot"); });
+    try{ if(e && e.pointerId != null) exDragHandle.releasePointerCapture(e.pointerId); }catch(err){}
+    if(!wasMoved){
+      /* Tapping the bucket handle scoops the next glowing mound! */
+      for(var i = 0; i < MOUND_COUNT; i++){
+        if(!moundsScoopedMap[i]){ scoopMound(i, false); break; }
+      }
+    }
+  }
+  exDragHandle.addEventListener("pointerup", endBucketDrag);
+  exDragHandle.addEventListener("pointercancel", endBucketDrag);
+
+  /* ============================================================================
+     PHASE 2: DUMP & STEAMROLL ROAD
+     ============================================================================ */
+  function setupPhase2(){
+    rollerSubStep = "dump";
+    rollProgress = 0;
+    isRollingDrag = false;
+
+    p2DumpBtn.hidden = false;
+    p2DumpBtn.classList.remove("tipping", "parked", "show-hand");
+    p2DumpBtn.classList.add("glow-cue");
+    roadTrack.classList.remove("rocks-poured");
+    roadSmoothOverlay.style.width = "0%";
+    roadSmoothOverlay.classList.remove("complete");
+    steamrollerWrap.classList.remove("ready", "rolling");
+    steamrollerWrap.style.left = "4%";
+
+    tipBtn.hidden = false;
+    rollTapBtn.hidden = true;
+    rollMeterWrap.hidden = true;
+    rollMeterFill.style.width = "0%";
+  }
+
+  function triggerDumpRocks(instant){
+    if(dead || phase !== "roller" || rollerSubStep !== "dump") return;
+    hasInteracted = true;
+    idleVoiceReminded = false;
+    hideIdleHints();
+
+    rollerSubStep = "roll";
+    p2DumpBtn.classList.remove("glow-cue");
+    p2DumpBtn.classList.add("tipping");
+
+    if(instant){
+      roadTrack.classList.add("rocks-poured");
+      p2DumpBtn.classList.add("parked");
+      p2DumpBtn.hidden = true;
+      steamrollerWrap.classList.add("ready");
+      tipBtn.hidden = true;
+      rollTapBtn.hidden = false;
+      rollMeterWrap.hidden = false;
+      return;
+    }
+
+    dumpPourSfx();
+    hootCheer();
+
+    later(function(){
+      roadTrack.classList.add("rocks-poured");
+      var rr = roadTrack.getBoundingClientRect();
+      spawnDustBurst(rr.left + rr.width * 0.55, rr.top + rr.height * 0.45, 16);
+      spawnSparkles(rr.left + rr.width * 0.55, rr.top + rr.height * 0.35, 8);
+    }, 240);
+
+    later(function(){
+      p2DumpBtn.classList.add("parked");
+      steamrollerWrap.classList.add("ready");
+      tipBtn.hidden = true;
+      rollTapBtn.hidden = false;
+      rollMeterWrap.hidden = false;
+      playConGuide("hoot-con-roll", "hoot-tap-big-btn", false);
+      armIdle(true);
+      later(function(){
+        if(rollerSubStep !== "dump") p2DumpBtn.hidden = true;
+      }, 560);
+    }, 820);
+  }
+
+  function applyRollProgress(nextPct, fromRub){
+    if(dead || phase !== "roller" || rollerSubStep !== "roll") return;
+    var finishGate = IS_RILEY ? 88 : 92;
+    rollProgress = Math.max(rollProgress, Math.min(100, nextPct));
+    if(rollProgress >= finishGate) rollProgress = 100;
+
+    roadSmoothOverlay.style.width = rollProgress.toFixed(1) + "%";
+    rollMeterFill.style.width = rollProgress.toFixed(1) + "%";
+
+    /* Keep steamroller nose right at the paving edge */
+    var leftPct = 4 + (rollProgress / 100) * 68;
+    steamrollerWrap.style.left = leftPct.toFixed(1) + "%";
+    steamrollerWrap.classList.add("rolling");
+
+    rollerPurrSfx(rollProgress);
+
+    var rr = roadTrack.getBoundingClientRect();
+    if(rr.width && (!fromRub || Math.random() < 0.38)){
+      spawnSparkles(rr.left + rr.width * (rollProgress / 100), rr.top + rr.height * 0.42, fromRub ? 3 : 7);
+    }
+
+    if(rollProgress >= 100){
+      completeRoadRolling(false);
+    } else {
+      later(function(){
+        if(!isRollingDrag) steamrollerWrap.classList.remove("rolling");
+      }, 260);
+    }
+  }
+
+  function completeRoadRolling(instant){
+    if(rollerSubStep === "done") return;
+    rollerSubStep = "done";
+    isRollingDrag = false;
+    rollProgress = 100;
+    roadSmoothOverlay.style.width = "100%";
+    roadSmoothOverlay.classList.add("complete");
+    rollMeterFill.style.width = "100%";
+    steamrollerWrap.style.left = "74%";
+    steamrollerWrap.classList.remove("rolling");
+    phaseDone.roller = true;
+    hideIdleHints();
+    updateHud(false);
+
+    if(instant) return;
+
+    dirtDropSfx(4);
+    hootCheer();
+    var rr = roadTrack.getBoundingClientRect();
+    spawnSparkles(rr.left + rr.width * 0.5, rr.top + rr.height * 0.4, 18);
+    playConGuide("hoot-con-smooth", "hoot-amazing", false);
+
+    later(function(){
+      if(phase === "roller") enterPhase("crane", false);
+    }, 1550);
+  }
+
+  /* Phase 2 Event Listeners (Dump Truck Tap + Tip Button + Road Rub/Tap + Roll Button) */
+  p2DumpBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    triggerDumpRocks(false);
+  });
+  tipBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    triggerDumpRocks(false);
+  });
+
+  rollTapBtn.addEventListener("click", function(){
+    if(dead || phase !== "roller" || rollerSubStep !== "roll") return;
+    unlockAudioOnce();
+    hasInteracted = true;
+    idleVoiceReminded = false;
+    hideIdleHints();
+    var step = IS_RILEY ? 34 : 26;
+    applyRollProgress(rollProgress + step, false);
+    if(rollProgress < 100) armIdle(false);
+  });
+
+  roadZone.addEventListener("pointerdown", function(e){
+    if(dead || phase !== "roller") return;
+    e.preventDefault();
+    unlockAudioOnce();
+    hasInteracted = true;
+    idleVoiceReminded = false;
+    hideIdleHints();
+
+    /* Extra forgiving: tapping road during dump step also tips the dump truck! */
+    if(rollerSubStep === "dump"){
+      triggerDumpRocks(false);
+      return;
+    }
+    if(rollerSubStep !== "roll") return;
+
+    isRollingDrag = true;
+    lastRollX = e.clientX;
+    try{ roadZone.setPointerCapture(e.pointerId); }catch(err){}
+
+    /* Single tap advances smoothly (extra forgiving for Riley!) */
+    var tapBoost = IS_RILEY ? 34 : 25;
+    var rr = roadTrack.getBoundingClientRect();
+    var pointerPct = Math.max(0, Math.min(100, ((e.clientX - rr.left) / rr.width) * 100));
+    var targetPct = Math.max(rollProgress + tapBoost, pointerPct);
+    applyRollProgress(targetPct, false);
+  });
+
+  roadZone.addEventListener("pointermove", function(e){
+    if(dead || !isRollingDrag || phase !== "roller" || rollerSubStep !== "roll") return;
+    e.preventDefault();
+    var dx = Math.abs(e.clientX - lastRollX);
+    lastRollX = e.clientX;
+    if(dx < 2) return;
+    var rr = roadTrack.getBoundingClientRect();
+    var mult = IS_RILEY ? 1.48 : 1.18;
+    var deltaPct = (dx / Math.max(180, rr.width)) * 100 * mult;
+    var pointerPct = Math.max(0, Math.min(100, ((e.clientX - rr.left) / rr.width) * 100));
+    applyRollProgress(Math.max(rollProgress + deltaPct, pointerPct), true);
+  });
+
+  function stopRoadRoll(e){
+    if(!isRollingDrag) return;
+    isRollingDrag = false;
+    steamrollerWrap.classList.remove("rolling");
+    try{ if(e && e.pointerId != null) roadZone.releasePointerCapture(e.pointerId); }catch(err){}
+    if(phase === "roller" && rollerSubStep === "roll") armIdle(false);
+  }
+  roadZone.addEventListener("pointerup", stopRoadRoll);
+  roadZone.addEventListener("pointercancel", stopRoadRoll);
+
+  /* ============================================================================
+     PHASE 3: CRANE RAINBOW BRIDGE BUILDER (TAP OR DRAG!)
+     ============================================================================ */
+  function getBridgeSlotBox(idx){
+    /* Span cleanly between left abutment (x=150) and right abutment (x=690) */
+    var spanStart = 152;
+    var spanWidth = 536;
+    var gap = 10;
+    var w = (spanWidth - gap * (BLOCK_COUNT - 1)) / BLOCK_COUNT;
+    var x = spanStart + idx * (w + gap);
+    /* Gentle Pixar rainbow bridge arch curve */
+    var norm = (idx + 0.5) / BLOCK_COUNT - 0.5; /* -0.5 .. +0.5 */
+    var archLift = Math.round((1 - norm * norm * 4) * 28);
+    var y = 266 - archLift;
+    return { x: Math.round(x), y: y, w: Math.round(w), h: 78, cx: Math.round(x + w * 0.5) };
+  }
+
+  function renderBridgeSlots(){
+    var html = "";
+    ACTIVE_BLOCKS.forEach(function(blk, idx){
+      var box = getBridgeSlotBox(idx);
+      var placed = !!blocksPlacedMap[blk.id];
+      html += '<g class="bridge-slot' + (placed ? ' placed' : '') + '" data-slot-id="' + blk.id + '" data-slot-idx="' + idx + '">'
+        + '<svg class="slot-ghost" x="' + box.x + '" y="' + box.y + '" width="' + box.w + '" height="' + box.h + '" viewBox="0 0 104 80">'
+        + '<rect x="6" y="8" width="92" height="64" rx="14" fill="rgba(255,253,245,.42)" stroke="' + blk.fill + '" stroke-width="5" stroke-dasharray="10 7" filter="url(#bridgeGlowF)"/>'
+        + '<text x="52" y="49" text-anchor="middle" font-family="Fredoka,Nunito,sans-serif" font-size="28" font-weight="900" fill="' + blk.stroke + '" opacity=".85">' + blk.num + '</text>'
+        + '</svg>'
+        + '<svg class="slot-solid" x="' + box.x + '" y="' + box.y + '" width="' + box.w + '" height="' + box.h + '" viewBox="0 0 104 80">'
+        + bridgeBlockInnerSvg(blk)
+        + '</svg>'
+        + '</g>';
+    });
+    bridgeSlotsLayer.innerHTML = html;
+    updateSuggestedBridgeSlot();
+  }
+
+  function updateSuggestedBridgeSlot(){
+    var slots = bridgeSlotsLayer.querySelectorAll(".bridge-slot");
+    var picked = false;
+    for(var i = 0; i < slots.length; i++){
+      var id = slots[i].getAttribute("data-slot-id");
+      var isPlaced = !!blocksPlacedMap[id];
+      slots[i].classList.toggle("placed", isPlaced);
+      slots[i].classList.remove("suggest", "hover-hot");
+      if(!isPlaced && !picked){
+        slots[i].classList.add("suggest");
+        picked = true;
+      }
+    }
+  }
+
+  function buildPhase3Dock(){
+    dockCrane.innerHTML = "";
+    ACTIVE_BLOCKS.forEach(function(blk, idx){
+      var tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "block-tile";
+      tile.dataset.blockId = blk.id;
+      tile.dataset.blockIdx = String(idx);
+      tile.setAttribute("aria-label", "Bridge block " + blk.num);
+      tile.style.setProperty("--blk-bg", blk.bg);
+      tile.style.setProperty("--blk-shadow", blk.shadow);
+      tile.innerHTML = '<span class="tile-hand" aria-hidden="true">👆</span>'
+        + bridgeBlockSvg(blk)
+        + '<span class="tile-check" aria-hidden="true">✓</span>';
+
+      /* Pointer Tap OR Magnetic Drag! */
+      tile.addEventListener("pointerdown", function(e){
+        if(dead || phase !== "crane" || craneBusy || blocksPlacedMap[blk.id]) return;
+        e.preventDefault();
+        unlockAudioOnce();
+        hasInteracted = true;
+        idleVoiceReminded = false;
+        hideIdleHints();
+        blockDragState = {
+          blk: blk,
+          idx: idx,
+          tile: tile,
+          pointerId: e.pointerId,
+          startX: e.clientX,
+          startY: e.clientY,
+          moved: false
+        };
+        try{ tile.setPointerCapture(e.pointerId); }catch(err){}
+      });
+
+      tile.addEventListener("pointermove", function(e){
+        if(!blockDragState || blockDragState.tile !== tile) return;
+        var dist = Math.hypot(e.clientX - blockDragState.startX, e.clientY - blockDragState.startY);
+        if(!blockDragState.moved && dist > 10){
+          blockDragState.moved = true;
+          dragGhost.innerHTML = bridgeBlockSvg(blk);
+          dragGhost.hidden = false;
+          clickPopSfx(620);
+        }
+        if(blockDragState.moved){
+          dragGhost.style.left = e.clientX + "px";
+          dragGhost.style.top = e.clientY + "px";
+          var dockTop = dockCrane.getBoundingClientRect().top;
+          var near = e.clientY < dockTop + 20;
+          var slotEl = bridgeSlotsLayer.querySelector('[data-slot-id="' + blk.id + '"]');
+          if(slotEl) slotEl.classList.toggle("hover-hot", near);
+        }
+      });
+
+      function finishBlockDrag(e){
+        if(!blockDragState || blockDragState.tile !== tile) return;
+        var ds = blockDragState;
+        blockDragState = null;
+        dragGhost.hidden = true;
+        try{ tile.releasePointerCapture(ds.pointerId); }catch(err){}
+        var slotEl = bridgeSlotsLayer.querySelector('[data-slot-id="' + ds.blk.id + '"]');
+        if(slotEl) slotEl.classList.remove("hover-hot");
+
+        if(!ds.moved){
+          snapBridgeBlock(ds.blk, ds.idx, false);
+        } else {
+          var dockTop = dockCrane.getBoundingClientRect().top;
+          if(e.clientY < dockTop + 24){
+            snapBridgeBlock(ds.blk, ds.idx, false);
+          } else {
+            armIdle(false);
+          }
+        }
+      }
+
+      tile.addEventListener("pointerup", finishBlockDrag);
+      tile.addEventListener("pointercancel", function(){
+        if(!blockDragState || blockDragState.tile !== tile) return;
+        blockDragState = null;
+        dragGhost.hidden = true;
+        armIdle(false);
+      });
+
+      /* Keyboard / automated click support */
+      tile.addEventListener("click", function(){
+        if(dead || phase !== "crane" || craneBusy || blocksPlacedMap[blk.id]) return;
+        unlockAudioOnce();
+        snapBridgeBlock(blk, idx, false);
+      });
+
+      dockCrane.appendChild(tile);
+    });
+  }
+
+  /* Tapping directly on any glowing silhouette slot on the bridge also lifts & snaps its matching block! */
+  craneSceneSvg.addEventListener("click", function(e){
+    if(dead || phase !== "crane" || craneBusy) return;
+    var g = e.target && e.target.closest ? e.target.closest(".bridge-slot") : null;
+    if(!g) return;
+    var id = g.getAttribute("data-slot-id");
+    var idx = Number(g.getAttribute("data-slot-idx"));
+    if(id && !blocksPlacedMap[id] && ACTIVE_BLOCKS[idx]){
+      unlockAudioOnce();
+      snapBridgeBlock(ACTIVE_BLOCKS[idx], idx, false);
+    }
+  });
+
+  function setCranePosition(x, cableY){
+    craneTrolleyGroup.setAttribute("transform", "translate(" + x + ", 0)");
+    craneCableLine.setAttribute("y2", String(cableY));
+    craneHookGroup.setAttribute("transform", "translate(0, " + cableY + ")");
+  }
+
+  function snapBridgeBlock(blk, idx, instant){
+    if(dead || phase !== "crane" || blocksPlacedMap[blk.id]) return;
+    if(!instant && craneBusy) return;
+
+    hasInteracted = true;
+    idleVoiceReminded = false;
+    hideIdleHints();
+    blocksPlacedMap[blk.id] = true;
+    blocksPlaced++;
+
+    var tile = dockCrane.querySelector('[data-block-id="' + blk.id + '"]');
+    if(tile) tile.classList.add("placed");
+
+    var box = getBridgeSlotBox(idx);
+
+    if(instant){
+      updateSuggestedBridgeSlot();
+      return;
+    }
+
+    craneBusy = true;
+    clickPopSfx(540 + idx * 80);
+
+    /* Step 1: Crane trolley glides over target slot carrying the bright block */
+    hookCarriedBlock.innerHTML = bridgeBlockInnerSvg(blk);
+    setCranePosition(box.cx, 128);
+
+    later(function(){
+      /* Step 2: Lower crane cable down into the bridge slot */
+      setCranePosition(box.cx, box.y - 24);
+    }, 320);
+
+    later(function(){
+      /* Step 3: Release & magnetically snap block into bridge! */
+      hookCarriedBlock.innerHTML = "";
+      updateSuggestedBridgeSlot();
+      blockSnapSfx(blocksPlaced);
+      hootCheer();
+
+      var slotEl = bridgeSlotsLayer.querySelector('[data-slot-id="' + blk.id + '"]');
+      var sr = slotEl ? slotEl.getBoundingClientRect() : craneSceneSvg.getBoundingClientRect();
+      if(sr.width){
+        spawnSparkles(sr.left + sr.width * 0.5, sr.top + sr.height * 0.5, 14);
+      }
+
+      if(blocksPlaced < BLOCK_COUNT){
+        if(blocksPlaced % 2 === 1){
+          enqueueVoice("name-number-" + blocksPlaced + ".mp3", true);
+        } else {
+          playConGuide("hoot-con-snap", "hoot-super", false);
+        }
+      }
+
+      /* Retract hook cleanly */
+      setCranePosition(box.cx, 128);
+    }, 640);
+
+    later(function(){
+      craneBusy = false;
+      if(blocksPlaced >= BLOCK_COUNT){
+        enterFinale(false);
+      } else {
+        armIdle(false);
+      }
+    }, 920);
+  }
+
+  /* ============================================================================
+     GRAND FINALE CELEBRATION: CONFETTI, PARADE & HONKING!
+     ============================================================================ */
+  function enterFinale(instant){
+    phase = "finale";
+    phaseDone.crane = true;
+    stars++;
+    completedRuns++;
+
+    stage.setAttribute("data-phase", "finale");
+    phaseExcavator.hidden = true;
+    phaseRoller.hidden = true;
+    phaseCrane.hidden = false;
+
+    dockExcavator.hidden = true;
+    dockRoller.hidden = true;
+    dockCrane.hidden = true;
+    dockFinale.hidden = false;
+
+    paradeLayer.hidden = false;
+    setCranePosition(200, 114);
+    hookCarriedBlock.innerHTML = "";
+    hideIdleHints();
+    updateHud(true);
+
+    if(instant) return;
+
+    finaleFanfareSfx();
+    showerConfetti(64);
+    hootCheer();
+    var sr = phaseCrane.getBoundingClientRect();
+    if(sr.width) spawnSparkles(sr.left + sr.width * 0.5, sr.top + sr.height * 0.45, 20);
+
+    later(function(){
+      if(phase === "finale") truckHonkSfx();
+    }, 480);
+
+    later(function(){
+      if(phase === "finale") playConGuide("hoot-con-win", "hoot-win-yay", false);
+    }, 980);
+  }
+
+  function triggerHonk(vehicleBtn){
+    if(dead) return;
+    unlockAudioOnce();
+    honkCount++;
+    truckHonkSfx();
+    hootCheer();
+
+    honkBurst.classList.remove("show");
+    void honkBurst.offsetWidth;
+    honkBurst.classList.add("show");
+
+    var targets = vehicleBtn ? [vehicleBtn] : Array.prototype.slice.call(paradeLayer.querySelectorAll(".parade-vehicle"));
+    targets.forEach(function(v){
+      v.classList.remove("honk-jump");
+      void v.offsetWidth;
+      v.classList.add("honk-jump");
+    });
+
+    var r = (vehicleBtn || honkBtn).getBoundingClientRect();
+    if(r.width) spawnSparkles(r.left + r.width * 0.5, r.top + r.height * 0.35, 12);
+
+    playConGuide("hoot-con-honk", "hoot-yay-2", false);
+  }
+
+  /* ============================================================================
+     PHASE TRANSITIONS & FULL REPLAY
+     ============================================================================ */
+  function enterPhase(targetPhase, isBoot){
+    clearTimers();
+    if(!isBoot) clearVoice(true);
+    excavatorBusy = false;
+    craneBusy = false;
+    isRollingDrag = false;
+    blockDragState = null;
+    bucketDragState = null;
+    dragGhost.hidden = true;
+    idleVoiceReminded = false;
+    hideIdleHints();
+
+    phase = targetPhase;
+    stage.setAttribute("data-phase", targetPhase);
+
+    phaseExcavator.hidden = targetPhase !== "excavator";
+    phaseRoller.hidden = targetPhase !== "roller";
+    phaseCrane.hidden = (targetPhase !== "crane" && targetPhase !== "finale");
+
+    dockExcavator.hidden = targetPhase !== "excavator";
+    dockRoller.hidden = targetPhase !== "roller";
+    dockCrane.hidden = targetPhase !== "crane";
+    dockFinale.hidden = targetPhase !== "finale";
+
+    paradeLayer.hidden = targetPhase !== "finale";
+
+    if(targetPhase === "excavator"){
+      moundsScoopedMap = {};
+      moundsScooped = 0;
+      buildPhase1();
+    } else if(targetPhase === "roller"){
+      setupPhase2();
+    } else if(targetPhase === "crane"){
+      blocksPlacedMap = {};
+      blocksPlaced = 0;
+      hookCarriedBlock.innerHTML = "";
+      setCranePosition(420, 148);
+      renderBridgeSlots();
+      buildPhase3Dock();
+    }
+
+    updateHud(false);
+    speakCurrentPhaseGuide(!!isBoot);
+    armIdle(true);
+  }
+
+  function startFreshBuild(isBoot){
+    phaseDone = { excavator: false, roller: false, crane: false };
+    rollerSubStep = "dump";
+    rollProgress = 0;
+    blocksPlacedMap = {};
+    blocksPlaced = 0;
+    hasInteracted = false;
+    enterPhase("excavator", !!isBoot);
+  }
+
+  /* ================= GLOBAL BUTTON & POINTER WIRING ================= */
+  phasePills.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var target = btn.dataset.phaseBtn;
+      if(!target) return;
+      unlockAudioOnce();
+      clickPopSfx(740);
+      enterPhase(target, false);
+    });
+  });
+
+  honkBtn.addEventListener("click", function(){
+    triggerHonk(null);
+  });
+  paradeLayer.querySelectorAll(".parade-vehicle").forEach(function(v){
+    v.addEventListener("click", function(){
+      triggerHonk(v);
+    });
+  });
+
+  againBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    clickPopSfx(860);
+    startFreshBuild(false);
+  });
+
+  soundBtn.addEventListener("click", function(){
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.setAttribute("aria-label", soundOn ? "Turn Sound Off" : "Turn Sound On");
+    if(!soundOn){
+      clearVoice(true);
+    } else {
+      unlockAudioOnce();
+      clickPopSfx(880);
+      speakCurrentPhaseGuide(false);
+    }
+  });
+
+  /* Direct tap on Construction Hoot -> cheers + repeats current step's spoken guidance! */
+  hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    hootCheer();
+    clickPopSfx(960);
+    window.__bellyArmed = true;
+    setTimeout(function(){ window.__bellyArmed = false; }, 500);
+    speakCurrentPhaseGuide(false);
+  });
+
+  /* Smooth eye-tracking on Construction Hoot */
+  function trackEyes(x, y){
+    var r = hootBtn.getBoundingClientRect();
+    if(!r.width) return;
+    var dx = Math.max(-4.5, Math.min(4.5, (x - (r.left + r.width * 0.5)) / 48));
+    var dy = Math.max(-3.5, Math.min(4.5, (y - (r.top + r.height * 0.44)) / 48));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+  }
+  stage.addEventListener("pointermove", function(e){ trackEyes(e.clientX, e.clientY); });
+  stage.addEventListener("pointerdown", function(e){ trackEyes(e.clientX, e.clientY); });
+
+  /* Clean Teardown */
+  function teardown(){
+    dead = true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden) clearVoice(false);
+  });
+
+  /* ================= BOOT & PUBLIC AUTOMATED QA HOOK ================= */
+  startFreshBuild(true);
+
+  function snapshot(){
+    return {
+      phase: phase,
+      subStep: rollerSubStep,
+      isRiley: IS_RILEY,
+      moundsTotal: MOUND_COUNT,
+      moundsScooped: moundsScooped,
+      rollProgress: Math.round(rollProgress),
+      blocksTotal: BLOCK_COUNT,
+      blocksPlaced: blocksPlaced,
+      stars: stars,
+      completedRuns: completedRuns,
+      honkCount: honkCount
+    };
+  }
+
+  function finishPhaseForTest(){
+    clearTimers();
+    if(phase === "excavator"){
+      for(var i = 0; i < MOUND_COUNT; i++){
+        if(!moundsScoopedMap[i]) scoopMound(i, true);
+      }
+      phaseDone.excavator = true;
+      enterPhase("roller", false);
+    } else if(phase === "roller"){
+      if(rollerSubStep === "dump") triggerDumpRocks(true);
+      completeRoadRolling(true);
+      enterPhase("crane", false);
+    } else if(phase === "crane"){
+      ACTIVE_BLOCKS.forEach(function(blk, idx){
+        if(!blocksPlacedMap[blk.id]) snapBridgeBlock(blk, idx, true);
+      });
+      enterFinale(true);
+    }
+    return snapshot();
+  }
+
+  window.__constructionGame = {
+    snapshot: snapshot,
+    finishPhaseForTest: finishPhaseForTest
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e159">
+<script src="js/hoot-game-tail.js?v=llprev3e159"></script>
+</body>
+</html>

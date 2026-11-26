@@ -1,8 +1,8 @@
 /* 3e53: game thumbnails inlined so the preview stays under the hosting file limit */
 var HW_THUMBS = {
-  splash: "assets/thumbs_v2/thumb_splash.jpg?v=llprev3e144",
-  shapes: "assets/thumbs_v2/thumb_shapes.jpg?v=llprev3e144",
-  real: "assets/thumbs_v2/thumb_real.jpg?v=llprev3e144",
+  splash: "assets/thumbs_v2/thumb_splash.jpg?v=llprev3e159",
+  shapes: "assets/thumbs_v2/thumb_shapes.jpg?v=llprev3e159",
+  real: "assets/thumbs_v2/thumb_real.jpg?v=llprev3e159",
   rocket: "assets/rocket3d/thumb_rocket.jpg?v=llprev3e105",
   pizza: "assets/pizza_cartoon/thumb_pizza.jpg?v=llprev3e118",
   twinkle: "assets/twinkle3d/thumb_twinkle.jpg?v=llprev3e116",
@@ -13,18 +13,22 @@ var HW_THUMBS = {
   paint: "assets/thumbs_v2/thumb_paint.jpg?v=llprev3e136",
   memory: "assets/thumbs_v2/thumb_memory.jpg?v=llprev3e139",
   balloon: "assets/thumbs_v2/thumb_balloon.jpg?v=llprev3e139",
-  bubblepop: "assets/thumbs_v2/thumb_bubblepop.jpg?v=llprev3e141",
-  dress: "assets/thumbs_v2/thumb_dress.jpg?v=llprev3e141",
-  magic: "assets/thumbs_v2/thumb_magic.jpg?v=llprev3e141",
-  piano: "assets/thumbs_v2/thumb_piano.jpg?v=llprev3e142",
-  band: "assets/thumbs_v2/thumb_band.jpg?v=llprev3e142",
-  friends: "assets/thumbs_v2/thumb_friends.jpg?v=llprev3e143",
-  find: "assets/thumbs_v2/thumb_find.jpg?v=llprev3e143",
-  dance: "assets/thumbs_v2/thumb_dance.jpg?v=llprev3e143",
+  bubblepop: "assets/thumbs_v2/thumb_bubblepop.jpg?v=llprev3e159",
+  dress: "assets/thumbs_v2/thumb_dress.jpg?v=llprev3e159",
+  magic: "assets/thumbs_v2/thumb_magic.jpg?v=llprev3e159",
+  piano: "assets/thumbs_v2/thumb_piano.jpg?v=llprev3e159",
+  band: "assets/thumbs_v2/thumb_band.jpg?v=llprev3e159",
+  friends: "assets/thumbs_v2/thumb_friends.jpg?v=llprev3e159",
+  find: "assets/thumbs_v2/thumb_find.jpg?v=llprev3e159",
+  dance: "assets/thumbs_v2/thumb_dance.jpg?v=llprev3e159",
   dino: "assets/thumbs_v2/thumb_dino.jpg?v=llprev3e149",
   train: "assets/thumbs_v2/thumb_train.jpg?v=llprev3e149",
   sub: "assets/sub3d/thumb_sub.jpg?v=llprev3e149",
-  icecream: "assets/icecream_cartoon/thumb_icecream.jpg?v=llprev3e149"
+  icecream: "assets/icecream_cartoon/thumb_icecream.jpg?v=llprev3e149",
+  construction: "assets/construction3d/thumb_construction.jpg?v=llprev3e159",
+  carwash: "assets/carwash3d/thumb_carwash.jpg?v=llprev3e159",
+  safari: "assets/safari3d/thumb_safari.jpg?v=llprev3e159",
+  treehouse: "assets/treehouse3d/thumb_treehouse.jpg?v=llprev3e159"
 }; /* Wave 3: thumbs load lazily from assets/thumbs/<key>.webp (-212 KB cold load) */
 /* Hoot's World layout preview 2 — v63 shell routing + data-to-card mapping.
    Does not rewrite Muse game, tutor, or lesson internals. */
@@ -73,7 +77,11 @@ var HW_THUMBS = {
     { key: "dino", title: "Dino Dig Museum", cat: "Dinosaurs", emo: "🦕", color: "#fed7aa" },
     { key: "train", title: "Wooden Train Builder", cat: "Toybox", emo: "🚂", color: "#fecaca" },
     { key: "sub", title: "3D Submarine Explorer", cat: "3D Ocean", emo: "🚤", color: "#0284C7" },
-    { key: "icecream", title: "Hoot's Ice Cream Truck", cat: "Kitchen", emo: "🍦", color: "#EC4899" }
+    { key: "icecream", title: "Hoot's Ice Cream Truck", cat: "Kitchen", emo: "🍦", color: "#EC4899" },
+    { key: "construction", title: "Hoot's Construction Yard", cat: "Trucks", emo: "🏗️", color: "#F59E0B" },
+    { key: "carwash", title: "Muddy Truck Car Wash", cat: "Trucks", emo: "🫧", color: "#0EA5E9" },
+    { key: "safari", title: "Safari Jeep Photo Adventure", cat: "Animals", emo: "🦁", color: "#D97706" },
+    { key: "treehouse", title: "Hoot's Pretend Treehouse", cat: "Pretend", emo: "🏡", color: "#16A34A" }
   ];
 
   var LESSONS = {
@@ -1483,7 +1491,7 @@ var LESSON_ART = {"creator-budget-the-project":1,"creator-debug-change-one-thing
 
   /* v145: Flickable Storybook Game Library (Hero Snap Carousel + Horizontal Shelves + Grid Toggle) */
   var GAME_SHELVES = [
-    { id:"worlds",  emo:"🌟", label:"Big Worlds",        keys:["sub","icecream","dino","train","pizza","rocket","twinkle","real","splash","shapes"] },
+    { id:"worlds",  emo:"🌟", label:"Big Worlds",        keys:["construction","carwash","safari","treehouse","sub","icecream","dino","train","pizza","rocket","twinkle","real","splash","shapes"] },
     { id:"learn",   emo:"🔤", label:"ABC, 123 & Puzzles",keys:["balloon","fishing","bubblepop","memory","find"] },
     { id:"create",  emo:"🎨", label:"Music, Art & Magic",keys:["paint","piano","band","dance","dress","magic"] },
     { id:"animals", emo:"🐾", label:"Animals & Friends", keys:["feed","animals","peek","friends"] }

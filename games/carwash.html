@@ -1,0 +1,3089 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>
+window.__HOOT_GAME_KEY__="carwash";
+window.__HOOT_SELF_COACH__=true;
+</script>
+<script src="js/hoot-game-head.js?v=llprev3e159"></script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>Hoot's Muddy Truck Car Wash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --sky-top:#1daeff;
+    --sky-mid:#6cd4ff;
+    --sky-low:#c6f2ff;
+    --aqua-hi:#22d3ee;
+    --aqua-deep:#0284c7;
+    --foam-white:#ffffff;
+    --gold:#ffd84d;
+    --gold-deep:#c98200;
+    --ink:#17344d;
+    --bay-blue:#0ea5e9;
+    --bay-dark:#0369a1;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
+  html,body{
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+  }
+  body{
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    color:var(--ink);
+    background:#38bdf8;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* ================= FULLSCREEN SUNNY CAR WASH STAGE ================= */
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, #25b4ff 0%, #6cd8ff 44%, #bceeff 72%, #e6f9ff 100%);
+  }
+
+  /* Pixar 3D Car Wash Backdrop with sunny aqua fallback underneath */
+  #carwashBg{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/carwash3d/bg_carwash.jpg"), linear-gradient(180deg, #25b4ff 0%, #6cd8ff 44%, #bceeff 72%, #e6f9ff 100%);
+  }
+  #carwashBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 44%, rgba(255,255,255,.08) 30%, rgba(3,58,99,.24) 100%),
+      linear-gradient(180deg, rgba(14,165,233,.14) 0%, rgba(255,255,255,0) 24%, rgba(2,132,199,.18) 100%);
+  }
+
+  /* Gentle Ambient Floating Soap Bubbles in Sky */
+  #ambientBubbles{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .amb-bub{
+    position:absolute;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.72);
+    background:radial-gradient(circle at 32% 28%, rgba(255,255,255,.85) 0%, rgba(186,230,253,.28) 45%, rgba(244,114,182,.18) 80%, rgba(255,255,255,.08) 100%);
+    opacity:.68;
+    animation:ambFloat 11s ease-in-out infinite;
+  }
+  @keyframes ambFloat{
+    0%,100%{ transform:translateY(0) translateX(0) scale(1); }
+    50%{ transform:translateY(-22px) translateX(10px) scale(1.06); }
+  }
+
+  /* ================= TOP HUD (4 VEHICLE PILLS + STARS + SOUND) ================= */
+  #hud{
+    position:relative;
+    z-index:20;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left));
+    pointer-events:none;
+  }
+  #vehicleBar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  .vehicle-pill{
+    position:relative;
+    min-width:66px;
+    min-height:66px;
+    width:68px;
+    height:68px;
+    padding:4px;
+    border-radius:22px;
+    border:4px solid #ffffff;
+    background:var(--pill-bg, linear-gradient(180deg,#ff6b6b,#dc2626));
+    box-shadow:0 5px 0 var(--pill-shadow, #991b1b), 0 8px 18px rgba(12,50,82,.26);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1), box-shadow .16s;
+  }
+  .vehicle-pill svg{
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.22));
+  }
+  .vehicle-pill:active{
+    transform:translateY(3px) scale(.93);
+  }
+  .vehicle-pill.active{
+    transform:translateY(-3px) scale(1.08);
+    border-color:#ffd84d;
+    box-shadow:0 6px 0 var(--pill-shadow, #991b1b), 0 0 0 4px rgba(255,216,77,.68), 0 10px 22px rgba(12,50,82,.3);
+  }
+  .vehicle-pill .clean-badge{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #fff59d 0%, #f59e0b 100%);
+    border:2.5px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.28);
+    display:grid;
+    place-items:center;
+    font-size:13px;
+    line-height:1;
+    opacity:0;
+    transform:scale(.3);
+    transition:opacity .28s, transform .38s cubic-bezier(.34,1.9,.5,1);
+    pointer-events:none;
+  }
+  .vehicle-pill.washed .clean-badge{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  .hud-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  #starPill{
+    min-height:64px;
+    height:64px;
+    padding:0 16px 0 12px;
+    border-radius:999px;
+    border:4px solid #ffffff;
+    background:linear-gradient(180deg, #fff9d6 0%, #ffe08a 100%);
+    box-shadow:0 5px 0 #c98200, 0 8px 18px rgba(12,50,82,.22);
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    color:var(--ink);
+  }
+  #starPill.bump{ animation:starBump .46s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes starBump{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.18) rotate(-4deg); }
+    100%{ transform:scale(1); }
+  }
+  .star-glyph{
+    font-size:28px;
+    line-height:1;
+    color:#f59e0b;
+    filter:drop-shadow(0 2px 0 rgba(255,255,255,.85));
+  }
+  #starNum{
+    font-size:26px;
+    font-weight:700;
+    line-height:1;
+    min-width:20px;
+    text-align:center;
+  }
+  .hud-dots{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    margin-left:2px;
+  }
+  .mini-dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    border:2px solid #c98200;
+    background:rgba(255,255,255,.7);
+    transition:transform .3s cubic-bezier(.34,1.8,.5,1), background .25s;
+  }
+  .mini-dot.lit{
+    background:var(--d-col, #22c55e);
+    border-color:#fff;
+    box-shadow:0 0 8px var(--d-col, #22c55e);
+    transform:scale(1.22);
+  }
+
+  #soundBtn{
+    min-width:64px;
+    min-height:64px;
+    width:66px;
+    height:66px;
+    border-radius:50%;
+    border:4px solid #ffffff;
+    background:linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    box-shadow:0 5px 0 #075985, 0 8px 18px rgba(12,50,82,.26);
+    color:#fff;
+    font-size:28px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+  }
+  #soundBtn:active{ transform:translateY(3px) scale(.93); }
+
+  /* ================= MAIN ARENA: CAR-WASH HOOT + WASH BAY ================= */
+  #arena{
+    position:relative;
+    z-index:10;
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    max-width:1160px;
+    margin:0 auto;
+    padding:4px clamp(10px, 2.2vw, 24px) 6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2.2vw, 24px);
+  }
+
+  /* Car-Wash Hoot Buddy (Yellow Rain Hat + Bubbly Sponge) */
+  #hootWrap{
+    position:relative;
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    align-self:flex-end;
+    padding-bottom:6px;
+    z-index:14;
+  }
+  #hootBtn{
+    width:clamp(120px, 15.5vw, 178px);
+    height:clamp(134px, 17.2vw, 198px);
+    min-width:64px;
+    min-height:64px;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+    position:relative;
+    filter:drop-shadow(0 10px 14px rgba(10,48,80,.3));
+    transition:transform .2s cubic-bezier(.34,1.65,.5,1);
+    animation:hootIdle 3.2s ease-in-out infinite;
+  }
+  #hootBtn svg{
+    width:100%;
+    height:100%;
+    display:block;
+    overflow:visible;
+  }
+  #hootBtn.cheer{
+    animation:hootCheer .65s cubic-bezier(.34,1.8,.5,1) 2 !important;
+  }
+  #hootBtn.scrubbing #hootSpongeArm{
+    animation:hootScrubWave .22s ease-in-out infinite alternate;
+  }
+  @keyframes hootIdle{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-5px) rotate(-1.6deg); }
+  }
+  @keyframes hootCheer{
+    0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
+    40%{ transform:translateY(-20px) scale(1.1) rotate(-6deg); }
+    72%{ transform:translateY(-5px) scale(1.03) rotate(5deg); }
+  }
+  @keyframes hootScrubWave{
+    from{ transform:rotate(-18deg) translate(0, 0); }
+    to{ transform:rotate(14deg) translate(6px, -5px); }
+  }
+  #hootSpongeArm{
+    transform-origin:162px 150px;
+  }
+
+  /* ================= SUNNY WASH BAY STAGE ================= */
+  #playStage{
+    position:relative;
+    flex:1 1 auto;
+    min-width:0;
+    height:100%;
+    max-width:780px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  /* Wash Bay Arch Frame */
+  #washBayFrame{
+    position:relative;
+    width:min(100%, 730px, calc((100dvh - 208px) * 1.52));
+    max-width:100%;
+    max-height:100%;
+    aspect-ratio:640 / 420;
+    border-radius:34px;
+    padding:12px;
+    background:linear-gradient(180deg, #38bdf8 0%, #0284c7 48%, #0369a1 100%);
+    border:5px solid #ffffff;
+    box-shadow:
+      0 10px 0 #075985,
+      0 20px 36px rgba(8,47,73,.36),
+      inset 0 4px 10px rgba(255,255,255,.62);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Step Progress Ribbon Mounted on Top of Wash Arch */
+  #stepRibbon{
+    position:absolute;
+    top:-22px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:16;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:5px 12px;
+    border-radius:999px;
+    background:linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%);
+    border:3.5px solid #38bdf8;
+    box-shadow:0 4px 0 #0284c7, 0 8px 16px rgba(8,47,73,.22);
+    pointer-events:none;
+  }
+  .step-pip{
+    position:relative;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:rgba(14,165,233,.14);
+    border:2.5px solid rgba(2,132,199,.3);
+    display:grid;
+    place-items:center;
+    font-size:19px;
+    line-height:1;
+    transition:transform .28s cubic-bezier(.34,1.8,.5,1), background .25s, border-color .25s, box-shadow .25s;
+  }
+  .step-pip.active{
+    background:linear-gradient(180deg, #fff59d 0%, #fbbf24 100%);
+    border-color:#ffffff;
+    box-shadow:0 0 0 3px #f59e0b, 0 4px 10px rgba(245,158,11,.5);
+    transform:scale(1.18);
+  }
+  .step-pip.done{
+    background:linear-gradient(180deg, #86efac 0%, #22c55e 100%);
+    border-color:#ffffff;
+    box-shadow:0 2px 6px rgba(22,163,74,.4);
+  }
+  .step-pip.done::after{
+    content:"✓";
+    position:absolute;
+    bottom:-4px;
+    right:-4px;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:#15803d;
+    color:#fff;
+    font-size:10px;
+    font-weight:900;
+    display:grid;
+    place-items:center;
+    border:1.5px solid #fff;
+  }
+
+  /* Inner Glossy Wash Bay Arena */
+  #washBayInner{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:23px;
+    overflow:hidden;
+    background:linear-gradient(180deg,
+      rgba(224,247,255,.78) 0%,
+      rgba(186,238,255,.70) 58%,
+      rgba(125,211,252,.82) 74%,
+      rgba(56,189,248,.92) 100%);
+    box-shadow:inset 0 0 24px rgba(3,105,161,.26);
+    touch-action:none;
+  }
+
+  /* Sunny tiled wash bay floor + overhead nozzle bar */
+  #washBayDecor{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+  }
+  .bay-floor{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:26%;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.26) 0 48px, rgba(255,255,255,.06) 48px 96px),
+      linear-gradient(180deg, #7dd3fc 0%, #38bdf8 36%, #0284c7 100%);
+    border-top:4px solid rgba(255,255,255,.85);
+  }
+  .bay-drain{
+    position:absolute;
+    left:50%;
+    bottom:8%;
+    transform:translateX(-50%);
+    width:56%;
+    height:10px;
+    border-radius:999px;
+    background:repeating-linear-gradient(90deg, rgba(7,89,133,.55) 0 12px, rgba(186,230,253,.45) 12px 20px);
+    opacity:.55;
+  }
+  .bay-arch-nozzles{
+    position:absolute;
+    top:0;
+    left:8%;
+    right:8%;
+    height:18px;
+    border-radius:0 0 14px 14px;
+    background:linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+    border-bottom:3px solid #64748b;
+    display:flex;
+    justify-content:space-around;
+    align-items:flex-end;
+    padding:0 16px;
+  }
+  .nozzle-tip{
+    width:14px;
+    height:8px;
+    border-radius:0 0 6px 6px;
+    background:#334155;
+    transform:translateY(5px);
+  }
+
+  /* Progress meter tucked cleanly along bottom-left/right inside bay */
+  #cleanMeterWrap{
+    position:absolute;
+    left:50%;
+    bottom:10px;
+    transform:translateX(-50%);
+    z-index:12;
+    width:min(72%, 340px);
+    height:16px;
+    border-radius:999px;
+    background:rgba(12,74,110,.36);
+    border:2.5px solid rgba(255,255,255,.92);
+    overflow:hidden;
+    pointer-events:none;
+    box-shadow:0 3px 8px rgba(8,47,73,.25);
+    transition:opacity .3s;
+  }
+  #stage[data-phase="celebrate"] #cleanMeterWrap{
+    opacity:0;
+  }
+  #cleanMeterFill{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, #f472b6 0%, #fbbf24 38%, #34d399 72%, #38bdf8 100%);
+    transition:width .14s ease-out;
+  }
+
+  /* Truck Container (Roll-in, Honk Bounce, Dry Shake, Zoom-out!) */
+  #truckMotion{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    will-change:transform;
+  }
+  #truckMotion.roll-in{
+    animation:truckRollIn .72s cubic-bezier(.22,1.18,.38,1) forwards;
+  }
+  #truckMotion.zoom-out{
+    animation:truckZoomOut .62s cubic-bezier(.45,0,.78,.22) forwards;
+  }
+  #truckMotion.honk-hop{
+    animation:truckHonkHop .52s cubic-bezier(.34,1.8,.5,1);
+  }
+  #truckMotion.dry-wiggle{
+    animation:truckDryWiggle .28s ease-in-out 4;
+  }
+  @keyframes truckRollIn{
+    0%{ transform:translateX(-110%) rotate(-2deg); }
+    72%{ transform:translateX(3%) rotate(1.5deg); }
+    88%{ transform:translateX(-1%) rotate(-.8deg); }
+    100%{ transform:translateX(0) rotate(0deg); }
+  }
+  @keyframes truckZoomOut{
+    0%{ transform:translateX(0) scale(1); }
+    22%{ transform:translateX(-4%) scale(1.04, .95); }
+    100%{ transform:translateX(120%) scale(1.02); }
+  }
+  @keyframes truckHonkHop{
+    0%,100%{ transform:translateY(0) scale(1); }
+    35%{ transform:translateY(-16px) scale(1.06, .95) rotate(-2deg); }
+    70%{ transform:translateY(3px) scale(.97, 1.04) rotate(1.5deg); }
+  }
+  @keyframes truckDryWiggle{
+    0%,100%{ transform:translateX(0) rotate(0deg); }
+    25%{ transform:translateX(-6px) rotate(-1.5deg); }
+    75%{ transform:translateX(6px) rotate(1.5deg); }
+  }
+
+  /* Truck SVG Layer */
+  #truckSvg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+    filter:drop-shadow(0 12px 14px rgba(8,47,73,.26));
+  }
+
+  /* Glossy Diagonal Shine Sweep (Dry & Celebrate) */
+  #shineSweep{
+    position:absolute;
+    inset:0;
+    z-index:7;
+    pointer-events:none;
+    overflow:hidden;
+    opacity:0;
+  }
+  #shineSweep.flash{
+    opacity:1;
+  }
+  #shineSweep::before{
+    content:"";
+    position:absolute;
+    top:-30%;
+    left:-60%;
+    width:46%;
+    height:170%;
+    transform:rotate(24deg);
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.88) 50%, rgba(255,255,255,0) 100%);
+  }
+  #shineSweep.flash::before{
+    animation:shineGlide .88s cubic-bezier(.25,.75,.35,1) forwards;
+  }
+  @keyframes shineGlide{
+    from{ left:-60%; }
+    to{ left:135%; }
+  }
+
+  /* Interactive Canvases (Mud, Soap Foam, FX Particles) */
+  #mudCanvas, #foamCanvas, #fxCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  #mudCanvas{ z-index:4; touch-action:none; cursor:grab; }
+  #foamCanvas{ z-index:5; touch-action:none; pointer-events:none; }
+  #fxCanvas{ z-index:8; pointer-events:none; }
+
+  #stage[data-phase="rinse"] #mudCanvas{ pointer-events:none; }
+  #stage[data-phase="rinse"] #foamCanvas{ pointer-events:auto; cursor:crosshair; }
+  #stage[data-phase="dry"] #mudCanvas,
+  #stage[data-phase="dry"] #foamCanvas{ pointer-events:none; }
+  #stage[data-phase="celebrate"] #mudCanvas,
+  #stage[data-phase="celebrate"] #foamCanvas{ pointer-events:none; }
+
+  /* Full-bay tap target during Dry & Celebrate so tapping the truck ALWAYS responds! */
+  #truckTapOverlay{
+    position:absolute;
+    inset:0;
+    z-index:9;
+    border:none;
+    background:transparent;
+    padding:0;
+    cursor:pointer;
+    outline:none;
+  }
+
+  /* Honk Sound Burst Badge */
+  #honkBurst{
+    position:absolute;
+    top:12%;
+    right:9%;
+    z-index:11;
+    pointer-events:none;
+    opacity:0;
+    font-size:46px;
+    line-height:1;
+    filter:drop-shadow(0 4px 10px rgba(245,158,11,.65));
+  }
+  #honkBurst.show{
+    animation:honkPop 1.05s cubic-bezier(.25,1.5,.5,1);
+  }
+  @keyframes honkPop{
+    0%{ opacity:0; transform:scale(.35) rotate(-12deg); }
+    28%{ opacity:1; transform:scale(1.24) rotate(8deg); }
+    70%{ opacity:1; transform:scale(1.06) rotate(-4deg); }
+    100%{ opacity:0; transform:scale(1.28) translateY(-18px) rotate(10deg); }
+  }
+
+  /* Follow-Finger Tool Cursor (Bubbly Sponge / Water Hose Nozzle) */
+  #toolCursor{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:74px;
+    height:74px;
+    margin:-37px 0 0 -37px;
+    z-index:13;
+    pointer-events:none;
+    opacity:0;
+    transform:scale(.82);
+    transition:opacity .12s ease, transform .12s ease;
+    filter:drop-shadow(0 6px 10px rgba(8,47,73,.34));
+  }
+  #toolCursor.active{
+    opacity:1;
+    transform:scale(1.08) rotate(-8deg);
+  }
+  #toolCursor svg{ width:100%; height:100%; display:block; }
+
+  /* Idle Hint Finger */
+  #bayHint{
+    position:absolute;
+    left:50%;
+    top:52%;
+    z-index:14;
+    pointer-events:none;
+    font-size:48px;
+    line-height:1;
+    opacity:0;
+    transform:translate(-50%, -50%);
+    filter:drop-shadow(0 5px 10px rgba(8,47,73,.42));
+  }
+  #bayHint.show{
+    opacity:1;
+    animation:hintRub 1.5s ease-in-out infinite;
+  }
+  @keyframes hintRub{
+    0%,100%{ transform:translate(-66%, -50%) rotate(-10deg) scale(1); }
+    50%{ transform:translate(-34%, -58%) rotate(10deg) scale(1.14); }
+  }
+
+  /* Celebration Action Row (Honk + Next Truck — sits right below wash bay or docked cleanly) */
+  #celebrateActions{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    z-index:15;
+    flex:0 0 auto;
+  }
+  .action-fab{
+    min-width:74px;
+    min-height:74px;
+    height:74px;
+    padding:0 22px;
+    border-radius:999px;
+    border:4px solid #ffffff;
+    font-family:"Fredoka",sans-serif;
+    font-size:32px;
+    font-weight:700;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.65,.5,1);
+  }
+  .action-fab:active{ transform:translateY(3px) scale(.92); }
+  #honkBtn{
+    background:linear-gradient(180deg, #ffe066 0%, #f59e0b 100%);
+    color:#542800;
+    box-shadow:0 6px 0 #b45309, 0 10px 22px rgba(8,47,73,.28);
+  }
+  #nextTruckBtn{
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#ffffff;
+    box-shadow:0 6px 0 #14532d, 0 0 24px rgba(74,222,128,.7), 0 10px 22px rgba(8,47,73,.3);
+    animation:pulseGlow 1.45s ease-in-out infinite;
+  }
+  @keyframes pulseGlow{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.07); }
+  }
+
+  /* ================= BOTTOM TOOL & STICKER DOCK (ALL BUTTONS >= 70px) ================= */
+  #bottomDock{
+    position:relative;
+    z-index:18;
+    flex:0 0 auto;
+    height:calc(96px + env(safe-area-inset-bottom));
+    padding:8px max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background:linear-gradient(180deg, #0ea5e9 0%, #0284c7 45%, #075985 100%);
+    border-top:5px solid #ffd84d;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.55), 0 -6px 20px rgba(7,89,133,.36);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .dock-group{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(10px, 2.4vw, 20px);
+    width:100%;
+    max-width:640px;
+  }
+
+  /* Giant Tactile Step Tool Buttons (Sponge / Hose / Blower) */
+  .tool-btn{
+    position:relative;
+    min-width:74px;
+    min-height:74px;
+    height:74px;
+    padding:0 24px;
+    border-radius:24px;
+    border:4px solid #ffffff;
+    font-family:"Fredoka",sans-serif;
+    font-size:36px;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1), box-shadow .16s;
+  }
+  .tool-btn:active{ transform:translateY(3px) scale(.93); }
+  #spongeToolBtn{
+    background:linear-gradient(180deg, #fef08a 0%, #facc15 55%, #eab308 100%);
+    box-shadow:0 6px 0 #a16207, 0 0 22px rgba(254,240,138,.8), 0 10px 20px rgba(7,89,133,.34);
+    animation:pulseGlow 1.55s ease-in-out infinite;
+  }
+  #hoseToolBtn{
+    background:linear-gradient(180deg, #67e8f9 0%, #06b6d4 58%, #0284c7 100%);
+    box-shadow:0 6px 0 #0c4a6e, 0 0 22px rgba(103,232,249,.85), 0 10px 20px rgba(7,89,133,.34);
+    animation:pulseGlow 1.55s ease-in-out infinite;
+  }
+  #dryerToolBtn{
+    min-width:128px;
+    background:linear-gradient(180deg, #f0abfc 0%, #c084fc 45%, #9333ea 100%);
+    color:#ffffff;
+    box-shadow:0 6px 0 #581c87, 0 0 26px rgba(232,121,249,.85), 0 10px 22px rgba(7,89,133,.34);
+    animation:pulseGlow 1.3s ease-in-out infinite;
+  }
+  .tool-badge-sub{
+    font-size:26px;
+    line-height:1;
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.22));
+  }
+
+  /* 4 Fun Hood Sticker Buttons (>= 72px each!) */
+  .sticker-btn{
+    position:relative;
+    flex:0 0 auto;
+    width:74px;
+    height:74px;
+    min-width:70px;
+    min-height:70px;
+    border-radius:22px;
+    border:4px solid #ffffff;
+    background:radial-gradient(circle at 35% 28%, #ffffff 0%, #e0f2fe 70%, #bae6fd 100%);
+    box-shadow:0 5px 0 #0369a1, 0 8px 16px rgba(7,89,133,.32);
+    font-size:36px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    outline:none;
+    transition:transform .16s cubic-bezier(.34,1.8,.5,1), box-shadow .16s, border-color .16s;
+  }
+  .sticker-btn:active{ transform:translateY(3px) scale(.92); }
+  .sticker-btn.picked{
+    border-color:#ffd84d;
+    background:radial-gradient(circle at 35% 28%, #fffef0 0%, #fef08a 100%);
+    box-shadow:0 5px 0 #b45309, 0 0 18px rgba(255,216,77,.9);
+    transform:translateY(-3px) scale(1.08);
+  }
+
+  /* ================= GLOBAL SPARKLE / CONFETTI FX LAYER ================= */
+  #fxLayer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:35;
+    overflow:hidden;
+  }
+  .fx-spark{
+    position:absolute;
+    font-size:28px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 0 8px rgba(255,220,90,.95));
+  }
+  .fx-conf{
+    position:absolute;
+    width:13px;
+    height:13px;
+    border-radius:4px;
+    pointer-events:none;
+  }
+
+  /* ================= RESPONSIVE: iPHONE PORTRAIT (390x844) ================= */
+  @media (max-width:640px){
+    #hud{
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 8px 2px;
+    }
+    #vehicleBar{
+      gap:6px;
+    }
+    .vehicle-pill{
+      min-width:64px;
+      min-height:64px;
+      width:64px;
+      height:64px;
+      border-radius:18px;
+      padding:4px;
+    }
+    #soundBtn{
+      min-width:64px;
+      min-height:64px;
+      width:64px;
+      height:64px;
+      font-size:25px;
+    }
+    .hud-right{
+      gap:6px;
+    }
+    #starPill{
+      order:3;
+      min-height:40px;
+      height:40px;
+      padding:0 12px 0 9px;
+      border-width:3px;
+      box-shadow:0 3px 0 #c98200;
+    }
+    .star-glyph{ font-size:20px; }
+    #starNum{ font-size:20px; }
+
+    #arena{
+      flex-direction:column;
+      justify-content:center;
+      gap:4px;
+      padding:2px 10px 6px;
+    }
+    #hootWrap{
+      align-self:center;
+      padding-bottom:0;
+      margin-bottom:-6px;
+    }
+    #hootBtn{
+      width:98px;
+      height:108px;
+    }
+    #playStage{
+      width:100%;
+      flex:0 1 auto;
+      height:auto;
+      min-height:0;
+      gap:10px;
+    }
+    #washBayFrame{
+      width:100%;
+      max-width:370px;
+      padding:8px;
+      border-radius:26px;
+    }
+    #washBayInner{ border-radius:18px; }
+    #stepRibbon{
+      top:-18px;
+      gap:6px;
+      padding:4px 10px;
+    }
+    .step-pip{
+      width:30px;
+      height:30px;
+      font-size:16px;
+    }
+    .action-fab{
+      min-width:70px;
+      min-height:70px;
+      height:70px;
+      padding:0 18px;
+      font-size:28px;
+    }
+    #bottomDock{
+      height:calc(88px + env(safe-area-inset-bottom));
+      padding:6px 8px max(6px, env(safe-area-inset-bottom));
+    }
+    .tool-btn{
+      min-width:70px;
+      min-height:70px;
+      height:70px;
+      font-size:32px;
+    }
+    .sticker-btn{
+      width:70px;
+      height:70px;
+      min-width:68px;
+      min-height:68px;
+      border-radius:18px;
+      font-size:32px;
+    }
+  }
+
+  /* Compact iPad landscape tuning (1024x768) */
+  @media (min-width:641px) and (max-height:790px){
+    #hootBtn{
+      width:clamp(112px, 13.8vw, 152px);
+      height:clamp(124px, 15.2vw, 168px);
+    }
+    #washBayFrame{
+      width:min(100%, 660px, calc((100dvh - 236px) * 1.52));
+    }
+    #bottomDock{
+      height:calc(90px + env(safe-area-inset-bottom));
+    }
+    .action-fab{
+      min-width:70px;
+      min-height:70px;
+      height:70px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01s !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage" data-phase="sponge">
+  <!-- ============ PIXAR 3D CAR WASH BACKDROP ============ -->
+  <div id="carwashBg" aria-hidden="true"></div>
+
+  <!-- Soft ambient rainbow bubbles -->
+  <div id="ambientBubbles" aria-hidden="true">
+    <span class="amb-bub" style="width:42px;height:42px;left:6%;top:18%;animation-delay:0s;"></span>
+    <span class="amb-bub" style="width:28px;height:28px;left:16%;top:32%;animation-delay:-3s;"></span>
+    <span class="amb-bub" style="width:36px;height:36px;right:9%;top:20%;animation-delay:-5s;"></span>
+    <span class="amb-bub" style="width:24px;height:24px;right:19%;top:35%;animation-delay:-2s;"></span>
+  </div>
+
+  <!-- ============ TOP HUD: 4 BIG VEHICLE PILLS + STARS + SOUND ============ -->
+  <header id="hud">
+    <nav id="vehicleBar" aria-label="Choose a muddy truck">
+      <button class="vehicle-pill active" data-vehicle="firetruck" type="button" aria-label="Red Fire Truck" aria-pressed="true" style="--pill-bg:linear-gradient(180deg,#ff6b6b,#dc2626);--pill-shadow:#991b1b">
+        <span class="pill-art"></span>
+        <span class="clean-badge" aria-hidden="true">✨</span>
+      </button>
+      <button class="vehicle-pill" data-vehicle="bus" type="button" aria-label="Yellow School Bus" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#fde047,#eab308);--pill-shadow:#a16207">
+        <span class="pill-art"></span>
+        <span class="clean-badge" aria-hidden="true">✨</span>
+      </button>
+      <button class="vehicle-pill" data-vehicle="icecream" type="button" aria-label="Mint Ice Cream Truck" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#5eead4,#14b8a6);--pill-shadow:#0f766e">
+        <span class="pill-art"></span>
+        <span class="clean-badge" aria-hidden="true">✨</span>
+      </button>
+      <button class="vehicle-pill" data-vehicle="tractor" type="button" aria-label="Green Farm Tractor" aria-pressed="false" style="--pill-bg:linear-gradient(180deg,#4ade80,#16a34a);--pill-shadow:#14532d">
+        <span class="pill-art"></span>
+        <span class="clean-badge" aria-hidden="true">✨</span>
+      </button>
+    </nav>
+
+    <div class="hud-right">
+      <div id="starPill" aria-label="Stars earned">
+        <span class="star-glyph" aria-hidden="true">★</span>
+        <span id="starNum">0</span>
+        <span class="hud-dots" aria-hidden="true">
+          <span class="mini-dot" data-v="firetruck" style="--d-col:#ef4444"></span>
+          <span class="mini-dot" data-v="bus" style="--d-col:#eab308"></span>
+          <span class="mini-dot" data-v="icecream" style="--d-col:#14b8a6"></span>
+          <span class="mini-dot" data-v="tractor" style="--d-col:#22c55e"></span>
+        </span>
+      </div>
+      <button id="soundBtn" type="button" aria-label="Toggle Sound">🔊</button>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ARENA: CAR-WASH HOOT + SUNNY WASH BAY ============ -->
+  <main id="arena">
+    <!-- Car-Wash Hoot Buddy wearing Yellow Rain Hat & Holding Bubbly Sponge -->
+    <div id="hootWrap">
+      <button id="hootBtn" type="button" aria-label="Car Wash Hoot">
+        <svg viewBox="0 0 220 242" aria-hidden="true">
+          <defs>
+            <linearGradient id="cwHootFeather" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c38448"/>
+              <stop offset="100%" stop-color="#8b5528"/>
+            </linearGradient>
+            <linearGradient id="rainHatGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fff078"/>
+              <stop offset="60%" stop-color="#facc15"/>
+              <stop offset="100%" stop-color="#d97706"/>
+            </linearGradient>
+            <linearGradient id="ponchoGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#0284c7"/>
+            </linearGradient>
+            <linearGradient id="spongeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </linearGradient>
+          </defs>
+          <!-- Ground Puddle Shadow -->
+          <ellipse cx="106" cy="229" rx="68" ry="11" fill="rgba(7,89,133,.28)"/>
+
+          <!-- Cute Yellow Rain Boots -->
+          <g fill="#facc15" stroke="#854d0e" stroke-width="3.4" stroke-linejoin="round">
+            <rect x="66" y="206" width="26" height="22" rx="9"/>
+            <rect x="122" y="206" width="26" height="22" rx="9"/>
+            <ellipse cx="75" cy="226" rx="16" ry="7"/>
+            <ellipse cx="139" cy="226" rx="16" ry="7"/>
+          </g>
+
+          <!-- Chubby Owl Body -->
+          <ellipse cx="106" cy="144" rx="68" ry="72" fill="url(#cwHootFeather)" stroke="#5b3414" stroke-width="4.5"/>
+
+          <!-- Left Wing -->
+          <path d="M44,128 Q16,154 32,190 Q52,194 62,166 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+
+          <!-- Cream Feathered Belly -->
+          <ellipse cx="106" cy="166" rx="45" ry="43" fill="#fff4d8"/>
+
+          <!-- Bright Aqua Car-Wash Apron / Bib -->
+          <path d="M62,134 Q106,148 150,134 L156,192 Q106,214 56,192 Z" fill="url(#ponchoGrad)" stroke="#075985" stroke-width="3.6" stroke-linejoin="round"/>
+          <circle cx="92" cy="164" r="6" fill="rgba(255,255,255,.7)"/>
+          <circle cx="116" cy="176" r="8" fill="rgba(255,255,255,.65)"/>
+          <circle cx="126" cy="158" r="4.5" fill="rgba(255,255,255,.75)"/>
+
+          <!-- Ear Tufts peeking under Yellow Rain Hat -->
+          <path d="M52,78 L38,54 L72,66 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M160,78 L174,54 L140,66 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+
+          <!-- Big Iconic Owl Eye Discs -->
+          <circle cx="80" cy="100" r="27" fill="#fffdf7" stroke="#5b3414" stroke-width="4"/>
+          <circle cx="132" cy="100" r="27" fill="#fffdf7" stroke="#5b3414" stroke-width="4"/>
+          <g id="hootPupils">
+            <circle cx="83" cy="100" r="13.5" fill="#2c190a"/>
+            <circle cx="135" cy="100" r="13.5" fill="#2c190a"/>
+            <circle cx="88" cy="94" r="5" fill="#fff"/>
+            <circle cx="140" cy="94" r="5" fill="#fff"/>
+            <circle cx="78" cy="106" r="2.6" fill="#fff"/>
+            <circle cx="130" cy="106" r="2.6" fill="#fff"/>
+          </g>
+
+          <!-- Rosy Cheeks & Happy Orange Beak -->
+          <ellipse cx="56" cy="116" rx="10" ry="6" fill="#ff8fab" opacity=".78"/>
+          <ellipse cx="156" cy="116" rx="10" ry="6" fill="#ff8fab" opacity=".78"/>
+          <path d="M96,110 L116,110 L106,127 Z" fill="#ff9f1c" stroke="#7c3d09" stroke-width="3.2" stroke-linejoin="round"/>
+
+          <!-- Sunny Yellow Rain Hat (Sou'wester) -->
+          <g>
+            <path d="M46,66 C48,18 164,18 166,66 Z" fill="url(#rainHatGrad)" stroke="#92400e" stroke-width="4"/>
+            <path d="M74,30 Q106,22 132,34" fill="none" stroke="#fffbeb" stroke-width="5" stroke-linecap="round" opacity=".82"/>
+            <path d="M48,58 Q106,66 164,58 L166,68 Q106,76 46,68 Z" fill="#0ea5e9" stroke="#075985" stroke-width="3"/>
+            <path d="M28,74 Q106,52 184,74 Q168,90 106,82 Q44,90 28,74 Z" fill="url(#rainHatGrad)" stroke="#92400e" stroke-width="4" stroke-linejoin="round"/>
+          </g>
+
+          <!-- Right Wing Holding Bubbly Rainbow Sponge -->
+          <g id="hootSpongeArm">
+            <path d="M164,128 Q196,144 182,180 Q162,184 154,158 Z" fill="#9c6230" stroke="#5b3414" stroke-width="4" stroke-linejoin="round"/>
+            <g transform="translate(184,126) rotate(14)">
+              <rect x="-22" y="-16" width="44" height="32" rx="10" fill="url(#spongeGrad)" stroke="#92400e" stroke-width="3.4"/>
+              <circle cx="-10" cy="-4" r="3.2" fill="#d97706" opacity=".6"/>
+              <circle cx="6" cy="4" r="4" fill="#d97706" opacity=".6"/>
+              <circle cx="11" cy="-6" r="2.6" fill="#d97706" opacity=".6"/>
+              <circle cx="-4" cy="7" r="2.6" fill="#d97706" opacity=".6"/>
+              <!-- Soap Suds on Sponge -->
+              <circle cx="-16" cy="-16" r="8" fill="#fff" stroke="#38bdf8" stroke-width="2"/>
+              <circle cx="-4" cy="-21" r="10" fill="#fff" stroke="#f472b6" stroke-width="2"/>
+              <circle cx="11" cy="-17" r="8" fill="#fff" stroke="#a855f7" stroke-width="2"/>
+              <circle cx="22" cy="-10" r="6" fill="#fff" stroke="#38bdf8" stroke-width="2"/>
+            </g>
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Center Play Stage -->
+    <div id="playStage">
+      <section id="washBayFrame" aria-label="Muddy Truck Wash Bay">
+        <!-- 4-Step Visual Progress Ribbon -->
+        <div id="stepRibbon" aria-hidden="true">
+          <span class="step-pip active" data-step="sponge">🧽</span>
+          <span class="step-pip" data-step="rinse">🚿</span>
+          <span class="step-pip" data-step="dry">💨</span>
+          <span class="step-pip" data-step="celebrate">✨</span>
+        </div>
+
+        <div id="washBayInner">
+          <!-- Glossy Wash Bay Floor & Overhead Sprayer Bar -->
+          <div id="washBayDecor" aria-hidden="true">
+            <div class="bay-arch-nozzles">
+              <span class="nozzle-tip"></span>
+              <span class="nozzle-tip"></span>
+              <span class="nozzle-tip"></span>
+              <span class="nozzle-tip"></span>
+              <span class="nozzle-tip"></span>
+            </div>
+            <div class="bay-floor">
+              <div class="bay-drain"></div>
+            </div>
+          </div>
+
+          <!-- Animated Truck + Mud + Foam Wrapper -->
+          <div id="truckMotion">
+            <svg id="truckSvg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+            <canvas id="mudCanvas" width="640" height="420"></canvas>
+            <canvas id="foamCanvas" width="640" height="420"></canvas>
+            <div id="shineSweep" aria-hidden="true"></div>
+          </div>
+
+          <!-- Water Spray, Bubbles, Wind Ribbons & Sparkle Hints Canvas -->
+          <canvas id="fxCanvas" width="640" height="420"></canvas>
+
+          <!-- Full-Bay Tap Surface for Dry & Celebrate Phases -->
+          <button id="truckTapOverlay" type="button" aria-label="Tap truck" hidden></button>
+
+          <!-- Honk Sound Burst Badge -->
+          <div id="honkBurst" aria-hidden="true">📣🎶</div>
+
+          <!-- Follow-Finger Sponge / Hose Cursor -->
+          <div id="toolCursor" aria-hidden="true"></div>
+
+          <!-- Idle Rub / Tap Finger Hint -->
+          <div id="bayHint" aria-hidden="true">👆</div>
+
+          <!-- Tactile Cleanliness Progress Bar -->
+          <div id="cleanMeterWrap" aria-hidden="true">
+            <div id="cleanMeterFill"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4 Celebration Actions: Big Honk + Next Truck -->
+      <div id="celebrateActions" hidden>
+        <button id="honkBtn" class="action-fab" type="button" aria-label="Honk Horn">📣</button>
+        <button id="nextTruckBtn" class="action-fab" type="button" aria-label="Next Truck">
+          <span id="nextTruckIcon" aria-hidden="true">🚌</span>
+          <span aria-hidden="true">▶</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ BOTTOM TOOL & HOOD STICKER DOCK ============ -->
+  <footer id="bottomDock">
+    <!-- Step 1: Bubbly Rainbow Sponge -->
+    <div id="spongeDock" class="dock-group">
+      <button id="spongeToolBtn" class="tool-btn" type="button" aria-label="Bubbly Rainbow Sponge">
+        <span aria-hidden="true">🧽</span>
+        <span class="tool-badge-sub" aria-hidden="true">🫧🌈</span>
+      </button>
+    </div>
+
+    <!-- Step 2: Sparkling Water Hose -->
+    <div id="rinseDock" class="dock-group" hidden>
+      <button id="hoseToolBtn" class="tool-btn" type="button" aria-label="Sparkling Water Hose">
+        <span aria-hidden="true">🚿</span>
+        <span class="tool-badge-sub" aria-hidden="true">💧✨</span>
+      </button>
+    </div>
+
+    <!-- Step 3: Giant Breezy Dryer -->
+    <div id="dryDock" class="dock-group" hidden>
+      <button id="dryerToolBtn" class="tool-btn" type="button" aria-label="Giant Breezy Dryer">
+        <span aria-hidden="true">💨</span>
+        <span class="tool-badge-sub" aria-hidden="true">🌬️✨</span>
+      </button>
+    </div>
+
+    <!-- Step 4: Optional Fun Hood Stickers (⭐ 🌈 ❤️ ⚡) -->
+    <div id="stickerDock" class="dock-group" aria-label="Pick a hood sticker" hidden>
+      <button class="sticker-btn" data-sticker="star" type="button" aria-label="Star Sticker">⭐</button>
+      <button class="sticker-btn" data-sticker="rainbow" type="button" aria-label="Rainbow Sticker">🌈</button>
+      <button class="sticker-btn" data-sticker="heart" type="button" aria-label="Heart Sticker">❤️</button>
+      <button class="sticker-btn" data-sticker="bolt" type="button" aria-label="Lightning Sticker">⚡</button>
+    </div>
+  </footer>
+</div>
+
+<!-- Sparkle & Confetti Global FX Layer -->
+<div id="fxLayer" aria-hidden="true"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================================
+     VEHICLE CATALOG & JOYFUL CARTOON SVG ARTWORK (640x420 WASH BAY SPACE)
+     ============================================================================ */
+  var VEHICLE_ORDER = ["firetruck", "bus", "icecream", "tractor"];
+  var STEP_ORDER = ["sponge", "rinse", "dry", "celebrate"];
+
+  var VEHICLES = {
+    firetruck: {
+      id: "firetruck",
+      emoji: "🚒",
+      stickerPos: { x: 256, y: 244, size: 52 },
+      cleanClip: "hoot-cw-firetruck",
+      cleanFallback: "hoot-amazing",
+      honkGlyph: "🚒📣",
+      mudZones: [
+        { x: 112, y: 158, w: 300, h: 162, rx: 32 },
+        { x: 376, y: 136, w: 156, h: 184, rx: 34 },
+        { x: 160, y: 108, w: 230, h: 52, rx: 18 }
+      ]
+    },
+    bus: {
+      id: "bus",
+      emoji: "🚌",
+      stickerPos: { x: 274, y: 258, size: 52 },
+      cleanClip: "hoot-cw-bus",
+      cleanFallback: "hoot-super",
+      honkGlyph: "🚌🎶",
+      mudZones: [
+        { x: 100, y: 126, w: 432, h: 192, rx: 40 }
+      ]
+    },
+    icecream: {
+      id: "icecream",
+      emoji: "🍦",
+      stickerPos: { x: 254, y: 256, size: 50 },
+      cleanClip: "hoot-cw-icecream",
+      cleanFallback: "hoot-great-job",
+      honkGlyph: "🍦🎵",
+      mudZones: [
+        { x: 110, y: 146, w: 416, h: 174, rx: 36 },
+        { x: 250, y: 72, w: 112, h: 88, rx: 36 }
+      ]
+    },
+    tractor: {
+      id: "tractor",
+      emoji: "🚜",
+      stickerPos: { x: 374, y: 224, size: 48 },
+      cleanClip: "hoot-cw-tractor",
+      cleanFallback: "hoot-yay-2",
+      honkGlyph: "🚜📣",
+      mudZones: [
+        { x: 146, y: 104, w: 166, h: 214, rx: 34 },
+        { x: 288, y: 166, w: 224, h: 146, rx: 34 }
+      ]
+    }
+  };
+
+  var STICKER_GLYPHS = {
+    star: "⭐",
+    rainbow: "🌈",
+    heart: "❤️",
+    bolt: "⚡"
+  };
+
+  function stickerMarkup(vehicleId, stickerId){
+    if(!stickerId || !STICKER_GLYPHS[stickerId]) return "";
+    var pos = VEHICLES[vehicleId].stickerPos;
+    return '<g id="hoodStickerNode" transform="translate(' + pos.x + ',' + pos.y + ')">'
+      + '<circle cx="0" cy="0" r="' + (pos.size * 0.62) + '" fill="#ffffff" stroke="#ffd84d" stroke-width="5" opacity=".96"/>'
+      + '<text x="0" y="' + (pos.size * 0.34) + '" text-anchor="middle" font-size="' + pos.size + '">' + STICKER_GLYPHS[stickerId] + '</text>'
+      + '</g>';
+  }
+
+  /* Crisp, Joyful Cartoon SVG Vehicles (viewBox 0 0 640 420) */
+  function vehicleSvg(id, stickerId){
+    var st = stickerMarkup(id, stickerId);
+
+    if(id === "firetruck"){
+      return '<defs>'
+        + '<linearGradient id="ftRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="55%" stop-color="#ef4444"/><stop offset="100%" stop-color="#b91c1c"/></linearGradient>'
+        + '<linearGradient id="ftWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#7dd3fc"/></linearGradient>'
+        + '<linearGradient id="ftMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f8fafc"/><stop offset="100%" stop-color="#94a3b8"/></linearGradient>'
+        + '</defs>'
+        /* Ground shadow */
+        + '<ellipse cx="322" cy="356" rx="224" ry="20" fill="rgba(7,89,133,.28)"/>'
+        /* Roof Silver Ladder */
+        + '<g>'
+        + '<rect x="132" y="106" width="268" height="34" rx="10" fill="url(#ftMetal)" stroke="#475569" stroke-width="5"/>'
+        + '<line x1="168" y1="108" x2="168" y2="138" stroke="#64748b" stroke-width="6"/>'
+        + '<line x1="208" y1="108" x2="208" y2="138" stroke="#64748b" stroke-width="6"/>'
+        + '<line x1="248" y1="108" x2="248" y2="138" stroke="#64748b" stroke-width="6"/>'
+        + '<line x1="288" y1="108" x2="288" y2="138" stroke="#64748b" stroke-width="6"/>'
+        + '<line x1="328" y1="108" x2="328" y2="138" stroke="#64748b" stroke-width="6"/>'
+        + '<line x1="368" y1="108" x2="368" y2="138" stroke="#64748b" stroke-width="6"/>'
+        + '</g>'
+        /* Flashing Siren Beacon */
+        + '<rect x="436" y="104" width="38" height="30" rx="14" fill="#38bdf8" stroke="#1e3a8a" stroke-width="5"/>'
+        + '<circle cx="455" cy="116" r="7" fill="#fff9c4"/>'
+        /* Rear Equipment Body */
+        + '<rect x="108" y="148" width="292" height="162" rx="26" fill="url(#ftRed)" stroke="#7f1d1d" stroke-width="6"/>'
+        /* Glossy top highlight */
+        + '<path d="M132,162 H382" stroke="#fca5a5" stroke-width="8" stroke-linecap="round" opacity=".75"/>'
+        /* White racing stripe */
+        + '<rect x="112" y="218" width="288" height="24" fill="#ffffff"/>'
+        /* Roll-up Equipment Door & Hose Reel */
+        + '<rect x="134" y="172" width="84" height="106" rx="12" fill="url(#ftMetal)" stroke="#475569" stroke-width="4.5"/>'
+        + '<line x1="142" y1="196" x2="210" y2="196" stroke="#64748b" stroke-width="4"/>'
+        + '<line x1="142" y1="220" x2="210" y2="220" stroke="#64748b" stroke-width="4"/>'
+        + '<line x1="142" y1="244" x2="210" y2="244" stroke="#64748b" stroke-width="4"/>'
+        + '<circle cx="338" cy="240" r="32" fill="#facc15" stroke="#854d0e" stroke-width="5"/>'
+        + '<circle cx="338" cy="240" r="16" fill="#fef08a" stroke="#854d0e" stroke-width="4"/>'
+        /* Front Cab */
+        + '<path d="M388,132 H486 Q526,132 534,174 L544,236 Q548,310 518,310 H388 Z" fill="url(#ftRed)" stroke="#7f1d1d" stroke-width="6" stroke-linejoin="round"/>'
+        /* White stripe across cab */
+        + '<rect x="390" y="218" width="148" height="24" fill="#ffffff"/>'
+        /* Cute Smiling Windshield with Expressive Cartoon Eyes */
+        + '<path d="M408,150 H488 Q514,150 520,182 L524,206 H408 Z" fill="url(#ftWin)" stroke="#1e3a8a" stroke-width="5" stroke-linejoin="round"/>'
+        + '<ellipse cx="446" cy="180" rx="13" ry="15" fill="#ffffff" stroke="#1e293b" stroke-width="3.2"/>'
+        + '<ellipse cx="486" cy="180" rx="13" ry="15" fill="#ffffff" stroke="#1e293b" stroke-width="3.2"/>'
+        + '<circle cx="450" cy="180" r="7" fill="#0f172a"/>'
+        + '<circle cx="490" cy="180" r="7" fill="#0f172a"/>'
+        + '<circle cx="453" cy="176" r="2.8" fill="#fff"/>'
+        + '<circle cx="493" cy="176" r="2.8" fill="#fff"/>'
+        /* Happy Chrome Bumper + Headlight + Smile */
+        + '<rect x="526" y="252" width="22" height="26" rx="8" fill="#fef08a" stroke="#a16207" stroke-width="4"/>'
+        + '<path d="M454,264 Q482,282 510,264" fill="none" stroke="#7f1d1d" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<rect x="96" y="294" width="460" height="24" rx="12" fill="url(#ftMetal)" stroke="#475569" stroke-width="5"/>'
+        /* Big Chunky Wheels */
+        + '<g>'
+        + '<circle cx="196" cy="316" r="44" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+        + '<circle cx="196" cy="316" r="24" fill="#e2e8f0" stroke="#475569" stroke-width="4"/>'
+        + '<circle cx="196" cy="316" r="9" fill="#ef4444"/>'
+        + '<circle cx="454" cy="316" r="44" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+        + '<circle cx="454" cy="316" r="24" fill="#e2e8f0" stroke="#475569" stroke-width="4"/>'
+        + '<circle cx="454" cy="316" r="9" fill="#ef4444"/>'
+        + '</g>'
+        + st;
+    }
+
+    if(id === "bus"){
+      return '<defs>'
+        + '<linearGradient id="busYel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="48%" stop-color="#facc15"/><stop offset="100%" stop-color="#eab308"/></linearGradient>'
+        + '<linearGradient id="busWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#7dd3fc"/></linearGradient>'
+        + '</defs>'
+        + '<ellipse cx="322" cy="356" rx="228" ry="20" fill="rgba(7,89,133,.28)"/>'
+        /* Roof Amber Lights */
+        + '<circle cx="170" cy="118" r="12" fill="#fb923c" stroke="#9a3412" stroke-width="4"/>'
+        + '<circle cx="468" cy="118" r="12" fill="#ef4444" stroke="#991b1b" stroke-width="4"/>'
+        /* Main Rounded School Bus Body */
+        + '<path d="M108,162 Q108,122 152,122 H458 Q504,122 512,168 L522,216 H532 Q552,216 552,248 V298 Q552,312 534,312 H112 Q96,312 96,294 V162 Z" fill="url(#busYel)" stroke="#854d0e" stroke-width="6" stroke-linejoin="round"/>'
+        + '<path d="M150,136 H452" stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity=".68"/>'
+        /* Classic Black Stripes */
+        + '<rect x="102" y="226" width="444" height="12" fill="#1e293b"/>'
+        + '<rect x="102" y="246" width="444" height="8" fill="#1e293b"/>'
+        /* Row of Bright Bus Windows */
+        + '<rect x="128" y="150" width="66" height="62" rx="14" fill="url(#busWin)" stroke="#1e3a8a" stroke-width="4.5"/>'
+        + '<rect x="208" y="150" width="66" height="62" rx="14" fill="url(#busWin)" stroke="#1e3a8a" stroke-width="4.5"/>'
+        + '<rect x="288" y="150" width="66" height="62" rx="14" fill="url(#busWin)" stroke="#1e3a8a" stroke-width="4.5"/>'
+        /* Cute Stop Sign Emblem */
+        + '<polygon points="366,184 378,172 396,172 408,184 408,202 396,214 378,214 366,202" fill="#ef4444" stroke="#ffffff" stroke-width="3.5"/>'
+        /* Front Windshield with Happy Cartoon Eyes */
+        + '<path d="M416,150 H482 Q502,150 508,176 L516,212 H416 Z" fill="url(#busWin)" stroke="#1e3a8a" stroke-width="4.5" stroke-linejoin="round"/>'
+        + '<ellipse cx="446" cy="182" rx="12" ry="14" fill="#ffffff" stroke="#1e293b" stroke-width="3"/>'
+        + '<ellipse cx="480" cy="182" rx="12" ry="14" fill="#ffffff" stroke="#1e293b" stroke-width="3"/>'
+        + '<circle cx="450" cy="182" r="6.5" fill="#0f172a"/>'
+        + '<circle cx="484" cy="182" r="6.5" fill="#0f172a"/>'
+        + '<circle cx="452" cy="178" r="2.6" fill="#fff"/>'
+        + '<circle cx="486" cy="178" r="2.6" fill="#fff"/>'
+        /* Happy Smile & Headlight & Bumpers */
+        + '<path d="M466,268 Q494,284 522,268" fill="none" stroke="#854d0e" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<circle cx="542" cy="264" r="13" fill="#fff9c4" stroke="#a16207" stroke-width="4"/>'
+        + '<rect x="88" y="294" width="470" height="22" rx="11" fill="#334155" stroke="#0f172a" stroke-width="4.5"/>'
+        /* Chunky Bus Wheels */
+        + '<circle cx="196" cy="316" r="44" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+        + '<circle cx="196" cy="316" r="23" fill="#facc15" stroke="#854d0e" stroke-width="4"/>'
+        + '<circle cx="196" cy="316" r="8" fill="#334155"/>'
+        + '<circle cx="448" cy="316" r="44" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+        + '<circle cx="448" cy="316" r="23" fill="#facc15" stroke="#854d0e" stroke-width="4"/>'
+        + '<circle cx="448" cy="316" r="8" fill="#334155"/>'
+        + st;
+    }
+
+    if(id === "icecream"){
+      return '<defs>'
+        + '<linearGradient id="icMint" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#99f6e4"/><stop offset="55%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>'
+        + '<linearGradient id="icCream" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#fef3c7"/></linearGradient>'
+        + '<linearGradient id="icWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#7dd3fc"/></linearGradient>'
+        + '</defs>'
+        + '<ellipse cx="322" cy="356" rx="224" ry="20" fill="rgba(7,89,133,.28)"/>'
+        /* Giant Roof Ice Cream Cone! */
+        + '<g transform="translate(300, 108)">'
+        + '<polygon points="-24,34 24,34 0,-2" fill="#f59e0b" stroke="#92400e" stroke-width="4.5" stroke-linejoin="round" transform="rotate(180 0 18)"/>'
+        + '<circle cx="-18" cy="-14" r="22" fill="#f472b6" stroke="#9d174d" stroke-width="4.5"/>'
+        + '<circle cx="18" cy="-14" r="22" fill="#fef08a" stroke="#a16207" stroke-width="4.5"/>'
+        + '<circle cx="0" cy="-32" r="24" fill="#fff1f2" stroke="#be185d" stroke-width="4.5"/>'
+        + '<circle cx="0" cy="-58" r="9" fill="#ef4444" stroke="#991b1b" stroke-width="3.5"/>'
+        /* Rainbow sprinkles on top scoop */
+        + '<line x1="-10" y1="-34" x2="-4" y2="-30" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>'
+        + '<line x1="6" y1="-36" x2="12" y2="-32" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>'
+        + '<line x1="-2" y1="-24" x2="4" y2="-22" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>'
+        + '</g>'
+        /* Van Body */
+        + '<path d="M114,166 Q114,136 148,136 H456 Q498,136 514,180 L534,236 Q546,256 544,296 Q544,312 522,312 H122 Q104,312 104,292 V166 Z" fill="url(#icCream)" stroke="#0f766e" stroke-width="6" stroke-linejoin="round"/>'
+        /* Mint lower body */
+        + '<path d="M107,232 H536 L542,296 Q542,309 522,309 H122 Q107,309 107,292 Z" fill="url(#icMint)"/>'
+        /* Pink Frosting Wave Trim */
+        + '<path d="M108,232 Q132,250 156,232 Q180,250 204,232 Q228,250 252,232 Q276,250 300,232 Q324,250 348,232 Q372,250 396,232 Q420,250 444,232 Q468,250 492,232 Q514,250 536,232" fill="none" stroke="#f472b6" stroke-width="10" stroke-linecap="round"/>'
+        /* Serving Window with Scalloped Pink & White Awning */
+        + '<rect x="148" y="160" width="210" height="68" rx="14" fill="url(#icWin)" stroke="#0f766e" stroke-width="4.5"/>'
+        + '<g>'
+        + '<path d="M142,158 H364 L356,184 Q342,196 328,184 Q314,196 300,184 Q286,196 272,184 Q258,196 244,184 Q230,196 216,184 Q202,196 188,184 Q174,196 160,184 Q146,196 142,182 Z" fill="#f472b6" stroke="#9d174d" stroke-width="4" stroke-linejoin="round"/>'
+        + '<rect x="174" y="160" width="24" height="24" fill="#ffffff" opacity=".88"/>'
+        + '<rect x="230" y="160" width="24" height="24" fill="#ffffff" opacity=".88"/>'
+        + '<rect x="286" y="160" width="24" height="24" fill="#ffffff" opacity=".88"/>'
+        + '<rect x="334" y="160" width="22" height="24" fill="#ffffff" opacity=".88"/>'
+        + '</g>'
+        /* Front Windshield with Sweet Smiling Eyes */
+        + '<path d="M396,158 H476 Q498,158 506,188 L516,218 H396 Z" fill="url(#icWin)" stroke="#0f766e" stroke-width="4.5" stroke-linejoin="round"/>'
+        + '<ellipse cx="436" cy="188" rx="12" ry="14" fill="#ffffff" stroke="#1e293b" stroke-width="3"/>'
+        + '<ellipse cx="472" cy="188" rx="12" ry="14" fill="#ffffff" stroke="#1e293b" stroke-width="3"/>'
+        + '<circle cx="440" cy="188" r="6.5" fill="#0f172a"/>'
+        + '<circle cx="476" cy="188" r="6.5" fill="#0f172a"/>'
+        + '<circle cx="443" cy="184" r="2.6" fill="#fff"/>'
+        + '<circle cx="479" cy="184" r="2.6" fill="#fff"/>'
+        /* Happy Rosy Cheek, Smile & Bumper */
+        + '<path d="M460,268 Q488,284 514,268" fill="none" stroke="#134e4a" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<circle cx="534" cy="264" r="12" fill="#fef08a" stroke="#a16207" stroke-width="4"/>'
+        + '<rect x="94" y="294" width="460" height="22" rx="11" fill="#f472b6" stroke="#9d174d" stroke-width="4.5"/>'
+        /* Cute Mint-Hub Wheels */
+        + '<circle cx="204" cy="316" r="43" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+        + '<circle cx="204" cy="316" r="23" fill="#fce7f3" stroke="#db2777" stroke-width="4"/>'
+        + '<circle cx="204" cy="316" r="8" fill="#2dd4bf"/>'
+        + '<circle cx="444" cy="316" r="43" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+        + '<circle cx="444" cy="316" r="23" fill="#fce7f3" stroke="#db2777" stroke-width="4"/>'
+        + '<circle cx="444" cy="316" r="8" fill="#2dd4bf"/>'
+        + st;
+    }
+
+    /* Green Farm Tractor */
+    return '<defs>'
+      + '<linearGradient id="trGrn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#86efac"/><stop offset="48%" stop-color="#22c55e"/><stop offset="100%" stop-color="#15803d"/></linearGradient>'
+      + '<linearGradient id="trWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#7dd3fc"/></linearGradient>'
+      + '</defs>'
+      + '<ellipse cx="324" cy="356" rx="208" ry="20" fill="rgba(7,89,133,.28)"/>'
+      /* Tall Chrome Exhaust Chimney */
+      + '<path d="M446,166 V98 Q446,84 464,84" fill="none" stroke="#475569" stroke-width="18" stroke-linecap="round"/>'
+      + '<path d="M446,166 V98 Q446,84 464,84" fill="none" stroke="#cbd5e1" stroke-width="9" stroke-linecap="round"/>'
+      /* Cozy Cab Roof & Pillars */
+      + '<rect x="148" y="94" width="166" height="24" rx="12" fill="#facc15" stroke="#854d0e" stroke-width="5"/>'
+      + '<path d="M164,118 L152,226 H308 L296,118 Z" fill="url(#trWin)" stroke="#14532d" stroke-width="6" stroke-linejoin="round"/>'
+      /* Tractor Green Body & Hood */
+      + '<path d="M142,216 H312 V170 Q312,158 326,158 H478 Q514,158 518,196 L522,280 Q522,298 502,298 H142 Z" fill="url(#trGrn)" stroke="#14532d" stroke-width="6" stroke-linejoin="round"/>'
+      /* Sunny Yellow Racing Stripe */
+      + '<rect x="312" y="218" width="204" height="20" fill="#facc15"/>'
+      /* Hood Highlight */
+      + '<path d="M336,174 H478" stroke="#bbf7d0" stroke-width="7" stroke-linecap="round" opacity=".82"/>'
+      /* Smiling Friendly Eyes on Tractor Cab & Front Grille */
+      + '<ellipse cx="212" cy="170" rx="14" ry="16" fill="#ffffff" stroke="#1e293b" stroke-width="3.2"/>'
+      + '<ellipse cx="254" cy="170" rx="14" ry="16" fill="#ffffff" stroke="#1e293b" stroke-width="3.2"/>'
+      + '<circle cx="216" cy="170" r="7.5" fill="#0f172a"/>'
+      + '<circle cx="258" cy="170" r="7.5" fill="#0f172a"/>'
+      + '<circle cx="219" cy="166" r="2.8" fill="#fff"/>'
+      + '<circle cx="261" cy="166" r="2.8" fill="#fff"/>'
+      /* Front Headlight & Happy Smile */
+      + '<circle cx="518" cy="198" r="15" fill="#fef08a" stroke="#a16207" stroke-width="4.5"/>'
+      + '<path d="M446,262 Q476,280 502,262" fill="none" stroke="#14532d" stroke-width="5.5" stroke-linecap="round"/>'
+      /* Fender over Giant Rear Wheel */
+      + '<path d="M116,266 Q146,184 236,192 Q296,198 310,256" fill="none" stroke="#16a34a" stroke-width="18" stroke-linecap="round"/>'
+      + '<path d="M116,266 Q146,184 236,192 Q296,198 310,256" fill="none" stroke="#14532d" stroke-width="5" stroke-linecap="round"/>'
+      /* GIANT Chunky Rear Wheel + Smaller Front Wheel */
+      + '<circle cx="212" cy="292" r="68" fill="#1e293b" stroke="#0f172a" stroke-width="6"/>'
+      + '<circle cx="212" cy="292" r="36" fill="#facc15" stroke="#854d0e" stroke-width="5"/>'
+      + '<circle cx="212" cy="292" r="14" fill="#15803d"/>'
+      + '<circle cx="458" cy="318" r="42" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>'
+      + '<circle cx="458" cy="318" r="22" fill="#facc15" stroke="#854d0e" stroke-width="4"/>'
+      + '<circle cx="458" cy="318" r="8" fill="#15803d"/>'
+      + st;
+  }
+
+  function pillSvg(id){
+    return '<svg viewBox="76 62 496 312">' + vehicleSvg(id, null) + '</svg>';
+  }
+
+  /* Cursor SVG for Sponge & Water Hose */
+  var SPONGE_CURSOR_SVG = '<svg viewBox="0 0 80 80">'
+    + '<rect x="14" y="26" width="52" height="36" rx="12" fill="#fde047" stroke="#92400e" stroke-width="4"/>'
+    + '<circle cx="28" cy="40" r="4" fill="#ca8a04" opacity=".6"/>'
+    + '<circle cx="44" cy="48" r="5" fill="#ca8a04" opacity=".6"/>'
+    + '<circle cx="52" cy="36" r="3.5" fill="#ca8a04" opacity=".6"/>'
+    + '<circle cx="24" cy="22" r="10" fill="#ffffff" stroke="#38bdf8" stroke-width="2.5"/>'
+    + '<circle cx="40" cy="18" r="12" fill="#ffffff" stroke="#f472b6" stroke-width="2.5"/>'
+    + '<circle cx="56" cy="23" r="9" fill="#ffffff" stroke="#a855f7" stroke-width="2.5"/>'
+    + '</svg>';
+
+  var HOSE_CURSOR_SVG = '<svg viewBox="0 0 80 80">'
+    + '<g transform="translate(40,40) rotate(-28)">'
+    + '<rect x="-6" y="4" width="12" height="28" rx="6" fill="#0284c7" stroke="#0c4a6e" stroke-width="3.5"/>'
+    + '<rect x="-18" y="-12" width="36" height="18" rx="7" fill="#38bdf8" stroke="#0c4a6e" stroke-width="3.5"/>'
+    + '<polygon points="-14,-12 -22,-28 22,-28 14,-12" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/>'
+    + '<circle cx="-10" cy="-34" r="4" fill="#7dd3fc"/>'
+    + '<circle cx="0" cy="-36" r="4.5" fill="#e0f2fe"/>'
+    + '<circle cx="10" cy="-34" r="4" fill="#7dd3fc"/>'
+    + '</g></svg>';
+
+  /* ============================================================================
+     DOM REFERENCES & STATE
+     ============================================================================ */
+  var $ = function(id){ return document.getElementById(id); };
+  var stage = $("stage");
+  var hootBtn = $("hootBtn");
+  var hootPupils = $("hootPupils");
+  var starPill = $("starPill");
+  var starNum = $("starNum");
+  var soundBtn = $("soundBtn");
+
+  var truckMotion = $("truckMotion");
+  var truckSvg = $("truckSvg");
+  var mudCanvas = $("mudCanvas");
+  var mudCtx = mudCanvas.getContext("2d", { willReadFrequently: true });
+  var foamCanvas = $("foamCanvas");
+  var foamCtx = foamCanvas.getContext("2d", { willReadFrequently: true });
+  var fxCanvas = $("fxCanvas");
+  var fxCtx = fxCanvas.getContext("2d");
+
+  var shineSweep = $("shineSweep");
+  var truckTapOverlay = $("truckTapOverlay");
+  var honkBurst = $("honkBurst");
+  var toolCursor = $("toolCursor");
+  var bayHint = $("bayHint");
+  var cleanMeterFill = $("cleanMeterFill");
+
+  var celebrateActions = $("celebrateActions");
+  var honkBtn = $("honkBtn");
+  var nextTruckBtn = $("nextTruckBtn");
+  var nextTruckIcon = $("nextTruckIcon");
+
+  var spongeDock = $("spongeDock");
+  var rinseDock = $("rinseDock");
+  var dryDock = $("dryDock");
+  var stickerDock = $("stickerDock");
+  var spongeToolBtn = $("spongeToolBtn");
+  var hoseToolBtn = $("hoseToolBtn");
+  var dryerToolBtn = $("dryerToolBtn");
+  var fxLayer = $("fxLayer");
+
+  var vehiclePills = Array.prototype.slice.call(document.querySelectorAll(".vehicle-pill"));
+  var stepPips = Array.prototype.slice.call(document.querySelectorAll(".step-pip"));
+  var stickerBtns = Array.prototype.slice.call(document.querySelectorAll(".sticker-btn"));
+
+  /* Age-adaptive defaults: Riley (kidb, age 2) gets 74px brush & 36% threshold; Zane gets 62px / 45% */
+  var IS_RILEY = false;
+  try{
+    var sp = new URLSearchParams(window.location.search || "");
+    IS_RILEY = sp.get("kid") === "kidb";
+  }catch(e){}
+
+  var BRUSH_RADIUS = IS_RILEY ? 74 : 62;
+  var CLEAN_THRESHOLD = IS_RILEY ? 0.36 : 0.45;
+  var CANVAS_W = 640;
+  var CANVAS_H = 420;
+
+  var vehicleId = "firetruck";
+  var phase = "sponge"; /* "sponge" | "rinse" | "dry" | "celebrate" */
+  var chosenSticker = null;
+  var washedMap = {};
+  var washedCount = 0;
+  var stars = 0;
+  var soundOn = true;
+  var dead = false;
+  var isTransitioning = false;
+  var isDrying = false;
+  var hasInteractedThisTruck = false;
+  var idleVoiceReminded = false;
+  var allFourCelebrated = false;
+
+  var mudSamples = [];
+  var foamSamples = [];
+  var mudCleanedRatio = 0;
+  var foamCleanedRatio = 0;
+
+  var isScrubbing = false;
+  var lastPt = null;
+  var lastCheckAt = 0;
+  var lastSfxAt = 0;
+  var spongeArmTimer = null;
+
+  var timers = [];
+  var idleTimer = null;
+  var idleVoiceTimer = null;
+  var fxRaf = 0;
+
+  /* Live FX Particle Pools */
+  var bubbles = [];
+  var droplets = [];
+  var windRibbons = [];
+  var sparkles = [];
+
+  /* ============================================================================
+     HOOT_HAVE-GATED STUDIO VOICE QUEUE & WEB AUDIO SFX (ZERO SYNTHETIC SPEECH)
+     ============================================================================ */
+  var audioCtx = null;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var voiceQueue = [];
+  var voicePlaying = false;
+  var audioUnlocked = false;
+  var pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
+  }
+
+  function getAudioCtx(){
+    if(!soundOn) return null;
+    try{
+      if(!audioCtx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if(AC) audioCtx = new AC();
+      }
+      if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    }catch(e){}
+    return audioCtx;
+  }
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    getAudioCtx();
+    try{
+      if(!voicePlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              enqueueVoice(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
+  function clearVoice(stopCurrent){
+    voiceQueue.length = 0;
+    if(stopCurrent){
+      voicePlaying = false;
+      try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
+    }
+  }
+
+  function pumpVoice(){
+    if(dead || !soundOn || voicePlaying || !voiceQueue.length) return;
+    var clip = voiceQueue.shift();
+    voicePlaying = true;
+    voiceEl.muted = false;
+    voiceEl.src = "assets/voice/" + clip;
+    var p = voiceEl.play();
+    if(p && p.catch){
+      p.catch(function(){
+        voicePlaying = false;
+        if(!audioUnlocked && !pendingBootClip) pendingBootClip = clip;
+        pumpVoice();
+      });
+    }
+  }
+  voiceEl.addEventListener("ended", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+  voiceEl.addEventListener("error", function(){
+    voicePlaying = false;
+    pumpVoice();
+  });
+
+  function enqueueVoice(clip, interrupt){
+    if(dead || !soundOn || !clip) return;
+    if(clip.indexOf(".mp3") < 0) clip = clip + ".mp3";
+    if(interrupt) clearVoice(true);
+    voiceQueue.push(clip);
+    pumpVoice();
+  }
+
+  function playCarWashGuide(customId, fallbackId, isBoot){
+    var clip = resolveClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && phase === "sponge" && !hasInteractedThisTruck){
+              enqueueVoice(clip, true);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    enqueueVoice(clip, true);
+  }
+
+  function speakCurrentStepGuide(isBoot){
+    if(phase === "sponge"){
+      if(isBoot){
+        playCarWashGuide("hoot-cw-welcome", "hoot-welcome", true);
+      } else {
+        playCarWashGuide("hoot-cw-sponge", "hoot-tap-big-btn", false);
+      }
+    } else if(phase === "rinse"){
+      playCarWashGuide("hoot-cw-rinse", "hoot-tap-big-btn", false);
+    } else if(phase === "dry"){
+      playCarWashGuide("hoot-cw-dry", "hoot-tap-big-btn", false);
+    } else if(phase === "celebrate"){
+      var v = VEHICLES[vehicleId] || VEHICLES.firetruck;
+      playCarWashGuide(v.cleanClip, v.cleanFallback, false);
+    }
+  }
+
+  /* ============================================================================
+     PLAYFUL WEB AUDIO SFX (BUBBLES, WATER SPRAY, WIND DRYER, CUSTOM VEHICLE HORNS)
+     ============================================================================ */
+  var noiseBuffer = null;
+  function getNoiseBuffer(ctx){
+    if(noiseBuffer) return noiseBuffer;
+    var len = Math.floor(ctx.sampleRate * 0.45);
+    noiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+    var data = noiseBuffer.getChannelData(0);
+    for(var i = 0; i < len; i++){
+      data[i] = (Math.random() * 2 - 1);
+    }
+    return noiseBuffer;
+  }
+
+  /* Bubbly rainbow soap pop SFX */
+  function bubblePopSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var now = Date.now();
+    if(now - lastSfxAt < 70) return;
+    lastSfxAt = now;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      var base = 420 + Math.random() * 440;
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(base, t);
+      osc.frequency.exponentialRampToValueAtTime(base * 2.1, t + 0.085);
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.linearRampToValueAtTime(0.14, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.12);
+    }catch(e){}
+  }
+
+  /* Shimmering water hose spray whoosh SFX */
+  function waterSpraySfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var now = Date.now();
+    if(now - lastSfxAt < 85) return;
+    lastSfxAt = now;
+    var t = ctx.currentTime;
+    try{
+      var src = ctx.createBufferSource();
+      src.buffer = getNoiseBuffer(ctx);
+      var filt = ctx.createBiquadFilter();
+      filt.type = "bandpass";
+      filt.frequency.setValueAtTime(1800 + Math.random() * 900, t);
+      filt.Q.value = 1.1;
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.linearRampToValueAtTime(0.09, t + 0.025);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      src.connect(filt);
+      filt.connect(g);
+      g.connect(ctx.destination);
+      src.start(t);
+      src.stop(t + 0.18);
+    }catch(e){}
+  }
+
+  /* Giant breezy wind dryer whoosh + sparkle chime */
+  function blowerWhooshSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var src = ctx.createBufferSource();
+      src.buffer = getNoiseBuffer(ctx);
+      src.loop = true;
+      var filt = ctx.createBiquadFilter();
+      filt.type = "bandpass";
+      filt.Q.value = 1.8;
+      filt.frequency.setValueAtTime(420, t);
+      filt.frequency.exponentialRampToValueAtTime(1450, t + 0.42);
+      filt.frequency.exponentialRampToValueAtTime(640, t + 0.92);
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.linearRampToValueAtTime(0.16, t + 0.14);
+      g.gain.setValueAtTime(0.14, t + 0.62);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.96);
+      src.connect(filt);
+      filt.connect(g);
+      g.connect(ctx.destination);
+      src.start(t);
+      src.stop(t + 0.98);
+    }catch(e){}
+  }
+
+  /* Sparkling step complete chime */
+  function sparkleChimeSfx(stepNum){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var notes = stepNum >= 3
+      ? [523.25, 659.25, 783.99, 1046.5, 1318.5]
+      : [523.25, 659.25, 783.99, 1046.5];
+    var t = ctx.currentTime;
+    notes.forEach(function(freq, i){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, t + i * 0.06);
+        g.gain.setValueAtTime(0.15, t + i * 0.06);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.36);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + i * 0.06);
+        osc.stop(t + i * 0.06 + 0.38);
+      }catch(e){}
+    });
+  }
+
+  function clickPopSfx(freq){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq || 680, t);
+      osc.frequency.exponentialRampToValueAtTime((freq || 680) * 1.3, t + 0.08);
+      g.gain.setValueAtTime(0.14, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.15);
+    }catch(e){}
+  }
+
+  /* Custom Silly Horn Per Vehicle! */
+  function vehicleHornSfx(id){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    try{
+      if(id === "firetruck"){
+        /* Playful Fire Truck Airhorn + Wee-Ooo Siren */
+        [0, 0.24].forEach(function(off){
+          [285, 358].forEach(function(freq){
+            var o = ctx.createOscillator();
+            var g = ctx.createGain();
+            o.type = "sawtooth";
+            var f = ctx.createBiquadFilter();
+            f.type = "lowpass";
+            f.frequency.value = 1100;
+            o.frequency.setValueAtTime(freq, t + off);
+            g.gain.setValueAtTime(0.09, t + off);
+            g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.19);
+            o.connect(f); f.connect(g); g.connect(ctx.destination);
+            o.start(t + off); o.stop(t + off + 0.2);
+          });
+        });
+        var s = ctx.createOscillator();
+        var sg = ctx.createGain();
+        s.type = "triangle";
+        s.frequency.setValueAtTime(640, t + 0.45);
+        s.frequency.linearRampToValueAtTime(920, t + 0.62);
+        s.frequency.linearRampToValueAtTime(620, t + 0.8);
+        sg.gain.setValueAtTime(0.13, t + 0.45);
+        sg.gain.exponentialRampToValueAtTime(0.001, t + 0.82);
+        s.connect(sg); sg.connect(ctx.destination);
+        s.start(t + 0.45); s.stop(t + 0.84);
+      } else if(id === "bus"){
+        /* Cheerful Double Beep-Beep School Bus Horn */
+        [0, 0.21].forEach(function(off){
+          [440, 554.37].forEach(function(freq){
+            var o = ctx.createOscillator();
+            var g = ctx.createGain();
+            o.type = "triangle";
+            o.frequency.setValueAtTime(freq, t + off);
+            g.gain.setValueAtTime(0.15, t + off);
+            g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.15);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(t + off); o.stop(t + off + 0.16);
+          });
+        });
+      } else if(id === "icecream"){
+        /* Twinkling Sweet Ice Cream Truck Music Box Jingle */
+        var melody = [659.25, 783.99, 1046.5, 880, 1046.5, 1318.5];
+        melody.forEach(function(freq, idx){
+          var o = ctx.createOscillator();
+          var g = ctx.createGain();
+          o.type = "sine";
+          o.frequency.setValueAtTime(freq, t + idx * 0.095);
+          g.gain.setValueAtTime(0.16, t + idx * 0.095);
+          g.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.095 + 0.22);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(t + idx * 0.095); o.stop(t + idx * 0.095 + 0.24);
+        });
+      } else {
+        /* Playful Low Bouncy Tractor Honk-Honk! */
+        [0, 0.24].forEach(function(off, idx){
+          var o = ctx.createOscillator();
+          var f = ctx.createBiquadFilter();
+          var g = ctx.createGain();
+          o.type = "sawtooth";
+          o.frequency.setValueAtTime(idx === 0 ? 196 : 233, t + off);
+          o.frequency.linearRampToValueAtTime(idx === 0 ? 174 : 210, t + off + 0.17);
+          f.type = "lowpass";
+          f.frequency.value = 720;
+          g.gain.setValueAtTime(0.16, t + off);
+          g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.19);
+          o.connect(f); f.connect(g); g.connect(ctx.destination);
+          o.start(t + off); o.stop(t + off + 0.2);
+        });
+      }
+    }catch(e){}
+  }
+
+  /* ============================================================================
+     TIMERS & GLOBAL FX HELPERS
+     ============================================================================ */
+  function later(fn, ms){
+    var id = setTimeout(function(){
+      if(!dead) fn();
+    }, ms);
+    timers.push(id);
+    return id;
+  }
+
+  function clearTimers(){
+    while(timers.length) clearTimeout(timers.pop());
+  }
+
+  function hootCheer(){
+    hootBtn.classList.remove("cheer");
+    void hootBtn.offsetWidth;
+    hootBtn.classList.add("cheer");
+  }
+
+  function spawnSparkles(cx, cy, count){
+    var glyphs = ["✨", "⭐", "🌟", "🫧"];
+    var n = count || 12;
+    for(var i = 0; i < n; i++){
+      var el = document.createElement("span");
+      el.className = "fx-spark";
+      el.textContent = glyphs[i % glyphs.length];
+      el.style.left = cx + "px";
+      el.style.top = cy + "px";
+      fxLayer.appendChild(el);
+      var ang = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+      var dist = 42 + Math.random() * 78;
+      var dx = Math.cos(ang) * dist;
+      var dy = Math.sin(ang) * dist - 18;
+      if(el.animate){
+        el.animate([
+          { transform: "translate(-50%,-50%) scale(.4) rotate(0deg)", opacity: 1 },
+          { transform: "translate(calc(-50% + " + dx.toFixed(0) + "px), calc(-50% + " + dy.toFixed(0) + "px)) scale(1.25) rotate(120deg)", opacity: 0 }
+        ], { duration: 680 + Math.random() * 260, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 980); })(el);
+    }
+  }
+
+  function showerConfetti(count){
+    var cols = ["#ff595e", "#ffca3a", "#2dd4bf", "#38bdf8", "#a855f7", "#fb923c", "#f472b6"];
+    var n = count || 48;
+    var vw = window.innerWidth;
+    for(var i = 0; i < n; i++){
+      var c = document.createElement("div");
+      c.className = "fx-conf";
+      c.style.background = cols[i % cols.length];
+      c.style.left = (Math.random() * vw).toFixed(0) + "px";
+      c.style.top = (-20 - Math.random() * 90).toFixed(0) + "px";
+      c.style.width = (10 + Math.random() * 8).toFixed(0) + "px";
+      c.style.height = (10 + Math.random() * 10).toFixed(0) + "px";
+      fxLayer.appendChild(c);
+      var drift = (Math.random() - 0.5) * 180;
+      var fall = window.innerHeight + 120;
+      if(c.animate){
+        c.animate([
+          { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+          { transform: "translate(" + drift.toFixed(0) + "px," + fall + "px) rotate(" + (360 + Math.random() * 420).toFixed(0) + "deg)", opacity: .9 }
+        ], { duration: 1500 + Math.random() * 1050, delay: Math.random() * 300, easing: "cubic-bezier(.2,.6,.4,1)", fill: "forwards" });
+      }
+      (function(node){ setTimeout(function(){ node.remove(); }, 3000); })(c);
+    }
+  }
+
+  /* ============================================================================
+     IDLE HINT SYSTEM (IMMEDIATE VISUAL CUE + GENTLE SPOKEN REMINDER)
+     ============================================================================ */
+  function hideIdleHints(){
+    bayHint.classList.remove("show");
+  }
+
+  function showPhaseHint(){
+    if(dead || phase === "celebrate") return;
+    var pt = findRemainingTargetPoint();
+    bayHint.style.left = ((pt.x / CANVAS_W) * 100).toFixed(1) + "%";
+    bayHint.style.top = ((pt.y / CANVAS_H) * 100).toFixed(1) + "%";
+    bayHint.classList.add("show");
+  }
+
+  function armIdle(fastVisual){
+    hideIdleHints();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+    if(dead || phase === "celebrate") return;
+    var visualDelay = fastVisual ? 1800 : 3800;
+    idleTimer = setTimeout(showPhaseHint, visualDelay);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(dead || phase === "celebrate") return;
+        idleVoiceReminded = true;
+        speakCurrentStepGuide(false);
+      }, 9500);
+    }
+  }
+
+  /* ============================================================================
+     STEP 1 & STEP 2: CANVAS MUD LAYER + RAINBOW FOAM LAYER + TARGET FINDING
+     ============================================================================ */
+  function drawRoundedRectPath(ctx, x, y, w, h, r){
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function clipToVehicleZones(ctx, id){
+    var zones = VEHICLES[id].mudZones;
+    ctx.beginPath();
+    zones.forEach(function(z){
+      drawRoundedRectPath(ctx, z.x, z.y, z.w, z.h, z.rx);
+    });
+    ctx.clip();
+  }
+
+  function paintMudLayer(){
+    mudCtx.save();
+    mudCtx.globalCompositeOperation = "source-over";
+    mudCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    clipToVehicleZones(mudCtx, vehicleId);
+
+    /* Deterministic rich cartoon mud splatters covering the truck */
+    var seed = vehicleId.charCodeAt(0) * 131 + 19;
+    function rand(){
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    }
+
+    /* Warm base mud coat over vehicle silhouette */
+    var g = mudCtx.createLinearGradient(110, 120, 520, 340);
+    g.addColorStop(0, "rgba(126, 78, 38, 0.86)");
+    g.addColorStop(0.5, "rgba(104, 62, 28, 0.92)");
+    g.addColorStop(1, "rgba(84, 46, 18, 0.94)");
+    mudCtx.fillStyle = g;
+    mudCtx.fillRect(80, 65, 480, 290);
+
+    /* Thick squishy mud blobs & splash splatters */
+    for(var i = 0; i < 64; i++){
+      var cx = 110 + rand() * 420;
+      var cy = 110 + rand() * 215;
+      var rx = 18 + rand() * 34;
+      var ry = 14 + rand() * 26;
+      mudCtx.fillStyle = i % 3 === 0 ? "#5c3314" : (i % 3 === 1 ? "#7a4720" : "#91582a");
+      mudCtx.beginPath();
+      mudCtx.ellipse(cx, cy, rx, ry, rand() * Math.PI, 0, Math.PI * 2);
+      mudCtx.fill();
+    }
+
+    /* Mud speckles & cute cartoon drip highlights */
+    for(var s = 0; s < 150; s++){
+      var sx = 104 + rand() * 432;
+      var sy = 100 + rand() * 230;
+      var sr = 2.5 + rand() * 5.5;
+      mudCtx.fillStyle = s % 2 === 0 ? "rgba(62, 32, 10, 0.65)" : "rgba(168, 114, 64, 0.55)";
+      mudCtx.beginPath();
+      mudCtx.arc(sx, sy, sr, 0, Math.PI * 2);
+      mudCtx.fill();
+    }
+
+    mudCtx.restore();
+
+    /* Sample active mud pixels on an 8px grid for ultra-fast accurate progress */
+    mudSamples = [];
+    var data = mudCtx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+    for(var py = 72; py < 350; py += 8){
+      for(var px = 92; px < 548; px += 8){
+        if(data[(py * CANVAS_W + px) * 4 + 3] >= 110){
+          mudSamples.push({ x: px, y: py });
+        }
+      }
+    }
+    mudCleanedRatio = 0;
+    cleanMeterFill.style.width = "0%";
+  }
+
+  function paintFoamBlanket(){
+    foamCtx.save();
+    foamCtx.globalCompositeOperation = "source-over";
+    clipToVehicleZones(foamCtx, vehicleId);
+
+    var pastelCols = [
+      "rgba(255, 255, 255, 0.94)",
+      "rgba(224, 247, 255, 0.92)",
+      "rgba(252, 231, 243, 0.88)",
+      "rgba(254, 249, 195, 0.88)",
+      "rgba(233, 213, 255, 0.86)"
+    ];
+    var seed = vehicleId.charCodeAt(0) * 73 + 41;
+    function rand(){
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    }
+
+    /* Fluffy bubbly white & pastel rainbow soap cloud layer */
+    for(var i = 0; i < 120; i++){
+      var cx = 104 + rand() * 432;
+      var cy = 104 + rand() * 224;
+      var r = 18 + rand() * 32;
+      foamCtx.fillStyle = pastelCols[i % pastelCols.length];
+      foamCtx.beginPath();
+      foamCtx.arc(cx, cy, r, 0, Math.PI * 2);
+      foamCtx.fill();
+      foamCtx.strokeStyle = "rgba(125, 211, 252, 0.55)";
+      foamCtx.lineWidth = 2;
+      foamCtx.stroke();
+    }
+    foamCtx.restore();
+
+    /* Sample active foam pixels on 8px grid */
+    foamSamples = [];
+    var data = foamCtx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+    for(var py = 72; py < 350; py += 8){
+      for(var px = 92; px < 548; px += 8){
+        if(data[(py * CANVAS_W + px) * 4 + 3] >= 95){
+          foamSamples.push({ x: px, y: py });
+        }
+      }
+    }
+    foamCleanedRatio = 0;
+    cleanMeterFill.style.width = "0%";
+  }
+
+  function stampBubblySudsAt(cx, cy){
+    foamCtx.save();
+    foamCtx.globalCompositeOperation = "source-over";
+    clipToVehicleZones(foamCtx, vehicleId);
+    var cols = ["rgba(255,255,255,.85)", "rgba(224,247,255,.82)", "rgba(252,231,243,.78)", "rgba(254,249,195,.78)"];
+    for(var i = 0; i < 4; i++){
+      var ox = (Math.random() - 0.5) * 44;
+      var oy = (Math.random() - 0.5) * 44;
+      var rr = 12 + Math.random() * 18;
+      foamCtx.fillStyle = cols[i % cols.length];
+      foamCtx.beginPath();
+      foamCtx.arc(cx + ox, cy + oy, rr, 0, Math.PI * 2);
+      foamCtx.fill();
+    }
+    foamCtx.restore();
+  }
+
+  function findRemainingTargetPoint(){
+    if(phase === "dry") return { x: 320, y: 220 };
+    var samples = phase === "sponge" ? mudSamples : foamSamples;
+    var ctx = phase === "sponge" ? mudCtx : foamCtx;
+    if(!samples.length) return { x: 320, y: 220 };
+    var data = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+    var sumX = 0, sumY = 0, cnt = 0;
+    for(var i = 0; i < samples.length; i += 5){
+      var s = samples[i];
+      if(data[(s.y * CANVAS_W + s.x) * 4 + 3] >= 95){
+        sumX += s.x;
+        sumY += s.y;
+        cnt++;
+      }
+    }
+    if(!cnt) return { x: 320, y: 220 };
+    return { x: sumX / cnt, y: sumY / cnt };
+  }
+
+  function spawnRainbowBubbles(cx, cy, count){
+    var hues = ["#f472b6", "#38bdf8", "#facc15", "#a855f7", "#34d399"];
+    for(var i = 0; i < count; i++){
+      if(bubbles.length > 90) bubbles.shift();
+      bubbles.push({
+        x: cx + (Math.random() - 0.5) * 48,
+        y: cy + (Math.random() - 0.5) * 40,
+        vx: (Math.random() - 0.5) * 2.2,
+        vy: -1.4 - Math.random() * 2.6,
+        r: 8 + Math.random() * 14,
+        col: hues[Math.floor(Math.random() * hues.length)],
+        life: 1
+      });
+    }
+  }
+
+  function spawnWaterDroplets(cx, cy, count){
+    for(var i = 0; i < count; i++){
+      if(droplets.length > 110) droplets.shift();
+      var ang = Math.random() * Math.PI * 2;
+      var spd = 2.2 + Math.random() * 5.2;
+      droplets.push({
+        x: cx + (Math.random() - 0.5) * 34,
+        y: cy + (Math.random() - 0.5) * 34,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 2.2,
+        r: 3.5 + Math.random() * 5.5,
+        life: 1
+      });
+    }
+  }
+
+  function spawnWindRibbons(){
+    for(var i = 0; i < 16; i++){
+      windRibbons.push({
+        x: -60 - Math.random() * 160,
+        y: 80 + Math.random() * 250,
+        vx: 14 + Math.random() * 9,
+        len: 75 + Math.random() * 95,
+        amp: 6 + Math.random() * 10,
+        phase: Math.random() * Math.PI * 2,
+        life: 1
+      });
+    }
+  }
+
+  function spawnCanvasSparkles(cx, cy, count){
+    for(var i = 0; i < count; i++){
+      if(sparkles.length > 60) sparkles.shift();
+      sparkles.push({
+        x: cx + (Math.random() - 0.5) * 360,
+        y: cy + (Math.random() - 0.5) * 180,
+        sz: 8 + Math.random() * 12,
+        life: 1
+      });
+    }
+  }
+
+  function scrubMudAt(x1, y1, x2, y2, radiusScale){
+    var rad = BRUSH_RADIUS * (radiusScale || 1);
+    mudCtx.save();
+    mudCtx.globalCompositeOperation = "destination-out";
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var dist = Math.hypot(dx, dy);
+    var steps = Math.max(1, Math.ceil(dist / 12));
+    for(var i = 0; i <= steps; i++){
+      var t = i / steps;
+      var cx = x1 + dx * t;
+      var cy = y1 + dy * t;
+      var rg = mudCtx.createRadialGradient(cx, cy, rad * 0.55, cx, cy, rad);
+      rg.addColorStop(0, "rgba(0,0,0,1)");
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      mudCtx.fillStyle = rg;
+      mudCtx.beginPath();
+      mudCtx.arc(cx, cy, rad, 0, Math.PI * 2);
+      mudCtx.fill();
+    }
+    mudCtx.restore();
+
+    stampBubblySudsAt(x2, y2);
+    spawnRainbowBubbles(x2, y2, radiusScale && radiusScale > 1.1 ? 8 : 4);
+    animateHootArm();
+    bubblePopSfx();
+  }
+
+  function rinseFoamAt(x1, y1, x2, y2, radiusScale){
+    var rad = BRUSH_RADIUS * (radiusScale || 1);
+    foamCtx.save();
+    foamCtx.globalCompositeOperation = "destination-out";
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var dist = Math.hypot(dx, dy);
+    var steps = Math.max(1, Math.ceil(dist / 12));
+    for(var i = 0; i <= steps; i++){
+      var t = i / steps;
+      var cx = x1 + dx * t;
+      var cy = y1 + dy * t;
+      var rg = foamCtx.createRadialGradient(cx, cy, rad * 0.55, cx, cy, rad);
+      rg.addColorStop(0, "rgba(0,0,0,1)");
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      foamCtx.fillStyle = rg;
+      foamCtx.beginPath();
+      foamCtx.arc(cx, cy, rad, 0, Math.PI * 2);
+      foamCtx.fill();
+    }
+    foamCtx.restore();
+
+    spawnWaterDroplets(x2, y2, radiusScale && radiusScale > 1.1 ? 12 : 6);
+    animateHootArm();
+    waterSpraySfx();
+  }
+
+  function animateHootArm(){
+    hootBtn.classList.add("scrubbing");
+    if(spongeArmTimer) clearTimeout(spongeArmTimer);
+    spongeArmTimer = setTimeout(function(){ hootBtn.classList.remove("scrubbing"); }, 220);
+  }
+
+  function checkScrubProgress(forceNow){
+    if(dead || isTransitioning) return;
+    if(phase !== "sponge" && phase !== "rinse") return;
+    var now = Date.now();
+    if(!forceNow && now - lastCheckAt < 80) return;
+    lastCheckAt = now;
+
+    if(phase === "sponge"){
+      if(!mudSamples.length) return;
+      var data = mudCtx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+      var cleared = 0;
+      for(var i = 0; i < mudSamples.length; i++){
+        var s = mudSamples[i];
+        if(data[(s.y * CANVAS_W + s.x) * 4 + 3] < 90) cleared++;
+      }
+      mudCleanedRatio = cleared / mudSamples.length;
+      var pct = Math.min(100, (mudCleanedRatio / CLEAN_THRESHOLD) * 100);
+      cleanMeterFill.style.width = pct.toFixed(1) + "%";
+      if(mudCleanedRatio >= CLEAN_THRESHOLD){
+        completeSpongeStep(false);
+      }
+    } else if(phase === "rinse"){
+      if(!foamSamples.length) return;
+      var fdata = foamCtx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+      var fcleared = 0;
+      for(var j = 0; j < foamSamples.length; j++){
+        var fs = foamSamples[j];
+        if(fdata[(fs.y * CANVAS_W + fs.x) * 4 + 3] < 90) fcleared++;
+      }
+      foamCleanedRatio = fcleared / foamSamples.length;
+      var fpct = Math.min(100, (foamCleanedRatio / CLEAN_THRESHOLD) * 100);
+      cleanMeterFill.style.width = fpct.toFixed(1) + "%";
+      if(foamCleanedRatio >= CLEAN_THRESHOLD){
+        completeRinseStep(false);
+      }
+    }
+  }
+
+  /* ============================================================================
+     STEP TRANSITIONS (SPONGE -> RINSE -> DRY -> CELEBRATE)
+     ============================================================================ */
+  function updatePhaseUI(){
+    stage.setAttribute("data-phase", phase);
+    var curIdx = STEP_ORDER.indexOf(phase);
+    stepPips.forEach(function(pip, idx){
+      pip.classList.toggle("active", idx === curIdx);
+      pip.classList.toggle("done", idx < curIdx);
+    });
+
+    spongeDock.hidden = (phase !== "sponge");
+    rinseDock.hidden = (phase !== "rinse");
+    dryDock.hidden = (phase !== "dry");
+    stickerDock.hidden = (phase !== "celebrate");
+    celebrateActions.hidden = (phase !== "celebrate");
+    truckTapOverlay.hidden = (phase === "sponge" || phase === "rinse");
+
+    if(phase === "sponge"){
+      toolCursor.innerHTML = SPONGE_CURSOR_SVG;
+    } else if(phase === "rinse"){
+      toolCursor.innerHTML = HOSE_CURSOR_SVG;
+    } else {
+      toolCursor.classList.remove("active");
+    }
+  }
+
+  function completeSpongeStep(instant){
+    if(phase !== "sponge" || isTransitioning) return;
+    isScrubbing = false;
+    toolCursor.classList.remove("active");
+    mudCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    mudCleanedRatio = 1;
+    cleanMeterFill.style.width = "100%";
+
+    if(instant){
+      enterRinsePhase();
+      return;
+    }
+    isTransitioning = true;
+    sparkleChimeSfx(1);
+    hootCheer();
+    spawnRainbowBubbles(320, 210, 22);
+    var br = mudCanvas.getBoundingClientRect();
+    if(br.width) spawnSparkles(br.left + br.width * 0.5, br.top + br.height * 0.5, 12);
+    later(function(){
+      isTransitioning = false;
+      enterRinsePhase();
+    }, 520);
+  }
+
+  function enterRinsePhase(){
+    phase = "rinse";
+    idleVoiceReminded = false;
+    paintFoamBlanket();
+    updatePhaseUI();
+    speakCurrentStepGuide(false);
+    armIdle(true);
+  }
+
+  function completeRinseStep(instant){
+    if(phase !== "rinse" || isTransitioning) return;
+    isScrubbing = false;
+    toolCursor.classList.remove("active");
+    foamCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    foamCleanedRatio = 1;
+    cleanMeterFill.style.width = "100%";
+
+    if(instant){
+      enterDryPhase();
+      return;
+    }
+    isTransitioning = true;
+    sparkleChimeSfx(2);
+    hootCheer();
+    spawnWaterDroplets(320, 200, 26);
+    var br = foamCanvas.getBoundingClientRect();
+    if(br.width) spawnSparkles(br.left + br.width * 0.5, br.top + br.height * 0.5, 14);
+    later(function(){
+      isTransitioning = false;
+      enterDryPhase();
+    }, 520);
+  }
+
+  function enterDryPhase(){
+    phase = "dry";
+    isDrying = false;
+    idleVoiceReminded = false;
+    cleanMeterFill.style.width = "0%";
+    updatePhaseUI();
+    speakCurrentStepGuide(false);
+    armIdle(true);
+  }
+
+  function triggerBreezyDry(instant){
+    if(dead || phase !== "dry" || isDrying) return;
+    unlockAudioOnce();
+    getAudioCtx();
+    hideIdleHints();
+    hasInteractedThisTruck = true;
+
+    if(instant){
+      enterCelebratePhase(true);
+      return;
+    }
+
+    isDrying = true;
+    blowerWhooshSfx();
+    spawnWindRibbons();
+    spawnCanvasSparkles(320, 210, 22);
+    cleanMeterFill.style.width = "100%";
+    hootCheer();
+
+    truckMotion.classList.remove("roll-in", "zoom-out", "honk-hop", "dry-wiggle");
+    void truckMotion.offsetWidth;
+    truckMotion.classList.add("dry-wiggle");
+
+    shineSweep.classList.remove("flash");
+    void shineSweep.offsetWidth;
+    shineSweep.classList.add("flash");
+
+    later(function(){
+      isDrying = false;
+      truckMotion.classList.remove("dry-wiggle");
+      if(phase === "dry"){
+        enterCelebratePhase(false);
+      }
+    }, 920);
+  }
+
+  function enterCelebratePhase(instant){
+    phase = "celebrate";
+    idleVoiceReminded = false;
+    hideIdleHints();
+    washedCount++;
+    stars++;
+    washedMap[vehicleId] = true;
+
+    var nextIdx = (VEHICLE_ORDER.indexOf(vehicleId) + 1) % VEHICLE_ORDER.length;
+    var nextId = VEHICLE_ORDER[nextIdx];
+    nextTruckIcon.textContent = VEHICLES[nextId].emoji;
+    nextTruckBtn.dataset.nextVehicle = nextId;
+
+    updateHudProgress(true);
+    updatePhaseUI();
+
+    stickerBtns.forEach(function(btn){
+      btn.classList.toggle("picked", btn.dataset.sticker === chosenSticker);
+    });
+
+    if(instant) return;
+
+    shineSweep.classList.remove("flash");
+    void shineSweep.offsetWidth;
+    shineSweep.classList.add("flash");
+
+    var allFourDone = VEHICLE_ORDER.every(function(k){ return !!washedMap[k]; });
+    sparkleChimeSfx(3);
+    showerConfetti(allFourDone ? 68 : 44);
+    spawnCanvasSparkles(320, 210, 24);
+    var br = mudCanvas.getBoundingClientRect();
+    if(br.width) spawnSparkles(br.left + br.width * 0.5, br.top + br.height * 0.45, 16);
+    hootCheer();
+
+    later(function(){
+      triggerVehicleHonk(true);
+    }, 340);
+
+    later(function(){
+      if(allFourDone && !allFourCelebrated){
+        allFourCelebrated = true;
+        playCarWashGuide("hoot-cw-win", "hoot-win-yay", false);
+      } else {
+        var v = VEHICLES[vehicleId] || VEHICLES.firetruck;
+        playCarWashGuide(v.cleanClip, v.cleanFallback, false);
+      }
+    }, 980);
+  }
+
+  function triggerVehicleHonk(fromAuto){
+    if(dead || phase !== "celebrate") return;
+    unlockAudioOnce();
+    getAudioCtx();
+    vehicleHornSfx(vehicleId);
+
+    truckMotion.classList.remove("roll-in", "zoom-out", "honk-hop", "dry-wiggle");
+    void truckMotion.offsetWidth;
+    truckMotion.classList.add("honk-hop");
+
+    honkBurst.textContent = (VEHICLES[vehicleId] && VEHICLES[vehicleId].honkGlyph) || "📣🎶";
+    honkBurst.classList.remove("show");
+    void honkBurst.offsetWidth;
+    honkBurst.classList.add("show");
+
+    hootCheer();
+    var br = mudCanvas.getBoundingClientRect();
+    if(br.width) spawnSparkles(br.left + br.width * 0.65, br.top + br.height * 0.32, 10);
+
+    if(!fromAuto){
+      playCarWashGuide("hoot-cw-honk", "hoot-great-job", false);
+    }
+  }
+
+  function applyHoodSticker(stickerId){
+    if(dead || phase !== "celebrate" || !STICKER_GLYPHS[stickerId]) return;
+    unlockAudioOnce();
+    getAudioCtx();
+    chosenSticker = stickerId;
+    truckSvg.innerHTML = vehicleSvg(vehicleId, chosenSticker);
+    stickerBtns.forEach(function(btn){
+      btn.classList.toggle("picked", btn.dataset.sticker === chosenSticker);
+    });
+    clickPopSfx(860);
+    hootCheer();
+    var pos = VEHICLES[vehicleId].stickerPos;
+    var br = mudCanvas.getBoundingClientRect();
+    if(br.width){
+      spawnSparkles(
+        br.left + (pos.x / CANVAS_W) * br.width,
+        br.top + (pos.y / CANVAS_H) * br.height,
+        12
+      );
+    }
+  }
+
+  /* ============================================================================
+     LIVE 60FPS FX CANVAS LOOP (BUBBLES, WATER SPRAY, WIND, SPARKLES, GLOW HINTS)
+     ============================================================================ */
+  var hintTarget = { x: 320, y: 210 };
+  var lastTargetUpdate = 0;
+
+  function tickFx(ts){
+    if(dead) return;
+    fxRaf = requestAnimationFrame(tickFx);
+    fxCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+    var t = (ts || 0) * 0.0035;
+
+    /* Soft pulsing glowing target circle on dirty / soapy spots for Riley */
+    if((phase === "sponge" || phase === "rinse") && !isTransitioning){
+      if(ts - lastTargetUpdate > 420){
+        lastTargetUpdate = ts;
+        hintTarget = findRemainingTargetPoint();
+      }
+      var pulse = 0.5 + 0.5 * Math.sin(t * 1.4);
+      fxCtx.save();
+      fxCtx.strokeStyle = phase === "sponge"
+        ? "rgba(255, 244, 150, " + (0.32 + pulse * 0.42).toFixed(2) + ")"
+        : "rgba(186, 238, 255, " + (0.38 + pulse * 0.46).toFixed(2) + ")";
+      fxCtx.lineWidth = 4.5;
+      fxCtx.setLineDash([12, 10]);
+      fxCtx.lineDashOffset = -t * 18;
+      fxCtx.beginPath();
+      fxCtx.arc(hintTarget.x, hintTarget.y, 46 + pulse * 9, 0, Math.PI * 2);
+      fxCtx.stroke();
+      fxCtx.restore();
+    }
+
+    /* Glistening wet water drops while waiting in Step 3 (Dry) */
+    if(phase === "dry" && !isDrying){
+      var dropPts = [[210,190],[310,170],[410,205],[265,255],[375,245],[465,195]];
+      for(var d = 0; d < dropPts.length; d++){
+        var dyOff = ((t * 18 + d * 17) % 24);
+        var dxp = dropPts[d][0];
+        var dyp = dropPts[d][1] + dyOff;
+        fxCtx.fillStyle = "rgba(186, 238, 255, 0.85)";
+        fxCtx.strokeStyle = "rgba(2, 132, 199, 0.55)";
+        fxCtx.lineWidth = 2;
+        fxCtx.beginPath();
+        fxCtx.moveTo(dxp, dyp - 10);
+        fxCtx.quadraticCurveTo(dxp + 8, dyp + 2, dxp, dyp + 8);
+        fxCtx.quadraticCurveTo(dxp - 8, dyp + 2, dxp, dyp - 10);
+        fxCtx.fill();
+        fxCtx.stroke();
+      }
+    }
+
+    /* Floating Rainbow Soap Bubbles */
+    for(var b = bubbles.length - 1; b >= 0; b--){
+      var bub = bubbles[b];
+      bub.x += bub.vx + Math.sin(t + b) * 0.45;
+      bub.y += bub.vy;
+      bub.life -= 0.016;
+      if(bub.life <= 0){
+        bubbles.splice(b, 1);
+        continue;
+      }
+      fxCtx.save();
+      fxCtx.globalAlpha = Math.min(1, bub.life * 1.4);
+      fxCtx.fillStyle = bub.col;
+      fxCtx.globalAlpha *= 0.24;
+      fxCtx.beginPath();
+      fxCtx.arc(bub.x, bub.y, bub.r, 0, Math.PI * 2);
+      fxCtx.fill();
+      fxCtx.globalAlpha = Math.min(1, bub.life * 1.3);
+      fxCtx.strokeStyle = "#ffffff";
+      fxCtx.lineWidth = 2.2;
+      fxCtx.stroke();
+      fxCtx.fillStyle = "#ffffff";
+      fxCtx.beginPath();
+      fxCtx.arc(bub.x - bub.r * 0.32, bub.y - bub.r * 0.32, bub.r * 0.26, 0, Math.PI * 2);
+      fxCtx.fill();
+      fxCtx.restore();
+    }
+
+    /* Shimmering Water Spray Droplets */
+    for(var w = droplets.length - 1; w >= 0; w--){
+      var dr = droplets[w];
+      dr.x += dr.vx;
+      dr.y += dr.vy;
+      dr.vy += 0.24;
+      dr.life -= 0.032;
+      if(dr.life <= 0){
+        droplets.splice(w, 1);
+        continue;
+      }
+      fxCtx.save();
+      fxCtx.globalAlpha = Math.max(0, dr.life);
+      fxCtx.fillStyle = w % 2 === 0 ? "#e0f2fe" : "#38bdf8";
+      fxCtx.beginPath();
+      fxCtx.arc(dr.x, dr.y, dr.r * dr.life, 0, Math.PI * 2);
+      fxCtx.fill();
+      fxCtx.restore();
+    }
+
+    /* Swirling Wind Ribbons (Step 3 Breezy Dryer) */
+    for(var r = windRibbons.length - 1; r >= 0; r--){
+      var wr = windRibbons[r];
+      wr.x += wr.vx;
+      wr.life -= 0.022;
+      if(wr.life <= 0 || wr.x > CANVAS_W + 140){
+        windRibbons.splice(r, 1);
+        continue;
+      }
+      fxCtx.save();
+      fxCtx.globalAlpha = Math.max(0, wr.life * 0.85);
+      fxCtx.strokeStyle = r % 2 === 0 ? "#ffffff" : "#bae6fd";
+      fxCtx.lineWidth = 6;
+      fxCtx.lineCap = "round";
+      fxCtx.beginPath();
+      fxCtx.moveTo(wr.x - wr.len, wr.y);
+      fxCtx.quadraticCurveTo(wr.x - wr.len * 0.5, wr.y - wr.amp * Math.sin(t * 4 + wr.phase), wr.x, wr.y);
+      fxCtx.stroke();
+      fxCtx.restore();
+    }
+
+    /* Four-Point Star Sparkles */
+    for(var k = sparkles.length - 1; k >= 0; k--){
+      var spk = sparkles[k];
+      spk.life -= 0.024;
+      if(spk.life <= 0){
+        sparkles.splice(k, 1);
+        continue;
+      }
+      var sz = spk.sz * Math.sin(spk.life * Math.PI);
+      fxCtx.save();
+      fxCtx.translate(spk.x, spk.y);
+      fxCtx.fillStyle = "rgba(255, 249, 178, " + Math.min(1, spk.life * 1.4).toFixed(2) + ")";
+      fxCtx.beginPath();
+      fxCtx.moveTo(0, -sz);
+      fxCtx.quadraticCurveTo(2, -2, sz, 0);
+      fxCtx.quadraticCurveTo(2, 2, 0, sz);
+      fxCtx.quadraticCurveTo(-2, 2, -sz, 0);
+      fxCtx.quadraticCurveTo(-2, -2, 0, -sz);
+      fxCtx.fill();
+      fxCtx.restore();
+    }
+  }
+
+  /* ============================================================================
+     POINTER HANDLERS (RUBBING + FORGIVING 1.35x TAP-PUFF BURST FOR TODDLERS!)
+     ============================================================================ */
+  function canvasPointFromEvent(e){
+    var r = mudCanvas.getBoundingClientRect();
+    if(!r.width || !r.height) return { x: 320, y: 210 };
+    return {
+      x: ((e.clientX - r.left) / r.width) * CANVAS_W,
+      y: ((e.clientY - r.top) / r.height) * CANVAS_H
+    };
+  }
+
+  function positionToolCursor(pt){
+    toolCursor.style.left = ((pt.x / CANVAS_W) * 100).toFixed(2) + "%";
+    toolCursor.style.top = ((pt.y / CANVAS_H) * 100).toFixed(2) + "%";
+    toolCursor.classList.add("active");
+  }
+
+  function attachScrubCanvas(canvas, activePhase, scrubFn){
+    canvas.addEventListener("pointerdown", function(e){
+      if(dead || isTransitioning || phase !== activePhase) return;
+      e.preventDefault();
+      unlockAudioOnce();
+      getAudioCtx();
+      hasInteractedThisTruck = true;
+      idleVoiceReminded = false;
+      hideIdleHints();
+      isScrubbing = true;
+      try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+      var pt = canvasPointFromEvent(e);
+      lastPt = pt;
+      positionToolCursor(pt);
+      /* Forgiving 1.35x tap-puff burst so 2-year-olds who tap instead of drag still wash cleanly! */
+      scrubFn(pt.x, pt.y, pt.x + 0.5, pt.y + 0.5, 1.35);
+      checkScrubProgress(true);
+      armIdle(false);
+    });
+
+    canvas.addEventListener("pointermove", function(e){
+      if(dead || !isScrubbing || isTransitioning || phase !== activePhase) return;
+      e.preventDefault();
+      var pt = canvasPointFromEvent(e);
+      positionToolCursor(pt);
+      if(lastPt){
+        scrubFn(lastPt.x, lastPt.y, pt.x, pt.y, 1);
+      }
+      lastPt = pt;
+      checkScrubProgress(false);
+    });
+
+    function endScrub(e){
+      if(!isScrubbing) return;
+      isScrubbing = false;
+      lastPt = null;
+      toolCursor.classList.remove("active");
+      try{ if(e && e.pointerId != null) canvas.releasePointerCapture(e.pointerId); }catch(err){}
+      checkScrubProgress(true);
+      armIdle(false);
+    }
+    canvas.addEventListener("pointerup", endScrub);
+    canvas.addEventListener("pointercancel", endScrub);
+  }
+
+  attachScrubCanvas(mudCanvas, "sponge", scrubMudAt);
+  attachScrubCanvas(foamCanvas, "rinse", rinseFoamAt);
+
+  /* Bottom Tool Buttons ALSO help toddlers who tap the glowing tool directly! */
+  spongeToolBtn.addEventListener("click", function(){
+    if(dead || isTransitioning || phase !== "sponge") return;
+    unlockAudioOnce();
+    getAudioCtx();
+    hasInteractedThisTruck = true;
+    hideIdleHints();
+    var pt = findRemainingTargetPoint();
+    scrubMudAt(pt.x - 16, pt.y, pt.x + 16, pt.y, 1.4);
+    checkScrubProgress(true);
+    armIdle(false);
+  });
+
+  hoseToolBtn.addEventListener("click", function(){
+    if(dead || isTransitioning || phase !== "rinse") return;
+    unlockAudioOnce();
+    getAudioCtx();
+    hasInteractedThisTruck = true;
+    hideIdleHints();
+    var pt = findRemainingTargetPoint();
+    rinseFoamAt(pt.x - 16, pt.y, pt.x + 16, pt.y, 1.4);
+    checkScrubProgress(true);
+    armIdle(false);
+  });
+
+  dryerToolBtn.addEventListener("click", function(){
+    triggerBreezyDry(false);
+  });
+
+  truckTapOverlay.addEventListener("click", function(){
+    if(phase === "dry"){
+      triggerBreezyDry(false);
+    } else if(phase === "celebrate"){
+      triggerVehicleHonk(false);
+    }
+  });
+
+  honkBtn.addEventListener("click", function(){
+    triggerVehicleHonk(false);
+  });
+
+  stickerBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      applyHoodSticker(btn.dataset.sticker);
+    });
+  });
+
+  /* Zoom clean truck out, then roll next muddy truck in! */
+  nextTruckBtn.addEventListener("click", function(){
+    if(dead || isTransitioning) return;
+    unlockAudioOnce();
+    getAudioCtx();
+    isTransitioning = true;
+    clickPopSfx(820);
+    vehicleHornSfx(vehicleId);
+    var targetId = nextTruckBtn.dataset.nextVehicle || VEHICLE_ORDER[(VEHICLE_ORDER.indexOf(vehicleId) + 1) % VEHICLE_ORDER.length];
+
+    truckMotion.classList.remove("roll-in", "honk-hop", "dry-wiggle");
+    void truckMotion.offsetWidth;
+    truckMotion.classList.add("zoom-out");
+
+    later(function(){
+      isTransitioning = false;
+      startVehicle(targetId, false);
+    }, 580);
+  });
+
+  /* ============================================================================
+     HUD, START VEHICLE, SOUND & CAR-WASH HOOT INTERACTIONS
+     ============================================================================ */
+  function updateHudProgress(animateStar){
+    starNum.textContent = String(stars);
+    if(animateStar){
+      starPill.classList.remove("bump");
+      void starPill.offsetWidth;
+      starPill.classList.add("bump");
+    }
+    vehiclePills.forEach(function(btn){
+      var id = btn.dataset.vehicle;
+      var isAct = id === vehicleId;
+      btn.classList.toggle("active", isAct);
+      btn.setAttribute("aria-pressed", isAct ? "true" : "false");
+      btn.classList.toggle("washed", !!washedMap[id]);
+    });
+    document.querySelectorAll(".mini-dot").forEach(function(dot){
+      dot.classList.toggle("lit", !!washedMap[dot.dataset.v]);
+    });
+  }
+
+  function startVehicle(id, isBoot){
+    if(!VEHICLES[id]) id = "firetruck";
+    clearTimers();
+    clearVoice(true);
+    vehicleId = id;
+    phase = "sponge";
+    chosenSticker = null;
+    isTransitioning = false;
+    isDrying = false;
+    isScrubbing = false;
+    hasInteractedThisTruck = false;
+    idleVoiceReminded = false;
+    bubbles.length = 0;
+    droplets.length = 0;
+    windRibbons.length = 0;
+    sparkles.length = 0;
+
+    truckSvg.innerHTML = vehicleSvg(vehicleId, null);
+    foamCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    paintMudLayer();
+
+    truckMotion.classList.remove("roll-in", "zoom-out", "honk-hop", "dry-wiggle");
+    void truckMotion.offsetWidth;
+    truckMotion.classList.add("roll-in");
+
+    updateHudProgress(false);
+    updatePhaseUI();
+    speakCurrentStepGuide(!!isBoot);
+    armIdle(true);
+  }
+
+  /* Populate static HUD vehicle pill art & tap handlers */
+  vehiclePills.forEach(function(btn){
+    var id = btn.dataset.vehicle;
+    btn.querySelector(".pill-art").innerHTML = pillSvg(id);
+    btn.addEventListener("click", function(){
+      unlockAudioOnce();
+      getAudioCtx();
+      clickPopSfx(740);
+      startVehicle(id, false);
+    });
+  });
+
+  soundBtn.addEventListener("click", function(){
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.setAttribute("aria-label", soundOn ? "Turn Sound Off" : "Turn Sound On");
+    if(!soundOn){
+      clearVoice(true);
+    } else {
+      unlockAudioOnce();
+      getAudioCtx();
+      clickPopSfx(880);
+      speakCurrentStepGuide(false);
+    }
+  });
+
+  /* Tap Car-Wash Hoot -> happy bounce + repeats current spoken step instruction! */
+  hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    getAudioCtx();
+    hootCheer();
+    clickPopSfx(960);
+    window.__bellyArmed = true;
+    setTimeout(function(){ window.__bellyArmed = false; }, 500);
+    speakCurrentStepGuide(false);
+  });
+
+  /* Smooth eye-tracking on Car-Wash Hoot */
+  function trackEyes(x, y){
+    var r = hootBtn.getBoundingClientRect();
+    if(!r.width) return;
+    var dx = Math.max(-4.5, Math.min(4.5, (x - (r.left + r.width * 0.5)) / 48));
+    var dy = Math.max(-3.5, Math.min(4.5, (y - (r.top + r.height * 0.42)) / 48));
+    hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+  }
+  stage.addEventListener("pointermove", function(e){ trackEyes(e.clientX, e.clientY); });
+  stage.addEventListener("pointerdown", function(e){ trackEyes(e.clientX, e.clientY); });
+
+  /* Clean Teardown */
+  function teardown(){
+    dead = true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+    if(fxRaf) cancelAnimationFrame(fxRaf);
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden) clearVoice(false);
+  });
+
+  /* ============================================================================
+     BOOT & PUBLIC TEST HOOK (window.__carwashGame)
+     ============================================================================ */
+  startVehicle("firetruck", true);
+  fxRaf = requestAnimationFrame(tickFx);
+
+  function snapshot(){
+    return {
+      vehicleId: vehicleId,
+      phase: phase,
+      stepIndex: STEP_ORDER.indexOf(phase),
+      mudCleanedRatio: Number(mudCleanedRatio.toFixed(3)),
+      foamCleanedRatio: Number(foamCleanedRatio.toFixed(3)),
+      sticker: chosenSticker,
+      washedCount: washedCount,
+      washedMap: Object.assign({}, washedMap),
+      stars: stars,
+      isRiley: IS_RILEY,
+      brushRadius: BRUSH_RADIUS,
+      cleanThreshold: CLEAN_THRESHOLD
+    };
+  }
+
+  window.__carwashGame = {
+    snapshot: snapshot,
+    finishStepForTest: function(){
+      isTransitioning = false;
+      isDrying = false;
+      if(phase === "sponge"){
+        completeSpongeStep(true);
+      } else if(phase === "rinse"){
+        completeRinseStep(true);
+      } else if(phase === "dry"){
+        triggerBreezyDry(true);
+      } else if(phase === "celebrate"){
+        var nextIdx = (VEHICLE_ORDER.indexOf(vehicleId) + 1) % VEHICLE_ORDER.length;
+        startVehicle(VEHICLE_ORDER[nextIdx], false);
+      }
+      return snapshot();
+    }
+  };
+})();
+</script>
+
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e159">
+<script src="js/hoot-game-tail.js?v=llprev3e159"></script>
+</body>
+</html>
