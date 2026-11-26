@@ -5210,35 +5210,3 @@ body.hw-quiet-mode{
   .gl-next{ right:4px; }
   .gl-shelf-card{ flex:0 0 152px !important; min-width:152px !important; }
 }
-
-/* ===== v146: Hoot's Living Island integration (Kid Home only; never teen) ===== */
-body.ll-island-home:not(.ll-teen) #ll-app{
-  max-width:1160px;
-}
-.kh-island-bar{
-  display:flex;
-  justify-content:flex-end;
-  margin:4px 0 10px;
-}
-.kh-island-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  min-height:52px;
-  padding:10px 18px;
-  border-radius:999px;
-  border:3.5px solid #4a2e1b;
-  background:linear-gradient(180deg,#fff9db 0%,#ffd43b 100%);
-  color:#4a2e1b;
-  font-family:"Fredoka","Baloo 2","Nunito",sans-serif;
-  font-weight:800;
-  font-size:1.05rem;
-  cursor:pointer;
-  box-shadow:0 5px 0 #4a2e1b, 0 10px 20px rgba(74,46,27,.16);
-  transition:transform .14s ease, box-shadow .14s ease;
-  -webkit-tap-highlight-color:transparent;
-}
-.kh-island-btn:hover{ transform:translateY(-2px); }
-.kh-island-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 #4a2e1b; }
-.kh-island-btn span{ font-size:1.35rem; line-height:1; }
-body.ll-teen .kh-island-bar{ display:none !important; }

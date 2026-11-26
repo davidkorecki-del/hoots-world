@@ -843,10 +843,7 @@
          a child in portrait is never trapped in a game. The player reserves
          exactly the bar's height at the top, so the game sits below the bar
          and no game content is ever hidden under it. */
-      #game-overlay{ --go-bar-h:calc(76px + env(safe-area-inset-top, 0px)); position:fixed; inset:0; height:100dvh; z-index:700; background:#17263b; display:flex; flex-direction:column; padding-top:var(--go-bar-h); overflow:hidden; transform-origin:50% 50%; }
-      #game-overlay:not([hidden]){ animation:hwGameZoomIn .32s cubic-bezier(.22,1.28,.36,1); }
-      @keyframes hwGameZoomIn{ 0%{ opacity:0; transform:scale(.90) translateY(14px); } 68%{ opacity:1; transform:scale(1.016) translateY(-2px); } 100%{ opacity:1; transform:none; } }
-      @media (prefers-reduced-motion: reduce){ #game-overlay:not([hidden]){ animation:none; } }
+      #game-overlay{ --go-bar-h:calc(76px + env(safe-area-inset-top, 0px)); position:fixed; inset:0; height:100dvh; z-index:700; background:#17263b; display:flex; flex-direction:column; padding-top:var(--go-bar-h); overflow:hidden; }
       #game-overlay[hidden]{ display:none !important; }
       .go-bar{ position:fixed; top:0; left:0; right:0; z-index:750; height:var(--go-bar-h); box-sizing:border-box; display:flex; align-items:center; gap:12px; padding:calc(10px + env(safe-area-inset-top, 0px)) 14px 10px; background:#17263b; color:#fff; border-bottom:3px solid #ffd93b; box-shadow:0 4px 16px rgba(0,0,0,.35); }
       .go-back{ flex:0 0 auto; min-height:52px; display:inline-flex; align-items:center; white-space:nowrap; border:3px solid #fff; background:#ff4d2e; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.02rem; padding:12px 18px; border-radius:999px; box-shadow:0 4px 0 rgba(0,0,0,.3); cursor:pointer; }
@@ -2416,8 +2413,7 @@
       @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
-  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e146">
-  <link rel="stylesheet" href="css/hoot-island.css?v=llprev3e146">
+  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e147">
   <link rel="stylesheet" href="js/hw-learn-fx.css?v=llprev3e118">
   <link rel="stylesheet" href="js/hw-monti-works.css?v=llprev3e66">
 <script src="js/hoot-config.js?v=llprev3e66"></script>
@@ -6755,9 +6751,9 @@
     (function gamePlayer(){
       /* Wave 3: 20 embedded games extracted to static same-origin games/<key>.html files
          with shared runtime js/hoot-game-head.js, js/hoot-game-tail.css, js/hoot-game-tail.js. */
-      var GAME_VER = "llprev3e146";
-      var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Town Rescue Patrol", rocket: "3D Rocket Count-Up", pizza: "Hoot's Pizza Shop", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Thunder Weather Machine", shapes: "Fireworks Night", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat", treehouse: "My Treehouse Hoot", train: "Wooden Train Builder", dino: "Dino Dig Museum", storymaker: "Family Storybooks" };
-      var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "pizza-shop": "pizza", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band", "treehouse-hoot": "treehouse", "train-builder": "train", "dino-dig": "dino", "story-maker": "storymaker" };
+      var GAME_VER = "llprev3e147";
+      var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Town Rescue Patrol", rocket: "3D Rocket Count-Up", pizza: "Hoot's Pizza Shop", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Thunder Weather Machine", shapes: "Fireworks Night", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat" };
+      var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "pizza-shop": "pizza", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band" };
       var overlay = document.getElementById("game-overlay");
       var frame = document.getElementById("game-frame");
       var titleEl = document.getElementById("game-title");
@@ -6801,10 +6797,9 @@
         try{
           var off = document.querySelector('.voice-btn[data-voice="off"]');
           if(off && (off.classList.contains("sel") || off.classList.contains("active") || off.getAttribute("aria-pressed") === "true")) return;
-          var NEW_INTRO = { splash: "hoot-weather-intro", shapes: "hoot-fireworks-intro", real: "hoot-rescue-intro", rocket: "hoot-r3d-build-rocket", pizza: "hoot-piz-welcome", treehouse: "hoot-welcome", train: "hoot-ready-go", dino: "hoot-ready-go", storymaker: "story-intro" };
-          var BASE_OK = { "hoot-welcome": 1, "hoot-ready-go": 1, "story-intro": 1 };
+          var NEW_INTRO = { splash: "hoot-weather-intro", shapes: "hoot-fireworks-intro", real: "hoot-rescue-intro", rocket: "hoot-r3d-build-rocket", pizza: "hoot-piz-welcome" };
           var ncId = NEW_INTRO[key] || "";
-          var hasNc = !!(ncId && (BASE_OK[ncId] || (window.HOOT_HAVE && window.HOOT_HAVE[ncId])));
+          var hasNc = !!(ncId && window.HOOT_HAVE && window.HOOT_HAVE[ncId]);
           var introSrc = ncId
             ? (hasNc ? ("assets/voice/" + ncId + ".mp3") : (key === "real" ? "assets/voice/name-firefighter.mp3" : "assets/voice/hoot-ready-go.mp3"))
             : ("assets/voice/coach/" + key + "-intro.mp3");
@@ -11287,7 +11282,7 @@
         var SAVE_KEY = "hootworld.profiles.v1";
         var PROFILES = { kida:{ name:"Profile A", initial:"A" }, kidb:{ name:"Profile B", initial:"B" } };
         var SLOT_FOR = { paint:"slot-paint", animals:"slot-homes", dance:"slot-dance", rocket:"slot-bubble", shapes:"slot-shape", piano:"slot-piano", feed:"slot-feed", magic:"slot-hat", twinkle:"slot-star" };
-        var SLUG_TO_KEY = { "balloon-abc-pop":"balloon", "dress-up-hoot":"dress", "real-world-adventure-quests":"real", "rocket-count-up":"rocket", "catch-the-twinkle-stars":"twinkle", "magic-hat-surprises":"magic", "dance-party":"dance", "animal-homes":"animals", "rainbow-piano":"piano", "finger-paint-studio":"paint", "color-splash":"splash", "shape-hunt":"shapes", "feed-hoot":"feed", "peekaboo-forest":"peek", "find-it":"find", "animal-friends":"friends", "memory-match":"memory", "bubble-number-pop":"bubblepop", "letter-fishing":"fishing", "copy-the-beat":"band", "treehouse-hoot":"treehouse", "train-builder":"train", "dino-dig":"dino", "story-maker":"storymaker" };
+        var SLUG_TO_KEY = { "balloon-abc-pop":"balloon", "dress-up-hoot":"dress", "real-world-adventure-quests":"real", "rocket-count-up":"rocket", "catch-the-twinkle-stars":"twinkle", "magic-hat-surprises":"magic", "dance-party":"dance", "animal-homes":"animals", "rainbow-piano":"piano", "finger-paint-studio":"paint", "color-splash":"splash", "shape-hunt":"shapes", "feed-hoot":"feed", "peekaboo-forest":"peek", "find-it":"find", "animal-friends":"friends", "memory-match":"memory", "bubble-number-pop":"bubblepop", "letter-fishing":"fishing", "copy-the-beat":"band" };
         /* The journey, in order: lessons (i = Little Explorers lesson
            number) and games interleaved through themed lands. */
         var STOPS = [
@@ -13622,20 +13617,19 @@
   }
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e146"></script>
+  <script src="js/hoot-lessons.js?v=llprev3e147"></script>
   <script src="js/hoot-study-visuals.js?v=llprev3e123"></script>
   <script src="js/hoot-study-pro.js?v=llprev3e125"></script>
   <script src="js/hoot-study-labs.js?v=llprev3e123"></script>
   <script src="js/hoot-study-exam.js?v=llprev3e122"></script>
   <script src="js/hoot-teen-arcade.js?v=llprev3e125"></script>
-  <script src="js/hoot-study.js?v=llprev3e146"></script>
+  <script src="js/hoot-study.js?v=llprev3e147"></script>
   <script src="js/hoot-ela7.js?v=llprev3e119"></script>
   <script src="js/hoot-sci7.js?v=llprev3e119"></script>
   <script src="js/hoot-ss7.js?v=llprev3e119"></script>
   <script src="js/hoot-games.js?v=llprev3e118"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hoot-island.js?v=llprev3e146"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e146"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e147"></script>
   <script src="js/hw-learn-fx.js?v=llprev3e118"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>
@@ -13649,12 +13643,12 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e146', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e147', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
-    var PAGE_VER = 'llprev3e146';
-    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e146';
+    var PAGE_VER = 'llprev3e147';
+    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e147';
     var SIG_KEY = 'hw.pwa.sig.v1', VER_KEY = 'hw.pwa.ver.v1', RELOAD_KEY = 'hw.pwa.reloadAt.v1';
     var baseSig = null, lastChk = 0, pendingReload = false;
     function safeToReload(){
