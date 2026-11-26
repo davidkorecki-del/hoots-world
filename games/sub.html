@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="sub";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e152"></script>
+<script src="js/hoot-game-head.js?v=llprev3e153"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Captain Hoot's Submarine Letter Voyage</title>
@@ -864,13 +864,21 @@
   var nextBubbleId = 1;
   var bubblesSinceTarget = 0;
 
+  function hasHootClip(id){
+    try{
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
   /* Sea Friends gliding past along the ocean voyage */
   var CREATURE_KINDS = [
-    { kind: "turtle",    clip: "word-turtle", col: "#22c55e", glow: "#86efac", size: 0.98 },
-    { kind: "whale",     clip: null,          col: "#38bdf8", glow: "#7dd3fc", size: 1.24 },
-    { kind: "clownfish", clip: "word-fish",   col: "#fb923c", glow: "#fed7aa", size: 0.84 },
-    { kind: "octopus",   clip: null,          col: "#a855f7", glow: "#e9d5ff", size: 0.94 },
-    { kind: "starfish",  clip: null,          col: "#f472b6", glow: "#fbcfe8", size: 0.82 }
+    { kind: "turtle",    clip: "word-turtle",   fallback: "word-turtle",  alwaysReady: true,  col: "#22c55e", glow: "#86efac", size: 0.98 },
+    { kind: "whale",     clip: "word-whale",    fallback: "hoot-amazing", alwaysReady: false, col: "#38bdf8", glow: "#7dd3fc", size: 1.24 },
+    { kind: "clownfish", clip: "word-fish",     fallback: "word-fish",    alwaysReady: true,  col: "#fb923c", glow: "#fed7aa", size: 0.84 },
+    { kind: "octopus",   clip: "word-octopus",  fallback: "hoot-super",   alwaysReady: false, col: "#a855f7", glow: "#e9d5ff", size: 0.94 },
+    { kind: "starfish",  clip: "word-starfish", fallback: "word-star",    alwaysReady: false, col: "#f472b6", glow: "#fbcfe8", size: 0.82 }
   ];
   var creatures = [];
 
@@ -1009,6 +1017,8 @@
         id: i,
         kind: def.kind,
         clip: def.clip,
+        fallback: def.fallback,
+        alwaysReady: !!def.alwaysReady,
         col: def.col,
         glow: def.glow,
         size: def.size,
@@ -1195,15 +1205,16 @@
 
   function interactCreature(cr){
     if(cr.cooldown > 0) return;
-    cr.cooldown = 1.25;
+    cr.cooldown = 2.0;
     cr.flipT = 1;
-    cr.waveT = 1.3;
-    sub.cheerT = 0.7;
+    cr.waveT = 1.4;
+    sub.cheerT = 0.85;
     sfxBubblePop(2);
-    spawnBubbleBurst(cr.x, cr.y, 12, true);
-    spawnSparkles(cr.x, cr.y, 10, cr.glow);
-    if(cr.clip){
-      playVoiceSeq([cr.clip]);
+    spawnBubbleBurst(cr.x, cr.y, 16, true);
+    spawnSparkles(cr.x, cr.y, 14, cr.glow);
+    var sayId = (cr.alwaysReady || (cr.clip && hasHootClip(cr.clip))) ? cr.clip : cr.fallback;
+    if(sayId){
+      playVoiceSeq([sayId], null, false);
     }
   }
 
@@ -2699,7 +2710,7 @@
       if(cr.glowBoost > 0) cr.glowBoost = Math.max(0, cr.glowBoost - dt * 0.65);
       if(cr.cooldown > 0) cr.cooldown = Math.max(0, cr.cooldown - dt);
 
-      if(Math.hypot(sub.x - cr.x, sub.y - cr.y) < subHitR + 18 * cr.size && cr.cooldown <= 0){
+      if(Math.hypot(sub.x - cr.x, sub.y - cr.y) < subHitR + 34 * cr.size && cr.cooldown <= 0){
         interactCreature(cr);
       }
     });
@@ -2944,7 +2955,7 @@
   requestAnimationFrame(render);
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e152">
-<script src="js/hoot-game-tail.js?v=llprev3e152"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e153">
+<script src="js/hoot-game-tail.js?v=llprev3e153"></script>
 </body>
 </html>

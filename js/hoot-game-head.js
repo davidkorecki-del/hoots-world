@@ -13,7 +13,7 @@ window.__hwNameFix=function(f,k){var m=/^call-(letter|color|shape|number)-([a-z0
   var recent={}, P=HTMLMediaElement.prototype, LINE=new RegExp("(?:^|/)(hoot-[a-z0-9-]+|owl-[a-z0-9-]+|lily-[a-z0-9-]+|coach/[a-z]+-(?:intro|idle|praise|wrong))[.]mp3(?:$|\\?)","i");
   /* Device Report #4 (Blocker fix): per-round teaching / target callouts & prompts MUST NEVER be
      deduped, rotated, or suppressed — every round speaks its target callout cleanly. */
-  var PROMPT_ALLOW=/^(?:call-|fish-|name-|ask-|teach-|peek-|homes-|feed-|food-|sound-|word-|phonics-|song-|lib-|story-|sayit-|tut-|kidc-|m7-|e7-|s7-|ss7-|hoot-(?:disp|fire|doc|pol|bus|r3d|piz|twk|feed|home|peek|fish)-)/i;
+  var PROMPT_ALLOW=/^(?:call-|fish-|name-|ask-|teach-|peek-|homes-|feed-|food-|sound-|word-|phonics-|song-|lib-|story-|sayit-|tut-|kidc-|m7-|e7-|s7-|ss7-|hoot-(?:disp|fire|doc|pol|bus|r3d|piz|twk|feed|home|peek|fish|ice)-)/i;
   /* Wave 5C (Muse): full 8-clip praise deck, 5-clip try-again deck, 6-clip 1s win cheer deck
      — all gated through window.parent.HOOT_HAVE so only verified clips ever play. */
   var PRAISE_DECK=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3","hoot-yay-2.mp3","hoot-nice-2.mp3","hoot-got-it.mp3","hoot-super.mp3"];

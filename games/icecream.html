@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="icecream";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e150"></script>
+<script src="js/hoot-game-head.js?v=llprev3e153"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🍦</text></svg>" />
@@ -1206,13 +1206,53 @@
     }catch(e){}
   }
 
-  function playVoice(id){
+  function hasHootClip(id){
+    try{
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
+  function resolveIceClip(customId, fallbackId){
+    return (customId && hasHootClip(customId)) ? customId : fallbackId;
+  }
+
+  function playVoice(id, isBoot){
     if(!id) return;
+    var src = "assets/voice/" + id + ".mp3";
+    if(isBoot){
+      try{
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+          if(window.parent.__hwPlayAfterIntro(src)) return;
+        }
+      }catch(e){}
+    }
     stopParentVoice();
     try{ voiceA.pause(); voiceA.currentTime = 0; }catch(e){}
-    voiceA.src = "assets/voice/" + id + ".mp3";
+    voiceA.src = src;
     var p = voiceA.play();
     if(p && p.catch) p.catch(function(){});
+  }
+
+  function playStepGuide(customId, fallbackId, isBoot){
+    playVoice(resolveIceClip(customId, fallbackId), isBoot);
+  }
+
+  function stepGuideForCurrentState(isBoot){
+    if(state.step === "cone"){
+      playStepGuide("hoot-ice-cone", "hoot-welcome", isBoot);
+    } else if(state.step === "scoop"){
+      playStepGuide("hoot-ice-scoop", "hoot-tap-big-btn", false);
+    } else if(state.step === "toppings"){
+      if(isPerfectOrder()){
+        playStepGuide("hoot-ice-serve", "hoot-tap-big-btn", false);
+      } else {
+        playStepGuide("hoot-ice-toppings", "hoot-tap-big-btn", false);
+      }
+    } else {
+      playStepGuide("hoot-ice-yummy", "hoot-next-one", false);
+    }
   }
 
   function armIdle(){
@@ -1221,8 +1261,8 @@
     idleTimer = setTimeout(function(){
       if(!winOverlay.hidden) return;
       idleReminded = true;
-      playVoice(lastIdleClip);
-    }, 12500);
+      stepGuideForCurrentState(false);
+    }, 9500);
   }
   window.addEventListener("pointerdown", function(){
     idleReminded = false;
@@ -2624,7 +2664,7 @@
 
     lastIdleClip = "hoot-idle-tap";
     if(opts && opts.voice){
-      playVoice(opts.voice);
+      playStepGuide(opts.customVoice || null, opts.voice, !!(opts && opts.isBoot));
     }
     armIdle();
     armHintShimmer();
@@ -2641,11 +2681,18 @@
     var c = centerOf(coneStage);
     spawnSparkles(c.x, c.y + 60, 12);
     lastIdleClip = "hoot-tap-big-btn";
+    playStepGuide("hoot-ice-scoop", "hoot-tap-big-btn", false);
     armHintShimmer();
     syncUI();
   }
 
   /* Step 2: Pull Flavor Lever -> Drop Bouncy Scoop (up to 3!) */
+  var FLAVOR_VOICE = {
+    strawberry: "hoot-ice-strawberry",
+    vanilla:    "hoot-ice-vanilla",
+    chocolate:  "hoot-ice-chocolate",
+    rainbow:    "hoot-ice-rainbow"
+  };
   function addScoop(flavorKey, btnEl){
     if(state.step !== "scoop" || state.scoops.length >= 3) return;
     if(btnEl){
@@ -2659,7 +2706,7 @@
     var n = state.scoops.length;
     sfxScoopPlop(n);
     showCountPop(n + "!");
-    playVoice("name-number-" + n);
+    playStepGuide(FLAVOR_VOICE[flavorKey], "name-number-" + n, false);
 
     var c = centerOf(coneStage);
     var m = FLAVOR_META[flavorKey] || FLAVOR_META.strawberry;
@@ -2674,15 +2721,24 @@
     /* Live-update giant Order Cloud green checkmarks + sparkle burst! */
     syncOrderProgress(true);
 
-    /* Automatically open Toppings Bar when 3 scoops are stacked! */
+    /* Automatically open Toppings Bar when 3 scoops are stacked or all ordered flavors are met! */
     if(n >= 3){
       state.step = "toppings";
+      setTimeout(function(){
+        if(state.step === "toppings") playStepGuide("hoot-ice-toppings", "hoot-tap-big-btn", false);
+      }, 950);
     }
     armHintShimmer();
     syncUI();
   }
 
   /* Step 3: Add Toppings (Sprinkles, Chocolate Drizzle, Whipped Cream, Red Cherry) */
+  var TOP_VOICE = {
+    sprinkles: "hoot-ice-sprinkles",
+    drizzle:   "hoot-ice-syrup",
+    whip:      "hoot-ice-whip",
+    cherry:    "hoot-ice-cherry"
+  };
   function addTopping(topKey){
     if(state.step !== "toppings" || state.scoops.length === 0) return;
     var already = !!state.toppings[topKey];
@@ -2715,6 +2771,12 @@
 
     /* Live-update giant Order Cloud green checkmarks + sparkle burst! */
     syncOrderProgress(true);
+    playStepGuide(TOP_VOICE[topKey], "hoot-nice-2", false);
+    if(isPerfectOrder()){
+      setTimeout(function(){
+        if(state.step === "toppings") playStepGuide("hoot-ice-serve", "hoot-tap-big-btn", false);
+      }, 1150);
+    }
     armHintShimmer();
     syncUI();
   }
@@ -2826,7 +2888,7 @@
     customerWrap.className = "leaving";
     orderCard.classList.add("entering");
     setTimeout(function(){
-      startNewCone({ voice: "hoot-next-one" });
+      startNewCone({ customVoice: "hoot-ice-next", voice: "hoot-next-one" });
     }, 300);
   }
 
@@ -2855,6 +2917,7 @@
     if(state.step === "scoop" && state.scoops.length >= 1){
       state.step = "toppings";
       sfxConePop();
+      playStepGuide("hoot-ice-toppings", "hoot-tap-big-btn", false);
       armHintShimmer();
       syncUI();
     }
@@ -2874,7 +2937,7 @@
 
   document.getElementById("hootBtn").addEventListener("click", function(){
     sfxCherryPop();
-    playVoice(state.step === "cone" ? "hoot-welcome" : "hoot-tap-big-btn");
+    stepGuideForCurrentState(false);
   });
 
   document.getElementById("doneBtn").addEventListener("click", function(){
@@ -2928,10 +2991,10 @@
   };
 
   /* Boot Hoot's Ice Cream Truck! */
-  startNewCone({ voice: "hoot-welcome" });
+  startNewCone({ customVoice: "hoot-ice-cone", voice: "hoot-welcome", isBoot: true });
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e150">
-<script src="js/hoot-game-tail.js?v=llprev3e150"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e153">
+<script src="js/hoot-game-tail.js?v=llprev3e153"></script>
 </body>
 </html>
