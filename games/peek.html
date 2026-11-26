@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="peek";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e135"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -28,7 +28,7 @@
     user-select:none; -webkit-user-select:none;
   }
 
-  /* ================= FULL-SCREEN IMMERSIVE ENCHANTED FOREST (ZERO CARDS / ZERO BOTTOM TRAY!) ================= */
+  /* ================= FULL-SCREEN IMMERSIVE PIXAR ENCHANTED FOREST ================= */
   #world{
     position:fixed; inset:0; height:100dvh; overflow:hidden;
     background:linear-gradient(180deg, #56c0f7 0%, #9ce2ff 24%, #b9f1c9 37%, #6dd165 40%, #48b44c 66%, #31943c 100%);
@@ -38,12 +38,21 @@
     background:linear-gradient(180deg, #0b1633 0%, #162954 26%, #14363b 39%, #134232 45%, #0e3226 70%, #09231b 100%);
   }
 
-  /* Atmospheric sunbeams / distant layered forest silhouettes */
-  #forestBgSvg{
-    position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; z-index:1;
+  .pixar-backdrop{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_peek.jpg"), linear-gradient(180deg, #56c0f7 0%, #9ce2ff 24%, #b9f1c9 37%, #6dd165 40%, #48b44c 66%, #31943c 100%);
     transition:filter .55s ease;
   }
-  #world.night-mode #forestBgSvg{ filter:brightness(.38) saturate(1.1); }
+  .pixar-backdrop::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 54%, rgba(255,253,240,.04) 28%, rgba(16,42,24,.24) 100%);
+  }
+  #world.night-mode .pixar-backdrop{
+    filter:brightness(.36) saturate(1.15) hue-rotate(8deg);
+  }
 
   #nightStars{
     position:absolute; inset:0 0 60% 0; z-index:2; pointer-events:none; opacity:0; transition:opacity .55s;
@@ -56,12 +65,15 @@
   }
   @keyframes twinkle{ from{ opacity:.3; transform:scale(.7); } to{ opacity:1; transform:scale(1.3); } }
 
+  /* 64x64 Toddler-Tappable Glowing Fireflies */
   .firefly{
-    position:absolute; z-index:9; width:34px; height:34px; border:none; background:none; padding:0;
+    position:absolute; z-index:9; width:64px; height:64px; min-width:64px; min-height:64px;
+    border:none; background:none; padding:0;
+    display:grid; place-items:center;
     cursor:pointer; animation:ffFloat 5.5s ease-in-out infinite alternate;
   }
   .firefly i{
-    display:block; width:12px; height:12px; margin:11px auto; border-radius:50%;
+    display:block; width:14px; height:14px; border-radius:50%;
     background:#fff49c; box-shadow:0 0 16px 6px rgba(255,235,110,.95);
     animation:ffGlow 1.3s ease-in-out infinite alternate;
   }
@@ -72,14 +84,14 @@
   #hud{
     position:fixed; top:0; left:0; right:0; z-index:22;
     display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:max(8px, env(safe-area-inset-top)) 12px 0;
+    padding:max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));
     pointer-events:none;
   }
   .hud-group{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
   .mode-pill{
-    min-width:68px; height:64px; padding:0 12px; border-radius:22px;
-    border:4px solid #fff; background:rgba(255,253,247,.95);
-    box-shadow:0 5px 0 rgba(23,50,79,.24), 0 8px 18px rgba(23,50,79,.16);
+    min-width:66px; min-height:64px; height:64px; padding:0 12px; border-radius:22px;
+    border:4px solid #fff; background:rgba(255,253,247,.96);
+    box-shadow:0 5px 0 rgba(23,50,79,.26), 0 8px 18px rgba(23,50,79,.18);
     display:flex; align-items:center; justify-content:center; gap:4px;
     font-size:25px; cursor:pointer;
     transition:transform .16s cubic-bezier(.34,1.6,.5,1), background .15s;
@@ -92,16 +104,16 @@
     transform:translateY(-2px) scale(1.04);
   }
   #soundBtn{
-    width:64px; height:64px; border-radius:50%;
+    min-width:64px; min-height:64px; width:64px; height:64px; border-radius:50%;
     border:4px solid #fff; background:rgba(255,253,247,.96);
-    box-shadow:0 5px 0 rgba(23,50,79,.24); display:grid; place-items:center; cursor:pointer;
+    box-shadow:0 5px 0 rgba(23,50,79,.26); display:grid; place-items:center; cursor:pointer;
   }
   #soundBtn:active{ transform:translateY(3px) scale(.94); }
   #soundBtn svg{ width:28px; height:28px; }
   #starPill{
-    height:64px; padding:0 16px 0 12px; border-radius:999px;
+    min-height:64px; height:64px; padding:0 16px 0 12px; border-radius:999px;
     border:4px solid #fff; background:rgba(255,253,247,.96);
-    box-shadow:0 5px 0 rgba(23,50,79,.24);
+    box-shadow:0 5px 0 rgba(23,50,79,.26);
     display:flex; align-items:center; gap:7px;
     font-weight:800; font-size:25px; color:#17324f;
   }
@@ -109,20 +121,21 @@
   #starPill.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
   @keyframes starBump{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22) rotate(-4deg); } 100%{ transform:scale(1); } }
 
-  /* ================= TREE-BRANCH PERCHED HOOT (LEFT CANOPY — NOT CENTERED!) ================= */
+  /* ================= TREE-BRANCH PERCHED HOOT (LEFT CANOPY) ================= */
   #branchPerch{
     position:fixed; left:-8px; top:max(76px, calc(env(safe-area-inset-top) + 70px)); z-index:18;
     display:flex; align-items:flex-start; gap:8px; pointer-events:none;
   }
   #branchSvg{
     position:absolute; left:0; top:68px; width:168px; height:44px; pointer-events:none;
-    filter:drop-shadow(0 5px 6px rgba(23,50,79,.25));
+    filter:drop-shadow(0 5px 6px rgba(23,50,79,.32));
   }
   #hootBtn{
     position:relative; z-index:2; margin-left:18px;
+    min-width:64px; min-height:64px;
     border:none; background:none; padding:0; cursor:pointer; pointer-events:auto;
     width:98px; height:102px;
-    filter:drop-shadow(0 8px 12px rgba(23,50,79,.28));
+    filter:drop-shadow(0 8px 14px rgba(23,50,79,.36));
     transform-origin:50% 90%;
     animation:owlBob 3.2s ease-in-out infinite;
   }
@@ -133,13 +146,13 @@
   #hootBtn.happy-jump{ animation:hootCheer .45s cubic-bezier(.34,1.7,.5,1) 3; }
   @keyframes hootCheer{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-16px) rotate(-4deg); } }
 
-  /* Compact Picture-Only Wanted Poster / Finder Bubble Next to Hoot's Branch */
+  /* Compact Picture-Only Finder Bubble Next to Hoot's Branch */
   #finderBubble{
     position:relative; z-index:2; margin-top:10px; pointer-events:auto;
     display:flex; align-items:center; gap:8px;
-    background:#fffdf8; border:4.5px solid #17324f; border-radius:28px;
-    padding:6px 10px 6px 10px;
-    box-shadow:0 7px 0 #17324f, 0 12px 24px rgba(23,50,79,.24);
+    background:rgba(255,253,248,.97); border:4.5px solid #17324f; border-radius:28px;
+    padding:6px 10px;
+    box-shadow:0 7px 0 #17324f, 0 12px 24px rgba(23,50,79,.28);
   }
   #finderBubble::before{
     content:""; position:absolute; left:-11px; top:26px;
@@ -155,20 +168,21 @@
   }
   #wantedIcon svg{ width:100%; height:100%; display:block; }
   #repeatBtn{
-    width:64px; height:64px; border-radius:50%;
+    min-width:64px; min-height:64px; width:64px; height:64px; border-radius:50%;
     border:4px solid #17324f; background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
     box-shadow:0 4px 0 #17324f; display:grid; place-items:center; cursor:pointer;
   }
   #repeatBtn:active{ transform:translateY(3px); box-shadow:0 1px 0 #17324f; }
   #repeatBtn svg{ width:28px; height:28px; }
 
-  /* ================= ORGANIC FULL-SCREEN FOREST PROPS (SCATTERED IN THE LIVING CLEARING!) ================= */
+  /* ================= ORGANIC FULL-SCREEN FOREST PROPS ================= */
   #clearing{
     position:absolute; inset:0; z-index:8;
   }
 
   .forest-prop{
     position:absolute; border:none; background:none; padding:0;
+    min-width:96px; min-height:96px;
     width:clamp(118px, 24vw, 182px); height:clamp(118px, 24vw, 182px);
     cursor:pointer; touch-action:manipulation;
     transform:translate(-50%, -50%);
@@ -179,21 +193,22 @@
 
   /* Ground contact shadow under every organic forest prop */
   .prop-shadow{
-    position:absolute; left:12%; right:12%; bottom:4%; height:18%;
-    border-radius:50%; background:rgba(20,56,28,.34); pointer-events:none;
+    position:absolute; left:10%; right:10%; bottom:2%; height:20%;
+    border-radius:50%; background:rgba(15,38,20,.46); pointer-events:none;
+    filter:blur(2px);
   }
 
-  /* The hiding animal tucked BEHIND the bush/tent/log — actually peeks ears up periodically! */
+  /* The hiding animal tucked BEHIND the bush/tent/log */
   .prop-hider{
     position:absolute; left:50%; bottom:16%; width:76%; height:76%;
     transform:translateX(-50%) translateY(22%) scale(.55);
     opacity:0; pointer-events:none; z-index:2;
-    filter:drop-shadow(0 8px 12px rgba(23,50,79,.32));
+    filter:drop-shadow(0 8px 14px rgba(23,50,79,.4));
     transition:transform .42s cubic-bezier(.34,1.88,.5,1), opacity .22s;
   }
   .prop-hider svg{ width:100%; height:100%; display:block; }
 
-  /* Sneaky live peek-a-boo tease! Ears/head pop up slightly behind the prop then duck back down! */
+  /* Sneaky live peek-a-boo tease! */
   .forest-prop.peeking-tease .prop-hider{
     opacity:1;
     animation:sneakyPeek 1.55s ease-in-out 1;
@@ -214,10 +229,10 @@
     transform:scale(1.08, .86) translateY(8px);
   }
 
-  /* Front bush / tent / mushroom / log layers that physically rustle & part open! */
+  /* Front bush / tent / mushroom / log layers with bright halo for crisp contrast against Pixar forest */
   .prop-front{
     position:relative; z-index:4; width:100%; height:100%;
-    filter:drop-shadow(0 10px 14px rgba(23,50,79,.28));
+    filter:drop-shadow(0 0 6px rgba(255,253,240,.55)) drop-shadow(0 12px 16px rgba(15,38,20,.42));
     transition:transform .32s cubic-bezier(.34,1.6,.5,1), filter .3s;
     pointer-events:none;
   }
@@ -248,13 +263,13 @@
 
   /* Warm Golden Nudge Glow & Bouncing Finger */
   .forest-prop.nudge-glow .prop-front{
-    filter:drop-shadow(0 0 14px #ffd23f) drop-shadow(0 0 26px rgba(255,201,60,.95));
+    filter:drop-shadow(0 0 16px #ffd23f) drop-shadow(0 0 28px rgba(255,201,60,.98));
     animation:propNudge .68s ease-in-out infinite alternate;
   }
   @keyframes propNudge{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.07); } }
   .nudge-hand{
     position:absolute; right:4%; bottom:-6%; font-size:40px; line-height:1;
-    z-index:10; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
+    z-index:10; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.45));
     animation:handTap .55s ease-in-out infinite alternate;
   }
   @keyframes handTap{ from{ transform:translate(0,0) rotate(-10deg); } to{ transform:translate(-6px,-10px) rotate(4deg); } }
@@ -267,7 +282,7 @@
     border-radius:36px 36px 22px 22px;
     border:5px solid #17324f;
     background:repeating-conic-gradient(#ff6374 0% 25%, #fff8f8 0% 50%) 0 0 / 26px 26px;
-    box-shadow:0 8px 0 #17324f, 0 14px 26px rgba(23,50,79,.32);
+    box-shadow:0 8px 0 #17324f, 0 14px 26px rgba(23,50,79,.36);
     display:flex; align-items:flex-end; justify-content:space-evenly;
     padding:0 14px 6px;
     transition:filter .5s ease;
@@ -277,14 +292,14 @@
   .blanket-guest{
     width:72px; height:72px; margin-bottom:4px;
     border-radius:50%;
-    background:rgba(255,253,247,.52); border:3px dashed rgba(23,50,79,.38);
+    background:rgba(255,253,247,.62); border:3px dashed rgba(23,50,79,.42);
     display:grid; place-items:center;
     transition:transform .35s cubic-bezier(.34,1.85,.5,1);
   }
   .blanket-guest.seated{
     background:none; border:none;
     width:86px; height:86px; margin-bottom:2px;
-    filter:drop-shadow(0 6px 8px rgba(23,50,79,.32));
+    filter:drop-shadow(0 6px 8px rgba(23,50,79,.36));
     animation:guestBounce 2.2s ease-in-out infinite alternate;
   }
   .blanket-guest.seated svg{ width:100%; height:100%; display:block; }
@@ -294,15 +309,14 @@
   #nightVeil{
     position:fixed; inset:0; z-index:15; pointer-events:none; opacity:0;
     transition:opacity .45s ease;
-    background:radial-gradient(circle 165px at var(--fx, 50%) var(--fy, 58%),
-      rgba(255,248,195,.16) 0%,
+    background:radial-gradient(circle 175px at var(--fx, 50%) var(--fy, 58%),
+      rgba(255,248,195,.18) 0%,
       rgba(255,242,170,.06) 44%,
       rgba(8,18,40,.62) 74%,
       rgba(5,12,28,.82) 100%);
   }
   #world.night-mode #nightVeil{ opacity:1; }
 
-  /* Physical Flashlight Handle Following Finger in Night Mode */
   #torchBadge{
     position:fixed; z-index:17; pointer-events:none; opacity:0;
     left:var(--fx, 50%); top:var(--fy, 58%);
@@ -329,32 +343,6 @@
     100%{ transform:translate(-50%, -70px) scale(1); opacity:0; }
   }
 
-  /* ================= ONE-TAP START PEEKABOO BUSH ================= */
-  #startVeil{
-    position:fixed; inset:0; z-index:30;
-    background:rgba(23,50,79,.26); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
-    display:flex; align-items:center; justify-content:center; padding:16px;
-  }
-  #goPeekBtn{
-    width:min(86vw, 304px); min-height:202px;
-    border:6px solid #17324f; border-radius:42px;
-    background:linear-gradient(180deg, #fffdf7 0%, #dff8e5 100%);
-    box-shadow:0 12px 0 #17324f, 0 24px 48px rgba(23,50,79,.38);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-    padding:20px; cursor:pointer;
-    animation:goPulse 1.25s ease-in-out infinite alternate;
-  }
-  @keyframes goPulse{ from{ transform:scale(1); } to{ transform:scale(1.05); } }
-  #goPeekBtn:active{ transform:translateY(5px) scale(.97); box-shadow:0 7px 0 #17324f; }
-  .go-play-pill{
-    display:inline-flex; align-items:center; justify-content:center;
-    min-width:184px; min-height:72px; padding:10px 28px; border-radius:999px;
-    border:5px solid #17324f;
-    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
-    color:#fff; font-size:32px; font-weight:800;
-    box-shadow:0 6px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
-  }
-
   /* ================= WIN CELEBRATION OVERLAY ================= */
   #winOverlay{
     position:fixed; inset:0; z-index:45;
@@ -375,26 +363,27 @@
   .win-mini svg{ width:100%; height:100%; display:block; }
   .win-btns{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
   #againBtn, .win-btn{
-    min-width:190px; min-height:72px; padding:12px 28px; border-radius:999px;
+    min-width:168px; min-height:72px; padding:12px 24px; border-radius:999px;
     border:5px solid #17324f;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
     color:#fff; font-family:inherit; font-size:26px; font-weight:800; cursor:pointer;
     box-shadow:0 7px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
   }
+  #againBtn:active, .win-btn:active{ transform:translateY(4px); box-shadow:0 3px 0 #14532d; }
 
   @media (max-width:460px){
-    #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 0; gap:4px; }
-    .hud-group{ gap:5px; }
-    .mode-pill{ min-width:64px; height:64px; padding:0 8px; font-size:21px; border-radius:18px; gap:2px; }
-    #soundBtn{ width:64px; height:64px; }
-    #starPill{ height:64px; padding:0 11px 0 9px; gap:5px; font-size:22px; }
-    #starPill svg{ width:24px; height:24px; }
+    #hud{ padding:max(8px, env(safe-area-inset-top)) 6px 0; gap:4px; }
+    .hud-group{ gap:4px; }
+    .mode-pill{ min-width:64px; height:64px; padding:0 6px; font-size:20px; border-radius:18px; gap:1px; }
+    #soundBtn{ width:64px; height:64px; min-width:64px; min-height:64px; }
+    #starPill{ height:64px; min-height:64px; padding:0 10px 0 8px; gap:4px; font-size:21px; }
+    #starPill svg{ width:23px; height:23px; }
     #branchPerch{ top:max(78px, calc(env(safe-area-inset-top) + 74px)); }
     #hootBtn{ width:80px; height:84px; margin-left:10px; }
     #branchSvg{ top:54px; width:132px; }
     #finderBubble{ padding:5px 8px; gap:6px; margin-top:4px; }
     #wantedIcon{ width:48px; height:48px; }
-    .forest-prop{ width:clamp(108px, 31vw, 134px); height:clamp(108px, 31vw, 134px); }
+    .forest-prop{ width:clamp(110px, 31vw, 136px); height:clamp(110px, 31vw, 136px); }
     #grassBlanket{ height:74px; padding:0 8px 4px; }
     .blanket-guest{ width:56px; height:56px; }
     .blanket-guest.seated{ width:68px; height:68px; }
@@ -403,48 +392,10 @@
 </head>
 <body>
 <div id="world">
-  <!-- Full-Screen Enchanted Forest Landscape SVG -->
-  <svg id="forestBgSvg" viewBox="0 0 1200 860" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <!-- Warm sunbeams filtering through the trees -->
-    <g opacity=".18" fill="#fff7b2">
-      <polygon points="940,0 1120,0 760,860 540,860"/>
-      <polygon points="720,0 850,0 440,860 280,860"/>
-    </g>
-    <!-- Smiling Sun (upper right) -->
-    <g id="bgSun" transform="translate(1070, 148)">
-      <circle r="44" fill="#ffd23f" stroke="#f59e0b" stroke-width="5"/>
-      <circle cx="-13" cy="-5" r="4.5" fill="#17324f"/><circle cx="13" cy="-5" r="4.5" fill="#17324f"/>
-      <path d="M-12 10 Q0 20 12 10" stroke="#17324f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-    </g>
-    <!-- Fluffy Clouds -->
-    <g fill="#fff" opacity=".9">
-      <ellipse cx="420" cy="128" rx="54" ry="22"/><ellipse cx="465" cy="112" rx="42" ry="28"/><ellipse cx="508" cy="128" rx="40" ry="20"/>
-      <ellipse cx="830" cy="175" rx="46" ry="18"/><ellipse cx="868" cy="162" rx="34" ry="22"/>
-    </g>
-    <!-- Distant Pine Forest Silhouette Ridge -->
-    <path d="M0 365 Q260 285 580 345 T1200 310 L1200 860 L0 860 Z" fill="#6fd468"/>
-    <g fill="#42b34c" opacity=".68">
-      <polygon points="240,320 278,220 316,320"/>
-      <polygon points="300,328 345,212 390,328"/>
-      <polygon points="790,330 834,218 878,330"/>
-      <polygon points="862,324 912,202 962,324"/>
-      <polygon points="1030,318 1075,214 1120,318"/>
-    </g>
-    <!-- Mid-ground Rolling Sunlit Clearing -->
-    <path d="M0 435 Q360 368 720 422 T1200 398 L1200 860 L0 860 Z" fill="#4fbf52"/>
-    <!-- Winding Warm Forest Footpath -->
-    <path d="M510 412 Q615 470 570 575 Q525 680 615 860 L740 860 Q645 680 685 570 Q715 468 585 412 Z" fill="#ebd29b" opacity=".52"/>
-    <!-- Foreground Lush Grass Mound & Tiny Wildflowers -->
-    <path d="M0 710 Q600 660 1200 715 L1200 860 L0 860 Z" fill="#359c3e"/>
-    <g>
-      <circle cx="110" cy="610" r="8" fill="#fff"/><circle cx="110" cy="610" r="3.8" fill="#ffd23f"/>
-      <circle cx="1090" cy="595" r="8" fill="#ffb3c6"/><circle cx="1090" cy="595" r="3.8" fill="#ffd23f"/>
-      <circle cx="980" cy="740" r="8.5" fill="#fff"/><circle cx="980" cy="740" r="4" fill="#ffd23f"/>
-      <circle cx="185" cy="760" r="8" fill="#ffe680"/><circle cx="185" cy="760" r="3.8" fill="#f97316"/>
-    </g>
-  </svg>
+  <!-- Pixar 3D Enchanted Forest Backdrop (with gradient fallback underneath) -->
+  <div id="pixarBg" class="pixar-backdrop" aria-hidden="true"></div>
 
-  <!-- Night Sky Stars & Glowing Fireflies -->
+  <!-- Night Sky Stars & 64px Interactive Glowing Fireflies -->
   <div id="nightStars" aria-hidden="true">
     <span class="nstar" style="left:14%;top:12%;animation-delay:.1s"></span>
     <span class="nstar" style="left:32%;top:18%;animation-delay:.7s"></span>
@@ -453,19 +404,19 @@
     <span class="nstar" style="left:82%;top:11%;animation-delay:1.0s"></span>
     <span class="nstar" style="left:90%;top:24%;animation-delay:.6s"></span>
   </div>
-  <button class="firefly" type="button" style="left:22%;top:34%" aria-label="Tap firefly"><i></i></button>
-  <button class="firefly" type="button" style="right:16%;top:32%;animation-delay:-2.2s" aria-label="Tap firefly"><i></i></button>
+  <button class="firefly" type="button" style="left:18%;top:29%" aria-label="Tap firefly"><i></i></button>
+  <button class="firefly" type="button" style="right:14%;top:28%;animation-delay:-2.2s" aria-label="Tap firefly"><i></i></button>
 
   <!-- Clean Picture-Only Top Bar -->
   <div id="hud">
     <div class="hud-group" role="group" aria-label="Game modes">
-      <button type="button" class="mode-pill on" data-mode="hide" aria-label="Sunny Forest Peekaboo">
+      <button type="button" class="mode-pill on" data-mode="hide" aria-label="Sunny Forest Peekaboo" aria-pressed="true">
         <span aria-hidden="true">🌿</span><span aria-hidden="true">👀</span>
       </button>
-      <button type="button" class="mode-pill" data-mode="night" aria-label="Night Flashlight Peekaboo">
+      <button type="button" class="mode-pill" data-mode="night" aria-label="Night Flashlight Peekaboo" aria-pressed="false">
         <span aria-hidden="true">🔦</span><span aria-hidden="true">🌙</span>
       </button>
-      <button type="button" class="mode-pill" data-mode="surprise" aria-label="Peekaboo Surprise Toybox">
+      <button type="button" class="mode-pill" data-mode="surprise" aria-label="Peekaboo Surprise Toybox" aria-pressed="false">
         <span aria-hidden="true">🎉</span><span aria-hidden="true">🐾</span>
       </button>
     </div>
@@ -488,7 +439,7 @@
       <ellipse cx="152" cy="14" rx="16" ry="9" fill="#4ade80" stroke="#17324f" stroke-width="3" transform="rotate(-18 152 14)"/>
       <ellipse cx="132" cy="36" rx="14" ry="8" fill="#22c55e" stroke="#17324f" stroke-width="3" transform="rotate(14 132 36)"/>
     </svg>
-    <button type="button" id="hootBtn" aria-label="Tap Hoot to giggle and repeat">
+    <button type="button" id="hootBtn" aria-label="Tap Hoot to repeat clue">
       <svg viewBox="0 0 220 228" aria-hidden="true">
         <path d="M90 190 L110 218 L130 190 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="4"/>
         <ellipse cx="40" cy="138" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(14 40 138)"/>
@@ -522,7 +473,7 @@
     </div>
   </div>
 
-  <!-- Full-Screen Living Forest Clearing (Organic Props Placed Right in the Grass!) -->
+  <!-- Full-Screen Living Forest Clearing -->
   <div id="clearing" aria-label="Forest hiding spots"></div>
 
   <!-- Real Checkered Picnic Blanket Spread Right on the Foreground Grass! -->
@@ -531,26 +482,6 @@
   <!-- Night Flashlight Darkness Cone & Handle -->
   <div id="nightVeil" aria-hidden="true"></div>
   <div id="torchBadge" aria-hidden="true">🔦</div>
-
-  <!-- Picture-First Start Bush -->
-  <div id="startVeil">
-    <button type="button" id="goPeekBtn" aria-label="Play Peekaboo Forest">
-      <svg width="136" height="98" viewBox="0 0 136 98" aria-hidden="true">
-        <ellipse cx="52" cy="24" rx="9" ry="20" fill="#fffdf8" stroke="#17324f" stroke-width="3.5" transform="rotate(-10 52 24)"/>
-        <ellipse cx="52" cy="26" rx="4" ry="12" fill="#ff9ebb" transform="rotate(-10 52 26)"/>
-        <ellipse cx="84" cy="24" rx="9" ry="20" fill="#fffdf8" stroke="#17324f" stroke-width="3.5" transform="rotate(10 84 24)"/>
-        <ellipse cx="84" cy="26" rx="4" ry="12" fill="#ff9ebb" transform="rotate(10 84 26)"/>
-        <circle cx="36" cy="64" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/>
-        <circle cx="100" cy="64" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/>
-        <circle cx="68" cy="54" r="30" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
-        <circle cx="44" cy="62" r="5" fill="#ff5d52" stroke="#17324f" stroke-width="2"/>
-        <circle cx="88" cy="68" r="5" fill="#ff5d52" stroke="#17324f" stroke-width="2"/>
-        <circle cx="58" cy="66" r="6" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="58" cy="66" r="2.6" fill="#17324f"/>
-        <circle cx="78" cy="66" r="6" fill="#fff" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="66" r="2.6" fill="#17324f"/>
-      </svg>
-      <span class="go-play-pill">▶</span>
-    </button>
-  </div>
 
   <!-- Win Celebration Overlay -->
   <div id="winOverlay" hidden>
@@ -586,15 +517,15 @@
       svg: wrapSvg('<path d="M84 96 q32 -6 28 -38 q-2 -24 -26 -30 q10 16 2 28 q10 22 -4 40 Z" fill="#c96a2b" stroke="#17324f" stroke-width="3.8"/><path d="M36 38 L28 12 L52 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><path d="M78 38 L86 12 L62 24 Z" fill="#e08238" stroke="#17324f" stroke-width="3.5"/><circle cx="57" cy="63" r="31" fill="#ec9042" stroke="#17324f" stroke-width="4"/><ellipse cx="57" cy="77" rx="17" ry="18" fill="#fef0d5"/><circle cx="46" cy="56" r="4.6" fill="#17324f"/><circle cx="68" cy="56" r="4.6" fill="#17324f"/><ellipse cx="57" cy="65" rx="5.5" ry="4" fill="#6b3410"/><ellipse cx="57" cy="95" rx="10" ry="12" fill="#8b5a2b" stroke="#17324f" stroke-width="3"/>') }
   ];
 
-  /* Organic full-screen clearing coordinates (desktop landscape + portrait friendly!) */
-  var PROPS = [
-    { id:"bush", name:"Berry Bush", x:18, y:62, mx:22, my:51,
+  /* Organic full-screen clearing coordinates (zero overlap with HUD, branch, or blanket on iPad & iPhone!) */
+  var ALL_PROPS = [
+    { id:"bush", name:"Berry Bush", x:18, y:62, mx:24, my:46,
       svg: wrapSvg('<circle cx="34" cy="76" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/><circle cx="86" cy="76" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/><circle cx="60" cy="64" r="32" fill="#55cf64" stroke="#17324f" stroke-width="4"/><circle cx="38" cy="68" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="78" cy="74" r="6" fill="#ff5d52" stroke="#17324f" stroke-width="2.5"/><circle cx="60" cy="48" r="6" fill="#ffc93c" stroke="#17324f" stroke-width="2.5"/>') },
-    { id:"tent", name:"Cozy Tent", x:47, y:49, mx:76, my:47,
+    { id:"tent", name:"Cozy Tent", x:47, y:49, mx:76, my:46,
       svg: wrapSvg('<path d="M10 102 L60 18 L110 102 Z" fill="#ffd23f" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 18 L84 102 L110 102 Z" fill="#ff7aa2" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M44 102 L60 56 L76 102 Z" fill="#24324a" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><path d="M60 10 v12 M60 10 l18 6 -18 6 Z" fill="#4ade80" stroke="#17324f" stroke-width="2.8" stroke-linejoin="round"/>') },
     { id:"mushroom", name:"Toadstool House", x:78, y:52, mx:24, my:70,
       svg: wrapSvg('<path d="M42 64 L78 64 L82 102 Q60 108 38 102 Z" fill="#fff4d8" stroke="#17324f" stroke-width="4"/><path d="M10 66 C12 24 42 16 60 16 C78 16 108 24 110 66 Z" fill="#ff5d52" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/><circle cx="40" cy="40" r="9.5" fill="#fffdf8"/><circle cx="78" cy="36" r="8.5" fill="#fffdf8"/><circle cx="60" cy="54" r="6" fill="#fffdf8"/><path d="M51 102 V80 A9 9 0 0 1 69 80 V102 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="3.2"/>') },
-    { id:"log", name:"Hollow Log", x:32, y:72, mx:76, my:69,
+    { id:"log", name:"Hollow Log", x:32, y:72, mx:76, my:70,
       svg: wrapSvg('<rect x="12" y="50" width="94" height="44" rx="20" fill="#a06a3b" stroke="#17324f" stroke-width="4"/><ellipse cx="28" cy="72" rx="16" ry="22" fill="#4a2e12" stroke="#17324f" stroke-width="4"/><ellipse cx="28" cy="72" rx="9" ry="13" fill="#231407"/><path d="M52 64 h38 M58 78 h28" stroke="#784b22" stroke-width="4" stroke-linecap="round"/><path d="M72 50 q4 -17 15 -17 q11 0 15 17 Z" fill="#ff5d52" stroke="#17324f" stroke-width="3"/><circle cx="83" cy="42" r="3" fill="#fff"/>') },
     { id:"flowers", name:"Flower Mound", x:63, y:70, mx:50, my:58,
       svg: wrapSvg('<path d="M12 102 Q60 66 108 102 Z" fill="#4ade80" stroke="#17324f" stroke-width="4"/><path d="M34 88 V54 M60 86 V42 M86 88 V56" stroke="#15803d" stroke-width="5" stroke-linecap="round"/><circle cx="34" cy="48" r="14" fill="#ff7aa2" stroke="#17324f" stroke-width="3.2"/><circle cx="34" cy="48" r="6" fill="#ffd23f"/><circle cx="60" cy="34" r="16" fill="#c084fc" stroke="#17324f" stroke-width="3.2"/><circle cx="60" cy="34" r="7" fill="#ffd23f"/><circle cx="86" cy="50" r="14" fill="#38bdf8" stroke="#17324f" stroke-width="3.2"/><circle cx="86" cy="50" r="6" fill="#ffd23f"/>') },
@@ -602,23 +533,29 @@
       svg: wrapSvg('<path d="M34 108 L40 36 Q42 16 60 14 Q78 16 80 36 L86 108 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/><circle cx="32" cy="28" r="18" fill="#3ec456" stroke="#17324f" stroke-width="3.8"/><circle cx="88" cy="24" r="19" fill="#2ea043" stroke="#17324f" stroke-width="3.8"/><circle cx="60" cy="18" r="18" fill="#55cf64" stroke="#17324f" stroke-width="3.8"/><ellipse cx="60" cy="70" rx="16" ry="20" fill="#2b1908" stroke="#17324f" stroke-width="3.5"/>') }
   ];
 
+  /* Age-adaptive: Riley (kidb, age 2) gets 4 extra-clear hiding spots & 3 friends to picnic! */
+  var IS_RILEY = false;
+  try{ IS_RILEY = new URLSearchParams(window.location.search || "").get("kid") === "kidb"; }catch(e){}
+  var GOAL = IS_RILEY ? 3 : 4;
+  var PROPS = IS_RILEY ? ALL_PROPS.slice(0, 4) : ALL_PROPS;
+
   function $(id){ return document.getElementById(id); }
   var world = $("world"), clearing = $("clearing"), grassBlanket = $("grassBlanket"),
       hootBtn = $("hootBtn"), hootPupils = $("hootPupils"), finderBubble = $("finderBubble"),
       wantedIcon = $("wantedIcon"), starCountEl = $("starCount"), starPill = $("starPill"),
-      startVeil = $("startVeil"), winOverlay = $("winOverlay"), winFriends = $("winFriends"),
-      winStars = $("winStars");
+      winOverlay = $("winOverlay"), winFriends = $("winFriends"), winStars = $("winStars");
 
-  var state = "start", mode = "hide", GOAL = 4;
+  var state = "playing", mode = "hide";
   var soundOn = true, dead = false, inputLock = false;
   var stars = 0, roundTok = 0;
   var queue = [], targetFriend = null, foundFriends = [];
   var propMap = {};
-  var peekTimer = null, idleTimer = null;
+  var peekTimer = null, peekInitTimer = null, idleVisualTimer = null, idleVoiceTimer = null, idleVoiceReminded = false;
 
   /* ================= WEBAUDIO SFX ================= */
   var AC = null;
   function audio(){
+    if(!soundOn) return null;
     if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; } }
     if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
     return AC;
@@ -626,15 +563,17 @@
   function tone(f0, f1, dur, type, vol, delay){
     if(!soundOn) return;
     var ac = audio(); if(!ac) return;
-    var t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
-    o.type = type || "sine";
-    o.frequency.setValueAtTime(f0, t);
-    if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 20), t + dur);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(ac.destination);
-    o.start(t); o.stop(t + dur + 0.04);
+    try{
+      var t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(f0, t);
+      if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 20), t + dur);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t + dur + 0.04);
+    }catch(e){}
   }
   function sfxPop(){ tone(520, 980, 0.14, "sine", 0.12); }
   function sfxRustle(){ tone(190, 340, 0.08, "triangle", 0.09, 0); tone(290, 165, 0.09, "triangle", 0.09, 0.07); }
@@ -642,17 +581,19 @@
   function sfxBoing(){ tone(240, 410, 0.13, "triangle", 0.10); tone(410, 210, 0.16, "triangle", 0.09, 0.11); }
   function sfxStar(){ tone(880, 880, 0.08, "triangle", 0.10); tone(1175, 1175, 0.10, "triangle", 0.10, 0.07); tone(1568, 1568, 0.16, "triangle", 0.09, 0.14); }
 
-  /* ================= STUDIO HOOT VOICE QUEUE ================= */
+  /* ================= STUDIO HOOT VOICE QUEUE (HOOT_HAVE-GATED + iOS UNLOCK) ================= */
   var VBASE = "assets/voice/";
-  var voiceEl = null, vQueue = [], vPlaying = false;
-  function getVoiceEl(){
-    if(!voiceEl){
-      voiceEl = new Audio();
-      voiceEl.preload = "auto";
-      voiceEl.addEventListener("ended", vNext);
-      voiceEl.addEventListener("error", vNext);
-    }
-    return voiceEl;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var vQueue = [], vPlaying = false, vDrainCbs = [];
+  var audioUnlocked = false, pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+  }
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") > -1 ? chosen : chosen + ".mp3") : null;
   }
   function hubMuted(){
     try{
@@ -662,57 +603,138 @@
       return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
     }catch(e){ return false; }
   }
+  function fireDrain(){
+    if(vPlaying || vQueue.length) return;
+    var list = vDrainCbs.splice(0, vDrainCbs.length);
+    for(var i = 0; i < list.length; i++){ try{ list[i](); }catch(e){} }
+  }
   function clearVoice(){
     vQueue.length = 0;
-    if(voiceEl){ voiceEl.__govWait = false; voiceEl.__govNext = null; try{ voiceEl.pause(); }catch(e){} }
+    vDrainCbs.length = 0;
+    if(voiceEl){ voiceEl.__govWait = false; voiceEl.__govNext = null; try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){} }
     vPlaying = false;
     hootBtn.classList.remove("talking");
   }
-  function vNext(){ vPlaying = false; hootBtn.classList.remove("talking"); pumpVoice(); }
+  function vNext(){
+    vPlaying = false;
+    hootBtn.classList.remove("talking");
+    if(vQueue.length) pumpVoice();
+    else fireDrain();
+  }
+  voiceEl.addEventListener("ended", vNext);
+  voiceEl.addEventListener("error", vNext);
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    audio();
+    try{
+      if(!vPlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              sayClips(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  world.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
   function pumpVoice(){
     if(vPlaying || dead) return;
     var file = vQueue.shift();
-    if(!file) return;
-    if(!soundOn || hubMuted()){ pumpVoice(); return; }
-    var el = getVoiceEl();
+    if(!file){ fireDrain(); return; }
+    if(!soundOn || hubMuted()){ vQueue.length = 0; fireDrain(); return; }
     vPlaying = true;
     hootBtn.classList.add("talking");
-    if(/hoot-giggle/i.test(file)){ window.__bellyArmed = true; setTimeout(function(){ window.__bellyArmed = false; }, 600); }
-    el.setAttribute("src", VBASE + file);
-    el.src = VBASE + file;
-    var pr = el.play();
-    if(pr && pr.catch) pr.catch(function(){ vNext(); });
+    voiceEl.muted = false;
+    voiceEl.setAttribute("src", VBASE + file);
+    voiceEl.src = VBASE + file;
+    var pr = voiceEl.play();
+    if(pr && pr.catch){
+      pr.catch(function(){
+        vPlaying = false;
+        hootBtn.classList.remove("talking");
+        if(!audioUnlocked && !pendingBootClip){
+          pendingBootClip = [file].concat(vQueue.slice());
+          vQueue.length = 0;
+        }
+        fireDrain();
+      });
+    }
   }
   function sayClips(list, replace){
     if(replace) clearVoice();
     (list || []).forEach(function(f){ if(f) vQueue.push(f.indexOf(".mp3") > -1 ? f : f + ".mp3"); });
     pumpVoice();
   }
+  function afterVoice(fn, minMs, maxMs){
+    var done = false, minDone = false, voiceDone = (!vPlaying && !vQueue.length);
+    function check(){
+      if(done || dead) return;
+      if(minDone && voiceDone){ done = true; fn(); }
+    }
+    setTimeout(function(){ minDone = true; check(); }, minMs || 700);
+    setTimeout(function(){ if(!done && !dead){ done = true; fn(); } }, maxMs || 3400);
+    if(!voiceDone){
+      vDrainCbs.push(function(){ voiceDone = true; check(); });
+    }
+  }
+  function playBootClip(clips){
+    if(dead || !soundOn || hubMuted() || !clips || !clips.length) return;
+    var first = clips[0].indexOf(".mp3") > -1 ? clips[0] : (clips[0] + ".mp3");
+    try{
+      if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+        if(window.parent.__hwPlayAfterIntro(VBASE + first)) return;
+      }
+    }catch(e){}
+    sayClips(clips, true);
+  }
   function childKey(){
     try{ return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null; }catch(e){ return null; }
   }
-  function hasVoice(id){
-    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
-  }
-  function speakPrompt(withHello){
-    var prefix = [];
-    if(withHello){
-      var ck = childKey();
-      prefix.push(ck === "kida" ? "hi-kida.mp3" : ck === "kidb" ? "hi-kidb.mp3" : "hoot-game-hello.mp3");
-    }
+  function speakPrompt(isBoot, withIntro){
     if(mode === "surprise"){
-      sayClips(prefix.concat([hasVoice("hoot-peek-surprise") ? "hoot-peek-surprise.mp3" : "hoot-ready-go.mp3"]), true);
-    } else if(targetFriend){
-      if(mode === "night" && hasVoice("hoot-peek-night")){
-        sayClips(prefix.concat(["hoot-peek-night.mp3", "peek-where-" + targetFriend.id + ".mp3"]), true);
+      var surpClip = resolveClip("hoot-peek-surprise", "hoot-ready-go");
+      if(isBoot) playBootClip([surpClip]);
+      else sayClips([surpClip], true);
+      return;
+    }
+    if(!targetFriend) return;
+    var whereClip = "peek-where-" + targetFriend.id + ".mp3";
+    if(isBoot){
+      var inHub = false;
+      try{ inHub = !!(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"); }catch(e){}
+      if(inHub){
+        playBootClip([whereClip]);
       } else {
-        sayClips(prefix.concat(["peek-where-" + targetFriend.id + ".mp3"]), true);
+        var introClip = resolveClip("hoot-peek-intro", null);
+        sayClips(introClip ? [introClip, whereClip] : [whereClip], true);
       }
+      return;
+    }
+    if(mode === "night" && hasHootClip("hoot-peek-night")){
+      sayClips(["hoot-peek-night.mp3", whereClip], true);
+    } else if(withIntro && hasHootClip("hoot-peek-intro")){
+      sayClips(["hoot-peek-intro.mp3", whereClip], true);
+    } else {
+      sayClips([whereClip], true);
     }
   }
   function speakFound(friend, isOdd){
     var ck = "hoot-peek-" + friend.id;
-    if(hasVoice(ck)){ sayClips([ck + ".mp3"], true); return; }
+    if(hasHootClip(ck)){ sayClips([ck + ".mp3"], true); return; }
     var k = childKey();
     var cheer = (isOdd && k === "kida") ? "great-job-kida.mp3" : (isOdd && k === "kidb") ? "great-job-kidb.mp3" : "hoot-amazing.mp3";
     sayClips(["word-" + friend.id + ".mp3", cheer], true);
@@ -786,10 +808,12 @@
   world.addEventListener("pointermove", function(e){ moveLight(e.clientX, e.clientY); });
   world.addEventListener("pointerdown", function(e){ moveLight(e.clientX, e.clientY); });
 
-  /* ================= LIVE SNEAKY PEEK TEASE + IDLE NUDGE ================= */
+  /* ================= LIVE SNEAKY PEEK TEASE + ~9s SPOKEN IDLE NUDGE ================= */
   function clearClues(){
+    if(peekInitTimer){ clearTimeout(peekInitTimer); peekInitTimer = null; }
     if(peekTimer){ clearInterval(peekTimer); peekTimer = null; }
-    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVisualTimer){ clearTimeout(idleVisualTimer); idleVisualTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
     Array.prototype.forEach.call(clearing.querySelectorAll(".forest-prop"), function(b){
       b.classList.remove("nudge-glow", "peeking-tease");
       var h = b.querySelector(".nudge-hand"); if(h) h.remove();
@@ -821,15 +845,26 @@
   function armClues(){
     clearClues();
     if(state !== "playing" || dead || mode === "surprise") return;
-    /* Every 2.8 seconds, the hiding friend actually peeks ears/head up behind the real bush/tent/log! */
-    setTimeout(triggerSneakyPeek, 1200);
-    peekTimer = setInterval(triggerSneakyPeek, 2900);
-    idleTimer = setTimeout(function(){
+    peekInitTimer = setTimeout(triggerSneakyPeek, IS_RILEY ? 1000 : 1200);
+    peekTimer = setInterval(triggerSneakyPeek, IS_RILEY ? 2400 : 2900);
+    idleVisualTimer = setTimeout(function(){
       if(state !== "playing" || dead || inputLock) return;
       var tb = targetPropBtn();
       if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); }
-      if(!vPlaying) speakPrompt(false);
-    }, 6200);
+    }, IS_RILEY ? 4200 : 5400);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(state !== "playing" || dead || inputLock || !targetFriend) return;
+        idleVoiceReminded = true;
+        if(!vPlaying){
+          if(hasHootClip("hoot-peek-idle")){
+            sayClips(["hoot-peek-idle.mp3", "peek-where-" + targetFriend.id + ".mp3"], true);
+          } else {
+            sayClips(["peek-where-" + targetFriend.id + ".mp3"], true);
+          }
+        }
+      }, 9000);
+    }
   }
 
   /* ================= RENDER FINDER BUBBLE & REAL FOREGROUND PICNIC BLANKET ================= */
@@ -914,10 +949,12 @@
     starCountEl.textContent = String(stars);
     starPill.classList.remove("bump"); void starPill.offsetWidth; starPill.classList.add("bump");
     sfxStar();
+    try{ if(window.parent && window.parent.hwAddStar) window.parent.hwAddStar(1); }catch(e){}
   }
 
   function onPropTap(btn, pr){
     if(state !== "playing" || inputLock || dead) return;
+    unlockAudioOnce();
     audio();
     var r = btn.getBoundingClientRect();
     var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -934,7 +971,7 @@
         burstLeaves(cx, r.top + 18, hider.color, 14);
         popBadge(cx, r.top, hider.fx);
         var ck = "hoot-peek-" + hider.id;
-        sayClips([hasVoice(ck) ? (ck + ".mp3") : ("word-" + hider.id + ".mp3")], true);
+        sayClips([hasHootClip(ck) ? (ck + ".mp3") : ("word-" + hider.id + ".mp3")], true);
         setTimeout(function(){ if(!dead) btn.classList.remove("revealed"); }, 1650);
       }, 220);
       return;
@@ -952,15 +989,16 @@
         sfxBoing();
         var critters = ["🦋", "🐞", "🍃", "🌼"];
         popBadge(cx, r.top + 8, critters[Math.floor(Math.random() * critters.length)]);
-        sayClips([hasVoice("hoot-peek-empty") ? "hoot-peek-empty.mp3" : "hoot-try-again.mp3"], true);
+        sayClips([resolveClip("hoot-peek-empty", "hoot-try-again")], true);
         inputLock = false;
         var tb = targetPropBtn();
         if(tb){ tb.classList.add("nudge-glow"); addHandTo(tb); triggerSneakyPeek(); }
+        armClues();
       }, 260);
       return;
     }
 
-    /* FOUND!! Animal springs out behind the real prop, celebrates, then hops right onto the grass picnic blanket! */
+    /* FOUND!! Animal springs out behind the real prop, celebrates, then hops onto the picnic blanket! */
     inputLock = true;
     sfxRustle();
     btn.classList.remove("rustling"); void btn.offsetWidth; btn.classList.add("rustling");
@@ -984,20 +1022,22 @@
           if(dead || tok !== roundTok) return;
           foundFriends.push(foundNow);
           renderBlanket();
-          setTimeout(function(){
+          /* Wait for Hoot's peekaboo cheer to finish cleanly before calling the next friend! */
+          afterVoice(function(){
             if(dead || tok !== roundTok) return;
             hootBtn.classList.remove("happy-jump");
             if(foundFriends.length >= GOAL) showWinCelebration();
-            else presentNextRound(false);
-          }, 650);
+            else presentNextRound(false, false);
+          }, 550, 3000);
         });
-      }, 1050);
+      }, 1000);
     }, 240);
   }
 
-  function presentNextRound(withHello){
+  function presentNextRound(isBoot, withIntro){
     state = "playing";
     inputLock = false;
+    idleVoiceReminded = false;
     world.classList.toggle("night-mode", mode === "night");
 
     if(mode === "surprise"){
@@ -1007,7 +1047,7 @@
       buildClearing(PROPS, mAll);
       renderFinder(true);
       renderBlanket();
-      speakPrompt(!!withHello);
+      speakPrompt(!!isBoot, !!withIntro);
       return;
     }
 
@@ -1019,13 +1059,14 @@
     buildClearing(PROPS, map);
     renderFinder(true);
     renderBlanket();
-    speakPrompt(!!withHello);
+    speakPrompt(!!isBoot, !!withIntro);
     armClues();
   }
 
   function showWinCelebration(){
     state = "won";
     inputLock = false;
+    clearClues();
     showerConfetti();
     winFriends.innerHTML = "";
     foundFriends.forEach(function(f){
@@ -1037,74 +1078,73 @@
       (function(el, ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(stEls[i], 140 + i * 140);
     }
     winOverlay.hidden = false;
-    sayClips([hasVoice("hoot-peek-win") ? "hoot-peek-win.mp3" : "hoot-win-yay.mp3"], true);
+    sayClips([resolveClip("hoot-peek-win", "hoot-win-yay")], true);
   }
 
   function syncModePills(){
     Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
-      b.classList.toggle("on", b.getAttribute("data-mode") === mode);
+      var on = b.getAttribute("data-mode") === mode;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
     });
   }
-  function beginSession(selectedMode, withHello){
+  function beginSession(selectedMode, isBoot, withIntro){
     roundTok++;
     clearClues();
     foundFriends = [];
     queue = shuffle(FRIENDS).slice(0, GOAL);
     hootBtn.classList.remove("happy-jump");
     winOverlay.hidden = true;
-    startVeil.hidden = true;
     mode = selectedMode || mode || "hide";
     syncModePills();
-    presentNextRound(withHello);
+    presentNextRound(!!isBoot, !!withIntro);
   }
 
-  $("goPeekBtn").addEventListener("click", function(){ audio(); sfxPop(); beginSession("hide", true); });
-  $("againBtn").addEventListener("click", function(){ audio(); sfxPop(); beginSession(mode === "surprise" ? "hide" : mode, false); });
+  $("againBtn").addEventListener("click", function(){ unlockAudioOnce(); audio(); sfxPop(); beginSession(mode === "surprise" ? "hide" : mode, false, false); });
   Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
     b.addEventListener("click", function(){
-      audio(); sfxPop(); startVeil.hidden = true; winOverlay.hidden = true;
-      beginSession(b.getAttribute("data-mode"), false);
+      unlockAudioOnce();
+      audio(); sfxPop(); winOverlay.hidden = true;
+      var nextMode = b.getAttribute("data-mode");
+      beginSession(nextMode, false, nextMode === "hide");
     });
   });
-  $("repeatBtn").addEventListener("click", function(){ audio(); if(state === "playing") speakPrompt(false); });
+  $("repeatBtn").addEventListener("click", function(){ unlockAudioOnce(); audio(); if(state === "playing") speakPrompt(false, false); });
   hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
     var r = hootBtn.getBoundingClientRect();
     popBadge(r.left + r.width / 2, r.top + 16, "🎵");
     hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
     setTimeout(function(){ hootBtn.classList.remove("happy-jump"); }, 900);
-    sayClips(["hoot-giggle.mp3"], true);
-    if(state === "playing" && mode !== "surprise"){
-      setTimeout(function(){ if(state === "playing" && !vPlaying) speakPrompt(false); }, 1150);
-    }
+    sfxPop();
+    if(state === "playing") speakPrompt(false, false);
   });
   $("soundBtn").addEventListener("click", function(){
     soundOn = !soundOn;
     $("sndOnSvg").style.display = soundOn ? "block" : "none";
     $("sndOffSvg").style.display = soundOn ? "none" : "block";
-    if(!soundOn) clearVoice(); else { audio(); sfxPop(); }
+    if(!soundOn) clearVoice(); else { unlockAudioOnce(); audio(); sfxPop(); if(state === "playing") speakPrompt(false, false); }
   });
   Array.prototype.forEach.call(document.querySelectorAll(".firefly"), function(ff){
     ff.addEventListener("click", function(){
-      audio(); sfxPop(); var r = ff.getBoundingClientRect(); burstLeaves(r.left + 17, r.top + 17, "#fff49c", 8);
+      unlockAudioOnce(); audio(); sfxPop(); var r = ff.getBoundingClientRect(); burstLeaves(r.left + 32, r.top + 32, "#fff49c", 8);
     });
   });
 
   window.addEventListener("pagehide", function(){ dead = true; clearClues(); clearVoice(); });
   document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(); });
 
-  /* Pre-populate full-screen enchanted forest clearing behind the Start Bush! */
-  targetFriend = FRIENDS[1];
-  buildClearing(PROPS, { bush: FRIENDS[1] });
-  renderFinder(false);
-  renderBlanket();
+  /* Boot directly into lush Pixar Peekaboo Forest (zero blocking start veil!) */
+  beginSession("hide", true, true);
 
   window.__peekGame = {
     snapshot: function(){
       return {
-        state: state, mode: mode, stars: stars,
+        state: state, mode: mode, isRiley: IS_RILEY, stars: stars,
         target: targetFriend ? targetFriend.id : null,
         foundCount: foundFriends.length, goal: GOAL,
+        propCount: clearing.querySelectorAll(".forest-prop").length,
         nightMode: world.classList.contains("night-mode"),
         winShown: !winOverlay.hidden, voicePlaying: vPlaying
       };
@@ -1113,7 +1153,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e135">
-<script src="js/hoot-game-tail.js?v=llprev3e135"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

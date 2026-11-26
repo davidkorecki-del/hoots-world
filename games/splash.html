@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="splash";</script>
-<script src="js/hoot-game-head.js?v=llprev3e101"></script>
+<script>window.__HOOT_GAME_KEY__="splash";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -19,6 +19,14 @@
   #stage{
     position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden;
     display:flex;flex-direction:column;justify-content:space-between;
+    background:linear-gradient(180deg, #0284c7 0%, #7dd3fc 52%, #fef9c3 100%);
+  }
+
+  /* Pixar-Illustrated Rainbow Splash Garden Backdrop with Gradient Fallback */
+  #pixarBg{
+    position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-size:cover;background-position:center center;background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_splash.jpg"), linear-gradient(180deg, #0284c7 0%, #7dd3fc 52%, #fef9c3 100%);
   }
 
   /* Crisp Pinkfong-Style Vector SVG Town Panorama */
@@ -79,13 +87,15 @@
   }
   .hud-left{display:flex;align-items:center;gap:10px;pointer-events:auto;min-width:0;flex:1}
   #hootBtn{
-    flex:none;width:clamp(56px,8vw,72px);height:clamp(56px,8vw,72px);
+    flex:none;min-width:64px;min-height:64px;width:clamp(64px,8vw,72px);height:clamp(64px,8vw,72px);
     border-radius:50%;border:3.5px solid var(--ink);
     background:radial-gradient(circle at 35% 30%,#fffdf0 0%,#ffe066 65%,#f59f00 100%);
     box-shadow:0 6px 0 var(--ink),0 0 18px rgba(255,212,59,.65);
     padding:5px;cursor:pointer;display:grid;place-items:center;
     animation:bossFloat 2.6s ease-in-out infinite;
   }
+  #hootBtn.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ from{transform:scale(1)} to{transform:scale(1.07)} }
   #hootBtn svg{width:100%;height:100%;display:block}
   #bubble{
     background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
@@ -93,12 +103,13 @@
     padding:8px 16px;font-size:clamp(.92rem,1.9vw,1.2rem);font-weight:800;
     color:var(--ink);line-height:1.22;
     box-shadow:0 6px 0 var(--ink),0 12px 24px rgba(10,20,50,.32);
-    max-width:580px;
+    max-width:560px;
   }
   #bubble b{color:#e8590c}
   .hud-right{display:flex;align-items:center;gap:8px;pointer-events:auto;flex:none}
   #starBar{
     display:flex;align-items:center;gap:4px;
+    min-height:64px;
     background:rgba(255,255,255,.94);border:3.5px solid var(--ink);
     border-radius:999px;padding:5px 12px;
     box-shadow:0 6px 0 var(--ink);font-weight:900;
@@ -106,11 +117,11 @@
   .wstar{font-size:1.25rem;filter:grayscale(1) opacity(.3);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
   .wstar.on{filter:none;transform:scale(1.2)}
   #doneBtn{
-    min-height:46px;padding:6px 16px;border-radius:999px;
+    min-width:68px;min-height:64px;padding:6px 18px;border-radius:999px;
     border:3.5px solid var(--ink);
     background:linear-gradient(180deg,#86efac 0%,#22c55e 100%);
-    color:var(--ink);font-family:inherit;font-weight:900;font-size:1rem;
-    box-shadow:0 6px 0 var(--ink);cursor:pointer;
+    color:var(--ink);font-family:inherit;font-weight:900;font-size:1.05rem;
+    box-shadow:0 6px 0 var(--ink);cursor:pointer;white-space:nowrap;
   }
   #doneBtn:active{translate:0 4px;box-shadow:0 2px 0 var(--ink)}
 
@@ -161,6 +172,12 @@
   .lever-bay.active-bay{
     box-shadow:inset 0 5px 0 #fff,0 8px 0 var(--ped),0 12px 0 var(--ink),0 0 0 4px #fde047;
   }
+  .lever-bay.cue-lever{
+    box-shadow:inset 0 5px 0 #fff,0 8px 0 var(--ped),0 12px 0 var(--ink),0 0 0 5px #fde047,0 0 26px rgba(253,224,71,.95);
+    animation:cuePulse 1.3s ease-in-out infinite;
+  }
+  @keyframes cuePulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.035)} }
+  body.kid-riley .tbar-handle{ height:38px; }
 
   .lever-head{
     display:flex;align-items:center;justify-content:space-between;width:100%;
@@ -226,21 +243,42 @@
   .win-trophy{font-size:5rem;line-height:1;margin:0 0 8px}
   .win-card h2{margin:0 0 6px;font-size:2rem;color:var(--ink)}
   .win-card p{margin:0 0 16px;font-size:1.12rem;font-weight:800;color:#334155}
-  .big-play{
-    min-height:66px;min-width:200px;padding:12px 28px;border-radius:999px;
+  .win-btns{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px}
+  .win-btn,.big-play{
+    min-height:66px;min-width:170px;padding:12px 26px;border-radius:999px;
     border:4px solid var(--ink);background:linear-gradient(180deg,#ffe066 0%,#fab005 100%);
-    color:var(--ink);font-family:inherit;font-size:1.32rem;font-weight:900;
+    color:var(--ink);font-family:inherit;font-size:1.28rem;font-weight:900;
     box-shadow:0 7px 0 var(--ink);cursor:pointer;
+  }
+
+  @media (max-width:600px){
+    #hud{gap:6px;padding:max(8px,env(safe-area-inset-top)) 8px 0}
+    #bubble{display:none}
+    #starBar{padding:4px 9px;gap:2px}
+    .wstar{font-size:1.08rem}
+    #doneBtn{padding:6px 14px;font-size:.96rem}
+    #interactiveLayer{top:80px;bottom:215px}
+    .town-actor{width:clamp(84px,22vw,108px);height:clamp(84px,22vw,108px)}
+    #machineDeck{padding:6px 8px 10px;border-radius:26px}
+    .deck-top{margin-bottom:4px}
+    .gauge-pill{padding:2px 10px;font-size:.74rem}
+    #consoleRow{gap:6px}
+    .lever-bay{height:150px;padding:5px 4px 7px;border-radius:20px}
+    .lever-head{font-size:.74rem;flex-direction:column;gap:2px}
+    .lever-pct{font-size:.66rem;min-width:34px;padding:1px 5px}
+    .slot-ticks{display:none}
+    .tbar-handle{width:clamp(50px,14vw,76px);height:32px}
   }
 
   @keyframes bossFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   @keyframes actorBob{0%,100%{transform:translate(-50%,-50%) scale(1) translateY(0)}50%{transform:translate(-50%,-50%) scale(1) translateY(-8px)}}
   @keyframes ledPulse{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e101" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157" />
 </head>
 <body>
 <div id="stage">
+  <div id="pixarBg" aria-hidden="true"></div>
   <!-- Crisp Pinkfong-Style Vector Illustrated Town Scene -->
   <svg id="townSvg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <!-- Dynamic Sky Background Rect -->
@@ -251,7 +289,7 @@
         <stop id="skyStop3" offset="100%" stop-color="#fef9c3"/>
       </linearGradient>
     </defs>
-    <rect width="1440" height="900" fill="url(#skyGrad)"/>
+    <rect width="1440" height="900" fill="url(#skyGrad)" opacity="0.54"/>
 
     <!-- Night Stars & Crescent Moon (Appear when Sun lever is pulled DOWN to dark!) -->
     <g id="svgRainbow" opacity="0">
@@ -359,7 +397,7 @@
       <button id="hootBtn" type="button" aria-label="Hoot the Owl">
         <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <div id="bubble" aria-live="polite">Slide any <b>Weather Lever UP or DOWN</b> and stop it anywhere to mix the weather!</div>
+      <div id="bubble">Slide or tap any <b>Weather Lever</b> to mix the weather!</div>
     </div>
     <div class="hud-right">
       <div id="starBar" aria-label="Weather stars">
@@ -417,11 +455,13 @@
   </div>
 
   <div id="winOverlay" hidden>
-    <div class="win-card">
+    <div id="winCard" class="win-card">
       <div class="win-trophy" aria-hidden="true">⛈️⛄🪁🌈</div>
       <h2>Weather Master!</h2>
       <p id="winRecap">You mixed storms, snow, flying kites, and rainbow sunshine over the town!</p>
-      <button id="againBtn" class="big-play" type="button">↻ Keep Playing</button>
+      <div class="win-btns">
+        <button id="againBtn" class="big-play win-btn" type="button">↻ Keep Playing</button>
+      </div>
     </div>
   </div>
 </div>
@@ -429,6 +469,8 @@
 <script>
 (function(){
   "use strict";
+  var stage = document.getElementById("stage");
+  var hootBtn = document.getElementById("hootBtn");
   var canvas = document.getElementById("weatherCanvas");
   var ctx = canvas.getContext("2d");
   var bubble = document.getElementById("bubble");
@@ -436,8 +478,23 @@
   var flashEl = document.getElementById("flashOverlay");
   var interactiveLayer = document.getElementById("interactiveLayer");
   var winOverlay = document.getElementById("winOverlay");
-  var starEls = Array.prototype.slice.call(document.querySelectorAll(".wstar"));
+  var starBarEl = document.getElementById("starBar");
   var leverBays = Array.prototype.slice.call(document.querySelectorAll(".lever-bay"));
+
+  var isRiley = /(^|[?&])kid=kidb(&|$)/.test(location.search);
+  try{ if(!isRiley && window.parent && window.parent.__llIsRiley && window.parent.__llIsRiley()) isRiley = true; }catch(e){}
+  if(isRiley) document.body.classList.add("kid-riley");
+  var STAR_GOAL = isRiley ? 4 : 5;
+  (function buildStars(){
+    starBarEl.innerHTML = "";
+    for(var i = 0; i < STAR_GOAL; i++){
+      var sp = document.createElement("span");
+      sp.className = "wstar";
+      sp.textContent = "⭐";
+      starBarEl.appendChild(sp);
+    }
+  })();
+  var starEls = Array.prototype.slice.call(starBarEl.querySelectorAll(".wstar"));
 
   var svgRainbow = document.getElementById("svgRainbow");
   var svgSun = document.getElementById("svgSun");
@@ -471,35 +528,145 @@
     flower: '<svg viewBox="0 0 130 130"><g fill="#ff4d8d" stroke="#141e30" stroke-width="5"><circle cx="65" cy="22" r="18"/><circle cx="96" cy="34" r="18"/><circle cx="108" cy="65" r="18"/><circle cx="96" cy="96" r="18"/><circle cx="65" cy="108" r="18"/><circle cx="34" cy="96" r="18"/><circle cx="22" cy="65" r="18"/><circle cx="34" cy="34" r="18"/></g><circle cx="65" cy="65" r="28" fill="#fde047" stroke="#141e30" stroke-width="6"/><circle cx="54" cy="60" r="6" fill="#141e30"/><circle cx="76" cy="60" r="6" fill="#141e30"/><path d="M54 74 Q65 84 76 74" fill="none" stroke="#141e30" stroke-width="4.5" stroke-linecap="round"/></svg>'
   };
 
-  /* ---------- Voice & Sound Engine (Strictly gated through HOOT_HAVE so only real Hoot voice clips play) ---------- */
+  /* ---------- Voice & Sound Engine (Strictly HOOT_HAVE-Gated + iOS Safari Unlock) ---------- */
+  var VBASE = "assets/voice/";
+  var PRAISE_DECK = ["hoot-great-job", "hoot-amazing", "hoot-super", "hoot-yay-2"];
+  var praiseIdx = 0;
   var voiceA = new Audio();
-  function hasClip(c){
+  voiceA.preload = "auto";
+  var voiceGen = 0, voicePriority = false, audioUnlocked = false, pendingBootClip = null;
+  var dead = false, won = false, rafId = null, idleTimer = null, winTimer = null;
+
+  function hasHootClip(id){
     try{
-      var H = window.parent && window.parent.HOOT_HAVE;
-      if(H) return !!H[c];
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
     }catch(e){}
-    return c !== "word-snowman" && c !== "word-thunder" && c !== "word-snow" && c !== "word-wind" && c !== "word-sunshine";
+    return false;
   }
-  function playVoice(clips){
-    if(!clips || !clips.length) return;
+  function resolveSplClip(customId, fallbackId){
+    return (customId && hasHootClip(customId)) ? customId : fallbackId;
+  }
+  function nextPraise(){
+    var id = PRAISE_DECK[praiseIdx % PRAISE_DECK.length];
+    praiseIdx++;
+    return hasHootClip(id) ? id : "hoot-great-job";
+  }
+  function hubQuiet(){
+    try{
+      var d = window.parent && window.parent.document;
+      if(!d || d === document) return false;
+      var b = d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
+    }catch(e){ return false; }
+  }
+  function stopVoice(){
+    voiceGen++;
+    voicePriority = false;
+    voiceA.onended = null; voiceA.onerror = null;
+    try{ voiceA.pause(); }catch(e){}
+    if(hootBtn) hootBtn.classList.remove("talking");
+  }
+  function playVoice(clips, isPriority){
+    if(dead || hubQuiet() || !clips || !clips.length) return;
+    if(!isPriority && voicePriority && !voiceA.paused && !voiceA.ended) return;
     var valid = clips.map(function(c){
-      if(hasClip(c)) return c;
-      if(c === "word-snowman") return "hoot-super";
-      if(c === "word-thunder") return "word-frog";
-      if(c === "word-snow") return "word-penguin";
-      if(c === "word-wind") return "word-kite";
-      if(c === "word-sunshine") return "word-flower";
-      return null;
+      if(!c) return null;
+      if(c === "word-snowman") return hasHootClip(c) ? c : "word-penguin";
+      if(c === "word-thunder") return hasHootClip(c) ? c : "word-frog";
+      if(c === "word-snow") return hasHootClip(c) ? c : "word-penguin";
+      if(c === "word-wind") return hasHootClip(c) ? c : "word-kite";
+      if(c === "word-sunshine") return hasHootClip(c) ? c : "word-flower";
+      return c;
     }).filter(Boolean);
     if(!valid.length) return;
-    var i = 0;
+    var gen = ++voiceGen, i = 0;
+    voicePriority = !!isPriority;
+    voiceA.onended = null; voiceA.onerror = null;
+    try{ voiceA.pause(); }catch(e){}
+    function finish(){
+      if(gen === voiceGen){
+        voicePriority = false;
+        if(hootBtn) hootBtn.classList.remove("talking");
+      }
+    }
     function step(){
-      if(i >= valid.length) return;
-      voiceA.src = "assets/voice/" + valid[i++] + ".mp3";
-      voiceA.onended = step; voiceA.onerror = step;
-      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
+      if(dead || gen !== voiceGen) return;
+      if(i >= valid.length){ finish(); return; }
+      var id = valid[i++];
+      voiceA.muted = false;
+      voiceA.src = VBASE + id + ".mp3";
+      voiceA.onended = step;
+      voiceA.onerror = step;
+      if(hootBtn) hootBtn.classList.add("talking");
+      var p = voiceA.play();
+      if(p && p.catch){
+        p.catch(function(){
+          if(!audioUnlocked && isPriority && !pendingBootClip) pendingBootClip = id;
+          finish();
+        });
+      }
     }
     step();
+  }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    ac();
+    try{
+      if(voiceA.paused || voiceA.ended){
+        voiceA.muted = true;
+        var p = voiceA.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceA.pause(); voiceA.currentTime = 0; voiceA.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip; pendingBootClip = null;
+              playVoice([c], true);
+            }
+          }).catch(function(){ voiceA.muted = false; });
+        } else { voiceA.muted = false; }
+      }
+    }catch(e){ voiceA.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
+  var WEATHER_ORDER = ["storm", "snow", "wind", "sun"];
+  var cueIdx = 0;
+  function currentCueKey(){ return WEATHER_ORDER[cueIdx % WEATHER_ORDER.length]; }
+  function updateCueHighlight(){
+    var ck = currentCueKey();
+    leverBays.forEach(function(bay){
+      bay.classList.toggle("cue-lever", !won && bay.getAttribute("data-w") === ck);
+    });
+  }
+  function weatherVoiceFor(key, val){
+    if(key === "storm"){
+      var stormFallback = hasHootClip("hoot-wea-rain") ? "hoot-wea-rain" : (hasHootClip("word-thunder") ? "word-thunder" : "word-frog");
+      return resolveSplClip("hoot-spl-storm", stormFallback);
+    }
+    if(key === "snow"){
+      return hasHootClip("hoot-wea-snow") ? "hoot-wea-snow" : (val >= 0.55 ? "word-penguin" : "word-snow");
+    }
+    if(key === "wind"){
+      return resolveSplClip("hoot-spl-wind", hasHootClip("word-wind") ? "word-wind" : "word-kite");
+    }
+    return hasHootClip("hoot-wea-sunny") ? "hoot-wea-sunny" : (val >= 0.55 ? "word-butterfly" : "word-flower");
+  }
+  function clearIdle(){
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+  }
+  function armIdle(){
+    clearIdle();
+    if(dead || won) return;
+    idleTimer = setTimeout(function(){
+      if(dead || won) return;
+      updateCueHighlight();
+      if(voiceA.paused || voiceA.ended){
+        playVoice([resolveSplClip("hoot-weather-idle", "hoot-tap-big-btn")], false);
+      }
+      armIdle();
+    }, 9000);
   }
   var actx = null;
   function ac(){
@@ -587,7 +754,7 @@
       } else {
         sfxNotes([523, 659, 784, 1046]);
       }
-      playVoice([a.clip]);
+      playVoice([a.clip, nextPraise()], false);
       awardStar();
     };
     b.addEventListener("pointerdown", hit);
@@ -596,9 +763,32 @@
     actorEls[a.id] = { el: b, def: a };
   });
 
+  function showWin(){
+    if(won || dead) return;
+    won = true;
+    clearIdle();
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    updateCueHighlight();
+    winOverlay.hidden = false;
+    sfxNotes([523, 659, 784, 1046, 1318]);
+    playVoice([resolveSplClip("hoot-spl-win", hasHootClip("hoot-win-yay") ? "hoot-win-yay" : "hoot-amazing")], true);
+  }
+
   function awardStar(){
-    stars = Math.min(5, stars + 1);
+    if(won || dead) return false;
+    stars = Math.min(STAR_GOAL, stars + 1);
     starEls.forEach(function(el, i){ el.classList.toggle("on", i < stars); });
+    armIdle();
+    if(stars >= STAR_GOAL){
+      clearIdle();
+      if(winTimer) clearTimeout(winTimer);
+      winTimer = (window.__hwFastWin || setTimeout)(function(){
+        winTimer = null;
+        if(!dead && !won) showWin();
+      }, 1150);
+      return true;
+    }
+    return false;
   }
 
   function strikeLightning(tx, ty){
@@ -718,11 +908,26 @@
     }
   }
 
-  /* ---------- Smooth Analog Dragging & Tapping on all 4 Levers ---------- */
+  /* ---------- Smooth Analog Dragging & Forgiving Toddler Tapping on all 4 Levers ---------- */
   leverBays.forEach(function(bay){
     var key = bay.getAttribute("data-w");
     var wrap = bay.querySelector(".slot-wrap");
-    var dragging = false, lastBucket = -1, startVal = 0;
+    var dragging = false, lastBucket = -1, startVal = 0, downY = 0, movedPx = 0;
+
+    function announceLever(val){
+      if(key === currentCueKey()){
+        cueIdx++;
+        updateCueHighlight();
+      }
+      var hitGoal = awardStar();
+      if(!hitGoal && val >= 0.25){
+        playVoice([weatherVoiceFor(key, val), nextPraise()], true);
+      }
+      if(key === "storm" && val >= 0.65){
+        strikeLightning();
+      }
+      armIdle();
+    }
 
     function setFromClientY(clientY, announce){
       var val = levels[key];
@@ -740,33 +945,25 @@
       }
       updateWorldFromLevers(key);
       if(announce && Math.abs(val - startVal) >= 0.12){
-        awardStar();
-        if(val >= 0.25){
-          if(key === "storm") playVoice([hasClip("word-thunder") && val >= 0.7 ? "word-thunder" : (val >= 0.55 ? "word-duck" : "word-frog")]);
-          else if(key === "snow") playVoice([val >= 0.55 ? "word-penguin" : (hasClip("word-snowman") ? "word-snowman" : "word-snow")]);
-          else if(key === "wind") playVoice([hasClip("word-wind") && val >= 0.7 ? "word-wind" : "word-kite"]);
-          else playVoice([hasClip("word-sunshine") && val >= 0.75 ? "word-sunshine" : (val >= 0.55 ? "word-butterfly" : "word-flower")]);
-        }
-      }
-      if(announce && key === "storm" && val >= 0.65){
-        strikeLightning();
+        announceLever(val);
       }
     }
 
     bay.addEventListener("pointerdown", function(e){
       e.preventDefault();
+      unlockAudioOnce();
+      if(won || dead) return;
       dragging = true;
       startVal = levels[key];
+      downY = e.clientY || 0;
+      movedPx = 0;
       try{ bay.setPointerCapture(e.pointerId); }catch(_){}
       /* If automated test or synthetic tap dispatches pointerdown at (0,0), toggle/step the lever up smoothly */
       if(e.clientY === 0 && e.clientX === 0){
         levels[key] = levels[key] < 0.85 ? 0.92 : 0.0;
         sfxSlideTick(levels[key]);
         updateWorldFromLevers(key);
-        if(levels[key] >= 0.5){
-          awardStar();
-          if(key === "storm") strikeLightning();
-        }
+        if(levels[key] >= 0.5 || key === "sun") announceLever(levels[key]);
         dragging = false;
         return;
       }
@@ -774,11 +971,20 @@
     });
     var onMove = function(e){
       if(!dragging) return;
+      movedPx = Math.max(movedPx, Math.abs((e.clientY || 0) - downY));
       setFromClientY(e.clientY, false);
     };
     var endDrag = function(e){
       if(!dragging) return;
       dragging = false;
+      /* Toddler forgiving tap: a quick tap on a low/OFF lever smoothly boosts it to MAX weather action! */
+      if(movedPx < 12 && startVal < 0.35 && levels[key] < 0.45){
+        levels[key] = 0.88;
+        sfxSlideTick(levels[key]);
+        updateWorldFromLevers(key);
+        announceLever(levels[key]);
+        return;
+      }
       setFromClientY(e && e.clientY ? e.clientY : undefined, true);
     };
     bay.addEventListener("pointermove", onMove);
@@ -789,6 +995,8 @@
   });
 
   canvas.addEventListener("pointerdown", function(e){
+    unlockAudioOnce();
+    if(won || dead) return;
     var x = e.clientX, y = e.clientY;
     spawnSparks(x, y, null, 24);
     if(levels.storm >= 0.3) strikeLightning(x, y);
@@ -799,25 +1007,60 @@
       var scale = [523, 587, 659, 698, 784, 880, 987, 1046];
       sfxNotes([scale[Math.floor((x / Math.max(1, W)) * scale.length) % scale.length]]);
     }
+    armIdle();
   });
 
-  document.getElementById("doneBtn").addEventListener("click", function(){
-    winOverlay.hidden = false;
-    sfxNotes([523, 659, 784, 1046, 1318]);
-    playVoice(["hoot-win-yay"]);
-  });
-  document.getElementById("againBtn").addEventListener("click", function(){
+  function startSession(isBoot){
+    won = false;
+    stars = 0;
+    cueIdx = 0;
     winOverlay.hidden = true;
+    try{ window.__hwWinSkipFn = null; }catch(e){}
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    clearIdle();
+    stopVoice();
+    starEls.forEach(function(el){ el.classList.remove("on"); });
+    levels.storm = 0; levels.snow = 0; levels.wind = 0; levels.sun = 0.85;
+    updateWorldFromLevers(null);
+    updateCueHighlight();
+    var firstClip = hasHootClip("hoot-wea-welcome") ? "hoot-wea-welcome" : (hasHootClip("hoot-weather-idle") ? "hoot-weather-idle" : "hoot-welcome");
+    var chainedBoot = false;
+    if(isBoot){
+      try{
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+          chainedBoot = !!window.parent.__hwPlayAfterIntro(VBASE + firstClip + ".mp3");
+        }
+      }catch(e){}
+    }
+    if(!chainedBoot){
+      var introClip = hasHootClip("hoot-weather-intro") ? "hoot-weather-intro" : firstClip;
+      playVoice([introClip], true);
+    }
+    armIdle();
+    if(!rafId) rafId = requestAnimationFrame(render);
+  }
+
+  document.getElementById("doneBtn").addEventListener("click", function(){ unlockAudioOnce(); showWin(); });
+  document.getElementById("againBtn").addEventListener("click", function(){ unlockAudioOnce(); startSession(false); });
+  document.getElementById("playBtn").addEventListener("click", function(){ unlockAudioOnce(); startSession(false); });
+  hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
+    updateCueHighlight();
+    playVoice([resolveSplClip("hoot-weather-idle", "hoot-tap-big-btn")], true);
+    armIdle();
   });
-  document.getElementById("playBtn").addEventListener("click", function(){
-    winOverlay.hidden = true;
-  });
-  document.getElementById("hootBtn").addEventListener("click", function(){
-    playVoice(["hoot-giggle"]);
+
+  window.addEventListener("pagehide", function(){
+    dead = true;
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    clearIdle();
+    stopVoice();
   });
 
   /* ---------- 60fps Continuous Analog Weather Renderer ---------- */
   function render(){
+    if(dead) return;
     tick++;
     ctx.clearRect(0, 0, W, H);
 
@@ -926,14 +1169,25 @@
       ctx.globalAlpha = 1;
     }
 
-    requestAnimationFrame(render);
+    rafId = requestAnimationFrame(render);
   }
 
-  updateWorldFromLevers(null);
-  playVoice(["hoot-game-hello"]);
-  requestAnimationFrame(render);
+  startSession(true);
+
+  window.__splashGame = {
+    snapshot: function(){
+      return {
+        isRiley: isRiley,
+        stars: stars,
+        goal: STAR_GOAL,
+        cue: currentCueKey(),
+        levels: { storm: levels.storm, snow: levels.snow, wind: levels.wind, sun: levels.sun },
+        winShown: !winOverlay.hidden
+      };
+    }
+  };
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e101"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="band";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e142"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -34,7 +34,7 @@ window.__HOOT_SELF_COACH__=true;
     -webkit-user-select:none;
   }
 
-  /* ================= SUNSET TREEHOUSE BANDSTAND STAGE ================= */
+  /* ================= SUNSET TREEHOUSE BANDSTAND STAGE + PIXAR BACKDROP ================= */
   #stage{
     position:fixed;
     inset:0;
@@ -51,6 +51,29 @@ window.__HOOT_SELF_COACH__=true;
       #8b5224 71%,
       #633715 100%);
   }
+  .backdrop{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_band.jpg"), linear-gradient(180deg,
+      #34205c 0%,
+      #59327c 26%,
+      #a84b7a 52%,
+      #f08d58 70%,
+      #8b5224 71%,
+      #633715 100%);
+  }
+  .backdrop::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 42%, rgba(28,14,52,.08) 25%, rgba(22,10,44,.38) 100%);
+  }
 
   /* Warm glowing string fairy lights across stage top */
   #lightsSvg{
@@ -63,23 +86,24 @@ window.__HOOT_SELF_COACH__=true;
   .bulb{ animation:bulbTwinkle 2.2s ease-in-out infinite alternate; }
   @keyframes bulbTwinkle{ from{opacity:.65} to{opacity:1} }
 
-  /* ================= TOP HUD (>=64px) ================= */
+  /* ================= TOP HUD (>=64px EVERYWHERE) ================= */
   #hud{
     position:relative;
     z-index:20;
     display:flex;
+    flex-wrap:wrap;
     align-items:center;
     justify-content:space-between;
     gap:8px;
     padding:max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 4px max(10px, env(safe-area-inset-left));
     flex:0 0 auto;
   }
-  .hud-group{ display:flex; align-items:center; gap:8px; }
+  .hud-group{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
   .hud-pill{
     min-width:64px;
     min-height:64px;
     height:64px;
-    padding:0 16px;
+    padding:0 15px;
     border-radius:999px;
     border:4px solid #fff;
     background:rgba(255,253,247,.96);
@@ -91,6 +115,7 @@ window.__HOOT_SELF_COACH__=true;
     cursor:pointer;
     box-shadow:0 5px 0 rgba(25,15,45,.32), 0 10px 18px rgba(0,0,0,.22);
     transition:transform .14s cubic-bezier(.34,1.6,.5,1), background .15s;
+    flex:0 0 auto;
   }
   .hud-pill:active{ transform:translateY(3px) scale(.94); }
   .hud-pill.round{ width:64px; padding:0; border-radius:50%; }
@@ -104,19 +129,22 @@ window.__HOOT_SELF_COACH__=true;
     box-shadow:0 5px 0 #9d174d, 0 0 0 3.5px #ffe066;
   }
   #starBank{
+    min-width:64px;
     min-height:64px;
-    padding:0 16px 0 11px;
+    height:64px;
+    padding:0 15px 0 11px;
     border-radius:999px;
     border:4px solid #fff;
     background:rgba(255,253,247,.96);
     display:inline-flex;
     align-items:center;
-    gap:7px;
-    font-size:25px;
+    gap:6px;
+    font-size:24px;
     font-weight:700;
     box-shadow:0 5px 0 rgba(25,15,45,.32);
+    flex:0 0 auto;
   }
-  #starBank svg{ width:28px; height:28px; display:block; }
+  #starBank svg{ width:26px; height:26px; display:block; }
   #starBank.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
   @keyframes starBump{ 0%{transform:scale(1)} 45%{transform:scale(1.2) rotate(-4deg)} 100%{transform:scale(1)} }
 
@@ -141,11 +169,13 @@ window.__HOOT_SELF_COACH__=true;
   }
   #hootLeader{
     width:clamp(108px, 16vw, 158px);
+    min-width:64px;
+    min-height:64px;
     border:none;
     background:none;
     padding:0;
     cursor:pointer;
-    filter:drop-shadow(0 12px 16px rgba(20,10,40,.42));
+    filter:drop-shadow(0 12px 16px rgba(20,10,40,.46));
     animation:leaderBounce 2.6s ease-in-out infinite;
     transform-origin:50% 90%;
   }
@@ -156,10 +186,12 @@ window.__HOOT_SELF_COACH__=true;
   #hootLeader .baton{ transform-box:fill-box; transform-origin:10% 90%; transition:transform .14s; }
   #hootLeader.beat .baton{ transform:rotate(-34deg); }
 
-  /* Replay Beat Pill beside Bandleader Hoot */
+  /* Replay Beat Pill beside Bandleader Hoot (>=64px) */
   #replayBtn{
     min-width:74px;
     min-height:74px;
+    width:74px;
+    height:74px;
     border-radius:50%;
     border:5px solid #fff;
     background:linear-gradient(180deg,#ffe473,#ffb703);
@@ -168,7 +200,7 @@ window.__HOOT_SELF_COACH__=true;
     display:grid;
     place-items:center;
     cursor:pointer;
-    box-shadow:0 7px 0 #b87400, 0 12px 24px rgba(0,0,0,.3);
+    box-shadow:0 7px 0 #b87400, 0 12px 24px rgba(0,0,0,.32);
     transition:transform .14s;
   }
   #replayBtn:active{ transform:translateY(3px) scale(.92); }
@@ -181,19 +213,19 @@ window.__HOOT_SELF_COACH__=true;
     align-items:center;
     justify-content:center;
     gap:12px;
-    background:rgba(25,15,48,.62);
-    border:3.5px solid rgba(255,224,102,.65);
+    background:rgba(25,15,48,.74);
+    border:3.5px solid rgba(255,224,102,.72);
     border-radius:999px;
     padding:8px 18px;
     min-height:62px;
-    box-shadow:0 8px 20px rgba(0,0,0,.3);
+    box-shadow:0 8px 20px rgba(0,0,0,.34);
   }
   .beat-orb{
     width:44px;
     height:44px;
     border-radius:50%;
-    background:rgba(255,255,255,.16);
-    border:3px solid rgba(255,255,255,.45);
+    background:rgba(255,255,255,.18);
+    border:3px solid rgba(255,255,255,.5);
     display:grid;
     place-items:center;
     font-size:24px;
@@ -217,7 +249,7 @@ window.__HOOT_SELF_COACH__=true;
     padding:14px max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
     background:linear-gradient(180deg, #b87032 0%, #8a4e1d 55%, #5c3110 100%);
     border-top:6px solid #e6a866;
-    box-shadow:0 -10px 26px rgba(15,8,30,.45), inset 0 4px 10px rgba(255,235,195,.35);
+    box-shadow:0 -10px 26px rgba(15,8,30,.48), inset 0 4px 10px rgba(255,235,195,.35);
   }
   #padGrid{
     display:grid;
@@ -228,6 +260,8 @@ window.__HOOT_SELF_COACH__=true;
   }
   .inst-pad{
     position:relative;
+    min-width:64px;
+    min-height:64px;
     height:clamp(132px, 26vh, 210px);
     border-radius:28px;
     border:5px solid #fff;
@@ -239,7 +273,7 @@ window.__HOOT_SELF_COACH__=true;
     align-items:center;
     justify-content:center;
     padding:8px;
-    transition:transform .09s cubic-bezier(.34,1.6,.5,1), filter .1s;
+    transition:transform .09s cubic-bezier(.34,1.6,.5,1), filter .1s, box-shadow .14s;
     touch-action:manipulation;
   }
   .inst-pad svg{
@@ -256,10 +290,22 @@ window.__HOOT_SELF_COACH__=true;
     filter:brightness(1.18);
   }
   .inst-pad.cue{
-    box-shadow:0 10px 0 var(--pdeep), 0 0 0 6px #ffe066, 0 0 28px rgba(255,224,102,.95);
+    box-shadow:0 10px 0 var(--pdeep), 0 0 0 7px #ffe066, 0 0 34px 6px rgba(255,224,102,.98);
     animation:padBounce .65s ease-in-out infinite alternate;
+    z-index:4;
   }
-  @keyframes padBounce{ from{transform:translateY(0)} to{transform:translateY(-8px)} }
+  @keyframes padBounce{ from{transform:translateY(0) scale(1)} to{transform:translateY(-8px) scale(1.04)} }
+  .pad-hand{
+    position:absolute;
+    top:-24px;
+    right:10px;
+    font-size:36px;
+    pointer-events:none;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));
+    animation:padHandBob .6s ease-in-out infinite alternate;
+    z-index:6;
+  }
+  @keyframes padHandBob{ from{transform:translateY(0)} to{transform:translateY(-9px)} }
 
   .glyph-pop{
     position:absolute;
@@ -279,7 +325,7 @@ window.__HOOT_SELF_COACH__=true;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:rgba(20,10,42,.55);
+    background:rgba(20,10,42,.58);
     padding:16px;
   }
   #winOverlay[hidden]{ display:none; }
@@ -298,8 +344,9 @@ window.__HOOT_SELF_COACH__=true;
   #winStars .lit{ color:var(--sun); text-shadow:0 3px 0 #d99400; }
   #winTrophy{ font-size:58px; margin:8px 0 18px; }
   #againBtn{
-    min-width:168px;
+    min-width:180px;
     min-height:74px;
+    padding:0 28px;
     border-radius:999px;
     border:4px solid #fff;
     background:linear-gradient(180deg,#6ce078,#3db84d);
@@ -312,21 +359,44 @@ window.__HOOT_SELF_COACH__=true;
   }
   .confetti{ position:absolute; z-index:32; width:12px; height:16px; border-radius:3px; pointer-events:none; }
 
-  /* ================= PORTRAIT PHONE RESPONSIVE ================= */
+  /* ================= PORTRAIT PHONE RESPONSIVE (390x844: ALL TARGETS >=64px) ================= */
   @media (max-width:600px){
-    .hud-pill{ min-width:56px; min-height:56px; height:56px; padding:0 12px; font-size:24px; }
-    .hud-pill.round{ width:56px; }
-    #starBank{ min-height:56px; font-size:22px; padding:0 12px 0 9px; }
+    #hud{
+      gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 8px 4px 8px;
+    }
+    .hud-group{ gap:5px; }
+    .hud-pill{
+      min-width:64px;
+      min-height:64px;
+      height:64px;
+      padding:0 12px;
+      font-size:26px;
+      border-width:3.5px;
+    }
+    .hud-pill.round{ width:64px; }
+    #starBank{
+      min-width:64px;
+      min-height:64px;
+      height:64px;
+      font-size:21px;
+      padding:0 12px 0 9px;
+      border-width:3.5px;
+    }
     #hootLeader{ width:104px; }
-    #replayBtn{ min-width:62px; min-height:62px; font-size:26px; }
-    #padGrid{ grid-template-columns:repeat(2, 1fr); gap:10px; }
-    .inst-pad{ height:clamp(108px, 19vh, 146px); border-radius:22px; }
-    .beat-orb{ width:36px; height:36px; font-size:20px; }
+    #replayBtn{ min-width:68px; min-height:68px; width:68px; height:68px; font-size:28px; }
+    #bandstand{ padding:12px 10px max(12px, env(safe-area-inset-bottom)); }
+    #padGrid{ grid-template-columns:repeat(2, 1fr); gap:12px; }
+    .inst-pad{ height:clamp(112px, 19vh, 148px); border-radius:22px; }
+    .pad-hand{ top:4px; right:8px; font-size:28px; }
+    .beat-orb{ width:38px; height:38px; font-size:20px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="worldBg" class="backdrop" aria-hidden="true"></div>
+
   <!-- Glowing Festival String Lights -->
   <svg id="lightsSvg" viewBox="0 0 1000 90" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
     <path d="M0 16 Q250 66 500 22 T1000 16" stroke="#2c194a" stroke-width="4" fill="none"/>
@@ -357,7 +427,7 @@ window.__HOOT_SELF_COACH__=true;
   <!-- Bandleader Hoot + Rhythm Orbs -->
   <div id="leaderArea">
     <div id="hootRow">
-      <button id="hootLeader" type="button" aria-label="Bandleader Hoot — tap to replay beat">
+      <button id="hootLeader" type="button" aria-label="Bandleader Hoot — tap to hear Hoot">
         <svg viewBox="0 0 220 215" aria-hidden="true">
           <ellipse cx="100" cy="130" rx="60" ry="60" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
           <ellipse cx="100" cy="146" rx="40" ry="40" fill="#fdecd2"/>
@@ -411,6 +481,12 @@ window.__HOOT_SELF_COACH__=true;
 (function(){
   "use strict";
 
+  var IS_RILEY = false;
+  try{
+    var sp = new URLSearchParams(window.location.search || "");
+    IS_RILEY = sp.get("kid") === "kidb";
+  }catch(e){}
+
   var PADS=[
     {id:"drum", emo:"🥁", word:"word-drum", col:"#ef4444", hi:"#ff9494", deep:"#a81d1d", glyph:"♩",
       svg:'<svg viewBox="0 0 110 92" aria-hidden="true"><path d="M22 30 L42 8 M88 30 L68 8" stroke="#fde2b8" stroke-width="6" stroke-linecap="round"/><circle cx="42" cy="8" r="6" fill="#ffe066"/><circle cx="68" cy="8" r="6" fill="#ffe066"/><ellipse cx="55" cy="34" rx="38" ry="12" fill="#fffdf7" stroke="#4a2810" stroke-width="3.5"/><path d="M17 34 L22 76 Q55 86 88 76 L93 34 Q55 46 17 34 Z" fill="#ffd447" stroke="#4a2810" stroke-width="3.5"/><path d="M19 48 L36 68 L55 46 L74 68 L91 48" stroke="#ef4444" stroke-width="5" fill="none" stroke-linejoin="round"/></svg>'},
@@ -422,15 +498,18 @@ window.__HOOT_SELF_COACH__=true;
       svg:'<svg viewBox="0 0 110 92" aria-hidden="true"><path d="M48 56 L42 84 Q55 90 68 84 L62 56 Z" fill="#c88542" stroke="#4a2810" stroke-width="3.5"/><ellipse cx="55" cy="36" rx="26" ry="30" fill="#ec4899" stroke="#4a2810" stroke-width="4"/><path d="M30 34 Q55 44 80 34" stroke="#ffe066" stroke-width="7" fill="none"/><circle cx="44" cy="22" r="4" fill="#ffe066"/><circle cx="66" cy="24" r="4" fill="#86efac"/><circle cx="55" cy="49" r="4" fill="#93c5fd"/></svg>'}
   ];
 
-  var TUNE_LENS=[2, 3, 4]; /* Toddler-friendly progressive beat lengths: 2 -> 3 -> 4! */
-  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-super.mp3"];
+  /* Age-adaptive progressive beat lengths & demo tempo */
+  var TUNE_LENS = IS_RILEY ? [2, 2, 3] : [2, 3, 4];
+  var DEMO_STEP_MS = IS_RILEY ? 760 : 620;
+  var PRAISE=["hoot-great-job","hoot-amazing","hoot-super","hoot-yay-2"];
 
   /* ================= STATE ================= */
   var mode="copy"; /* copy | jam */
-  var phase="demo"; /* demo | copy | done | won */
-  var tuneIdx=0, pattern=[], step=0, stars=0, praiseIdx=0;
+  var phase="demo"; /* demo | copy | done | won | jam */
+  var tuneIdx=0, pattern=[], step=0, stars=0, praiseIdx=0, jamHits=0;
   var soundOn=true, dead=false, grooveOn=false, grooveTimer=null, grooveStep=0;
-  var padEls={}, timers=[];
+  var hasInteracted=false, idleVoiceReminded=false, lastCopyTapAt=0, lastCopyPad="";
+  var padEls={}, timers=[], idleTimer=null, idleVoiceTimer=null;
 
   function $(id){ return document.getElementById(id); }
   var stage=$("stage"), padGrid=$("padGrid"), beatTrack=$("beatTrack"),
@@ -440,14 +519,21 @@ window.__HOOT_SELF_COACH__=true;
       grooveBtn=$("grooveBtn"), soundBtn=$("soundBtn"),
       winOverlay=$("winOverlay"), winStars=$("winStars");
 
-  function later(fn,ms){ var id=setTimeout(fn,ms); timers.push(id); return id; }
-  function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+  function later(fn,ms){
+    var id=setTimeout(function(){ if(!dead) fn(); }, ms);
+    timers.push(id);
+    return id;
+  }
+  function clearTimers(){
+    while(timers.length) clearTimeout(timers.pop());
+  }
 
   /* ================= INSTRUMENT SYNTH ================= */
   var AC=null;
   function audio(){
+    if(!soundOn) return null;
     if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } }
-    if(AC&&AC.state==="suspended") AC.resume();
+    if(AC&&AC.state==="suspended") try{ AC.resume(); }catch(e){}
     return AC;
   }
   function tone(f0,f1,dur,type,vol,delay){
@@ -479,12 +565,21 @@ window.__HOOT_SELF_COACH__=true;
     else if(id==="shaker"){ noiseBurst(0.11,0.2); setTimeout(function(){ noiseBurst(0.09,0.14); }, 65); }
   }
 
-  /* ================= STUDIO HOOT VOICE ================= */
+  /* ================= GOLD-STANDARD STUDIO HOOT VOICE (HOOT_HAVE-GATED) ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null;
-  function hasClip(id){
-    try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H) return !!H[id]; }catch(e){}
-    return true;
+  var voiceEl=new Audio();
+  voiceEl.preload="auto";
+  var voiceQueue=[], voicePlaying=false, audioUnlocked=false, pendingBootClip=null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3")>=0 ? chosen : chosen+".mp3") : null;
   }
   function hubQuiet(){
     try{
@@ -494,17 +589,122 @@ window.__HOOT_SELF_COACH__=true;
       return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
     }catch(e){ return false; }
   }
-  function speakClip(file, giggle){
-    if(!soundOn||hubQuiet()||dead) return;
-    if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; }
-    if(giggle) window.__bellyArmed=true;
-    voiceEl.src=VBASE+file;
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked=true;
+    audio();
+    try{
+      if(!voicePlaying){
+        voiceEl.muted=true;
+        var p=voiceEl.play();
+        if(p&&p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime=0;
+            voiceEl.muted=false;
+            if(pendingBootClip){
+              var c=pendingBootClip; pendingBootClip=null;
+              enqueueVoice(c, true);
+            }
+          }).catch(function(){ voiceEl.muted=false; });
+        } else {
+          voiceEl.muted=false;
+        }
+      }
+    }catch(e){ voiceEl.muted=false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+
+  function clearVoice(stopCurrent){
+    voiceQueue.length=0;
+    if(stopCurrent){
+      voicePlaying=false;
+      try{ voiceEl.pause(); voiceEl.currentTime=0; }catch(e){}
+    }
+  }
+  function pumpVoice(){
+    if(dead || !soundOn || hubQuiet() || voicePlaying || !voiceQueue.length) return;
+    var clip=voiceQueue.shift();
+    voicePlaying=true;
+    voiceEl.muted=false;
+    voiceEl.src=VBASE+clip;
     var p=voiceEl.play();
-    if(giggle) setTimeout(function(){ window.__bellyArmed=false; }, 120);
-    if(p&&p.catch) p.catch(function(){});
+    if(p&&p.catch){
+      p.catch(function(){
+        voicePlaying=false;
+        if(!audioUnlocked && !pendingBootClip) pendingBootClip=clip;
+        pumpVoice();
+      });
+    }
+  }
+  voiceEl.addEventListener("ended", function(){ voicePlaying=false; pumpVoice(); });
+  voiceEl.addEventListener("error", function(){ voicePlaying=false; pumpVoice(); });
+
+  function enqueueVoice(clip, interrupt){
+    if(dead || !soundOn || !clip) return;
+    if(clip.indexOf(".mp3")<0) clip=clip+".mp3";
+    if(interrupt) clearVoice(true);
+    voiceQueue.push(clip);
+    pumpVoice();
+  }
+  function playBandGuide(customId, fallbackId, isBoot){
+    var clip=resolveClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && !hasInteracted){
+              enqueueVoice(clip, true);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    enqueueVoice(clip, true);
+  }
+  function speakCurrentGuide(isBoot){
+    if(mode==="jam"){
+      if(grooveOn) playBandGuide("hoot-bnd-groove", "hoot-yay-2", false);
+      else playBandGuide("hoot-bnd-jam", "hoot-tap-big-btn", false);
+    } else {
+      playBandGuide("hoot-bnd-start", "hoot-welcome", isBoot);
+    }
   }
 
-  /* ================= FX ================= */
+  /* ================= IDLE HELPER (VISUAL GLOW + 9.5s SPOKEN REMINDER) ================= */
+  function armIdle(){
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
+    if(dead || phase==="demo" || phase==="won" || phase==="done") return;
+    idleTimer=setTimeout(function(){
+      if(dead || phase==="demo" || phase==="won" || phase==="done") return;
+      if(mode==="copy" && phase==="copy" && pattern[step]){
+        showPadCue(pattern[step].id, true);
+      } else if(mode==="jam"){
+        var rnd=PADS[Math.floor(Math.random()*PADS.length)];
+        showPadCue(rnd.id, false);
+      }
+    }, 4000);
+    if(!idleVoiceReminded){
+      idleVoiceTimer=setTimeout(function(){
+        if(dead || phase==="demo" || phase==="won" || phase==="done") return;
+        idleVoiceReminded=true;
+        speakCurrentGuide(false);
+      }, 9500);
+    }
+  }
+
+  /* ================= FX & STARS ================= */
+  function addStar(n){
+    stars += (n||1);
+    starCount.textContent=stars;
+    starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+    try{ if(window.parent && window.parent.hwAddStar) window.parent.hwAddStar(n||1); }catch(e){}
+  }
+
   function popGlyph(pad, el){
     var sr=stage.getBoundingClientRect(), r=el.getBoundingClientRect();
     var g=document.createElement("span");
@@ -567,6 +767,27 @@ window.__HOOT_SELF_COACH__=true;
     popGlyph(p, el);
   }
 
+  function clearCues(){
+    PADS.forEach(function(p){
+      var el=padEls[p.id];
+      el.classList.remove("cue");
+      var h=el.querySelector(".pad-hand"); if(h) h.remove();
+    });
+  }
+  function showPadCue(padId, withHand){
+    clearCues();
+    var el=padEls[padId];
+    if(!el) return;
+    el.classList.add("cue");
+    if(withHand){
+      var h=document.createElement("span");
+      h.className="pad-hand";
+      h.setAttribute("aria-hidden","true");
+      h.textContent="👆";
+      el.appendChild(h);
+    }
+  }
+
   /* ================= COPY THE BEAT FLOW ================= */
   function renderTrack(highlightIdx){
     beatTrack.innerHTML="";
@@ -585,14 +806,10 @@ window.__HOOT_SELF_COACH__=true;
         orb.textContent=p.emo;
       } else {
         orb.textContent="●";
-        orb.style.color="rgba(255,255,255,.35)";
+        orb.style.color="rgba(255,255,255,.38)";
       }
       beatTrack.appendChild(orb);
     });
-  }
-
-  function clearCues(){
-    PADS.forEach(function(p){ padEls[p.id].classList.remove("cue"); });
   }
 
   function buildPattern(len){
@@ -610,28 +827,36 @@ window.__HOOT_SELF_COACH__=true;
   function playDemo(isFirstBoot){
     clearTimers();
     clearCues();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
     phase="demo";
     step=0;
     replayBtn.classList.remove("pulse");
     renderTrack(-1);
-    if(!isFirstBoot && hasClip("band-watch-listen")) speakClip("band-watch-listen.mp3", false);
+    if(isFirstBoot){
+      playBandGuide("hoot-bnd-start", "hoot-welcome", true);
+    } else if(hasHootClip("band-watch-listen")){
+      enqueueVoice("band-watch-listen.mp3", true);
+    }
 
-    var startDelay=isFirstBoot?700:550;
+    var startDelay=isFirstBoot ? 1150 : 650;
     pattern.forEach(function(p, i){
       later(function(){
         if(dead || mode!=="copy") return;
         playPadAudio(p.id);
         hitVisual(p);
         renderTrack(i);
-      }, startDelay + i*640);
+      }, startDelay + i*DEMO_STEP_MS);
     });
     later(function(){
       if(dead || mode!=="copy") return;
       phase="copy";
+      idleVoiceReminded=false;
       renderTrack(-1);
-      if(hasClip("say-your-turn")) speakClip("say-your-turn.mp3", false);
-      padEls[pattern[0].id].classList.add("cue");
-    }, startDelay + pattern.length*640 + 280);
+      if(hasHootClip("say-your-turn")) enqueueVoice("say-your-turn.mp3", false);
+      showPadCue(pattern[0].id, IS_RILEY);
+      armIdle();
+    }, startDelay + pattern.length*DEMO_STEP_MS + 280);
   }
 
   function startTune(isFirstBoot){
@@ -642,7 +867,8 @@ window.__HOOT_SELF_COACH__=true;
   function startGame(isFirstBoot){
     clearTimers();
     stopGroove();
-    tuneIdx=0; stars=0;
+    tuneIdx=0; stars=0; jamHits=0;
+    idleVoiceReminded=false;
     starCount.textContent="0";
     winOverlay.hidden=true;
     if(mode==="copy"){
@@ -655,18 +881,40 @@ window.__HOOT_SELF_COACH__=true;
       grooveBtn.style.display="inline-flex";
       clearCues();
       renderTrack(-1);
+      playBandGuide("hoot-bnd-jam", "hoot-tap-big-btn", isFirstBoot);
+      armIdle();
     }
   }
 
   function onPadTap(p){
+    unlockAudioOnce();
+    hasInteracted=true;
+    idleVoiceReminded=false;
     audio();
     playPadAudio(p.id);
     hitVisual(p);
+
     if(mode==="jam"){
-      if(hasClip(p.word) && Math.random()<0.35) speakClip(p.word+".mp3", false);
+      clearCues();
+      jamHits++;
+      if(jamHits % (IS_RILEY ? 6 : 10) === 0){
+        addStar(1);
+        spawnConfetti(24);
+        var jp=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
+        enqueueVoice(resolveClip(null, jp), true);
+      } else if(hasHootClip(p.word) && Math.random()<0.35){
+        enqueueVoice(p.word+".mp3", false);
+      }
+      armIdle();
       return;
     }
+
     if(phase!=="copy") return;
+    /* Forgiving toddler double-bounce guard (<140ms on same pad) */
+    var now=Date.now();
+    if(p.id===lastCopyPad && now-lastCopyTapAt<140) return;
+    lastCopyTapAt=now; lastCopyPad=p.id;
+
     clearCues();
     var expected=pattern[step];
     if(p.id === expected.id){
@@ -674,13 +922,10 @@ window.__HOOT_SELF_COACH__=true;
       renderTrack(step-1);
       if(step>=pattern.length){
         phase="done";
-        stars++;
-        starCount.textContent=stars;
-        starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+        addStar(1);
         var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
-        if(!hasClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
-        speakClip(pr, false);
-        spawnConfetti(26);
+        enqueueVoice(resolveClip(null, pr), true);
+        spawnConfetti(28);
         later(function(){
           if(dead || mode!=="copy") return;
           if(tuneIdx>=TUNE_LENS.length-1){
@@ -691,27 +936,31 @@ window.__HOOT_SELF_COACH__=true;
           }
         }, 1250);
       } else {
-        /* Gentle shimmer on next pad after slight beat */
-        padEls[pattern[step].id].classList.add("cue");
+        showPadCue(pattern[step].id, IS_RILEY);
+        armIdle();
       }
     } else {
-      /* Kind try-again + highlight the expected pad & pulse replay button */
-      speakClip("hoot-try-again.mp3", false);
-      padEls[expected.id].classList.add("cue");
+      /* Kind try-again + unmistakable highlight & bouncing hand on expected pad */
+      enqueueVoice("hoot-try-again.mp3", true);
+      showPadCue(expected.id, true);
       replayBtn.classList.add("pulse");
+      armIdle();
     }
   }
 
   function showWin(){
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
     phase="won";
     winOverlay.hidden=false;
     var st=winStars.children;
     for(var i=0;i<st.length;i++){
       st[i].classList.remove("lit");
-      (function(el,ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(st[i], 180+i*180);
+      (function(el,ms){ later(function(){ el.classList.add("lit"); }, ms); })(st[i], 180+i*180);
     }
-    spawnConfetti(44);
-    speakClip(hasClip("hoot-win-yay")?"hoot-win-yay.mp3":"hoot-amazing.mp3", false);
+    spawnConfetti(48);
+    enqueueVoice(resolveClip("hoot-bnd-win", "hoot-win-yay"), true);
   }
 
   /* ================= FUN BACKING GROOVE IN FREE JAM ================= */
@@ -721,10 +970,11 @@ window.__HOOT_SELF_COACH__=true;
     grooveBtn.classList.remove("active"); grooveBtn.setAttribute("aria-pressed","false");
   }
   function toggleGroove(){
-    audio();
+    unlockAudioOnce(); hasInteracted=true; audio();
     if(grooveOn){ stopGroove(); return; }
     grooveOn=true; grooveStep=0;
     grooveBtn.classList.add("active"); grooveBtn.setAttribute("aria-pressed","true");
+    playBandGuide("hoot-bnd-groove", "hoot-yay-2", false);
     grooveTimer=setInterval(function(){
       if(dead || !grooveOn || !soundOn) return;
       var s=grooveStep%4;
@@ -738,35 +988,52 @@ window.__HOOT_SELF_COACH__=true;
 
   /* ================= CONTROLS ================= */
   modeCopyBtn.addEventListener("click",function(){
-    audio(); mode="copy";
+    unlockAudioOnce(); hasInteracted=true; audio(); mode="copy";
     modeCopyBtn.classList.add("active"); modeCopyBtn.setAttribute("aria-pressed","true");
     modeJamBtn.classList.remove("active"); modeJamBtn.setAttribute("aria-pressed","false");
     startGame(false);
   });
   modeJamBtn.addEventListener("click",function(){
-    audio(); mode="jam";
+    unlockAudioOnce(); hasInteracted=true; audio(); mode="jam";
     modeJamBtn.classList.add("active"); modeJamBtn.setAttribute("aria-pressed","true");
     modeCopyBtn.classList.remove("active"); modeCopyBtn.setAttribute("aria-pressed","false");
     startGame(false);
   });
   grooveBtn.addEventListener("click",toggleGroove);
-  replayBtn.addEventListener("click",function(){ audio(); if(mode==="copy") playDemo(false); });
+  replayBtn.addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true; audio();
+    if(mode==="copy") playDemo(false);
+  });
   soundBtn.addEventListener("click",function(){
     soundOn=!soundOn; soundBtn.textContent=soundOn?"🔊":"🔇";
-    if(!soundOn && voiceEl) try{voiceEl.pause();}catch(e){}
+    if(!soundOn){ clearVoice(true); }
+    else { unlockAudioOnce(); audio(); speakCurrentGuide(false); }
   });
-  $("againBtn").addEventListener("click",function(){ audio(); startGame(false); });
+  $("againBtn").addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true; audio();
+    startGame(false);
+  });
 
-  var lastHootTap=0;
+  /* Tap Bandleader Hoot -> repeats beat demo or spoken guidance! */
   hootLeader.addEventListener("click",function(){
-    audio();
+    unlockAudioOnce(); hasInteracted=true; audio();
+    idleVoiceReminded=false;
     hootLeader.classList.remove("beat"); void hootLeader.offsetWidth; hootLeader.classList.add("beat");
     if(mode==="copy" && phase==="copy"){ playDemo(false); return; }
-    var now=Date.now();
-    if(now-lastHootTap>7000){ lastHootTap=now; speakClip("hoot-giggle.mp3", true); }
+    speakCurrentGuide(false);
+    armIdle();
   });
 
-  window.addEventListener("pagehide",function(){ dead=true; clearTimers(); stopGroove(); if(voiceEl) try{voiceEl.pause();}catch(e){} });
+  function teardown(){
+    dead=true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
+    stopGroove();
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= BOOT ================= */
   startGame(true);
@@ -775,13 +1042,13 @@ window.__HOOT_SELF_COACH__=true;
     snapshot:function(){
       return {
         mode:mode, phase:phase, tuneIdx:tuneIdx, patternLen:pattern.length,
-        step:step, stars:stars, grooveOn:grooveOn, winShown:!winOverlay.hidden
+        step:step, stars:stars, grooveOn:grooveOn, winShown:!winOverlay.hidden, isRiley:IS_RILEY
       };
     }
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e142">
-<script src="js/hoot-game-tail.js?v=llprev3e142"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

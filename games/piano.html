@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="piano";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e142"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -34,7 +34,7 @@ window.__HOOT_SELF_COACH__=true;
     -webkit-user-select:none;
   }
 
-  /* ================= SUNLIT RAINBOW PAVILION STAGE ================= */
+  /* ================= SUNLIT RAINBOW PAVILION STAGE + PIXAR BACKDROP ================= */
   #stage{
     position:fixed;
     inset:0;
@@ -50,8 +50,33 @@ window.__HOOT_SELF_COACH__=true;
       #8ee06e 67%,
       #5ac24c 100%);
   }
+  .backdrop{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_piano.jpg"), linear-gradient(180deg,
+      #5ac6fa 0%,
+      #9be1ff 42%,
+      #dff7ff 66%,
+      #8ee06e 67%,
+      #5ac24c 100%);
+  }
+  .backdrop::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(180deg,
+      rgba(255,253,245,.16) 0%,
+      rgba(255,253,245,.04) 48%,
+      rgba(16,38,68,.24) 100%);
+  }
 
-  /* ================= TOP HUD (>=64px) ================= */
+  /* ================= TOP HUD (>=64px EVERYWHERE) ================= */
   #hud{
     position:relative;
     z-index:20;
@@ -63,7 +88,12 @@ window.__HOOT_SELF_COACH__=true;
     padding:max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 4px max(10px, env(safe-area-inset-left));
     flex:0 0 auto;
   }
-  .hud-group{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .hud-group{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-wrap:wrap;
+  }
   .hud-pill{
     min-width:64px;
     min-height:64px;
@@ -78,7 +108,7 @@ window.__HOOT_SELF_COACH__=true;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 5px 0 rgba(20,66,105,.22), 0 10px 18px rgba(20,66,105,.14);
+    box-shadow:0 5px 0 rgba(20,66,105,.24), 0 10px 18px rgba(20,66,105,.16);
     transition:transform .14s cubic-bezier(.34,1.6,.5,1), background .15s;
     flex:0 0 auto;
   }
@@ -93,33 +123,36 @@ window.__HOOT_SELF_COACH__=true;
     box-shadow:0 5px 0 #0284c7, 0 0 0 3.5px var(--ink);
   }
   #starBank{
+    min-width:64px;
     min-height:64px;
-    padding:0 16px 0 11px;
+    height:64px;
+    padding:0 15px 0 11px;
     border-radius:999px;
     border:4px solid #fff;
     background:rgba(255,253,247,.96);
     display:inline-flex;
     align-items:center;
-    gap:7px;
-    font-size:25px;
+    gap:6px;
+    font-size:24px;
     font-weight:700;
-    box-shadow:0 5px 0 rgba(20,66,105,.22);
+    box-shadow:0 5px 0 rgba(20,66,105,.24);
     flex:0 0 auto;
   }
-  #starBank svg{ width:28px; height:28px; display:block; }
+  #starBank svg{ width:26px; height:26px; display:block; }
   #starBank.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
   @keyframes starBump{ 0%{transform:scale(1)} 45%{transform:scale(1.2) rotate(-4deg)} 100%{transform:scale(1)} }
 
   /* ================= SKY ARCH + HOOT + SONG BAR ================= */
   #skyScene{
     position:relative;
+    z-index:5;
     flex:1 1 auto;
     min-height:0;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:flex-end;
-    padding-bottom:6px;
+    padding:4px 8px 6px;
   }
   #rainbowSvg{
     position:absolute;
@@ -136,12 +169,12 @@ window.__HOOT_SELF_COACH__=true;
     fill:none;
     stroke-width:22;
     stroke-linecap:round;
-    opacity:.26;
+    opacity:.32;
     transition:opacity .25s ease, filter .25s ease;
   }
   .rb-arc.lit{
     opacity:1;
-    filter:drop-shadow(0 0 10px rgba(255,255,255,.85));
+    filter:drop-shadow(0 0 12px rgba(255,255,255,.92));
   }
 
   /* Song Picker & Note Progress Strip (shown in Song mode) */
@@ -149,38 +182,48 @@ window.__HOOT_SELF_COACH__=true;
     position:relative;
     z-index:8;
     display:none;
+    flex-wrap:wrap;
     align-items:center;
-    gap:10px;
-    background:rgba(255,253,247,.96);
+    justify-content:center;
+    gap:8px;
+    background:rgba(255,253,247,.95);
     border:4px solid #fff;
-    border-radius:999px;
-    padding:6px 14px;
-    box-shadow:0 6px 0 rgba(20,66,105,.18);
-    margin-bottom:8px;
+    border-radius:36px;
+    padding:6px 12px;
+    box-shadow:0 6px 0 rgba(20,66,105,.22), 0 12px 24px rgba(20,66,105,.18);
+    margin-bottom:6px;
+    max-width:min(96vw, 660px);
   }
   #songBar.show{ display:flex; }
   .song-tab{
-    width:52px; height:52px;
+    min-width:64px;
+    min-height:64px;
+    width:64px;
+    height:64px;
     border-radius:50%;
-    border:3px solid #dbe7f2;
+    border:3.5px solid #dbe7f2;
     background:#fff;
-    font-size:26px;
+    font-size:28px;
     display:grid;
     place-items:center;
     cursor:pointer;
     transition:transform .14s;
+    flex:0 0 auto;
   }
   .song-tab:active{ transform:scale(.9); }
   .song-tab.on{
     background:var(--sun);
     border-color:var(--ink);
-    transform:scale(1.08);
+    box-shadow:0 4px 0 #c98600;
+    transform:scale(1.06);
   }
   #songDots{
     display:flex;
     align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
     gap:6px;
-    padding:0 6px;
+    padding:2px 6px;
   }
   .s-dot{
     width:18px;
@@ -188,24 +231,26 @@ window.__HOOT_SELF_COACH__=true;
     border-radius:50%;
     border:3px solid #fff;
     box-shadow:0 2px 4px rgba(0,0,0,.22);
-    opacity:.4;
+    opacity:.42;
     transition:transform .22s, opacity .22s;
   }
   .s-dot.done{ opacity:1; transform:scale(1.18); }
-  .s-dot.cur{ opacity:1; transform:scale(1.38); outline:3px solid var(--ink); }
+  .s-dot.cur{ opacity:1; transform:scale(1.42); outline:3px solid var(--ink); }
 
   /* Conductor Hoot sitting happily on left meadow */
   #hootMusic{
     position:absolute;
-    left:clamp(10px, 3vw, 44px);
+    left:clamp(8px, 3vw, 44px);
     bottom:4px;
     z-index:7;
-    width:clamp(88px, 13vw, 142px);
+    width:clamp(84px, 13vw, 142px);
+    min-width:64px;
+    min-height:64px;
     border:none;
     background:none;
     padding:0;
     cursor:pointer;
-    filter:drop-shadow(0 8px 12px rgba(20,66,105,.24));
+    filter:drop-shadow(0 8px 14px rgba(20,40,75,.34));
     animation:hootGroove 2.8s ease-in-out infinite;
     transform-origin:50% 90%;
   }
@@ -214,16 +259,25 @@ window.__HOOT_SELF_COACH__=true;
   @keyframes hootHop{ 0%,100%{transform:translateY(0)} 45%{transform:translateY(-20px) rotate(-5deg)} }
   #hootMusic svg{ width:100%; height:auto; display:block; overflow:visible; }
 
-  /* Dancing meadow flowers */
+  /* Dancing meadow flower (>=64px) */
   .flower-toy{
     position:absolute;
     bottom:4px;
-    width:46px; height:58px;
-    border:none; background:none; padding:0; cursor:pointer;
-    z-index:5;
+    right:clamp(8px, 4vw, 44px);
+    width:64px;
+    height:68px;
+    min-width:64px;
+    min-height:64px;
+    border:none;
+    background:none;
+    padding:4px;
+    cursor:pointer;
+    z-index:6;
     transform-origin:50% 100%;
+    filter:drop-shadow(0 5px 8px rgba(15,40,25,.28));
     animation:flSway 3.2s ease-in-out infinite alternate;
   }
+  .flower-toy svg{ width:100%; height:100%; display:block; }
   @keyframes flSway{ from{transform:rotate(-5deg)} to{transform:rotate(5deg)} }
   .flower-toy.dance{ animation:flDance .4s cubic-bezier(.34,1.7,.5,1) 2; }
   @keyframes flDance{ 0%,100%{transform:scale(1)} 45%{transform:scale(1.34) rotate(-8deg)} }
@@ -236,7 +290,7 @@ window.__HOOT_SELF_COACH__=true;
     padding:12px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
     background:linear-gradient(180deg, #d89652 0%, #b47032 60%, #8a4f1d 100%);
     border-top:6px solid #f0bc7d;
-    box-shadow:0 -8px 24px rgba(34,48,74,.22), inset 0 4px 8px rgba(255,240,210,.45);
+    box-shadow:0 -8px 24px rgba(34,48,74,.28), inset 0 4px 8px rgba(255,240,210,.45);
   }
   #keysRow{
     display:grid;
@@ -244,11 +298,13 @@ window.__HOOT_SELF_COACH__=true;
     gap:clamp(6px, 1.2vw, 14px);
     max-width:1100px;
     margin:0 auto;
-    height:clamp(190px, 38vh, 300px);
+    height:clamp(196px, 38vh, 300px);
     align-items:end;
   }
   .pkey{
     position:relative;
+    min-width:64px;
+    min-height:64px;
     border:4px solid #fff;
     border-radius:20px 20px 26px 26px;
     cursor:pointer;
@@ -261,7 +317,7 @@ window.__HOOT_SELF_COACH__=true;
     font-family:"Fredoka",sans-serif;
     font-weight:700;
     touch-action:none;
-    transition:transform .08s ease, filter .08s ease;
+    transition:transform .08s ease, filter .08s ease, box-shadow .14s ease;
     box-shadow:0 10px 0 var(--kdeep), 0 14px 20px rgba(20,30,50,.28), inset 0 6px 12px rgba(255,255,255,.38);
     background:linear-gradient(180deg, var(--khi) 0%, var(--kcol) 55%, var(--kdeep) 100%);
   }
@@ -282,31 +338,37 @@ window.__HOOT_SELF_COACH__=true;
     line-height:1;
   }
   .pkey .k-emo{
-    font-size:clamp(18px, 2.8vw, 28px);
+    font-size:clamp(20px, 2.8vw, 28px);
     line-height:1;
   }
   .pkey.pressed{
-    transform:translateY(8px) scale(.98);
+    transform:translateY(8px) scale(.97);
     box-shadow:0 2px 0 var(--kdeep), 0 4px 8px rgba(20,30,50,.22), inset 0 4px 10px rgba(255,255,255,.55);
-    filter:brightness(1.14);
+    filter:brightness(1.16);
   }
   .pkey.cue{
-    box-shadow:0 10px 0 var(--kdeep), 0 0 0 6px #ffe066, 0 0 28px rgba(255,224,102,.95);
-    animation:keyPulse .75s ease-in-out infinite alternate;
+    box-shadow:0 10px 0 var(--kdeep), 0 0 0 6px #ffe066, 0 0 32px 6px rgba(255,224,102,.98);
+    animation:keyPulse .7s ease-in-out infinite alternate;
+    z-index:4;
+  }
+  .pkey.idle-glow{
+    box-shadow:0 10px 0 var(--kdeep), 0 0 0 5px #ffe066, 0 0 24px rgba(255,224,102,.9);
+    animation:keyPulse .85s ease-in-out infinite alternate;
   }
   @keyframes keyPulse{
-    from{ transform:translateY(0); }
-    to{ transform:translateY(-8px); }
+    from{ transform:translateY(0) scale(1); }
+    to{ transform:translateY(-8px) scale(1.04); }
   }
   .key-hand{
     position:absolute;
-    top:-40px;
+    top:-42px;
     left:50%;
     transform:translateX(-50%);
-    font-size:34px;
+    font-size:36px;
     pointer-events:none;
-    filter:drop-shadow(0 4px 6px rgba(0,0,0,.28));
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.32));
     animation:handTap .6s ease-in-out infinite alternate;
+    z-index:6;
   }
   @keyframes handTap{ from{transform:translate(-50%,0)} to{transform:translate(-50%,-10px)} }
 
@@ -321,44 +383,101 @@ window.__HOOT_SELF_COACH__=true;
   }
   .confetti{ position:absolute; z-index:28; width:12px; height:16px; border-radius:3px; pointer-events:none; }
 
-  /* ================= PORTRAIT PHONE RESPONSIVE ================= */
+  /* ================= PORTRAIT PHONE RESPONSIVE (390x844: ALL TARGETS >=64px, ZERO OVERLAP) ================= */
   @media (max-width:600px){
-    #hud{ gap:6px; padding-left:8px; padding-right:8px; }
-    .hud-group{ gap:5px; }
-    .hud-pill{ min-width:46px; min-height:46px; height:46px; padding:0 9px; font-size:20px; border-width:3px; }
-    .hud-pill.round{ width:46px; }
-    #starBank{ min-height:46px; padding:0 10px 0 8px; font-size:18px; border-width:3px; }
-    #hootMusic{ width:76px; left:6px; }
-    #pianoDeck{ padding:8px 6px max(10px, env(safe-area-inset-bottom)); }
-    #keysRow{ gap:4px; height:min(44vh, 270px); }
-    .pkey{ border-width:3px; border-radius:14px 14px 18px 18px; padding-bottom:10px; }
-    .pkey::before{ width:10px; height:10px; margin-top:8px; }
-    .pkey .k-note{ font-size:19px; }
-    .pkey .k-emo{ font-size:15px; }
-    #songBar{ gap:5px; padding:4px 10px; }
-    .song-tab{ width:42px; height:42px; font-size:21px; }
-    .s-dot{ width:13px; height:13px; }
+    #hud{
+      gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 8px 4px 8px;
+      justify-content:center;
+    }
+    .hud-group{
+      gap:6px;
+      justify-content:center;
+    }
+    #hudRowTop{
+      width:100%;
+      justify-content:space-between;
+    }
+    #hudRowInst{
+      width:100%;
+      justify-content:center;
+    }
+    .hud-pill{
+      min-width:64px;
+      min-height:64px;
+      height:64px;
+      padding:0 12px;
+      font-size:26px;
+      border-width:3.5px;
+    }
+    .hud-pill.round{ width:64px; }
+    #starBank{
+      min-height:64px;
+      height:64px;
+      padding:0 12px 0 9px;
+      font-size:21px;
+      border-width:3.5px;
+    }
+    #hootMusic{ width:76px; left:6px; bottom:2px; }
+    .flower-toy{ width:64px; height:64px; right:6px; bottom:2px; }
+    #songBar{ gap:6px; padding:6px 10px; border-radius:26px; }
+    .song-tab{ width:64px; height:64px; min-width:64px; min-height:64px; font-size:26px; }
+    .s-dot{ width:14px; height:14px; }
+    #pianoDeck{ padding:10px 8px max(12px, env(safe-area-inset-bottom)); }
+    /* 4x2 giant chunky toy keys on portrait phone so EVERY key is ~86x108px (>=64px!) */
+    #keysRow{
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      grid-template-rows:repeat(2, 1fr);
+      gap:8px;
+      height:clamp(224px, 34vh, 276px);
+      align-items:stretch;
+    }
+    .pkey{
+      height:100% !important;
+      border-width:3.5px;
+      border-radius:18px;
+      padding:0 0 8px;
+      box-shadow:0 7px 0 var(--kdeep), 0 10px 16px rgba(20,30,50,.26), inset 0 5px 10px rgba(255,255,255,.36);
+    }
+    .pkey::before{ width:10px; height:10px; margin-top:7px; }
+    .pkey .k-note{ font-size:24px; }
+    .pkey .k-emo{ font-size:22px; }
+    .key-hand{
+      top:4px;
+      left:auto;
+      right:4px;
+      transform:none;
+      font-size:26px;
+      animation:handTapMob .6s ease-in-out infinite alternate;
+    }
+    @keyframes handTapMob{ from{transform:translateY(0)} to{transform:translateY(-6px)} }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="worldBg" class="backdrop" aria-hidden="true"></div>
+
   <!-- Top HUD -->
   <div id="hud">
-    <div class="hud-group">
-      <button class="hud-pill active" id="modeFreeBtn" type="button" aria-label="Free Jam" aria-pressed="true">🌈</button>
-      <button class="hud-pill" id="modeSongBtn" type="button" aria-label="Follow-the-Glow Songs" aria-pressed="false">🎵</button>
+    <div class="hud-group" id="hudRowTop">
+      <div class="hud-group">
+        <button class="hud-pill active" id="modeFreeBtn" type="button" aria-label="Free Jam" aria-pressed="true">🌈</button>
+        <button class="hud-pill" id="modeSongBtn" type="button" aria-label="Follow-the-Glow Songs" aria-pressed="false">🎵</button>
+      </div>
+      <div class="hud-group">
+        <button class="hud-pill round" id="soundBtn" type="button" aria-label="Toggle Sound">🔊</button>
+        <div id="starBank" aria-label="Stars collected">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l3 6 6.6.9-4.8 4.6 1.1 6.6L12 17.4l-5.9 3.1 1.1-6.6-4.8-4.6 6.6-.9z" fill="#ffc93c" stroke="#d99400" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span id="starCount">0</span>
+        </div>
+      </div>
+    </div>
+    <div class="hud-group" id="hudRowInst">
       <button class="hud-pill round inst-btn active" type="button" data-inst="piano" aria-label="Piano sound">🎹</button>
       <button class="hud-pill round inst-btn" type="button" data-inst="bells" aria-label="Bells sound">🔔</button>
       <button class="hud-pill round inst-btn" type="button" data-inst="harp" aria-label="Harp sound">✨</button>
       <button class="hud-pill round inst-btn" type="button" data-inst="meow" aria-label="Silly Synth sound">🐱</button>
-    </div>
-    <div class="hud-group">
-      <button class="hud-pill round" id="soundBtn" type="button" aria-label="Toggle Sound">🔊</button>
-      <div id="starBank" aria-label="Stars collected">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l3 6 6.6.9-4.8 4.6 1.1 6.6L12 17.4l-5.9 3.1 1.1-6.6-4.8-4.6 6.6-.9z" fill="#ffc93c" stroke="#d99400" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        <span id="starCount">0</span>
-      </div>
     </div>
   </div>
 
@@ -375,7 +494,7 @@ window.__HOOT_SELF_COACH__=true;
       <path class="rb-arc" id="arc7" d="M236 310 A114 114 0 0 1 464 310" stroke="#f472b6"/>
     </svg>
 
-    <button id="hootMusic" type="button" aria-label="Conductor Hoot — tap to bounce">
+    <button id="hootMusic" type="button" aria-label="Conductor Hoot — tap to hear Hoot">
       <svg viewBox="0 0 200 205" aria-hidden="true">
         <ellipse cx="100" cy="126" rx="60" ry="60" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
         <ellipse cx="100" cy="142" rx="40" ry="40" fill="#fdecd2"/>
@@ -397,7 +516,7 @@ window.__HOOT_SELF_COACH__=true;
       </svg>
     </button>
 
-    <button class="flower-toy" type="button" style="right:6%" aria-label="Dancing Flower">
+    <button class="flower-toy" type="button" aria-label="Dancing Flower">
       <svg viewBox="0 0 48 62" aria-hidden="true"><path d="M24 62 Q22 44 24 28" stroke="#258038" stroke-width="4.5" fill="none" stroke-linecap="round"/><g fill="#ff8fab"><circle cx="24" cy="11" r="7.5"/><circle cx="13" cy="18" r="7.5"/><circle cx="35" cy="18" r="7.5"/><circle cx="17" cy="28" r="7.5"/><circle cx="31" cy="28" r="7.5"/></g><circle cx="24" cy="20" r="6.5" fill="#ffc93c"/></svg>
     </button>
 
@@ -421,6 +540,12 @@ window.__HOOT_SELF_COACH__=true;
 (function(){
   "use strict";
 
+  var IS_RILEY = false;
+  try{
+    var sp = new URLSearchParams(window.location.search || "");
+    IS_RILEY = sp.get("kid") === "kidb";
+  }catch(e){}
+
   /* 8 Diatonic C-Major Rainbow Keys (graduated toy-xylophone heights!) */
   var KEYS=[
     {n:"C", freq:261.63, col:"#ff595e", hi:"#ff9195", deep:"#c8232c", emo:"🍎", h:"100%"},
@@ -433,32 +558,50 @@ window.__HOOT_SELF_COACH__=true;
     {n:"C", freq:523.25, col:"#f472b6", hi:"#fbc2df", deep:"#be2d78", emo:"🌸", h:"72%"}
   ];
 
-  var SONGS=[
+  /* Age-adaptive song lengths: Riley (age 2) gets extra-forgiving 5-note songs! */
+  var SONGS = IS_RILEY ? [
+    {id:"twinkle", emo:"⭐", notes:[0,0,4,4,5]},
+    {id:"mary",    emo:"🐑", notes:[2,1,0,1,2]},
+    {id:"scale",   emo:"🌈", notes:[0,1,2,3,4]},
+    {id:"jingle",  emo:"🔔", notes:[2,2,2,4,0]}
+  ] : [
     {id:"twinkle", emo:"⭐", notes:[0,0,4,4,5,5,4]},
     {id:"mary",    emo:"🐑", notes:[2,1,0,1,2,2,2]},
     {id:"scale",   emo:"🌈", notes:[0,1,2,3,4,5,6,7]},
     {id:"jingle",  emo:"🔔", notes:[2,2,2,2,2,2,2,4,0,1,2]}
   ];
 
-  var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-super.mp3"];
+  var PRAISE=["hoot-great-job","hoot-amazing","hoot-super","hoot-yay-2"];
 
   /* ================= STATE ================= */
   var mode="free"; /* free | song */
   var inst="piano"; /* piano | bells | harp | meow */
-  var songIdx=0, noteIdx=0, stars=0, praiseIdx=0;
+  var songIdx=0, noteIdx=0, stars=0, praiseIdx=0, freeNotes=0;
   var soundOn=true, dead=false, busyReplay=false;
-  var keyEls=[], activePointerKey=new Map();
+  var hasInteracted=false, idleVoiceReminded=false;
+  var keyEls=[], activePointerKey=new Map(), timers=[];
+  var idleTimer=null, idleVoiceTimer=null, lastInstGuideAt=0;
 
   function $(id){ return document.getElementById(id); }
   var stage=$("stage"), keysRow=$("keysRow"), songBar=$("songBar"), songDots=$("songDots"),
       hootMusic=$("hootMusic"), starCount=$("starCount"), starBank=$("starBank"),
       modeFreeBtn=$("modeFreeBtn"), modeSongBtn=$("modeSongBtn"), soundBtn=$("soundBtn");
 
+  function later(fn, ms){
+    var id=setTimeout(function(){ if(!dead) fn(); }, ms);
+    timers.push(id);
+    return id;
+  }
+  function clearTimers(){
+    while(timers.length) clearTimeout(timers.pop());
+  }
+
   /* ================= MUSICAL SYNTH ENGINE ================= */
   var AC=null;
   function audio(){
+    if(!soundOn) return null;
     if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } }
-    if(AC&&AC.state==="suspended") AC.resume();
+    if(AC&&AC.state==="suspended") try{ AC.resume(); }catch(e){}
     return AC;
   }
   function playNote(idx){
@@ -467,7 +610,6 @@ window.__HOOT_SELF_COACH__=true;
     var f=KEYS[idx].freq, t=ac.currentTime;
 
     if(inst==="piano"){
-      /* Warm toy grand piano: fundamental + 2nd harmonic */
       var o1=ac.createOscillator(), o2=ac.createOscillator(), g=ac.createGain();
       o1.type="triangle"; o2.type="sine";
       o1.frequency.setValueAtTime(f,t); o2.frequency.setValueAtTime(f*2,t);
@@ -477,7 +619,6 @@ window.__HOOT_SELF_COACH__=true;
       o1.connect(g); o2.connect(g); g.connect(ac.destination);
       o1.start(t); o2.start(t); o1.stop(t+0.7); o2.stop(t+0.7);
     } else if(inst==="bells"){
-      /* Shimmering chime bells */
       [1,2.01,3.02].forEach(function(m,k){
         var o=ac.createOscillator(), g=ac.createGain();
         o.type="sine"; o.frequency.setValueAtTime(f*m,t);
@@ -487,7 +628,6 @@ window.__HOOT_SELF_COACH__=true;
         o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+1.0);
       });
     } else if(inst==="harp"){
-      /* Plucked harp shimmer */
       [1, 1.5].forEach(function(m,k){
         var o=ac.createOscillator(), g=ac.createGain();
         o.type="triangle"; o.frequency.setValueAtTime(f*m,t+k*0.045);
@@ -497,7 +637,6 @@ window.__HOOT_SELF_COACH__=true;
         o.connect(g); g.connect(ac.destination); o.start(t+k*0.045); o.stop(t+k*0.045+0.6);
       });
     } else {
-      /* Playful silly meow/boing synth */
       var o=ac.createOscillator(), g=ac.createGain();
       o.type="sawtooth";
       var flt=ac.createBiquadFilter(); flt.type="lowpass"; flt.frequency.setValueAtTime(f*4,t);
@@ -512,12 +651,21 @@ window.__HOOT_SELF_COACH__=true;
     }
   }
 
-  /* ================= STUDIO HOOT VOICE ================= */
+  /* ================= GOLD-STANDARD STUDIO HOOT VOICE (HOOT_HAVE-GATED) ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null;
-  function hasClip(id){
-    try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H) return !!H[id]; }catch(e){}
-    return true;
+  var voiceEl=new Audio();
+  voiceEl.preload="auto";
+  var voiceQueue=[], voicePlaying=false, audioUnlocked=false, pendingBootClip=null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
   }
   function hubQuiet(){
     try{
@@ -527,17 +675,123 @@ window.__HOOT_SELF_COACH__=true;
       return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
     }catch(e){ return false; }
   }
-  function speakClip(file, giggle){
-    if(!soundOn||hubQuiet()||dead) return;
-    if(!voiceEl){ voiceEl=new Audio(); voiceEl.preload="auto"; }
-    if(giggle) window.__bellyArmed=true;
-    voiceEl.src=VBASE+file;
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked=true;
+    audio();
+    try{
+      if(!voicePlaying){
+        voiceEl.muted=true;
+        var p=voiceEl.play();
+        if(p&&p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime=0;
+            voiceEl.muted=false;
+            if(pendingBootClip){
+              var c=pendingBootClip; pendingBootClip=null;
+              enqueueVoice(c, true);
+            }
+          }).catch(function(){ voiceEl.muted=false; });
+        } else {
+          voiceEl.muted=false;
+        }
+      }
+    }catch(e){ voiceEl.muted=false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+
+  function clearVoice(stopCurrent){
+    voiceQueue.length=0;
+    if(stopCurrent){
+      voicePlaying=false;
+      try{ voiceEl.pause(); voiceEl.currentTime=0; }catch(e){}
+    }
+  }
+  function pumpVoice(){
+    if(dead || !soundOn || hubQuiet() || voicePlaying || !voiceQueue.length) return;
+    var clip=voiceQueue.shift();
+    voicePlaying=true;
+    voiceEl.muted=false;
+    voiceEl.src=VBASE+clip;
     var p=voiceEl.play();
-    if(giggle) setTimeout(function(){ window.__bellyArmed=false; }, 120);
-    if(p&&p.catch) p.catch(function(){});
+    if(p&&p.catch){
+      p.catch(function(){
+        voicePlaying=false;
+        if(!audioUnlocked && !pendingBootClip) pendingBootClip=clip;
+        pumpVoice();
+      });
+    }
+  }
+  voiceEl.addEventListener("ended", function(){ voicePlaying=false; pumpVoice(); });
+  voiceEl.addEventListener("error", function(){ voicePlaying=false; pumpVoice(); });
+
+  function enqueueVoice(clip, interrupt){
+    if(dead || !soundOn || !clip) return;
+    if(clip.indexOf(".mp3")<0) clip=clip+".mp3";
+    if(interrupt) clearVoice(true);
+    voiceQueue.push(clip);
+    pumpVoice();
+  }
+  function playPianoGuide(customId, fallbackId, isBoot){
+    var clip=resolveClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && !hasInteracted){
+              enqueueVoice(clip, true);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    enqueueVoice(clip, true);
+  }
+  function speakModeGuide(isBoot){
+    if(mode==="song"){
+      playPianoGuide("hoot-pia-song", "hoot-tap-big-btn", isBoot);
+    } else {
+      playPianoGuide("hoot-pia-start", "hoot-welcome", isBoot);
+    }
   }
 
-  /* ================= FX ================= */
+  /* ================= IDLE HELPER (VISUAL GLOW + GENTLE 9.5s SPOKEN REMINDER) ================= */
+  function hideIdleCue(){
+    keyEls.forEach(function(el){ el.classList.remove("idle-glow"); });
+  }
+  function armIdle(){
+    hideIdleCue();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
+    if(dead) return;
+    idleTimer=setTimeout(function(){
+      if(dead || busyReplay) return;
+      if(mode==="free"){
+        var pick=keyEls[Math.floor(Math.random()*keyEls.length)];
+        if(pick) pick.classList.add("idle-glow");
+      }
+    }, 4500);
+    if(!idleVoiceReminded){
+      idleVoiceTimer=setTimeout(function(){
+        if(dead || busyReplay) return;
+        idleVoiceReminded=true;
+        speakModeGuide(false);
+      }, 9500);
+    }
+  }
+
+  /* ================= FX & STARS ================= */
+  function addStar(n){
+    stars += (n||1);
+    starCount.textContent=stars;
+    starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+    try{ if(window.parent && window.parent.hwAddStar) window.parent.hwAddStar(n||1); }catch(e){}
+  }
+
   function spawnNote(keyEl, col){
     var sr=stage.getBoundingClientRect(), r=keyEl.getBoundingClientRect();
     var el=document.createElement("span");
@@ -576,7 +830,7 @@ window.__HOOT_SELF_COACH__=true;
     }
   }
 
-  /* ================= BUILD PIANO KEYS (WITH GLISSANDO SUPPORT!) ================= */
+  /* ================= BUILD PIANO KEYS (MULTI-TAP + GLISSANDO) ================= */
   KEYS.forEach(function(k, i){
     var b=document.createElement("button");
     b.type="button";
@@ -613,9 +867,25 @@ window.__HOOT_SELF_COACH__=true;
 
   function triggerKey(idx){
     if(dead || busyReplay) return;
+    unlockAudioOnce();
+    hasInteracted=true;
+    idleVoiceReminded=false;
     audio();
     playNote(idx);
     lightKey(idx);
+    armIdle();
+
+    if(mode==="free"){
+      freeNotes++;
+      var milestone = IS_RILEY ? 6 : 10;
+      if(freeNotes % milestone === 0){
+        addStar(1);
+        spawnConfetti(22);
+        var fp = PRAISE[praiseIdx % PRAISE.length]; praiseIdx++;
+        enqueueVoice(resolveClip(null, fp), true);
+      }
+      return;
+    }
 
     if(mode==="song"){
       var song=SONGS[songIdx];
@@ -625,29 +895,29 @@ window.__HOOT_SELF_COACH__=true;
         renderSongCue();
         if(noteIdx>=song.notes.length){
           /* SONG COMPLETE! */
-          stars++;
-          starCount.textContent=stars;
-          starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
+          addStar(1);
           for(var a=0;a<8;a++) $("arc"+a).classList.add("lit");
-          spawnConfetti(38);
-          var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
-          if(!hasClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
-          speakClip(pr, false);
+          spawnConfetti(42);
+          enqueueVoice(resolveClip("hoot-pia-win", "hoot-win-yay"), true);
           /* Auto-replay the melody joyfully, then cue the next song! */
           busyReplay=true;
           clearSongCues();
+          clearTimers();
           song.notes.forEach(function(ni, k){
-            setTimeout(function(){
-              if(dead) return;
+            later(function(){
+              if(dead || mode!=="song") return;
               playNote(ni); lightKey(ni);
-            }, 650 + k*270);
+            }, 680 + k*270);
           });
-          setTimeout(function(){
+          later(function(){
             if(dead) return;
             busyReplay=false;
-            songIdx=(songIdx+1)%SONGS.length;
-            selectSong(songIdx);
-          }, 950 + song.notes.length*270);
+            if(mode==="song"){
+              songIdx=(songIdx+1)%SONGS.length;
+              selectSong(songIdx);
+              armIdle();
+            }
+          }, 1050 + song.notes.length*270);
         }
       }
     }
@@ -707,6 +977,8 @@ window.__HOOT_SELF_COACH__=true;
     }
   }
   function selectSong(idx){
+    clearTimers();
+    busyReplay=false;
     songIdx=idx;
     noteIdx=0;
     for(var a=0;a<8;a++) $("arc"+a).classList.remove("lit");
@@ -717,71 +989,103 @@ window.__HOOT_SELF_COACH__=true;
   }
 
   /* ================= CONTROLS ================= */
+  function setMode(next, isBoot){
+    clearTimers();
+    busyReplay=false;
+    mode=next;
+    idleVoiceReminded=false;
+    modeFreeBtn.classList.toggle("active", mode==="free");
+    modeFreeBtn.setAttribute("aria-pressed", String(mode==="free"));
+    modeSongBtn.classList.toggle("active", mode==="song");
+    modeSongBtn.setAttribute("aria-pressed", String(mode==="song"));
+    if(mode==="song"){
+      songBar.classList.add("show");
+      selectSong(songIdx);
+    } else {
+      songBar.classList.remove("show");
+      clearSongCues();
+    }
+    speakModeGuide(!!isBoot);
+    armIdle();
+  }
+
   modeFreeBtn.addEventListener("click",function(){
-    audio();
-    mode="free"; busyReplay=false;
-    modeFreeBtn.classList.add("active"); modeFreeBtn.setAttribute("aria-pressed","true");
-    modeSongBtn.classList.remove("active"); modeSongBtn.setAttribute("aria-pressed","false");
-    songBar.classList.remove("show");
-    clearSongCues();
+    unlockAudioOnce(); hasInteracted=true; audio();
+    setMode("free", false);
   });
   modeSongBtn.addEventListener("click",function(){
-    audio();
-    mode="song"; busyReplay=false;
-    modeSongBtn.classList.add("active"); modeSongBtn.setAttribute("aria-pressed","true");
-    modeFreeBtn.classList.remove("active"); modeFreeBtn.setAttribute("aria-pressed","false");
-    songBar.classList.add("show");
-    selectSong(songIdx);
+    unlockAudioOnce(); hasInteracted=true; audio();
+    setMode("song", false);
   });
   document.querySelectorAll(".song-tab").forEach(function(b){
     b.addEventListener("click",function(){
-      audio(); busyReplay=false;
+      unlockAudioOnce(); hasInteracted=true; audio();
+      idleVoiceReminded=false;
       selectSong(Number(b.dataset.song)||0);
+      playPianoGuide("hoot-pia-song", "hoot-tap-big-btn", false);
+      armIdle();
     });
   });
   document.querySelectorAll(".inst-btn").forEach(function(b){
     b.addEventListener("click",function(){
-      audio();
+      unlockAudioOnce(); hasInteracted=true; audio();
+      idleVoiceReminded=false;
       inst=b.dataset.inst;
       document.querySelectorAll(".inst-btn").forEach(function(x){ x.classList.remove("active"); });
       b.classList.add("active");
       playNote(4);
+      var now=Date.now();
+      if(now-lastInstGuideAt>3500){
+        lastInstGuideAt=now;
+        playPianoGuide("hoot-pia-inst", "hoot-super", false);
+      }
+      armIdle();
     });
   });
   soundBtn.addEventListener("click",function(){
     soundOn=!soundOn;
     soundBtn.textContent=soundOn?"🔊":"🔇";
+    if(!soundOn){ clearVoice(true); }
+    else { unlockAudioOnce(); audio(); speakModeGuide(false); }
   });
 
-  var lastHootTap=0;
+  /* Tap Conductor Hoot -> happy bounce + repeats current spoken Hoot guidance! */
   hootMusic.addEventListener("click",function(){
-    audio();
+    unlockAudioOnce(); hasInteracted=true; audio();
+    idleVoiceReminded=false;
     hootMusic.classList.remove("hop"); void hootMusic.offsetWidth; hootMusic.classList.add("hop");
-    var now=Date.now();
-    if(now-lastHootTap>7000){
-      lastHootTap=now;
-      speakClip("hoot-giggle.mp3", true);
-    } else playNote(0);
+    playNote(0);
+    speakModeGuide(false);
+    armIdle();
   });
   document.querySelector(".flower-toy").addEventListener("click",function(){
-    audio(); playNote(7);
+    unlockAudioOnce(); hasInteracted=true; audio(); playNote(7);
     this.classList.remove("dance"); void this.offsetWidth; this.classList.add("dance");
+    armIdle();
   });
 
-  window.addEventListener("pagehide",function(){ dead=true; if(voiceEl) try{voiceEl.pause();}catch(e){} });
-
-  if(/(^|[?&])kid=kida(&|$)/.test(location.search)){
-    modeSongBtn.click();
+  function teardown(){
+    dead=true;
+    clearTimers();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
+    clearVoice(true);
   }
+  window.addEventListener("pagehide", teardown);
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(false); });
+
+  /* ================= BOOT ================= */
+  var bootMode = /(^|[?&])kid=kida(&|$)/.test(location.search) ? "song" : "free";
+  setMode(bootMode, true);
 
   window.__pianoGame={
     snapshot:function(){
-      return { mode:mode, inst:inst, songIdx:songIdx, noteIdx:noteIdx, stars:stars, keyCount:keyEls.length };
+      return { mode:mode, inst:inst, songIdx:songIdx, noteIdx:noteIdx, stars:stars, keyCount:keyEls.length, isRiley:IS_RILEY };
     }
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e142">
-<script src="js/hoot-game-tail.js?v=llprev3e142"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

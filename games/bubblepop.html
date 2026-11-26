@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="bubblepop"; window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e141"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -47,6 +47,25 @@
       #0c88b5 48%,
       #095d8f 78%,
       #083f6a 100%);
+  }
+
+  /* Pixar-Illustrated Bubble Garden / Lagoon Backdrop with Gradient Fallback */
+  #pixarBg{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_bubblepop.jpg"), linear-gradient(180deg, #34d8eb 0%, #14b5d6 18%, #0c88b5 48%, #095d8f 78%, #083f6a 100%);
+  }
+  #pixarBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(180deg, rgba(8,96,144,.16) 0%, rgba(7,68,112,.24) 68%, rgba(6,44,78,.34) 100%);
   }
 
   /* Shimmering Water Surface Caustics */
@@ -121,6 +140,7 @@
     height:clamp(155px, 28vh, 260px);
     z-index:3;
     pointer-events:none;
+    opacity:.74;
   }
   .kelp{
     position:absolute;
@@ -488,6 +508,10 @@
     touch-action:manipulation;
     outline:none;
   }
+  body.kid-riley .bub{
+    width:clamp(98px, 12.2vw, 132px);
+    height:clamp(98px, 12.2vw, 132px);
+  }
   .bub svg{
     width:100%;
     height:100%;
@@ -735,6 +759,10 @@
       width:clamp(80px, 22vw, 96px);
       height:clamp(80px, 22vw, 96px);
     }
+    body.kid-riley .bub{
+      width:clamp(88px, 24.5vw, 108px);
+      height:clamp(88px, 24.5vw, 108px);
+    }
     .win-pearl{ width:38px; height:38px; font-size:19px; }
   }
 
@@ -745,6 +773,7 @@
 </head>
 <body>
 <div id="stage">
+  <div id="pixarBg" aria-hidden="true"></div>
   <!-- Shimmering Water Surface Caustics -->
   <svg id="surfaceWave" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 18 Q75 4 150 18 T300 18 T450 18 T600 18 T750 18 T900 18 T1050 18 T1200 18 L1200 0 L0 0 Z" fill="#b7f9ff" opacity=".75"/>
@@ -989,7 +1018,10 @@
 
   /* ================= CONSTANTS & PALETTES ================= */
   var VBASE = "assets/voice/";
-  var PRAISE_CLIPS = ["hoot-great-job.mp3", "hoot-amazing.mp3", "hoot-star.mp3"];
+  var PRAISE_CLIPS = ["hoot-great-job.mp3", "hoot-amazing.mp3", "hoot-star.mp3", "hoot-super.mp3", "hoot-yay-2.mp3"];
+  var isRiley = /(^|[?&])kid=kidb(&|$)/.test(location.search);
+  try{ if(!isRiley && window.parent && window.parent.__llIsRiley && window.parent.__llIsRiley()) isRiley = true; }catch(e){}
+  if(isRiley) document.body.classList.add("kid-riley");
   /* Subtle iridescent soap-film tints per number (all stay translucent 3D soap bubbles!) */
   var SOAP_TINTS = [
     { rimA:"#7ef9ff", rimB:"#f0abfc", rimC:"#fde047", glow:"rgba(126,249,255,.32)" },
@@ -1014,6 +1046,7 @@
   var animId = null;
   var lastFrame = 0;
   var idleTimer = null;
+  var winTimer = null;
   var gradCounter = 0;
 
   function $(id){ return document.getElementById(id); }
@@ -1121,8 +1154,20 @@
     }
   }
 
-  /* ================= STUDIO HOOT VOICE QUEUE ================= */
-  var voiceEl = null, vQueue = [], vPlaying = false;
+  /* ================= STUDIO HOOT VOICE QUEUE (HOOT_HAVE-GATED + iOS UNLOCK) ================= */
+  var voiceEl = null, vQueue = [], vPlaying = false, vPriority = false;
+  var audioUnlocked = false, pendingBootClip = null;
+  function hasHootClip(id){
+    try{
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveBubClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
+  }
   function getVoice(){
     if(!voiceEl){
       voiceEl = new Audio();
@@ -1145,6 +1190,30 @@
     }
     return voiceEl;
   }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    audio();
+    var el = getVoice();
+    try{
+      if(!vPlaying){
+        el.muted = true;
+        var p = el.play();
+        if(p && p.then){
+          p.then(function(){
+            el.pause(); el.currentTime = 0; el.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip; pendingBootClip = null;
+              clearVoice(true);
+              enqueue(c, false, true);
+            }
+          }).catch(function(){ el.muted = false; });
+        } else { el.muted = false; }
+      }
+    }catch(e){ el.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
   function hubQuiet(){
     try{
       var d = window.parent && window.parent.document;
@@ -1156,6 +1225,7 @@
   function vNext(){
     if(!vPlaying){ pumpVoice(); return; }
     vPlaying = false;
+    vPriority = false;
     snorkelHoot.classList.remove("talking");
     pumpVoice();
   }
@@ -1166,7 +1236,9 @@
     if(!soundOn || hubQuiet()){ pumpVoice(); return; }
     var el = getVoice();
     vPlaying = true;
+    vPriority = !!item.priority;
     snorkelHoot.classList.add("talking");
+    el.muted = false;
     el.__hwT = Date.now();
     el.__hwRetry = 0;
     if(item.giggleArm){
@@ -1175,7 +1247,10 @@
     }
     el.src = VBASE + item.file;
     var p = el.play();
-    if(p && p.catch) p.catch(vNext);
+    if(p && p.catch) p.catch(function(){
+      if(!audioUnlocked && item.priority && !pendingBootClip) pendingBootClip = item.file;
+      vNext();
+    });
   }
   function clearVoice(stop){
     vQueue.length = 0;
@@ -1184,12 +1259,14 @@
       voiceEl.__hwRetry = 1;
       try{ voiceEl.pause(); }catch(e){}
       vPlaying = false;
+      vPriority = false;
       snorkelHoot.classList.remove("talking");
     }
   }
-  function enqueue(file, giggleArm){
+  function enqueue(file, giggleArm, priority){
     if(!file) return;
-    vQueue.push({ file:file, giggleArm:!!giggleArm });
+    if(!priority && vPriority && vPlaying) return;
+    vQueue.push({ file:file, giggleArm:!!giggleArm, priority:!!priority });
     pumpVoice();
   }
 
@@ -1207,33 +1284,41 @@
       try{
         if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
           if(window.parent.__hwPlayAfterIntro(VBASE + clip)){
+            pendingBootClip = null;
             return;
           }
         }
       }catch(e){}
     }
     clearVoice(true);
-    enqueue(clip);
+    enqueue(clip, false, true);
   }
 
   function speakPopSuccess(n, nextN){
     clearVoice(true);
-    enqueue("name-number-" + n + ".mp3");
-    var pr = PRAISE_CLIPS[praiseIdx % PRAISE_CLIPS.length];
-    praiseIdx++;
-    enqueue(pr);
+    enqueue("name-number-" + n + ".mp3", false, true);
+    if(n === 3 || (maxN === 10 && n === 5)){
+      enqueue(resolveBubClip("hoot-bub-pearl", "hoot-super"), false, true);
+    } else {
+      var pr = PRAISE_CLIPS[praiseIdx % PRAISE_CLIPS.length];
+      praiseIdx++;
+      if(!hasHootClip(pr.replace(".mp3","")) && pr !== "hoot-great-job.mp3" && pr !== "hoot-amazing.mp3" && pr !== "hoot-star.mp3"){
+        pr = "hoot-great-job.mp3";
+      }
+      enqueue(pr, false, true);
+    }
     if(nextN != null){
-      enqueue("call-number-" + nextN + ".mp3");
+      enqueue("call-number-" + nextN + ".mp3", false, true);
     }
   }
 
   function speakWrong(targetN){
     clearVoice(true);
-    enqueue("hoot-try-again.mp3");
-    enqueue("call-number-" + targetN + ".mp3");
+    enqueue("hoot-try-again.mp3", false, true);
+    enqueue("call-number-" + targetN + ".mp3", false, true);
   }
 
-  /* ================= GENTLE ~9.5s IDLE REMINDER ================= */
+  /* ================= GENTLE ~9s IDLE REMINDER ================= */
   function clearHalo(){
     for(var i = 0; i < bubbles.length; i++){
       bubbles[i].el.classList.remove("target-halo");
@@ -1259,7 +1344,7 @@
         callTarget(target, false);
       }
       armIdle();
-    }, 9500);
+    }, 9000);
   }
 
   /* ================= AMBIENT MICRO-BUBBLES & PUFFS ================= */
@@ -1476,10 +1561,10 @@
       baseX: laneX,
       x: laneX,
       y: startY,
-      vy: 20 + Math.random() * 14, /* soothing gentle upward lagoon float */
+      vy: isRiley ? (13 + Math.random() * 8) : (20 + Math.random() * 14), /* age-adaptive soothing upward lagoon float */
       phase: Math.random() * Math.PI * 2,
-      swayAmp: 12 + Math.random() * 12,
-      swaySpd: 1.05 + Math.random() * 0.55,
+      swayAmp: isRiley ? (8 + Math.random() * 6) : (12 + Math.random() * 12),
+      swaySpd: isRiley ? (0.8 + Math.random() * 0.35) : (1.05 + Math.random() * 0.55),
       wobblePhase: Math.random() * Math.PI * 2,
       lastTapAt: 0,
       dead: false
@@ -1616,7 +1701,17 @@
     }
   }
 
+  function ensureTargetPresent(){
+    if(mode !== "count" || target == null || target > maxN) return;
+    for(var i = 0; i < bubbles.length; i++){
+      if(!bubbles[i].dead && bubbles[i].num === target) return;
+    }
+    spawnBubble(target, Math.floor(Math.random() * 3), 3, true);
+  }
+
   function startRound(isBoot){
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    try{ window.__hwWinSkipFn = null; }catch(e){}
     clearIdle();
     clearVoice(true);
     clearBubbles();
@@ -1628,30 +1723,36 @@
 
     if(mode === "free"){
       target = null;
-      var pool = shuffle([1,2,3,4,5,6,7,8,9,10]).slice(0, 6);
+      var freeCount = isRiley ? 4 : 6;
+      var pool = shuffle([1,2,3,4,5,6,7,8,9,10]).slice(0, freeCount);
       for(var i = 0; i < pool.length; i++){
         spawnBubble(pool[i], i, pool.length, false);
       }
       updateHUD();
-      if(!isBoot) enqueue("hoot-ready-go.mp3");
+      if(!isBoot) enqueue(resolveBubClip("hoot-bub-welcome", "hoot-ready-go"), false, true);
+      if(!animId){ lastFrame = 0; animId = requestAnimationFrame(tick); }
       return;
     }
 
     target = 1;
-    var initialCount = Math.min(5, maxN);
+    var maxVisible = isRiley ? 3 : 5;
+    var initialCount = Math.min(maxVisible, maxN);
     nextSpawnN = initialCount + 1;
     var nums = [];
     for(var n = 1; n <= initialCount; n++) nums.push(n);
     shuffle(nums);
+    updateHUD();
+    callTarget(1, !!isBoot);
     for(var i = 0; i < nums.length; i++){
       spawnBubble(nums[i], i, nums.length, false);
     }
-    updateHUD();
-    callTarget(1, !!isBoot);
+    ensureTargetPresent();
     armIdle();
+    if(!animId){ lastFrame = 0; animId = requestAnimationFrame(tick); }
   }
 
   function onBubbleTap(b){
+    unlockAudioOnce();
     audio();
     if(dead || state !== "play" || b.dead) return;
     var r = b.el.getBoundingClientRect();
@@ -1695,14 +1796,15 @@
     if(mode === "free"){
       updateHUD();
       clearVoice(true);
-      enqueue("name-number-" + b.num + ".mp3");
+      enqueue("name-number-" + b.num + ".mp3", false, false);
       var used = bubbles.map(function(x){ return x.num; });
       var cands = [];
       for(var k = 1; k <= 10; k++){
         if(used.indexOf(k) < 0) cands.push(k);
       }
+      var freeCount = isRiley ? 4 : 6;
       var nextFree = cands.length ? cands[Math.floor(Math.random() * cands.length)] : (1 + Math.floor(Math.random() * 10));
-      spawnBubble(nextFree, Math.floor(Math.random() * 6), 6, true);
+      spawnBubble(nextFree, Math.floor(Math.random() * freeCount), freeCount, true);
       return;
     }
 
@@ -1712,7 +1814,9 @@
     if(b.num >= maxN){
       updateHUD();
       speakPopSuccess(b.num, null);
-      (window.__hwFastWin || setTimeout)(function(){
+      if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+      winTimer = (window.__hwFastWin || setTimeout)(function(){
+        winTimer = null;
         if(!dead && state === "play") showWin();
       }, 760);
       return;
@@ -1720,10 +1824,12 @@
 
     /* Advance to next number in sequence */
     target = b.num + 1;
+    var maxVisible = isRiley ? 3 : 5;
     if(nextSpawnN <= maxN){
-      spawnBubble(nextSpawnN, Math.floor(Math.random() * 5), 5, true);
+      spawnBubble(nextSpawnN, Math.floor(Math.random() * maxVisible), maxVisible, true);
       nextSpawnN++;
     }
+    ensureTargetPresent();
     updateHUD();
     targetBadge.classList.remove("pop");
     void targetBadge.offsetWidth;
@@ -1735,6 +1841,7 @@
   function showWin(){
     if(state === "won") return;
     state = "won";
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
     clearIdle();
     clearBubbles();
     winChips.innerHTML = "";
@@ -1751,6 +1858,8 @@
     }
     winOverlay.hidden = false;
     winFanfareSfx();
+    clearVoice(true);
+    enqueue(resolveBubClip("hoot-bub-win", "hoot-win-yay"), false, true);
     var sr = stage.getBoundingClientRect();
     puffMiniBubbles(sr.width * 0.32, sr.height * 0.55, 10);
     puffMiniBubbles(sr.width * 0.68, sr.height * 0.55, 10);
@@ -1797,8 +1906,9 @@
     }
   });
 
-  /* Direct tap of Snorkel Hoot: joyful giggle ONLY here (with transient __bellyArmed) + snorkel bubbles! */
+  /* Direct tap of Snorkel Hoot: joyful snorkel bubbles + repeat target number in count mode! */
   snorkelHoot.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
     snorkelSfx();
     snorkelHoot.classList.remove("giggle", "celebrate");
@@ -1807,13 +1917,22 @@
     setTimeout(function(){ snorkelHoot.classList.remove("giggle"); }, 1000);
     var r = snorkelHoot.getBoundingClientRect();
     puffMiniBubbles(r.left + r.width * 0.82, r.top + r.height * 0.16, 6);
-    clearVoice(true);
-    enqueue("hoot-giggle.mp3", true);
-    if(state === "play" && mode === "count") armIdle();
+    if(state === "play" && mode === "count"){
+      highlightTargetBubble();
+      callTarget(target, false);
+      armIdle();
+    } else if(state === "play" && mode === "free"){
+      clearVoice(true);
+      enqueue(resolveBubClip("hoot-bub-welcome", "hoot-ready-go"), false, true);
+    } else {
+      clearVoice(true);
+      enqueue("hoot-giggle.mp3", true, false);
+    }
   });
 
   /* Target Number Bubble [ n ] [ 🔊 ]: repeats call-number-<target>.mp3 + shimmers target bubble */
   targetBadge.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
     snorkelSfx();
     if(state === "play" && mode === "count"){
@@ -1858,6 +1977,7 @@
   });
 
   againBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
     pearlLandSfx(5);
     startRound(false);
@@ -1873,7 +1993,8 @@
 
   window.addEventListener("pagehide", function(){
     dead = true;
-    if(animId) cancelAnimationFrame(animId);
+    if(animId){ cancelAnimationFrame(animId); animId = null; }
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
     clearIdle();
     clearVoice(true);
   });
@@ -1888,7 +2009,6 @@
   }
   buildAmbientBubbles();
   startRound(true);
-  animId = requestAnimationFrame(tick);
 
   /* ================= VERIFICATION SNAPSHOT API ================= */
   window.__bubbleGame = {
@@ -1897,6 +2017,7 @@
         state: state,
         mode: mode,
         maxN: maxN,
+        isRiley: isRiley,
         target: target,
         stars: stars,
         popped: popped.slice(),
@@ -1907,7 +2028,7 @@
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e141">
-<script src="js/hoot-game-tail.js?v=llprev3e141"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

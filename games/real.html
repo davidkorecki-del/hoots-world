@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="real";</script>
-<script src="js/hoot-game-head.js?v=llprev3e105"></script>
+<script>window.__HOOT_GAME_KEY__="real";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Town Rescue Patrol</title>
@@ -19,6 +19,14 @@
   #stage{
     position:fixed; inset:0; width:100%; height:100dvh; overflow:hidden;
     display:flex; flex-direction:column; justify-content:space-between;
+    background-image:url("assets/worlds3d/bg_real.jpg"), linear-gradient(180deg, #0284c7 0%, #bae6fd 52%, #4ade80 100%);
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+  #stage::before{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%, rgba(255,254,248,.04) 30%, rgba(20,30,48,.22) 100%);
   }
 
   /* 4 Full-Screen Dedicated SVG Backdrops (One per Vehicle!) */
@@ -111,7 +119,7 @@
   }
   .doc-tool-btn{
     display:flex; align-items:center; gap:10px;
-    min-width:clamp(185px, 26vw, 255px); min-height:58px;
+    min-width:clamp(185px, 26vw, 255px); min-height:64px;
     background:linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
     border:4px solid #141e30; border-radius:20px;
     padding:5px 14px; cursor:pointer;
@@ -254,11 +262,13 @@
   .wstar{ font-size:24px; filter:grayscale(1) opacity(.28); transition:transform .3s cubic-bezier(.34,1.8,.5,1), filter .3s; }
   .wstar.on{ filter:none; transform:scale(1.22); }
   #doneBtn{
+    min-width:64px; min-height:64px;
     border:4px solid var(--outline); border-radius:999px;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
     color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:17px;
     padding:8px 16px; cursor:pointer; white-space:nowrap;
     box-shadow:0 6px 0 var(--outline); text-shadow:0 2px 0 rgba(0,0,0,.35);
+    display:inline-flex; align-items:center; justify-content:center; gap:5px;
   }
   #doneBtn:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--outline); }
 
@@ -340,11 +350,15 @@
   .win-trophy{ font-size:74px; line-height:1; margin-bottom:8px; }
   .win-card h2{ margin:0 0 8px; font-family:"Fredoka",sans-serif; font-size:34px; color:#141e30; }
   .win-card p{ margin:0 0 18px; font-weight:800; font-size:18px; color:#334155; }
-  .big-play{
+  .win-btns{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;
+  }
+  .big-play, .win-btn{
+    min-width:168px; min-height:68px;
     border:4px solid var(--outline); border-radius:999px;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
     color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:22px;
-    padding:12px 32px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
+    padding:12px 28px; cursor:pointer; box-shadow:0 7px 0 var(--outline);
   }
 
   /* ---------- Expanded gameplay UI ---------- */
@@ -503,6 +517,7 @@
   #dispTitle{ margin:0 0 4px; font-family:"Fredoka",sans-serif; font-size:26px; color:#fde047; }
   #dispMsg{ margin:0 0 14px; font-weight:800; font-size:16px; color:#e2e8f0; line-height:1.3; }
   #dispGoBtn{
+    min-width:190px; min-height:66px;
     border:4px solid #141e30; border-radius:999px;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
     color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:21px;
@@ -547,9 +562,10 @@
     display:none; align-items:center; gap:5px; flex:0 0 auto;
   }
   .bmode-btn{
+    min-width:64px; min-height:64px;
     border:3px solid #141e30; border-radius:999px;
-    background:#fff; color:#141e30; font-family:"Fredoka",sans-serif; font-weight:800; font-size:13px;
-    padding:4px 10px; cursor:pointer; box-shadow:0 3px 0 #141e30; white-space:nowrap;
+    background:#fff; color:#141e30; font-family:"Fredoka",sans-serif; font-weight:800; font-size:14px;
+    padding:4px 12px; cursor:pointer; box-shadow:0 3px 0 #141e30; white-space:nowrap;
   }
   .bmode-btn.on{ background:#fde047; }
   .color-dot{ width:38px; height:38px; border-radius:50%; border:4px solid #141e30; display:inline-block; }
@@ -558,23 +574,49 @@
   #busDoor{ transform-origin:310px 135px; transition:transform .4s cubic-bezier(.34,1.5,.5,1); }
   #busDoor.open{ transform:scaleX(0.18); }
 
+  /* Gentle toddler visual cue ring + bouncing finger */
+  .fire-zone.cue-first::before{
+    content:""; position:absolute; inset:6px; border-radius:50%;
+    border:5px dashed #fde047;
+    box-shadow:0 0 24px rgba(253,224,71,.95);
+    animation:zonePulse .75s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  .cue-hand{
+    position:absolute; right:-8px; top:-18px; font-size:34px; line-height:1;
+    pointer-events:none; filter:drop-shadow(0 4px 5px rgba(0,0,0,.35));
+    animation:fingerBounce .55s ease-in-out infinite alternate;
+  }
+
   @media (max-width: 680px){
     #badgeRibbon{ display:none; }
   }
 
   @media (max-width: 620px){
+    #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 0 8px; gap:6px; }
+    #hootBtn{ width:64px; height:64px; flex:0 0 64px; }
+    #bubble{ display:none; }
+    #starBar{ padding:5px 10px; gap:3px; min-height:64px; }
+    .wstar{ font-size:20px; }
+    #doneBtn{ padding:6px 12px; font-size:15px; }
+    #rescueDeck{ padding:7px 8px 10px; border-radius:24px; }
+    .deck-header{ flex-wrap:wrap; justify-content:center; gap:6px; margin-bottom:6px; }
+    .siren-pill{ display:none; }
+    .action-pill-btn{ font-size:14px; padding:8px 12px; }
+    #garageRow{ gap:6px; }
+    .bay-title{ font-size:11px; padding:2px 6px; }
     #vehicleStage{ left:2%; bottom:24.5%; width:190px; height:120px; }
     #vehicleStage.giant-bus{ left:3%; bottom:25%; width:255px; height:160px; }
     #friendStage{ right:3%; bottom:26%; width:98px; height:108px; }
-    #doctorStageWrap{ flex-direction:row; gap:10px; top:43%; }
-    #giantTeddyWrap{ width:210px; height:250px; }
+    #doctorStageWrap{ flex-direction:row; gap:8px; top:43%; }
+    #giantTeddyWrap{ width:176px; height:226px; }
     .teddy-spot{ width:64px; height:64px; font-size:28px; }
-    .doc-tool-btn{ min-width:155px; min-height:62px; font-size:15px; padding:6px 10px; }
-    .doc-tool-ic{ font-size:30px; }
+    .doc-tool-btn{ min-width:148px; min-height:64px; font-size:14px; padding:5px 8px; gap:6px; }
+    .doc-tool-ic{ font-size:26px; }
     .crosswalk-walker, .bus-student{ width:115px; height:130px; }
     .crosswalk-walker svg, .bus-student svg{ width:96px; height:96px; }
-    .bay-btn{ min-height:92px; }
-    .bay-svg{ width:50px; height:40px; }
+    .bay-btn{ min-height:88px; padding:4px; }
+    .bay-svg{ width:48px; height:38px; }
     .fire-zone{ width:96px; height:96px; }
   }
 </style>
@@ -591,14 +633,14 @@
         <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#bae6fd"/>
       </linearGradient>
     </defs>
-    <rect width="1440" height="900" fill="url(#skyFire)"/>
+    <rect width="1440" height="900" fill="url(#skyFire)" fill-opacity="0.28"/>
     <g transform="translate(210,125)">
       <circle cx="0" cy="0" r="68" fill="#fde047" opacity=".35"/>
       <circle cx="0" cy="0" r="46" fill="#facc15" stroke="#141e30" stroke-width="6"/>
       <circle cx="-14" cy="-6" r="6.5" fill="#141e30"/><circle cx="14" cy="-6" r="6.5" fill="#141e30"/>
       <path d="M-13 11 Q0 22 13 11" fill="none" stroke="#141e30" stroke-width="5" stroke-linecap="round"/>
     </g>
-    <path d="M0 510 Q380 430 760 495 T1440 480 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <path d="M0 510 Q380 430 760 495 T1440 480 L1440 900 L0 900 Z" fill="#4ade80" fill-opacity="0.58" stroke="#141e30" stroke-width="6"/>
     <g transform="translate(720,235)">
       <rect x="-185" y="35" width="370" height="275" rx="16" fill="#fef3c7" stroke="#141e30" stroke-width="7"/>
       <polygon points="-210,42 0,-75 210,42" fill="#ef4444" stroke="#141e30" stroke-width="7" stroke-linejoin="round"/>
@@ -632,13 +674,13 @@
       </linearGradient>
     </defs>
     <!-- Soft Sky-Blue Clinic Room Wall & Checkered Floor -->
-    <rect width="1440" height="580" fill="url(#clinicWall)"/>
-    <rect y="580" width="1440" height="320" fill="#fef3c7" stroke="#141e30" stroke-width="7"/>
+    <rect width="1440" height="580" fill="url(#clinicWall)" fill-opacity="0.76"/>
+    <rect y="580" width="1440" height="320" fill="#fef3c7" fill-opacity="0.92" stroke="#141e30" stroke-width="7"/>
     <!-- Clinic Wall Trim -->
     <rect y="555" width="1440" height="28" fill="#38bdf8" stroke="#141e30" stroke-width="6"/>
     <!-- Clinic Window on Left showing Ambulance parked outside -->
     <g transform="translate(180,260)" stroke="#141e30" stroke-width="6">
-      <rect x="-110" y="-110" width="220" height="190" rx="18" fill="#7dd3fc"/>
+      <rect x="-110" y="-110" width="220" height="190" rx="18" fill="#7dd3fc" fill-opacity="0.28"/>
       <path d="M-104 40 Q0 10 104 40 L104 75 L-104 75 Z" fill="#4ade80"/>
       <line x1="0" y1="-110" x2="0" y2="80"/><line x1="-110" y1="-15" x2="110" y2="-15"/>
     </g>
@@ -662,8 +704,8 @@
         <stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#93c5fd"/>
       </linearGradient>
     </defs>
-    <rect width="1440" height="900" fill="url(#skyPol)"/>
-    <path d="M0 230 Q420 170 920 220 T1440 200 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <rect width="1440" height="900" fill="url(#skyPol)" fill-opacity="0.28"/>
+    <path d="M0 230 Q420 170 920 220 T1440 200 L1440 900 L0 900 Z" fill="#4ade80" fill-opacity="0.58" stroke="#141e30" stroke-width="6"/>
     <g transform="translate(1210,120)" stroke="#141e30" stroke-width="6">
       <rect x="-16" y="40" width="32" height="90" rx="6" fill="#b45309"/>
       <circle cx="0" cy="0" r="58" fill="#22c55e"/><circle cx="-38" cy="22" r="42" fill="#16a34a"/><circle cx="38" cy="22" r="42" fill="#16a34a"/>
@@ -697,9 +739,9 @@
         <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#fef08a"/>
       </linearGradient>
     </defs>
-    <rect width="1440" height="900" fill="url(#skyBus)"/>
+    <rect width="1440" height="900" fill="url(#skyBus)" fill-opacity="0.28"/>
     <g transform="translate(1180,130)"><circle r="62" fill="#fde047" opacity=".4"/><circle r="42" fill="#facc15" stroke="#141e30" stroke-width="6"/></g>
-    <path d="M0 460 Q450 380 950 440 T1440 420 L1440 900 L0 900 Z" fill="#4ade80" stroke="#141e30" stroke-width="6"/>
+    <path d="M0 460 Q450 380 950 440 T1440 420 L1440 900 L0 900 Z" fill="#4ade80" fill-opacity="0.58" stroke="#141e30" stroke-width="6"/>
     <rect x="0" y="510" width="1440" height="205" fill="#334155" stroke="#141e30" stroke-width="7"/>
     <g id="laneMarks" fill="#facc15">
       <rect x="-220" y="605" width="110" height="16" rx="8"/><rect x="0" y="605" width="110" height="16" rx="8"/><rect x="220" y="605" width="110" height="16" rx="8"/>
@@ -734,7 +776,7 @@
       <div id="bubble" aria-live="polite">🚒 <b>FIREFIGHTER!</b> Hold or drag your finger across the <b>burning windows &amp; roof</b> to spray the <b>Water Hose</b> and put out the fire!</div>
     </div>
     <div class="hud-right">
-      <div id="badgeRibbon" aria-label="Rescue badges"><button type="button" class="rbadge" data-badge="firefighter" title="Fire Chief Badge">🔥</button><button type="button" class="rbadge" data-badge="doctor" title="Super Doctor Badge">🩺</button><button type="button" class="rbadge" data-badge="police" title="Safety Officer Badge">⭐</button><button type="button" class="rbadge" data-badge="teacher" title="Bus Captain Badge">🚌</button></div>
+      <div id="badgeRibbon" aria-label="Rescue badges"><span class="rbadge" data-badge="firefighter" title="Fire Chief Badge">🔥</span><span class="rbadge" data-badge="doctor" title="Super Doctor Badge">🩺</span><span class="rbadge" data-badge="police" title="Safety Officer Badge">⭐</span><span class="rbadge" data-badge="teacher" title="Bus Captain Badge">🚌</span></div>
       <div id="starBar" aria-label="Rescue stars">
         <span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span><span class="wstar">⭐</span>
       </div>
@@ -798,7 +840,9 @@
       <div class="win-trophy" aria-hidden="true">🚒🚑🚓🚌</div>
       <h2>Rescue Hero!</h2>
       <p>You sprayed out the fires, gave Giant Teddy Bear a checkup, walked pets across the street, and loaded the School Bus!</p>
-      <button id="againBtn" class="big-play" type="button">↻ Keep Playing</button>
+      <div class="win-btns">
+        <button id="againBtn" class="big-play" type="button">↻ Keep Playing</button>
+      </div>
     </div>
   </div>
 </div>
@@ -837,8 +881,22 @@
   window.addEventListener("resize", resize);
   resize();
 
+  /* ---------- Kid Profile Detection (Riley age 2 vs Zane age 3) ---------- */
+  var urlKid = "";
+  try{ urlKid = String(new URLSearchParams(window.location.search).get("kid") || "").toLowerCase(); }catch(e){}
+  function isKidB(){
+    try{
+      if(urlKid === "kidb") return true;
+      if(urlKid === "kida") return false;
+      return !!(window.parent && window.parent.__llNameKey && window.parent.__llNameKey() === "kidb");
+    }catch(e){ return urlKid === "kidb"; }
+  }
+  var RILEY_MODE = isKidB();
+
   /* ---------- Voice Engine (Strictly Verified Real Hoot Clips Only!) ---------- */
   var voiceA = new Audio();
+  voiceA.preload = "auto";
+  var audioUnlocked = false, pendingBootClips = null, dead = false;
   var lastStepClips = null, idleHelpTimer = null, idleHelpReminded = false;
   function hasClip(id){
     try{
@@ -847,57 +905,102 @@
     }catch(e){}
     return false;
   }
+  function stopParentVoice(){
+    try{
+      if(window.parent && window.parent !== window){
+        if(window.parent.__hwStopIntro) window.parent.__hwStopIntro();
+        if(window.parent.__hootStopClip) window.parent.__hootStopClip();
+      }
+    }catch(e){}
+  }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    ac();
+    try{
+      voiceA.muted = true;
+      var p = voiceA.play();
+      if(p && p.then){
+        p.then(function(){
+          voiceA.pause(); voiceA.currentTime = 0; voiceA.muted = false;
+          if(pendingBootClips){
+            var c = pendingBootClips; pendingBootClips = null;
+            playVoice(c, false);
+          }
+        }).catch(function(){ voiceA.muted = false; });
+      } else {
+        voiceA.muted = false;
+      }
+    }catch(e){ voiceA.muted = false; }
+  }
+  document.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
   function resolveCmd(preferredId, fallbacks){
     if(preferredId && hasClip(preferredId)) return [preferredId];
-    return (fallbacks && fallbacks.length) ? fallbacks.slice() : [];
+    return (fallbacks && fallbacks.length) ? fallbacks.slice() : ["hoot-tap-big-btn"];
   }
   function clearIdleHelp(){
     if(idleHelpTimer){ clearTimeout(idleHelpTimer); idleHelpTimer = null; }
   }
   function armIdleHelp(){
     clearIdleHelp();
-    if(won || !lastStepClips || !lastStepClips.length || idleHelpReminded) return;
+    if(dead || won || !lastStepClips || !lastStepClips.length || idleHelpReminded) return;
     idleHelpTimer = setTimeout(function(){
-      if(won || !lastStepClips || !lastStepClips.length) return;
+      if(dead || won || !lastStepClips || !lastStepClips.length) return;
       idleHelpReminded = true;
-      playVoice(lastStepClips);
-    }, 10500);
+      playVoice(lastStepClips, false);
+    }, 9000);
   }
   window.addEventListener("pointerdown", function(){
     idleHelpReminded = false;
     armIdleHelp();
   }, true);
   var voiceGen = 0;
-  function playVoice(clips){
-    if(!clips || !clips.length) return;
+  function playVoice(clips, isBoot){
+    if(dead || !clips || !clips.length) return;
+    if(isBoot){
+      var bootId = clips[0];
+      if(bootId){
+        try{
+          if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+            if(window.parent.__hwPlayAfterIntro("assets/voice/" + bootId + ".mp3")) return;
+          }
+        }catch(e){}
+      }
+    }
+    stopParentVoice();
     var myGen = ++voiceGen;
     var i = 0;
     voiceA.onended = null; voiceA.onerror = null;
     try{ voiceA.pause(); }catch(e){}
     function step(){
-      if(myGen !== voiceGen || i >= clips.length) return;
+      if(dead || myGen !== voiceGen || i >= clips.length) return;
       var id = clips[i++];
       if(!id) { step(); return; }
+      voiceA.muted = false;
       voiceA.src = "assets/voice/" + id + ".mp3";
       voiceA.onended = step; voiceA.onerror = step;
-      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
+      var p = voiceA.play();
+      if(p && p.catch) p.catch(function(){
+        if(!audioUnlocked && !pendingBootClips) pendingBootClips = clips.slice();
+      });
     }
     step();
   }
   function sayCmd(preferredId, fallbacks, prefixClip){
     var seq = resolveCmd(preferredId, fallbacks);
     if(prefixClip) seq = [prefixClip].concat(seq);
-    if(seq.length) playVoice(seq);
+    if(seq.length) playVoice(seq, false);
     return seq;
   }
-  function setStepVoice(preferredId, fallbacks, speakNow, prefixClip){
+  function setStepVoice(preferredId, fallbacks, speakNow, prefixClip, isBoot){
     var seq = resolveCmd(preferredId, fallbacks);
     lastStepClips = seq;
     idleHelpReminded = false;
     armIdleHelp();
     if(speakNow !== false){
-      var full = prefixClip ? [prefixClip].concat(seq) : seq;
-      if(full.length) playVoice(full);
+      var full = (prefixClip && !isBoot) ? [prefixClip].concat(seq) : seq;
+      if(full.length) playVoice(full, !!isBoot);
     }
   }
 
@@ -1006,7 +1109,7 @@
     firefighter: {
       title: "FIREFIGHTER",
       nameClip: "name-firefighter",
-      teachClip: "teach-firefighter",
+      teachClip: "hoot-tap-big-btn",
       friend: "kitten",
       friendName: "Kitten!",
       friendClip: "word-kitten",
@@ -1017,7 +1120,7 @@
     doctor: {
       title: "DOCTOR",
       nameClip: "name-doctor",
-      teachClip: "teach-doctor",
+      teachClip: "hoot-tap-big-btn",
       friend: "bear",
       friendName: "Teddy Bear!",
       friendClip: "word-teddy-bear",
@@ -1028,7 +1131,7 @@
     police: {
       title: "POLICE OFFICER",
       nameClip: "name-police-officer",
-      teachClip: "teach-police-officer",
+      teachClip: "hoot-tap-big-btn",
       friend: "puppy",
       friendName: "Puppy!",
       friendClip: "word-dog",
@@ -1039,7 +1142,7 @@
     teacher: {
       title: "TEACHER",
       nameClip: "name-teacher",
-      teachClip: "teach-teacher",
+      teachClip: "hoot-tap-big-btn",
       friend: "bunny",
       friendName: "Bunny!",
       friendClip: "word-bunny",
@@ -1184,7 +1287,7 @@
   /* =========================================================================
      MISSION 1: FIREFIGHTER — Roaring Building Fires & Pressurized Water Hose
      ========================================================================= */
-  function setupFirefighterMission(speakIntro){
+  function setupFirefighterMission(speakIntro, isBoot){
     rescueLayer.innerHTML = "";
     activeZones = [];
     winLeft.setAttribute("fill", "#7f1d1d");
@@ -1199,7 +1302,7 @@
     friendStage.style.transform = "";
     friendStage.classList.add("on-roof");
     friendBadge.textContent = "Help!";
-    setStepVoice("hoot-fire-spray", ["teach-firefighter"], speakIntro !== false, speakIntro !== false ? "name-firefighter" : null);
+    setStepVoice("hoot-fire-spray", ["hoot-tap-big-btn"], speakIntro !== false, speakIntro !== false ? "name-firefighter" : null, !!isBoot);
 
     var spots = [
       { id: "left", xPct: 43, yPct: 37, label: "🔥 Window Fire!" },
@@ -1207,13 +1310,14 @@
       { id: "right",xPct: 57, yPct: 37, label: "🔥 Bakery Fire!" }
     ];
 
-    spots.forEach(function(sp){
+    spots.forEach(function(sp, spIdx){
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "fire-zone choice-btn";
+      btn.className = "fire-zone choice-btn" + (spIdx === 0 ? " cue-first" : "");
       btn.style.left = sp.xPct + "%";
       btn.style.top = sp.yPct + "%";
       btn.innerHTML =
+        (spIdx === 0 ? '<span class="cue-hand" aria-hidden="true">👆</span>' : '') +
         '<div class="zone-meter"><div class="zone-fill"></div></div>' +
         '<span class="zone-badge">' + sp.label + '</span>';
 
@@ -1229,18 +1333,20 @@
 
       btn.addEventListener("pointerdown", function(e){
         e.preventDefault(); e.stopPropagation();
+        btn.classList.remove("cue-first");
+        var ch = btn.querySelector(".cue-hand"); if(ch) ch.remove();
         var r = btn.getBoundingClientRect();
         aimX = r.left + r.width / 2;
         aimY = r.top + r.height / 2;
         spraying = true;
-        applyWaterToFire(z, 22);
+        applyWaterToFire(z, RILEY_MODE ? 40 : 22);
       });
       btn.addEventListener("click", function(e){
         if(e.detail === 0){
           var r = btn.getBoundingClientRect();
           aimX = r.left + r.width / 2;
           aimY = r.top + r.height / 2;
-          applyWaterToFire(z, 34);
+          applyWaterToFire(z, RILEY_MODE ? 50 : 34);
         }
       });
 
@@ -1263,7 +1369,7 @@
     z.hit = tick;
     var r = z.el.getBoundingClientRect();
     var zx = r.left + r.width / 2, zy = r.top + r.height / 2;
-    z.hp = Math.max(0, z.hp - amount);
+    z.hp = Math.max(0, z.hp - (RILEY_MODE ? amount * 1.65 : amount));
     z.fillEl.style.width = Math.round(z.hp) + "%";
     spawnSteam(zx, zy, 5);
     sfxWaterSpray();
@@ -1368,19 +1474,21 @@
       };
     }
     lb.addEventListener("pointerdown", function(e){
+      var sx0 = e.clientX, sy0 = e.clientY;
       startToolDrag(e, "🪜", {
         move: function(x, y){
-          if(hitEl(friendStage, x, y, 70)){
+          if(hitEl(friendStage, x, y, RILEY_MODE ? 110 : 70)){
             endDrag();
             rescueKitten(x, y);
           }
         },
         drop: function(x, y){
-          if(hitEl(friendStage, x, y, 140)){
+          var tapped = Math.hypot(x - sx0, y - sy0) < 18;
+          if((RILEY_MODE && tapped) || hitEl(friendStage, x, y, RILEY_MODE ? 220 : 140)){
             rescueKitten(x, y);
           } else {
             bubble.innerHTML = "🪜 Drag the ladder right up to <b>Kitten on the roof</b>!";
-            sayCmd("hoot-fire-ladder", ["word-kitten", "hoot-try-this-one"]);
+            sayCmd("hoot-fire-ladder", ["word-kitten", "hoot-tap-big-btn"]);
           }
         }
       });
@@ -1534,11 +1642,11 @@
     var mouth = document.getElementById("teddyMouth");
 
     var STEPS = [
-      { k: "ice",     cmd: "hoot-doc-ice",      fb: ["teach-doctor"],       icon: "🧊", label: "Ice Pack",    zone: "head",  mode: "rub",  need: 700, msg: "🧊 <b>Rub the Ice Pack</b> on " + pat.name + "'s hot forehead to cool the fever!" },
-      { k: "heart",   cmd: "hoot-doc-heart",    fb: ["hoot-try-this-one"],  icon: "🩺", label: "Stethoscope", zone: "chest", mode: "drop", msg: "🩺 <b>Drag the Stethoscope</b> onto " + pat.name + "'s chest to listen to the heart!" },
-      { k: "xray",    cmd: "hoot-doc-xray",     fb: ["hoot-try-this-one"],  icon: "🩻", label: "X-Ray Scan",  zone: "chest", mode: "drop", msg: "🩻 <b>Slide the X-Ray Scanner</b> onto " + pat.name + "'s tummy to see inside!" },
-      { k: "bandaid", cmd: "hoot-doc-bandaid",  fb: ["hoot-try-this-one"],  icon: "🩹", label: "Band-Aid",    zone: "knee",  mode: "drop", msg: "🩹 <b>Put the Band-Aid</b> onto the hurt knee!" },
-      { k: "spoon",   cmd: "hoot-doc-medicine", fb: ["hoot-try-this-one"],  icon: "🥄", label: "Medicine",    zone: "mouth", mode: "drop", msg: "🥄 <b>Give the Medicine Spoon</b> to " + pat.name + "'s mouth — open wide!" }
+      { k: "ice",     cmd: "hoot-doc-ice",      fb: ["hoot-tap-big-btn"],   icon: "🧊", label: "Ice Pack",    zone: "head",  mode: "rub",  need: RILEY_MODE ? 320 : 700, msg: "🧊 <b>Rub the Ice Pack</b> on " + pat.name + "'s hot forehead to cool the fever!" },
+      { k: "heart",   cmd: "hoot-doc-heart",    fb: ["hoot-tap-big-btn"],   icon: "🩺", label: "Stethoscope", zone: "chest", mode: "drop", msg: "🩺 <b>Drag the Stethoscope</b> onto " + pat.name + "'s chest to listen to the heart!" },
+      { k: "xray",    cmd: "hoot-doc-xray",     fb: ["hoot-tap-big-btn"],   icon: "🩻", label: "X-Ray Scan",  zone: "chest", mode: "drop", msg: "🩻 <b>Slide the X-Ray Scanner</b> onto " + pat.name + "'s tummy to see inside!" },
+      { k: "bandaid", cmd: "hoot-doc-bandaid",  fb: ["hoot-tap-big-btn"],   icon: "🩹", label: "Band-Aid",    zone: "knee",  mode: "drop", msg: "🩹 <b>Put the Band-Aid</b> onto the hurt knee!" },
+      { k: "spoon",   cmd: "hoot-doc-medicine", fb: ["hoot-tap-big-btn"],   icon: "🥄", label: "Medicine",    zone: "mouth", mode: "drop", msg: "🥄 <b>Give the Medicine Spoon</b> to " + pat.name + "'s mouth — open wide!" }
     ];
     var ZONES = { head: [0.5, 0.2], chest: [0.5, 0.66], knee: [0.27, 0.86], mouth: [0.5, 0.43] };
     var idx = 0, progress = 0, inRhythm = false, beatCount = 0, beatT = 0, lastPhase = 0, lastRubOK = false;
@@ -1650,6 +1758,7 @@
     }
 
     function beginRhythm(){
+      var beatNeed = RILEY_MODE ? 2 : 4;
       inRhythm = true; beatCount = 0; beatT = 0; lastPhase = 0;
       var zc = zoneCenter("chest");
       var tr = rectOf(teddy);
@@ -1657,7 +1766,8 @@
       beatBtn.style.top = ((zc.y - tr.top) / tr.height * 100) + "%";
       beatBtn.hidden = false;
       refreshUI();
-      bubble.innerHTML = "💓 <b>Listen to the heartbeat!</b> Tap the heart <b>when the ring shrinks onto it</b>! (0/4)";
+      bubble.innerHTML = "💓 <b>Listen to the heartbeat!</b> Tap the heart <b>when the ring shrinks onto it</b>! (0/" + beatNeed + ")";
+      setStepVoice("hoot-doc-beat", ["hoot-tap-big-btn"], true);
       missionTick = function(dt){
         beatT += dt;
         var phase = (beatT % 1.05) / 1.05;
@@ -1666,24 +1776,26 @@
         var sc = 2.1 - 1.1 * phase;
         beatRing.style.transform = "translate(-50%,-50%) scale(" + sc.toFixed(3) + ")";
         beatRing.style.opacity = String(0.35 + 0.65 * phase);
-        beatBtn.setAttribute("data-ok", (phase > 0.68 || phase < 0.1) ? "1" : "0");
-        beatRing.style.borderColor = (phase > 0.68 || phase < 0.1) ? "#4ade80" : "#e11d48";
+        var inWin = RILEY_MODE ? (phase > 0.42 || phase < 0.25) : (phase > 0.68 || phase < 0.1);
+        beatBtn.setAttribute("data-ok", inWin ? "1" : "0");
+        beatRing.style.borderColor = inWin ? "#4ade80" : "#e11d48";
       };
     }
     beatBtn.addEventListener("pointerdown", function(e){
       e.preventDefault(); e.stopPropagation();
       if(!inRhythm) return;
+      var beatNeed = RILEY_MODE ? 2 : 4;
       if(beatBtn.getAttribute("data-ok") === "1"){
         beatCount++;
         sfxHeartbeat();
         var zc = zoneCenter("chest"); spawnCelebration(zc.x, zc.y);
-        bubble.innerHTML = "💓 <b>Lub-dub!</b> Great timing! (" + beatCount + "/4)";
-        if(beatCount >= 4){
+        bubble.innerHTML = "💓 <b>Lub-dub!</b> Great timing! (" + beatCount + "/" + beatNeed + ")";
+        if(beatCount >= beatNeed){
           inRhythm = false; missionTick = null; beatBtn.hidden = true;
           completeStep();
         }
       } else {
-        bubble.innerHTML = "💓 Wait for it… tap when the <b>ring shrinks onto the heart</b>! (" + beatCount + "/4)";
+        bubble.innerHTML = "💓 Wait for it… tap when the <b>ring shrinks onto the heart</b>! (" + beatCount + "/" + beatNeed + ")";
       }
     });
 
@@ -1704,7 +1816,7 @@
     spraying = false;
 
     var COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#a855f7", "#f97316", "#ec4899"];
-    var cars = [], pets = [], spawnT = 0.4, stopLeft = 0, STOP_TIME = 8.5, crossedCount = 0, hurt = 0;
+    var cars = [], pets = [], spawnT = 0.4, stopLeft = 0, STOP_TIME = RILEY_MODE ? 13.5 : 8.5, crossedCount = 0, hurt = 0;
     var polRed = document.getElementById("polRed"), polGreen = document.getElementById("polGreen");
 
     function geo(){
@@ -1768,7 +1880,7 @@
     function tryWalk(p){
       if(p.state !== "wait") return;
       if(stopLeft <= 0){ sfxHonk(); bubble.innerHTML = "🚫 Cars are still driving! Press the big red <b>✋ STOP</b> button first!"; shake(p.el); sayCmd("hoot-pol-stop", ["ask-stop-at-line"]); return; }
-      if(stopLeft < 3.2){ bubble.innerHTML = "⏱️ The STOP is almost over! Press <b>✋ STOP</b> again to keep cars waiting!"; shake(p.el); sayCmd("hoot-pol-stop", ["ask-stop-at-line"]); return; }
+      if(stopLeft < (RILEY_MODE ? 1.5 : 3.2)){ bubble.innerHTML = "⏱️ The STOP is almost over! Press <b>✋ STOP</b> again to keep cars waiting!"; shake(p.el); sayCmd("hoot-pol-stop", ["ask-stop-at-line"]); return; }
       if(crosswalkBusy()){ sfxHonk(); bubble.innerHTML = "⚠️ <b>Wait!</b> A car is still on the crosswalk. Let it pass first!"; shake(p.el); return; }
       p.state = "walk";
       p.el.classList.add("walking");
@@ -1800,7 +1912,7 @@
       }
       if(dir === -1) el.firstChild.style.transform = "scaleX(-1)";
       rescueLayer.insertBefore(el, rescueLayer.firstChild);
-      cars.push({ el: el, x: x, y: y, dir: dir, vx: dir * 60, max: 190 + Math.random() * 110 });
+      cars.push({ el: el, x: x, y: y, dir: dir, vx: dir * 60, max: (RILEY_MODE ? 130 : 190) + Math.random() * (RILEY_MODE ? 65 : 110) });
     }
 
     missionTick = function(dt){
@@ -1882,7 +1994,7 @@
 
     missionCleanup = function(){ cars.forEach(function(c){ c.el.remove(); }); cars = []; };
     bubble.innerHTML = "🚓 <b>POLICE OFFICER!</b> Cars keep driving! Press the big red <b>✋ STOP</b> button, then walk the pets across to the park!";
-    setStepVoice("hoot-pol-stop", ["teach-police-officer"], speakIntro !== false, speakIntro !== false ? "name-police-officer" : null);
+    setStepVoice("hoot-pol-stop", ["hoot-tap-big-btn"], speakIntro !== false, speakIntro !== false ? "name-police-officer" : null);
   }
 
   /* =========================================================================
@@ -1967,12 +2079,13 @@
         : busTopic === "col"
           ? BUS_COLS.map(function(c){ return { k: c.k, label: c.n, html: '<span class="color-dot" style="background:' + c.h + '"></span>' }; })
           : LETTERS.map(function(l){ return { k: l, label: l.toUpperCase(), html: l.toUpperCase() }; });
+      var kidCount = RILEY_MODE ? 2 : 3;
       var picks = [];
-      while(picks.length < 3){
+      while(picks.length < kidCount){
         var cand = pool[Math.floor(Math.random() * pool.length)];
         if(!picks.some(function(x){ return x.k === cand.k; }) && usedLetters.indexOf(cand.k) < 0) picks.push(cand);
       }
-      targetItem = picks[Math.floor(Math.random() * 3)];
+      targetItem = picks[Math.floor(Math.random() * kidCount)];
       targetLetter = targetItem.k;
       usedLetters.push(targetItem.k);
       var order = KINDS.slice().sort(function(){ return Math.random() - 0.5; });
@@ -1983,7 +2096,7 @@
         var b = document.createElement("button");
         b.type = "button"; b.className = "bus-kid choice-btn";
         b.innerHTML = FRIEND_SVGS[kind] + '<span class="letter-badge">' + it.html + '</span>';
-        b.style.left = (W * (0.56 + i * 0.17)) + "px";
+        b.style.left = (W * (kidCount === 2 ? (0.58 + i * 0.24) : (0.56 + i * 0.17))) + "px";
         b.style.top = (r.top + r.height * 0.44) + "px";
         b.style.animationDelay = (-i * 0.3) + "s";
         b.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); pickKid(b, it, kind); });
@@ -1992,7 +2105,11 @@
       });
       var wordKind = busTopic === "num" ? "number" : busTopic === "col" ? "color" : "letter";
       bubble.innerHTML = "🎒 <b>Bus Stop " + (stopNo + 1) + "!</b> Pick up the kid holding the " + wordKind + " <b>" + targetItem.label + "</b>!";
-      setStepVoice(busItemClip(targetItem), [busItemClip(targetItem)], true);
+      var pickPrompt = hasClip("hoot-bus-pick") ? ["hoot-bus-pick", busItemClip(targetItem)] : [busItemClip(targetItem)];
+      lastStepClips = pickPrompt;
+      idleHelpReminded = false;
+      armIdleHelp();
+      playVoice(pickPrompt, false);
       missionAction = function(){ playVoice([busItemClip(targetItem)]); bubble.innerHTML = "👂 Find the kid holding <b>" + targetItem.label + "</b>!"; };
       driveBtn.style.display = "none";
       hoseBtn.textContent = "👂 Say it again";
@@ -2061,8 +2178,8 @@
     function brake(){
       if(phase !== "drive") return;
       var d = signX - targetX();
-      if(d > 560){ bubble.innerHTML = "⏳ Not yet! Wait until the sign gets close to the <b>STOP HERE</b> spot!"; sfxHonk(); return; }
-      if(d < -220){ bubble.innerHTML = "💨 Too late — we passed it! Watch for the next sign."; sfxHonk(); makeSign(boarded >= 3); return; }
+      if(d > (RILEY_MODE ? 720 : 560)){ bubble.innerHTML = "⏳ Not yet! Wait until the sign gets close to the <b>STOP HERE</b> spot!"; sfxHonk(); return; }
+      if(d < (RILEY_MODE ? -260 : -220)){ bubble.innerHTML = "💨 Too late — we passed it! Watch for the next sign."; sfxHonk(); makeSign(boarded >= 3); return; }
       phase = "braking";
       sfxSiren();
     }
@@ -2109,7 +2226,8 @@
       if(moving){
         var tx = targetX();
         if(phase === "drive"){
-          v += (300 - v) * Math.min(1, dt * 1.4);
+          var cruiseSpd = RILEY_MODE ? 200 : 300;
+          v += (cruiseSpd - v) * Math.min(1, dt * 1.4);
         } else {
           var d = signX - tx;
           v = Math.max(95, Math.abs(d) * 3.8) * (d >= 0 ? 1 : -1);
@@ -2152,10 +2270,10 @@
     v = 120;
     sfxEngine();
     bubble.innerHTML = "🚌 <b>DRIVE THE ROUTE!</b> The bus is rolling. Press <b>🛑 BRAKE</b> when the <b>Bus Stop sign</b> reaches the <b>STOP HERE</b> spot!";
-    setStepVoice("hoot-bus-brake", ["teach-teacher"], speakIntro !== false, speakIntro !== false ? "name-teacher" : null);
+    setStepVoice("hoot-bus-brake", ["hoot-tap-big-btn"], speakIntro !== false, speakIntro !== false ? "name-teacher" : null);
   }
 
-  function selectRole(role, speakIntro){
+  function selectRole(role, speakIntro, isBoot){
     currentRole = ROLES[role] ? role : "firefighter";
     var cfg = ROLES[currentRole];
     hideDispatch();
@@ -2215,7 +2333,7 @@
 
     canvas.style.pointerEvents = currentRole === "firefighter" ? "auto" : "none";
 
-    if(currentRole === "firefighter") setupFirefighterMission(speakIntro);
+    if(currentRole === "firefighter") setupFirefighterMission(speakIntro, isBoot);
     else if(currentRole === "doctor") setupDoctorMission(speakIntro);
     else if(currentRole === "police") setupPoliceMission(speakIntro);
     else setupTeacherMission(speakIntro);
@@ -2330,13 +2448,16 @@
   });
   document.getElementById("doneBtn").addEventListener("click", function(){
     won = true;
+    clearIdleHelp();
+    hideDispatch();
     winOverlay.hidden = false;
-    playVoice(["hoot-win-star"]);
+    playVoice(resolveCmd("hoot-real-win", ["hoot-win-yay"]), false);
   });
   document.getElementById("againBtn").addEventListener("click", function(){
-    won = false; stars = 0; winOverlay.hidden = true;
+    won = false; stars = 0; earnedBadges = {}; winOverlay.hidden = true;
     starEls.forEach(function(el){ el.classList.remove("on"); });
-    selectRole("firefighter", true);
+    document.querySelectorAll(".rbadge").forEach(function(el){ el.classList.remove("earned"); });
+    selectRole("firefighter", true, false);
   });
 
   /* ---------- 60fps Roaring Fire + Pressurized Water Hose + Confetti Loop ---------- */
@@ -2434,7 +2555,7 @@
     var nowT = performance.now(); var dtF = Math.min(0.05, (nowT - lastT) / 1000); lastT = nowT;
     if(missionTick) missionTick(dtF);
     if(currentRole === "firefighter"){
-      if(spraying && tank > 0 && !ladderPhase) tank = Math.max(0, tank - 0.32);
+      if(spraying && tank > 0 && !ladderPhase) tank = Math.max(0, tank - (RILEY_MODE ? 0.16 : 0.32));
       if(refilling) tank = Math.min(100, tank + 1.5);
       var tf = document.getElementById("tankFill"); if(tf) tf.style.width = tank + "%";
       if(!ladderPhase && !waveDone && tank < 18 && !refilling) hydrantBtn.classList.add("needs-refill");
@@ -2615,10 +2736,19 @@
     requestAnimationFrame(render);
   }
 
-  selectRole("firefighter", true);
+  window.addEventListener("pagehide", function(){
+    dead = true; clearIdleHelp(); hideDispatch(); endMission();
+    try{ voiceA.pause(); }catch(e){}
+  });
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden){ try{ voiceA.pause(); }catch(e){} }
+  });
+
+  selectRole("firefighter", true, true);
   requestAnimationFrame(render);
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e105"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

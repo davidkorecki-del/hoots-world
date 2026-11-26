@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="magic";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e141"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -56,6 +56,28 @@ window.__HOOT_SELF_COACH__=true;
       radial-gradient(circle at 22% 24%, rgba(255,216,77,.14) 0%, transparent 45%),
       radial-gradient(circle at 78% 24%, rgba(255,152,216,.14) 0%, transparent 45%),
       linear-gradient(180deg, #100729 0%, #231152 46%, #31196b 74%, #1d0d42 100%);
+  }
+
+  /* Pixar Storybook Magician Theater Backdrop (with royal velvet gradient fallback) */
+  #worldBg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      url("assets/worlds3d/bg_magic.jpg"),
+      radial-gradient(ellipse 68% 58% at 50% 44%, rgba(114,66,214,.62) 0%, rgba(52,23,115,.35) 52%, transparent 78%),
+      linear-gradient(180deg, #100729 0%, #231152 46%, #31196b 74%, #1d0d42 100%);
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+  }
+  #worldBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 44%, rgba(28,12,68,.16) 24%, rgba(12,4,32,.46) 100%);
   }
 
   /* Soft volumetric stage spotlights streaming onto the hat */
@@ -1039,12 +1061,12 @@ window.__HOOT_SELF_COACH__=true;
     #hootAnchor{
       position:absolute;
       left:8px;
-      top:24px;
+      top:10px;
       z-index:11;
     }
     #magicianHoot{
-      width:110px;
-      height:122px;
+      width:96px;
+      height:106px;
     }
     #centerEnsemble{
       margin-top:auto;
@@ -1117,6 +1139,9 @@ window.__HOOT_SELF_COACH__=true;
 </head>
 <body>
 <div id="stage" class="mode-pop">
+  <!-- Pixar Magic Theater Backdrop -->
+  <div id="worldBg" aria-hidden="true"></div>
+
   <!-- Volumetric Stage Spotlights -->
   <div id="spotlights" aria-hidden="true">
     <div class="beam beam-l"></div>
@@ -1491,7 +1516,11 @@ window.__HOOT_SELF_COACH__=true;
     "hoot-win-yay.mp3",
     "hoot-win-star.mp3"
   ];
-  var GOAL = 5;
+  var IS_RILEY = false;
+  try{
+    IS_RILEY = new URLSearchParams(window.location.search || "").get("kid") === "kidb";
+  }catch(e){}
+  var GOAL = IS_RILEY ? 3 : 5;
 
   function surpriseSVG(id){
     switch(id){
@@ -1679,6 +1708,8 @@ window.__HOOT_SELF_COACH__=true;
   var lastSparkAt = 0;
   var guessLocked = false;
   var winPending = false;
+  var hasChargedOnce = false;
+  var idleVoiceReminded = false;
   var timers = [];
   var idleTimer = null;
 
@@ -1800,14 +1831,32 @@ window.__HOOT_SELF_COACH__=true;
     });
   }
 
-  /* ================= STUDIO HOOT VOICE QUEUE (ZERO speechSynthesis) ================= */
+  /* ================= STUDIO HOOT VOICE QUEUE (HOOT_HAVE-GATED, ZERO BROWSER TTS) ================= */
   var VBASE = "assets/voice/";
-  var voiceEl = null, vQueue = [], vPlaying = false;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var vQueue = [], vPlaying = false;
+  var audioUnlocked = false;
+  var pendingBootClip = null;
 
+  /* Strict gate for NEW custom hoot-mag-* clips: ONLY true when listed in parent HOOT_HAVE */
+  function hasHootClip(id){
+    var base = String(id || "").replace(/\.mp3$/i, "");
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[base]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveMagicClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    if(!chosen) return null;
+    return /\.mp3$/i.test(chosen) ? chosen : (chosen + ".mp3");
+  }
   function hasClip(id){
+    var base = String(id || "").replace(/\.mp3$/i, "");
     try{
       var H = window.parent && window.parent.HOOT_HAVE;
-      if(H) return !!H[id];
+      if(H && Object.keys(H).length) return !!H[base];
     }catch(e){}
     return true;
   }
@@ -1819,28 +1868,50 @@ window.__HOOT_SELF_COACH__=true;
       return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
     }catch(e){ return false; }
   }
-  function getVoice(){
-    if(!voiceEl){
-      voiceEl = new Audio();
-      voiceEl.preload = "auto";
-      voiceEl.addEventListener("ended", function(){
-        var e = voiceEl;
-        if(e.__hwT && Date.now() - e.__hwT < 350){
-          if(!e.paused && !e.ended) return;
-          if(!e.__hwRetry){
-            e.__hwRetry = 1;
-            try{ e.currentTime = 0; }catch(x){}
-            var p = e.play();
-            if(p && p.catch) p.catch(vNext);
-            return;
-          }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    audio();
+    try{
+      if(!vPlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              clearVoice(true);
+              enqueue(c);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
         }
-        vNext();
-      });
-      voiceEl.addEventListener("error", vNext);
-    }
-    return voiceEl;
+      }
+    }catch(e){ voiceEl.muted = false; }
   }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+
+  voiceEl.addEventListener("ended", function(){
+    var e = voiceEl;
+    if(e.__hwT && Date.now() - e.__hwT < 350){
+      if(!e.paused && !e.ended) return;
+      if(!e.__hwRetry){
+        e.__hwRetry = 1;
+        try{ e.currentTime = 0; }catch(x){}
+        var p = e.play();
+        if(p && p.catch) p.catch(vNext);
+        return;
+      }
+    }
+    vNext();
+  });
+  voiceEl.addEventListener("error", vNext);
+
   function vNext(){
     if(!vPlaying){ pumpVoice(); return; }
     vPlaying = false;
@@ -1852,41 +1923,66 @@ window.__HOOT_SELF_COACH__=true;
     var item = vQueue.shift();
     if(!item) return;
     if(!soundOn || hubQuiet()){ pumpVoice(); return; }
-    var el = getVoice();
     vPlaying = true;
     magicianHoot.classList.add("talking");
-    el.__hwT = Date.now();
-    el.__hwRetry = 0;
-    el.src = VBASE + item.file;
-    var p = el.play();
-    if(p && p.catch) p.catch(vNext);
+    voiceEl.muted = false;
+    voiceEl.__hwT = Date.now();
+    voiceEl.__hwRetry = 0;
+    voiceEl.src = VBASE + item.file;
+    var p = voiceEl.play();
+    if(p && p.catch){
+      p.catch(function(){
+        vPlaying = false;
+        magicianHoot.classList.remove("talking");
+        if(!audioUnlocked && !pendingBootClip && item.boot) pendingBootClip = item.file;
+        pumpVoice();
+      });
+    }
   }
   function clearVoice(stop){
     vQueue.length = 0;
     if(stop && voiceEl){
       voiceEl.__hwT = 0;
       voiceEl.__hwRetry = 1;
-      try{ voiceEl.pause(); }catch(e){}
+      try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
       vPlaying = false;
       magicianHoot.classList.remove("talking");
     }
   }
-  function enqueue(file){
+  function enqueue(file, isBoot){
     if(!file) return;
-    vQueue.push({ file:file });
+    vQueue.push({ file:file, boot:!!isBoot });
     pumpVoice();
   }
   function playPromptClip(file, preferAfterIntro){
-    if(!soundOn || hubQuiet()) return;
+    if(!soundOn || hubQuiet() || !file) return;
     if(preferAfterIntro){
       try{
-        if(window.parent && window.parent !== window && window.parent.__hwPlayAfterIntro && window.parent.__hwPlayAfterIntro(VBASE + file)){
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function" && window.parent.__hwPlayAfterIntro(VBASE + file)){
           return;
         }
       }catch(e){}
     }
     clearVoice(true);
-    enqueue(file);
+    enqueue(file, !!preferAfterIntro);
+  }
+  function playMagicGuide(customId, fallbackId, preferAfterIntro){
+    var clip = resolveMagicClip(customId, fallbackId);
+    if(!clip) return;
+    playPromptClip(clip, !!preferAfterIntro);
+  }
+  function speakCurrentGuide(isBoot){
+    if(state === "won"){
+      playMagicGuide("hoot-mag-win", "hoot-win-yay", false);
+    } else if(mode === "guess"){
+      playPromptClip("ask-whos-in-hat.mp3", !!isBoot);
+    } else if(revealed && current){
+      speakSurprise(current, false);
+    } else if(charged){
+      playMagicGuide("hoot-mag-tap-hat", "hoot-tap-big-btn", false);
+    } else {
+      playMagicGuide("hoot-mag-welcome", "hoot-welcome", !!isBoot);
+    }
   }
   function speakSurprise(item, withPraise){
     if(!item) return;
@@ -2072,7 +2168,29 @@ window.__HOOT_SELF_COACH__=true;
   })();
 
   /* ================= HUD & SHELF RENDERING ================= */
+  function syncGoalStarsMarkup(){
+    var pipsEl = $("starPips");
+    if(pipsEl && pipsEl.children.length !== GOAL){
+      pipsEl.innerHTML = "";
+      for(var i = 0; i < GOAL; i++){
+        var s = document.createElement("span");
+        s.className = "star-pip";
+        s.textContent = "★";
+        pipsEl.appendChild(s);
+      }
+      starPips = pipsEl.children;
+    }
+    if(winStars && winStars.children.length !== GOAL){
+      winStars.innerHTML = "";
+      for(var j = 0; j < GOAL; j++){
+        var ws = document.createElement("span");
+        ws.textContent = "★";
+        winStars.appendChild(ws);
+      }
+    }
+  }
   function renderStars(){
+    syncGoalStarsMarkup();
     starNum.textContent = String(stars);
     for(var i = 0; i < starPips.length; i++){
       starPips[i].classList.toggle("on", i < stars);
@@ -2163,13 +2281,24 @@ window.__HOOT_SELF_COACH__=true;
       if(mode === "pop"){
         if(!charged){
           magicWandBtn.classList.remove("wave"); void magicWandBtn.offsetWidth; magicWandBtn.classList.add("wave");
+          if(!idleVoiceReminded){
+            idleVoiceReminded = true;
+            playMagicGuide("hoot-mag-idle", "hoot-tap-big-btn", false);
+          }
         } else {
           magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
+          if(!idleVoiceReminded){
+            idleVoiceReminded = true;
+            playMagicGuide("hoot-mag-tap-hat", "hoot-tap-big-btn", false);
+          }
         }
       } else if(mode === "guess" && !revealed){
         peekWrap.classList.add("higher");
         magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
-        playPromptClip("ask-whos-in-hat.mp3", false);
+        if(!idleVoiceReminded){
+          idleVoiceReminded = true;
+          playPromptClip("ask-whos-in-hat.mp3", false);
+        }
       }
       armIdle();
     }, 9500);
@@ -2194,17 +2323,21 @@ window.__HOOT_SELF_COACH__=true;
     popArt.innerHTML = "";
   }
 
-  function preparePopTrick(){
+  function preparePopTrick(preferAfterIntro){
     clearTimers();
     charged = false;
     revealed = false;
     guessLocked = false;
+    idleVoiceReminded = false;
     nextItem();
     hideRevealed();
     peekWrap.hidden = true;
     peekQ.hidden = true;
     guessRow.innerHTML = "";
     updateCues();
+    if(preferAfterIntro !== undefined){
+      playMagicGuide("hoot-mag-welcome", "hoot-welcome", !!preferAfterIntro);
+    }
     armIdle();
   }
 
@@ -2213,6 +2346,7 @@ window.__HOOT_SELF_COACH__=true;
     charged = false;
     revealed = false;
     guessLocked = false;
+    idleVoiceReminded = false;
     nextItem();
     hideRevealed();
 
@@ -2222,9 +2356,10 @@ window.__HOOT_SELF_COACH__=true;
     peekWrap.hidden = false;
     peekQ.hidden = false;
 
-    /* Build 3 big picture-only choice bubbles */
+    /* Build big picture-only choice bubbles (2 for Riley age 2, 3 for Zane age 3) */
     guessRow.innerHTML = "";
-    var distractors = shuffle(ITEMS.filter(function(it){ return it.id !== current.id; })).slice(0, 2);
+    var distractorCount = IS_RILEY ? 1 : 2;
+    var distractors = shuffle(ITEMS.filter(function(it){ return it.id !== current.id; })).slice(0, distractorCount);
     var opts = shuffle([current].concat(distractors));
     opts.forEach(function(it){
       var b = document.createElement("button");
@@ -2245,7 +2380,9 @@ window.__HOOT_SELF_COACH__=true;
   /* ================= STEP 1: WAND TAP OR WAVE ================= */
   function triggerWand(clientX, clientY){
     if(dead || state !== "play" || mode !== "pop" || winPending) return;
+    unlockAudioOnce();
     audio();
+    idleVoiceReminded = false;
     armIdle();
 
     /* If a previous surprise was still showing, tuck it away and pick a brand-new surprise! */
@@ -2256,6 +2393,7 @@ window.__HOOT_SELF_COACH__=true;
       nextItem();
     }
 
+    var wasCharged = charged;
     charged = true;
     harpArpeggioSfx();
 
@@ -2268,6 +2406,11 @@ window.__HOOT_SELF_COACH__=true;
     magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
     magicianHoot.classList.add("cast");
     setTimeout(function(){ magicianHoot.classList.remove("cast"); }, 460);
+
+    if(!wasCharged && !hasChargedOnce){
+      hasChargedOnce = true;
+      playMagicGuide("hoot-mag-tap-hat", "hoot-tap-big-btn", false);
+    }
 
     updateCues();
   }
@@ -2288,6 +2431,12 @@ window.__HOOT_SELF_COACH__=true;
       twinkleBellSfx(1318);
       shootWandSparkles(e.clientX, e.clientY);
       if(!charged) triggerWand(e.clientX, e.clientY);
+      /* Dragging the glowing wand right over the hat pops the surprise in one smooth sweep! */
+      var hr = magicHatBtn.getBoundingClientRect();
+      if(charged && !revealed && e.clientX >= hr.left - 16 && e.clientX <= hr.right + 16 && e.clientY >= hr.top - 16 && e.clientY <= hr.bottom + 16){
+        wandDown = false;
+        popHatSurprise();
+      }
     }
   });
   window.addEventListener("pointerup", function(){ wandDown = false; });
@@ -2304,6 +2453,7 @@ window.__HOOT_SELF_COACH__=true;
 
     revealed = true;
     charged = false;
+    idleVoiceReminded = false;
 
     /* Hide sneaky peek if coming from Guess mode */
     peekWrap.hidden = true;
@@ -2338,7 +2488,7 @@ window.__HOOT_SELF_COACH__=true;
 
     updateCues();
 
-    /* Check for 5-Star Grand Golden Curtain Finale */
+    /* Check for Grand Golden Curtain Finale */
     if(stars >= GOAL){
       winPending = true;
       var scheduleWin = window.__hwFastWin || later;
@@ -2357,7 +2507,9 @@ window.__HOOT_SELF_COACH__=true;
 
   magicHatBtn.addEventListener("click", function(){
     if(dead || state !== "play") return;
+    unlockAudioOnce();
     audio();
+    idleVoiceReminded = false;
     armIdle();
 
     if(mode === "guess"){
@@ -2370,12 +2522,12 @@ window.__HOOT_SELF_COACH__=true;
       return;
     }
 
-    /* Magic Pop Mode */
+    /* Magic Pop Mode: toddler-friendly — tapping the hat directly charges it with a wand sparkle wave so the next tap pops! */
     if(!charged){
-      /* Playful bounce & extra spotlight on the Star Magic Wand */
-      magicHatBtn.classList.remove("wiggle"); void magicHatBtn.offsetWidth; magicHatBtn.classList.add("wiggle");
-      magicWandBtn.classList.remove("wave"); void magicWandBtn.offsetWidth; magicWandBtn.classList.add("wave");
-      twinkleBellSfx(740);
+      triggerWand();
+      if(IS_RILEY){
+        playMagicGuide("hoot-mag-tap-hat", "hoot-tap-big-btn", false);
+      }
       return;
     }
 
@@ -2385,7 +2537,10 @@ window.__HOOT_SELF_COACH__=true;
   /* Tap the popped surprise itself to hear its word + starting letter again! */
   popRevealBtn.addEventListener("click", function(){
     if(dead || !current || !revealed) return;
+    unlockAudioOnce();
     audio();
+    idleVoiceReminded = false;
+    armIdle();
     twinkleBellSfx(1175);
     popRevealBtn.classList.remove("hop", "pop-in");
     void popRevealBtn.offsetWidth;
@@ -2397,7 +2552,9 @@ window.__HOOT_SELF_COACH__=true;
   /* ================= GUESS WHO'S INSIDE CHOICE HANDLER ================= */
   function onGuessTap(item, btn){
     if(dead || state !== "play" || mode !== "guess" || guessLocked || revealed) return;
+    unlockAudioOnce();
     audio();
+    idleVoiceReminded = false;
     armIdle();
 
     if(item.id === current.id){
@@ -2426,9 +2583,10 @@ window.__HOOT_SELF_COACH__=true;
     clearTimers();
     if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
     updateCues();
+    syncGoalStarsMarkup();
 
     winTrophies.innerHTML = "";
-    collected.slice(-5).forEach(function(it){
+    collected.slice(-GOAL).forEach(function(it){
       var t = document.createElement("div");
       t.className = "win-tok";
       t.innerHTML = surpriseSVG(it.id);
@@ -2445,11 +2603,9 @@ window.__HOOT_SELF_COACH__=true;
     finaleFanfareSfx();
     showerFinaleConfetti();
 
-    clearVoice(true);
-    var wc = WIN_CLIPS[winIdx % WIN_CLIPS.length];
-    winIdx++;
-    if(!hasClip(wc.replace(".mp3", ""))) wc = "hoot-amazing.mp3";
-    enqueue(wc);
+    var fallbackWin = WIN_CLIPS[(winIdx++) % WIN_CLIPS.length];
+    if(!hasClip(fallbackWin)) fallbackWin = "hoot-win-yay.mp3";
+    playMagicGuide("hoot-mag-win", fallbackWin, false);
   }
 
   function startShow(isBoot){
@@ -2457,6 +2613,8 @@ window.__HOOT_SELF_COACH__=true;
     clearVoice(true);
     state = "play";
     winPending = false;
+    hasChargedOnce = false;
+    idleVoiceReminded = false;
     stars = 0;
     collected = [];
     collectedMap = {};
@@ -2467,13 +2625,14 @@ window.__HOOT_SELF_COACH__=true;
     if(mode === "guess"){
       prepareGuessTrick(!!isBoot);
     } else {
-      preparePopTrick();
+      preparePopTrick(!!isBoot);
     }
   }
 
   /* ================= CONTROLS & PLAYFUL THEATER PROPS ================= */
   function setMode(nextMode){
     if(mode === nextMode && state === "play") return;
+    unlockAudioOnce();
     audio();
     twinkleBellSfx(988);
     mode = nextMode;
@@ -2490,7 +2649,7 @@ window.__HOOT_SELF_COACH__=true;
     }
     clearVoice(true);
     if(mode === "guess") prepareGuessTrick(false);
-    else preparePopTrick();
+    else preparePopTrick(false);
   }
 
   modePopBtn.addEventListener("click", function(){ setMode("pop"); });
@@ -2503,26 +2662,31 @@ window.__HOOT_SELF_COACH__=true;
     if(!soundOn){
       clearVoice(true);
     } else {
+      unlockAudioOnce();
       audio();
       twinkleBellSfx(1046);
+      speakCurrentGuide(false);
     }
   });
 
   againBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
     starChimeSfx();
     startShow(false);
   });
 
-  /* Direct tap of Magician Hoot -> happy jump + transient __bellyArmed giggle! */
+  /* Direct tap of Magician Hoot -> happy jump + repeats current spoken Hoot guide! */
   magicianHoot.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
+    idleVoiceReminded = false;
+    armIdle();
     hootCheer();
     twinkleBellSfx(1318);
     window.__bellyArmed = true;
     setTimeout(function(){ window.__bellyArmed = false; }, 500);
-    clearVoice(true);
-    enqueue("hoot-giggle.mp3");
+    speakCurrentGuide(false);
   });
 
   /* Smooth eye-tracking on Magician Hoot */
@@ -2589,7 +2753,7 @@ window.__HOOT_SELF_COACH__=true;
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e141">
-<script src="js/hoot-game-tail.js?v=llprev3e141"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="paint";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e137"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -38,7 +38,7 @@ window.__HOOT_SELF_COACH__=true;
     -webkit-user-select:none;
   }
 
-  /* ================= SUNNY WOODEN ART STUDIO STAGE ================= */
+  /* ================= SUNNY WOODEN ART STUDIO STAGE + PIXAR BACKDROP ================= */
   #stage{
     position:fixed;
     inset:0;
@@ -52,21 +52,41 @@ window.__HOOT_SELF_COACH__=true;
       repeating-linear-gradient(90deg, rgba(197,132,70,.07) 0 46px, rgba(197,132,70,.02) 46px 92px),
       linear-gradient(180deg, #fff5dc 0%, #f7e1b8 100%);
   }
+  .backdrop{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_paint.jpg"),
+      radial-gradient(circle at 80% 10%, rgba(255,244,196,.9) 0%, rgba(255,244,196,0) 44%),
+      linear-gradient(180deg, #fff5dc 0%, #f7e1b8 100%);
+  }
+  .backdrop::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 48%, rgba(255,251,238,.12) 25%, rgba(88,52,18,.24) 100%);
+  }
 
   /* Festive rainbow bunting string at top of studio */
   #buntingSvg{
     position:absolute;
     top:0; left:0; width:100%; height:44px;
     pointer-events:none;
-    z-index:1;
+    z-index:2;
     opacity:.92;
   }
 
-  /* ================= TOP STUDIO BAR (>=64px) ================= */
+  /* ================= TOP STUDIO BAR (>=64px EVERYWHERE) ================= */
   #topbar{
     position:relative;
     z-index:10;
     display:flex;
+    flex-wrap:wrap;
     align-items:center;
     justify-content:space-between;
     gap:8px;
@@ -152,7 +172,8 @@ window.__HOOT_SELF_COACH__=true;
   #subStrip.show{ display:flex; }
   .sub-pill{
     min-width:64px;
-    min-height:58px;
+    min-height:64px;
+    height:64px;
     padding:4px 12px;
     border-radius:18px;
     border:3.5px solid #fff;
@@ -248,14 +269,22 @@ window.__HOOT_SELF_COACH__=true;
   #guideCanvas{ z-index:2; pointer-events:none; }
   #fxCanvas{ z-index:3; pointer-events:none; }
 
+  #easelFrame.idle-pulse{
+    box-shadow:
+      0 8px 0 #663812,
+      0 0 0 6px #ffd84d,
+      0 0 32px rgba(255,216,77,.85);
+  }
   /* Floating Artist Hoot buddy tucked cleanly at bottom-right easel corner */
   #hootBuddy{
     position:absolute;
     right:12px;
     bottom:10px;
     z-index:6;
-    width:clamp(66px, 9vw, 88px);
-    height:clamp(66px, 9vw, 88px);
+    width:clamp(68px, 9vw, 88px);
+    height:clamp(68px, 9vw, 88px);
+    min-width:64px;
+    min-height:64px;
     border:none;
     background:none;
     padding:0;
@@ -270,23 +299,25 @@ window.__HOOT_SELF_COACH__=true;
   @keyframes hootBob{ from{transform:translateY(0)} to{transform:translateY(-5px)} }
   #hootBuddy svg{ width:100%; height:100%; display:block; overflow:visible; }
 
-  /* Floating Paper Theme + Gallery mini pills inside top-right corner of easel */
+  /* Floating Paper Theme + Gallery mini pills inside top-right corner of easel (>=64px) */
   #easelCorner{
     position:absolute;
-    top:12px;
-    right:12px;
+    top:10px;
+    right:10px;
     z-index:6;
     display:flex;
-    gap:6px;
+    gap:8px;
   }
   .corner-pill{
-    width:50px;
-    height:50px;
+    width:64px;
+    height:64px;
+    min-width:64px;
+    min-height:64px;
     border-radius:50%;
-    border:3px solid #fff;
-    background:rgba(255,253,246,.92);
-    box-shadow:0 3px 0 rgba(27,44,71,.2);
-    font-size:23px;
+    border:3.5px solid #fff;
+    background:rgba(255,253,246,.94);
+    box-shadow:0 4px 0 rgba(27,44,71,.22);
+    font-size:28px;
     display:grid;
     place-items:center;
     cursor:pointer;
@@ -401,8 +432,10 @@ window.__HOOT_SELF_COACH__=true;
     flex:0 0 auto;
   }
   .sz-btn{
-    width:52px;
-    height:52px;
+    width:64px;
+    height:64px;
+    min-width:64px;
+    min-height:64px;
     border-radius:50%;
     border:3px solid transparent;
     background:var(--cream);
@@ -469,8 +502,8 @@ window.__HOOT_SELF_COACH__=true;
     gap:10px;
   }
   .saved-btn{
-    min-width:118px;
-    min-height:60px;
+    min-width:124px;
+    min-height:64px;
     padding:0 20px;
     border-radius:999px;
     border:4px solid #fff;
@@ -519,8 +552,8 @@ window.__HOOT_SELF_COACH__=true;
     box-shadow:0 2px 0 rgba(0,0,0,.12);
   }
   #closeGalleryBtn{
-    min-width:120px;
-    min-height:60px;
+    min-width:128px;
+    min-height:64px;
     border-radius:999px;
     border:4px solid #fff;
     background:var(--leaf);
@@ -532,11 +565,11 @@ window.__HOOT_SELF_COACH__=true;
     box-shadow:0 5px 0 #268432;
   }
 
-  /* ================= LANDSCAPE IPAD / DESKTOP / PHONE FULL-HEIGHT SIDEBAR (ZERO SCROLL!) ================= */
+  /* ================= LANDSCAPE IPAD / DESKTOP FULL-HEIGHT SIDEBAR (>=64px TARGETS, ZERO SCROLL!) ================= */
   @media (orientation:landscape) and (min-width:640px){
     #stage{
       display:grid;
-      grid-template-columns:236px minmax(0, 1fr);
+      grid-template-columns:256px minmax(0, 1fr);
       grid-template-rows:auto auto minmax(0, 1fr);
       column-gap:12px;
       row-gap:6px;
@@ -553,9 +586,11 @@ window.__HOOT_SELF_COACH__=true;
       min-height:0;
       padding:10px;
       gap:8px;
-      overflow:hidden;
+      overflow-y:auto;
+      scrollbar-width:none;
       justify-content:space-between;
     }
+    #palette::-webkit-scrollbar{ display:none; }
     #topbar{
       grid-column:2;
       grid-row:1;
@@ -576,17 +611,17 @@ window.__HOOT_SELF_COACH__=true;
     #potsRow{
       display:grid;
       grid-template-columns:repeat(3, 1fr);
-      gap:9px;
+      gap:8px;
       justify-items:center;
       align-items:center;
       overflow:visible;
       padding:4px 2px;
     }
     .pot{
-      width:58px;
-      height:58px;
-      min-width:58px;
-      min-height:58px;
+      width:64px;
+      height:64px;
+      min-width:64px;
+      min-height:64px;
     }
     #toolsRow{
       display:grid;
@@ -597,10 +632,10 @@ window.__HOOT_SELF_COACH__=true;
       border-top:3px dashed rgba(128,75,29,.22);
     }
     .tool-btn{
-      min-width:0;
+      min-width:64px;
       width:100%;
-      min-height:58px;
-      height:58px;
+      min-height:64px;
+      height:64px;
       padding:0;
       font-size:26px;
       border-radius:16px;
@@ -611,61 +646,75 @@ window.__HOOT_SELF_COACH__=true;
       padding:4px 6px;
     }
     .sz-btn{
-      width:48px;
-      height:48px;
+      width:64px;
+      height:64px;
+      min-width:64px;
+      min-height:64px;
     }
   }
 
-  /* Medium-short landscape screens (520px..660px tall): still 100% zero scroll */
+  /* Medium-short landscape screens (520px..660px tall) */
   @media (orientation:landscape) and (min-width:640px) and (max-height:660px){
-    #stage{ grid-template-columns:220px minmax(0, 1fr); row-gap:4px; }
+    #stage{ grid-template-columns:240px minmax(0, 1fr); row-gap:4px; }
     #palette{ padding:7px 8px; gap:6px; }
     #potsRow{ gap:6px; padding:2px; }
-    .pot{ width:48px; height:48px; min-width:48px; min-height:48px; border-width:3px; }
+    .pot{ width:56px; height:56px; min-width:56px; min-height:56px; border-width:3px; }
     #toolsRow{ gap:6px; padding-top:6px; }
-    .tool-btn{ min-height:48px; height:48px; font-size:22px; border-radius:14px; border-width:3px; }
-    .sz-btn{ width:40px; height:40px; }
-    .studio-btn{ min-width:54px; min-height:54px; height:54px; font-size:24px; }
-    .studio-btn.round{ width:54px; }
-    #starBank{ min-height:54px; font-size:20px; }
-    .sub-pill{ min-width:52px; min-height:48px; font-size:24px; }
+    .tool-btn{ min-width:56px; min-height:56px; height:56px; font-size:24px; border-radius:14px; border-width:3px; }
+    .sz-btn{ width:52px; height:52px; min-width:52px; min-height:52px; }
   }
 
-  /* Compact phone landscape (e.g. iPhone 844x390): 4x3 pots + 3x3 tools -> ZERO scroll! */
+  /* Compact phone landscape (e.g. iPhone 844x390) */
   @media (orientation:landscape) and (min-width:640px) and (max-height:519px){
     #stage{ grid-template-columns:236px minmax(0, 1fr); padding:5px 8px; column-gap:8px; row-gap:4px; }
     #palette{ padding:6px; gap:5px; border-width:3px; border-radius:18px; }
     #potsRow{ grid-template-columns:repeat(4, 1fr); gap:5px; padding:1px; }
-    .pot{ width:40px; height:40px; min-width:40px; min-height:40px; border-width:3px; box-shadow:0 3px 0 rgba(27,44,71,.22), 0 0 0 2px rgba(27,44,71,.28), inset 0 -5px 8px rgba(0,0,0,.2); }
+    .pot{ width:46px; height:46px; min-width:46px; min-height:46px; border-width:3px; box-shadow:0 3px 0 rgba(27,44,71,.22), 0 0 0 2px rgba(27,44,71,.28), inset 0 -5px 8px rgba(0,0,0,.2); }
     .pot.on{ transform:scale(1.08); box-shadow:0 0 0 3px var(--ink), 0 0 0 6px var(--sun); }
     #toolsRow{ grid-template-columns:repeat(3, 1fr); gap:5px; padding-top:5px; }
-    .tool-btn{ min-height:40px; height:40px; font-size:20px; border-radius:12px; border-width:2.5px; box-shadow:0 3px 0 rgba(27,44,71,.22); }
+    .tool-btn{ min-width:48px; min-height:46px; height:46px; font-size:20px; border-radius:12px; border-width:2.5px; box-shadow:0 3px 0 rgba(27,44,71,.22); }
     #sizeGroup{ padding:2px 4px; gap:4px; }
-    .sz-btn{ width:34px; height:34px; }
-    .studio-btn{ min-width:48px; min-height:48px; height:48px; font-size:22px; border-radius:14px; border-width:3px; }
-    .studio-btn.round{ width:48px; }
-    #starBank{ min-height:48px; font-size:18px; }
-    .sub-pill{ min-width:46px; min-height:42px; font-size:20px; border-radius:12px; }
+    .sz-btn{ width:42px; height:42px; min-width:42px; min-height:42px; }
+    .studio-btn{ min-width:54px; min-height:54px; height:54px; font-size:22px; border-radius:14px; border-width:3px; }
+    .studio-btn.round{ width:54px; }
+    #starBank{ min-height:54px; font-size:18px; }
+    .sub-pill{ min-width:54px; min-height:50px; height:50px; font-size:22px; border-radius:12px; }
     #easelFrame{ padding:6px; border-radius:18px; }
-    #hootBuddy{ width:50px; height:50px; right:6px; bottom:6px; }
+    #hootBuddy{ width:56px; height:56px; min-width:56px; min-height:56px; right:6px; bottom:6px; }
   }
 
-  /* Compact Phone Portrait (390x844 etc.) */
+  /* Compact Phone Portrait (390x844: ALL TARGETS >=64px, ZERO OVERLAP!) */
   @media (max-width:540px){
-    .studio-btn{ min-width:56px; min-height:56px; height:56px; padding:0 10px; font-size:24px; border-radius:16px; }
-    .studio-btn.round{ width:56px; }
+    #topbar{
+      gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 8px 4px 8px;
+      justify-content:space-between;
+    }
+    .bar-group{ gap:6px; }
+    .studio-btn{
+      min-width:64px;
+      min-height:64px;
+      height:64px;
+      padding:0 10px;
+      font-size:26px;
+      border-radius:18px;
+      border-width:3.5px;
+    }
+    .studio-btn.round{ width:64px; }
     #starBank{ display:none; }
     #easelFrame{ padding:7px; border-radius:20px; }
-    #palette{ padding:6px 8px; gap:6px; border-radius:20px; }
-    .pot{ width:56px; height:56px; min-width:56px; min-height:56px; }
-    .tool-btn{ min-width:56px; min-height:56px; height:56px; font-size:24px; border-radius:15px; }
-    .sz-btn{ width:46px; height:46px; }
-    #hootBuddy{ width:58px; height:58px; right:8px; bottom:8px; }
+    #palette{ padding:7px 8px; gap:6px; border-radius:20px; }
+    .pot{ width:64px; height:64px; min-width:64px; min-height:64px; }
+    .tool-btn{ min-width:64px; min-height:64px; height:64px; font-size:26px; border-radius:16px; }
+    .sz-btn{ width:64px; height:64px; min-width:64px; min-height:64px; }
+    #hootBuddy{ width:64px; height:64px; min-width:64px; min-height:64px; right:8px; bottom:8px; }
+    .corner-pill{ width:64px; height:64px; min-width:64px; min-height:64px; font-size:26px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="worldBg" class="backdrop" aria-hidden="true"></div>
   <!-- Playful Studio Rainbow Bunting -->
   <svg id="buntingSvg" viewBox="0 0 1000 44" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 6 Q250 32 500 10 T1000 6" stroke="#804b1d" stroke-width="3" fill="none"/>
@@ -850,10 +899,16 @@ window.__HOOT_SELF_COACH__=true;
   var PRAISE=["hoot-amazing.mp3","hoot-great-job.mp3","hoot-star.mp3","hoot-super.mp3","hoot-yay-2.mp3"];
 
   /* ================= STATE ================= */
+  var IS_RILEY=false;
+  try{
+    var sp=new URLSearchParams(window.location.search||"");
+    IS_RILEY=sp.get("kid")==="kidb";
+  }catch(e){}
+
   var mode="free"; /* free | colour | trace */
   var tool="brush"; /* brush | rainbow | glitter | bucket | spray | stamp | eraser */
   var colour=PAINTS[0].hex;
-  var brushSize=28;
+  var brushSize=IS_RILEY ? 48 : 28;
   var mirror=false;
   var nightPaper=false;
   var picture="hoot";
@@ -862,12 +917,13 @@ window.__HOOT_SELF_COACH__=true;
   var traceKind="letters", traceIdx=0, traceSamples=[], traceHits=0, traceDone=false;
   var stars=0, hue=0, soundOn=true, dead=false, praiseIdx=0;
   var drawing=false, lastX=0, lastY=0, dirty=false, colourDabs=0;
+  var hasInteracted=false, idleVoiceReminded=false;
   var undoStack=[], galleryItems=[];
-  var sparkles=[];
+  var sparkles=[], fxRaf=0, idleTimer=null, idleVoiceTimer=null;
 
   /* ================= DOM ================= */
   function $(id){ return document.getElementById(id); }
-  var wrap=$("canvasWrap"),
+  var stage=$("stage"), easelFrame=$("easelFrame"), wrap=$("canvasWrap"),
       paintCanvas=$("paintCanvas"), guideCanvas=$("guideCanvas"), fxCanvas=$("fxCanvas"),
       pctx=paintCanvas.getContext("2d", {willReadFrequently:true}),
       gctx=guideCanvas.getContext("2d"),
@@ -887,8 +943,9 @@ window.__HOOT_SELF_COACH__=true;
   /* ================= SOUND FX ================= */
   var AC=null;
   function audio(){
+    if(!soundOn) return null;
     if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; } }
-    if(AC&&AC.state==="suspended") AC.resume();
+    if(AC&&AC.state==="suspended") try{ AC.resume(); }catch(e){}
     return AC;
   }
   function tone(f0,f1,dur,type,vol,delay){
@@ -909,27 +966,21 @@ window.__HOOT_SELF_COACH__=true;
   function starSfx(){ tone(880,880,0.08,"triangle",0.1); tone(1175,1175,0.08,"triangle",0.1,0.06); tone(1568,1568,0.14,"triangle",0.1,0.12); }
   function whooshSfx(){ tone(260,90,0.2,"triangle",0.13); }
 
-  /* ================= STUDIO HOOT VOICE ================= */
+  /* ================= GOLD-STANDARD STUDIO HOOT VOICE (HOOT_HAVE-GATED) ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false;
-  function hasClip(id){
-    try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H) return !!H[id]; }catch(e){}
-    return true;
+  var voiceEl=new Audio();
+  voiceEl.preload="auto";
+  var vQueue=[], vPlaying=false, audioUnlocked=false, pendingBootClip=null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
   }
-  function getVoice(){
-    if(!voiceEl){
-      voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){
-        var e=voiceEl;
-        if(e.__hwT && Date.now()-e.__hwT<350){
-          if(!e.paused && !e.ended) return;
-          if(!e.__hwRetry){ e.__hwRetry=1; try{e.currentTime=0;}catch(x){} var p=e.play(); if(p&&p.catch) p.catch(vNext); return; }
-        }
-        vNext();
-      });
-      voiceEl.addEventListener("error",vNext);
-    }
-    return voiceEl;
+  function resolveClip(customId, fallbackId){
+    var chosen=(customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3")>=0 ? chosen : chosen+".mp3") : null;
   }
   function hubQuiet(){
     try{
@@ -939,6 +990,37 @@ window.__HOOT_SELF_COACH__=true;
       return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
     }catch(e){ return false; }
   }
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked=true;
+    audio();
+    try{
+      if(!vPlaying){
+        voiceEl.muted=true;
+        var p=voiceEl.play();
+        if(p&&p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime=0;
+            voiceEl.muted=false;
+            if(pendingBootClip){
+              var c=pendingBootClip; pendingBootClip=null;
+              clearVoice(true);
+              enqueue(c);
+            }
+          }).catch(function(){ voiceEl.muted=false; });
+        } else {
+          voiceEl.muted=false;
+        }
+      }
+    }catch(e){ voiceEl.muted=false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+
+  voiceEl.addEventListener("ended", function(){ vNext(); });
+  voiceEl.addEventListener("error", function(){ vNext(); });
+
   function vNext(){
     if(!vPlaying){ pumpVoice(); return; }
     vPlaying=false; hootBuddy.classList.remove("talking"); pumpVoice();
@@ -947,37 +1029,70 @@ window.__HOOT_SELF_COACH__=true;
     if(vPlaying||dead) return;
     var item=vQueue.shift(); if(!item) return;
     if(!soundOn||hubQuiet()){ pumpVoice(); return; }
-    var el=getVoice();
     vPlaying=true; hootBuddy.classList.add("talking");
+    voiceEl.muted=false;
     if(item.giggle) window.__bellyArmed=true;
-    el.__hwT=Date.now(); el.__hwRetry=0;
-    el.src=VBASE+item.file;
-    var p=el.play();
+    voiceEl.src=VBASE+item.file;
+    var p=voiceEl.play();
     if(item.giggle) setTimeout(function(){ window.__bellyArmed=false; }, 120);
-    if(p&&p.catch) p.catch(vNext);
+    if(p&&p.catch) p.catch(function(){
+      if(!audioUnlocked && !pendingBootClip) pendingBootClip=item.file;
+      vNext();
+    });
   }
   function clearVoice(stop){
     vQueue.length=0;
-    if(stop && voiceEl){
-      voiceEl.__hwT=0; voiceEl.__hwRetry=1;
-      try{ voiceEl.pause(); }catch(e){}
+    if(stop){
+      try{ voiceEl.pause(); voiceEl.currentTime=0; }catch(e){}
       vPlaying=false; hootBuddy.classList.remove("talking");
     }
   }
   function enqueue(file,opts){
-    if(!file) return;
+    if(dead||!soundOn||!file) return;
+    if(file.indexOf(".mp3")<0) file=file+".mp3";
     vQueue.push({file:file, giggle:!!(opts&&opts.giggle)});
     pumpVoice();
   }
+  function playPaintGuide(customId, fallbackId, isBoot){
+    var clip=resolveClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && !hasInteracted){
+              clearVoice(true);
+              enqueue(clip);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    clearVoice(true);
+    enqueue(clip);
+  }
+  function speakModeGuide(isBoot){
+    if(mode==="colour"){
+      playPaintGuide("hoot-pnt-colour", "hoot-tap-big-btn", isBoot);
+    } else if(mode==="trace"){
+      playPaintGuide("hoot-pnt-trace", "hoot-tap-big-btn", isBoot);
+    } else {
+      playPaintGuide("hoot-pnt-start", "hoot-welcome", isBoot);
+    }
+  }
   function speakColorName(clip){
     if(!clip) return;
+    var id="name-color-"+clip;
+    if(!hasHootClip(id)) return;
     clearVoice(true);
-    enqueue("name-color-"+clip+".mp3");
+    enqueue(id+".mp3");
   }
   function speakPraise(){
     var f=PRAISE[praiseIdx%PRAISE.length];
     praiseIdx++;
-    if(!hasClip(f.replace(".mp3",""))) f="hoot-great-job.mp3";
+    var id=f.replace(".mp3","");
+    if(!hasHootClip(id)) f="hoot-great-job.mp3";
     enqueue(f);
   }
   function celebrateHoot(){
@@ -987,6 +1102,29 @@ window.__HOOT_SELF_COACH__=true;
     stars++; starCount.textContent=stars;
     starBank.classList.remove("bump"); void starBank.offsetWidth; starBank.classList.add("bump");
     starSfx();
+    try{ if(window.parent && window.parent.hwAddStar) window.parent.hwAddStar(1); }catch(e){}
+  }
+
+  /* ================= IDLE HELPER (GENTLE EASEL PULSE + 9.5s SPOKEN REMINDER) ================= */
+  function hideIdleCue(){
+    easelFrame.classList.remove("idle-pulse");
+  }
+  function armIdle(){
+    hideIdleCue();
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
+    if(dead) return;
+    idleTimer=setTimeout(function(){
+      if(dead || !$("savedModal").hidden || !galleryModal.hidden) return;
+      easelFrame.classList.add("idle-pulse");
+    }, 5200);
+    if(!idleVoiceReminded){
+      idleVoiceTimer=setTimeout(function(){
+        if(dead || !$("savedModal").hidden || !galleryModal.hidden) return;
+        idleVoiceReminded=true;
+        speakModeGuide(false);
+      }, 9500);
+    }
   }
 
   /* ================= CANVAS SIZING (RETAINS ARTWORK) ================= */
@@ -1076,7 +1214,7 @@ window.__HOOT_SELF_COACH__=true;
           drawStarShape(fctx,s.x,s.y,s.r,s.col,s.life);
         }
       }
-      requestAnimationFrame(fxLoop);
+      fxRaf=requestAnimationFrame(fxLoop);
     }
   })();
 
@@ -1286,9 +1424,20 @@ window.__HOOT_SELF_COACH__=true;
 
     var startOff=(sy*pw+sx)*4;
     if(gData && gData[startOff+3]>120){
-      /* Tapped directly on an outline — gently ignore */
-      popSfx();
-      return;
+      /* Toddler-forgiving nudge: if finger landed directly on a line, peek nearby for an open interior pixel! */
+      var foundOpen=false;
+      var rads=[4, 8, 12];
+      for(var ri=0; ri<rads.length && !foundOpen; ri++){
+        var d=Math.round(rads[ri]*DPR);
+        var dirs=[[d,0],[-d,0],[0,d],[0,-d],[d,d],[-d,-d],[d,-d],[-d,d]];
+        for(var di=0; di<dirs.length; di++){
+          var nx=Math.max(0, Math.min(pw-1, sx+dirs[di][0]));
+          var ny=Math.max(0, Math.min(ph-1, sy+dirs[di][1]));
+          var no=(ny*pw+nx)*4;
+          if(gData[no+3]<=110){ sx=nx; sy=ny; startOff=no; foundOpen=true; break; }
+        }
+      }
+      if(!foundOpen){ popSfx(); return; }
     }
 
     var fillCol=hexToRgba(colour);
@@ -1386,14 +1535,16 @@ window.__HOOT_SELF_COACH__=true;
   function markTrace(x,y,r){
     if(mode!=="trace" || traceDone || !traceSamples.length) return;
     var grew=false;
-    var rr=(r+12)*(r+12);
+    var pad=IS_RILEY ? 20 : 12;
+    var rr=(r+pad)*(r+pad);
     for(var i=0;i<traceSamples.length;i++){
       var sm=traceSamples[i];
       if(sm.hit) continue;
       var dx=sm.x-x, dy=sm.y-y;
       if(dx*dx+dy*dy<=rr){ sm.hit=true; traceHits++; grew=true; }
     }
-    if(grew && traceHits/traceSamples.length>=0.52){
+    var goal=IS_RILEY ? 0.36 : 0.50;
+    if(grew && traceHits/traceSamples.length>=goal){
       traceDone=true;
       addStar();
       celebrateHoot();
@@ -1402,13 +1553,13 @@ window.__HOOT_SELF_COACH__=true;
       clearVoice(true);
       if(traceKind==="letters"){
         var lid="name-letter-"+item.toLowerCase();
-        if(hasClip(lid)) enqueue(lid+".mp3");
+        if(hasHootClip(lid)) enqueue(lid+".mp3");
       } else if(traceKind==="numbers"){
         var nid="call-number-"+item;
-        if(hasClip(nid)) enqueue(nid+".mp3");
+        if(hasHootClip(nid)) enqueue(nid+".mp3");
       } else if(traceKind==="shapes"){
         var sid="call-shape-"+item.toLowerCase();
-        if(hasClip(sid)) enqueue(sid+".mp3");
+        if(hasHootClip(sid)) enqueue(sid+".mp3");
       }
       speakPraise();
       setTimeout(function(){
@@ -1422,7 +1573,8 @@ window.__HOOT_SELF_COACH__=true;
 
   function checkColorProgress(){
     if(mode!=="colour" || picStarred[picture]) return;
-    if(colourDabs>=44){
+    var threshold=IS_RILEY ? 26 : 44;
+    if(colourDabs>=threshold){
       picStarred[picture]=true;
       addStar();
       celebrateHoot();
@@ -1440,18 +1592,30 @@ window.__HOOT_SELF_COACH__=true;
     pts.forEach(function(pt,i){
       var cx=pt[0], cy=pt[1], ox=ppts[i][0], oy=ppts[i][1];
       if(tool==="brush" || tool==="rainbow" || tool==="glitter"){
-        if(isStart) dab(cx,cy,col,brushSize);
-        else strokeLine(ox,oy,cx,cy,col,brushSize);
+        if(isStart){
+          /* Responsive tap-splat! A single toddler poke paints a lush splat + tiny joyful splash dots */
+          dab(cx,cy,col,brushSize*1.12);
+          for(var sp=0;sp<3;sp++){
+            var sa=Math.random()*Math.PI*2;
+            var sd=brushSize*(0.55+Math.random()*0.4);
+            dab(cx+Math.cos(sa)*sd, cy+Math.sin(sa)*sd, col, Math.max(5, brushSize*0.24));
+          }
+          burstSparkles(cx,cy,col,6);
+        } else {
+          strokeLine(ox,oy,cx,cy,col,brushSize);
+        }
         if(tool==="glitter"){
           drawGlitterDot(cx,cy,brushSize*0.85);
           if(Math.random()<0.35) burstSparkles(cx,cy,col,2);
         }
       } else if(tool==="spray"){
-        for(var k=0;k<12;k++){
+        var drops=isStart ? 18 : 12;
+        for(var k=0;k<drops;k++){
           var a=Math.random()*Math.PI*2;
-          var rad=Math.random()*brushSize*0.95;
-          dab(cx+Math.cos(a)*rad, cy+Math.sin(a)*rad, col, 3+Math.random()*4.5);
+          var rad=Math.random()*brushSize*1.05;
+          dab(cx+Math.cos(a)*rad, cy+Math.sin(a)*rad, col, 3.5+Math.random()*5);
         }
+        if(isStart) burstSparkles(cx,cy,col,6);
       } else if(tool==="eraser"){
         pctx.save();
         pctx.globalCompositeOperation="destination-out";
@@ -1472,21 +1636,28 @@ window.__HOOT_SELF_COACH__=true;
     return { x:e.clientX-r.left, y:e.clientY-r.top };
   }
   paintCanvas.addEventListener("pointerdown",function(e){
+    unlockAudioOnce();
+    hasInteracted=true;
+    idleVoiceReminded=false;
     audio(); e.preventDefault();
     var p=getPt(e);
     pushUndo();
     if(tool==="bucket"){
       magicFloodFill(p.x,p.y);
+      armIdle();
       return;
     }
     if(tool==="stamp"){
       stampSticker(p.x,p.y);
+      armIdle();
       return;
     }
+    popSfx();
     drawing=true;
     lastX=p.x; lastY=p.y;
     paintStroke(p.x,p.y,p.x,p.y,true);
     try{ paintCanvas.setPointerCapture(e.pointerId); }catch(err){}
+    armIdle();
   });
   paintCanvas.addEventListener("pointermove",function(e){
     if(!drawing) return;
@@ -1495,7 +1666,7 @@ window.__HOOT_SELF_COACH__=true;
     paintStroke(p.x,p.y,lastX,lastY,false);
     lastX=p.x; lastY=p.y;
   });
-  function stopDraw(){ drawing=false; }
+  function stopDraw(){ drawing=false; armIdle(); }
   paintCanvas.addEventListener("pointerup",stopDraw);
   paintCanvas.addEventListener("pointercancel",stopDraw);
 
@@ -1638,6 +1809,7 @@ window.__HOOT_SELF_COACH__=true;
   /* Mode Switch */
   document.querySelectorAll(".mode-btn").forEach(function(b){
     b.addEventListener("click",function(){
+      unlockAudioOnce(); hasInteracted=true; idleVoiceReminded=false;
       audio(); popSfx();
       var next=b.getAttribute("data-mode");
       document.querySelectorAll(".mode-btn").forEach(function(x){ x.classList.remove("on"); });
@@ -1648,11 +1820,14 @@ window.__HOOT_SELF_COACH__=true;
       if(changed) clearCanvasData();
       drawGuide();
       renderSubStrip();
+      speakModeGuide(false);
+      armIdle();
     });
   });
 
   /* Paper Day/Night Glow Toggle */
   paperBtn.addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true;
     audio(); sparkleSfx();
     nightPaper=!nightPaper;
     wrap.classList.toggle("night-paper",nightPaper);
@@ -1669,16 +1844,16 @@ window.__HOOT_SELF_COACH__=true;
     undoBtn.disabled=true;
   }
   clearBtn.addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true; idleVoiceReminded=false;
     audio();
     pushUndo();
     pctx.clearRect(0,0,W,H);
     dirty=false; colourDabs=0;
     whooshSfx();
     wrap.classList.remove("just-cleared"); void wrap.offsetWidth; wrap.classList.add("just-cleared");
-    if(hasClip("hoot-clean-page")){
-      clearVoice(true);
-      enqueue("hoot-clean-page.mp3");
-    }
+    clearVoice(true);
+    enqueue("hoot-clean-page.mp3");
+    armIdle();
   });
 
   /* Save Snapshot to Persistent Memories & Studio Gallery */
@@ -1747,6 +1922,7 @@ window.__HOOT_SELF_COACH__=true;
     });
   }
   saveBtn.addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true; idleVoiceReminded=false;
     audio();
     var url=flattenArt();
     galleryItems.unshift({ url:url, ts:Date.now() });
@@ -1758,13 +1934,19 @@ window.__HOOT_SELF_COACH__=true;
     $("savedPreviewImg").src=url;
     $("savedDownloadBtn").href=url;
     $("savedModal").hidden=false;
+    playPaintGuide("hoot-pnt-save", "hoot-amazing", false);
   });
   $("closeSavedBtn").addEventListener("click",function(){
     audio(); popSfx();
     $("savedModal").hidden=true;
+    armIdle();
+  });
+  $("savedModal").addEventListener("click",function(e){
+    if(e.target===$("savedModal")){ $("savedModal").hidden=true; armIdle(); }
   });
 
   galleryBtn.addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true;
     audio(); popSfx();
     renderGalleryGrid();
     galleryModal.hidden=false;
@@ -1772,32 +1954,43 @@ window.__HOOT_SELF_COACH__=true;
   $("closeGalleryBtn").addEventListener("click",function(){
     audio(); popSfx();
     galleryModal.hidden=true;
+    armIdle();
+  });
+  galleryModal.addEventListener("click",function(e){
+    if(e.target===galleryModal){ galleryModal.hidden=true; armIdle(); }
   });
 
-  /* Direct tap on Artist Hoot -> cute hop + giggle (belly-only rule!) */
-  var lastHootTap=0;
+  /* Direct tap on Artist Hoot -> cute hop + sparkles + repeats current spoken Hoot guide! */
   hootBuddy.addEventListener("click",function(){
+    unlockAudioOnce(); hasInteracted=true; idleVoiceReminded=false;
     audio();
     celebrateHoot();
-    burstSparkles(W-48, H-48, "#ffc93c", 10);
-    var now=Date.now();
-    if(now-lastHootTap>8000){
-      lastHootTap=now;
-      clearVoice(true);
-      enqueue("hoot-giggle.mp3",{giggle:true});
-    } else {
-      sparkleSfx();
-    }
+    burstSparkles(W-48, H-48, "#ffc93c", 12);
+    sparkleSfx();
+    speakModeGuide(false);
+    armIdle();
   });
 
-  window.addEventListener("pagehide",function(){ dead=true; clearVoice(true); });
+  function teardown(){
+    dead=true;
+    if(fxRaf) cancelAnimationFrame(fxRaf);
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
+    clearVoice(true);
+  }
+  window.addEventListener("pagehide", teardown);
   document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= INIT ================= */
+  /* Sync age-adaptive default brush size dot (Giant 48px for Riley age 2!) */
+  document.querySelectorAll(".sz-btn").forEach(function(x){
+    x.classList.toggle("on", Number(x.getAttribute("data-sz"))===brushSize);
+  });
   buildPots();
   loadSavedGallery();
   requestAnimationFrame(function(){ fitCanvases(false); });
-  enqueue("hoot-game-hello.mp3");
+  speakModeGuide(true);
+  armIdle();
 
   window.__paintGame={
     snapshot:function(){
@@ -1805,13 +1998,13 @@ window.__HOOT_SELF_COACH__=true;
         mode:mode, tool:tool, colour:colour, brushSize:brushSize, mirror:mirror,
         nightPaper:nightPaper, stars:stars, dirty:dirty, galleryCount:galleryItems.length,
         picture:picture, traceKind:traceKind, traceItem:TRACE_SETS[traceKind][traceIdx],
-        undoDepth:undoStack.length
+        undoDepth:undoStack.length, isRiley:IS_RILEY
       };
     }
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e137">
-<script src="js/hoot-game-tail.js?v=llprev3e137"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

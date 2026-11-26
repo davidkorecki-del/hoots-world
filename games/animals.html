@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="animals";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e131"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -36,40 +36,38 @@
     background:linear-gradient(180deg, #4db7f5 0%, #9de2ff 40%, #d8f8de 66%, #59cc62 100%);
   }
 
-  /* ================= STORYBOOK SUNNY WOODLAND SCENERY ================= */
-  #scenery{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
-  #meadowSvg{
-    position:absolute; left:0; right:0; bottom:12%;
-    width:100%; height:62%; display:block;
+  /* ================= PIXAR 3D WOODLAND BACKDROP ================= */
+  .pixar-backdrop{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_animals.jpg"), linear-gradient(180deg, #4db7f5 0%, #9de2ff 40%, #d8f8de 66%, #59cc62 100%);
   }
-  #pineLeft{
-    position:absolute; left:-18px; bottom:26%;
-    width:clamp(112px, 19vw, 190px);
-    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
-  }
-  #oakRight{
-    position:absolute; right:-20px; bottom:28%;
-    width:clamp(118px, 20vw, 200px);
-    filter:drop-shadow(0 8px 14px rgba(23,50,79,.16));
+  .pixar-backdrop::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 44%, rgba(255,253,245,.04) 30%, rgba(23,50,79,.2) 100%);
   }
 
+  /* ================= INTERACTIVE SKY TOYS ================= */
+  #scenery{ position:absolute; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
   .decor{ position:absolute; border:none; background:none; padding:0; cursor:pointer; pointer-events:auto; }
-  #sunBtn{ top:74px; right:16px; width:80px; height:80px; z-index:2; }
-  #sunBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 16px rgba(255,183,3,.5)); }
+  #sunBtn{ top:max(76px, calc(env(safe-area-inset-top) + 70px)); right:14px; width:74px; height:74px; z-index:2; }
+  #sunBtn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 16px rgba(255,183,3,.55)); }
   #sunBtn .rays{ transform-box:fill-box; transform-origin:center; animation:sunSpin 44s linear infinite; }
   #sunBtn.zing .rays{ animation:sunSpin .9s cubic-bezier(.34,1.5,.5,1) 1; }
   @keyframes sunSpin{ to{ transform:rotate(360deg); } }
 
-  .cloud{ z-index:1; width:124px; height:56px; opacity:.95; animation:cloudDrift linear infinite; }
-  .cloud svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 10px rgba(23,50,79,.08)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
+  .cloud{ z-index:1; width:124px; height:64px; opacity:.9; animation:cloudDrift linear infinite; display:grid; place-items:center; }
+  .cloud svg{ width:120px; height:54px; display:block; filter:drop-shadow(0 6px 10px rgba(23,50,79,.12)); transition:transform .25s cubic-bezier(.34,1.8,.5,1); }
   .cloud.puff svg{ transform:scale(1.24, 1.34); }
   @keyframes cloudDrift{ from{ transform:translateX(-150px); } to{ transform:translateX(112vw); } }
 
   #bflyBtn{
-    left:16%; top:21%; width:66px; height:66px; z-index:3;
+    left:12%; top:22%; width:66px; height:66px; z-index:3;
     display:grid; place-items:center; animation:bflyFloat 6.8s ease-in-out infinite alternate;
   }
-  #bflyBtn svg{ width:50px; height:40px; overflow:visible; }
+  #bflyBtn svg{ width:50px; height:40px; overflow:visible; filter:drop-shadow(0 4px 6px rgba(23,50,79,.22)); }
   #bflyBtn .bw{ transform-box:fill-box; animation:flapW .2s ease-in-out infinite alternate; }
   #bflyBtn .bw-l{ transform-origin:100% 50%; }
   #bflyBtn .bw-r{ transform-origin:0% 50%; }
@@ -84,43 +82,43 @@
   #hud{
     position:relative; z-index:12;
     display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:max(8px, env(safe-area-inset-top)) 12px 0;
+    padding:max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));
     pointer-events:none;
   }
   .hud-group{ display:flex; align-items:center; gap:8px; pointer-events:auto; }
   .mode-pill{
-    min-width:68px; height:66px; padding:0 12px; border-radius:22px;
-    border:4px solid #fff; background:rgba(255,253,247,.95);
-    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    min-width:66px; min-height:64px; height:64px; padding:0 12px; border-radius:22px;
+    border:4px solid #fff; background:rgba(255,253,247,.96);
+    box-shadow:0 5px 0 rgba(23,50,79,.26), 0 8px 18px rgba(23,50,79,.18);
     display:flex; align-items:center; justify-content:center; gap:4px;
-    font-size:26px; cursor:pointer;
+    font-size:25px; cursor:pointer;
     transition:transform .16s cubic-bezier(.34,1.6,.5,1), background .15s, box-shadow .15s;
   }
   .mode-pill:active{ transform:translateY(3px) scale(.95); }
   .mode-pill.on{
     background:linear-gradient(180deg, #ffe885 0%, #ffc93c 100%);
     border-color:#17324f;
-    box-shadow:0 5px 0 #17324f, 0 0 22px rgba(255,201,60,.78);
+    box-shadow:0 5px 0 #17324f, 0 0 22px rgba(255,201,60,.82);
     transform:translateY(-2px) scale(1.04);
   }
 
   #soundBtn{
-    width:66px; height:66px; border-radius:50%;
+    min-width:64px; min-height:64px; width:64px; height:64px; border-radius:50%;
     border:4px solid #fff; background:rgba(255,253,247,.96);
-    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
+    box-shadow:0 5px 0 rgba(23,50,79,.26), 0 8px 18px rgba(23,50,79,.18);
     display:grid; place-items:center; cursor:pointer;
   }
   #soundBtn:active{ transform:translateY(3px) scale(.94); }
-  #soundBtn svg{ width:30px; height:30px; }
+  #soundBtn svg{ width:28px; height:28px; }
 
   #starPill{
-    height:66px; padding:0 18px 0 14px; border-radius:999px;
+    min-height:64px; height:64px; padding:0 16px 0 12px; border-radius:999px;
     border:4px solid #fff; background:rgba(255,253,247,.96);
-    box-shadow:0 5px 0 rgba(23,50,79,.22), 0 8px 18px rgba(23,50,79,.14);
-    display:flex; align-items:center; gap:8px;
-    font-weight:800; font-size:26px; color:#17324f;
+    box-shadow:0 5px 0 rgba(23,50,79,.26), 0 8px 18px rgba(23,50,79,.18);
+    display:flex; align-items:center; gap:7px;
+    font-weight:800; font-size:25px; color:#17324f;
   }
-  #starPill svg{ width:30px; height:30px; display:block; }
+  #starPill svg{ width:28px; height:28px; display:block; }
   #starPill.bump{ animation:starBump .45s cubic-bezier(.34,1.8,.5,1); }
   @keyframes starBump{ 0%{ transform:scale(1); } 45%{ transform:scale(1.22) rotate(-4deg); } 100%{ transform:scale(1); } }
 
@@ -136,9 +134,9 @@
   #orderCloud{
     position:relative; z-index:9;
     display:flex; align-items:center; gap:12px;
-    background:#fffdf8; border:5px solid #17324f; border-radius:36px;
-    padding:8px 14px 8px 18px;
-    box-shadow:0 8px 0 #17324f, 0 16px 32px rgba(23,50,79,.22);
+    background:rgba(255,253,248,.97); border:5px solid #17324f; border-radius:36px;
+    padding:8px 14px 8px 16px;
+    box-shadow:0 8px 0 #17324f, 0 16px 32px rgba(23,50,79,.28);
     max-width:94vw;
     transition:transform .22s cubic-bezier(.34,1.7,.5,1);
   }
@@ -164,12 +162,12 @@
     background:#eff6ff; border:3.5px dashed #3b82f6;
     display:grid; place-items:center; font-size:30px;
   }
-  .cloud-stars{ display:flex; align-items:center; gap:4px; font-size:26px; color:#d8e4f0; }
+  .cloud-stars{ display:flex; align-items:center; gap:4px; font-size:26px; color:#cbd5e1; }
   .cloud-stars span.lit{ color:#ffc93c; text-shadow:0 2px 6px rgba(245,158,11,.55); display:inline-block; animation:slotFed .45s cubic-bezier(.34,1.85,.5,1); }
   @keyframes slotFed{ 0%{ transform:scale(.45) rotate(-14deg); } 60%{ transform:scale(1.26) rotate(6deg); } 100%{ transform:scale(1) rotate(0); } }
 
   #repeatBtn{
-    width:64px; height:64px; border-radius:50%; flex:0 0 auto;
+    min-width:64px; min-height:64px; width:64px; height:64px; border-radius:50%; flex:0 0 auto;
     border:4px solid #17324f; background:linear-gradient(180deg, #ffe47a 0%, #ffb703 100%);
     box-shadow:0 5px 0 #17324f; display:grid; place-items:center; cursor:pointer;
   }
@@ -186,8 +184,9 @@
 
   #hootBtn{
     position:relative; border:none; background:none; padding:0; cursor:pointer;
-    width:clamp(124px, 24vh, 184px);
-    filter:drop-shadow(0 10px 14px rgba(23,50,79,.24));
+    min-width:64px; min-height:64px;
+    width:clamp(120px, 22vh, 178px);
+    filter:drop-shadow(0 12px 16px rgba(23,50,79,.34));
     transform-origin:50% 94%;
     animation:hootIdle 3.1s ease-in-out infinite;
   }
@@ -216,9 +215,10 @@
   #heroAnimalWrap[hidden]{ display:none !important; }
   #heroAnimalBtn{
     position:relative; z-index:3; border:none; background:none; padding:0;
-    width:clamp(112px, 21vh, 152px); height:clamp(112px, 21vh, 152px);
+    min-width:64px; min-height:64px;
+    width:clamp(110px, 20vh, 148px); height:clamp(110px, 20vh, 148px);
     cursor:grab; touch-action:none;
-    filter:drop-shadow(0 12px 16px rgba(23,50,79,.28));
+    filter:drop-shadow(0 12px 18px rgba(23,50,79,.36));
     animation:animalWave 2.1s ease-in-out infinite alternate;
   }
   #heroAnimalBtn svg{ width:100%; height:100%; display:block; overflow:visible; pointer-events:none; }
@@ -229,39 +229,41 @@
     100%{ transform:translateY(-10px) rotate(3deg) scale(1.04); }
   }
   #stumpSvg{
-    width:clamp(108px, 20vh, 146px); height:auto; margin-top:-20px; z-index:1;
-    filter:drop-shadow(0 6px 8px rgba(23,50,79,.22)); pointer-events:none;
+    width:clamp(108px, 19vh, 144px); height:auto; margin-top:-20px; z-index:1;
+    filter:drop-shadow(0 8px 10px rgba(23,50,79,.3)); pointer-events:none;
   }
 
-  /* ================= MEADOW HABITAT STAGE (3 GIANT HOMES OR 6 EXPLORE HOMES) ================= */
+  /* ================= MEADOW HABITAT STAGE (HIGH-CONTRAST HOMES DECK) ================= */
   #meadowDeck{
     position:relative; z-index:8; width:100%;
     padding:14px 12px max(12px, env(safe-area-inset-bottom));
-    background:linear-gradient(180deg, #5fd166 0%, #3fb64c 52%, #2f9c3e 100%);
-    border-top:6px solid #17324f;
-    box-shadow:0 -10px 26px rgba(23,50,79,.22), inset 0 6px 0 rgba(255,255,255,.32);
+    background:linear-gradient(180deg, rgba(76,196,88,.88) 0%, rgba(47,156,62,.94) 100%);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    border-top:5px solid rgba(255,253,247,.9);
+    box-shadow:0 -10px 28px rgba(23,50,79,.28), inset 0 6px 0 rgba(255,255,255,.32);
   }
   #homesGrid{
-    max-width:840px; margin:0 auto;
+    max-width:860px; margin:0 auto;
     display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
-    gap:clamp(12px, 3vw, 26px);
+    gap:clamp(12px, 3vw, 28px);
     min-height:132px;
   }
   #homesGrid.explore-mode{ max-width:960px; gap:clamp(10px, 2vw, 18px); }
 
   .home-btn{
     position:relative;
-    width:clamp(108px, 27vw, 152px); height:clamp(108px, 27vw, 152px);
+    min-width:96px; min-height:96px;
+    width:clamp(112px, 27vw, 154px); height:clamp(112px, 27vw, 154px);
     border-radius:34px;
     border:5px solid #17324f;
-    background:radial-gradient(circle at 35% 28%, #ffffff 0%, #fffdf6 64%, #e5f5ec 100%);
-    box-shadow:0 8px 0 #17324f, 0 14px 24px rgba(23,50,79,.26), inset 0 -6px 0 #d5ebd8;
+    background:radial-gradient(circle at 35% 28%, #ffffff 0%, #fffdf6 68%, #e5f5ec 100%);
+    box-shadow:0 8px 0 #17324f, 0 16px 26px rgba(23,50,79,.32), inset 0 -6px 0 #d5ebd8;
     padding:10px; cursor:pointer; touch-action:manipulation;
     display:grid; place-items:center;
     transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .16s, border-color .16s;
   }
   #homesGrid.explore-mode .home-btn{
-    width:clamp(96px, 26vw, 126px); height:clamp(96px, 26vw, 126px);
+    width:clamp(98px, 26vw, 128px); height:clamp(98px, 26vw, 128px);
     border-radius:28px; padding:8px;
   }
   .home-btn svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 4px 5px rgba(23,50,79,.16)); pointer-events:none; }
@@ -269,12 +271,12 @@
 
   .home-btn.drop-hover{
     border-color:#ffb703;
-    box-shadow:0 8px 0 #17324f, 0 0 0 9px rgba(255,201,60,.75), 0 0 30px rgba(255,183,3,.95);
+    box-shadow:0 8px 0 #17324f, 0 0 0 9px rgba(255,201,60,.82), 0 0 32px rgba(255,183,3,.95);
     transform:translateY(-8px) scale(1.08);
   }
   .home-btn.nudge-glow{
     border-color:#ffb703;
-    box-shadow:0 8px 0 #17324f, 0 0 0 8px rgba(255,201,60,.68), 0 0 28px rgba(255,183,3,.95);
+    box-shadow:0 8px 0 #17324f, 0 0 0 8px rgba(255,201,60,.75), 0 0 28px rgba(255,183,3,.95);
     animation:homeNudge .65s ease-in-out infinite alternate;
   }
   @keyframes homeNudge{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-8px) scale(1.06); } }
@@ -311,12 +313,12 @@
 
   .nudge-hand{
     position:absolute; right:-10px; bottom:-14px; font-size:36px; line-height:1;
-    pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));
+    pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));
     animation:handTap .55s ease-in-out infinite alternate;
   }
   @keyframes handTap{ from{ transform:translate(0,0) rotate(-10deg); } to{ transform:translate(-6px,-8px) rotate(4deg); } }
 
-  /* Rescued Village Strip (tiny happy neighbors at bottom of meadow!) */
+  /* Rescued Village Strip */
   #villageStrip{
     max-width:740px; margin:10px auto 0;
     display:flex; align-items:center; justify-content:center; gap:8px;
@@ -325,7 +327,7 @@
   #villageStrip[hidden]{ display:none !important; }
   .vslot{
     width:46px; height:46px; border-radius:16px;
-    background:rgba(255,253,247,.32); border:3px dashed rgba(255,255,255,.65);
+    background:rgba(255,253,247,.38); border:3px dashed rgba(255,255,255,.78);
     display:grid; place-items:center; padding:4px;
     transition:transform .3s cubic-bezier(.34,1.8,.5,1), background .2s;
   }
@@ -358,32 +360,6 @@
     100%{ transform:translate(-50%, -68px) scale(1); opacity:0; }
   }
 
-  /* ================= ONE-TAP START TREEHOUSE (ZERO READING!) ================= */
-  #startVeil{
-    position:fixed; inset:0; z-index:30;
-    background:rgba(23,50,79,.22); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
-    display:flex; align-items:center; justify-content:center; padding:16px;
-  }
-  #goTreehouseBtn{
-    width:min(86vw, 304px); min-height:202px;
-    border:6px solid #17324f; border-radius:42px;
-    background:linear-gradient(180deg, #fffdf7 0%, #dff8e5 100%);
-    box-shadow:0 12px 0 #17324f, 0 24px 48px rgba(23,50,79,.38);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-    padding:20px; cursor:pointer;
-    animation:goPulse 1.25s ease-in-out infinite alternate;
-  }
-  @keyframes goPulse{ from{ transform:scale(1); } to{ transform:scale(1.05); } }
-  #goTreehouseBtn:active{ transform:translateY(5px) scale(.97); box-shadow:0 7px 0 #17324f; }
-  .go-play-pill{
-    display:inline-flex; align-items:center; justify-content:center;
-    min-width:184px; min-height:72px; padding:10px 28px; border-radius:999px;
-    border:5px solid #17324f;
-    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
-    color:#fff; font-size:32px; font-weight:800;
-    box-shadow:0 6px 0 #14532d; text-shadow:0 2px 0 rgba(0,0,0,.3);
-  }
-
   /* ================= CELEBRATION WIN OVERLAY ================= */
   #winOverlay{
     position:fixed; inset:0; z-index:45;
@@ -404,7 +380,7 @@
   .win-mini svg{ width:100%; height:100%; display:block; }
   .win-btns{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
   #againBtn, .win-btn{
-    min-width:190px; min-height:72px; padding:12px 28px; border-radius:999px;
+    min-width:168px; min-height:72px; padding:12px 24px; border-radius:999px;
     border:5px solid #17324f;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
     color:#fff; font-family:inherit; font-size:26px; font-weight:800; cursor:pointer;
@@ -413,27 +389,27 @@
   #againBtn:active, .win-btn:active{ transform:translateY(4px); box-shadow:0 3px 0 #14532d; }
 
   @media (max-width:460px){
-    #hud{ padding:max(8px, env(safe-area-inset-top)) 8px 0; gap:4px; }
-    .hud-group{ gap:5px; }
-    .mode-pill{ min-width:64px; height:64px; padding:0 8px; font-size:22px; border-radius:18px; gap:2px; }
-    #soundBtn{ width:64px; height:64px; }
-    #starPill{ height:64px; padding:0 11px 0 9px; gap:5px; font-size:22px; }
-    #starPill svg{ width:24px; height:24px; }
+    #hud{ padding:max(8px, env(safe-area-inset-top)) 6px 0; gap:4px; }
+    .hud-group{ gap:4px; }
+    .mode-pill{ min-width:64px; height:64px; padding:0 6px; font-size:21px; border-radius:18px; gap:1px; }
+    #soundBtn{ width:64px; height:64px; min-width:64px; min-height:64px; }
+    #starPill{ height:64px; min-height:64px; padding:0 10px 0 8px; gap:4px; font-size:21px; }
+    #starPill svg{ width:23px; height:23px; }
     #orderCloud{ padding:7px 10px 7px 12px; gap:7px; }
     #cloudInner{ gap:6px; }
     .cloud-animal-badge{ width:48px; height:48px; border-radius:15px; padding:3px; }
     .cloud-q{ width:46px; height:46px; border-radius:15px; font-size:24px; }
     .cloud-arrow{ font-size:20px; }
     .cloud-stars{ font-size:19px; gap:2px; }
-    .home-btn{ width:clamp(100px, 28vw, 118px); height:clamp(100px, 28vw, 118px); border-radius:26px; padding:8px; }
+    .home-btn{ width:clamp(104px, 28vw, 124px); height:clamp(104px, 28vw, 124px); border-radius:26px; padding:8px; }
     #homesGrid{ gap:10px; }
-    #hootBtn{ width:clamp(112px, 22vh, 146px); }
-    #heroAnimalBtn{ width:clamp(98px, 18vh, 126px); height:clamp(98px, 18vh, 126px); }
+    #hootBtn{ width:clamp(112px, 21vh, 144px); }
+    #heroAnimalBtn{ width:clamp(98px, 18vh, 124px); height:clamp(98px, 18vh, 124px); }
   }
   @media (max-height:640px){
-    #hootBtn{ width:clamp(106px, 22vh, 148px); }
-    #heroAnimalBtn{ width:clamp(92px, 18vh, 120px); height:clamp(92px, 18vh, 120px); }
-    .home-btn{ width:clamp(92px, 21vh, 122px); height:clamp(92px, 21vh, 122px); }
+    #hootBtn{ width:clamp(102px, 21vh, 142px); }
+    #heroAnimalBtn{ width:clamp(92px, 18vh, 118px); height:clamp(92px, 18vh, 118px); }
+    .home-btn{ width:clamp(96px, 21vh, 122px); height:clamp(96px, 21vh, 122px); }
     #meadowDeck{ padding-top:8px; padding-bottom:8px; }
     #villageStrip{ margin-top:6px; min-height:38px; }
     .vslot{ width:38px; height:38px; }
@@ -445,12 +421,15 @@
 </head>
 <body>
 <div id="stage">
-  <!-- Living Sunny Woodland Backdrop -->
+  <!-- Pixar 3D Sunny Woodland Backdrop (with gradient fallback underneath) -->
+  <div id="pixarBg" class="pixar-backdrop" aria-hidden="true"></div>
+
+  <!-- Interactive Sky Toys -->
   <div id="scenery" aria-hidden="true">
     <button class="decor cloud" type="button" style="top:10%;animation-duration:84s;animation-delay:-30s" tabindex="-1">
       <svg viewBox="0 0 124 56"><ellipse cx="40" cy="39" rx="31" ry="14" fill="#fff"/><ellipse cx="68" cy="28" rx="27" ry="19" fill="#fff"/><ellipse cx="92" cy="39" rx="24" ry="13" fill="#fff"/></svg>
     </button>
-    <button class="decor cloud" type="button" style="top:18%;animation-duration:108s;animation-delay:-72s;transform:scale(.82)" tabindex="-1">
+    <button class="decor cloud" type="button" style="top:18%;animation-duration:108s;animation-delay:-72s;transform:scale(.86)" tabindex="-1">
       <svg viewBox="0 0 124 56"><ellipse cx="40" cy="39" rx="31" ry="14" fill="#fff"/><ellipse cx="68" cy="28" rx="27" ry="19" fill="#fff"/><ellipse cx="92" cy="39" rx="24" ry="13" fill="#fff"/></svg>
     </button>
 
@@ -466,40 +445,6 @@
       </svg>
     </button>
 
-    <!-- Rolling Woodland Hills + Winding Path + Meadow Daisies -->
-    <svg id="meadowSvg" viewBox="0 0 900 340" preserveAspectRatio="xMidYMax slice">
-      <path d="M0 155 Q230 68 480 138 T900 110 L900 340 L0 340 Z" fill="#8ce07c"/>
-      <path d="M0 205 Q290 134 570 188 T900 166 L900 340 L0 340 Z" fill="#52c55b"/>
-      <!-- Cozy winding dirt trail -->
-      <path d="M360 340 Q420 260 470 215 Q515 175 495 148 Q518 175 525 220 Q535 275 565 340 Z" fill="#f3d8a3" opacity=".82"/>
-      <!-- Wildflowers -->
-      <g>
-        <circle cx="195" cy="228" r="9" fill="#fff"/><circle cx="195" cy="228" r="4.5" fill="#ffd23f"/>
-        <circle cx="242" cy="248" r="7.5" fill="#ffb3c6"/><circle cx="242" cy="248" r="3.6" fill="#ffd23f"/>
-        <circle cx="685" cy="222" r="9" fill="#fff"/><circle cx="685" cy="222" r="4.5" fill="#ffd23f"/>
-        <circle cx="738" cy="246" r="8" fill="#ffe680"/><circle cx="738" cy="246" r="3.8" fill="#f97316"/>
-        <circle cx="808" cy="216" r="8.5" fill="#ffb3c6"/><circle cx="808" cy="216" r="4" fill="#fff"/>
-      </g>
-    </svg>
-
-    <!-- Grounded Storybook Woodland Trees -->
-    <svg id="pineLeft" viewBox="0 0 180 250">
-      <ellipse cx="90" cy="238" rx="44" ry="9" fill="rgba(23,50,79,.14)"/>
-      <rect x="76" y="176" width="28" height="62" rx="6" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
-      <path d="M22 186 L90 98 L158 186 Z" fill="#2ea043" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M34 136 L90 56 L146 136 Z" fill="#3ec456" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M48 88 L90 22 L132 88 Z" fill="#58d66b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-    </svg>
-
-    <svg id="oakRight" viewBox="0 0 190 250">
-      <ellipse cx="98" cy="238" rx="46" ry="9" fill="rgba(23,50,79,.14)"/>
-      <path d="M82 238 Q88 180 88 122 L108 122 Q108 180 116 238 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
-      <circle cx="62" cy="96" r="42" fill="#3eb84d" stroke="#17324f" stroke-width="4"/>
-      <circle cx="132" cy="88" r="40" fill="#2ea03d" stroke="#17324f" stroke-width="4"/>
-      <circle cx="98" cy="58" r="44" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
-      <circle cx="96" cy="96" r="36" fill="#47c456"/>
-    </svg>
-
     <button class="decor" id="bflyBtn" type="button" aria-label="Tap butterfly">
       <svg viewBox="0 0 44 34">
         <g class="bw bw-l"><ellipse cx="11" cy="12" rx="10" ry="7.5" fill="#60a5fa" stroke="#17324f" stroke-width="2"/><ellipse cx="12" cy="24" rx="7.5" ry="6" fill="#bfdbfe" stroke="#17324f" stroke-width="2"/></g>
@@ -512,13 +457,13 @@
   <!-- Top Bar: 3 Giant Picture Mode Buttons + Sound + Star Counter -->
   <div id="hud">
     <div class="hud-group" role="group" aria-label="Game modes">
-      <button type="button" class="mode-pill on" data-mode="takehome" aria-label="Take animals home">
+      <button type="button" class="mode-pill on" data-mode="takehome" aria-label="Take animals home" aria-pressed="true">
         <span aria-hidden="true">🐾</span><span aria-hidden="true">🏠</span>
       </button>
-      <button type="button" class="mode-pill" data-mode="knock" aria-label="Knock knock surprise">
+      <button type="button" class="mode-pill" data-mode="knock" aria-label="Knock knock surprise" aria-pressed="false">
         <span aria-hidden="true">🚪</span><span aria-hidden="true">❓</span>
       </button>
-      <button type="button" class="mode-pill" data-mode="explore" aria-label="Explore animal village">
+      <button type="button" class="mode-pill" data-mode="explore" aria-label="Explore animal village" aria-pressed="false">
         <span aria-hidden="true">🌿</span><span aria-hidden="true">🔍</span>
       </button>
     </div>
@@ -544,7 +489,7 @@
     </div>
 
     <div id="heroRow">
-      <button type="button" id="hootBtn" aria-label="Tap Hoot to giggle and repeat">
+      <button type="button" id="hootBtn" aria-label="Tap Hoot to repeat clue">
         <svg viewBox="0 0 220 225" aria-hidden="true">
           <path d="M90 186 L110 214 L130 186 Z" fill="#7c4f2b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
           <ellipse class="wing-l" cx="40" cy="134" rx="20" ry="44" fill="#8a5a33" stroke="#17324f" stroke-width="4" transform="rotate(14 40 134)"/>
@@ -582,7 +527,7 @@
       <div id="heroAnimalWrap">
         <button type="button" id="heroAnimalBtn" aria-label="Drag or tap animal"></button>
         <svg id="stumpSvg" viewBox="0 0 150 64" aria-hidden="true">
-          <ellipse cx="75" cy="54" rx="64" ry="9" fill="rgba(23,50,79,.18)"/>
+          <ellipse cx="75" cy="54" rx="64" ry="9" fill="rgba(23,50,79,.22)"/>
           <path d="M24 22 L126 22 L134 52 Q122 58 75 58 Q28 58 16 52 Z" fill="#9c6b3b" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
           <ellipse cx="75" cy="22" rx="51" ry="14" fill="#f3d6a4" stroke="#17324f" stroke-width="4"/>
           <ellipse cx="75" cy="22" rx="34" ry="8" fill="none" stroke="#d5aa6d" stroke-width="2.5"/>
@@ -596,23 +541,6 @@
   <div id="meadowDeck">
     <div id="homesGrid" aria-label="Animal homes"></div>
     <div id="villageStrip" aria-label="Animals home safely"></div>
-  </div>
-
-  <!-- Picture-First One-Tap Start Treehouse (Unlocks iOS Audio with Zero Reading!) -->
-  <div id="startVeil">
-    <button type="button" id="goTreehouseBtn" aria-label="Play Animal Homes">
-      <svg width="132" height="102" viewBox="0 0 132 102" aria-hidden="true">
-        <rect x="52" y="64" width="28" height="34" rx="6" fill="#8b5a2b" stroke="#17324f" stroke-width="4"/>
-        <circle cx="34" cy="48" r="24" fill="#3ec456" stroke="#17324f" stroke-width="4"/>
-        <circle cx="98" cy="48" r="24" fill="#2ea043" stroke="#17324f" stroke-width="4"/>
-        <circle cx="66" cy="30" r="26" fill="#55cf64" stroke="#17324f" stroke-width="4"/>
-        <rect x="40" y="34" width="52" height="36" rx="8" fill="#ffe6a7" stroke="#17324f" stroke-width="4"/>
-        <path d="M32 38 L66 12 L100 38 Z" fill="#ff5d52" stroke="#17324f" stroke-width="4" stroke-linejoin="round"/>
-        <path d="M56 70 V52 A10 10 0 0 1 76 52 V70 Z" fill="#8b5a2b" stroke="#17324f" stroke-width="3.5"/>
-        <circle cx="71" cy="60" r="2.5" fill="#ffc93c"/>
-      </svg>
-      <span class="go-play-pill">▶</span>
-    </button>
   </div>
 
   <!-- Picture-First Win Celebration -->
@@ -687,24 +615,33 @@
   ];
 
   function $(id){ return document.getElementById(id); }
-  var hootBtn = $("hootBtn"), hootPupils = $("hootPupils"), orderCloud = $("orderCloud"),
-      cloudInner = $("cloudInner"), heroAnimalWrap = $("heroAnimalWrap"), heroAnimalBtn = $("heroAnimalBtn"),
-      homesGrid = $("homesGrid"), villageStrip = $("villageStrip"), starCountEl = $("starCount"),
-      starPill = $("starPill"), startVeil = $("startVeil"), winOverlay = $("winOverlay"),
-      winFriends = $("winFriends"), winStars = $("winStars");
+  var stage = $("stage"), hootBtn = $("hootBtn"), hootPupils = $("hootPupils"),
+      orderCloud = $("orderCloud"), cloudInner = $("cloudInner"),
+      heroAnimalWrap = $("heroAnimalWrap"), heroAnimalBtn = $("heroAnimalBtn"),
+      homesGrid = $("homesGrid"), villageStrip = $("villageStrip"),
+      starCountEl = $("starCount"), starPill = $("starPill"),
+      winOverlay = $("winOverlay"), winFriends = $("winFriends"), winStars = $("winStars");
+
+  /* ================= AGE-ADAPTIVE DEFAULTS (RILEY AGE 2 vs ZANE AGE 3) ================= */
+  var IS_RILEY = false;
+  try{ IS_RILEY = new URLSearchParams(window.location.search || "").get("kid") === "kidb"; }catch(e){}
+  var GOAL = IS_RILEY ? 3 : 4;
+  var CHOICE_COUNT = IS_RILEY ? 2 : 3;
+  var EXPLORE_COUNT = IS_RILEY ? 4 : 6;
+  var DROP_SNAP_PX = IS_RILEY ? 140 : 115;
 
   /* ================= STATE ================= */
-  var state = "start";       /* start | playing | won */
+  var state = "playing";     /* playing | won */
   var mode = "takehome";     /* takehome | knock | explore */
-  var GOAL = 4;
   var soundOn = true, dead = false, inputLock = false;
   var stars = 0, roundTok = 0;
   var queue = [], current = null, homed = [], exploreSet = [];
-  var idleTimer = null;
+  var idleVisualTimer = null, idleVoiceTimer = null, idleVoiceReminded = false;
 
   /* ================= WEBAUDIO SOUND EFFECTS ================= */
   var AC = null;
   function audio(){
+    if(!soundOn) return null;
     if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; } }
     if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
     return AC;
@@ -712,15 +649,17 @@
   function tone(f0, f1, dur, type, vol, delay){
     if(!soundOn) return;
     var ac = audio(); if(!ac) return;
-    var t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
-    o.type = type || "sine";
-    o.frequency.setValueAtTime(f0, t);
-    if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 20), t + dur);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(ac.destination);
-    o.start(t); o.stop(t + dur + 0.04);
+    try{
+      var t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(f0, t);
+      if(f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(f1, 20), t + dur);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t + dur + 0.04);
+    }catch(e){}
   }
   function sfxPop(){ tone(520, 960, 0.13, "sine", 0.11); }
   function sfxBoing(){ tone(240, 420, 0.14, "triangle", 0.11); tone(420, 210, 0.18, "triangle", 0.10, 0.12); }
@@ -739,17 +678,19 @@
     else { tone(360, 740, 0.16, "sine", 0.11, 0); tone(460, 920, 0.16, "sine", 0.10, 0.16); }
   }
 
-  /* ================= STUDIO HOOT VOICE QUEUE ================= */
+  /* ================= STUDIO HOOT VOICE QUEUE (HOOT_HAVE-GATED + iOS UNLOCK) ================= */
   var VBASE = "assets/voice/";
-  var voiceEl = null, vQueue = [], vPlaying = false;
-  function getVoiceEl(){
-    if(!voiceEl){
-      voiceEl = new Audio();
-      voiceEl.preload = "auto";
-      voiceEl.addEventListener("ended", vNext);
-      voiceEl.addEventListener("error", vNext);
-    }
-    return voiceEl;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var vQueue = [], vPlaying = false, vDrainCbs = [];
+  var audioUnlocked = false, pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+  }
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") > -1 ? chosen : chosen + ".mp3") : null;
   }
   function hubMuted(){
     try{
@@ -759,11 +700,17 @@
       return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
     }catch(e){ return false; }
   }
+  function fireDrain(){
+    if(vPlaying || vQueue.length) return;
+    var list = vDrainCbs.splice(0, vDrainCbs.length);
+    for(var i = 0; i < list.length; i++){ try{ list[i](); }catch(e){} }
+  }
   function clearVoice(){
     vQueue.length = 0;
+    vDrainCbs.length = 0;
     if(voiceEl){
       voiceEl.__govWait = false; voiceEl.__govNext = null;
-      try{ voiceEl.pause(); }catch(e){}
+      try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
     }
     vPlaying = false;
     hootBtn.classList.remove("talking");
@@ -771,55 +718,124 @@
   function vNext(){
     vPlaying = false;
     hootBtn.classList.remove("talking");
-    pumpVoice();
+    if(vQueue.length) pumpVoice();
+    else fireDrain();
   }
+  voiceEl.addEventListener("ended", vNext);
+  voiceEl.addEventListener("error", vNext);
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    audio();
+    try{
+      if(!vPlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              sayClips(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
   function pumpVoice(){
     if(vPlaying || dead) return;
     var file = vQueue.shift();
-    if(!file) return;
-    if(!soundOn || hubMuted()){ pumpVoice(); return; }
-    var el = getVoiceEl();
+    if(!file){ fireDrain(); return; }
+    if(!soundOn || hubMuted()){ vQueue.length = 0; fireDrain(); return; }
     vPlaying = true;
     hootBtn.classList.add("talking");
-    if(/hoot-giggle/i.test(file)){
-      window.__bellyArmed = true;
-      setTimeout(function(){ window.__bellyArmed = false; }, 600);
+    voiceEl.muted = false;
+    voiceEl.setAttribute("src", VBASE + file);
+    voiceEl.src = VBASE + file;
+    var pr = voiceEl.play();
+    if(pr && pr.catch){
+      pr.catch(function(){
+        vPlaying = false;
+        hootBtn.classList.remove("talking");
+        if(!audioUnlocked && !pendingBootClip){
+          pendingBootClip = [file].concat(vQueue.slice());
+          vQueue.length = 0;
+        }
+        fireDrain();
+      });
     }
-    el.setAttribute("src", VBASE + file);
-    el.src = VBASE + file;
-    var pr = el.play();
-    if(pr && pr.catch) pr.catch(function(){ vNext(); });
   }
   function sayClips(list, replace){
     if(replace) clearVoice();
     (list || []).forEach(function(f){ if(f) vQueue.push(f.indexOf(".mp3") > -1 ? f : f + ".mp3"); });
     pumpVoice();
   }
+  function afterVoice(fn, minMs, maxMs){
+    var done = false, minDone = false, voiceDone = (!vPlaying && !vQueue.length);
+    function check(){
+      if(done || dead) return;
+      if(minDone && voiceDone){ done = true; fn(); }
+    }
+    setTimeout(function(){ minDone = true; check(); }, minMs || 1350);
+    setTimeout(function(){ if(!done && !dead){ done = true; fn(); } }, maxMs || 3800);
+    if(!voiceDone){
+      vDrainCbs.push(function(){ voiceDone = true; check(); });
+    }
+  }
+  function playBootClip(clips){
+    if(dead || !soundOn || hubMuted() || !clips || !clips.length) return;
+    var first = clips[0].indexOf(".mp3") > -1 ? clips[0] : (clips[0] + ".mp3");
+    try{
+      if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+        if(window.parent.__hwPlayAfterIntro(VBASE + first)) return;
+      }
+    }catch(e){}
+    sayClips(clips, true);
+  }
   function childKey(){
     try{ return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null; }catch(e){ return null; }
   }
-  function hasVoice(id){
-    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
-  }
-  function speakPrompt(withHello){
-    var prefix = [];
-    if(withHello){
-      var ck = childKey();
-      prefix.push(ck === "kida" ? "hi-kida.mp3" : ck === "kidb" ? "hi-kidb.mp3" : "hoot-game-hello.mp3");
-    }
+  function speakPrompt(isBoot, withIntro){
     if(mode === "explore"){
-      sayClips(prefix.concat([hasVoice("hoot-home-explore") ? "hoot-home-explore.mp3" : "hoot-ready-go.mp3"]), true);
-    } else if(current){
-      if(mode === "knock" && hasVoice("hoot-home-knock-prompt")){
-        sayClips(prefix.concat(["hoot-home-knock-prompt.mp3", "homes-where-" + current.id + ".mp3"]), true);
+      var expClip = resolveClip("hoot-home-explore", "hoot-ready-go");
+      if(isBoot) playBootClip([expClip]);
+      else sayClips([expClip], true);
+      return;
+    }
+    if(!current) return;
+    var targetClip = "homes-where-" + current.id + ".mp3";
+    if(isBoot){
+      /* In iframe hub, parent already plays the welcome intro; chain directly into the exact target question! */
+      var inHub = false;
+      try{ inHub = !!(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"); }catch(e){}
+      if(inHub){
+        playBootClip([targetClip]);
       } else {
-        sayClips(prefix.concat(["homes-where-" + current.id + ".mp3"]), true);
+        var introClip = resolveClip("hoot-ani-intro", null);
+        sayClips(introClip ? [introClip, targetClip] : [targetClip], true);
       }
+      return;
+    }
+    if(mode === "knock" && hasHootClip("hoot-home-knock-prompt")){
+      sayClips(["hoot-home-knock-prompt.mp3", targetClip], true);
+    } else if(withIntro && hasHootClip("hoot-ani-intro")){
+      sayClips(["hoot-ani-intro.mp3", targetClip], true);
+    } else {
+      sayClips([targetClip], true);
     }
   }
   function speakCelebrate(pair, isFirstHalf){
     var customKey = "hoot-home-" + pair.id;
-    if(hasVoice(customKey)){
+    if(hasHootClip(customKey)){
       sayClips([customKey + ".mp3"], true);
       return;
     }
@@ -843,7 +859,7 @@
     var r = hootBtn.getBoundingClientRect();
     var cx = r.left + r.width / 2, cy = r.top + r.height * 0.36;
     var dx = Math.max(-6, Math.min(6, (x - cx) / 28));
-    var dy = Math.max(-5, Math.min(6, (y - cy) / 28));
+    var dy = Math.max(-5, Math.min(5, (y - cy) / 28));
     hootPupils.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
   }
   function resetEyes(){ hootPupils.setAttribute("transform", "translate(0,0)"); }
@@ -899,9 +915,10 @@
     }
   }
 
-  /* ================= GENTLE IDLE POINTER NUDGE ================= */
+  /* ================= GENTLE IDLE VISUAL CUE + ~9s SPOKEN REMINDER ================= */
   function clearIdle(){
-    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVisualTimer){ clearTimeout(idleVisualTimer); idleVisualTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
     Array.prototype.forEach.call(homesGrid.querySelectorAll(".home-btn"), function(b){
       b.classList.remove("nudge-glow");
       var h = b.querySelector(".nudge-hand"); if(h) h.remove();
@@ -916,12 +933,25 @@
   function armIdle(){
     clearIdle();
     if(state !== "playing" || dead || mode === "explore") return;
-    idleTimer = setTimeout(function(){
+    var visualMs = IS_RILEY ? 3800 : 5200;
+    idleVisualTimer = setTimeout(function(){
       if(state !== "playing" || dead || inputLock || !current) return;
       var match = homesGrid.querySelector('.home-btn[data-id="' + current.id + '"]');
       if(match){ match.classList.add("nudge-glow"); addHandTo(match); }
-      if(!vPlaying) speakPrompt(false);
-    }, 6400);
+    }, visualMs);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(state !== "playing" || dead || inputLock || !current) return;
+        idleVoiceReminded = true;
+        if(!vPlaying){
+          if(hasHootClip("hoot-ani-idle")){
+            sayClips(["hoot-ani-idle.mp3", "homes-where-" + current.id + ".mp3"], true);
+          } else {
+            sayClips(["homes-where-" + current.id + ".mp3"], true);
+          }
+        }
+      }, 9200);
+    }
   }
 
   /* ================= THOUGHT CLOUD & VILLAGE STRIP ================= */
@@ -972,7 +1002,7 @@
     }
     function findHomeUnder(x, y){
       var btns = homesGrid.querySelectorAll(".home-btn");
-      var best = null, bestD = 110;
+      var best = null, bestD = DROP_SNAP_PX;
       for(var i = 0; i < btns.length; i++){
         var r = btns[i].getBoundingClientRect();
         var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -985,6 +1015,7 @@
     heroAnimalBtn.addEventListener("pointerdown", function(e){
       if(state !== "playing" || mode !== "takehome" || inputLock || dead || !current) return;
       e.preventDefault();
+      unlockAudioOnce();
       audio();
       clearIdle();
       activeId = e.pointerId;
@@ -1027,7 +1058,7 @@
         sfxHabitat(current.sfx);
         var r = heroAnimalBtn.getBoundingClientRect();
         popBadge(r.left + r.width / 2, r.top + 10, current.fx);
-        speakPrompt(false);
+        speakPrompt(false, false);
         armIdle();
         return;
       }
@@ -1080,10 +1111,12 @@
     starCountEl.textContent = String(stars);
     starPill.classList.remove("bump"); void starPill.offsetWidth; starPill.classList.add("bump");
     sfxStar();
+    try{ if(window.parent && window.parent.hwAddStar) window.parent.hwAddStar(1); }catch(e){}
   }
 
   function handleHomeChoice(homeBtn, pickedPair, dropPt){
     if(state !== "playing" || inputLock || dead) return;
+    unlockAudioOnce();
     audio();
     clearIdle();
 
@@ -1098,7 +1131,7 @@
         burstSparkles(r.left + r.width / 2, r.top + 28, pickedPair.color, 12);
         popBadge(r.left + r.width / 2, r.top + 10, pickedPair.fx);
         var ck = "hoot-home-" + pickedPair.id;
-        if(hasVoice(ck)) sayClips([ck + ".mp3"], true);
+        if(hasHootClip(ck)) sayClips([ck + ".mp3"], true);
         else sayClips(["word-" + pickedPair.id + ".mp3", "word-home-" + pickedPair.homeSlug + ".mp3"], true);
         setTimeout(function(){ homeBtn.classList.remove("celebrating"); }, 1400);
       }, 280);
@@ -1123,9 +1156,9 @@
           inputLock = false;
           var match = homesGrid.querySelector('.home-btn[data-id="' + current.id + '"]');
           if(match){ match.classList.add("nudge-glow"); addHandTo(match); }
+          armIdle();
           return;
         }
-        /* Knock-knock RIGHT HOME -> door bursts open & animal pops out! */
         var kb = homeBtn.querySelector(".knock-badge"); if(kb) kb.remove();
         homeBtn.classList.add("has-resident", "celebrating");
         celebrateSuccess(homeBtn, kr.left + kr.width / 2, kr.top + 24);
@@ -1149,6 +1182,7 @@
         inputLock = false;
         var match = homesGrid.querySelector('.home-btn[data-id="' + current.id + '"]');
         if(match){ match.classList.add("nudge-glow"); addHandTo(match); }
+        armIdle();
       }, 450);
       return;
     }
@@ -1178,20 +1212,16 @@
     speakCelebrate(pairNow, homed.length % 2 === 1);
 
     var tok = ++roundTok;
-    setTimeout(function(){
+    /* Wait until Hoot finishes praising so zero mid-word cutoffs! */
+    afterVoice(function(){
       if(dead || tok !== roundTok) return;
       hootBtn.classList.remove("happy-jump");
       if(homed.length >= GOAL){
-        if(mode === "takehome"){
-          /* Exciting Bonus Finale: 2 Knock-Knock Surprise rounds before the win party! */
-          showWinCelebration();
-        } else {
-          showWinCelebration();
-        }
+        showWinCelebration();
       } else {
-        presentNextRound(false);
+        presentNextRound(false, false);
       }
-    }, 1750);
+    }, 1500, 3800);
   }
 
   function buildHomeCards(list, isKnock, isExplore){
@@ -1212,17 +1242,18 @@
     });
   }
 
-  function presentNextRound(withHello){
+  function presentNextRound(isBoot, withIntro){
     state = "playing";
     inputLock = false;
+    idleVoiceReminded = false;
 
     if(mode === "explore"){
       heroAnimalWrap.hidden = true;
-      exploreSet = shuffle(PAIRS).slice(0, 6);
+      exploreSet = shuffle(PAIRS).slice(0, EXPLORE_COUNT);
       buildHomeCards(exploreSet, false, true);
       renderCloud(true);
       renderVillageStrip();
-      speakPrompt(!!withHello);
+      speakPrompt(!!isBoot, !!withIntro);
       return;
     }
 
@@ -1238,17 +1269,18 @@
       heroAnimalWrap.hidden = true;
     }
 
-    var distractors = shuffle(PAIRS.filter(function(p){ return p.id !== current.id; })).slice(0, 2);
+    var distractors = shuffle(PAIRS.filter(function(p){ return p.id !== current.id; })).slice(0, CHOICE_COUNT - 1);
     buildHomeCards(shuffle([current].concat(distractors)), mode === "knock", false);
     renderCloud(true);
     renderVillageStrip();
-    speakPrompt(!!withHello);
+    speakPrompt(!!isBoot, !!withIntro);
     armIdle();
   }
 
   function showWinCelebration(){
     state = "won";
     inputLock = false;
+    clearIdle();
     showerConfetti();
     winFriends.innerHTML = "";
     homed.forEach(function(p){
@@ -1263,58 +1295,59 @@
       (function(el, ms){ setTimeout(function(){ el.classList.add("lit"); }, ms); })(stEls[i], 140 + i * 140);
     }
     winOverlay.hidden = false;
-    sayClips(["hoot-win-yay.mp3"], true);
+    sayClips([resolveClip("hoot-ani-win", "hoot-win-yay")], true);
   }
 
   /* ================= CONTROLS & LIVING SCENE TAPS ================= */
   function syncModePills(){
     Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
-      b.classList.toggle("on", b.getAttribute("data-mode") === mode);
+      var on = b.getAttribute("data-mode") === mode;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
     });
   }
-  function beginSession(selectedMode, withHello){
+  function beginSession(selectedMode, isBoot, withIntro){
     roundTok++;
     clearIdle();
     homed = [];
     queue = shuffle(PAIRS).slice(0, GOAL);
     hootBtn.classList.remove("happy-jump");
     winOverlay.hidden = true;
-    startVeil.hidden = true;
     mode = selectedMode || mode || "takehome";
     syncModePills();
-    presentNextRound(withHello);
+    presentNextRound(!!isBoot, !!withIntro);
   }
 
-  $("goTreehouseBtn").addEventListener("click", function(){
-    audio(); sfxPop();
-    beginSession("takehome", true);
-  });
   $("againBtn").addEventListener("click", function(){
+    unlockAudioOnce();
     audio(); sfxPop();
-    beginSession(mode === "explore" ? "takehome" : mode, false);
+    beginSession(mode === "explore" ? "takehome" : mode, false, false);
   });
   Array.prototype.forEach.call(document.querySelectorAll(".mode-pill"), function(b){
     b.addEventListener("click", function(){
+      unlockAudioOnce();
       audio(); sfxPop();
-      startVeil.hidden = true;
       winOverlay.hidden = true;
-      beginSession(b.getAttribute("data-mode"), false);
+      var nextMode = b.getAttribute("data-mode");
+      beginSession(nextMode, false, nextMode === "takehome");
     });
   });
 
   $("repeatBtn").addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
-    if(state === "playing") speakPrompt(false);
+    if(state === "playing") speakPrompt(false, false);
   });
   hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     audio();
     var r = hootBtn.getBoundingClientRect();
     popBadge(r.left + r.width / 2, r.top + 20, "🎵");
     hootBtn.classList.remove("happy-jump"); void hootBtn.offsetWidth; hootBtn.classList.add("happy-jump");
     setTimeout(function(){ hootBtn.classList.remove("happy-jump"); }, 900);
-    sayClips(["hoot-giggle.mp3"], true);
-    if(state === "playing" && mode !== "explore"){
-      setTimeout(function(){ if(state === "playing" && !vPlaying) speakPrompt(false); }, 1150);
+    sfxPop();
+    if(state === "playing"){
+      speakPrompt(false, false);
     }
   });
 
@@ -1323,22 +1356,22 @@
     $("sndOnSvg").style.display = soundOn ? "block" : "none";
     $("sndOffSvg").style.display = soundOn ? "none" : "block";
     if(!soundOn) clearVoice();
-    else { audio(); sfxPop(); }
+    else { unlockAudioOnce(); audio(); sfxPop(); if(state === "playing") speakPrompt(false, false); }
   });
 
   $("sunBtn").addEventListener("click", function(){
-    audio();
+    unlockAudioOnce(); audio();
     $("sunBtn").classList.remove("zing"); void $("sunBtn").offsetWidth; $("sunBtn").classList.add("zing");
     sfxStar();
   });
   $("bflyBtn").addEventListener("click", function(){
-    audio(); sfxPop();
+    unlockAudioOnce(); audio(); sfxPop();
     var r = $("bflyBtn").getBoundingClientRect();
     burstSparkles(r.left + 32, r.top + 32, "#60a5fa", 8);
   });
   Array.prototype.forEach.call(document.querySelectorAll(".cloud"), function(cl){
     cl.addEventListener("click", function(){
-      audio(); sfxPop();
+      unlockAudioOnce(); audio(); sfxPop();
       cl.classList.remove("puff"); void cl.offsetWidth; cl.classList.add("puff");
       setTimeout(function(){ cl.classList.remove("puff"); }, 400);
     });
@@ -1347,19 +1380,16 @@
   window.addEventListener("pagehide", function(){ dead = true; clearIdle(); clearVoice(); });
   document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(); });
 
-  /* Pre-populate lush preview scene behind the start treehouse! */
-  current = PAIRS[1]; /* Frog */
-  heroAnimalBtn.innerHTML = current.animal;
-  buildHomeCards([PAIRS[0], PAIRS[1], PAIRS[2]], false, false);
-  renderCloud(false);
-  renderVillageStrip();
+  /* Boot directly into lush Pixar woodland play (zero blocking start veil!) */
+  beginSession("takehome", true, true);
 
   window.__animalsGame = {
     snapshot: function(){
       return {
-        state: state, mode: mode, stars: stars,
+        state: state, mode: mode, stars: stars, isRiley: IS_RILEY,
         current: current ? current.id : null,
         homedCount: homed.length, goal: GOAL,
+        choiceCount: homesGrid.querySelectorAll(".home-btn").length,
         winShown: !winOverlay.hidden, voicePlaying: vPlaying
       };
     }
@@ -1367,7 +1397,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e131">
-<script src="js/hoot-game-tail.js?v=llprev3e131"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

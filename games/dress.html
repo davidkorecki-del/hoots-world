@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="dress"; window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e141"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -64,14 +64,38 @@
     transition:background .45s ease;
   }
 
+  /* Pixar Storybook Dressing Room Backdrop (with warm gradient fallback) */
+  #worldBg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      url("assets/worlds3d/bg_dress.jpg"),
+      radial-gradient(ellipse 75% 58% at 50% 6%, rgba(255,250,214,.92) 0%, rgba(255,244,210,0) 68%),
+      linear-gradient(180deg, #fff6e6 0%, #ffe9e1 56%, #f9d9d5 100%);
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    transition:filter .45s ease;
+  }
+  #worldBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%, rgba(255,250,242,.12) 25%, rgba(74,34,48,.22) 100%);
+  }
+  #stage.parade #worldBg{ filter:brightness(.55) saturate(1.15); }
+
   /* Sunbeam glow from top of dressing room */
   #sunbeams{
     position:absolute;
     inset:0;
     pointer-events:none;
-    z-index:0;
+    z-index:1;
     background:
-      conic-gradient(from 156deg at 50% -10%, transparent 0deg, rgba(255,245,195,.36) 14deg, transparent 28deg, rgba(255,235,175,.28) 42deg, transparent 58deg);
+      conic-gradient(from 156deg at 50% -10%, transparent 0deg, rgba(255,245,195,.28) 14deg, transparent 28deg, rgba(255,235,175,.22) 42deg, transparent 58deg);
     transition:opacity .45s ease;
   }
 
@@ -192,6 +216,11 @@
     align-items:center;
     gap:8px;
   }
+  .hud-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
   .round-btn{
     width:64px;
     height:64px;
@@ -210,6 +239,15 @@
   }
   .round-btn:active{ transform:translateY(3px) scale(.93); }
   .round-btn svg{ width:30px; height:30px; display:block; }
+  #hootGuideBtn{
+    background:linear-gradient(180deg, #fff8d6 0%, #ffe08a 100%);
+    box-shadow:0 5px 0 rgba(168,108,16,.28), 0 8px 16px rgba(120,66,46,.18);
+  }
+  #hootGuideBtn svg{ width:46px; height:46px; }
+  #hootGuideBtn.talking{ animation:hootBtnBob .24s ease-in-out infinite alternate; }
+  #hootGuideBtn.cheer{ animation:hootBtnCheer .52s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes hootBtnBob{ from{ transform:translateY(0) scale(1); } to{ transform:translateY(-4px) scale(1.06); } }
+  @keyframes hootBtnCheer{ 0%,100%{ transform:scale(1); } 45%{ transform:scale(1.16) rotate(-7deg); } }
 
   #starBank{
     height:64px;
@@ -621,14 +659,14 @@
     min-width:360px;
     max-width:470px;
     min-height:0;
-    background:linear-gradient(180deg, #fffdf8 0%, #fff2e0 100%);
+    background:linear-gradient(180deg, rgba(255,253,248,.94) 0%, rgba(255,242,224,.94) 100%);
     border:5px solid #fff;
     border-radius:30px;
     padding:14px;
     box-shadow:
       inset 0 2px 0 rgba(255,255,255,.9),
       0 8px 0 rgba(168,112,68,.24),
-      0 16px 32px rgba(92,50,42,.15);
+      0 16px 32px rgba(92,50,42,.22);
     display:flex;
     flex-direction:column;
     gap:12px;
@@ -763,6 +801,34 @@
     border:2.5px solid #fff;
     box-shadow:0 3px 6px rgba(32,112,44,.3);
   }
+  .tile.hint-glow{
+    border-color:#ffc93c;
+    animation:tileGlow 1.15s ease-in-out infinite alternate;
+  }
+  @keyframes tileGlow{
+    from{ box-shadow:0 6px 0 rgba(201,134,0,.45), 0 0 0 3px rgba(255,216,77,.55), 0 8px 18px rgba(255,193,7,.3); transform:scale(1); }
+    to{ box-shadow:0 6px 0 rgba(201,134,0,.6), 0 0 0 7px rgba(255,216,77,.95), 0 0 26px rgba(255,216,77,.85); transform:scale(1.04); }
+  }
+  #paradeBtn.hint-ready{
+    animation:paradeBtnPulse .9s ease-in-out infinite alternate;
+  }
+  #mirrorFrame.drop-hot{
+    box-shadow:
+      inset 0 2px 6px rgba(255,255,255,.95),
+      0 10px 0 #a3620b,
+      0 0 0 6px rgba(255,220,90,.9),
+      0 0 36px rgba(255,216,77,.92);
+  }
+  #dragGhost{
+    position:fixed;
+    z-index:40;
+    width:92px;
+    height:84px;
+    transform:translate(-50%, -50%) scale(1.12);
+    pointer-events:none;
+    filter:drop-shadow(0 10px 14px rgba(43,35,66,.35));
+  }
+  #dragGhost svg{ width:100%; height:100%; display:block; overflow:visible; }
 
   /* ================= GLOBAL CONFETTI LAYER ================= */
   #confettiLayer{
@@ -786,7 +852,7 @@
       grid-template-rows:auto auto;
       gap:6px;
     }
-    #soundBtn{ grid-column:1; grid-row:1; }
+    .hud-left{ grid-column:1; grid-row:1; }
     #starBank{ grid-column:3; grid-row:1; }
     #charRow{
       grid-column:1 / -1;
@@ -834,13 +900,14 @@
       max-width:none;
       width:100%;
       border-radius:22px;
-      padding:7px;
+      padding:6px;
       gap:6px;
       border-width:3px;
       box-shadow:0 5px 0 rgba(168,112,68,.22), 0 8px 16px rgba(92,50,42,.12);
     }
-    #catRow{ gap:5px; }
+    #catRow{ gap:4px; }
     .cat-btn{
+      min-width:64px;
       height:64px;
       min-height:64px;
       border-radius:16px;
@@ -889,6 +956,7 @@
 </head>
 <body>
 <div id="stage">
+  <div id="worldBg" aria-hidden="true"></div>
   <div id="sunbeams" aria-hidden="true"></div>
   <div class="room-valance" aria-hidden="true"></div>
   <div class="room-curtain left" aria-hidden="true"><div class="curtain-tie"></div></div>
@@ -900,18 +968,33 @@
   </div>
 
   <header id="topHeader">
-    <button class="round-btn" id="soundBtn" type="button" aria-label="Sound on">
-      <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#2b2342" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#2b2342"/>
-        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-        <path d="M18.4 6a9 9 0 0 1 0 12"/>
-      </svg>
-      <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#2b2342" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="display:none" aria-hidden="true">
-        <path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe5f2" stroke="#2b2342"/>
-        <line x1="16" y1="9" x2="22" y2="15"/>
-        <line x1="22" y1="9" x2="16" y2="15"/>
-      </svg>
-    </button>
+    <div class="hud-left">
+      <button class="round-btn" id="soundBtn" type="button" aria-label="Sound on">
+        <svg id="soundOnIc" viewBox="0 0 24 24" fill="none" stroke="#2b2342" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4z" fill="#ffc93c" stroke="#2b2342"/>
+          <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+          <path d="M18.4 6a9 9 0 0 1 0 12"/>
+        </svg>
+        <svg id="soundOffIc" viewBox="0 0 24 24" fill="none" stroke="#2b2342" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="display:none" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4z" fill="#dbe5f2" stroke="#2b2342"/>
+          <line x1="16" y1="9" x2="22" y2="15"/>
+          <line x1="22" y1="9" x2="16" y2="15"/>
+        </svg>
+      </button>
+      <button class="round-btn" id="hootGuideBtn" type="button" aria-label="Tap Hoot to hear guidance">
+        <svg viewBox="0 0 60 60" aria-hidden="true">
+          <path d="M12 16 Q8 4 19 8 Z M48 16 Q52 4 41 8 Z" fill="#8a5a33"/>
+          <circle cx="30" cy="31" r="24" fill="#a06a3b"/>
+          <ellipse cx="21" cy="30" rx="8" ry="9" fill="#fdeed3"/>
+          <ellipse cx="39" cy="30" rx="8" ry="9" fill="#fdeed3"/>
+          <circle cx="21" cy="30" r="3.6" fill="#22304a"/>
+          <circle cx="39" cy="30" r="3.6" fill="#22304a"/>
+          <circle cx="22.4" cy="28.6" r="1.3" fill="#fff"/>
+          <circle cx="40.4" cy="28.6" r="1.3" fill="#fff"/>
+          <path d="M25 38 L30 44 L35 38 Z" fill="#ff9f1c"/>
+        </svg>
+      </button>
+    </div>
 
     <div id="charRow" role="group" aria-label="Choose a friend"></div>
 
@@ -970,6 +1053,7 @@
     </aside>
   </main>
 
+  <div id="dragGhost" hidden aria-hidden="true"></div>
   <div id="confettiLayer" aria-hidden="true"></div>
 </div>
 
@@ -1126,16 +1210,16 @@ function charFaceSVG(id){
 
 /* ================= WARDROBE DATA & STUDIO VOICE MAP ================= */
 var CATS = [
-  { id:"hats",      icon:"\uD83C\uDFA9", label:"Hats",      slot:"hat" },
-  { id:"outfits",   icon:"\uD83E\uDDB8", label:"Outfits",   slot:"outfit" },
-  { id:"face",      icon:"\uD83D\uDD76\uFE0F", label:"Face", slot:"face" },
-  { id:"shoes",     icon:"\uD83D\uDC62", label:"Shoes",     slot:"shoes" },
-  { id:"treasures", icon:"\u2728",       label:"Treasures", slot:"treasure" }
+  { id:"hats",      icon:"\uD83C\uDFA9", label:"Hats",      slot:"hat",      clip:"word-hat.mp3" },
+  { id:"outfits",   icon:"\uD83E\uDDB8", label:"Outfits",   slot:"outfit",   clip:"word-outfit.mp3" },
+  { id:"face",      icon:"\uD83D\uDD76\uFE0F", label:"Face", slot:"face",    clip:"word-glasses.mp3" },
+  { id:"shoes",     icon:"\uD83D\uDC62", label:"Shoes",     slot:"shoes",    clip:"word-shoes.mp3" },
+  { id:"treasures", icon:"\u2728",       label:"Treasures", slot:"treasure", clip:"word-treasure.mp3" }
 ];
 var TRUCK_CATS = [
-  { id:"paint", icon:"\uD83C\uDFA8", label:"Paint" },
-  { id:"tires", icon:"\uD83D\uDEDE", label:"Tires" },
-  { id:"signs", icon:"\u26A1",       label:"Signs" }
+  { id:"paint", icon:"\uD83C\uDFA8", label:"Paint", clip:null },
+  { id:"tires", icon:"\uD83D\uDEDE", label:"Tires", clip:null },
+  { id:"signs", icon:"\u26A1",       label:"Signs", clip:"word-star.mp3" }
 ];
 
 var ITEMS = [
@@ -1222,13 +1306,13 @@ var TRUCK_ITEMS = [
     tile:'<ellipse cx="30" cy="25" rx="21" ry="17" fill="#8b6fd8"/><ellipse cx="23" cy="18" rx="6" ry="4" fill="#fff" opacity=".35"/>' },
 
   /* Tires */
-  { id:"tire-classic", cat:"tires", name:"Classic Tires", clip:null, tire:"classic",
+  { id:"tire-classic", cat:"tires", name:"Classic Tires", clip:"hoot-nice-2.mp3", tire:"classic",
     tile:'<circle cx="30" cy="24" r="18" fill="#2b2b38"/><circle cx="30" cy="24" r="8" fill="#dbe7f2" stroke="#7c8fa6" stroke-width="2"/>' },
-  { id:"tire-big",     cat:"tires", name:"Big Tires",     clip:null, tire:"big",
+  { id:"tire-big",     cat:"tires", name:"Big Tires",     clip:"hoot-super.mp3",  tire:"big",
     tile:'<circle cx="30" cy="24" r="22" fill="#2b2b38"/><circle cx="30" cy="24" r="9" fill="#dbe7f2" stroke="#7c8fa6" stroke-width="2"/>' },
-  { id:"tire-rainbow", cat:"tires", name:"Rainbow Hubs",  clip:null, tire:"rainbow",
+  { id:"tire-rainbow", cat:"tires", name:"Rainbow Hubs",  clip:"hoot-yay-2.mp3",  tire:"rainbow",
     tile:'<circle cx="30" cy="24" r="18" fill="#2b2b38"/><circle cx="30" cy="24" r="12" fill="none" stroke="#38d2c6" stroke-width="3"/><circle cx="30" cy="24" r="7" fill="#ff8fab"/>' },
-  { id:"tire-star",    cat:"tires", name:"Star Hubs",     clip:null, tire:"star",
+  { id:"tire-star",    cat:"tires", name:"Star Hubs",     clip:"word-star.mp3",   tire:"star",
     tile:'<circle cx="30" cy="24" r="18" fill="#2b2b38"/><circle cx="30" cy="24" r="9.5" fill="#ffc93c"/><path d="M30 17 l2 4.4 4.8.7 -3.5 3.4.8 4.8 -4.1 -2.2 -4.1 2.2.8 -4.8 -3.5 -3.4 4.8 -.7Z" fill="#fff"/>' },
 
   /* Signs */
@@ -1236,13 +1320,18 @@ var TRUCK_ITEMS = [
     tile:'<path d="M30 6 l6.5 13.2 14.5 2.1 -10.5 10.2 2.5 14.5 L30 39.2 17 46 19.5 31.5 9 21.3 23.5 19.2Z" fill="#ffc93c" stroke="#d48c19" stroke-width="1.8" stroke-linejoin="round"/>' },
   { id:"sign-heart", cat:"signs", name:"Heart Sign",  clip:"name-shape-heart.mp3", sign:"heart",
     tile:'<path d="M30 42 C13 29 11 11 23.5 11 C28 11 30 15.5 30 15.5 C30 15.5 32 11 36.5 11 C49 11 47 29 30 42Z" fill="#ff6b93" stroke="#d94570" stroke-width="1.8"/>' },
-  { id:"sign-bolt",  cat:"signs", name:"Bolt Sign",   clip:null,                   sign:"bolt",
+  { id:"sign-bolt",  cat:"signs", name:"Bolt Sign",   clip:"hoot-super.mp3",       sign:"bolt",
     tile:'<path d="M34 5 L15 28 L27 28 L21 44 L44 20 L31 20Z" fill="#ffd93b" stroke="#d48c19" stroke-width="2" stroke-linejoin="round"/>' },
-  { id:"sign-smile", cat:"signs", name:"Smiley Sign", clip:null,                   sign:"smile",
+  { id:"sign-smile", cat:"signs", name:"Smiley Sign", clip:"hoot-great-job.mp3",   sign:"smile",
     tile:'<circle cx="30" cy="24" r="18" fill="#ffd93b" stroke="#d48c19" stroke-width="2"/><circle cx="23" cy="20" r="2.8" fill="#22304a"/><circle cx="37" cy="20" r="2.8" fill="#22304a"/><path d="M21 29 Q30 37 39 29" stroke="#22304a" stroke-width="3" fill="none" stroke-linecap="round"/>' }
 ];
 
 /* ================= STATE ================= */
+var IS_RILEY = false;
+try{
+  IS_RILEY = new URLSearchParams(window.location.search || "").get("kid") === "kidb";
+}catch(e){}
+
 var character = "hoot";
 var category = "hats";
 var equipped = { hat:null, outfit:null, face:null, shoes:null, treasure:null };
@@ -1252,9 +1341,14 @@ var paradeActive = false;
 var paradeTimer = null;
 var soundOn = true;
 var dead = false;
-var paradeCheerIdx = 0;
-var shuffleCheerIdx = 0;
+var equipCount = 0;
+var praiseIdx = 0;
 var lastGiggleAt = 0;
+var idleVisualTimer = null;
+var idleVoiceTimer = null;
+var idleVoiceReminded = false;
+var dragState = null;
+var suppressNextClick = 0;
 
 /* ================= DOM REFS ================= */
 function $(id){ return document.getElementById(id); }
@@ -1263,8 +1357,10 @@ var charRow      = $("charRow");
 var catRow       = $("catRow");
 var tilesEl      = $("tiles");
 var figureBtn    = $("figureBtn");
+var mirrorFrame  = $("mirrorFrame");
 var mirrorGlass  = $("mirrorGlass");
 var fxLayer      = $("fxLayer");
+var dragGhost    = $("dragGhost");
 var confettiEl   = $("confettiLayer");
 var starBank     = $("starBank");
 var starCountEl  = $("starCount");
@@ -1274,6 +1370,7 @@ var resetBtn     = $("resetBtn");
 var soundBtn     = $("soundBtn");
 var soundOnIc    = $("soundOnIc");
 var soundOffIc   = $("soundOffIc");
+var hootGuideBtn = $("hootGuideBtn");
 
 /* ================= DECORATIVE AMBIENCE & MIRROR BULBS ================= */
 (function buildDecor(){
@@ -1370,9 +1467,15 @@ function honkSound(){
   tone(494, 488, 0.2, "triangle", 0.09, 0.19);
 }
 
-/* ================= REAL STUDIO HOOT VOICE (NO BROWSER TTS) ================= */
+/* ================= REAL STUDIO HOOT VOICE (HOOT_HAVE-GATED, ZERO TTS) ================= */
 var VBASE = "assets/voice/";
-var voiceEl = null;
+var PRAISE_CLIPS = ["hoot-great-job.mp3", "hoot-super.mp3", "hoot-yay-2.mp3", "hoot-amazing.mp3"];
+var voiceEl = new Audio();
+voiceEl.preload = "auto";
+var voiceQueue = [];
+var voicePlaying = false;
+var audioUnlocked = false;
+var pendingBootClip = null;
 
 function hubQuiet(){
   try{
@@ -1382,42 +1485,186 @@ function hubQuiet(){
     return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
   }catch(e){ return false; }
 }
-function hasClip(file){
+/* Strict gate for NEW custom hoot-drs-* clips: ONLY true when listed in parent HOOT_HAVE */
+function hasHootClip(id){
+  var base = String(id || "").replace(/\.mp3$/i, "");
+  try{
+    if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[base]) return true;
+  }catch(e){}
+  return false;
+}
+/* Verified shipped clips (word-*, name-*, hoot-welcome, etc.) */
+function hasExistingClip(file){
   var base = String(file || "").replace(/\.mp3$/i, "");
   try{
     var H = window.parent && window.parent.HOOT_HAVE;
-    if(H && Object.keys(H).length) return !!H[base];
+    if(H && Object.keys(H).length && !/^(hoot-welcome|hoot-giggle|hoot-great-job|hoot-amazing|hoot-super|hoot-yay-2|hoot-nice-2|hoot-tap-big-btn|hoot-win-yay|name-color-|name-shape-)/.test(base)){
+      return !!H[base];
+    }
   }catch(e){}
   return true;
 }
+function resolveDressClip(customId, fallbackId){
+  var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+  if(!chosen) return null;
+  return /\.mp3$/i.test(chosen) ? chosen : (chosen + ".mp3");
+}
+
+function unlockAudioOnce(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+  audio();
+  try{
+    if(!voicePlaying){
+      voiceEl.muted = true;
+      var p = voiceEl.play();
+      if(p && p.then){
+        p.then(function(){
+          voiceEl.pause();
+          voiceEl.currentTime = 0;
+          voiceEl.muted = false;
+          if(pendingBootClip){
+            var c = pendingBootClip;
+            pendingBootClip = null;
+            enqueueVoice(c, { interrupt:true });
+          }
+        }).catch(function(){ voiceEl.muted = false; });
+      } else {
+        voiceEl.muted = false;
+      }
+    }
+  }catch(e){ voiceEl.muted = false; }
+}
+stageEl.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+
 function stopVoice(){
+  voiceQueue.length = 0;
+  voicePlaying = false;
+  if(hootGuideBtn) hootGuideBtn.classList.remove("talking");
   if(voiceEl){
+    voiceEl.__hwT = 0;
+    voiceEl.__hwRetry = 1;
     voiceEl.__govNext = null;
     voiceEl.__govWait = false;
-    try{ voiceEl.pause(); }catch(e){}
+    try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
   }
   try{ if(window.__govStopAll) window.__govStopAll(); }catch(e){}
 }
-function playVoice(file, opts){
-  if(dead || !file || !soundOn || hubQuiet()) return;
-  if(!hasClip(file)) return;
-  stopVoice();
-  if(!voiceEl){
-    voiceEl = new Audio();
-    voiceEl.preload = "auto";
+function vNext(){
+  if(!voicePlaying){ pumpVoice(); return; }
+  voicePlaying = false;
+  if(hootGuideBtn) hootGuideBtn.classList.remove("talking");
+  pumpVoice();
+}
+voiceEl.addEventListener("ended", function(){
+  if(voiceEl.__hwT && Date.now() - voiceEl.__hwT < 350){
+    if(!voiceEl.paused && !voiceEl.ended) return;
+    if(!voiceEl.__hwRetry){
+      voiceEl.__hwRetry = 1;
+      try{ voiceEl.currentTime = 0; }catch(x){}
+      var p = voiceEl.play();
+      if(p && p.catch) p.catch(vNext);
+      return;
+    }
   }
-  var isGiggle = !!(opts && opts.giggle);
+  vNext();
+});
+voiceEl.addEventListener("error", vNext);
+
+function pumpVoice(){
+  if(dead || voicePlaying || !voiceQueue.length) return;
+  if(!soundOn || hubQuiet()){ voiceQueue.length = 0; return; }
+  var item = voiceQueue.shift();
+  if(!item || !item.file){ pumpVoice(); return; }
+  voicePlaying = true;
+  if(hootGuideBtn) hootGuideBtn.classList.add("talking");
+  voiceEl.muted = false;
   voiceEl.__hwT = Date.now();
   voiceEl.__hwRetry = 0;
-  voiceEl.src = VBASE + file;
+  voiceEl.src = VBASE + item.file;
   var p;
-  if(isGiggle) window.__bellyArmed = true;
-  try{
-    p = voiceEl.play();
-  } finally {
-    if(isGiggle) window.__bellyArmed = false;
+  if(item.giggle) window.__bellyArmed = true;
+  try{ p = voiceEl.play(); }
+  finally{ if(item.giggle) setTimeout(function(){ window.__bellyArmed = false; }, 140); }
+  if(p && p.catch){
+    p.catch(function(){
+      voicePlaying = false;
+      if(hootGuideBtn) hootGuideBtn.classList.remove("talking");
+      if(!audioUnlocked && !pendingBootClip && item.boot) pendingBootClip = item.file;
+      pumpVoice();
+    });
   }
-  if(p && p.catch) p.catch(function(){});
+}
+function enqueueVoice(file, opts){
+  if(dead || !file || !soundOn || hubQuiet()) return;
+  if(!/\.mp3$/i.test(file)) file = file + ".mp3";
+  if(opts && opts.interrupt) stopVoice();
+  voiceQueue.push({ file:file, giggle:!!(opts && opts.giggle), boot:!!(opts && opts.boot) });
+  pumpVoice();
+}
+function playDressGuide(customId, fallbackId, isBoot){
+  var clip = resolveDressClip(customId, fallbackId);
+  if(!clip || dead || !soundOn || hubQuiet()) return;
+  if(isBoot){
+    try{
+      if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+        if(window.parent.__hwPlayAfterIntro(VBASE + clip)) return;
+      }
+    }catch(e){}
+  }
+  enqueueVoice(clip, { interrupt:true, boot:!!isBoot });
+}
+function dressedCount(){
+  if(isTruck()) return 3;
+  var n = 0;
+  Object.keys(equipped).forEach(function(k){ if(equipped[k]) n++; });
+  return n;
+}
+function speakCurrentGuide(isBoot){
+  if(!isBoot && dressedCount() >= (IS_RILEY ? 2 : 3)){
+    playDressGuide("hoot-drs-parade", "hoot-amazing", false);
+  } else {
+    playDressGuide("hoot-drs-welcome", "hoot-welcome", !!isBoot);
+  }
+}
+function hootBtnCheer(){
+  if(!hootGuideBtn) return;
+  hootGuideBtn.classList.remove("cheer");
+  void hootGuideBtn.offsetWidth;
+  hootGuideBtn.classList.add("cheer");
+}
+
+/* ================= IDLE VISUAL CUE & ~9.5s SPOKEN REMINDER ================= */
+function clearIdleHints(){
+  if(idleVisualTimer){ clearTimeout(idleVisualTimer); idleVisualTimer = null; }
+  if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
+  Array.prototype.forEach.call(tilesEl.querySelectorAll(".tile"), function(t){ t.classList.remove("hint-glow"); });
+}
+function updateParadeReadyCue(){
+  var ready = !paradeActive && dressedCount() >= (IS_RILEY ? 2 : 3);
+  paradeBtn.classList.toggle("hint-ready", ready);
+}
+function armIdle(isBoot){
+  clearIdleHints();
+  if(dead || paradeActive) return;
+  var vDelay = isBoot ? (IS_RILEY ? 2200 : 3400) : (IS_RILEY ? 2800 : 4500);
+  idleVisualTimer = setTimeout(function(){
+    if(dead || paradeActive) return;
+    var firstOff = tilesEl.querySelector(".tile:not(.on)") || tilesEl.querySelector(".tile");
+    if(firstOff) firstOff.classList.add("hint-glow");
+  }, vDelay);
+  if(!idleVoiceReminded){
+    idleVoiceTimer = setTimeout(function(){
+      if(dead || paradeActive) return;
+      idleVoiceReminded = true;
+      playDressGuide("hoot-drs-idle", "hoot-tap-big-btn", false);
+    }, 9500);
+  }
+}
+function noteInteraction(){
+  idleVoiceReminded = false;
+  clearIdleHints();
+  armIdle(false);
 }
 
 /* ================= HELPERS ================= */
@@ -1541,6 +1788,7 @@ function renderChars(){
     b.setAttribute("aria-pressed", c.id === character ? "true" : "false");
     b.innerHTML = '<svg viewBox="0 0 60 60" aria-hidden="true">' + charFaceSVG(c.id) + '</svg>';
     b.addEventListener("click", function(){
+      unlockAudioOnce();
       audio();
       if(paradeActive) endParade();
       character = c.id;
@@ -1552,6 +1800,7 @@ function renderChars(){
       renderAll();
       pulseFigure(isTruck() ? "truck-honk" : "equip-pop", 420);
       sparkleBurst(7);
+      noteInteraction();
     });
     charRow.appendChild(b);
   });
@@ -1567,11 +1816,14 @@ function renderCats(){
     b.setAttribute("aria-pressed", c.id === category ? "true" : "false");
     b.innerHTML = '<span class="cat-ic" aria-hidden="true">' + c.icon + '</span>';
     b.addEventListener("click", function(){
+      unlockAudioOnce();
       audio();
       category = c.id;
       popSound();
       renderCats();
       renderTiles();
+      if(c.clip && hasExistingClip(c.clip)) enqueueVoice(c.clip, { interrupt:true });
+      noteInteraction();
     });
     catRow.appendChild(b);
   });
@@ -1588,7 +1840,64 @@ function renderTiles(){
     b.setAttribute("aria-label", it.name);
     b.setAttribute("aria-pressed", on ? "true" : "false");
     b.innerHTML = '<svg viewBox="0 0 60 48" aria-hidden="true">' + it.tile + '</svg>';
-    b.addEventListener("click", function(){ onItemTap(it); });
+
+    /* Support BOTH instant single-tap AND toddler drag-and-drop onto the mirror! */
+    b.addEventListener("pointerdown", function(e){
+      if(dead) return;
+      unlockAudioOnce();
+      audio();
+      dragState = {
+        item: it,
+        el: b,
+        pid: e.pointerId,
+        sx: e.clientX,
+        sy: e.clientY,
+        moved: false
+      };
+      try{ b.setPointerCapture(e.pointerId); }catch(err){}
+    });
+    b.addEventListener("pointermove", function(e){
+      if(!dragState || dragState.el !== b) return;
+      var dist = Math.hypot(e.clientX - dragState.sx, e.clientY - dragState.sy);
+      if(!dragState.moved && dist > 14){
+        dragState.moved = true;
+        dragGhost.innerHTML = '<svg viewBox="0 0 60 48" aria-hidden="true">' + it.tile + '</svg>';
+        dragGhost.hidden = false;
+        popSound();
+      }
+      if(dragState.moved){
+        dragGhost.style.left = e.clientX + "px";
+        dragGhost.style.top = e.clientY + "px";
+        var mr = mirrorFrame.getBoundingClientRect();
+        var over = e.clientX >= mr.left - 24 && e.clientX <= mr.right + 24 && e.clientY >= mr.top - 24 && e.clientY <= mr.bottom + 24;
+        mirrorFrame.classList.toggle("drop-hot", over);
+      }
+    });
+    function finishDrag(e){
+      if(!dragState || dragState.el !== b) return;
+      var ds = dragState;
+      dragState = null;
+      dragGhost.hidden = true;
+      mirrorFrame.classList.remove("drop-hot");
+      try{ b.releasePointerCapture(ds.pid); }catch(err){}
+      if(ds.moved){
+        suppressNextClick = Date.now();
+        var mr = mirrorFrame.getBoundingClientRect();
+        var over = e.clientX >= mr.left - 36 && e.clientX <= mr.right + 36 && e.clientY >= mr.top - 36 && e.clientY <= mr.bottom + 36;
+        if(over) onItemTap(ds.item, true);
+      }
+    }
+    b.addEventListener("pointerup", finishDrag);
+    b.addEventListener("pointercancel", function(){
+      if(!dragState || dragState.el !== b) return;
+      dragState = null;
+      dragGhost.hidden = true;
+      mirrorFrame.classList.remove("drop-hot");
+    });
+    b.addEventListener("click", function(){
+      if(Date.now() - suppressNextClick < 320) return;
+      onItemTap(it, false);
+    });
     tilesEl.appendChild(b);
   });
 }
@@ -1598,10 +1907,12 @@ function renderAll(){
   renderCats();
   renderTiles();
   renderFigure();
+  updateParadeReadyCue();
 }
 
 /* ================= INTERACTIONS ================= */
-function onItemTap(it){
+function onItemTap(it, forceEquip){
+  unlockAudioOnce();
   audio();
   if(isTruck()){
     if(it.paint){ truckState.paint = it.paint; truckState.paintId = it.id; }
@@ -1612,34 +1923,48 @@ function onItemTap(it){
     renderTiles();
     pulseFigure("truck-honk", 440);
     sparkleBurst(10);
-    if(it.clip) playVoice(it.clip);
+    if(it.clip && hasExistingClip(it.clip)) enqueueVoice(it.clip, { interrupt:true });
+    noteInteraction();
     return;
   }
 
-  /* Non-truck friends: tap to equip, tap again to toggle off */
-  if(equipped[it.slot] === it.id){
+  /* Non-truck friends: tap to equip, tap again to toggle off (drag onto mirror always equips!) */
+  if(!forceEquip && equipped[it.slot] === it.id){
     equipped[it.slot] = null;
     unequipSound();
     renderFigure();
     renderCats();
     renderTiles();
+    updateParadeReadyCue();
     pulseFigure("equip-pop", 340);
+    noteInteraction();
     return;
   }
 
   equipped[it.slot] = it.id;
+  equipCount++;
   equipSound();
   renderFigure();
   renderCats();
   renderTiles();
+  updateParadeReadyCue();
   pulseFigure("equip-pop", 420);
   sparkleBurst(11);
-  if(it.clip) playVoice(it.clip);
+  if(it.clip && hasExistingClip(it.clip)){
+    enqueueVoice(it.clip, { interrupt:true });
+    if(equipCount % 2 === 0){
+      var pr = PRAISE_CLIPS[(praiseIdx++) % PRAISE_CLIPS.length];
+      enqueueVoice(pr, { interrupt:false });
+    }
+  }
+  noteInteraction();
 }
 
 /* Tap character directly on stage (giggle ONLY for Hoot with transient __bellyArmed) */
 figureBtn.addEventListener("click", function(){
+  unlockAudioOnce();
   audio();
+  noteInteraction();
   if(isTruck()){
     honkSound();
     pulseFigure("truck-honk", 460);
@@ -1652,7 +1977,10 @@ figureBtn.addEventListener("click", function(){
     sparkleBurst(10, ["#ffc93c", "#ff8fab", "#fff176"]);
     if(now - lastGiggleAt > 1200){
       lastGiggleAt = now;
-      playVoice("hoot-giggle.mp3", { giggle:true });
+      enqueueVoice("hoot-giggle.mp3", { interrupt:true, giggle:true });
+      if(dressedCount() === 0){
+        enqueueVoice(resolveDressClip("hoot-drs-idle", "hoot-tap-big-btn"), { interrupt:false });
+      }
     } else {
       equipSound();
     }
@@ -1663,8 +1991,19 @@ figureBtn.addEventListener("click", function(){
   sparkleBurst(9);
 });
 
+/* Tap Hoot Guide button in HUD -> repeats spoken Hoot guidance anytime! */
+hootGuideBtn.addEventListener("click", function(){
+  unlockAudioOnce();
+  audio();
+  hootBtnCheer();
+  popSound();
+  noteInteraction();
+  speakCurrentGuide(false);
+});
+
 /* 1. Surprise Shuffle */
 shuffleBtn.addEventListener("click", function(){
+  unlockAudioOnce();
   audio();
   if(paradeActive) endParade();
   if(isTruck()){
@@ -1690,11 +2029,12 @@ shuffleBtn.addEventListener("click", function(){
   renderFigure();
   renderCats();
   renderTiles();
+  updateParadeReadyCue();
   pulseFigure(isTruck() ? "truck-honk" : "equip-pop", 460);
   sparkleBurst(16);
   launchConfetti(22);
-  var cheers = ["hoot-yay-2.mp3", "hoot-nice-2.mp3"];
-  playVoice(cheers[(shuffleCheerIdx++) % cheers.length]);
+  playDressGuide("hoot-drs-shuffle", "hoot-yay-2", false);
+  noteInteraction();
 });
 
 /* 2. Spotlight Parade */
@@ -1704,22 +2044,27 @@ function endParade(){
   stageEl.classList.remove("parade");
   paradeBtn.classList.remove("active");
   figureBtn.classList.remove("parade-dance");
+  updateParadeReadyCue();
+  armIdle(false);
 }
 
 paradeBtn.addEventListener("click", function(){
   if(paradeActive) return;
+  unlockAudioOnce();
   audio();
+  clearIdleHints();
+  idleVoiceReminded = false;
   paradeActive = true;
   stageEl.classList.add("parade");
   paradeBtn.classList.add("active");
+  paradeBtn.classList.remove("hint-ready");
   figureBtn.classList.remove("equip-pop", "giggle-hop", "truck-honk");
   figureBtn.classList.add("parade-dance");
 
   fanfareSound();
   if(isTruck()) setTimeout(honkSound, 260);
 
-  var paradeClips = ["hoot-amazing.mp3", "hoot-super.mp3"];
-  playVoice(paradeClips[(paradeCheerIdx++) % paradeClips.length]);
+  playDressGuide("hoot-drs-parade", "hoot-amazing", false);
 
   sparkleBurst(20);
   launchConfetti(42);
@@ -1733,6 +2078,7 @@ paradeBtn.addEventListener("click", function(){
 
 /* 3. Reset */
 resetBtn.addEventListener("click", function(){
+  unlockAudioOnce();
   audio();
   if(paradeActive) endParade();
   if(isTruck()){
@@ -1745,7 +2091,9 @@ resetBtn.addEventListener("click", function(){
   renderFigure();
   renderCats();
   renderTiles();
+  updateParadeReadyCue();
   pulseFigure("equip-pop", 360);
+  noteInteraction();
 });
 
 /* Sound Toggle */
@@ -1757,14 +2105,17 @@ soundBtn.addEventListener("click", function(){
   if(!soundOn){
     stopVoice();
   } else {
+    unlockAudioOnce();
     audio();
     popSound();
+    speakCurrentGuide(false);
   }
 });
 
 /* Teardown cleanly */
 function teardown(){
   dead = true;
+  clearIdleHints();
   if(paradeTimer){ clearTimeout(paradeTimer); paradeTimer = null; }
   stopVoice();
 }
@@ -1773,8 +2124,10 @@ document.addEventListener("visibilitychange", function(){
   if(document.hidden) stopVoice();
 });
 
-/* Initial instant live render (zero start screen) */
+/* Initial instant live render (zero start screen) + spoken Hoot boot guide */
 renderAll();
+speakCurrentGuide(true);
+armIdle(true);
 
 /* Verification handle */
 window.__dressGame = {
@@ -1793,7 +2146,7 @@ window.__dressGame = {
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e141">
-<script src="js/hoot-game-tail.js?v=llprev3e141"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

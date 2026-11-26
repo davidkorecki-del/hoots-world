@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="train";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e150"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -54,7 +54,10 @@
     width:100%;
     height:100dvh;
     overflow:hidden;
-    background:linear-gradient(180deg,#9de070 0%,#7ec954 55%,#6ab745 100%);
+    background-image:url("assets/worlds3d/bg_train.jpg"), linear-gradient(180deg,#9de070 0%,#7ec954 55%,#6ab745 100%);
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
   }
 
   #worldCanvas{
@@ -233,6 +236,125 @@
     height:34px;
     display:block;
   }
+  #hootBtn{
+    width:64px;
+    height:64px;
+    min-width:64px;
+    min-height:64px;
+    padding:3px;
+    border-radius:50%;
+    border:4px solid var(--wood-dark);
+    background:radial-gradient(circle at 35% 28%, #fff9d2 0%, #ffd43b 62%, #f59e0b 100%);
+    box-shadow:0 5px 0 var(--wood-dark), 0 0 16px rgba(255,212,59,.55), inset 0 2px 0 rgba(255,255,255,.78);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    flex:0 0 auto;
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+  }
+  #hootBtn:active{ transform:translateY(3px) scale(.94); }
+  #hootBtn svg{ width:100%; height:100%; display:block; }
+
+  #doneBtn{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 14px;
+    border-radius:22px;
+    border:4px solid #1b5e28;
+    background:linear-gradient(180deg,#7ae582 0%,#35b84d 100%);
+    color:#fff;
+    font-family:inherit;
+    font-weight:700;
+    font-size:20px;
+    text-shadow:0 2px 0 rgba(18,74,28,.55);
+    box-shadow:0 5px 0 #1b5e28, 0 8px 16px rgba(24,88,38,.28), inset 0 2px 0 rgba(255,255,255,.6);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  #doneBtn:active{ transform:translateY(3px) scale(.94); box-shadow:0 2px 0 #1b5e28; }
+
+  /* Gentle toddler visual finger cue */
+  .cue-finger{
+    position:absolute;
+    right:-8px;
+    top:-22px;
+    font-size:32px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 4px 5px rgba(0,0,0,.35));
+    animation:cueBob .65s ease-in-out infinite alternate;
+  }
+  @keyframes cueBob{ from{ transform:translateY(0) rotate(-8deg); } to{ transform:translateY(-10px) rotate(6deg); } }
+
+  /* Celebration Win Overlay */
+  [hidden]{ display:none !important; }
+  #winOverlay{
+    position:fixed;
+    inset:0;
+    z-index:40;
+    background:rgba(44,29,17,.58);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  #winCard{
+    width:min(92vw, 430px);
+    background:linear-gradient(180deg,#fffdf6 0%,#fae5b4 100%);
+    border:6px solid var(--wood-dark);
+    border-radius:36px;
+    box-shadow:0 12px 0 var(--wood-dark), 0 26px 54px rgba(34,20,8,.45);
+    padding:24px 22px 22px;
+    text-align:center;
+  }
+  #winStars{
+    font-size:40px;
+    letter-spacing:6px;
+    color:#ffd43b;
+    text-shadow:0 3px 0 #b8760b;
+    line-height:1;
+  }
+  #winTrophy{
+    font-size:64px;
+    line-height:1.1;
+    margin:8px 0 4px;
+  }
+  #winCard h2{
+    margin:4px 0 16px;
+    font-size:clamp(26px, 6vw, 34px);
+    color:var(--ink);
+  }
+  .win-btns{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+  }
+  #againBtn, .win-btn{
+    min-width:170px;
+    min-height:68px;
+    padding:12px 26px;
+    border-radius:999px;
+    border:4px solid #1b5e28;
+    background:linear-gradient(180deg,#7ae582 0%,#35b84d 100%);
+    color:#fff;
+    font-family:inherit;
+    font-weight:700;
+    font-size:24px;
+    text-shadow:0 2px 0 rgba(18,74,28,.5);
+    box-shadow:0 7px 0 #1b5e28;
+    cursor:pointer;
+  }
+  #againBtn:active, .win-btn:active{ transform:translateY(4px) scale(.96); box-shadow:0 3px 0 #1b5e28; }
 
   /* ==================== FIRST-PERSON CAB VIEW TOGGLE ==================== */
   #btnCabView{
@@ -388,6 +510,7 @@
     50%{ box-shadow:0 0 0 8px rgba(122,229,130,0), 0 6px 0 #1b5e28, 0 12px 26px rgba(42,168,68,.55), inset 0 3px 0 rgba(255,255,255,.7); }
   }
   #btnDriveNow{
+    position:relative;
     min-width:196px;
     min-height:68px;
     height:68px;
@@ -554,6 +677,7 @@
   .car-dot:nth-child(4).on{ background:#a855f7; }
 
   #whistleBtn{
+    position:relative;
     min-width:96px;
     min-height:68px;
     height:68px;
@@ -606,7 +730,7 @@
       gap:6px;
     }
     .hud-group{ gap:6px; }
-    #modeSwitch{ order:1; flex:1 1 auto; }
+    #modeSwitch{ order:1; flex:0 1 auto; }
     #hudRight{ order:2; }
     #hudCenter{
       order:3;
@@ -614,13 +738,13 @@
       justify-content:center;
     }
     .mode-btn{
-      flex:1 1 64px;
+      flex:0 1 auto;
       min-width:64px;
       min-height:64px;
       height:64px;
-      padding:0 8px;
-      font-size:15px;
-      gap:5px;
+      padding:0 7px;
+      font-size:13.5px;
+      gap:3px;
       border-radius:18px;
       border-width:3.5px;
     }
@@ -628,19 +752,19 @@
     .mode-ico{ font-size:20px; }
 
     #presetBar{
-      width:100%;
-      max-width:374px;
+      flex:1 1 auto;
+      max-width:300px;
       justify-content:space-between;
-      gap:6px;
+      gap:5px;
     }
     .preset-pill{
       flex:1 1 64px;
       min-width:64px;
       min-height:64px;
       height:64px;
-      padding:0 6px;
-      font-size:14px;
-      gap:4px;
+      padding:0 5px;
+      font-size:13px;
+      gap:3px;
       border-radius:18px;
       border-width:3.5px;
     }
@@ -649,8 +773,8 @@
     #btnCabView{
       min-height:64px;
       height:64px;
-      padding:0 22px;
-      font-size:18px;
+      padding:0 18px;
+      font-size:17px;
       border-radius:20px;
       border-width:3.5px;
     }
@@ -662,6 +786,13 @@
       border-width:3.5px;
     }
     #starPill svg{ width:22px; height:22px; }
+    #doneBtn{
+      width:64px;
+      padding:0;
+      border-radius:18px;
+      border-width:3.5px;
+    }
+    #doneBtn .done-lbl{ display:none; }
     .hud-icon-btn{
       border-radius:18px;
       border-width:3.5px;
@@ -785,10 +916,7 @@
         <span class="cab-ico" aria-hidden="true">👀</span>
         <span class="cab-txt">Cab View</span>
       </button>
-    </div>
 
-    <!-- Right HUD: Stars & Sound Toggle -->
-    <div class="hud-group" id="hudRight">
       <div id="starPill" aria-label="Stars earned">
         <svg viewBox="0 0 32 32" aria-hidden="true">
           <path d="M16 2.5 L20.1 10.8 L29.2 12.1 L22.6 18.5 L24.2 27.6 L16 23.3 L7.8 27.6 L9.4 18.5 L2.8 12.1 L11.9 10.8 Z" fill="#ffd43b" stroke="#8a501c" stroke-width="2.4" stroke-linejoin="round"/>
@@ -796,6 +924,13 @@
         </svg>
         <span id="starCount">0</span>
       </div>
+    </div>
+
+    <!-- Right HUD: Tap-Hoot-to-Repeat, Sound Toggle & Done Celebration -->
+    <div class="hud-group" id="hudRight">
+      <button id="hootBtn" type="button" aria-label="Tap Hoot to hear guidance">
+        <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
+      </button>
       <button class="hud-icon-btn" id="muteBtn" type="button" aria-label="Toggle Sound" aria-pressed="false">
         <svg id="soundOnIcon" viewBox="0 0 36 36" aria-hidden="true">
           <path d="M6 14 H12 L20 7 V29 L12 22 H6 Z" fill="#5a3413" stroke="#2c1d11" stroke-width="2.2" stroke-linejoin="round"/>
@@ -806,6 +941,9 @@
           <path d="M6 14 H12 L20 7 V29 L12 22 H6 Z" fill="#9c4242" stroke="#2c1d11" stroke-width="2.2" stroke-linejoin="round"/>
           <path d="M24 13 L32 23 M32 13 L24 23" fill="none" stroke="#b3281e" stroke-width="3.2" stroke-linecap="round"/>
         </svg>
+      </button>
+      <button id="doneBtn" type="button" aria-label="Finish and Celebrate">
+        <span aria-hidden="true">🏆</span><span class="done-lbl"> Done</span>
       </button>
     </div>
   </div>
@@ -853,6 +991,7 @@
           <span aria-hidden="true">▶️</span>
           <span class="d-full">DRIVE MY TRACK!</span>
           <span class="d-short">DRIVE!</span>
+          <span class="cue-finger" id="driveCueFinger" aria-hidden="true">👆</span>
         </button>
       </div>
     </div>
@@ -898,6 +1037,7 @@
         </button>
 
         <button id="whistleBtn" type="button" aria-label="Blow Train Whistle">
+          <span class="cue-finger" id="whistleCueFinger" aria-hidden="true">👆</span>
           <svg viewBox="0 0 54 42" aria-hidden="true">
             <circle cx="43" cy="9" r="4.5" fill="#fff" opacity=".95"/>
             <circle cx="49" cy="14" r="3.5" fill="#fff" opacity=".9"/>
@@ -942,18 +1082,43 @@
       </div>
     </div>
   </div>
+
+  <!-- Celebration Win Overlay -->
+  <div id="winOverlay" hidden>
+    <div id="winCard" role="dialog" aria-modal="true" aria-label="Super Train Engineer">
+      <div id="winStars" aria-hidden="true">★★★★★</div>
+      <div id="winTrophy" aria-hidden="true">🚂🌟</div>
+      <h2>Super Train Engineer!</h2>
+      <div class="win-btns">
+        <button id="againBtn" class="big-play" type="button">🚂 Play Again!</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 (function(){
   "use strict";
 
+  /* ==================== KID PROFILE (RILEY AGE 2 vs ZANE AGE 3) ==================== */
+  var urlKid = "";
+  try{ urlKid = String(new URLSearchParams(window.location.search).get("kid") || "").toLowerCase(); }catch(e){}
+  function isKidB(){
+    try{
+      if(urlKid === "kidb") return true;
+      if(urlKid === "kida") return false;
+      return !!(window.parent && window.parent.__llNameKey && window.parent.__llNameKey() === "kidb");
+    }catch(e){ return urlKid === "kidb"; }
+  }
+  var RILEY_MODE = isKidB();
+  var STAR_GOAL = RILEY_MODE ? 3 : 5;
+
   /* ==================== STATE ==================== */
   var state = {
     appMode: "build",     // "build" | "drive"
     tool: "track",        // "track" | "bridge" | "tunnel" | "crossing" | "prop" | "erase"
     running: true,
-    speed: "cruise",      // "slow" | "cruise" | "turbo"
+    speed: RILEY_MODE ? "slow" : "cruise",      // "slow" | "cruise" | "turbo"
     dir: 1,               // 1 forward | -1 reverse
     carCount: 1,          // 0..4 attached wooden cars
     carTheme: 0,
@@ -961,7 +1126,8 @@
     whistles: 0,
     cabView: false,
     muted: false,
-    propCursor: 0
+    propCursor: 0,
+    winShownOnce: false
   };
 
   var PROP_KINDS = ["cow", "pond", "station", "pine"];
@@ -994,6 +1160,12 @@
 
   var starPillEl = document.getElementById("starPill");
   var starCountEl = document.getElementById("starCount");
+  var hootBtn = document.getElementById("hootBtn");
+  var doneBtn = document.getElementById("doneBtn");
+  var winOverlay = document.getElementById("winOverlay");
+  var againBtn = document.getElementById("againBtn");
+  var driveCueFinger = document.getElementById("driveCueFinger");
+  var whistleCueFinger = document.getElementById("whistleCueFinger");
   var muteBtn = document.getElementById("muteBtn");
   var soundOnIcon = document.getElementById("soundOnIcon");
   var soundOffIcon = document.getElementById("soundOffIcon");
@@ -1006,7 +1178,7 @@
   var whistleBtn = document.getElementById("whistleBtn");
   var speedBtns = document.querySelectorAll(".speed-btn");
 
-  /* ==================== VERIFIED AUDIO ENGINE ==================== */
+  /* ==================== VERIFIED AUDIO ENGINE (HOOT_HAVE-GATED) ==================== */
   // Every single MP3 below was verified in `git ls-tree -r origin/main --name-only assets/voice/`
   var VERIFIED_VOICE = {
     moo: "assets/voice/sound-moo.mp3",
@@ -1015,14 +1187,45 @@
     great: "assets/voice/hoot-great-job.mp3",
     yay: "assets/voice/hoot-yay-2.mp3",
     super: "assets/voice/hoot-super.mp3",
-    amazing: "assets/voice/hoot-amazing.mp3"
+    amazing: "assets/voice/hoot-amazing.mp3",
+    welcome: "assets/voice/hoot-welcome.mp3",
+    tap: "assets/voice/hoot-tap-big-btn.mp3",
+    win: "assets/voice/hoot-win-yay.mp3"
   };
 
   var actx = null;
   var noiseBuf = null;
-  var voiceEl = null;
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
   var audioUnlocked = false;
+  var voiceUnlocked = false;
+  var pendingBootClip = null;
+  var idleTimer = null;
+  var idleReminded = false;
+  var dead = false;
   var woodClickStep = 0;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
+  function resolveTrainClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
+  }
+
+  function stopParentVoice(){
+    try{
+      if(window.parent && window.parent !== window){
+        if(window.parent.__hwStopIntro) window.parent.__hwStopIntro();
+        if(window.parent.__hootStopClip) window.parent.__hootStopClip();
+      }
+    }catch(e){}
+  }
 
   function ensureAudio(){
     if(state.muted) return null;
@@ -1049,18 +1252,92 @@
     return actx;
   }
 
+  function unlockAudioOnce(){
+    if(voiceUnlocked) return;
+    voiceUnlocked = true;
+    ensureAudio();
+    try{
+      voiceEl.muted = true;
+      var p = voiceEl.play();
+      if(p && p.then){
+        p.then(function(){
+          voiceEl.pause(); voiceEl.currentTime = 0; voiceEl.muted = false;
+          if(pendingBootClip){
+            var c = pendingBootClip; pendingBootClip = null;
+            playVoiceFile(c, false);
+          }
+        }).catch(function(){ voiceEl.muted = false; });
+      } else {
+        voiceEl.muted = false;
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  document.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
+  function playVoiceFile(clipFile, isBoot){
+    if(dead || state.muted || !clipFile) return;
+    var src = clipFile.indexOf("/") >= 0 ? clipFile : ("assets/voice/" + clipFile);
+    if(isBoot){
+      try{
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+          if(window.parent.__hwPlayAfterIntro(src)) return;
+        }
+      }catch(e){}
+    }
+    stopParentVoice();
+    try{
+      voiceEl.pause();
+      voiceEl.currentTime = 0;
+      voiceEl.muted = false;
+      voiceEl.src = src;
+      var p = voiceEl.play();
+      if(p && p.catch){
+        p.catch(function(){
+          if(!voiceUnlocked && !pendingBootClip) pendingBootClip = src;
+        });
+      }
+    }catch(e){}
+  }
+
+  function playTrainGuide(customId, fallbackId, isBoot){
+    var clip = resolveTrainClip(customId, fallbackId);
+    if(clip) playVoiceFile(clip, !!isBoot);
+  }
+
+  function speakCurrentModeGuide(isBoot){
+    if(isBoot){
+      playTrainGuide("hoot-trn-welcome", "hoot-welcome", true);
+    } else if(state.appMode === "build"){
+      playTrainGuide("hoot-trn-build", "hoot-tap-big-btn", false);
+    } else if(state.cabView){
+      playTrainGuide("hoot-trn-cab", "hoot-super", false);
+    } else {
+      playTrainGuide("hoot-trn-drive", "hoot-yay-2", false);
+    }
+  }
+
+  function clearIdle(){
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+  }
+  function armIdle(){
+    clearIdle();
+    if(dead || !winOverlay.hidden || idleReminded) return;
+    idleTimer = setTimeout(function(){
+      if(dead || !winOverlay.hidden) return;
+      idleReminded = true;
+      speakCurrentModeGuide(false);
+    }, 9000);
+  }
+  window.addEventListener("pointerdown", function(){
+    idleReminded = false;
+    armIdle();
+  }, true);
+
   function playVoice(key){
     if(state.muted) return;
     var src = VERIFIED_VOICE[key];
     if(!src) return;
-    try{
-      if(!voiceEl) voiceEl = new Audio();
-      voiceEl.pause();
-      voiceEl.currentTime = 0;
-      voiceEl.src = src;
-      var p = voiceEl.play();
-      if(p && p.catch) p.catch(function(){});
-    }catch(e){}
+    playVoiceFile(src, false);
   }
 
   var PENTA = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5];
@@ -1528,6 +1805,11 @@
   }
 
   function loadBootStarterTrack(){
+    if(RILEY_MODE){
+      // Riley (age 2): start with a ready-to-drive closed Oval loop so tapping DRIVE works seamlessly!
+      loadPreset("oval");
+      return;
+    }
     if(!play.portrait){
       // 7x4: Welcoming 8-tile wooden starter track with sparkling brook bridge + pulsing next-tile hint!
       layOrderedPath(
@@ -2195,11 +2477,11 @@
       connectPair(prev, a);
       rebuildTrackSpline(false);
       playStationCheerSfx();
-      playVoice("amazing");
+      playTrainGuide("hoot-trn-loop", "hoot-great-job", false);
     } else {
       // Fallback: clean starter oval if current shape was completely boxed in
       loadPreset("oval");
-      playVoice("amazing");
+      playTrainGuide("hoot-trn-loop", "hoot-great-job", false);
     }
   }
 
@@ -2393,35 +2675,48 @@
     }
   }
 
-  /* ==================== DRAWING: MEADOW, GRID GUIDES & WOODEN TRACKS ==================== */
+  /* ==================== DRAWING: MEADOW (PIXAR BACKDROP + FALLBACK), GRID GUIDES & WOODEN TRACKS ==================== */
+  var worldBgImg = new Image();
+  var worldBgReady = false;
+  worldBgImg.onload = function(){ worldBgReady = true; };
+  worldBgImg.src = "assets/worlds3d/bg_train.jpg";
+
   function drawMeadowBg(t){
-    var bg = ctx.createRadialGradient(play.cx, play.cy * 0.75, 40, play.cx, play.cy, Math.max(W, H) * 0.85);
-    bg.addColorStop(0, "#b0ea7a");
-    bg.addColorStop(0.55, "#83cf56");
-    bg.addColorStop(1, "#66b241");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    if(worldBgReady && worldBgImg.naturalWidth > 0){
+      // Let CSS background-image (assets/worlds3d/bg_train.jpg cover/center) shine cleanly underneath!
+      ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      ctx.fillStyle = "rgba(244, 255, 228, 0.14)";
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      var bg = ctx.createRadialGradient(play.cx, play.cy * 0.75, 40, play.cx, play.cy, Math.max(W, H) * 0.85);
+      bg.addColorStop(0, "#b0ea7a");
+      bg.addColorStop(0.55, "#83cf56");
+      bg.addColorStop(1, "#66b241");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
 
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 250, 200, 0.14)";
-    ctx.beginPath();
-    ctx.ellipse(W * 0.22, H * 0.30, W * 0.26, H * 0.16, -0.15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(W * 0.78, H * 0.68, W * 0.28, H * 0.18, 0.12, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = "rgba(63, 128, 38, 0.28)";
-    ctx.lineWidth = 2.2 * play.scale;
-    ctx.lineCap = "round";
-    for(var i = 0; i < 16; i++){
-      var gx = ((i * 197 + 63) % 94 + 3) / 100 * W;
-      var gy = ((i * 131 + 41) % 72 + 14) / 100 * H;
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 250, 200, 0.14)";
       ctx.beginPath();
-      ctx.moveTo(gx, gy); ctx.lineTo(gx - 4, gy - 7);
-      ctx.moveTo(gx + 4, gy); ctx.lineTo(gx + 5, gy - 8);
-      ctx.moveTo(gx + 8, gy + 1); ctx.lineTo(gx + 12, gy - 5);
-      ctx.stroke();
+      ctx.ellipse(W * 0.22, H * 0.30, W * 0.26, H * 0.16, -0.15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(W * 0.78, H * 0.68, W * 0.28, H * 0.18, 0.12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(63, 128, 38, 0.28)";
+      ctx.lineWidth = 2.2 * play.scale;
+      ctx.lineCap = "round";
+      for(var i = 0; i < 16; i++){
+        var gx = ((i * 197 + 63) % 94 + 3) / 100 * W;
+        var gy = ((i * 131 + 41) % 72 + 14) / 100 * H;
+        ctx.beginPath();
+        ctx.moveTo(gx, gy); ctx.lineTo(gx - 4, gy - 7);
+        ctx.moveTo(gx + 4, gy); ctx.lineTo(gx + 5, gy - 8);
+        ctx.moveTo(gx + 8, gy + 1); ctx.lineTo(gx + 12, gy - 5);
+        ctx.stroke();
+      }
     }
 
     clouds.forEach(function(cl){
@@ -4751,12 +5046,15 @@
     state.appMode = "drive";
     state.running = true;
     state.cabView = false;
+    if(driveCueFinger) driveCueFinger.style.display = "none";
     syncHudUi();
     measurePlayfield();
     rebuildTrackSpline(false);
-    triggerWhistle();
+    triggerWhistle(true);
     spawnSparkles(play.cx, play.cy, ["#ffd43b", "#69db7c", "#74c0fc", "#ffffff"], 18, "star");
-    playVoice("yay");
+    playTrainGuide("hoot-trn-drive", "hoot-yay-2", false);
+    idleReminded = false;
+    armIdle();
   }
 
   function enterBuildMode(){
@@ -4767,6 +5065,17 @@
     rebuildTrackSpline(false);
     playMarimbaNote(587.33, 0, 0.12);
     playMarimbaNote(783.99, 0.06, 0.12);
+    playTrainGuide("hoot-trn-build", "hoot-tap-big-btn", false);
+    idleReminded = false;
+    armIdle();
+  }
+
+  function showWinCelebration(){
+    clearIdle();
+    winOverlay.hidden = false;
+    playStationCheerSfx();
+    spawnSparkles(W * 0.5, H * 0.35, ["#ffd43b", "#69db7c", "#74c0fc", "#ff6b6b", "#ffffff"], 26, "star");
+    playTrainGuide("hoot-trn-win", "hoot-win-yay", false);
   }
 
   function earnStar(x, y){
@@ -4777,16 +5086,24 @@
     starPillEl.classList.add("pop");
     setTimeout(function(){ starPillEl.classList.remove("pop"); }, 260);
     spawnSparkles(x, y, ["#ffd43b", "#fff3bf", "#ff922b", "#ff6b6b"], 14, "star");
+    if(!state.winShownOnce && state.stars >= STAR_GOAL){
+      state.winShownOnce = true;
+      setTimeout(function(){ if(!dead) showWinCelebration(); }, 650);
+    }
   }
 
   function triggerWhistle(shortToot){
     state.whistles++;
     hootWaveTimer = 1.65;
     trainBounce = 1.0;
+    if(!shortToot && whistleCueFinger) whistleCueFinger.style.display = "none";
     whistleBtn.classList.add("tooting");
     setTimeout(function(){ whistleBtn.classList.remove("tooting"); }, 480);
 
     playWhistleSfx(shortToot);
+    if(!shortToot && (state.whistles === 1 || state.whistles % 3 === 0)){
+      playTrainGuide("hoot-trn-whistle", "hoot-amazing", false);
+    }
 
     if(state.cabView){
       ringCabBell(9.5);
@@ -4818,11 +5135,15 @@
       playMarimbaNote(659.25, 0.055, 0.13);
       playMarimbaNote(783.99, 0.11, 0.14);
       spawnSparkles(W * 0.5, H * 0.45, ["#ffd43b", "#7ee8ff", "#ffffff", "#69db7c"], 16, "star");
+      playTrainGuide("hoot-trn-cab", "hoot-super", false);
     } else {
       playMarimbaNote(783.99, 0, 0.12);
       playMarimbaNote(587.33, 0.06, 0.12);
       spawnSparkles(play.cx, play.cy, ["#ffd43b", "#69db7c", "#74c0fc"], 12, "star");
+      playTrainGuide("hoot-trn-drive", "hoot-yay-2", false);
     }
+    idleReminded = false;
+    armIdle();
   }
 
   /* ==================== BIND HUD & CONSOLE EVENTS ==================== */
@@ -4941,6 +5262,36 @@
     syncHudUi();
   });
 
+  hootBtn.addEventListener("click", function(){
+    ensureAudio();
+    idleReminded = false;
+    speakCurrentModeGuide(false);
+    armIdle();
+  });
+
+  doneBtn.addEventListener("click", function(){
+    ensureAudio();
+    showWinCelebration();
+  });
+
+  againBtn.addEventListener("click", function(){
+    ensureAudio();
+    winOverlay.hidden = true;
+    state.stars = 0;
+    state.winShownOnce = false;
+    state.cabView = false;
+    state.appMode = "build";
+    loadBootStarterTrack();
+    syncHudUi();
+    measurePlayfield();
+    rebuildTrackSpline(false);
+    if(driveCueFinger) driveCueFinger.style.display = "";
+    if(whistleCueFinger) whistleCueFinger.style.display = "";
+    playTrainGuide("hoot-trn-welcome", "hoot-welcome", false);
+    idleReminded = false;
+    armIdle();
+  });
+
   /* ==================== POINTER DRAG-TO-BUILD & TAP-TO-PLAY ==================== */
   var draggingBuild = false;
   var lastPaintedCell = null;
@@ -4989,9 +5340,10 @@
     }
 
     // DRIVE MODE — FIRST-PERSON CAB VIEW INTERACTIONS
+    var hitBoost = RILEY_MODE ? 1.35 : 1.0;
     if(state.cabView){
       var bell = cab.hitZones.bell;
-      if(bell && Math.hypot(x - bell.x, y - bell.y) <= bell.r){
+      if(bell && Math.hypot(x - bell.x, y - bell.y) <= bell.r * hitBoost){
         ringCabBell(11);
         playCrossingBell(2);
         spawnSparkles(bell.x, bell.y, ["#ffd43b", "#fff3bf", "#ffffff"], 12, "star");
@@ -4999,8 +5351,8 @@
       }
       var bl = cab.hitZones.boiler;
       if(bl){
-        var bdx = (x - bl.x) / Math.max(40, bl.rx);
-        var bdy = (y - bl.y) / Math.max(40, bl.ry);
+        var bdx = (x - bl.x) / Math.max(40, bl.rx * hitBoost);
+        var bdy = (y - bl.y) / Math.max(40, bl.ry * hitBoost);
         if(bdx * bdx + bdy * bdy <= 1.0){
           triggerWhistle(false);
           return;
@@ -5008,7 +5360,7 @@
       }
       for(var pi = cab.hitZones.props.length - 1; pi >= 0; pi--){
         var hp = cab.hitZones.props[pi];
-        if(Math.hypot(x - hp.x, y - hp.y) <= hp.r){
+        if(Math.hypot(x - hp.x, y - hp.y) <= hp.r * hitBoost){
           if(hp.kind === "cow" || hp.kind === "barn"){
             cab.cowHop = 1.0; cab.barnHop = 1.0;
             spawnSparkles(hp.x, hp.y, ["#fff", "#ffafcc", "#ffd43b"], 12, "star");
@@ -5041,7 +5393,7 @@
     for(var i = 0; i < units.length; i++){
       var u = units[i];
       if(u.inTunnel) continue;
-      if(Math.hypot(x - u.x, y - u.y) < 34 * S){
+      if(Math.hypot(x - u.x, y - u.y) < 34 * S * hitBoost){
         if(u.index === 0){
           hootWaveTimer = 1.5; trainBounce = 1.0;
           spawnSteam(u.x, u.y, true);
@@ -5324,6 +5676,10 @@
 
   window.addEventListener("resize", handleResize);
   window.addEventListener("orientationchange", function(){ setTimeout(handleResize, 80); });
+  window.addEventListener("pagehide", function(){
+    dead = true; clearIdle();
+    if(voiceEl){ try{ voiceEl.pause(); }catch(e){} }
+  });
   document.addEventListener("visibilitychange", function(){
     if(document.hidden && voiceEl){ try{ voiceEl.pause(); }catch(e){} }
   });
@@ -5361,6 +5717,8 @@
 
   syncHudUi();
   handleResize();
+  speakCurrentModeGuide(true);
+  armIdle();
   requestAnimationFrame(function(){
     measurePlayfield();
     rebuildTrackSpline(false);
@@ -5368,7 +5726,7 @@
   });
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e150">
-<script src="js/hoot-game-tail.js?v=llprev3e150"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

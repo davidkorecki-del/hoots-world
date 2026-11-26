@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="memory";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e139"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -51,6 +51,28 @@ window.__HOOT_SELF_COACH__=true;
       linear-gradient(180deg, #87dbff 0%, #c8f1ff 16%, #99e57c 18%, #6fd15c 52%, #4cb848 100%);
   }
 
+  /* Pixar Storybook Clover Meadow Backdrop (with sunlit gradient fallback) */
+  #worldBg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      url("assets/worlds3d/bg_memory.jpg"),
+      radial-gradient(circle at 82% 8%, rgba(255,244,178,.85) 0%, rgba(255,244,178,0) 34%),
+      linear-gradient(180deg, #87dbff 0%, #c8f1ff 16%, #99e57c 18%, #6fd15c 52%, #4cb848 100%);
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+  }
+  #worldBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 48%, rgba(255,253,240,.14) 24%, rgba(20,66,34,.22) 100%);
+  }
+
   /* Soft decorative meadow hills & clover tufts */
   #meadowBg{
     position:absolute;
@@ -59,6 +81,7 @@ window.__HOOT_SELF_COACH__=true;
     height:100%;
     pointer-events:none;
     z-index:1;
+    opacity:.22;
   }
 
   /* Fluttering butterflies & blooming daisies */
@@ -220,9 +243,11 @@ window.__HOOT_SELF_COACH__=true;
     position:relative;
     padding:12px;
     border-radius:30px;
-    background:linear-gradient(145deg, rgba(255,253,246,.34), rgba(255,253,246,.16));
-    border:4px solid rgba(255,255,255,.55);
-    box-shadow:0 12px 28px rgba(18,74,35,.22), inset 0 2px 6px rgba(255,255,255,.4);
+    background:linear-gradient(145deg, rgba(255,253,246,.52), rgba(255,253,246,.28));
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    border:4px solid rgba(255,255,255,.78);
+    box-shadow:0 12px 28px rgba(18,74,35,.26), inset 0 2px 6px rgba(255,255,255,.55);
     width:min(94vw, 720px);
     height:min(100%, 560px);
     display:flex;
@@ -328,6 +353,10 @@ window.__HOOT_SELF_COACH__=true;
   @keyframes hintGlow{
     0%,100%{ box-shadow:0 7px 0 #186430, 0 0 0 0 rgba(255,224,102,0); }
     50%{ box-shadow:0 7px 0 #c98600, 0 0 0 7px rgba(255,224,102,.95), 0 0 28px rgba(255,224,102,.95); }
+  }
+  .card.peek-shimmer .face.front{
+    border-color:#ffe066;
+    box-shadow:0 7px 0 #d4961a, 0 0 0 5px rgba(255,224,102,.85), 0 0 24px rgba(255,224,102,.8);
   }
 
   /* Golden Firefly Sparkle Arc on Match */
@@ -461,21 +490,27 @@ window.__HOOT_SELF_COACH__=true;
   }
 
   @media (max-width:560px){
-    .hud-pill{ min-width:54px; min-height:54px; height:54px; padding:0 10px; font-size:19px; }
-    .hud-pill.round{ width:54px; font-size:22px; }
-    #starBank{ min-height:54px; padding:0 12px 0 9px; font-size:20px; }
-    #boardFrame{ padding:8px; border-radius:22px; width:100%; height:min(100%, 440px); }
+    #hud{ flex-wrap:wrap; justify-content:center; gap:6px; padding:max(8px, env(safe-area-inset-top)) 8px 4px; }
+    .hud-group{ gap:5px; }
+    .hud-pill{ min-width:64px; min-height:64px; height:64px; padding:0 8px; font-size:19px; gap:3px; }
+    .hud-pill.round{ width:64px; padding:0; font-size:24px; }
+    #starBank{ min-height:42px; height:42px; padding:0 12px 0 9px; font-size:20px; border-width:3px; }
+    #starBank svg{ width:22px; height:22px; }
+    #boardFrame{ padding:8px; border-radius:22px; width:100%; height:min(100%, 430px); }
     #grid{ gap:8px; }
     #grid.g-6{ grid-template-columns:repeat(2, 1fr); grid-template-rows:repeat(3, 1fr); max-width:320px; }
     #grid.g-12{ grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(4, 1fr); max-width:360px; }
     .face{ border-radius:18px; border-width:4px !important; }
-    #hootMeadow{ width:76px; left:6px; bottom:4px; }
-    #meadowMain{ padding-bottom:68px; }
+    #hootMeadow{ width:78px; min-width:64px; min-height:64px; left:6px; bottom:4px; }
+    #meadowMain{ padding-bottom:84px; gap:6px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <!-- Pixar Storybook Clover Meadow Backdrop -->
+  <div id="worldBg" aria-hidden="true"></div>
+
   <!-- Rolling Clover Meadow SVG -->
   <svg id="meadowBg" viewBox="0 0 1200 760" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 148 Q260 92 580 142 T1200 132 L1200 220 L0 220 Z" fill="#8be068"/>
@@ -582,15 +617,21 @@ window.__HOOT_SELF_COACH__=true;
   ];
 
   var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-super.mp3","hoot-yay-2.mp3"];
+  var WRONG_CLIPS=["hoot-try-again.mp3","hoot-almost.mp3","hoot-look-closely.mp3"];
   var CLOVER_SVG='<svg viewBox="0 0 80 80" aria-hidden="true">'
     +'<circle cx="40" cy="24" r="15" fill="#92f29b"/><circle cx="24" cy="40" r="15" fill="#92f29b"/>'
     +'<circle cx="56" cy="40" r="15" fill="#92f29b"/><circle cx="40" cy="56" r="15" fill="#92f29b"/>'
     +'<circle cx="40" cy="40" r="11" fill="#ffe066" stroke="#fff" stroke-width="3"/></svg>';
 
-  var pairGoal=3; /* default 6 cards (3 pairs) — ideal for Zane (3) & Riley (2) */
+  var IS_RILEY = false;
+  try{
+    IS_RILEY = new URLSearchParams(window.location.search || "").get("kid") === "kidb";
+  }catch(e){}
+  var pairGoal = IS_RILEY ? 2 : 3; /* Riley (age 2) starts with 4 cards; Zane (age 3) starts with 6 cards */
   var state="play"; /* play | checking | won */
-  var cards=[], firstCard=null, matchedCount=0, stars=0, praiseIdx=0;
-  var soundOn=true, dead=false, idleTimer=null;
+  var cards=[], firstCard=null, matchedCount=0, stars=0, praiseIdx=0, wrongIdx=0;
+  var soundOn=true, dead=false, idleTimer=null, peekTimer=null;
+  var idleVoiceReminded=false, peeking=false, lastWrongVoiceAt=0, lastPtrAt=0;
 
   function $(id){ return document.getElementById(id); }
   var stage=$("stage"), grid=$("grid"), boardFrame=$("boardFrame"),
@@ -625,28 +666,68 @@ window.__HOOT_SELF_COACH__=true;
   function hintSfx(){ tone(980,1480,0.12,"sine",0.09); }
   function starSfx(){ tone(880,880,0.08,"triangle",0.1); tone(1175,1175,0.08,"triangle",0.1,0.06); tone(1568,1568,0.14,"triangle",0.1,0.12); }
 
-  /* ================= STUDIO HOOT VOICE ================= */
+  /* ================= STUDIO HOOT VOICE (HOOT_HAVE-GATED, ZERO TTS) ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false;
+  var voiceEl=new Audio();
+  voiceEl.preload="auto";
+  var vQueue=[], vPlaying=false, audioUnlocked=false, pendingBootClip=null;
+
+  /* Strict gate for NEW custom hoot-mem-* clips: ONLY true when listed in parent HOOT_HAVE */
+  function hasHootClip(id){
+    var base=String(id||"").replace(/\.mp3$/i,"");
+    try{
+      if(window.parent&&window.parent.HOOT_HAVE&&window.parent.HOOT_HAVE[base]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveMemoryClip(customId, fallbackId){
+    var chosen=(customId&&hasHootClip(customId))?customId:fallbackId;
+    if(!chosen) return null;
+    return /\.mp3$/i.test(chosen)?chosen:(chosen+".mp3");
+  }
   function hasClip(id){
-    try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H) return !!H[id]; }catch(e){}
+    var base=String(id||"").replace(/\.mp3$/i,"");
+    try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H&&Object.keys(H).length) return !!H[base]; }catch(e){}
     return true;
   }
-  function getVoice(){
-    if(!voiceEl){
-      voiceEl=new Audio(); voiceEl.preload="auto";
-      voiceEl.addEventListener("ended",function(){
-        var e=voiceEl;
-        if(e.__hwT && Date.now()-e.__hwT<350){
-          if(!e.paused && !e.ended) return;
-          if(!e.__hwRetry){ e.__hwRetry=1; try{e.currentTime=0;}catch(x){} var p=e.play(); if(p&&p.catch) p.catch(vNext); return; }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked=true;
+    audio();
+    try{
+      if(!vPlaying){
+        voiceEl.muted=true;
+        var p=voiceEl.play();
+        if(p&&p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime=0;
+            voiceEl.muted=false;
+            if(pendingBootClip){
+              var c=pendingBootClip;
+              pendingBootClip=null;
+              clearVoice(true);
+              enqueue(c);
+            }
+          }).catch(function(){ voiceEl.muted=false; });
+        } else {
+          voiceEl.muted=false;
         }
-        vNext();
-      });
-      voiceEl.addEventListener("error",vNext);
-    }
-    return voiceEl;
+      }
+    }catch(e){ voiceEl.muted=false; }
   }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+
+  voiceEl.addEventListener("ended",function(){
+    var e=voiceEl;
+    if(e.__hwT && Date.now()-e.__hwT<350){
+      if(!e.paused && !e.ended) return;
+      if(!e.__hwRetry){ e.__hwRetry=1; try{e.currentTime=0;}catch(x){} var p=e.play(); if(p&&p.catch) p.catch(vNext); return; }
+    }
+    vNext();
+  });
+  voiceEl.addEventListener("error",vNext);
+
   function hubQuiet(){
     try{
       var d=window.parent&&window.parent.document;
@@ -660,27 +741,56 @@ window.__HOOT_SELF_COACH__=true;
     if(vPlaying||dead) return;
     var item=vQueue.shift(); if(!item) return;
     if(!soundOn||hubQuiet()){ pumpVoice(); return; }
-    var el=getVoice();
     vPlaying=true; hootMeadow.classList.add("talking");
+    voiceEl.muted=false;
     if(item.giggle) window.__bellyArmed=true;
-    el.__hwT=Date.now(); el.__hwRetry=0;
-    el.src=VBASE+item.file;
-    var p=el.play();
+    voiceEl.__hwT=Date.now(); voiceEl.__hwRetry=0;
+    voiceEl.src=VBASE+item.file;
+    var p=voiceEl.play();
     if(item.giggle) setTimeout(function(){ window.__bellyArmed=false; }, 120);
-    if(p&&p.catch) p.catch(vNext);
+    if(p&&p.catch){
+      p.catch(function(){
+        vPlaying=false;
+        hootMeadow.classList.remove("talking");
+        if(!audioUnlocked && !pendingBootClip && item.boot) pendingBootClip=item.file;
+        pumpVoice();
+      });
+    }
   }
   function clearVoice(stop){
     vQueue.length=0;
     if(stop && voiceEl){
       voiceEl.__hwT=0; voiceEl.__hwRetry=1;
-      try{ voiceEl.pause(); }catch(e){}
+      try{ voiceEl.pause(); voiceEl.currentTime=0; }catch(e){}
       vPlaying=false; hootMeadow.classList.remove("talking");
     }
   }
   function enqueue(file,opts){
     if(!file) return;
-    vQueue.push({file:file, giggle:!!(opts&&opts.giggle)});
+    vQueue.push({file:file, giggle:!!(opts&&opts.giggle), boot:!!(opts&&opts.boot)});
     pumpVoice();
+  }
+  function playMemoryGuide(customId, fallbackId, isBoot){
+    var clip=resolveMemoryClip(customId, fallbackId);
+    if(!clip||dead||!soundOn||hubQuiet()) return;
+    if(isBoot){
+      try{
+        if(window.parent&&window.parent!==window&&typeof window.parent.__hwPlayAfterIntro==="function"&&window.parent.__hwPlayAfterIntro(VBASE+clip)){
+          return;
+        }
+      }catch(e){}
+    }
+    clearVoice(true);
+    enqueue(clip,{boot:!!isBoot});
+  }
+  function speakCurrentGuide(isBoot){
+    if(state==="won"){
+      playMemoryGuide("hoot-mem-win","hoot-win-yay",false);
+    } else if(matchedCount===0 && !firstCard){
+      playMemoryGuide("hoot-mem-welcome","hoot-welcome",!!isBoot);
+    } else {
+      playMemoryGuide("hoot-mem-idle","hoot-tap-big-btn",false);
+    }
   }
   function speakAnimal(an){
     if(!an || !an.word || !hasClip(an.word)) return;
@@ -694,6 +804,14 @@ window.__HOOT_SELF_COACH__=true;
     var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
     if(!hasClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
     enqueue(pr);
+  }
+  function speakMismatchEncourage(){
+    var now=Date.now();
+    if(now-lastWrongVoiceAt<3200) return;
+    lastWrongVoiceAt=now;
+    var wr=WRONG_CLIPS[(wrongIdx++)%WRONG_CLIPS.length];
+    if(!hasClip(wr)) wr="hoot-try-again.mp3";
+    enqueue(wr);
   }
 
   /* ================= HELPERS ================= */
@@ -734,7 +852,7 @@ window.__HOOT_SELF_COACH__=true;
     }
   }
 
-  /* ================= IDLE FIREFLY HINT ================= */
+  /* ================= IDLE FIREFLY HINT & ~9.5s SPOKEN REMINDER ================= */
   function clearIdle(){ if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; } }
   function armIdle(){
     clearIdle();
@@ -742,7 +860,12 @@ window.__HOOT_SELF_COACH__=true;
     idleTimer=setTimeout(function(){
       if(dead || state!=="play") return;
       pulsePairHint();
-    }, 11000);
+      if(!idleVoiceReminded){
+        idleVoiceReminded=true;
+        playMemoryGuide("hoot-mem-idle","hoot-tap-big-btn",false);
+      }
+      armIdle();
+    }, 9500);
   }
   function pulsePairHint(){
     var targetId=firstCard ? firstCard.dataset.id : null;
@@ -769,8 +892,22 @@ window.__HOOT_SELF_COACH__=true;
     }
   }
 
-  function startRound(){
+  function finishIntroPeek(){
+    if(peekTimer){ clearTimeout(peekTimer); peekTimer=null; }
+    if(!peeking) return;
+    peeking=false;
+    cards.forEach(function(c){
+      if(!c.classList.contains("matched")){
+        c.classList.remove("up","peek-shimmer");
+      }
+    });
+  }
+
+  function startRound(isBoot){
     clearIdle();
+    if(peekTimer){ clearTimeout(peekTimer); peekTimer=null; }
+    peeking=false;
+    idleVoiceReminded=false;
     clearVoice(true);
     state="play";
     firstCard=null;
@@ -796,6 +933,11 @@ window.__HOOT_SELF_COACH__=true;
         +'</span>';
       btn.addEventListener("pointerdown",function(e){
         e.preventDefault();
+        lastPtrAt=Date.now();
+        onCardTap(btn, an);
+      });
+      btn.addEventListener("click",function(){
+        if(Date.now()-lastPtrAt<320) return;
         onCardTap(btn, an);
       });
       grid.appendChild(btn);
@@ -803,13 +945,29 @@ window.__HOOT_SELF_COACH__=true;
     });
 
     renderPairTray();
-    armIdle();
+
+    /* Age-adaptive brief peek shimmer so 2-3yo toddlers glimpse the hiding friends! */
+    var peekMs = pairGoal<=2 ? (IS_RILEY ? 1300 : 1050) : (pairGoal<=3 ? (IS_RILEY ? 1150 : 900) : 750);
+    peeking=true;
+    cards.forEach(function(c){ c.classList.add("up","peek-shimmer"); });
+    peekTimer=setTimeout(function(){
+      if(dead) return;
+      finishIntroPeek();
+      armIdle();
+    }, peekMs);
+
+    if(isBoot){
+      playMemoryGuide("hoot-mem-welcome","hoot-welcome",true);
+    }
   }
 
   function onCardTap(btn, an){
+    unlockAudioOnce();
     audio();
     if(dead || state!=="play") return;
+    if(peeking) finishIntroPeek();
     if(btn.classList.contains("up") || btn.classList.contains("matched")) return;
+    idleVoiceReminded=false;
     clearIdle();
     btn.classList.add("up");
     flipSfx();
@@ -849,13 +1007,14 @@ window.__HOOT_SELF_COACH__=true;
         }
       }, 650);
     } else {
-      /* NOT A MATCH — kind generous peek window for toddlers! */
+      /* NOT A MATCH — kind generous peek window + gentle spoken encouragement for toddlers! */
       speakAnimal(an);
       setTimeout(function(){
         if(dead) return;
         missSfx();
         prev.classList.add("wiggle");
         btn.classList.add("wiggle");
+        speakMismatchEncourage();
       }, 360);
       setTimeout(function(){
         if(dead) return;
@@ -863,7 +1022,7 @@ window.__HOOT_SELF_COACH__=true;
         btn.classList.remove("up","wiggle");
         state="play";
         armIdle();
-      }, 1150);
+      }, IS_RILEY ? 1250 : 1150);
     }
   }
 
@@ -887,56 +1046,65 @@ window.__HOOT_SELF_COACH__=true;
     winOverlay.hidden=false;
     spawnConfetti(42);
     starSfx();
-    enqueue(hasClip("hoot-win-yay")?"hoot-win-yay.mp3":"hoot-amazing.mp3");
+    playMemoryGuide("hoot-mem-win","hoot-win-yay",false);
   }
 
   /* ================= CONTROLS ================= */
   document.querySelectorAll(".size-btn").forEach(function(b){
     b.addEventListener("click",function(){
+      unlockAudioOnce();
       audio(); flipSfx();
       pairGoal=Number(b.getAttribute("data-pairs"))||3;
       document.querySelectorAll(".size-btn").forEach(function(x){ x.classList.remove("active"); });
       b.classList.add("active");
-      startRound();
+      startRound(false);
     });
   });
   hintBtn.addEventListener("click",function(){
+    unlockAudioOnce();
     audio();
-    if(state==="play") pulsePairHint();
+    if(peeking) finishIntroPeek();
+    if(state==="play"){
+      pulsePairHint();
+      idleVoiceReminded=false;
+      armIdle();
+    }
   });
   soundBtn.addEventListener("click",function(){
     soundOn=!soundOn;
     soundBtn.textContent=soundOn?"🔊":"🔇";
-    if(!soundOn) clearVoice(true); else{ audio(); flipSfx(); }
+    if(!soundOn) clearVoice(true); else{ unlockAudioOnce(); audio(); flipSfx(); speakCurrentGuide(false); }
   });
   $("againBtn").addEventListener("click",function(){
+    unlockAudioOnce();
     audio(); starSfx();
-    startRound();
+    startRound(false);
   });
   levelUpBtn.addEventListener("click",function(){
+    unlockAudioOnce();
     audio(); starSfx();
     pairGoal=(pairGoal===2)?3:6;
     document.querySelectorAll(".size-btn").forEach(function(x){
       x.classList.toggle("active", Number(x.getAttribute("data-pairs"))===pairGoal);
     });
-    startRound();
+    startRound(false);
   });
 
-  var lastHootTap=0;
+  /* Tap Flower-Crown Hoot -> happy bounce + flashes a matching pair hint + repeats spoken guidance! */
   hootMeadow.addEventListener("click",function(){
+    unlockAudioOnce();
     audio();
+    if(peeking) finishIntroPeek();
     hootMeadow.classList.remove("celebrate"); void hootMeadow.offsetWidth; hootMeadow.classList.add("celebrate");
     if(state==="play") pulsePairHint();
-    var now=Date.now();
-    if(now-lastHootTap>8000){
-      lastHootTap=now;
-      clearVoice(true);
-      enqueue("hoot-giggle.mp3",{giggle:true});
-    }
+    idleVoiceReminded=false;
+    armIdle();
+    speakCurrentGuide(false);
   });
 
   document.querySelectorAll(".bfly").forEach(function(bf){
     bf.addEventListener("click",function(){
+      unlockAudioOnce();
       audio(); hintSfx();
       bf.classList.remove("spin"); void bf.offsetWidth; bf.classList.add("spin");
       setTimeout(function(){ bf.classList.remove("spin"); }, 700);
@@ -944,24 +1112,26 @@ window.__HOOT_SELF_COACH__=true;
   });
   document.querySelectorAll(".daisy").forEach(function(d){
     d.addEventListener("click",function(){
+      unlockAudioOnce();
       audio(); flipSfx();
       d.classList.remove("bloom"); void d.offsetWidth; d.classList.add("bloom");
       setTimeout(function(){ d.classList.remove("bloom"); }, 520);
     });
   });
 
-  window.addEventListener("pagehide",function(){ dead=true; clearIdle(); clearVoice(true); });
+  window.addEventListener("pagehide",function(){
+    dead=true;
+    clearIdle();
+    if(peekTimer){ clearTimeout(peekTimer); peekTimer=null; }
+    clearVoice(true);
+  });
   document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= INIT ================= */
-  if(/(^|[?&])kid=kidb(&|$)/.test(location.search)){
-    pairGoal=2;
-    document.querySelectorAll(".size-btn").forEach(function(x){
-      x.classList.toggle("active", Number(x.getAttribute("data-pairs"))===2);
-    });
-  }
-  startRound();
-  enqueue("hoot-game-hello.mp3");
+  document.querySelectorAll(".size-btn").forEach(function(x){
+    x.classList.toggle("active", Number(x.getAttribute("data-pairs"))===pairGoal);
+  });
+  startRound(true);
 
   window.__memoryGame={
     snapshot:function(){
@@ -973,7 +1143,7 @@ window.__HOOT_SELF_COACH__=true;
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e139">
-<script src="js/hoot-game-tail.js?v=llprev3e139"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

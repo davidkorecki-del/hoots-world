@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="balloon";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e139"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -49,6 +49,25 @@ window.__HOOT_SELF_COACH__=true;
       #e6f9ff 100%);
   }
 
+  /* Pixar-Illustrated Sunny Sky Backdrop with Gradient Fallback */
+  #pixarBg{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_balloon.jpg"), linear-gradient(180deg, #3db6f5 0%, #73d2fb 36%, #b7ebff 72%, #e6f9ff 100%);
+  }
+  #pixarBg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 55% 42%, rgba(255,255,255,.08) 28%, rgba(20,90,145,.18) 100%);
+  }
+
   /* Soft bottom cloud banks */
   #cloudBanks{
     position:absolute;
@@ -57,6 +76,7 @@ window.__HOOT_SELF_COACH__=true;
     height:clamp(84px, 14vh, 140px);
     pointer-events:none;
     z-index:2;
+    opacity:.86;
   }
 
   /* Living sky decor */
@@ -309,6 +329,10 @@ window.__HOOT_SELF_COACH__=true;
     transform-origin:50% 45%;
     touch-action:manipulation;
   }
+  body.kid-riley .p-balloon{
+    width:clamp(120px, 16vw, 168px);
+    height:clamp(160px, 21.5vw, 224px);
+  }
   .p-balloon svg{
     width:100%;
     height:100%;
@@ -402,6 +426,18 @@ window.__HOOT_SELF_COACH__=true;
   #winTrophy{ font-size:56px; margin:6px 0; }
   #winChips{ display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin:12px 0 20px; }
   #winChips .sky-chip{ width:52px; height:52px; font-size:28px; }
+  .win-btns{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; }
+  .win-btn{
+    min-height:68px;
+    border-radius:999px;
+    border:4px solid #fff;
+    font-family:"Fredoka",sans-serif;
+    font-size:26px;
+    font-weight:700;
+    padding:0 24px;
+    cursor:pointer;
+    touch-action:manipulation;
+  }
   #againBtn{
     min-width:168px;
     min-height:74px;
@@ -419,10 +455,15 @@ window.__HOOT_SELF_COACH__=true;
 
   /* ================= PORTRAIT PHONE RESPONSIVE ================= */
   @media (max-width:600px){
-    #sunBtn{ right:86px; width:62px; height:62px; }
-    .hud-pill{ min-width:56px; min-height:56px; height:56px; padding:0 12px; font-size:24px; }
-    .hud-pill.round{ width:56px; }
-    #starBank{ min-height:56px; padding:0 14px 0 10px; font-size:22px; }
+    #sunBtn{
+      top:max(82px, calc(env(safe-area-inset-top) + 74px));
+      right:12px;
+      width:64px;
+      height:64px;
+    }
+    .hud-pill{ min-width:64px; min-height:64px; height:64px; padding:0 12px; font-size:26px; }
+    .hud-pill.round{ width:64px; }
+    #starBank{ min-height:64px; height:64px; padding:0 14px 0 10px; font-size:22px; }
     #hotAirWrap{
       left:8px;
       bottom:max(6px, env(safe-area-inset-bottom));
@@ -430,18 +471,20 @@ window.__HOOT_SELF_COACH__=true;
       align-items:flex-end;
       gap:8px;
     }
-    #hotAirBtn{ width:112px; }
-    #wantedBanner{ min-height:64px; padding:6px 10px 6px 8px; gap:6px; margin-bottom:8px; }
+    #hotAirBtn{ width:112px; min-width:64px; min-height:64px; }
+    #wantedBanner{ min-height:66px; padding:6px 10px 6px 8px; gap:6px; margin-bottom:8px; }
     #targetLetter{ width:48px; height:48px; font-size:32px; }
     #targetEmoji{ font-size:24px; }
     #bannerSpeak{ width:40px; height:40px; font-size:18px; }
-    .p-balloon{ width:clamp(94px, 27vw, 120px); height:clamp(126px, 36vw, 160px); }
+    .p-balloon{ width:clamp(98px, 27vw, 124px); height:clamp(132px, 36vw, 166px); }
+    body.kid-riley .p-balloon{ width:clamp(108px, 30vw, 136px); height:clamp(144px, 40vw, 182px); }
     .sky-chip{ width:22px; height:22px; font-size:12px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="pixarBg" aria-hidden="true"></div>
   <!-- Living Sky Props -->
   <button class="sky-prop" id="sunBtn" type="button" aria-label="Smiling Sun">
     <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -555,11 +598,13 @@ window.__HOOT_SELF_COACH__=true;
 
   <!-- Win Celebration Overlay -->
   <div id="winOverlay" hidden>
-    <div id="winCard" role="dialog" aria-modal="true" aria-label="You popped all 5 letter balloons!">
+    <div id="winCard" role="dialog" aria-modal="true" aria-label="You popped all letter balloons!">
       <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
       <div id="winTrophy" aria-hidden="true">🎈🌟🎉</div>
       <div id="winChips"></div>
-      <button id="againBtn" type="button" aria-label="Play Again">↻ ▶</button>
+      <div class="win-btns">
+        <button class="win-btn" id="againBtn" type="button" aria-label="Play Again">↻ ▶</button>
+      </div>
     </div>
   </div>
 </div>
@@ -588,7 +633,11 @@ window.__HOOT_SELF_COACH__=true;
 
   var PRAISE=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-super.mp3","hoot-yay-2.mp3"];
   var WRONG=["hoot-try-again.mp3","hoot-look-closely.mp3","hoot-almost.mp3"];
-  var GOAL=5;
+  var isRiley = /(^|[?&])kid=kidb(&|$)/.test(location.search);
+  try{ if(!isRiley && window.parent && window.parent.__llIsRiley && window.parent.__llIsRiley()) isRiley = true; }catch(e){}
+  if(isRiley) document.body.classList.add("kid-riley");
+  var GOAL = isRiley ? 4 : 5;
+  var WAVE_COUNT = isRiley ? 3 : 4;
 
   function shuffle(a){
     for(var i=a.length-1;i>0;i--){
@@ -618,18 +667,23 @@ window.__HOOT_SELF_COACH__=true;
   var mode="quest"; /* quest | free */
   var lettersSet=[], targets=[], tIdx=0, targetLetter="A";
   var popped=[], stars=0, praiseIdx=0, wrongIdx=0;
-  var soundOn=true, dead=false, idleTimer=null;
+  var soundOn=true, dead=false, idleTimer=null, winTimer=null;
   var balloons=[], animId=null, lastFrame=0;
 
   function $(id){ return document.getElementById(id); }
   var stage=$("stage"), skyField=$("skyField"),
       hotAirBtn=$("hotAirBtn"), basketChips=$("basketChips"),
       wantedBanner=$("wantedBanner"), targetLetterEl=$("targetLetter"),
-      targetEmoji=$("targetEmoji"), dots=$("progressDots").children,
+      targetEmoji=$("targetEmoji"), progressDotsEl=$("progressDots"),
       starCount=$("starCount"), starBank=$("starBank"),
       winOverlay=$("winOverlay"), winStars=$("winStars"), winChips=$("winChips"),
       modeQuestBtn=$("modeQuestBtn"), modeFreeBtn=$("modeFreeBtn"),
       soundBtn=$("soundBtn");
+  (function buildProgressDots(){
+    progressDotsEl.innerHTML="";
+    for(var i=0;i<GOAL;i++) progressDotsEl.appendChild(document.createElement("i"));
+  })();
+  var dots=progressDotsEl.children;
 
   /* ================= SOUND FX ================= */
   var AC=null;
@@ -667,10 +721,22 @@ window.__HOOT_SELF_COACH__=true;
   function chirpSfx(){ tone(1400,2100,0.08,"sine",0.08); tone(1600,2400,0.09,"sine",0.08,0.1); }
   function starSfx(){ tone(880,880,0.08,"triangle",0.1); tone(1175,1175,0.08,"triangle",0.1,0.06); tone(1568,1568,0.14,"triangle",0.1,0.12); }
 
-  /* ================= STUDIO HOOT VOICE ================= */
+  /* ================= STUDIO HOOT VOICE (HOOT_HAVE-GATED + iOS UNLOCK) ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false;
-  function hasClip(id){
+  var voiceEl=null, vQueue=[], vPlaying=false, vPriority=false;
+  var audioUnlocked=false, pendingBootClip=null;
+  function hasHootClip(id){
+    try{
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveBalClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3")>=0 ? chosen : chosen+".mp3") : null;
+  }
+  function hasBaseClip(id){
     try{ var H=window.parent&&window.parent.HOOT_HAVE; if(H) return !!H[id]; }catch(e){}
     return true;
   }
@@ -689,6 +755,28 @@ window.__HOOT_SELF_COACH__=true;
     }
     return voiceEl;
   }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked=true;
+    audio();
+    var el=getVoice();
+    try{
+      if(!vPlaying){
+        el.muted=true;
+        var p=el.play();
+        if(p&&p.then){
+          p.then(function(){
+            el.pause(); el.currentTime=0; el.muted=false;
+            if(pendingBootClip){
+              var c=pendingBootClip; pendingBootClip=null;
+              clearVoice(true); enqueue(c, true);
+            }
+          }).catch(function(){ el.muted=false; });
+        } else { el.muted=false; }
+      }
+    }catch(e){ el.muted=false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
   function hubQuiet(){
     try{
       var d=window.parent&&window.parent.document;
@@ -697,29 +785,34 @@ window.__HOOT_SELF_COACH__=true;
       return !!(b&&(b.classList.contains("sel")||b.classList.contains("active")||b.getAttribute("aria-pressed")==="true"));
     }catch(e){ return false; }
   }
-  function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; hotAirBtn.classList.remove("talking"); pumpVoice(); }
+  function vNext(){ if(!vPlaying){ pumpVoice(); return; } vPlaying=false; vPriority=false; hotAirBtn.classList.remove("talking"); pumpVoice(); }
   function pumpVoice(){
     if(vPlaying||dead) return;
     var item=vQueue.shift(); if(!item) return;
     if(!soundOn||hubQuiet()){ pumpVoice(); return; }
     var el=getVoice();
-    vPlaying=true; hotAirBtn.classList.add("talking");
+    vPlaying=true; vPriority=!!item.priority; hotAirBtn.classList.add("talking");
+    el.muted=false;
     el.__hwT=Date.now(); el.__hwRetry=0;
     el.src=VBASE+item.file;
     var p=el.play();
-    if(p&&p.catch) p.catch(vNext);
+    if(p&&p.catch) p.catch(function(){
+      if(!audioUnlocked && item.priority && !pendingBootClip) pendingBootClip=item.file;
+      vNext();
+    });
   }
   function clearVoice(stop){
     vQueue.length=0;
     if(stop && voiceEl){
       voiceEl.__hwT=0; voiceEl.__hwRetry=1;
       try{ voiceEl.pause(); }catch(e){}
-      vPlaying=false; hotAirBtn.classList.remove("talking");
+      vPlaying=false; vPriority=false; hotAirBtn.classList.remove("talking");
     }
   }
-  function enqueue(file){
+  function enqueue(file, priority){
     if(!file) return;
-    vQueue.push({file:file});
+    if(!priority && vPriority && vPlaying) return;
+    vQueue.push({file:file, priority:!!priority});
     pumpVoice();
   }
   function callTarget(L, isBoot){
@@ -728,36 +821,41 @@ window.__HOOT_SELF_COACH__=true;
     wantedBanner.classList.remove("pop"); void wantedBanner.offsetWidth; wantedBanner.classList.add("pop");
     if(isBoot){
       try{
-        if(window.parent && window.parent!==window && window.parent.__hwPlayAfterIntro && window.parent.__hwPlayAfterIntro(VBASE+clip)){
+        if(window.parent && window.parent!==window && typeof window.parent.__hwPlayAfterIntro==="function" && window.parent.__hwPlayAfterIntro(VBASE+clip)){
+          pendingBootClip=null;
           return;
         }
       }catch(e){}
     }
     clearVoice(true);
-    enqueue(clip);
+    enqueue(clip, true);
   }
-  function speakPopSuccess(L, nextL){
+  function speakPopSuccess(L, nextL, isRainbow){
     var low=L.toLowerCase();
     clearVoice(true);
-    enqueue("name-letter-"+low+".mp3");
-    var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
-    if(!hasClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
-    enqueue(pr);
+    enqueue("name-letter-"+low+".mp3", true);
+    if(isRainbow){
+      enqueue(resolveBalClip("hoot-bal-rainbow", "hoot-amazing"), true);
+    } else {
+      var pr=PRAISE[praiseIdx%PRAISE.length]; praiseIdx++;
+      if(!hasBaseClip(pr.replace(".mp3",""))) pr="hoot-great-job.mp3";
+      enqueue(pr, true);
+    }
     if(nextL){
       var nlow=nextL.toLowerCase();
-      enqueue("call-letter-"+nlow+".mp3");
+      enqueue("call-letter-"+nlow+".mp3", true);
     }
   }
   function speakWrong(T){
     var w=WRONG[wrongIdx%WRONG.length]; wrongIdx++;
-    if(!hasClip(w.replace(".mp3",""))) w="hoot-try-again.mp3";
+    if(!hasBaseClip(w.replace(".mp3",""))) w="hoot-try-again.mp3";
     var low=T.toLowerCase();
     clearVoice(true);
-    enqueue(w);
-    enqueue("call-letter-"+low+".mp3");
+    enqueue(w, true);
+    enqueue("call-letter-"+low+".mp3", true);
   }
 
-  /* ================= IDLE NUDGE ================= */
+  /* ================= IDLE NUDGE (~9s) ================= */
   function clearIdle(){
     if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
     balloons.forEach(function(b){ b.el.classList.remove("hint-glow"); });
@@ -770,8 +868,9 @@ window.__HOOT_SELF_COACH__=true;
       balloons.forEach(function(b){
         if(b.letter===targetLetter) b.el.classList.add("hint-glow");
       });
-      if(!vPlaying && !vQueue.length) callTarget(targetLetter);
-    }, 9500);
+      if(!vPlaying && !vQueue.length) callTarget(targetLetter, false);
+      armIdle();
+    }, 9000);
   }
 
   /* ================= GLOSSY 3D PARTY BALLOON SVG ================= */
@@ -835,10 +934,10 @@ window.__HOOT_SELF_COACH__=true;
     var obj={
       el:el, letter:L, rainbow:!!rainbow, pal:pal,
       baseX:baseX, x:baseX, y:startY,
-      vy: 26 + Math.random()*18, /* gentle soothing float speed px/sec */
+      vy: isRiley ? (15 + Math.random()*9) : (26 + Math.random()*16), /* age-adaptive soothing float speed px/sec */
       phase: Math.random()*Math.PI*2,
-      swayAmp: 12 + Math.random()*12,
-      swaySpd: 1.2 + Math.random()*0.6,
+      swayAmp: isRiley ? (8 + Math.random()*6) : (12 + Math.random()*12),
+      swaySpd: isRiley ? (0.85 + Math.random()*0.4) : (1.2 + Math.random()*0.6),
       dead:false
     };
     el.style.transform="translate3d("+obj.x+"px,"+obj.y+"px,0)";
@@ -857,6 +956,7 @@ window.__HOOT_SELF_COACH__=true;
     var dt=Math.min(0.05, (ts-lastFrame)/1000);
     lastFrame=ts;
     var bnd=skyBounds();
+    var minSep = window.innerWidth < 600 ? (isRiley ? 108 : 96) : (isRiley ? 132 : 118);
     for(var i=0;i<balloons.length;i++){
       var b=balloons[i];
       if(b.dead) continue;
@@ -866,7 +966,30 @@ window.__HOOT_SELF_COACH__=true;
         /* Loop smoothly back up from bottom clouds */
         b.y = bnd.h - 10;
       }
-      b.x = Math.max(bnd.minX-12, Math.min(bnd.maxX+12, b.baseX + Math.sin(b.phase)*b.swayAmp));
+      var targetX = b.baseX + Math.sin(b.phase)*b.swayAmp;
+      b.x += (targetX - b.x) * Math.min(1, dt * 4);
+    }
+    /* Gentle separation so balloons never overlap on iPhone or iPad */
+    for(var i=0;i<balloons.length;i++){
+      var a=balloons[i];
+      if(a.dead) continue;
+      for(var j=i+1;j<balloons.length;j++){
+        var c=balloons[j];
+        if(c.dead) continue;
+        var dx=c.x-a.x, dy=c.y-a.y;
+        var dist=Math.sqrt(dx*dx+dy*dy)||0.1;
+        if(dist<minSep){
+          var push=(minSep-dist)*0.32*dt*8;
+          var nx=dx/dist, ny=dy/dist;
+          a.x -= nx*push; a.y -= ny*push*0.45;
+          c.x += nx*push; c.y += ny*push*0.45;
+        }
+      }
+    }
+    for(var i=0;i<balloons.length;i++){
+      var b=balloons[i];
+      if(b.dead) continue;
+      b.x = Math.max(bnd.minX-8, Math.min(bnd.maxX+8, b.x));
       var rot = Math.cos(b.phase)*4.5;
       b.el.style.transform="translate3d("+b.x.toFixed(1)+"px,"+b.y.toFixed(1)+"px,0) rotate("+rot.toFixed(1)+"deg)";
     }
@@ -940,21 +1063,22 @@ window.__HOOT_SELF_COACH__=true;
     wantedBanner.style.display="flex";
 
     clearBalloons();
+    if(speakNow) callTarget(targetLetter, isBoot);
     var pool=shuffle(Object.keys(DATA).filter(function(x){ return x!==targetLetter && popped.indexOf(x)<0; }));
-    var wave=shuffle([targetLetter].concat(pool.slice(0,3)));
+    var wave=shuffle([targetLetter].concat(pool.slice(0, Math.max(2, WAVE_COUNT-1))));
     var rainbowIdx=(Math.random()<0.35) ? wave.indexOf(targetLetter) : -1;
     wave.forEach(function(L,i){
       spawnBalloon(L, i, wave.length, i===rainbowIdx, false);
     });
     updateHUD();
-    if(speakNow) callTarget(targetLetter, isBoot);
     armIdle();
   }
 
   function presentFreeSky(){
     wantedBanner.style.display="none";
     clearBalloons();
-    var wave=shuffle(Object.keys(DATA)).slice(0,5);
+    var freeCnt = isRiley ? 4 : 5;
+    var wave=shuffle(Object.keys(DATA)).slice(0,freeCnt);
     wave.forEach(function(L,i){
       spawnBalloon(L, i, wave.length, i===0, false);
     });
@@ -962,6 +1086,8 @@ window.__HOOT_SELF_COACH__=true;
   }
 
   function startRound(isBoot){
+    if(winTimer){ clearTimeout(winTimer); winTimer=null; }
+    try{ window.__hwWinSkipFn=null; }catch(e){}
     clearIdle();
     clearVoice(true);
     state="play";
@@ -976,11 +1102,13 @@ window.__HOOT_SELF_COACH__=true;
       presentQuestWave(true, !!isBoot);
     } else {
       presentFreeSky();
-      enqueue("hoot-game-hello.mp3");
+      enqueue(resolveBalClip("hoot-bal-welcome", "hoot-ready-go"), true);
     }
+    if(!animId){ lastFrame=0; animId=requestAnimationFrame(tick); }
   }
 
   function onBalloonTap(b){
+    unlockAudioOnce();
     audio();
     if(dead || state!=="play" || b.dead) return;
     var r=b.el.getBoundingClientRect();
@@ -1020,24 +1148,28 @@ window.__HOOT_SELF_COACH__=true;
     if(mode==="free"){
       var low=b.letter.toLowerCase();
       clearVoice(true);
-      if(hasClip("name-letter-"+low)) enqueue("name-letter-"+low+".mp3");
+      if(hasBaseClip("name-letter-"+low)) enqueue("name-letter-"+low+".mp3", false);
       /* Spawn a fresh balloon from bottom clouds so the sky party never stops! */
       var all=Object.keys(DATA);
       var used=balloons.map(function(x){ return x.letter; });
       var nextPool=all.filter(function(x){ return used.indexOf(x)<0; });
       var nextL=nextPool[Math.floor(Math.random()*nextPool.length)] || all[0];
-      spawnBalloon(nextL, Math.floor(Math.random()*5), 5, Math.random()<0.22, true);
+      var freeCnt = isRiley ? 4 : 5;
+      spawnBalloon(nextL, Math.floor(Math.random()*freeCnt), freeCnt, Math.random()<0.22, true);
       return;
     }
 
     /* Quest progression */
     if(tIdx >= GOAL-1){
-      speakPopSuccess(b.letter, null);
-      setTimeout(function(){ if(!dead) showWin(); }, 650);
+      speakPopSuccess(b.letter, null, b.rainbow);
+      winTimer = (window.__hwFastWin || setTimeout)(function(){
+        winTimer = null;
+        if(!dead && state==="play") showWin();
+      }, 720);
     } else {
       tIdx++;
       var nextTarget=targets[tIdx];
-      speakPopSuccess(b.letter, nextTarget);
+      speakPopSuccess(b.letter, nextTarget, b.rainbow);
       presentQuestWave(false);
     }
   }
@@ -1045,6 +1177,7 @@ window.__HOOT_SELF_COACH__=true;
   function showWin(){
     if(state==="won") return;
     state="won";
+    if(winTimer){ clearTimeout(winTimer); winTimer=null; }
     clearIdle();
     clearBalloons();
     winChips.innerHTML="";
@@ -1061,7 +1194,8 @@ window.__HOOT_SELF_COACH__=true;
     }
     winOverlay.hidden=false;
     starSfx();
-    enqueue(hasClip("hoot-win-yay")?"hoot-win-yay.mp3":"hoot-amazing.mp3");
+    clearVoice(true);
+    enqueue(resolveBalClip("hoot-bal-win", "hoot-win-yay"), true);
     /* Big sky confetti shower! */
     var sr=stage.getBoundingClientRect();
     burstPopFX(sr.width*0.35, sr.height*0.32, popped[0]||"A", PALETTE[0], true);
@@ -1070,22 +1204,31 @@ window.__HOOT_SELF_COACH__=true;
 
   /* ================= CONTROLS & SKY TOYS ================= */
   function repeatCall(){
+    unlockAudioOnce();
     audio(); burnerSfx();
     hotAirBtn.classList.remove("boost"); void hotAirBtn.offsetWidth; hotAirBtn.classList.add("boost");
-    if(state==="play" && mode==="quest"){ callTarget(targetLetter); armIdle(); }
+    if(state==="play" && mode==="quest"){
+      balloons.forEach(function(b){ if(!b.dead && b.letter===targetLetter) b.el.classList.add("hint-glow"); });
+      callTarget(targetLetter, false);
+      armIdle();
+    } else if(state==="play" && mode==="free"){
+      clearVoice(true);
+      enqueue(resolveBalClip("hoot-bal-welcome", "hoot-ready-go"), true);
+    }
   }
   hotAirBtn.addEventListener("click",repeatCall);
   wantedBanner.addEventListener("click",repeatCall);
 
   basketChips.addEventListener("click",function(e){
     e.stopPropagation();
+    unlockAudioOnce();
     audio();
     var chips=basketChips.children;
     if(!chips.length) return;
     clearVoice(true);
     Array.prototype.forEach.call(chips,function(ch,i){
       var low=ch.dataset.letter.toLowerCase();
-      if(hasClip("name-letter-"+low)) enqueue("name-letter-"+low+".mp3");
+      if(hasBaseClip("name-letter-"+low)) enqueue("name-letter-"+low+".mp3", false);
       setTimeout(function(){
         for(var j=0;j<chips.length;j++) chips[j].classList.toggle("reading", j===i);
         if(i===chips.length-1) setTimeout(function(){
@@ -1096,48 +1239,49 @@ window.__HOOT_SELF_COACH__=true;
   });
 
   modeQuestBtn.addEventListener("click",function(){
-    audio(); popSfx();
+    unlockAudioOnce(); audio(); popSfx();
     mode="quest";
     modeQuestBtn.classList.add("active"); modeQuestBtn.setAttribute("aria-pressed","true");
     modeFreeBtn.classList.remove("active"); modeFreeBtn.setAttribute("aria-pressed","false");
     startRound();
   });
   modeFreeBtn.addEventListener("click",function(){
-    audio(); popSfx();
+    unlockAudioOnce(); audio(); popSfx();
     mode="free";
     modeFreeBtn.classList.add("active"); modeFreeBtn.setAttribute("aria-pressed","true");
     modeQuestBtn.classList.remove("active"); modeQuestBtn.setAttribute("aria-pressed","false");
     startRound();
   });
   soundBtn.addEventListener("click",function(){
+    unlockAudioOnce();
     soundOn=!soundOn;
     soundBtn.textContent=soundOn?"🔊":"🔇";
-    if(!soundOn) clearVoice(true); else{ audio(); if(state==="play"&&mode==="quest") callTarget(targetLetter); }
+    if(!soundOn) clearVoice(true); else{ audio(); if(state==="play"&&mode==="quest") callTarget(targetLetter, false); }
   });
-  $("againBtn").addEventListener("click",function(){ audio(); starSfx(); startRound(); });
+  $("againBtn").addEventListener("click",function(){ unlockAudioOnce(); audio(); starSfx(); startRound(); });
 
   $("sunBtn").addEventListener("click",function(){
-    audio(); starSfx();
+    unlockAudioOnce(); audio(); starSfx();
     var s=$("sunBtn"); s.classList.remove("zing"); void s.offsetWidth; s.classList.add("zing");
   });
   document.querySelectorAll(".cloud-btn").forEach(function(c){
-    c.addEventListener("click",function(){ audio(); noise(0.14,750,0.08); c.classList.add("puff"); setTimeout(function(){ c.classList.remove("puff"); }, 320); });
+    c.addEventListener("click",function(){ unlockAudioOnce(); audio(); noise(0.14,750,0.08); c.classList.add("puff"); setTimeout(function(){ c.classList.remove("puff"); }, 320); });
   });
   document.querySelectorAll(".bird-btn").forEach(function(b){
-    b.addEventListener("click",function(){ audio(); chirpSfx(); });
+    b.addEventListener("click",function(){ unlockAudioOnce(); audio(); chirpSfx(); });
   });
 
-  window.addEventListener("pagehide",function(){ dead=true; if(animId) cancelAnimationFrame(animId); clearIdle(); clearVoice(true); });
+  window.addEventListener("pagehide",function(){ dead=true; if(animId){ cancelAnimationFrame(animId); animId=null; } if(winTimer){ clearTimeout(winTimer); winTimer=null; } clearIdle(); clearVoice(true); });
   document.addEventListener("visibilitychange",function(){ if(document.hidden) clearVoice(false); });
 
   /* ================= BOOT ================= */
   startRound(true);
-  animId=requestAnimationFrame(tick);
 
   window.__balloonGame={
     snapshot:function(){
       return {
         state:state, mode:mode, target:targetLetter, stars:stars,
+        isRiley:isRiley, goal:GOAL,
         popped:popped.slice(), balloonCount:balloons.length,
         presented:balloons.map(function(b){ return b.letter; }),
         winShown:!winOverlay.hidden
@@ -1146,7 +1290,7 @@ window.__HOOT_SELF_COACH__=true;
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e139">
-<script src="js/hoot-game-tail.js?v=llprev3e139"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

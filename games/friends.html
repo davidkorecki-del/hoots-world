@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="friends";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e143"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -20,6 +20,7 @@
     --pink:#ff6b9d;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  [hidden]{ display:none !important; }
   html,body{ height:100%; margin:0; overflow:hidden; }
   body{
     font-family:"Fredoka",system-ui,sans-serif;
@@ -46,7 +47,32 @@
       #3da83a 100%);
   }
 
-  /* ================= FARMYARD SCENERY ================= */
+  /* ================= PIXAR 3D SUNNY FARMYARD BACKDROP ================= */
+  .pixar-backdrop{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_friends.jpg"), linear-gradient(180deg,
+      #5ac4f8 0%,
+      #9be0ff 32%,
+      #d8f6ff 46%,
+      #8de268 47%,
+      #5dc94d 72%,
+      #3da83a 100%);
+  }
+  .pixar-backdrop::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 50%, rgba(255,253,245,.06) 28%, rgba(28,48,20,.22) 100%);
+  }
+
+  /* ================= SUBTLE FLOATING SKY AMBIENCE ================= */
   #scenery{
     position:absolute;
     inset:0;
@@ -56,37 +82,22 @@
   }
   #sunGlow{
     position:absolute;
-    top:54px;
-    right:34px;
-    width:92px;
-    height:92px;
+    top:52px;
+    right:26px;
+    width:82px;
+    height:82px;
+    opacity:.88;
     animation:sunSpin 38s linear infinite;
   }
   @keyframes sunSpin{ to{ transform:rotate(360deg); } }
-  #barnSvg{
-    position:absolute;
-    left:max(8px, 2vw);
-    top:22%;
-    width:clamp(118px, 18vw, 220px);
-    opacity:.96;
-  }
-  #fenceSvg{
-    position:absolute;
-    left:0;
-    right:0;
-    top:44%;
-    width:100%;
-    height:42px;
-    opacity:.92;
-  }
   .cloud{
     position:absolute;
-    opacity:.92;
-    animation:cloudDrift 34s linear infinite;
+    opacity:.76;
+    animation:cloudDrift 38s linear infinite;
   }
   @keyframes cloudDrift{ from{ transform:translateX(-140px); } to{ transform:translateX(calc(100vw + 140px)); } }
 
-  /* ================= TOP HUD ================= */
+  /* ================= TOP HUD (ALL >=64PX) ================= */
   #hud{
     position:relative;
     z-index:20;
@@ -106,14 +117,14 @@
     padding:0 16px;
     border-radius:999px;
     border:4px solid #fff;
-    background:rgba(255,253,245,.96);
+    background:rgba(255,253,245,.97);
     color:var(--ink);
     font-size:28px;
     display:inline-flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 5px 0 rgba(44,29,18,.22), 0 10px 18px rgba(44,29,18,.14);
+    box-shadow:0 5px 0 rgba(44,29,18,.26), 0 10px 18px rgba(44,29,18,.18);
     transition:transform .14s cubic-bezier(.34,1.6,.5,1);
     flex:0 0 auto;
   }
@@ -125,16 +136,17 @@
   }
   #starBank{
     min-height:64px;
-    padding:0 18px 0 12px;
+    height:64px;
+    padding:0 16px 0 12px;
     border-radius:999px;
     border:4px solid #fff;
-    background:rgba(255,253,245,.96);
+    background:rgba(255,253,245,.97);
     display:inline-flex;
     align-items:center;
-    gap:8px;
+    gap:7px;
     font-size:25px;
     font-weight:700;
-    box-shadow:0 5px 0 rgba(44,29,18,.2), 0 10px 18px rgba(44,29,18,.14);
+    box-shadow:0 5px 0 rgba(44,29,18,.24), 0 10px 18px rgba(44,29,18,.18);
   }
   #starBank svg{ width:28px; height:28px; display:block; }
   #starBank.bump{ animation:starBump .45s cubic-bezier(.34,1.7,.5,1); }
@@ -147,17 +159,19 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:14px;
-    padding:2px 14px 4px;
+    gap:12px;
+    padding:2px 12px 4px;
     flex:0 0 auto;
   }
   #hootFarmer{
-    width:clamp(88px, 13vh, 128px);
+    min-width:64px;
+    min-height:64px;
+    width:clamp(84px, 12.5vh, 122px);
     background:none;
     border:none;
     padding:0;
     cursor:pointer;
-    filter:drop-shadow(0 8px 10px rgba(44,29,18,.26));
+    filter:drop-shadow(0 10px 14px rgba(44,29,18,.34));
     animation:hootFloat 3s ease-in-out infinite;
     flex:0 0 auto;
   }
@@ -165,22 +179,26 @@
   @keyframes hootFloat{ 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-6px) rotate(1.5deg)} }
   #hootFarmer.cheer{ animation:hootJump .42s cubic-bezier(.34,1.6,.5,1) 2; }
   @keyframes hootJump{ 0%,100%{transform:translateY(0) scale(1)} 45%{transform:translateY(-18px) scale(1.08)} }
+  #hootFarmer.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ from{transform:translateY(0) scale(1)} to{transform:translateY(-3px) scale(1.03)} }
 
   #promptPill{
     display:inline-flex;
     align-items:center;
     gap:10px;
-    background:rgba(255,253,245,.96);
+    background:rgba(255,253,245,.97);
     border:4px solid #fff;
     border-radius:999px;
-    padding:8px 18px 8px 10px;
-    box-shadow:0 6px 0 rgba(44,29,18,.18), 0 12px 22px rgba(44,29,18,.14);
+    padding:6px 16px 6px 8px;
+    box-shadow:0 6px 0 rgba(44,29,18,.22), 0 12px 24px rgba(44,29,18,.18);
   }
   #hearBtn{
-    width:58px;
-    height:58px;
+    min-width:64px;
+    min-height:64px;
+    width:64px;
+    height:64px;
     border-radius:50%;
-    border:3.5px solid #fff;
+    border:4px solid #fff;
     background:linear-gradient(180deg,#ff8fab,#ff5d8f);
     color:#fff;
     font-size:28px;
@@ -199,8 +217,8 @@
     justify-content:center;
   }
   .heart-pip{
-    width:20px;
-    height:20px;
+    width:18px;
+    height:18px;
     border-radius:50%;
     background:#e9ecef;
     border:2.5px solid #ced4da;
@@ -209,14 +227,15 @@
   .heart-pip.met{
     background:linear-gradient(180deg,#ff8fab,#ff4d6d);
     border-color:#c2255c;
-    transform:scale(1.12);
+    transform:scale(1.14);
   }
   #quizSoundBadge{
     display:none;
-    font-size:32px;
+    font-size:30px;
     padding:0 6px;
     color:#d6336c;
     letter-spacing:.02em;
+    font-weight:700;
   }
 
   /* ================= PASTURE PLAYGROUND ================= */
@@ -239,14 +258,25 @@
     align-items:center;
     justify-items:center;
   }
+  #friendsGrid.cols-3{
+    max-width:820px;
+    grid-template-columns:repeat(3, 1fr);
+    gap:clamp(14px, 2.8vw, 28px);
+  }
   #friendsGrid.quiz-mode{
-    max-width:860px;
+    max-width:880px;
     grid-template-columns:repeat(4, 1fr);
     gap:clamp(12px, 2.6vw, 26px);
+  }
+  #friendsGrid.quiz-mode.cols-3{
+    max-width:780px;
+    grid-template-columns:repeat(3, 1fr);
   }
 
   .friend-btn{
     position:relative;
+    min-width:96px;
+    min-height:96px;
     width:100%;
     max-width:210px;
     aspect-ratio:1/1;
@@ -259,14 +289,14 @@
     align-items:center;
     justify-content:center;
     padding:8px;
-    box-shadow:0 10px 0 var(--shade), 0 18px 28px rgba(24,52,22,.24), inset 0 8px 14px rgba(255,255,255,.45);
+    box-shadow:0 10px 0 var(--shade), 0 18px 30px rgba(24,52,22,.32), inset 0 8px 14px rgba(255,255,255,.5);
     transition:transform .16s cubic-bezier(.34,1.6,.5,1), box-shadow .16s;
   }
   .friend-btn:active{ transform:translateY(5px) scale(.94); box-shadow:0 4px 0 var(--shade); }
   .friend-btn .ani-emo{
     font-size:clamp(54px, 9.5vw, 94px);
     line-height:1;
-    filter:drop-shadow(0 6px 8px rgba(44,29,18,.22));
+    filter:drop-shadow(0 6px 8px rgba(44,29,18,.24));
     transition:transform .2s;
     pointer-events:none;
   }
@@ -302,7 +332,7 @@
     transform:translateX(-50%);
     font-size:38px;
     pointer-events:none;
-    filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));
     animation:handBob .65s ease-in-out infinite alternate;
   }
   @keyframes handBob{ from{transform:translate(-50%,0)} to{transform:translate(-50%,-10px)} }
@@ -324,59 +354,68 @@
     z-index:40;
     background:rgba(36,78,28,.55);
     backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
     display:flex;
     align-items:center;
     justify-content:center;
     padding:16px;
   }
-  #winOverlay[hidden]{ display:none; }
-  .win-card{
+  #winCard{
     background:var(--cream);
     border:5px solid #fff;
     border-radius:36px;
-    padding:24px 28px;
+    padding:24px 24px;
     text-align:center;
     max-width:440px;
     width:100%;
     box-shadow:0 12px 0 rgba(44,29,18,.24), 0 26px 50px rgba(0,0,0,.3);
   }
-  .win-parade{ font-size:42px; letter-spacing:4px; margin-bottom:8px; }
+  .win-parade{ font-size:40px; letter-spacing:4px; margin-bottom:8px; }
   .win-stars{ font-size:42px; margin-bottom:14px; }
-  #playAgainBtn{
-    min-width:120px;
-    min-height:70px;
-    padding:0 32px;
+  .win-btns{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+  #againBtn, .win-btn{
+    min-width:140px;
+    min-height:72px;
+    padding:10px 28px;
     border-radius:999px;
     border:4px solid #fff;
     background:linear-gradient(180deg,#6ee7b7,#10b981);
     color:#fff;
-    font-size:34px;
+    font-family:inherit;
+    font-size:28px;
+    font-weight:700;
     cursor:pointer;
     box-shadow:0 6px 0 #047857;
   }
-  #playAgainBtn:active{ transform:translateY(3px) scale(.95); }
+  #againBtn:active, .win-btn:active{ transform:translateY(3px) scale(.95); }
 
-  /* Portrait Phone & Compact Landscape */
+  /* Portrait Phone (390x844) & Compact Landscape — ALL BUTTONS >= 64px! */
   @media (max-width:680px){
     #hud{ gap:6px; padding-left:8px; padding-right:8px; }
-    .hud-pill{ min-width:52px; min-height:52px; height:52px; padding:0 12px; font-size:23px; border-width:3.5px; }
-    .hud-pill.round{ width:52px; }
-    #starBank{ min-height:52px; font-size:20px; padding:0 12px 0 9px; border-width:3.5px; }
-    #hootFarmer{ width:80px; }
-    #hearBtn{ width:48px; height:48px; font-size:23px; }
-    #friendsGrid{ grid-template-columns:repeat(2, 1fr); gap:10px; max-width:360px; }
-    #friendsGrid.quiz-mode{ grid-template-columns:repeat(2, 1fr); gap:14px; max-width:360px; }
-    .friend-btn{ max-height:132px; border-radius:26px; border-width:4px; }
+    .hud-group{ gap:6px; }
+    .hud-pill{ min-width:64px; min-height:64px; height:64px; padding:0 14px; font-size:24px; }
+    .hud-pill.round{ width:64px; }
+    #starBank{ min-height:64px; height:64px; font-size:22px; padding:0 12px 0 10px; }
+    #hootFarmer{ width:78px; }
+    #promptPill{ padding:5px 12px 5px 6px; gap:8px; }
+    #hearBtn{ min-width:64px; min-height:64px; width:64px; height:64px; font-size:26px; }
+    .heart-pip{ width:15px; height:15px; }
+    #friendsGrid, #friendsGrid.cols-3{ grid-template-columns:repeat(2, 1fr); gap:10px; max-width:356px; }
+    #friendsGrid.quiz-mode, #friendsGrid.quiz-mode.cols-3{ grid-template-columns:repeat(2, 1fr); gap:14px; max-width:356px; }
+    .friend-btn{ max-height:126px; border-radius:26px; border-width:4px; }
     .friend-btn .ani-emo{ font-size:56px; }
   }
   @media (max-height:640px) and (min-width:681px){
-    .friend-btn{ max-height:156px; }
-    #hootFarmer{ width:82px; }
+    .friend-btn{ max-height:152px; }
+    #hootFarmer{ width:80px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
+  <!-- Pixar 3D Sunny Farmyard Backdrop (with gradient fallback underneath) -->
+  <div id="pixarBg" class="pixar-backdrop" aria-hidden="true"></div>
+
   <div id="scenery" aria-hidden="true">
     <svg id="sunGlow" viewBox="0 0 120 120">
       <g stroke="#ffe066" stroke-width="6" stroke-linecap="round">
@@ -387,29 +426,11 @@
       </g>
       <circle cx="60" cy="60" r="28" fill="#ffd43b" stroke="#f59f00" stroke-width="4"/>
     </svg>
-    <svg class="cloud" style="top:11%;width:120px;animation-duration:36s" viewBox="0 0 130 56">
+    <svg class="cloud" style="top:11%;width:120px;animation-duration:44s" viewBox="0 0 130 56">
       <path d="M22 48 H108 a16 16 0 0 0 2 -32 a24 24 0 0 0 -46 -8 a20 20 0 0 0 -42 12 a14 14 0 0 0 0 28 Z" fill="#fff"/>
     </svg>
-    <svg class="cloud" style="top:18%;width:94px;animation-duration:48s;animation-delay:-18s" viewBox="0 0 130 56">
+    <svg class="cloud" style="top:18%;width:94px;animation-duration:56s;animation-delay:-18s" viewBox="0 0 130 56">
       <path d="M22 48 H108 a16 16 0 0 0 2 -32 a24 24 0 0 0 -46 -8 a20 20 0 0 0 -42 12 a14 14 0 0 0 0 28 Z" fill="#fff"/>
-    </svg>
-    <svg id="barnSvg" viewBox="0 0 200 170">
-      <polygon points="100,12 18,74 34,74 34,158 166,158 166,74 182,74" fill="#e03131" stroke="#7f1d1d" stroke-width="5" stroke-linejoin="round"/>
-      <polyline points="16,74 100,12 184,74" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="66" y="96" width="68" height="62" rx="4" fill="#b91c1c" stroke="#fff" stroke-width="5"/>
-      <line x1="68" y1="98" x2="132" y2="156" stroke="#fff" stroke-width="4"/>
-      <line x1="132" y1="98" x2="68" y2="156" stroke="#fff" stroke-width="4"/>
-      <rect x="86" y="48" width="28" height="24" rx="4" fill="#fde047" stroke="#fff" stroke-width="4"/>
-    </svg>
-    <svg id="fenceSvg" viewBox="0 0 1000 44" preserveAspectRatio="xMidYMid slice">
-      <rect x="0" y="12" width="1000" height="7" fill="#fff5e6" stroke="#c89f70" stroke-width="2"/>
-      <rect x="0" y="28" width="1000" height="7" fill="#fff5e6" stroke="#c89f70" stroke-width="2"/>
-      <g fill="#fff8ee" stroke="#c89f70" stroke-width="2">
-        <rect x="40" y="4" width="16" height="40" rx="4"/><rect x="160" y="4" width="16" height="40" rx="4"/>
-        <rect x="280" y="4" width="16" height="40" rx="4"/><rect x="400" y="4" width="16" height="40" rx="4"/>
-        <rect x="520" y="4" width="16" height="40" rx="4"/><rect x="640" y="4" width="16" height="40" rx="4"/>
-        <rect x="760" y="4" width="16" height="40" rx="4"/><rect x="880" y="4" width="16" height="40" rx="4"/>
-      </g>
     </svg>
   </div>
 
@@ -430,16 +451,12 @@
   <div id="farmerBar">
     <button id="hootFarmer" type="button" aria-label="Farmer Hoot — tap to hear again">
       <svg viewBox="0 0 220 220" aria-hidden="true">
-        <!-- Body -->
         <ellipse cx="110" cy="144" rx="60" ry="56" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
         <ellipse cx="110" cy="156" rx="40" ry="38" fill="#fdecd2"/>
-        <!-- Wings -->
         <ellipse cx="52" cy="146" rx="18" ry="32" fill="#8b5226" stroke="#4a2810" stroke-width="4.5" transform="rotate(16 52 146)"/>
         <ellipse cx="168" cy="146" rx="18" ry="32" fill="#8b5226" stroke="#4a2810" stroke-width="4.5" transform="rotate(-16 168 146)"/>
-        <!-- Feet -->
         <ellipse cx="88" cy="198" rx="14" ry="8" fill="#f59e0b" stroke="#4a2810" stroke-width="3.5"/>
         <ellipse cx="132" cy="198" rx="14" ry="8" fill="#f59e0b" stroke="#4a2810" stroke-width="3.5"/>
-        <!-- Head -->
         <circle cx="110" cy="96" r="50" fill="#a26636" stroke="#4a2810" stroke-width="5"/>
         <ellipse cx="90" cy="94" rx="22" ry="22" fill="#fff" stroke="#4a2810" stroke-width="3.5"/>
         <ellipse cx="130" cy="94" rx="22" ry="22" fill="#fff" stroke="#4a2810" stroke-width="3.5"/>
@@ -448,9 +465,7 @@
         <ellipse cx="72" cy="110" rx="8" ry="5" fill="#ff8fa3" opacity=".65"/>
         <ellipse cx="148" cy="110" rx="8" ry="5" fill="#ff8fa3" opacity=".65"/>
         <polygon points="110,103 101,117 119,117" fill="#fbbf24" stroke="#4a2810" stroke-width="3.5" stroke-linejoin="round"/>
-        <!-- Red Bandana -->
         <polygon points="78,132 142,132 110,154" fill="#ef4444" stroke="#4a2810" stroke-width="4" stroke-linejoin="round"/>
-        <!-- Straw Farmer Sun Hat -->
         <ellipse cx="110" cy="54" rx="68" ry="15" fill="#fde047" stroke="#92400e" stroke-width="4.5"/>
         <path d="M74 52 C74 22,146 22,146 52 Z" fill="#facc15" stroke="#92400e" stroke-width="4.5"/>
         <path d="M75 46 Q110 54 145 46" fill="none" stroke="#ef4444" stroke-width="7" stroke-linecap="round"/>
@@ -470,10 +485,12 @@
 
   <!-- Celebration Overlay -->
   <div id="winOverlay" hidden>
-    <div class="win-card">
-      <div class="win-parade">🐮 🐶 🐱 🦆 🐷 🐑 🐸 🐰</div>
+    <div id="winCard" role="dialog" aria-modal="true" aria-label="All animal friends met">
+      <div class="win-parade" id="winParade">🐮 🐶 🐱 🦆 🐷 🐑 🐸 🐰</div>
       <div class="win-stars">⭐ ⭐ ⭐</div>
-      <button id="playAgainBtn" type="button" aria-label="Play Again">▶️</button>
+      <div class="win-btns">
+        <button id="againBtn" class="win-btn" type="button" aria-label="Play Again">▶ 🐾</button>
+      </div>
     </div>
   </div>
 </div>
@@ -481,17 +498,24 @@
 <script>
 (function(){
   "use strict";
-  var FRIENDS = [
-    { id:"cow",   emo:"🐮", bg:"linear-gradient(180deg,#fff3bf,#ffd43b)", shade:"#d99400", sound:"sound-moo.mp3",    word:"word-cow.mp3",   ask:"ask-who-says-moo.mp3",    find:"find-friends-cow.mp3",   pitch:196 },
-    { id:"dog",   emo:"🐶", bg:"linear-gradient(180deg,#ffd8a8,#ffa94d)", shade:"#d96b00", sound:"sound-woof.mp3",   word:"word-dog.mp3",   ask:"ask-who-says-woof.mp3",   find:"find-friends-dog.mp3",   pitch:262 },
-    { id:"cat",   emo:"🐱", bg:"linear-gradient(180deg,#ffdeeb,#f783ac)", shade:"#c2255c", sound:"sound-meow.mp3",   word:"word-cat.mp3",   ask:"ask-who-says-meow.mp3",   find:"find-friends-cat.mp3",   pitch:392 },
-    { id:"duck",  emo:"🦆", bg:"linear-gradient(180deg,#c5f6fa,#4dabf7)", shade:"#1971c2", sound:"sound-quack.mp3",  word:"word-duck.mp3",  ask:"ask-who-says-quack.mp3",  find:"find-friends-duck.mp3",  pitch:330 },
-    { id:"pig",   emo:"🐷", bg:"linear-gradient(180deg,#fcc2d7,#ff8787)", shade:"#c92a2a", sound:"sound-oink.mp3",   word:"word-pig.mp3",   ask:"ask-who-says-oink.mp3",   find:"find-friends-pig.mp3",   pitch:247 },
-    { id:"sheep", emo:"🐑", bg:"linear-gradient(180deg,#e5dbff,#b197fc)", shade:"#6741d9", sound:"sound-baa.mp3",    word:"word-sheep.mp3", ask:"ask-who-says-baa.mp3",    find:"find-friends-sheep.mp3", pitch:294 },
-    { id:"frog",  emo:"🐸", bg:"linear-gradient(180deg,#d3f9d8,#69db7c)", shade:"#2b8a3e", sound:"sound-ribbit.mp3", word:"word-frog.mp3",  ask:"ask-who-says-ribbit.mp3", find:"find-friends-frog.mp3",  pitch:220 },
-    { id:"bunny", emo:"🐰", bg:"linear-gradient(180deg,#d0ebff,#74c0fc)", shade:"#1864ab", sound:"word-bunny.mp3",   word:"word-bunny.mp3", ask:"find-friends-bunny.mp3",  find:"find-friends-bunny.mp3", pitch:440 }
+  var ALL_FRIENDS = [
+    { id:"cow",   emo:"🐮", bg:"linear-gradient(180deg,#fff3bf,#ffd43b)", shade:"#d99400", sound:"sound-moo.mp3",    word:"word-cow.mp3",   ask:"ask-who-says-moo.mp3",    pitch:196 },
+    { id:"dog",   emo:"🐶", bg:"linear-gradient(180deg,#ffd8a8,#ffa94d)", shade:"#d96b00", sound:"sound-woof.mp3",   word:"word-dog.mp3",   ask:"ask-who-says-woof.mp3",   pitch:262 },
+    { id:"cat",   emo:"🐱", bg:"linear-gradient(180deg,#ffdeeb,#f783ac)", shade:"#c2255c", sound:"sound-meow.mp3",   word:"word-cat.mp3",   ask:"ask-who-says-meow.mp3",   pitch:392 },
+    { id:"duck",  emo:"🦆", bg:"linear-gradient(180deg,#c5f6fa,#4dabf7)", shade:"#1971c2", sound:"sound-quack.mp3",  word:"word-duck.mp3",  ask:"ask-who-says-quack.mp3",  pitch:330 },
+    { id:"pig",   emo:"🐷", bg:"linear-gradient(180deg,#fcc2d7,#ff8787)", shade:"#c92a2a", sound:"sound-oink.mp3",   word:"word-pig.mp3",   ask:"ask-who-says-oink.mp3",   pitch:247 },
+    { id:"sheep", emo:"🐑", bg:"linear-gradient(180deg,#e5dbff,#b197fc)", shade:"#6741d9", sound:"sound-baa.mp3",    word:"word-sheep.mp3", ask:"ask-who-says-baa.mp3",    pitch:294 },
+    { id:"frog",  emo:"🐸", bg:"linear-gradient(180deg,#d3f9d8,#69db7c)", shade:"#2b8a3e", sound:"sound-ribbit.mp3", word:"word-frog.mp3",  ask:"ask-who-says-ribbit.mp3", pitch:220 },
+    { id:"bunny", emo:"🐰", bg:"linear-gradient(180deg,#d0ebff,#74c0fc)", shade:"#1864ab", sound:"word-bunny.mp3",   word:"word-bunny.mp3", ask:null, customAsk:"hoot-frd-bunny", fallbackAsk:"peek-where-bunny.mp3", pitch:440 }
   ];
-  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-super.mp3","hoot-star.mp3"];
+  var PRAISE = ["hoot-great-job.mp3","hoot-amazing.mp3","hoot-super.mp3","hoot-yay-2.mp3"];
+
+  /* Age-adaptive: Riley (kidb, age 2) gets 6 giant explore friends & 3-choice/3-round quiz! */
+  var IS_RILEY = false;
+  try{ IS_RILEY = new URLSearchParams(window.location.search || "").get("kid") === "kidb"; }catch(e){}
+  var FRIENDS = IS_RILEY ? ALL_FRIENDS.slice(0, 6) : ALL_FRIENDS;
+  var QUIZ_CHOICES = IS_RILEY ? 3 : 4;
+  var QUIZ_GOAL = IS_RILEY ? 3 : 5;
 
   var stage = document.getElementById("stage");
   var grid = document.getElementById("friendsGrid");
@@ -505,7 +529,10 @@
   var modeQuizBtn = document.getElementById("modeQuizBtn");
   var soundBtn = document.getElementById("soundBtn");
   var winOverlay = document.getElementById("winOverlay");
-  var playAgainBtn = document.getElementById("playAgainBtn");
+  var winParade = document.getElementById("winParade");
+  var againBtn = document.getElementById("againBtn");
+
+  winParade.textContent = FRIENDS.map(function(f){ return f.emo; }).join(" ");
 
   var mode = "explore";
   var muted = false;
@@ -515,18 +542,147 @@
   var quizTarget = null;
   var quizRound = 0;
   var quizLocked = false;
-  var idleTimer = null;
-  var voiceEl = null;
+  var idleVisualTimer = null;
+  var idleVoiceTimer = null;
+  var idleVoiceReminded = false;
   var audioCtx = null;
   var dead = false;
+  var roundTok = 0;
+
+  /* ================= PERSISTENT VOICE QUEUE + iOS SAFARI UNLOCK ================= */
+  var VBASE = "assets/voice/";
+  var voiceEl = new Audio();
+  voiceEl.preload = "auto";
+  var vQueue = [], vPlaying = false, vDrainCbs = [];
+  var audioUnlocked = false, pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+  }
+  function resolveClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") > -1 ? chosen : chosen + ".mp3") : null;
+  }
+  function getQuizAskClip(f){
+    if(!f) return "hoot-welcome.mp3";
+    if(f.ask) return f.ask;
+    return resolveClip(f.customAsk, f.fallbackAsk || "peek-where-bunny");
+  }
+  function hubMuted(){
+    try{
+      var d = window.parent && window.parent.document;
+      if(!d || d === document) return false;
+      var b = d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
+    }catch(e){ return false; }
+  }
+  function fireDrain(){
+    if(vPlaying || vQueue.length) return;
+    var list = vDrainCbs.splice(0, vDrainCbs.length);
+    for(var i = 0; i < list.length; i++){ try{ list[i](); }catch(e){} }
+  }
+  function clearVoice(){
+    vQueue.length = 0;
+    vDrainCbs.length = 0;
+    try{ voiceEl.pause(); voiceEl.currentTime = 0; }catch(e){}
+    vPlaying = false;
+    hootFarmer.classList.remove("talking");
+  }
+  function vNext(){
+    vPlaying = false;
+    hootFarmer.classList.remove("talking");
+    if(vQueue.length) pumpVoice();
+    else fireDrain();
+  }
+  voiceEl.addEventListener("ended", vNext);
+  voiceEl.addEventListener("error", vNext);
 
   function ensureCtx(){
+    if(muted) return null;
     if(!audioCtx){
       var AC = window.AudioContext || window.webkitAudioContext;
       if(AC) try{ audioCtx = new AC(); }catch(e){}
     }
     if(audioCtx && audioCtx.state === "suspended") try{ audioCtx.resume(); }catch(e){}
     return audioCtx;
+  }
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    ensureCtx();
+    try{
+      if(!vPlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              sayClips(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+
+  function pumpVoice(){
+    if(vPlaying || dead) return;
+    var file = vQueue.shift();
+    if(!file){ fireDrain(); return; }
+    if(muted || hubMuted()){ vQueue.length = 0; fireDrain(); return; }
+    vPlaying = true;
+    hootFarmer.classList.add("talking");
+    voiceEl.muted = false;
+    voiceEl.setAttribute("src", VBASE + file);
+    voiceEl.src = VBASE + file;
+    var p = voiceEl.play();
+    if(p && p.catch){
+      p.catch(function(){
+        vPlaying = false;
+        hootFarmer.classList.remove("talking");
+        if(!audioUnlocked && !pendingBootClip){
+          pendingBootClip = [file].concat(vQueue.slice());
+          vQueue.length = 0;
+        }
+        fireDrain();
+      });
+    }
+  }
+  function sayClips(list, replace){
+    if(replace) clearVoice();
+    (list || []).forEach(function(f){ if(f) vQueue.push(f.indexOf(".mp3") > -1 ? f : f + ".mp3"); });
+    pumpVoice();
+  }
+  function afterVoice(fn, minMs, maxMs){
+    var done = false, minDone = false, voiceDone = (!vPlaying && !vQueue.length);
+    function check(){
+      if(done || dead) return;
+      if(minDone && voiceDone){ done = true; fn(); }
+    }
+    setTimeout(function(){ minDone = true; check(); }, minMs || 1200);
+    setTimeout(function(){ if(!done && !dead){ done = true; fn(); } }, maxMs || 3800);
+    if(!voiceDone){
+      vDrainCbs.push(function(){ voiceDone = true; check(); });
+    }
+  }
+  function playAfterIntroOrNow(file){
+    if(dead || muted || hubMuted() || !file) return;
+    var fn = file.indexOf(".mp3") > -1 ? file : (file + ".mp3");
+    try{
+      if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+        if(window.parent.__hwPlayAfterIntro(VBASE + fn)) return;
+      }
+    }catch(e){}
+    sayClips([fn], true);
   }
 
   function playTone(freq, dur, type){
@@ -549,28 +705,6 @@
     [523.25, 659.25, 783.99, 1046.5].forEach(function(f, i){
       setTimeout(function(){ playTone(f, 0.22, "sine"); }, i * 85);
     });
-  }
-
-  function playClip(file, onEnd){
-    if(dead || muted || !file){ if(onEnd) onEnd(); return; }
-    try{
-      if(voiceEl){ voiceEl.onended = null; voiceEl.onerror = null; voiceEl.pause(); }
-      voiceEl = new Audio("assets/voice/" + file);
-      voiceEl.onended = function(){ if(onEnd && !dead) onEnd(); };
-      voiceEl.onerror = function(){ if(onEnd && !dead) onEnd(); };
-      var p = voiceEl.play();
-      if(p && p.catch) p.catch(function(){ if(onEnd && !dead) onEnd(); });
-    }catch(e){ if(onEnd) onEnd(); }
-  }
-
-  function playAfterIntroOrNow(file){
-    if(dead || muted || !file) return;
-    try{
-      if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
-        if(window.parent.__hwPlayAfterIntro("assets/voice/" + file)) return;
-      }
-    }catch(e){}
-    playClip(file);
   }
 
   function addStar(n){
@@ -598,10 +732,14 @@
       stage.appendChild(sp);
       var ang = (Math.PI * 2 * i / 6) + Math.random() * 0.4;
       var dist = 48 + Math.random() * 44;
-      sp.animate([
-        { transform:"translate(-50%,-50%) scale(.5)", opacity:1 },
-        { transform:"translate(calc(-50% + " + Math.round(Math.cos(ang)*dist) + "px),calc(-50% + " + Math.round(Math.sin(ang)*dist - 24) + "px)) scale(1.2)", opacity:0 }
-      ], { duration:680, easing:"ease-out" }).onfinish = function(){ this.effect && this.effect.target && this.effect.target.remove(); };
+      if(sp.animate){
+        sp.animate([
+          { transform:"translate(-50%,-50%) scale(.5)", opacity:1 },
+          { transform:"translate(calc(-50% + " + Math.round(Math.cos(ang)*dist) + "px),calc(-50% + " + Math.round(Math.sin(ang)*dist - 24) + "px)) scale(1.2)", opacity:0 }
+        ], { duration:680, easing:"ease-out" }).onfinish = function(){ this.effect && this.effect.target && this.effect.target.remove(); };
+      } else {
+        (function(node){ setTimeout(function(){ node.remove(); }, 680); })(sp);
+      }
     }
   }
 
@@ -614,10 +752,14 @@
       c.style.left = (10 + Math.random() * 80) + "%";
       c.style.top = "-18px";
       stage.appendChild(c);
-      c.animate([
-        { transform:"translateY(0) rotate(0deg)", opacity:1 },
-        { transform:"translateY(" + (window.innerHeight + 40) + "px) rotate(" + (260 + Math.random()*360) + "deg)", opacity:.9 }
-      ], { duration:1200 + Math.random()*700, delay:Math.random()*260, easing:"ease-in" }).onfinish = function(){ this.effect && this.effect.target && this.effect.target.remove(); };
+      if(c.animate){
+        c.animate([
+          { transform:"translateY(0) rotate(0deg)", opacity:1 },
+          { transform:"translateY(" + (window.innerHeight + 40) + "px) rotate(" + (260 + Math.random()*360) + "deg)", opacity:.9 }
+        ], { duration:1200 + Math.random()*700, delay:Math.random()*260, easing:"ease-in" }).onfinish = function(){ this.effect && this.effect.target && this.effect.target.remove(); };
+      } else {
+        (function(node){ setTimeout(function(){ node.remove(); }, 1800); })(c);
+      }
     }
   }
 
@@ -634,23 +776,31 @@
     } else {
       soundWave.style.display = "none";
       quizSoundBadge.style.display = "block";
-      quizSoundBadge.textContent = "🎵 " + Math.min(quizRound + 1, 5) + "/5";
+      quizSoundBadge.textContent = "🎵 " + Math.min(quizRound + 1, QUIZ_GOAL) + "/" + QUIZ_GOAL;
     }
   }
 
   function clearIdle(){
-    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVisualTimer){ clearTimeout(idleVisualTimer); idleVisualTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
     grid.querySelectorAll(".friend-btn.hint").forEach(function(b){
       b.classList.remove("hint");
       var h = b.querySelector(".hand-cue"); if(h) h.remove();
     });
   }
 
-  function armQuizIdle(){
+  function armIdle(){
     clearIdle();
-    idleTimer = setTimeout(function(){
-      if(dead || mode !== "quiz" || quizLocked || !quizTarget) return;
-      var btn = grid.querySelector('.friend-btn[data-id="' + quizTarget.id + '"]');
+    if(dead || !winOverlay.hidden) return;
+    var visualMs = IS_RILEY ? 4000 : 5400;
+    idleVisualTimer = setTimeout(function(){
+      if(dead || !winOverlay.hidden) return;
+      var btn = null;
+      if(mode === "quiz" && !quizLocked && quizTarget){
+        btn = grid.querySelector('.friend-btn[data-id="' + quizTarget.id + '"]');
+      } else if(mode === "explore"){
+        btn = grid.querySelector('.friend-btn:not(.met)') || grid.querySelector('.friend-btn');
+      }
       if(btn){
         btn.classList.add("hint");
         if(!btn.querySelector(".hand-cue")){
@@ -660,8 +810,22 @@
           btn.appendChild(h);
         }
       }
-      playClip(quizTarget.ask);
-    }, 6200);
+    }, visualMs);
+
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(dead || !winOverlay.hidden) return;
+        if(mode === "quiz" && quizLocked) return;
+        idleVoiceReminded = true;
+        if(!vPlaying){
+          if(mode === "quiz" && quizTarget){
+            sayClips([getQuizAskClip(quizTarget)], true);
+          } else {
+            sayClips([resolveClip("hoot-frd-idle", "hoot-idle-tap")], true);
+          }
+        }
+      }, 9000);
+    }
   }
 
   function makeFriendCard(f){
@@ -675,21 +839,31 @@
     b.innerHTML = '<span class="ani-emo" aria-hidden="true">' + f.emo + '</span><span class="met-heart" aria-hidden="true">💖</span>';
     b.addEventListener("pointerdown", function(e){
       e.preventDefault();
+      unlockAudioOnce();
       if(mode === "explore") onExploreTap(f, b);
       else onQuizTap(f, b);
     });
     return b;
   }
 
-  function renderExplore(){
+  function renderExplore(isBoot){
+    roundTok++;
     clearIdle();
+    idleVoiceReminded = false;
     grid.classList.remove("quiz-mode");
+    grid.classList.toggle("cols-3", FRIENDS.length <= 6);
     grid.innerHTML = "";
     FRIENDS.forEach(function(f){ grid.appendChild(makeFriendCard(f)); });
     renderPips();
+    var introClip = resolveClip("hoot-frd-intro", "hoot-welcome");
+    if(isBoot) playAfterIntroOrNow(introClip);
+    else sayClips([introClip], true);
+    armIdle();
   }
 
   function onExploreTap(f, btn){
+    clearIdle();
+    idleVoiceReminded = false;
     btn.classList.remove("bounce"); void btn.offsetWidth; btn.classList.add("bounce");
     playTone(f.pitch, 0.16, "triangle");
     burstEmo(btn, f.emo);
@@ -698,73 +872,83 @@
     metSet[f.id] = true;
     btn.classList.add("met");
     renderPips();
-    if(f.sound !== f.word){
-      playClip(f.sound, function(){ playClip(f.word); });
-    } else {
-      playClip(f.word);
-    }
+    var seq = (f.sound !== f.word) ? [f.sound, f.word] : [f.word];
     if(firstTime){
       addStar(1);
       if(Object.keys(metSet).length === FRIENDS.length){
-        setTimeout(function(){
-          if(dead || mode !== "explore") return;
+        sayClips(seq, true);
+        var tok = ++roundTok;
+        afterVoice(function(){
+          if(dead || mode !== "explore" || tok !== roundTok) return;
           playChime();
           showerConfetti();
-          playClip("hoot-win-yay.mp3");
+          sayClips(["hoot-win-yay.mp3"], true);
           winOverlay.hidden = false;
-        }, 900);
+        }, 900, 3200);
+        return;
+      } else if(Object.keys(metSet).length % 2 === 0){
+        seq.push(PRAISE[Object.keys(metSet).length % PRAISE.length]);
       }
     }
+    sayClips(seq, true);
+    armIdle();
   }
 
   function startQuizRound(isFirst){
+    roundTok++;
     clearIdle();
+    idleVoiceReminded = false;
     quizLocked = false;
     var pool = FRIENDS.slice().sort(function(){ return Math.random() - 0.5; });
-    quizChoices = pool.slice(0, 4);
+    quizChoices = pool.slice(0, QUIZ_CHOICES);
     quizTarget = quizChoices[Math.floor(Math.random() * quizChoices.length)];
     grid.classList.add("quiz-mode");
+    grid.classList.toggle("cols-3", QUIZ_CHOICES <= 3);
     grid.innerHTML = "";
     quizChoices.forEach(function(f){ grid.appendChild(makeFriendCard(f)); });
     renderPips();
-    if(isFirst) playAfterIntroOrNow(quizTarget.ask);
-    else playClip(quizTarget.ask);
-    armQuizIdle();
+    var askClip = getQuizAskClip(quizTarget);
+    if(isFirst) playAfterIntroOrNow(askClip);
+    else sayClips([askClip], true);
+    armIdle();
   }
 
   function onQuizTap(f, btn){
     if(quizLocked || !quizTarget) return;
+    clearIdle();
+    idleVoiceReminded = false;
     if(f.id === quizTarget.id){
       quizLocked = true;
-      clearIdle();
       btn.classList.add("met", "bounce");
       playChime();
       burstEmo(btn, f.emo);
       cheerHoot();
       addStar(1);
       var praise = PRAISE[quizRound % PRAISE.length];
-      playClip(f.sound, function(){ playClip(praise); });
+      var seq = (f.sound !== f.word) ? [f.sound, praise] : [f.word, praise];
+      sayClips(seq, true);
       quizRound++;
-      setTimeout(function(){
-        if(dead || mode !== "quiz") return;
-        if(quizRound >= 5){
+      var tok = ++roundTok;
+      afterVoice(function(){
+        if(dead || mode !== "quiz" || tok !== roundTok) return;
+        if(quizRound >= QUIZ_GOAL){
           showerConfetti();
-          playClip("hoot-win-yay.mp3");
+          sayClips(["hoot-win-yay.mp3"], true);
           winOverlay.hidden = false;
         } else {
           startQuizRound(false);
         }
-      }, 1500);
+      }, 1350, 3800);
     } else {
       btn.classList.remove("wiggle"); void btn.offsetWidth; btn.classList.add("wiggle");
       playTone(170, 0.16, "sine");
-      playClip("hoot-try-again.mp3", function(){
-        if(quizTarget && !quizLocked) playClip(quizTarget.ask);
-      });
+      sayClips(["hoot-try-again.mp3", getQuizAskClip(quizTarget)], true);
+      armIdle();
     }
   }
 
   function setMode(next){
+    unlockAudioOnce();
     mode = next;
     winOverlay.hidden = true;
     modeExploreBtn.classList.toggle("active", mode === "explore");
@@ -772,7 +956,7 @@
     modeQuizBtn.classList.toggle("active", mode === "quiz");
     modeQuizBtn.setAttribute("aria-pressed", String(mode === "quiz"));
     if(mode === "explore"){
-      renderExplore();
+      renderExplore(false);
     } else {
       quizRound = 0;
       startQuizRound(false);
@@ -784,32 +968,32 @@
   soundBtn.addEventListener("click", function(){
     muted = !muted;
     soundBtn.textContent = muted ? "🔇" : "🔊";
-    if(muted && voiceEl) try{ voiceEl.pause(); }catch(e){}
+    if(muted) clearVoice();
+    else { unlockAudioOnce(); replayPrompt(); }
   });
 
   function replayPrompt(){
+    unlockAudioOnce();
     cheerHoot();
     if(mode === "quiz" && quizTarget){
-      playClip(quizTarget.ask);
+      sayClips([getQuizAskClip(quizTarget)], true);
     } else {
-      var pick = FRIENDS[Math.floor(Math.random() * FRIENDS.length)];
-      playClip(pick.sound);
+      sayClips([resolveClip("hoot-frd-intro", "hoot-welcome")], true);
     }
   }
   hearBtn.addEventListener("click", replayPrompt);
   hootFarmer.addEventListener("click", function(){
-    window.__bellyArmed = true;
-    setTimeout(function(){ window.__bellyArmed = false; }, 120);
+    unlockAudioOnce();
     cheerHoot();
-    if(mode === "quiz" && quizTarget) playClip(quizTarget.ask);
-    else playClip("hoot-giggle.mp3");
+    replayPrompt();
   });
 
-  playAgainBtn.addEventListener("click", function(){
+  againBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     winOverlay.hidden = true;
     if(mode === "explore"){
       metSet = {};
-      renderExplore();
+      renderExplore(false);
     } else {
       quizRound = 0;
       startQuizRound(false);
@@ -819,18 +1003,23 @@
   window.addEventListener("pagehide", function(){
     dead = true;
     clearIdle();
-    if(voiceEl) try{ voiceEl.pause(); }catch(e){}
+    clearVoice();
+  });
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden) clearVoice();
   });
 
-  renderExplore();
+  renderExplore(true);
 
   window.__friendsGame = {
     snapshot: function(){
       return {
         mode: mode,
+        isRiley: IS_RILEY,
         stars: stars,
         metCount: Object.keys(metSet).length,
         quizRound: quizRound,
+        quizGoal: QUIZ_GOAL,
         quizTarget: quizTarget ? quizTarget.id : null,
         cardCount: grid.querySelectorAll(".friend-btn").length,
         winShown: !winOverlay.hidden
@@ -839,7 +1028,7 @@
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e143">
-<script src="js/hoot-game-tail.js?v=llprev3e143"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

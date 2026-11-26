@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="fishing";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e136"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -44,7 +44,7 @@ window.__HOOT_SELF_COACH__=true;
     width:100vw;
     height:100dvh;
     overflow:hidden;
-    background:linear-gradient(180deg,
+    background-image:url("assets/worlds3d/bg_fishing.jpg"), linear-gradient(180deg,
       #78d3fa 0%,
       #aee8ff 19%,
       #d8f6ff 27%,
@@ -52,6 +52,17 @@ window.__HOOT_SELF_COACH__=true;
       #27a7cc 52%,
       #1a83b5 78%,
       #146699 100%);
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+  #stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:linear-gradient(180deg, rgba(16,64,104,.06) 0%, rgba(12,56,92,.14) 45%, rgba(8,42,74,.24) 100%);
   }
 
   /* Scenic storybook hills, trees & shoreline */
@@ -62,6 +73,7 @@ window.__HOOT_SELF_COACH__=true;
     height:100%;
     pointer-events:none;
     z-index:1;
+    opacity:.24;
   }
 
   /* Animated sunlit water sparkles & ripples */
@@ -339,6 +351,16 @@ window.__HOOT_SELF_COACH__=true;
     box-shadow:0 0 22px rgba(255,224,102,.95), inset 0 0 14px rgba(255,224,102,.65);
     animation:hintRing 1.1s ease-in-out infinite;
     pointer-events:none;
+  }
+  .fish-nudge-hand{
+    position:absolute;
+    right:-6px;
+    bottom:-16px;
+    font-size:34px;
+    line-height:1;
+    pointer-events:none;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.32));
+    animation:handBounce .65s ease-in-out infinite alternate;
   }
   @keyframes hintRing{
     0%,100%{ transform:scale(.92); opacity:.7; }
@@ -802,21 +824,29 @@ window.__HOOT_SELF_COACH__=true;
     height:52px;
     font-size:28px;
   }
-  #againBtn{
+  .win-btns{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+  }
+  #againBtn, .win-btn{
     min-width:168px;
     min-height:74px;
+    padding:0 24px;
     border-radius:999px;
     border:4px solid #fff;
     background:linear-gradient(180deg,#6ce078,#40b84f);
     color:#fff;
     font-family:"Fredoka",sans-serif;
-    font-size:32px;
+    font-size:28px;
     font-weight:700;
     cursor:pointer;
     box-shadow:0 7px 0 #268432, 0 14px 28px rgba(38,132,50,.35);
     transition:transform .12s;
   }
-  #againBtn:active{ transform:translateY(4px) scale(.96); }
+  #againBtn:active, .win-btn:active{ transform:translateY(4px) scale(.96); }
 
   /* ================= PARTICLES, RIPPLES, FLYING FISH ================= */
   .ripple{
@@ -859,10 +889,10 @@ window.__HOOT_SELF_COACH__=true;
 
   /* ================= PORTRAIT PHONE RESPONSIVE (390x844 etc.) ================= */
   @media (max-width:600px){
-    #sunBtn{ right:86px; width:62px; height:62px; }
-    .hud-pill{ min-width:58px; min-height:58px; padding:0 12px; font-size:24px; }
-    .hud-round{ width:58px; height:58px; min-width:58px; min-height:58px; }
-    #starBank{ min-height:58px; padding:0 14px 0 10px; font-size:22px; }
+    #sunBtn{ right:82px; width:64px; height:64px; }
+    .hud-pill{ min-width:64px; min-height:64px; padding:0 10px; font-size:24px; }
+    .hud-round{ width:64px; height:64px; min-width:64px; min-height:64px; }
+    #starBank{ min-height:64px; padding:0 12px 0 8px; font-size:22px; }
     #boatStage{ left:6px; bottom:max(6px, env(safe-area-inset-bottom)); }
     #boatWrap{ width:min(52vw, 212px); }
     #wantedBuoy{ top:-94px; left:6px; padding:6px 10px 6px 8px; min-height:64px; gap:6px; }
@@ -872,9 +902,9 @@ window.__HOOT_SELF_COACH__=true;
     #bucketBtn{ width:80px; margin-left:-16px; }
     #bucketChips{ width:112px; top:-14px; }
     .b-chip{ width:26px; height:26px; font-size:14px; }
-    .fish-btn{ width:clamp(116px, 34vw, 146px); }
-    #frogBtn{ right:8px; top:25%; width:72px; height:60px; }
-    #duckBtn{ left:8px; top:24%; width:78px; height:58px; }
+    .fish-btn{ width:clamp(120px, 34vw, 150px); }
+    #frogBtn{ right:8px; top:25%; width:72px; height:64px; }
+    #duckBtn{ left:8px; top:24%; width:78px; height:64px; }
     #reelPad{ right:12px; bottom:max(14px, env(safe-area-inset-bottom)); }
     #reelWheel{ width:104px; height:104px; }
   }
@@ -1186,7 +1216,9 @@ window.__HOOT_SELF_COACH__=true;
       <div id="winStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
       <div id="winTrophy" aria-hidden="true">🎣🌟</div>
       <div id="winChips"></div>
-      <button id="againBtn" type="button" aria-label="Play Again">↻ ▶</button>
+      <div class="win-btns">
+        <button id="againBtn" type="button" aria-label="Play Again">↻ ▶</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1249,8 +1281,18 @@ window.__HOOT_SELF_COACH__=true;
     }
   }
 
-  var GOAL=5;
-  var REEL_CLICKS=3;
+  var urlKid="";
+  try{ urlKid=String(new URLSearchParams(window.location.search).get("kid")||"").toLowerCase(); }catch(e){}
+  function isKidB(){
+    try{
+      if(urlKid==="kidb") return true;
+      if(urlKid==="kida") return false;
+      return !!(window.parent && window.parent.__llNameKey && window.parent.__llNameKey()==="kidb");
+    }catch(e){ return urlKid==="kidb"; }
+  }
+  var RILEY_MODE=isKidB();
+  var GOAL=RILEY_MODE?3:5;
+  var REEL_CLICKS=RILEY_MODE?2:3;
   var PRAISE_CLIPS=["hoot-great-job.mp3","hoot-amazing.mp3","hoot-star.mp3","hoot-great-thinking.mp3","hoot-yay-2.mp3","hoot-super.mp3"];
   var WRONG_CLIPS=["hoot-try-again.mp3","hoot-look-closely.mp3","hoot-almost.mp3"];
 
@@ -1263,25 +1305,30 @@ window.__HOOT_SELF_COACH__=true;
   var hookedEl=null, hookedData=null, reelStep=0, crankDeg=0;
   var fishStart=null, fishDock=null;
   var soundOn=true, dead=false, inputLock=false, wonRound=false;
-  var idleTimer=null, teachGen=0, teachLetter="", bobberPhase=0;
+  var idleTimer=null, idleVoiceTimer=null, idleVoiceReminded=false, teachGen=0, teachLetter="", bobberPhase=0;
 
   /* ================= DOM ================= */
   function $(id){ return document.getElementById(id); }
   var stage=$("stage"), pond=$("pond"), fishLayer=$("fishLayer"),
       boatWrap=$("boatWrap"), hootBoatBtn=$("hootBoatBtn"),
       wantedBuoy=$("wantedBuoy"), targetLetterEl=$("targetLetter"),
-      targetEmoji=$("targetEmoji"), dots=$("progressDots").children,
+      targetEmoji=$("targetEmoji"), progressDotsEl=$("progressDots"),
       bucketBtn=$("bucketBtn"), bucketChips=$("bucketChips"),
       rodShadow=$("rodShadow"), rodPath=$("rodPath"), rodHi=$("rodHi"),
       linePath=$("linePath"), bobberG=$("bobberG"),
       reelPad=$("reelPad"), reelWheel=$("reelWheel"), reelCrank=$("reelCrank"),
-      reelDots=$("reelSteps").children,
+      reelStepsEl=$("reelSteps"),
       catchModal=$("catchModal"), catchFishBox=$("catchFishBox"),
       catchLetterBig=$("catchLetterBig"), catchEmojiBig=$("catchEmojiBig"),
       winOverlay=$("winOverlay"), winStars=$("winStars"), winChips=$("winChips"),
       starCount=$("starCount"), starBank=$("starBank"),
       modeQuestBtn=$("modeQuestBtn"), modeFreeBtn=$("modeFreeBtn"),
       soundBtn=$("soundBtn");
+
+  progressDotsEl.innerHTML=Array(GOAL+1).join("<i></i>");
+  reelStepsEl.innerHTML=Array(REEL_CLICKS+1).join("<i></i>");
+  var dots=progressDotsEl.children;
+  var reelDots=reelStepsEl.children;
 
   /* ================= SOUND FX (WebAudio) ================= */
   var AC=null;
@@ -1325,18 +1372,51 @@ window.__HOOT_SELF_COACH__=true;
 
   /* ================= STUDIO HOOT VOICE ENGINE ================= */
   var VBASE="assets/voice/";
-  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null;
+  var voiceEl=null, vQueue=[], vPlaying=false, vCurrent=null, audioUnlocked=false, pendingBootClip=null;
 
   function hasClip(id){
     try{
-      var H=window.parent&&window.parent.HOOT_HAVE;
-      if(H) return !!H[id];
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
     }catch(e){}
-    return true;
+    return false;
   }
   function pickClip(primaryId, fallbackFile){
     return hasClip(primaryId) ? (primaryId+".mp3") : fallbackFile;
   }
+  function stopParentVoice(){
+    try{
+      if(window.parent && window.parent!==window){
+        if(window.parent.__hwStopIntro) window.parent.__hwStopIntro();
+        if(window.parent.__hootStopClip) window.parent.__hootStopClip();
+      }
+    }catch(e){}
+  }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked=true;
+    audio();
+    try{
+      var el=getVoice();
+      if(!vPlaying){
+        el.muted=true;
+        var p=el.play();
+        if(p && p.then){
+          p.then(function(){
+            el.pause(); el.currentTime=0; el.muted=false;
+            if(pendingBootClip){
+              var c=pendingBootClip; pendingBootClip=null;
+              enqueue(c,"callout","",null);
+            }
+          }).catch(function(){ el.muted=false; });
+        } else {
+          el.muted=false;
+        }
+      }
+    }catch(e){ if(voiceEl) voiceEl.muted=false; }
+  }
+  document.addEventListener("pointerdown", unlockAudioOnce, { passive:true, capture:true });
+  document.addEventListener("pointerdown", function(){ idleVoiceReminded=false; }, true);
   function getVoice(){
     if(!voiceEl){
       voiceEl=new Audio(); voiceEl.preload="auto";
@@ -1380,16 +1460,23 @@ window.__HOOT_SELF_COACH__=true;
     var el=getVoice();
     vPlaying=true; vCurrent=item; hootTalking(true);
     el.__hwT=Date.now(); el.__hwRetry=0;
+    el.muted=false;
     el.src=VBASE+item.file;
     var p=el.play();
-    if(p&&p.catch) p.catch(function(){ vNext(); });
+    if(p&&p.catch) p.catch(function(){
+      if(!audioUnlocked && !pendingBootClip) pendingBootClip=item.file;
+      vNext();
+    });
   }
   function clearVoice(stopCurrent){
     vQueue.length=0;
-    if(stopCurrent && voiceEl){
-      voiceEl.__hwT=0; voiceEl.__hwRetry=1;
-      try{ voiceEl.pause(); }catch(e){}
-      vPlaying=false; vCurrent=null; hootTalking(false);
+    if(stopCurrent){
+      stopParentVoice();
+      if(voiceEl){
+        voiceEl.__hwT=0; voiceEl.__hwRetry=1;
+        try{ voiceEl.pause(); }catch(e){}
+        vPlaying=false; vCurrent=null; hootTalking(false);
+      }
     }
   }
   function enqueue(file,kind,target,onStart){
@@ -1436,26 +1523,63 @@ window.__HOOT_SELF_COACH__=true;
   /* ================= IDLE NUDGE (PRE-READER FLOOR) ================= */
   function clearIdle(){
     if(idleTimer){ clearTimeout(idleTimer); idleTimer=null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer=null; }
     document.querySelectorAll(".fish-btn.hint-glow").forEach(function(el){ el.classList.remove("hint-glow"); });
+    document.querySelectorAll(".fish-nudge-hand").forEach(function(el){ el.remove(); });
+  }
+  function showFishVisualCue(){
+    if(dead || state!=="aim") return;
+    var btn=(mode==="quest")
+      ? fishLayer.querySelector('.fish-btn[data-letter="'+targetLetter+'"]')
+      : fishLayer.querySelector(".fish-btn");
+    if(btn){
+      btn.classList.add("hint-glow");
+      if(!btn.querySelector(".fish-nudge-hand")){
+        var h=document.createElement("span");
+        h.className="fish-nudge-hand"; h.setAttribute("aria-hidden","true"); h.textContent="👆";
+        btn.appendChild(h);
+      }
+    }
+  }
+  function speakReelGuide(){
+    var f=pickClip("hoot-fish-reel", "hoot-tap-big-btn.mp3");
+    clearVoice(true);
+    enqueue(f,"callout","",null);
+  }
+  function speakFreeGuide(isBoot){
+    var f=pickClip("hoot-fish-free", "hoot-welcome.mp3");
+    if(isBoot){
+      try{
+        if(window.parent && window.parent!==window && window.parent.__hwPlayAfterIntro && window.parent.__hwPlayAfterIntro(VBASE+f)){
+          return;
+        }
+      }catch(e){}
+    }
+    clearVoice(true);
+    enqueue(f,"callout","",null);
   }
   function armIdle(){
     clearIdle();
-    if(dead || state!=="aim" || mode!=="quest") return;
-    idleTimer=setTimeout(function(){
-      if(dead || state!=="aim" || mode!=="quest") return;
-      var targetBtn=fishLayer.querySelector('.fish-btn[data-letter="'+targetLetter+'"]');
-      if(targetBtn) targetBtn.classList.add("hint-glow");
-      if(!vPlaying && !vQueue.length) speakFindLetter(targetLetter);
-      armIdleRepeat();
-    }, 10000);
-  }
-  function armIdleRepeat(){
-    if(idleTimer) clearTimeout(idleTimer);
-    idleTimer=setTimeout(function(){
-      if(dead || state!=="aim" || mode!=="quest") return;
-      if(!vPlaying && !vQueue.length) speakFindLetter(targetLetter);
-      armIdleRepeat();
-    }, 12000);
+    if(dead || (state!=="aim" && state!=="hooked")) return;
+    if(state==="aim"){
+      var visualMs=RILEY_MODE?3200:4600;
+      idleTimer=setTimeout(showFishVisualCue, visualMs);
+    }
+    if(!idleVoiceReminded){
+      idleVoiceTimer=setTimeout(function(){
+        if(dead) return;
+        idleVoiceReminded=true;
+        if(state==="aim"){
+          showFishVisualCue();
+          if(!vPlaying && !vQueue.length){
+            if(mode==="quest") speakFindLetter(targetLetter);
+            else speakFreeGuide(false);
+          }
+        } else if(state==="hooked"){
+          if(!vPlaying && !vQueue.length) speakReelGuide();
+        }
+      }, 9000);
+    }
   }
 
   /* ================= PLUMP STORYBOOK FISH SVG ================= */
@@ -1710,11 +1834,13 @@ window.__HOOT_SELF_COACH__=true;
       pool=pool.concat(extra);
     }
     shuffle(pool);
-    var wave=shuffle([targetLetter].concat(pool.slice(0,2)));
+    var distractCount=RILEY_MODE?1:2;
+    var wave=shuffle([targetLetter].concat(pool.slice(0,distractCount)));
     var goldenLetter=(Math.random()<0.34) ? targetLetter : null;
     renderFishWave(wave, goldenLetter);
     updateHUD();
     drawRestingLine();
+    idleVoiceReminded=false;
     if(speakNow) speakFindLetter(targetLetter, !!isBoot);
     armIdle();
   }
@@ -1724,11 +1850,13 @@ window.__HOOT_SELF_COACH__=true;
     targetEmoji.textContent="✨";
     wantedBuoy.style.display="none";
     var pool=shuffle(Object.keys(DATA));
-    var wave=pool.slice(0,4);
+    var wave=pool.slice(0, RILEY_MODE?3:4);
     var goldenLetter=Math.random()<0.35 ? wave[0] : null;
     renderFishWave(wave, goldenLetter);
     updateHUD();
     drawRestingLine();
+    idleVoiceReminded=false;
+    armIdle();
   }
 
   function startNewRound(silent, isBoot){
@@ -1751,7 +1879,7 @@ window.__HOOT_SELF_COACH__=true;
       presentQuestTarget(!silent, !!isBoot);
     } else {
       presentFreeWave();
-      if(!silent) enqueue("hoot-game-hello.mp3","hello","",null);
+      if(!silent) speakFreeGuide(!!isBoot);
     }
   }
 
@@ -1843,6 +1971,9 @@ window.__HOOT_SELF_COACH__=true;
       for(var i=0;i<reelDots.length;i++) reelDots[i].classList.remove("on");
       reelPad.classList.add("show");
       inputLock=false;
+      idleVoiceReminded=false;
+      speakReelGuide();
+      armIdle();
     }, 360);
   }
 
@@ -2007,8 +2138,8 @@ window.__HOOT_SELF_COACH__=true;
       st[i].classList.remove("lit");
       (function(el,ms){ setTimeout(function(){ el.classList.add("lit"); },ms); })(st[i], 180+i*150);
     }
-    clearVoice(false);
-    enqueue(hasClip("hoot-win-yay")?"hoot-win-yay.mp3":"hoot-amazing.mp3","win","",null);
+    clearVoice(true);
+    enqueue(pickClip("hoot-fish-win", "hoot-win-yay.mp3"),"win","",null);
     winOverlay.hidden=false;
     spawnConfetti(42);
     goldenSfx();
@@ -2017,11 +2148,17 @@ window.__HOOT_SELF_COACH__=true;
   /* ================= INTERACTIONS ================= */
   function repeatPrompt(){
     audio();
+    idleVoiceReminded=false;
     if(state==="aim" && mode==="quest"){
       speakFindLetter(targetLetter);
       armIdle();
+    } else if(state==="aim" && mode==="free"){
+      speakFreeGuide(false);
+      armIdle();
     } else if(state==="hooked"){
       crankSfx();
+      speakReelGuide();
+      armIdle();
     } else {
       plipSfx();
     }
@@ -2141,7 +2278,7 @@ window.__HOOT_SELF_COACH__=true;
   };
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e136">
-<script src="js/hoot-game-tail.js?v=llprev3e136"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <base href="../">
-<script>window.__HOOT_GAME_KEY__="shapes";</script>
-<script src="js/hoot-game-head.js?v=llprev3e101"></script>
+<script>window.__HOOT_GAME_KEY__="shapes";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -25,10 +25,26 @@
       linear-gradient(180deg,#04071a 0%,#0d153f 42%,#1e1b4b 72%,#311042 100%);
   }
 
+  /* Pixar-Illustrated Backdrop with Night-Sky Scrim so Neon Fireworks Glow Vividly */
+  #pixarBg{
+    position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-size:cover;background-position:center center;background-repeat:no-repeat;
+    background-image:url("assets/worlds3d/bg_shapes.jpg"), linear-gradient(180deg,#04071a 0%,#0d153f 42%,#1e1b4b 72%,#311042 100%);
+    filter:brightness(.42) saturate(1.15);
+  }
+  #pixarBg::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(circle at 82% 16%,rgba(253,224,71,.22) 0%,transparent 30%),
+      radial-gradient(circle at 20% 28%,rgba(192,132,252,.22) 0%,transparent 42%),
+      linear-gradient(180deg, rgba(6,10,36,.72) 0%, rgba(16,22,68,.56) 46%, rgba(36,16,66,.52) 100%);
+  }
+
   /* Crisp Pinkfong-Style SVG Carnival Skyline & Ferris Wheel Backdrop */
   #carnivalSvg{
     position:absolute;left:0;right:0;bottom:0;width:100%;height:42%;
     z-index:1;pointer-events:none;display:block;
+    opacity:.9;
   }
   #ferrisWheel{
     transform-box:fill-box;transform-origin:center;
@@ -50,6 +66,7 @@
   .sky-target{
     position:absolute;pointer-events:auto;
     width:clamp(84px,12.5vw,112px);height:clamp(84px,12.5vw,112px);
+    min-width:72px;min-height:72px;
     border-radius:50%;border:3.5px solid #fff;
     background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.95) 0 14%,rgba(255,255,255,.25) 15% 58%,var(--glow) 100%);
     box-shadow:0 0 24px var(--glow),inset 0 0 18px rgba(255,255,255,.75);
@@ -57,6 +74,9 @@
     cursor:pointer;padding:0;font-family:inherit;
     animation:targetFloat 3.2s ease-in-out infinite;
     transition:transform .15s ease;
+  }
+  body.kid-riley .sky-target{
+    width:clamp(98px,15vw,128px);height:clamp(98px,15vw,128px);
   }
   .sky-target:active{transform:scale(1.25)}
   .sky-target svg{width:72%;height:72%;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));pointer-events:none}
@@ -92,26 +112,29 @@
   }
   .hud-left{display:flex;align-items:center;gap:10px;pointer-events:auto;min-width:0;flex:1}
   #hootBtn{
-    flex:none;width:clamp(58px,8.5vw,76px);height:clamp(58px,8.5vw,76px);
+    flex:none;min-width:64px;min-height:64px;width:clamp(64px,8.5vw,76px);height:clamp(64px,8.5vw,76px);
     border-radius:50%;border:3.5px solid var(--ink);
     background:radial-gradient(circle at 35% 30%,#fffdf0 0%,#ffe066 65%,#f59f00 100%);
     box-shadow:0 6px 0 var(--ink),0 0 22px rgba(255,212,59,.75);
     padding:5px;cursor:pointer;display:grid;place-items:center;
     animation:targetFloat 2.6s ease-in-out infinite;
   }
+  #hootBtn.talking{ animation:hootTalk .22s ease-in-out infinite alternate; }
+  @keyframes hootTalk{ from{transform:scale(1)} to{transform:scale(1.07)} }
   #hootBtn svg{width:100%;height:100%;display:block}
   #bubble{
     background:linear-gradient(180deg,#ffffff 0%,#fff9db 100%);
     border:3.5px solid var(--ink);border-radius:22px;
-    padding:8px 16px;font-size:clamp(.95rem,2vw,1.26rem);font-weight:800;
+    padding:8px 16px;font-size:clamp(.92rem,1.9vw,1.22rem);font-weight:800;
     color:var(--ink);line-height:1.22;
     box-shadow:0 6px 0 var(--ink),0 0 24px rgba(236,72,153,.45);
-    max-width:600px;
+    max-width:560px;
   }
   #bubble b{color:#d946ef}
   .hud-right{display:flex;align-items:center;gap:8px;pointer-events:auto;flex:none}
   #starBar{
-    display:flex;align-items:center;gap:5px;
+    display:flex;align-items:center;gap:4px;
+    min-height:64px;
     background:rgba(15,23,42,.92);border:3.5px solid #fde047;
     border-radius:999px;padding:5px 12px;
     box-shadow:0 0 20px rgba(253,224,71,.5);font-weight:900;
@@ -119,11 +142,11 @@
   .fstar{font-size:1.3rem;filter:grayscale(1) opacity(.3);transition:transform .3s cubic-bezier(.2,1.6,.4,1),filter .3s}
   .fstar.on{filter:none;transform:scale(1.22)}
   #doneBtn{
-    min-height:46px;padding:6px 16px;border-radius:999px;
+    min-width:68px;min-height:64px;padding:6px 18px;border-radius:999px;
     border:3.5px solid var(--ink);
     background:linear-gradient(180deg,#fde047 0%,#f59f00 100%);
-    color:var(--ink);font-family:inherit;font-weight:900;font-size:1rem;
-    box-shadow:0 6px 0 var(--ink);cursor:pointer;
+    color:var(--ink);font-family:inherit;font-weight:900;font-size:1.05rem;
+    box-shadow:0 6px 0 var(--ink);cursor:pointer;white-space:nowrap;
   }
   #doneBtn:active{translate:0 4px;box-shadow:0 2px 0 var(--ink)}
   .sky-target.called-target,.cannon-btn.called-target{
@@ -195,24 +218,33 @@
   .win-trophy{font-size:5rem;line-height:1;margin:0 0 8px}
   .win-card h2{margin:0 0 6px;font-size:2rem;color:var(--ink)}
   .win-card p{margin:0 0 16px;font-size:1.12rem;font-weight:800;color:#334155}
-  .big-play{
-    min-height:66px;min-width:200px;padding:12px 28px;border-radius:999px;
+  .win-btns{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px}
+  .win-btn,.big-play{
+    min-height:66px;min-width:170px;padding:12px 26px;border-radius:999px;
     border:4px solid var(--ink);background:linear-gradient(180deg,#ffe066 0%,#fab005 100%);
-    color:var(--ink);font-family:inherit;font-size:1.32rem;font-weight:900;
+    color:var(--ink);font-family:inherit;font-size:1.28rem;font-weight:900;
     box-shadow:0 7px 0 var(--ink);cursor:pointer;
   }
 
-  @media (max-width:540px){
-    #padGrid{grid-template-columns:repeat(3,1fr)}
-    .cannon-btn{min-height:80px}
+  @media (max-width:600px){
+    #hud{gap:6px;padding:max(8px,env(safe-area-inset-top)) 8px 0}
+    #bubble{display:none}
+    #starBar{padding:4px 9px;gap:2px}
+    .fstar{font-size:1.08rem}
+    #doneBtn{padding:6px 14px;font-size:.96rem}
+    #skyTargets{top:84px;bottom:214px}
+    #padGrid{grid-template-columns:repeat(3,1fr);gap:8px}
+    .cannon-btn{min-height:76px;padding:4px 4px 6px}
+    .cannon-btn svg{width:46px;height:46px}
   }
   @keyframes targetFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   @keyframes finaleBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 </style>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e101" />
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157" />
 </head>
 <body>
 <div id="stage">
+  <div id="pixarBg" aria-hidden="true"></div>
   <!-- Illustrated Pinkfong-Style Carnival Harbor & Rotating Ferris Wheel SVG -->
   <svg id="carnivalSvg" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
     <!-- Glowing Crescent Moon & Distant Hills -->
@@ -267,7 +299,7 @@
       <button id="hootBtn" type="button" aria-label="Hoot the Owl">
         <svg viewBox="0 0 200 210" aria-hidden="true"><path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/><ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/><ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/><ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/><ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/><path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/><path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/><circle cx="100" cy="72" r="52" fill="#a06a3b"/><ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/><ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/><circle cx="78" cy="72" r="11" fill="#17324f"/><circle cx="122" cy="72" r="11" fill="#17324f"/><circle cx="82" cy="68" r="4" fill="#fff"/><circle cx="126" cy="68" r="4" fill="#fff"/><circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/><circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/><path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/></svg>
       </button>
-      <div id="bubble" aria-live="polite">Tap the <b>glowing sky bubbles</b> or <b>HOLD</b> your finger down for a <b>MEGA FINALE</b>!</div>
+      <div id="bubble">Tap the <b>glowing sky bubbles</b> or <b>HOLD</b> your finger down for a <b>MEGA FINALE</b>!</div>
     </div>
     <div class="hud-right">
       <div id="starBar" aria-label="Firework stars">
@@ -309,11 +341,13 @@
   </div>
 
   <div id="winOverlay" hidden>
-    <div class="win-card">
+    <div id="winCard" class="win-card">
       <div class="win-trophy" aria-hidden="true">🎆🦁🦋✨</div>
       <h2>Fireworks Superstar!</h2>
       <p id="winRecap">You lit up the whole carnival sky with glowing animal fireworks and a grand finale!</p>
-      <button id="againBtn" class="big-play" type="button">↻ More Fireworks!</button>
+      <div class="win-btns">
+        <button id="againBtn" class="big-play win-btn" type="button">↻ More Fireworks!</button>
+      </div>
     </div>
   </div>
 </div>
@@ -321,14 +355,32 @@
 <script>
 (function(){
   "use strict";
+  var stage = document.getElementById("stage");
+  var hootBtn = document.getElementById("hootBtn");
   var canvas = document.getElementById("fwCanvas");
   var ctx = canvas.getContext("2d");
   var bubble = document.getElementById("bubble");
   var burstLayer = document.getElementById("burstLayer");
   var skyTargets = document.getElementById("skyTargets");
   var winOverlay = document.getElementById("winOverlay");
-  var starEls = Array.prototype.slice.call(document.querySelectorAll(".fstar"));
+  var starBarEl = document.getElementById("starBar");
   var padBtns = Array.prototype.slice.call(document.querySelectorAll(".cannon-btn"));
+
+  var isRiley = /(^|[?&])kid=kidb(&|$)/.test(location.search);
+  try{ if(!isRiley && window.parent && window.parent.__llIsRiley && window.parent.__llIsRiley()) isRiley = true; }catch(e){}
+  if(isRiley) document.body.classList.add("kid-riley");
+  var STAR_GOAL = isRiley ? 4 : 6;
+  var SKY_TARGET_COUNT = isRiley ? 2 : 3;
+  (function buildStars(){
+    starBarEl.innerHTML = "";
+    for(var i = 0; i < STAR_GOAL; i++){
+      var sp = document.createElement("span");
+      sp.className = "fstar";
+      sp.textContent = "⭐";
+      starBarEl.appendChild(sp);
+    }
+  })();
+  var starEls = Array.prototype.slice.call(starBarEl.querySelectorAll(".fstar"));
 
   /* ---------- Custom Pinkfong-Style Kawaii Vector SVG Animal Art ---------- */
   var ANIMAL_SVGS = {
@@ -360,19 +412,99 @@
   window.addEventListener("resize", resize);
   resize();
 
-  /* ---------- Recorded Voice + WebAudio Firework Synth ---------- */
+  /* ---------- Recorded Voice (HOOT_HAVE-Gated + iOS Safari Unlock) + WebAudio Firework Synth ---------- */
+  var VBASE = "assets/voice/";
+  var PRAISE_DECK = ["hoot-great-job", "hoot-amazing", "hoot-super", "hoot-yay-2"];
+  var praiseIdx = 0;
   var voiceA = new Audio();
-  function playVoice(clips){
-    if(!clips || !clips.length) return;
-    var i = 0;
+  voiceA.preload = "auto";
+  var voiceGen = 0, voicePriority = false, audioUnlocked = false, pendingBootClip = null;
+  var dead = false, rafId = null;
+
+  function hasHootClip(id){
+    try{
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+  function resolveShpClip(customId, fallbackId){
+    return (customId && hasHootClip(customId)) ? customId : fallbackId;
+  }
+  function nextPraise(){
+    var id = PRAISE_DECK[praiseIdx % PRAISE_DECK.length];
+    praiseIdx++;
+    return hasHootClip(id) ? id : "hoot-great-job";
+  }
+  function hubQuiet(){
+    try{
+      var d = window.parent && window.parent.document;
+      if(!d || d === document) return false;
+      var b = d.querySelector('.voice-btn[data-voice="off"]');
+      return !!(b && (b.classList.contains("sel") || b.classList.contains("active") || b.getAttribute("aria-pressed") === "true"));
+    }catch(e){ return false; }
+  }
+  function stopVoice(){
+    voiceGen++;
+    voicePriority = false;
+    voiceA.onended = null; voiceA.onerror = null;
+    try{ voiceA.pause(); }catch(e){}
+    if(hootBtn) hootBtn.classList.remove("talking");
+  }
+  function playVoice(clips, isPriority){
+    if(dead || hubQuiet() || !clips || !clips.length) return;
+    if(!isPriority && voicePriority && !voiceA.paused && !voiceA.ended) return;
+    var gen = ++voiceGen, i = 0;
+    voicePriority = !!isPriority;
+    voiceA.onended = null; voiceA.onerror = null;
+    try{ voiceA.pause(); }catch(e){}
+    function finish(){
+      if(gen === voiceGen){
+        voicePriority = false;
+        if(hootBtn) hootBtn.classList.remove("talking");
+      }
+    }
     function step(){
-      if(i >= clips.length) return;
-      voiceA.src = "assets/voice/" + clips[i++] + ".mp3";
-      voiceA.onended = step; voiceA.onerror = step;
-      var p = voiceA.play(); if(p && p.catch) p.catch(function(){});
+      if(dead || gen !== voiceGen) return;
+      if(i >= clips.length){ finish(); return; }
+      var id = clips[i++];
+      if(!id){ step(); return; }
+      voiceA.muted = false;
+      voiceA.src = VBASE + id + ".mp3";
+      voiceA.onended = step;
+      voiceA.onerror = step;
+      if(hootBtn) hootBtn.classList.add("talking");
+      var p = voiceA.play();
+      if(p && p.catch){
+        p.catch(function(){
+          if(!audioUnlocked && isPriority && !pendingBootClip) pendingBootClip = id;
+          finish();
+        });
+      }
     }
     step();
   }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    ensureAudio();
+    try{
+      if(voiceA.paused || voiceA.ended){
+        voiceA.muted = true;
+        var p = voiceA.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceA.pause(); voiceA.currentTime = 0; voiceA.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip; pendingBootClip = null;
+              playVoice([c], true);
+            }
+          }).catch(function(){ voiceA.muted = false; });
+        } else { voiceA.muted = false; }
+      }
+    }catch(e){ voiceA.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
   var actx = null;
   function ensureAudio(){
     if(!actx){ var A = window.AudioContext || window.webkitAudioContext; if(A) actx = new A(); }
@@ -465,7 +597,24 @@
   var holding = false, holdX = 0, holdY = 0, holdStart = 0;
   var targetIdx = 0;
   var targetAnimal = ANIMAL_KEYS[0];
-  var nextCallTimer = null;
+  var nextCallTimer = null, idleTimer = null, winTimer = null;
+
+  function clearIdle(){
+    if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+  }
+  function armIdle(){
+    clearIdle();
+    if(dead || won) return;
+    idleTimer = setTimeout(function(){
+      if(dead || won) return;
+      highlightCalledTarget();
+      var cfg = ANIMALS[targetAnimal] || ANIMALS.cat;
+      if(voiceA.paused || voiceA.ended){
+        playVoice([resolveShpClip("hoot-fireworks-idle", "hoot-tap-big-btn"), cfg.clip], false);
+      }
+      armIdle();
+    }, 9000);
+  }
 
   function highlightCalledTarget(){
     padBtns.forEach(function(b){
@@ -493,22 +642,23 @@
     highlightCalledTarget();
     bubble.innerHTML = "🎆 Find &amp; tap the <b>" + cfg.name + "</b> firework — or hold the sky for a <b>MEGA FINALE</b>!";
     if(announceVoice !== false){
-      playVoice([cfg.clip]);
+      playVoice([cfg.clip], true);
     }
+    armIdle();
   }
 
   function scheduleNextAnimalCall(){
     if(nextCallTimer) clearTimeout(nextCallTimer);
     nextCallTimer = setTimeout(function(){
-      if(!won) callNextAnimal(true);
-    }, 1500);
+      if(!dead && !won) callNextAnimal(true);
+    }, 1700);
   }
 
   /* ---------- Interactive Floating Sky Bubble Targets ---------- */
   function spawnSkyTargets(){
     skyTargets.innerHTML = "";
     var picks = [targetAnimal, ANIMAL_KEYS[(targetIdx) % ANIMAL_KEYS.length], ANIMAL_KEYS[(targetIdx + 1) % ANIMAL_KEYS.length]];
-    for(var i = 0; i < 3; i++){
+    for(var i = 0; i < SKY_TARGET_COUNT; i++){
       createOneTarget(picks[i % picks.length], i);
     }
     highlightCalledTarget();
@@ -521,37 +671,67 @@
     b.setAttribute("data-kind", kind);
     b.setAttribute("data-slot", String(slot));
     b.style.setProperty("--glow", cfg.colors[0]);
-    b.style.left = (14 + slot * 31 + Math.round(Math.random() * 8)) + "%";
-    b.style.top = (12 + (slot % 2) * 28 + Math.round(Math.random() * 10)) + "%";
+    var leftPct = SKY_TARGET_COUNT === 2
+      ? (18 + slot * 46 + Math.round(Math.random() * 8))
+      : (10 + slot * 31 + Math.round(Math.random() * 6));
+    b.style.left = leftPct + "%";
+    b.style.top = (12 + (slot % 2) * 24 + Math.round(Math.random() * 10)) + "%";
     b.style.animationDelay = (-slot * 0.9) + "s";
     b.setAttribute("aria-label", "Pop " + cfg.name + " firework bubble");
     b.innerHTML = '<span class="t-ring"></span>' + (ANIMAL_SVGS[kind] || ANIMAL_SVGS.star);
+    var popped = false;
     var popTarget = function(e){
+      if(popped || won || dead) return;
+      popped = true;
+      unlockAudioOnce();
       if(e){ e.preventDefault(); e.stopPropagation(); }
       var r = b.getBoundingClientRect();
       var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       b.remove();
       explode(cx, cy, kind, 1.35);
       bubble.innerHTML = "🎆 <b>" + cfg.name + " SUPER BURST!</b> Watch it sparkle!";
-      playVoice([cfg.clip, "hoot-great-job"]);
-      recordLaunch();
-      scheduleNextAnimalCall();
+      playVoice([cfg.clip, nextPraise()], true);
+      var hitGoal = recordLaunch();
+      if(!hitGoal) scheduleNextAnimalCall();
       setTimeout(function(){
-        if(!won){
-          createOneTarget( targetAnimal, slot );
+        if(!dead && !won){
+          createOneTarget(targetAnimal, slot);
           highlightCalledTarget();
         }
       }, 850);
     };
+    b.__popTarget = popTarget;
     b.addEventListener("pointerdown", popTarget);
     b.addEventListener("click", function(e){ if(e.detail === 0) popTarget(e); });
     skyTargets.appendChild(b);
   }
 
+  function showWin(){
+    if(won || dead) return;
+    won = true;
+    clearIdle();
+    if(nextCallTimer){ clearTimeout(nextCallTimer); nextCallTimer = null; }
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    winOverlay.hidden = false;
+    playVoice([resolveShpClip("hoot-shp-win", "hoot-win-star")], true);
+  }
+
   function recordLaunch(){
-    if(won) return;
-    stars = Math.min(6, stars + 1);
+    if(won || dead) return false;
+    stars = Math.min(STAR_GOAL, stars + 1);
     starEls.forEach(function(el, i){ el.classList.toggle("on", i < stars); });
+    armIdle();
+    if(stars >= STAR_GOAL){
+      clearIdle();
+      if(nextCallTimer){ clearTimeout(nextCallTimer); nextCallTimer = null; }
+      if(winTimer) clearTimeout(winTimer);
+      winTimer = (window.__hwFastWin || setTimeout)(function(){
+        winTimer = null;
+        if(!dead && !won) showWin();
+      }, 1100);
+      return true;
+    }
+    return false;
   }
 
   function spawnVectorAnimalBurst(x, y, kind){
@@ -624,7 +804,7 @@
     });
     if(!silentVoice){
       bubble.innerHTML = "🎆 <b>" + cfg.name + " FIREWORK!</b> Watch it burst in the sky!";
-      playVoice([cfg.clip, "hoot-great-job"]);
+      playVoice([cfg.clip, nextPraise()], true);
       scheduleNextAnimalCall();
     }
   }
@@ -632,10 +812,11 @@
   function launchGrandFinale(count){
     var n = count || 5;
     bubble.innerHTML = "🎇 <b>MEGA CARNIVAL FINALE!</b> Look at all the animals lighting up the night!";
-    playVoice(["owl-excited"]);
+    playVoice([resolveShpClip("hoot-shp-finale", "hoot-amazing")], true);
     for(var i = 0; i < n; i++){
       (function(idx){
         setTimeout(function(){
+          if(dead) return;
           var k = ANIMAL_KEYS[idx % ANIMAL_KEYS.length];
           var fx = W * (0.15 + (idx / Math.max(1, n - 1)) * 0.7) + (Math.random() - 0.5) * 35;
           var fy = H * (0.20 + (idx % 2) * 0.14);
@@ -643,13 +824,14 @@
         }, idx * 135);
       })(i);
     }
-    recordLaunch();
-    scheduleNextAnimalCall();
+    var hitGoal = recordLaunch();
+    if(!hitGoal) scheduleNextAnimalCall();
   }
 
-  /* Hold-to-charge Finale & Drag Sparkler Trail on Sky Canvas */
+  /* Hold-to-charge Finale & Drag Sparkler Trail (forgiving drag across any sky bubble pops it too!) */
   canvas.addEventListener("pointerdown", function(e){
     e.preventDefault();
+    unlockAudioOnce();
     holding = true;
     holdX = e.clientX;
     holdY = Math.min(e.clientY, H * 0.58);
@@ -668,69 +850,104 @@
         r: 3, life: 0.75, decay: 0.04, gravity: 0.03
       });
     }
+    /* Forgiving toddler drag-to-pop: dragging over a sky bubble pops it cleanly! */
+    var skyBtns = skyTargets.querySelectorAll(".sky-target");
+    for(var s = 0; s < skyBtns.length; s++){
+      var sb = skyBtns[s];
+      var sr = sb.getBoundingClientRect();
+      if(e.clientX >= sr.left - 10 && e.clientX <= sr.right + 10 && e.clientY >= sr.top - 10 && e.clientY <= sr.bottom + 10){
+        if(typeof sb.__popTarget === "function") sb.__popTarget(null);
+        break;
+      }
+    }
   });
   window.addEventListener("pointerup", function(){
     if(!holding) return;
     var heldMs = Date.now() - holdStart;
     holding = false;
+    if(won || dead) return;
     if(heldMs >= 460){
       launchGrandFinale(Math.min(6, 4 + Math.floor(heldMs / 400)));
     } else {
       var k = targetAnimal || ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
-      launchRocket(holdX, holdY, k, 1.2, false);
-      recordLaunch();
+      var hitGoal = recordLaunch();
+      launchRocket(holdX, holdY, k, 1.2, hitGoal);
     }
   });
 
   padBtns.forEach(function(b){
     var a = b.getAttribute("data-a");
     var fire = function(e){
+      unlockAudioOnce();
       if(e){ e.preventDefault(); e.stopPropagation(); }
+      if(won || dead) return;
       if(a === "finale"){
         launchGrandFinale(5);
       } else {
         var tx = W * (0.2 + Math.random() * 0.6);
         var ty = H * (0.2 + Math.random() * 0.22);
-        launchRocket(tx, ty, a, 1.28, false);
-        recordLaunch();
+        var hitGoal = recordLaunch();
+        launchRocket(tx, ty, a, 1.28, hitGoal);
       }
     };
     b.addEventListener("pointerdown", fire);
     b.addEventListener("click", function(e){ if(e.detail === 0) fire(e); });
   });
 
-  function startGame(){
+  function startGame(isBoot){
     won = false; stars = 0; winOverlay.hidden = true;
-    if(nextCallTimer) clearTimeout(nextCallTimer);
+    try{ window.__hwWinSkipFn = null; }catch(e){}
+    if(nextCallTimer){ clearTimeout(nextCallTimer); nextCallTimer = null; }
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    clearIdle();
+    stopVoice();
     starEls.forEach(function(el){ el.classList.remove("on"); });
     targetIdx = 0;
     callNextAnimal(false);
     spawnSkyTargets();
     var firstCfg = ANIMALS[targetAnimal] || ANIMALS.cat;
-    playVoice(["hoot-game-hello", firstCfg.clip]);
+    var chainedBoot = false;
+    if(isBoot){
+      try{
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+          chainedBoot = !!window.parent.__hwPlayAfterIntro(VBASE + firstCfg.clip + ".mp3");
+        }
+      }catch(e){}
+    }
+    if(!chainedBoot){
+      var introClip = resolveShpClip("hoot-shp-intro", hasHootClip("hoot-fireworks-intro") ? "hoot-fireworks-intro" : "hoot-welcome");
+      playVoice([introClip, firstCfg.clip], true);
+    }
     setTimeout(function(){
-      if(!won) playVoice([firstCfg.clip]);
-    }, 1150);
-    setTimeout(function(){
-      launchRocket(W * 0.5, H * 0.28, targetAnimal, 1.25, true);
-    }, 180);
+      if(!dead && !won) launchRocket(W * 0.5, H * 0.28, targetAnimal, 1.25, true);
+    }, 220);
+    armIdle();
+    if(!rafId) rafId = requestAnimationFrame(render);
   }
-  document.getElementById("againBtn").addEventListener("click", startGame);
-  document.getElementById("playBtn").addEventListener("click", startGame);
-  document.getElementById("doneBtn").addEventListener("click", function(){
-    won = true;
-    if(nextCallTimer) clearTimeout(nextCallTimer);
-    winOverlay.hidden = false;
-    playVoice(["hoot-win-star"]);
-  });
-  document.getElementById("hootBtn").addEventListener("click", function(){
+  document.getElementById("againBtn").addEventListener("click", function(){ unlockAudioOnce(); startGame(false); });
+  document.getElementById("playBtn").addEventListener("click", function(){ unlockAudioOnce(); startGame(false); });
+  document.getElementById("doneBtn").addEventListener("click", function(){ unlockAudioOnce(); showWin(); });
+  hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     var cfg = ANIMALS[targetAnimal] || ANIMALS.cat;
     bubble.innerHTML = "🎆 Find &amp; tap the <b>" + cfg.name + "</b> firework — or hold the sky for a <b>MEGA FINALE</b>!";
-    playVoice([cfg.clip]);
+    highlightCalledTarget();
+    playVoice([cfg.clip], true);
+    armIdle();
+  });
+
+  window.addEventListener("pagehide", function(){
+    dead = true;
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    if(nextCallTimer){ clearTimeout(nextCallTimer); nextCallTimer = null; }
+    if(winTimer){ clearTimeout(winTimer); winTimer = null; }
+    clearIdle();
+    stopVoice();
   });
 
   /* ---------- 60fps Additive HDR Neon Particle Loop (Never Muddy Gray!) ---------- */
   function render(){
+    if(dead) return;
     tick++;
     var waterY = H * 0.72;
     ctx.clearRect(0, 0, W, H);
@@ -831,13 +1048,25 @@
     }
 
     ctx.restore();
-    requestAnimationFrame(render);
+    rafId = requestAnimationFrame(render);
   }
 
-  startGame();
-  requestAnimationFrame(render);
+  startGame(true);
+
+  window.__shapesGame = {
+    snapshot: function(){
+      return {
+        isRiley: isRiley,
+        stars: stars,
+        goal: STAR_GOAL,
+        targetAnimal: targetAnimal,
+        skyTargetCount: skyTargets.querySelectorAll(".sky-target").length,
+        winShown: !winOverlay.hidden
+      };
+    }
+  };
 })();
 </script>
-<script src="js/hoot-game-tail.js?v=llprev3e101"></script>
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="feed";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e129"></script>
+<script src="js/hoot-game-head.js?v=llprev3e157"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light" />
@@ -33,14 +33,21 @@
   #stage{
     position:fixed; inset:0; height:100dvh; overflow:hidden;
     display:flex; flex-direction:column; justify-content:space-between;
-    background:linear-gradient(180deg, #4eb8f5 0%, #9be0ff 42%, #daf7df 68%, #68d362 100%);
+    background-image:url("assets/worlds3d/bg_feed.jpg"), linear-gradient(180deg, #4eb8f5 0%, #9be0ff 42%, #daf7df 68%, #68d362 100%);
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+  #stage::before{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 44%, rgba(255,253,245,.06) 34%, rgba(23,50,79,.22) 100%);
   }
 
   /* ================= SUNNY STORYBOOK ORCHARD SCENERY ================= */
   #scenery{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
   #meadowSvg{
-    position:absolute; left:0; right:0; bottom:18%;
-    width:100%; height:56%; display:block;
+    position:absolute; left:0; right:0; bottom:16%;
+    width:100%; height:36%; display:block; opacity:.22;
   }
   #orchardTree{
     position:absolute; left:-14px; bottom:24%;
@@ -650,7 +657,7 @@
         <path d="M12 44 L108 44" stroke="#ff6b7a" stroke-width="9" stroke-linecap="round"/>
         <path d="M36 56 v28 M60 56 v28 M84 56 v28 M24 68 h72" stroke="#a66c2e" stroke-width="3.5" stroke-linecap="round"/>
       </svg>
-      <span class="go-play-pill">▶</span>
+      <span class="go-play-pill">▶ <span class="nudge-hand" style="position:static;font-size:28px;margin-left:4px" aria-hidden="true">👆</span></span>
     </button>
   </div>
 
@@ -721,7 +728,13 @@
   var sortColor = "red", sortNeed = 3, sortGot = 0;
   var blendItems = [], blendReadyToDrink = false;
   var eatenHistory = [];
-  var idleTimer = null, roundTok = 0;
+  var idleTimer = null, idleVoiceTimer = null, idleVoiceReminded = false, roundTok = 0;
+  var urlKid = "";
+  try{ urlKid = String(new URLSearchParams(window.location.search).get("kid") || "").toLowerCase(); }catch(e){}
+  function isKidB(){
+    return urlKid === "kidb" || childKey() === "kidb";
+  }
+  function blendTargetCount(){ return isKidB() ? 2 : 3; }
 
   /* ================= WEBAUDIO SOUND EFFECTS ================= */
   var AC = null;
@@ -760,7 +773,7 @@
 
   /* ================= STUDIO HOOT VOICE QUEUE (100% REAL MP3s, ZERO 404s) ================= */
   var VBASE = "assets/voice/";
-  var voiceEl = null, vQueue = [], vPlaying = false;
+  var voiceEl = null, vQueue = [], vPlaying = false, audioUnlocked = false, pendingBootClip = null;
   function getVoiceEl(){
     if(!voiceEl){
       voiceEl = new Audio();
@@ -770,6 +783,39 @@
     }
     return voiceEl;
   }
+  function stopParentVoice(){
+    try{
+      if(window.parent && window.parent !== window){
+        if(window.parent.__hwStopIntro) window.parent.__hwStopIntro();
+        if(window.parent.__hootStopClip) window.parent.__hootStopClip();
+      }
+    }catch(e){}
+  }
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    audio();
+    try{
+      var el = getVoiceEl();
+      if(!vPlaying){
+        el.muted = true;
+        var p = el.play();
+        if(p && p.then){
+          p.then(function(){
+            el.pause(); el.currentTime = 0; el.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip; pendingBootClip = null;
+              sayClips([c], true);
+            }
+          }).catch(function(){ el.muted = false; });
+        } else {
+          el.muted = false;
+        }
+      }
+    }catch(e){ if(voiceEl) voiceEl.muted = false; }
+  }
+  document.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
+  document.addEventListener("pointerdown", function(){ idleVoiceReminded = false; }, true);
   function hubMuted(){
     try{
       var d = window.parent && window.parent.document;
@@ -804,21 +850,40 @@
       window.__bellyArmed = true;
       setTimeout(function(){ window.__bellyArmed = false; }, 600);
     }
+    el.muted = false;
     el.setAttribute("src", VBASE + file);
     el.src = VBASE + file;
     var pr = el.play();
-    if(pr && pr.catch) pr.catch(function(){ vNext(); });
+    if(pr && pr.catch) pr.catch(function(){
+      if(!audioUnlocked && !pendingBootClip) pendingBootClip = file;
+      vNext();
+    });
   }
-  function sayClips(list, replace){
-    if(replace) clearVoice();
+  function sayClips(list, replace, isBoot){
+    if(isBoot && list && list.length === 1){
+      var f0 = list[0].indexOf(".mp3") > -1 ? list[0] : list[0] + ".mp3";
+      try{
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+          if(window.parent.__hwPlayAfterIntro(VBASE + f0)) return;
+        }
+      }catch(e){}
+    }
+    if(replace){ stopParentVoice(); clearVoice(); }
     (list || []).forEach(function(f){ if(f) vQueue.push(f.indexOf(".mp3") > -1 ? f : f + ".mp3"); });
     pumpVoice();
   }
   function childKey(){
-    try{ return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null; }catch(e){ return null; }
+    try{
+      if(urlKid === "kidb" || urlKid === "kida") return urlKid;
+      return window.parent && window.parent.__llNameKey ? window.parent.__llNameKey() : null;
+    }catch(e){ return urlKid || null; }
   }
   function hasVoice(id){
-    try{ return !!(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]); }catch(e){ return false; }
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+      if(window.HOOT_HAVE && window.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
   }
   function foodClip(food, qty){
     return qty === 1 ? ("food-" + food.id + "-one.mp3") : ("food-" + food.id + ".mp3");
@@ -843,7 +908,7 @@
     } else if(mode === "blender"){
       if(blendReadyToDrink){
         sayClips(prefix.concat([hasVoice("hoot-feed-smoothie-ready") ? "hoot-feed-smoothie-ready.mp3" : "hoot-super.mp3"]), true);
-      } else if(blendItems.length >= 3){
+      } else if(blendItems.length >= blendTargetCount()){
         sayClips(prefix.concat([hasVoice("hoot-feed-blend-go") ? "hoot-feed-blend-go.mp3" : "hoot-tap-big-btn.mp3"]), true);
       } else {
         sayClips(prefix.concat([hasVoice("hoot-feed-blend-start") ? "hoot-feed-blend-start.mp3" : "hoot-ready-go.mp3"]), true);
@@ -926,9 +991,10 @@
     return hootBtn.getBoundingClientRect();
   }
 
-  /* ================= IDLE GENTLE POINTER NUDGE ================= */
+  /* ================= IDLE GENTLE POINTER NUDGE & ~9s SPOKEN REMINDER ================= */
   function clearIdle(){
     if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
     Array.prototype.forEach.call(plateGrid.querySelectorAll(".plate-btn"), function(b){
       b.classList.remove("nudge-glow");
       var h = b.querySelector(".nudge-hand"); if(h) h.remove();
@@ -942,27 +1008,43 @@
     h.className = "nudge-hand"; h.setAttribute("aria-hidden","true"); h.textContent = "👆";
     el.appendChild(h);
   }
+  function showVisualCueNow(){
+    if(state !== "playing" || dead || inputLock) return;
+    if(mode === "blender" && blendReadyToDrink && !smoothieCupBtn.hidden){
+      addHandTo(smoothieCupBtn);
+      return;
+    }
+    if(mode === "blender" && blendItems.length >= blendTargetCount() && !blendGoBtn.hidden){
+      addHandTo(blendGoBtn);
+      return;
+    }
+    var matchBtn = findMatchingPlate();
+    if(matchBtn){
+      matchBtn.classList.add("nudge-glow");
+      addHandTo(matchBtn);
+    }
+  }
   function armIdle(){
     clearIdle();
     if(state !== "playing" || dead) return;
-    var waitMs = (mode === "blender" && (blendItems.length >= 3 || blendReadyToDrink)) ? 3200 : 6200;
-    idleTimer = setTimeout(function(){
-      if(state !== "playing" || dead || inputLock) return;
-      if(mode === "blender" && blendReadyToDrink && !smoothieCupBtn.hidden){
-        addHandTo(smoothieCupBtn);
-        return;
-      }
-      if(mode === "blender" && blendItems.length >= 3 && !blendGoBtn.hidden){
-        addHandTo(blendGoBtn);
-        return;
-      }
-      var matchBtn = findMatchingPlate();
-      if(matchBtn){
-        matchBtn.classList.add("nudge-glow");
-        addHandTo(matchBtn);
-      }
-      if(!vPlaying) speakCurrentOrder(false);
-    }, waitMs);
+    var visualMs = (mode === "blender" && (blendItems.length >= blendTargetCount() || blendReadyToDrink))
+      ? 2400
+      : (isKidB() ? 3200 : 4800);
+    idleTimer = setTimeout(showVisualCueNow, visualMs);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(state !== "playing" || dead || inputLock) return;
+        idleVoiceReminded = true;
+        showVisualCueNow();
+        if(!vPlaying){
+          if(mode === "number" || mode === "color" || mode === "blender"){
+            speakCurrentOrder(false);
+          } else {
+            sayClips([hasVoice("hoot-feed-idle") ? "hoot-feed-idle.mp3" : "hoot-tap-big-btn.mp3"], true);
+          }
+        }
+      }, 9000);
+    }
   }
   function findMatchingPlate(){
     var btns = Array.prototype.slice.call(plateGrid.querySelectorAll(".plate-btn:not(.eaten)"));
@@ -1011,7 +1093,8 @@
         drinkHint.innerHTML = '<span>🍹</span><span style="font-size:26px;color:#16a34a">➜</span><span>🦉</span>';
         orderSlots.appendChild(drinkHint);
       } else {
-        for(var b = 0; b < 3; b++){
+        var bNeed = blendTargetCount();
+        for(var b = 0; b < bNeed; b++){
           var bs = document.createElement("div");
           var bf = blendItems[b];
           bs.className = "oslot" + (bf ? " filled" : "") + (b === blendItems.length - 1 && bf ? " just-fed" : "");
@@ -1091,7 +1174,9 @@
       var tr = mouthTargetRect();
       var tcx = tr.left + tr.width / 2, tcy = tr.top + tr.height * 0.45;
       var dist = Math.hypot(e.clientX - tcx, e.clientY - tcy);
-      if(dist < 170 || e.clientY < window.innerHeight * 0.68){
+      var dropRadius = isKidB() ? 225 : 170;
+      var dropYCut = isKidB() ? 0.78 : 0.68;
+      if(dist < dropRadius || e.clientY < window.innerHeight * dropYCut){
         handlePlateChoice(btn, food, { x: e.clientX, y: e.clientY });
       } else {
         armIdle();
@@ -1145,7 +1230,8 @@
     var startRect = dropPt ? { left: dropPt.x - 44, top: dropPt.y - 44, width: 88, height: 88 } : btn.getBoundingClientRect();
 
     if(mode === "blender"){
-      if(blendItems.length >= 3) return;
+      var bNeed = blendTargetCount();
+      if(blendItems.length >= bNeed) return;
       inputLock = true;
       btn.classList.add("eaten");
       flyToTarget(food, startRect, blenderBox, false, function(cx, cy){
@@ -1157,7 +1243,7 @@
         updateBlenderVisual();
         renderOrderCloud(false);
         var n = blendItems.length;
-        if(n >= 3){
+        if(n >= bNeed){
           blendGoBtn.hidden = false;
           plateGrid.innerHTML = "";
           sfxStar();
@@ -1167,6 +1253,7 @@
           sayClips(hasVoice(bKey) ? [bKey + ".mp3", foodClip(food, 1)] : [foodClip(food, 1)], true);
         }
         inputLock = false;
+        idleVoiceReminded = false;
         armIdle();
       });
       return;
@@ -1285,17 +1372,24 @@
     orderCloud.hidden = false;
     state = "playing";
     inputLock = false;
+    idleVoiceReminded = false;
+    var riley = isKidB();
     var pool = FOODS.filter(function(f){ return !reqFood || f.id !== reqFood.id; });
     reqFood = pool[Math.floor(Math.random() * pool.length)];
-    reqNeed = ordersDone === 0 ? (1 + Math.floor(Math.random() * 2))
-            : ordersDone === 1 ? (2 + Math.floor(Math.random() * 2))
-            : 3;
+    if(riley){
+      reqNeed = ordersDone === 0 ? 1 : 2;
+    } else {
+      reqNeed = ordersDone === 0 ? (1 + Math.floor(Math.random() * 2))
+              : ordersDone === 1 ? (2 + Math.floor(Math.random() * 2))
+              : 3;
+    }
     reqGot = 0;
 
+    var totalPlates = riley ? 4 : 6;
     var list = [];
     for(var i = 0; i < reqNeed; i++) list.push(reqFood);
     var distract = shuffle(FOODS.filter(function(f){ return f.id !== reqFood.id; }));
-    while(list.length < 6) list.push(distract[list.length % distract.length]);
+    while(list.length < totalPlates) list.push(distract[list.length % distract.length]);
 
     renderOrderCloud(true);
     buildPlates(shuffle(list));
@@ -1308,16 +1402,18 @@
     orderCloud.hidden = false;
     state = "playing";
     inputLock = false;
+    idleVoiceReminded = false;
+    var riley = isKidB();
     var cols = ["red", "yellow", "orange", "green", "purple"].filter(function(c){ return c !== sortColor; });
     sortColor = cols[Math.floor(Math.random() * cols.length)];
-    sortNeed = 3;
+    sortNeed = riley ? 2 : 3;
     sortGot = 0;
 
     var matching = shuffle(FOODS.filter(function(f){ return f.color === sortColor; }));
     var others = shuffle(FOODS.filter(function(f){ return f.color !== sortColor; }));
     var list = [];
-    for(var i = 0; i < 3; i++) list.push(matching[i % matching.length]);
-    for(var j = 0; j < 3; j++) list.push(others[j]);
+    for(var i = 0; i < sortNeed; i++) list.push(matching[i % matching.length]);
+    for(var j = 0; j < sortNeed; j++) list.push(others[j]);
 
     renderOrderCloud(true);
     buildPlates(shuffle(list));
@@ -1335,6 +1431,7 @@
     clearIdle();
     state = "playing";
     inputLock = false;
+    idleVoiceReminded = false;
     blendItems = [];
     blendReadyToDrink = false;
     blenderWrap.hidden = false;
@@ -1344,7 +1441,7 @@
     orderCloud.hidden = false;
     updateBlenderVisual();
     renderOrderCloud(true);
-    buildPlates(shuffle(FRUITS_FOR_BLENDER).slice(0, 6));
+    buildPlates(shuffle(FRUITS_FOR_BLENDER).slice(0, isKidB() ? 4 : 6));
     speakCurrentOrder(!!withHello);
     armIdle();
   }
@@ -1362,7 +1459,7 @@
   }
 
   blendGoBtn.addEventListener("click", function(){
-    if(inputLock || blendItems.length < 3 || dead) return;
+    if(inputLock || blendItems.length < blendTargetCount() || dead) return;
     audio();
     clearIdle();
     inputLock = true;
@@ -1448,6 +1545,9 @@
   }
   function beginSession(selectedMode, withHello){
     roundTok++;
+    clearIdle();
+    clearVoice();
+    idleVoiceReminded = false;
     ordersDone = 0;
     totalBites = 0;
     eatenHistory = [];
@@ -1533,9 +1633,11 @@
   document.addEventListener("visibilitychange", function(){ if(document.hidden) clearVoice(); });
 
   /* Pre-populate initial preview scene behind the Play basket so the orchard looks alive immediately! */
-  reqFood = FOODS[1]; reqNeed = 3; reqGot = 0;
+  reqFood = FOODS[1]; reqNeed = isKidB() ? 2 : 3; reqGot = 0;
   renderOrderCloud(false);
-  buildPlates(FOODS.slice(0, 6));
+  buildPlates(FOODS.slice(0, isKidB() ? 4 : 6));
+  /* Chain boot welcome right after hub intro via Safari-unlocked parent Audio */
+  sayClips([hasVoice("hoot-feed-welcome") ? "hoot-feed-welcome.mp3" : "hoot-welcome.mp3"], false, true);
 
   window.__feedGame = {
     snapshot: function(){
@@ -1550,7 +1652,7 @@
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e129">
-<script src="js/hoot-game-tail.js?v=llprev3e129"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e157">
+<script src="js/hoot-game-tail.js?v=llprev3e157"></script>
 </body>
 </html>
