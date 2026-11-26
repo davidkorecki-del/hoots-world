@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="sub";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e150"></script>
+<script src="js/hoot-game-head.js?v=llprev3e151"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Captain Hoot's Submarine Letter Voyage</title>
@@ -459,27 +459,45 @@
   var VBASE = "assets/voice/";
   var voiceAudio = new Audio();
   var voiceGen = 0;
+  var voicePriority = false; /* true while speaking a target letter callout so fish/distractors NEVER cancel it! */
+  var voiceUnlocked = false;
   var PRAISE_CLIPS = ["hoot-great-job", "hoot-amazing", "hoot-super", "hoot-star"];
   var praiseIdx = 0;
   var pendingBootLetter = null;
 
-  function playVoiceSeq(ids, onBlocked){
+  function playVoiceSeq(ids, onBlocked, isPriority){
     if(!ids || !ids.length) return;
+    /* Never let a passing fish or non-target bubble interrupt an active target letter callout! */
+    if(!isPriority && voicePriority && !voiceAudio.paused && !voiceAudio.ended) return;
     var gen = ++voiceGen, idx = 0;
+    voicePriority = !!isPriority;
     voiceAudio.onended = null;
     voiceAudio.onerror = null;
     try{ voiceAudio.pause(); }catch(e){}
+    function finish(){
+      if(gen === voiceGen) voicePriority = false;
+    }
     function next(){
-      if(gen !== voiceGen || idx >= ids.length) return;
+      if(gen !== voiceGen) return;
+      if(idx >= ids.length){ finish(); return; }
       var id = ids[idx++];
       if(!id){ next(); return; }
-      /* Direct path to verified base voice clips in assets/voice/ */
-      voiceAudio.src = VBASE + id + ".mp3";
+      var src = VBASE + id + ".mp3";
+      voiceAudio.src = src;
       voiceAudio.onended = next;
       voiceAudio.onerror = next;
       var p = voiceAudio.play();
       if(p && p.catch){
         p.catch(function(){
+          /* Safari iframe autoplay fallback: route priority callout through Safari-unlocked parent element */
+          if(isPriority){
+            try{
+              if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+                if(window.parent.__hwPlayAfterIntro(src)){ finish(); return; }
+              }
+            }catch(e){}
+          }
+          finish();
           if(onBlocked) onBlocked();
         });
       }
@@ -512,11 +530,11 @@
       }catch(e){}
       playVoiceSeq([clipId], function(){
         pendingBootLetter = letter;
-      });
+      }, true);
       return;
     }
     pendingBootLetter = null;
-    playVoiceSeq([clipId]);
+    playVoiceSeq([clipId], null, true);
   }
 
   /* =========================================================================
@@ -932,7 +950,7 @@
 
   function spawnLetterBubble(forceTarget, xOverride){
     var wantTarget = !!forceTarget;
-    if(!wantTarget){
+    if(!wantTarget && targetDelayT <= 0){
       if(!hasActiveTargetBubble() && bubblesSinceTarget >= 1){
         wantTarget = true;
       } else if(!hasActiveTargetBubble() && Math.random() < 0.65){
@@ -961,7 +979,7 @@
       r: r,
       phase: Math.random() * 6.28,
       amp: 12 + Math.random() * 10,
-      speedMul: isTgt ? Math.max(0.72, 0.86 - state.missesForTarget * 0.05) : (0.88 + Math.random() * 0.14),
+      speedMul: isTgt ? Math.max(0.46, 0.56 - state.missesForTarget * 0.04) : (0.76 + Math.random() * 0.12),
       sonarGlow: 0,
       wiggleT: 0,
       cooldown: 0,
@@ -969,14 +987,16 @@
     });
   }
 
+  var targetDelayT = 0;
+
   function seedInitialBubbles(){
     letterBubbles = [];
     bubblesSinceTarget = 0;
     var r = getBubbleRadius();
-    /* Place an inviting target letter entering smoothly on-screen right away + 2 friendly letters */
-    spawnLetterBubble(true, Math.max(W * 0.76, sub.x + 210));
-    spawnLetterBubble(false, W + r + 90);
-    spawnLetterBubble(false, W + r + Math.max(260, W * 0.34));
+    /* Give Hoot ~1.8s to finish calling the opening letter BEFORE the target bubble glides into view! */
+    targetDelayT = 1.65;
+    spawnLetterBubble(false, W + r + 110);
+    spawnLetterBubble(false, W + r + Math.max(290, W * 0.36));
   }
 
   function seedCreatures(){
@@ -1146,21 +1166,19 @@
         ob.missBoost = 0;
       });
 
-      /* Guarantee an incoming target letter bubble soon */
-      if(!hasActiveTargetBubble()){
-        spawnLetterBubble(true, Math.max(W + 40, W * 0.96));
-      }
+      /* Hold next target bubble for 1.35s so Hoot ALWAYS announces the new letter BEFORE it glides onto screen! */
+      targetDelayT = 1.35;
 
       targetPill.classList.remove("pop");
       void targetPill.offsetWidth;
       targetPill.classList.add("pop");
 
-      /* Hoot plays call-letter-<collected> + praise + calls next target letter! */
-      playVoiceSeq([
-        "call-letter-" + prevLetter.toLowerCase(),
-        nextPraise(),
-        "call-letter-" + state.targetLetter.toLowerCase()
-      ]);
+      /* Snappy harp chord -> Hoot immediately calls the NEXT letter (no long 4s delay!) */
+      var nextClip = "call-letter-" + state.targetLetter.toLowerCase();
+      var seq = (state.lettersCollected % 3 === 0) ? [nextPraise(), nextClip] : [nextClip];
+      setTimeout(function(){
+        playVoiceSeq(seq, null, true);
+      }, 320);
 
       syncHud();
     } else {
@@ -1294,6 +1312,17 @@
 
   function unlockPendingAudio(){
     getAC();
+    if(!voiceUnlocked){
+      voiceUnlocked = true;
+      /* Synchronously prime iframe voiceAudio on first user gesture so iOS Safari allows later rAF collisions to speak */
+      try{
+        if(voiceAudio.paused && !voiceAudio.src){
+          voiceAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+          var pr = voiceAudio.play();
+          if(pr && pr.then) pr.then(function(){ try{ voiceAudio.pause(); }catch(e){} }).catch(function(){});
+        }
+      }catch(e){}
+    }
     if(pendingBootLetter){
       var l = pendingBootLetter;
       pendingBootLetter = null;
@@ -2569,12 +2598,22 @@
     sub.blinkT -= dt;
     if(sub.blinkT <= 0) sub.blinkT = 2.8 + Math.random() * 2.4;
 
+    /* Timed delayed target-letter spawn so Hoot ALWAYS announces the letter BEFORE it enters the screen! */
+    if(targetDelayT > 0){
+      targetDelayT -= dt;
+      if(targetDelayT <= 0 && !hasActiveTargetBubble()){
+        spawnLetterBubble(true, W + getBubbleRadius() + 48);
+      }
+    }
+
     /* Update Giant Letter Pearl Bubbles (drifting right-to-left + submarine collision!) */
     var subHitR = 66 * getSubScale();
     var rightmostX = -999;
     for(var i = letterBubbles.length - 1; i >= 0; i--){
       var lb = letterBubbles[i];
-      lb.x -= voyageSpeed * lb.speedMul * dt;
+      /* Gently slow target bubbles in the center play zone so toddlers never feel rushed */
+      var zoneSlow = (lb.isTarget && lb.x > W * 0.22 && lb.x < W * 0.78) ? 0.78 : 1;
+      lb.x -= voyageSpeed * lb.speedMul * zoneSlow * dt;
       lb.baseY = Math.max(b.minY + lb.r + 10, Math.min(b.maxY - lb.r - 18, lb.baseY));
       lb.y = lb.baseY + Math.sin(tAcc * 2.2 + lb.phase) * lb.amp;
       if(lb.sonarGlow > 0) lb.sonarGlow = Math.max(0, lb.sonarGlow - dt);
@@ -2596,6 +2635,8 @@
       if(lb.x < -lb.r - 40){
         if(lb.isTarget){
           state.missesForTarget = Math.min(3, state.missesForTarget + 1);
+          targetDelayT = 0.9;
+          speakTargetCallout(state.targetLetter, false);
         }
         letterBubbles.splice(i, 1);
         continue;
@@ -2906,7 +2947,7 @@
   requestAnimationFrame(render);
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e150">
-<script src="js/hoot-game-tail.js?v=llprev3e150"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e151">
+<script src="js/hoot-game-tail.js?v=llprev3e151"></script>
 </body>
 </html>
