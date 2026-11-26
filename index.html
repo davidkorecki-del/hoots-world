@@ -2413,7 +2413,7 @@
       @media (max-width:600px) and (prefers-color-scheme: dark){ .tutor-hoot.ot-bubble::before{ border-top-color:#8fa8c8; } }
       @media (prefers-reduced-motion: reduce){ .ot-hoot.is-speaking svg, .ot-hoot.is-speaking .beak{ animation:none; } }
     </style>
-  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e147">
+  <link rel="stylesheet" href="hw-ll-shell.css?v=llprev3e149">
   <link rel="stylesheet" href="js/hw-learn-fx.css?v=llprev3e118">
   <link rel="stylesheet" href="js/hw-monti-works.css?v=llprev3e66">
 <script src="js/hoot-config.js?v=llprev3e66"></script>
@@ -5877,7 +5877,7 @@
         "lily-cheer":"lily-cheer.mp3",
         "lily-play":"lily-play.mp3"
       };
-      var hootClipEl = null, hootClipQueue = [];
+      var hootClipEl = null, hootClipQueue = [], hootClipOnEnd = null;
       function hootClipPlayer(){
         if(!hootClipEl){
           hootClipEl = new Audio();
@@ -5886,8 +5886,9 @@
             setSpeaking(false);
             var next = hootClipQueue.shift();
             if(next) playHootClip(next, true);
+            else if(hootClipOnEnd){ var cb = hootClipOnEnd; hootClipOnEnd = null; try{ cb(); }catch(e){} }
           });
-          hootClipEl.addEventListener("error", function(){ setSpeaking(false); });
+          hootClipEl.addEventListener("error", function(){ hootClipOnEnd = null; setSpeaking(false); });
         }
         return hootClipEl;
       }
@@ -5920,9 +5921,9 @@
           a.src = "assets/voice/" + file;
           setSpeaking(true);
           var p = a.play();
-          if(p && p.catch) p.catch(function(){ setSpeaking(false); });
+          if(p && p.catch) p.catch(function(){ hootClipOnEnd = null; setSpeaking(false); });
           return true;
-        }catch(e){ setSpeaking(false); return false; }
+        }catch(e){ hootClipOnEnd = null; setSpeaking(false); return false; }
       }
       function queueHootClip(key){ hootClipQueue.push(key); }
       /* 3e51: shelf works speak their key words (colours, shapes, counting) in Hoot's
@@ -5932,18 +5933,21 @@
          inside her lessons (Dawid's rule: everything for Kaitlyn gets a
          tutor explaining every step). */
       var TUT_HAVE = (window.__hwTutHave = {"owl-hello":1,"owl-excited":1,"owl-sleepy":1,"hoot-great-job":1,"hoot-amazing":1,"hoot-star":1,"hoot-try-again":1,"hoot-look-closely":1,"hoot-great-thinking":1,"hoot-keep-going":1,"hoot-you-learned":1,"name-number-1":1,"name-number-2":1,"name-number-3":1,"name-number-4":1,"name-number-5":1,"name-number-6":1,"name-number-7":1,"name-number-8":1,"name-number-9":1,"name-number-10":1,"name-color-red":1,"name-color-blue":1,"name-color-yellow":1,"name-color-green":1,"name-color-orange":1,"name-color-purple":1,"name-color-pink":1,"name-color-black":1,"name-color-white":1,"name-color-brown":1,"name-color-sky-blue":1,"call-color-red":1,"call-color-blue":1,"call-color-yellow":1,"call-color-green":1,"call-color-orange":1,"call-color-purple":1,"call-color-pink":1,"call-color-black":1,"call-color-white":1,"call-color-brown":1,"hoot-ask-hoot":1,"ask-which-animal":1,"ask-what-comes-next":1,"ask-which-feeling":1,"ask-which-part":1,"ask-which-big":1,"ask-which-small":1,"ask-which-up":1,"ask-which-down":1,"call-shape-circle":1,"call-shape-square":1,"call-shape-triangle":1,"call-shape-star":1,"call-shape-heart":1,"call-shape-rectangle":1,"call-shape-oval":1,"call-shape-diamond":1,"name-shape-circle":1,"name-shape-square":1,"name-shape-triangle":1,"name-shape-star":1,"name-shape-heart":1,"name-shape-rectangle":1,"name-shape-oval":1,"name-shape-diamond":1,"teach-big":1,"teach-small":1,"teach-happy":1,"teach-sad":1,"teach-eyes":1,"teach-ears":1,"teach-nose":1,"teach-mouth":1,"teach-hands":1,"teach-feet":1,"teach-apple":1,"teach-banana":1,"call-number-1":1,"call-number-2":1,"call-number-3":1,"call-number-4":1,"call-number-5":1,"call-number-6":1,"call-number-7":1,"call-number-8":1,"call-number-9":1,"call-number-10":1,"call-letter-a":1,"call-letter-b":1,"call-letter-c":1,"call-letter-d":1,"call-letter-e":1,"call-letter-f":1,"call-letter-g":1,"call-letter-h":1,"call-letter-i":1,"call-letter-j":1,"call-letter-k":1,"call-letter-l":1,"call-letter-m":1,"call-letter-n":1,"call-letter-o":1,"call-letter-p":1,"call-letter-q":1,"call-letter-r":1,"call-letter-s":1,"call-letter-t":1,"call-letter-u":1,"call-letter-v":1,"call-letter-w":1,"call-letter-x":1,"call-letter-y":1,"call-letter-z":1,"fish-teach-a":1,"fish-teach-b":1,"fish-teach-c":1,"fish-teach-d":1,"fish-teach-e":1,"name-letter-a":1,"name-letter-b":1,"name-letter-c":1,"name-letter-d":1,"name-letter-e":1,"name-letter-f":1,"name-letter-g":1,"name-letter-h":1,"name-letter-i":1,"name-letter-j":1,"name-letter-k":1,"name-letter-l":1,"name-letter-m":1,"name-letter-n":1,"name-letter-o":1,"name-letter-p":1,"name-letter-q":1,"name-letter-r":1,"name-letter-s":1,"name-letter-t":1,"name-letter-u":1,"name-letter-v":1,"name-letter-w":1,"name-letter-x":1,"name-letter-y":1,"name-letter-z":1});
-      window.__hwSay = function(names){
+      window.__hwSay = function(names, onEnd){
         try{
           if(currentVoice === "off") return;
           var H = window.HOOT_HAVE || {}, P = window.__hwPendingAsk || {}, list = [];
           (names || []).forEach(function(n){ if(!n) return; if(P[n] && !H[n]) list = list.concat(P[n]); else list.push(n); });
           stopHootClip();
+          if(!list.length) return;
+          hootClipOnEnd = typeof onEnd === "function" ? onEnd : null;
           var teenTut = false; try { teenTut = document.body && document.body.classList.contains("ll-teen"); } catch(e) {}
           list.forEach(function(n, i){ var k = "x-" + n; HOOT_CLIPS[k] = (teenTut && TUT_HAVE[n] ? "tut-" + n : n) + ".mp3"; if(i === 0) playHootClip(k); else queueHootClip(k); });
         }catch(e){}
       };
       function stopHootClip(){
         hootClipQueue.length = 0;
+        hootClipOnEnd = null;
         if(hootClipEl){ hootClipEl.__govWait = false; hootClipEl.__govNext = null; try{ hootClipEl.pause(); }catch(e){} }
         setSpeaking(false);
       }
@@ -6751,9 +6755,9 @@
     (function gamePlayer(){
       /* Wave 3: 20 embedded games extracted to static same-origin games/<key>.html files
          with shared runtime js/hoot-game-head.js, js/hoot-game-tail.css, js/hoot-game-tail.js. */
-      var GAME_VER = "llprev3e147";
-      var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Town Rescue Patrol", rocket: "3D Rocket Count-Up", pizza: "Hoot's Pizza Shop", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Thunder Weather Machine", shapes: "Fireworks Night", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat" };
-      var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "pizza-shop": "pizza", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band" };
+      var GAME_VER = "llprev3e149";
+      var TITLES = { balloon: "Balloon ABC Pop", dress: "Dress Up Friends", real: "Town Rescue Patrol", rocket: "3D Rocket Count-Up", pizza: "Hoot's Pizza Shop", twinkle: "Catch the Twinkle Stars", magic: "Magic Hat Surprises", paint: "Finger Paint Studio", dance: "Dance Party", animals: "Animal Homes", piano: "Rainbow Piano", splash: "Thunder Weather Machine", shapes: "Fireworks Night", feed: "Feed Hoot", peek: "Peekaboo Forest", find: "Find It!", friends: "Animal Friends", memory: "Memory Match Meadow", bubblepop: "Bubble Number Pop", fishing: "Letter Fishing", band: "Copy the Beat", dino: "Dino Dig Museum", train: "Wooden Train Builder", sub: "3D Submarine Explorer", icecream: "Hoot's Ice Cream Truck" };
+      var SLUG_TO_KEY = { "balloon-abc-pop": "balloon", "dress-up-hoot": "dress", "real-world-adventure-quests": "real", "rocket-count-up": "rocket", "pizza-shop": "pizza", "catch-the-twinkle-stars": "twinkle", "magic-hat-surprises": "magic", "finger-paint-studio": "paint", "dance-party": "dance", "animal-homes": "animals", "rainbow-piano": "piano", "color-splash": "splash", "shape-hunt": "shapes", "feed-hoot": "feed", "peekaboo-forest": "peek", "find-it": "find", "animal-friends": "friends", "memory-match": "memory", "bubble-number-pop": "bubblepop", "letter-fishing": "fishing", "copy-the-beat": "band", "dino-dig": "dino", "train-builder": "train", "sub-explorer": "sub", "ice-cream-truck": "icecream" };
       var overlay = document.getElementById("game-overlay");
       var frame = document.getElementById("game-frame");
       var titleEl = document.getElementById("game-title");
@@ -6797,7 +6801,7 @@
         try{
           var off = document.querySelector('.voice-btn[data-voice="off"]');
           if(off && (off.classList.contains("sel") || off.classList.contains("active") || off.getAttribute("aria-pressed") === "true")) return;
-          var NEW_INTRO = { splash: "hoot-weather-intro", shapes: "hoot-fireworks-intro", real: "hoot-rescue-intro", rocket: "hoot-r3d-build-rocket", pizza: "hoot-piz-welcome" };
+          var NEW_INTRO = { splash: "hoot-weather-intro", shapes: "hoot-fireworks-intro", real: "hoot-rescue-intro", rocket: "hoot-r3d-build-rocket", pizza: "hoot-piz-welcome", dino: "hoot-ready-go", train: "hoot-ready-go", sub: "hoot-ready-go", icecream: "hoot-ready-go" };
           var ncId = NEW_INTRO[key] || "";
           var hasNc = !!(ncId && window.HOOT_HAVE && window.HOOT_HAVE[ncId]);
           var introSrc = ncId
@@ -13617,19 +13621,19 @@
   }
 })();
 </script>
-  <script src="js/hoot-lessons.js?v=llprev3e147"></script>
+  <script src="js/hoot-lessons.js?v=llprev3e149"></script>
   <script src="js/hoot-study-visuals.js?v=llprev3e123"></script>
   <script src="js/hoot-study-pro.js?v=llprev3e125"></script>
   <script src="js/hoot-study-labs.js?v=llprev3e123"></script>
   <script src="js/hoot-study-exam.js?v=llprev3e122"></script>
   <script src="js/hoot-teen-arcade.js?v=llprev3e125"></script>
-  <script src="js/hoot-study.js?v=llprev3e147"></script>
+  <script src="js/hoot-study.js?v=llprev3e149"></script>
   <script src="js/hoot-ela7.js?v=llprev3e119"></script>
   <script src="js/hoot-sci7.js?v=llprev3e119"></script>
   <script src="js/hoot-ss7.js?v=llprev3e119"></script>
   <script src="js/hoot-games.js?v=llprev3e118"></script>
   <script src="js/hw-activities.js?v=llprev3e66"></script>
-  <script src="js/hw-ll-shell.js?v=llprev3e147"></script>
+  <script src="js/hw-ll-shell.js?v=llprev3e149"></script>
   <script src="js/hw-learn-fx.js?v=llprev3e118"></script>
   <script src="js/hw-monti-works.js?v=llprev3e66"></script>
   <script>
@@ -13643,12 +13647,12 @@
     var swReg = null;
     if('serviceWorker' in navigator){
       try{
-        navigator.serviceWorker.register('sw.js?v=llprev3e147', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
+        navigator.serviceWorker.register('sw.js?v=llprev3e149', { updateViaCache: 'none' }).then(function(r){ swReg = r; }).catch(function(){});
       }catch(e){}
     }
     if(!window.fetch || !/^https?:/.test(location.protocol || '')) return;
-    var PAGE_VER = 'llprev3e147';
-    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e147';
+    var PAGE_VER = 'llprev3e149';
+    var SHELL_URL = 'js/hw-ll-shell.js?v=llprev3e149';
     var SIG_KEY = 'hw.pwa.sig.v1', VER_KEY = 'hw.pwa.ver.v1', RELOAD_KEY = 'hw.pwa.reloadAt.v1';
     var baseSig = null, lastChk = 0, pendingReload = false;
     function safeToReload(){

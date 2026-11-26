@@ -5210,3 +5210,26 @@ body.hw-quiet-mode{
   .gl-next{ right:4px; }
   .gl-shelf-card{ flex:0 0 152px !important; min-width:152px !important; }
 }
+
+/* v149: Storybook Auto-Read Bedtime Mode */
+.lib-nav { flex-wrap: wrap; row-gap: 8px; }
+.lib-nav-mid { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.lib-autoread {
+  background: #fff9eb;
+  border: 2px solid #c9a86a;
+  color: #3d2c14;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.lib-autoread.on {
+  background: linear-gradient(135deg, #2B3A67, #4338CA);
+  border-color: #FFD93B;
+  color: #FFF8DC;
+  box-shadow: 0 0 0 3px rgba(255, 217, 59, .38), 0 4px 12px rgba(43, 58, 103, .3);
+}
+@media (max-width: 560px) {
+  .lib-nav { gap: 6px; padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .lib-nav-mid { gap: 6px; }
+  .lib-reader.lib-little .lib-nav .ll-btn { min-height: 50px; padding: 8px 12px; font-size: .94rem; }
+}

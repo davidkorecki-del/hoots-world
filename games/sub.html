@@ -1,0 +1,2450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="sub";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e149"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>3D Submarine Ocean Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0b2239;
+    --outline:#0c2340;
+    --gold:#ffd43b;
+    --aqua:#22d3ee;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  [hidden]{ display:none !important; }
+  html,body{
+    margin:0; width:100%; height:100%; overflow:hidden;
+    font-family:"Nunito",system-ui,sans-serif;
+    background:#05223c; touch-action:none;
+  }
+
+  #stage{
+    position:fixed; inset:0; width:100%; height:100dvh;
+    overflow:hidden; background:#05223c;
+  }
+  #gameCanvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    display:block; z-index:1; touch-action:none; cursor:pointer;
+  }
+
+  /* Top HUD — Pre-reader zero text walls, all buttons >= 64px */
+  #hud{
+    position:absolute; top:0; left:0; right:0; z-index:10;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:max(10px, env(safe-area-inset-top)) 14px 0 14px;
+    pointer-events:none;
+  }
+  .hud-left, .hud-center, .hud-right{
+    display:flex; align-items:center; gap:10px; pointer-events:auto;
+  }
+  .hud-left{ flex:0 0 auto; }
+  .hud-center{ flex:0 1 auto; justify-content:center; }
+  .hud-right{ flex:0 0 auto; }
+
+  #hootBtn{
+    width:68px; height:68px; min-width:64px; min-height:64px;
+    flex:0 0 68px; border-radius:50%;
+    border:4px solid #fff;
+    background:radial-gradient(circle at 35% 28%, #fff6be, #ffd23f 62%, #f09400 100%);
+    box-shadow:0 6px 0 var(--outline), 0 0 24px rgba(255,212,59,.68);
+    padding:4px; cursor:pointer;
+    animation:hootBob 2.4s ease-in-out infinite alternate;
+  }
+  #hootBtn:active{ transform:scale(.92); }
+  @keyframes hootBob{ from{ transform:translateY(0); } to{ transform:translateY(-4px); } }
+
+  /* Zone Switcher Pill (Sunny Reef / Glowing Deep Sea) */
+  #zonePill{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(8,31,56,.82);
+    backdrop-filter:blur(10px);
+    border:4px solid rgba(255,255,255,.88);
+    border-radius:999px;
+    padding:4px;
+    box-shadow:0 6px 0 var(--outline), 0 10px 24px rgba(0,0,0,.36);
+  }
+  .zone-btn{
+    min-width:64px; min-height:64px;
+    border:3px solid transparent; border-radius:999px;
+    padding:0 18px;
+    font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:18px; line-height:1; white-space:nowrap;
+    cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    color:rgba(255,255,255,.82);
+    background:transparent;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1), background .22s, color .22s, box-shadow .22s;
+  }
+  .zone-btn:active{ transform:scale(.94); }
+  .zone-btn.active[data-zone="reef"]{
+    color:#0b2239;
+    border-color:#fff;
+    background:linear-gradient(180deg, #fef08a 0%, #38bdf8 100%);
+    box-shadow:0 4px 0 #0c4a6e, 0 0 20px rgba(56,189,248,.75);
+  }
+  .zone-btn.active[data-zone="deep"]{
+    color:#fff;
+    border-color:#67e8f9;
+    background:linear-gradient(180deg, #6366f1 0%, #1e1b4b 100%);
+    box-shadow:0 4px 0 #090d24, 0 0 22px rgba(103,232,249,.85);
+    text-shadow:0 2px 6px rgba(34,211,238,.7);
+  }
+
+  #starPill{
+    min-height:64px; min-width:86px;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    background:linear-gradient(180deg, #fffef8 0%, #fef3c7 100%);
+    border:4px solid var(--outline); border-radius:999px;
+    padding:0 16px;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:22px; color:var(--ink);
+    box-shadow:0 6px 0 var(--outline), 0 8px 18px rgba(0,0,0,.3);
+  }
+  #starPill.pop{ animation:pillPop .45s cubic-bezier(.34,1.8,.5,1); }
+  @keyframes pillPop{ 0%{ transform:scale(1); } 50%{ transform:scale(1.22); } 100%{ transform:scale(1); } }
+
+  #doneBtn{
+    min-width:68px; min-height:64px;
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:18px;
+    padding:0 18px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    box-shadow:0 6px 0 var(--outline), 0 8px 18px rgba(0,0,0,.3);
+    text-shadow:0 2px 0 rgba(0,0,0,.32);
+  }
+  #doneBtn:active{ transform:translateY(3px); box-shadow:0 3px 0 var(--outline); }
+
+  /* Bottom HUD — Pearl Discovery Bar (left) + Giant Sonar Ping Button (right) */
+  #bottomHud{
+    position:absolute; left:0; right:0;
+    bottom:max(12px, env(safe-area-inset-bottom));
+    z-index:10;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+    padding:0 16px;
+    pointer-events:none;
+  }
+
+  #pearlBar{
+    pointer-events:auto;
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(7,30,54,.84);
+    backdrop-filter:blur(10px);
+    border:4px solid rgba(103,232,249,.88);
+    border-radius:999px;
+    padding:9px 14px;
+    box-shadow:0 7px 0 var(--outline), 0 12px 28px rgba(0,0,0,.42);
+    transition:border-color .3s, box-shadow .3s;
+  }
+  #pearlBar.chest-ready{
+    border-color:#fde047;
+    box-shadow:0 7px 0 var(--outline), 0 0 32px rgba(253,224,71,.88);
+    animation:readyBarPulse .7s ease-in-out infinite alternate;
+  }
+  @keyframes readyBarPulse{
+    from{ transform:scale(1); }
+    to{ transform:scale(1.045); }
+  }
+  .pearl-slot{
+    width:32px; height:32px; border-radius:50%;
+    border:3px solid rgba(186,230,253,.45);
+    background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.18), rgba(15,23,42,.55));
+    position:relative;
+    transition:transform .35s cubic-bezier(.34,1.85,.5,1), background .3s, border-color .3s, box-shadow .3s;
+  }
+  .pearl-slot.filled{
+    border-color:#fff;
+    background:radial-gradient(circle at 30% 26%, #ffffff 0%, #fbcfe8 32%, #67e8f9 68%, #818cf8 100%);
+    box-shadow:0 0 14px rgba(103,232,249,.95), inset 0 -3px 6px rgba(59,130,246,.5);
+    transform:scale(1.1);
+  }
+  .pearl-slot.filled::after{
+    content:""; position:absolute; top:4px; left:6px; width:8px; height:5px;
+    border-radius:50%; background:rgba(255,255,255,.92); transform:rotate(-25deg);
+  }
+  #chestBadge{
+    width:38px; height:38px; border-radius:50%;
+    border:3px solid rgba(253,224,71,.5);
+    background:rgba(253,224,71,.16);
+    display:grid; place-items:center;
+    transition:transform .3s, box-shadow .3s, background .3s;
+  }
+  #pearlBar.chest-ready #chestBadge{
+    border-color:#fff;
+    background:radial-gradient(circle at 35% 28%, #fef08a, #f59e0b 85%);
+    box-shadow:0 0 18px rgba(253,224,71,1);
+    transform:scale(1.18);
+  }
+  #chestBadge svg{ width:24px; height:24px; display:block; }
+
+  /* Giant Sonar Ping Button */
+  #sonarBtn{
+    pointer-events:auto;
+    position:relative;
+    width:82px; height:82px; min-width:74px; min-height:74px;
+    border-radius:50%;
+    border:5px solid #fff;
+    background:radial-gradient(circle at 34% 26%, #a5f3fc 0%, #06b6d4 54%, #0e7490 100%);
+    box-shadow:0 8px 0 var(--outline), 0 0 30px rgba(34,211,238,.82), inset 0 5px 8px rgba(255,255,255,.55);
+    cursor:pointer;
+    display:grid; place-items:center;
+    font-size:36px; line-height:1;
+    transition:transform .14s cubic-bezier(.34,1.8,.5,1), box-shadow .14s;
+  }
+  #sonarBtn::before{
+    content:""; position:absolute; inset:-10px; border-radius:50%;
+    border:3px solid rgba(103,232,249,.65);
+    animation:sonarHalo 2.1s ease-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sonarHalo{
+    0%{ transform:scale(.88); opacity:.9; }
+    100%{ transform:scale(1.36); opacity:0; }
+  }
+  #sonarBtn:active{
+    transform:translateY(4px) scale(.92);
+    box-shadow:0 4px 0 var(--outline), 0 0 36px rgba(103,232,249,1);
+  }
+  #sonarBtn.pinged{
+    animation:sonarBounce .42s cubic-bezier(.34,1.9,.5,1);
+  }
+  @keyframes sonarBounce{
+    0%{ transform:scale(.84); }
+    60%{ transform:scale(1.16); }
+    100%{ transform:scale(1); }
+  }
+
+  /* Win Overlay */
+  #winOverlay{
+    position:fixed; inset:0; z-index:40;
+    background:rgba(5,22,44,.76); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .win-card{
+    background:linear-gradient(180deg, #fffef8 0%, #e0f2fe 100%);
+    border:6px solid var(--outline); border-radius:34px;
+    padding:26px 24px; text-align:center; max-width:430px; width:100%;
+    box-shadow:0 14px 0 var(--outline), 0 26px 50px rgba(0,0,0,.55);
+  }
+  .win-stars{
+    font-family:"Fredoka",sans-serif; font-weight:800;
+    font-size:48px; line-height:1.15; margin-bottom:8px; color:#d97706;
+    text-shadow:0 4px 0 rgba(12,35,64,.16);
+  }
+  .win-card h2{
+    margin:0 0 12px; font-family:"Fredoka",sans-serif;
+    font-size:32px; color:#0b2239;
+  }
+  .win-stats{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    margin:0 0 20px; flex-wrap:wrap;
+  }
+  .win-stat{
+    background:#fff; border:3.5px solid var(--outline); border-radius:999px;
+    padding:8px 16px; font-family:"Fredoka",sans-serif; font-weight:800; font-size:20px; color:#0b2239;
+    box-shadow:0 4px 0 var(--outline);
+  }
+  .win-btns{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;
+  }
+  .big-play, .win-btn{
+    min-height:64px;
+    border:4px solid var(--outline); border-radius:999px;
+    background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    color:#fff; font-family:"Fredoka",sans-serif; font-weight:800; font-size:21px;
+    padding:12px 26px; cursor:pointer; box-shadow:0 6px 0 var(--outline);
+  }
+
+  /* Responsive Phone Portrait (iPhone 390x844) — zero overflow, all buttons >= 64px */
+  @media (max-width: 720px){
+    #hud{
+      flex-wrap:wrap; align-items:center; gap:8px;
+      padding:max(8px, env(safe-area-inset-top)) 10px 0 10px;
+    }
+    .hud-left{ order:1; }
+    .hud-right{ order:2; margin-left:auto; gap:8px; }
+    .hud-center{ order:3; flex:1 0 100%; justify-content:center; }
+    #hootBtn{ width:64px; height:64px; flex:0 0 64px; }
+    #starPill{ min-height:64px; min-width:74px; padding:0 12px; font-size:20px; }
+    #doneBtn{ min-width:64px; min-height:64px; padding:0 14px; font-size:17px; }
+    #doneBtn .done-lbl{ display:none; }
+    .zone-btn{ min-height:64px; padding:0 16px; font-size:16.5px; }
+    #bottomHud{ padding:0 10px; bottom:max(10px, env(safe-area-inset-bottom)); }
+    #pearlBar{ gap:5px; padding:8px 10px; }
+    .pearl-slot{ width:26px; height:26px; border-width:2.5px; }
+    #chestBadge{ width:32px; height:32px; }
+    #sonarBtn{ width:76px; height:76px; font-size:33px; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gameCanvas" aria-label="3D Submarine Ocean Explorer"></canvas>
+
+  <!-- Top HUD -->
+  <div id="hud">
+    <div class="hud-left">
+      <button id="hootBtn" type="button" aria-label="Captain Hoot cheer">
+        <svg viewBox="0 0 200 210" aria-hidden="true">
+          <path d="M82 178 L100 205 L118 178 Z" fill="#8a5a33"/>
+          <ellipse cx="34" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(14 34 128)"/>
+          <ellipse cx="166" cy="128" rx="17" ry="40" fill="#8a5a33" transform="rotate(-14 166 128)"/>
+          <ellipse cx="100" cy="118" rx="66" ry="72" fill="#a06a3b"/>
+          <ellipse cx="100" cy="140" rx="44" ry="46" fill="#fdeed3"/>
+          <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
+          <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
+          <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
+          <!-- Yellow Captain's Hat -->
+          <ellipse cx="100" cy="28" rx="44" ry="11" fill="#17324f"/>
+          <path d="M62 24 Q100 -4 138 24 L132 32 Q100 20 68 32 Z" fill="#ffd23f" stroke="#c27803" stroke-width="3"/>
+          <circle cx="100" cy="18" r="5" fill="#fff7cc" stroke="#b45309" stroke-width="2"/>
+          <ellipse cx="78" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <ellipse cx="122" cy="74" rx="24" ry="26" fill="#fdeed3"/>
+          <circle cx="78" cy="72" r="11" fill="#17324f"/>
+          <circle cx="122" cy="72" r="11" fill="#17324f"/>
+          <circle cx="82" cy="68" r="4" fill="#fff"/>
+          <circle cx="126" cy="68" r="4" fill="#fff"/>
+          <circle cx="56" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <circle cx="144" cy="94" r="8" fill="#ffb59d" opacity=".85"/>
+          <path d="M90 88 Q100 84 110 88 Q106 102 100 104 Q94 102 90 88 Z" fill="#ff9f1c" stroke="#e07f00" stroke-width="1.5"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="hud-center">
+      <div id="zonePill" role="group" aria-label="Ocean Zone">
+        <button id="reefZoneBtn" type="button" class="zone-btn active" data-zone="reef">☀️ Reef</button>
+        <button id="deepZoneBtn" type="button" class="zone-btn" data-zone="deep">✨ Deep Sea</button>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div id="starPill" aria-label="Stars earned">⭐ <span id="starCount">0</span></div>
+      <button id="doneBtn" type="button" aria-label="Done">🏆<span class="done-lbl"> Done</span></button>
+    </div>
+  </div>
+
+  <!-- Bottom HUD -->
+  <div id="bottomHud">
+    <div id="pearlBar" aria-label="Ocean discoveries toward treasure chest">
+      <span class="pearl-slot" data-slot="0"></span>
+      <span class="pearl-slot" data-slot="1"></span>
+      <span class="pearl-slot" data-slot="2"></span>
+      <span class="pearl-slot" data-slot="3"></span>
+      <span class="pearl-slot" data-slot="4"></span>
+      <span id="chestBadge" aria-hidden="true">
+        <svg viewBox="0 0 36 36">
+          <rect x="4" y="15" width="28" height="15" rx="3" fill="#92400e" stroke="#451a03" stroke-width="2.5"/>
+          <path d="M4 16 Q18 6 32 16 Z" fill="#b45309" stroke="#451a03" stroke-width="2.5"/>
+          <rect x="4" y="14" width="28" height="4" fill="#fbbf24"/>
+          <rect x="15" y="13" width="6" height="8" rx="1.5" fill="#fde047" stroke="#78350f" stroke-width="1.5"/>
+        </svg>
+      </span>
+    </div>
+
+    <button id="sonarBtn" type="button" aria-label="Sonar Ping">📡</button>
+  </div>
+
+  <!-- Celebratory Win Overlay -->
+  <div id="winOverlay" hidden>
+    <div class="win-card">
+      <div class="win-stars" aria-hidden="true">⭐🏆⭐</div>
+      <h2 id="winHeading">Ocean Explorer!</h2>
+      <div class="win-stats">
+        <span class="win-stat">⭐ <span id="winStars">0</span></span>
+        <span class="win-stat">💎 <span id="winChests">0</span></span>
+        <span class="win-stat">🫧 <span id="winFriends">0</span></span>
+      </div>
+      <div class="win-btns">
+        <button id="againBtn" class="big-play" type="button">↻ Keep Exploring</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================================
+     1. VERIFIED HOOT VOICE ENGINE (100% Real Studio Hoot MP3s)
+     ========================================================================= */
+  var voiceAudio = new Audio();
+  var voiceGen = 0;
+  var PRAISE_CLIPS = ["hoot-amazing", "hoot-great-job", "hoot-super", "hoot-star"];
+  var praiseIdx = 0;
+
+  function playVoiceSeq(ids){
+    if(!ids || !ids.length) return;
+    var gen = ++voiceGen, idx = 0;
+    voiceAudio.onended = null;
+    voiceAudio.onerror = null;
+    try{ voiceAudio.pause(); }catch(e){}
+    function next(){
+      if(gen !== voiceGen || idx >= ids.length) return;
+      var id = ids[idx++];
+      if(!id){ next(); return; }
+      voiceAudio.src = "assets/voice/" + id + ".mp3";
+      voiceAudio.onended = next;
+      voiceAudio.onerror = next;
+      var p = voiceAudio.play();
+      if(p && p.catch) p.catch(function(){});
+    }
+    next();
+  }
+  function nextPraise(){
+    var c = PRAISE_CLIPS[praiseIdx % PRAISE_CLIPS.length];
+    praiseIdx++;
+    return c;
+  }
+
+  /* =========================================================================
+     2. UNDERWATER WEBAUDIO SYNTHESIZER (Harp Arpeggio, Sonar Ping, Treasure)
+     ========================================================================= */
+  var actx = null;
+  function getAC(){
+    if(!actx){
+      var A = window.AudioContext || window.webkitAudioContext;
+      if(A) actx = new A();
+    }
+    if(actx && actx.state === "suspended") actx.resume();
+    return actx;
+  }
+
+  function sfxHarpArpeggio(step){
+    try{
+      var c = getAC(); if(!c) return;
+      var t = c.currentTime;
+      var chords = [
+        [523.25, 659.25, 783.99, 1046.50, 1318.51],
+        [587.33, 739.99, 880.00, 1174.66, 1479.98],
+        [659.25, 783.99, 987.77, 1318.51, 1567.98],
+        [698.46, 880.00, 1046.50, 1396.91, 1760.00],
+        [783.99, 987.77, 1174.66, 1567.98, 1975.53]
+      ];
+      var notes = chords[((step || 1) - 1) % chords.length];
+      notes.forEach(function(freq, i){
+        var o = c.createOscillator();
+        var o2 = c.createOscillator();
+        var g = c.createGain();
+        o.type = "triangle";
+        o2.type = "sine";
+        o.frequency.setValueAtTime(freq, t + i * 0.055);
+        o2.frequency.setValueAtTime(freq * 2, t + i * 0.055);
+        g.gain.setValueAtTime(0.001, t + i * 0.055);
+        g.gain.linearRampToValueAtTime(0.13, t + i * 0.055 + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.055 + 0.52);
+        var g2 = c.createGain();
+        g2.gain.value = 0.25;
+        o.connect(g);
+        o2.connect(g2); g2.connect(g);
+        g.connect(c.destination);
+        o.start(t + i * 0.055); o.stop(t + i * 0.055 + 0.56);
+        o2.start(t + i * 0.055); o2.stop(t + i * 0.055 + 0.56);
+      });
+    }catch(e){}
+  }
+
+  function sfxSonarPing(){
+    try{
+      var c = getAC(); if(!c) return;
+      var t = c.currentTime;
+      [0, 0.28, 0.58].forEach(function(delay, idx){
+        var o = c.createOscillator();
+        var g = c.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(1180, t + delay);
+        o.frequency.exponentialRampToValueAtTime(1140, t + delay + 0.55);
+        var amp = idx === 0 ? 0.19 : (idx === 1 ? 0.09 : 0.04);
+        g.gain.setValueAtTime(0.001, t + delay);
+        g.gain.linearRampToValueAtTime(amp, t + delay + 0.014);
+        g.gain.exponentialRampToValueAtTime(0.0008, t + delay + 0.65);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + delay); o.stop(t + delay + 0.7);
+      });
+    }catch(e){}
+  }
+
+  function sfxBubblePop(pitchBoost){
+    try{
+      var c = getAC(); if(!c) return;
+      var t = c.currentTime;
+      var o = c.createOscillator();
+      var g = c.createGain();
+      o.type = "sine";
+      var f0 = 320 + (pitchBoost || 0) * 65;
+      o.frequency.setValueAtTime(f0, t);
+      o.frequency.exponentialRampToValueAtTime(f0 * 2.5, t + 0.11);
+      g.gain.setValueAtTime(0.11, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.16);
+    }catch(e){}
+  }
+
+  function sfxTreasureFanfare(){
+    try{
+      var c = getAC(); if(!c) return;
+      var t = c.currentTime;
+      var seq = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98, 2093.0];
+      seq.forEach(function(freq, i){
+        var o = c.createOscillator();
+        var g = c.createGain();
+        o.type = i % 2 === 0 ? "triangle" : "sine";
+        o.frequency.setValueAtTime(freq, t + i * 0.065);
+        g.gain.setValueAtTime(0.15, t + i * 0.065);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.065 + 0.55);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + i * 0.065); o.stop(t + i * 0.065 + 0.6);
+      });
+    }catch(e){}
+  }
+
+  function sfxZoneDive(toDeep){
+    try{
+      var c = getAC(); if(!c) return;
+      var t = c.currentTime;
+      var o = c.createOscillator();
+      var g = c.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(toDeep ? 540 : 240, t);
+      o.frequency.exponentialRampToValueAtTime(toDeep ? 210 : 620, t + 0.42);
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.48);
+      o.connect(g); g.connect(c.destination);
+      o.start(t); o.stop(t + 0.5);
+    }catch(e){}
+  }
+
+  /* =========================================================================
+     3. BACKDROP ART ASSETS (Real Painted Pixar-Style Reef & Deep Sea)
+     ========================================================================= */
+  var bgImages = {
+    reef: new Image(),
+    deep: new Image()
+  };
+  bgImages.reef.src = "assets/sub3d/bg_reef.jpg?v=llprev3e149";
+  bgImages.deep.src = "assets/sub3d/bg_deep.jpg?v=llprev3e149";
+
+  /* =========================================================================
+     4. CANVAS & LIGHTING LAYER SETUP
+     ========================================================================= */
+  var canvas = document.getElementById("gameCanvas");
+  var ctx = canvas.getContext("2d");
+  var lightCanvas = document.createElement("canvas");
+  var lightCtx = lightCanvas.getContext("2d");
+
+  var W = window.innerWidth, H = window.innerHeight;
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize(){
+    W = window.innerWidth;
+    H = window.innerHeight;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    /* Half-res offscreen darkness/headlamp mask for silky 60fps Deep Sea glow */
+    lightCanvas.width = Math.max(240, Math.round(W * 0.5));
+    lightCanvas.height = Math.max(240, Math.round(H * 0.5));
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  /* =========================================================================
+     5. GAME STATE & SNAPSHOT API
+     ========================================================================= */
+  var state = {
+    zone: "reef",          /* "reef" | "deep" */
+    prevZone: "reef",
+    zoneFade: 1,           /* 0..1 crossfade */
+    discovered: 0,         /* total friends + pearls discovered */
+    cycleFound: 0,         /* 0..5 toward next treasure chest */
+    chestReady: false,
+    chestsOpened: 0,
+    stars: 0,
+    sonarPings: 0,
+    won: false,
+    hasSteered: false
+  };
+
+  /* Expose required test/inspection snapshot API */
+  window.__subGame = {
+    snapshot: function(){
+      return {
+        zone: state.zone,
+        discovered: state.discovered,
+        chestReady: state.chestReady,
+        chestsOpened: state.chestsOpened,
+        stars: state.stars,
+        sonarPings: state.sonarPings
+      };
+    }
+  };
+
+  /* DOM refs */
+  var reefZoneBtn = document.getElementById("reefZoneBtn");
+  var deepZoneBtn = document.getElementById("deepZoneBtn");
+  var starCountEl = document.getElementById("starCount");
+  var starPill = document.getElementById("starPill");
+  var pearlBar = document.getElementById("pearlBar");
+  var pearlSlots = Array.prototype.slice.call(document.querySelectorAll(".pearl-slot"));
+  var sonarBtn = document.getElementById("sonarBtn");
+  var hootBtn = document.getElementById("hootBtn");
+  var doneBtn = document.getElementById("doneBtn");
+  var winOverlay = document.getElementById("winOverlay");
+  var againBtn = document.getElementById("againBtn");
+
+  function syncHud(){
+    reefZoneBtn.classList.toggle("active", state.zone === "reef");
+    deepZoneBtn.classList.toggle("active", state.zone === "deep");
+    starCountEl.textContent = String(state.stars);
+    pearlSlots.forEach(function(el, idx){
+      el.classList.toggle("filled", idx < state.cycleFound);
+    });
+    pearlBar.classList.toggle("chest-ready", state.chestReady);
+  }
+
+  /* =========================================================================
+     6. SUBMARINE, CREATURES, PEARLS, TREASURE CHEST & PARTICLES
+     ========================================================================= */
+  var sub = {
+    x: W * 0.34,
+    y: H * 0.44,
+    vx: 0,
+    vy: 0,
+    targetX: W * 0.34,
+    targetY: H * 0.44,
+    facing: 1,       /* 1 right, -1 left */
+    faceVis: 1,      /* smoothly interpolated scaleX */
+    pitch: 0,
+    propAngle: 0,
+    bounce: 0,
+    cheerT: 0,
+    blinkT: 2.6,
+    bubbleAcc: 0
+  };
+
+  var chest = {
+    xPct: 0.5,
+    yPct: 0.80,
+    openAmt: 0,      /* 0 closed .. 1 open */
+    opening: false,
+    celebrateT: 0,
+    wobbleT: 0,
+    pulseT: 0
+  };
+
+  var CREATURE_KINDS = [
+    { kind: "turtle",    clip: "word-turtle", col: "#22c55e", glow: "#86efac", size: 1.05 },
+    { kind: "whale",     clip: null,          col: "#38bdf8", glow: "#7dd3fc", size: 1.32 },
+    { kind: "clownfish", clip: "word-fish",   col: "#fb923c", glow: "#fed7aa", size: 0.88 },
+    { kind: "octopus",   clip: null,          col: "#a855f7", glow: "#e9d5ff", size: 1.02 },
+    { kind: "starfish",  clip: null,          col: "#f472b6", glow: "#fbcfe8", size: 0.86 }
+  ];
+
+  var creatures = [];
+  var hiddenPearls = [];
+  var sonarWaves = [];
+  var bubbles = [];
+  var sparkles = [];
+  var coins = [];
+  var ripples = [];
+  var flyingStars = [];
+  var ambientMotes = [];
+  var tAcc = 0;
+
+  for(var mi = 0; mi < 48; mi++){
+    ambientMotes.push({
+      x: Math.random(),
+      y: Math.random() * 0.92,
+      r: 1.4 + Math.random() * 2.8,
+      ph: Math.random() * 6.28,
+      sp: 0.012 + Math.random() * 0.025,
+      hue: 175 + Math.random() * 55
+    });
+  }
+
+  function getPlayBounds(){
+    var topPad = W < 720 ? 198 : 112;
+    var botPad = 126;
+    var sidePad = Math.max(54, W * 0.07);
+    return {
+      minX: sidePad,
+      maxX: W - sidePad,
+      minY: topPad,
+      maxY: Math.max(topPad + 140, H - botPad)
+    };
+  }
+
+  function spawnCreatures(resetAll){
+    var b = getPlayBounds();
+    var lanes = W < 720 ? [0.28, 0.38, 0.48, 0.56, 0.64] : [0.22, 0.34, 0.46, 0.56, 0.65];
+    if(resetAll) creatures = [];
+    for(var i = 0; i < CREATURE_KINDS.length; i++){
+      var def = CREATURE_KINDS[i];
+      var existing = creatures[i];
+      if(existing && !resetAll){
+        existing.discovered = false;
+        existing.glowBoost = 1;
+        continue;
+      }
+      var dir = i % 2 === 0 ? 1 : -1;
+      var x = b.minX + ((i + 0.5) / CREATURE_KINDS.length) * (b.maxX - b.minX);
+      var y = Math.min(b.maxY - 45, Math.max(b.minY + 34, H * lanes[i]));
+      creatures.push({
+        id: i,
+        kind: def.kind,
+        clip: def.clip,
+        col: def.col,
+        glow: def.glow,
+        size: def.size,
+        x: x,
+        y: y,
+        baseY: y,
+        vx: dir * (28 + (i % 3) * 11),
+        dir: dir,
+        faceVis: dir,
+        phase: Math.random() * 6.28,
+        amp: 12 + (i % 3) * 6,
+        discovered: false,
+        flipT: 0,
+        waveT: 0,
+        glowBoost: 0,
+        cooldown: 0
+      });
+    }
+  }
+
+  function getPearlPos(p){
+    if(W < 720){
+      var map = [
+        { x: 0.14, y: 0.60 },
+        { x: 0.86, y: 0.58 },
+        { x: 0.14, y: 0.75 },
+        { x: 0.86, y: 0.74 }
+      ];
+      var m = map[p.idx % map.length];
+      return { x: m.x * W, y: m.y * H };
+    }
+    return { x: p.xPct * W, y: p.yPct * H };
+  }
+
+  function spawnHiddenPearls(){
+    hiddenPearls = [];
+    var spots = [
+      { xPct: 0.16, yPct: 0.70 },
+      { xPct: 0.84, yPct: 0.68 },
+      { xPct: 0.28, yPct: 0.82 },
+      { xPct: 0.72, yPct: 0.81 }
+    ];
+    spots.forEach(function(sp, idx){
+      hiddenPearls.push({
+        idx: idx,
+        xPct: sp.xPct,
+        yPct: sp.yPct,
+        phase: idx * 1.4,
+        collected: false,
+        shimmerT: 0,
+        respawnT: 0
+      });
+    });
+  }
+
+  spawnCreatures(true);
+  spawnHiddenPearls();
+  syncHud();
+
+  /* =========================================================================
+     7. CORE GAMEPLAY INTERACTIONS (Discovery, Treasure Chest, Sonar, Zones)
+     ========================================================================= */
+  function spawnBubbleBurst(x, y, count, rainbow){
+    for(var i = 0; i < count; i++){
+      var ang = Math.random() * Math.PI * 2;
+      var spd = 45 + Math.random() * 145;
+      bubbles.push({
+        x: x + (Math.random() - 0.5) * 24,
+        y: y + (Math.random() - 0.5) * 24,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 55,
+        r: 6 + Math.random() * 12,
+        life: 1,
+        decay: 0.52 + Math.random() * 0.45,
+        hue: rainbow ? Math.floor(Math.random() * 360) : (185 + Math.random() * 35),
+        rainbow: !!rainbow
+      });
+    }
+  }
+
+  function spawnSparkles(x, y, count, col){
+    for(var i = 0; i < count; i++){
+      var ang = Math.random() * Math.PI * 2;
+      var spd = 50 + Math.random() * 170;
+      sparkles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 20,
+        r: 4 + Math.random() * 6,
+        col: col || (i % 2 === 0 ? "#fde047" : "#67e8f9"),
+        life: 1,
+        decay: 0.85 + Math.random() * 0.6,
+        rot: Math.random() * 6.28
+      });
+    }
+  }
+
+  function registerDiscovery(x, y, creatureClip){
+    state.discovered++;
+    sub.bounce = 1;
+    sub.cheerT = 1.1;
+
+    if(state.cycleFound < 5){
+      state.cycleFound++;
+      sfxHarpArpeggio(state.cycleFound);
+      if(state.cycleFound >= 5){
+        state.chestReady = true;
+        chest.pulseT = 1;
+        playVoiceSeq(["name-number-5", nextPraise()]);
+      } else {
+        playVoiceSeq(["name-number-" + state.cycleFound]);
+      }
+    } else {
+      /* Chest already ready! Still celebrate joyfully */
+      sfxHarpArpeggio(5);
+      if(creatureClip && state.discovered % 2 === 0){
+        playVoiceSeq([creatureClip, nextPraise()]);
+      } else {
+        playVoiceSeq([nextPraise()]);
+      }
+    }
+
+    spawnBubbleBurst(x, y, 16, true);
+    spawnSparkles(x, y, 14, "#fde047");
+    syncHud();
+  }
+
+  function interactCreature(cr){
+    if(cr.cooldown > 0) return;
+    cr.cooldown = 1.05;
+    cr.flipT = 1;
+    cr.waveT = 1.2;
+    if(!cr.discovered){
+      cr.discovered = true;
+      registerDiscovery(cr.x, cr.y, cr.clip);
+    } else {
+      /* Already discovered friend still flips joyfully with zero dead taps! */
+      sfxHarpArpeggio(((cr.id + 1) % 5) + 1);
+      spawnBubbleBurst(cr.x, cr.y, 12, true);
+      spawnSparkles(cr.x, cr.y, 10, cr.glow);
+      sub.cheerT = 0.8;
+      if(cr.clip){
+        playVoiceSeq([cr.clip]);
+      } else {
+        playVoiceSeq([nextPraise()]);
+      }
+    }
+  }
+
+  function collectPearl(p){
+    if(p.collected) return;
+    p.collected = true;
+    p.respawnT = 9.5;
+    var pp = getPearlPos(p);
+    registerDiscovery(pp.x, pp.y, null);
+  }
+
+  function getChestPos(){
+    return {
+      x: W * chest.xPct,
+      y: H * (W < 720 ? 0.77 : 0.80),
+      r: Math.max(46, Math.min(68, Math.min(W, H) * 0.088))
+    };
+  }
+
+  function triggerChest(){
+    var cp = getChestPos();
+    if(!state.chestReady){
+      /* Playful wobble hint if tapped before 5/5 */
+      chest.wobbleT = 1;
+      sfxBubblePop(2);
+      spawnBubbleBurst(cp.x, cp.y - 16, 7, false);
+      return;
+    }
+    if(chest.opening) return;
+
+    chest.opening = true;
+    chest.celebrateT = 2.6;
+    state.chestReady = false;
+    state.chestsOpened++;
+    state.stars++;
+    sub.bounce = 1;
+    sub.cheerT = 1.8;
+
+    sfxTreasureFanfare();
+    playVoiceSeq(["hoot-win-yay"]);
+
+    /* Shower of spinning golden coins, pearls & rainbow bubbles! */
+    for(var i = 0; i < 34; i++){
+      var ang = -Math.PI * 0.5 + (Math.random() - 0.5) * 1.45;
+      var spd = 240 + Math.random() * 340;
+      coins.push({
+        x: cp.x + (Math.random() - 0.5) * 44,
+        y: cp.y - 12,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd,
+        r: 9 + Math.random() * 7,
+        spin: Math.random() * 6.28,
+        spinSpd: 7 + Math.random() * 9,
+        pearl: i % 4 === 0,
+        life: 1
+      });
+    }
+    spawnBubbleBurst(cp.x, cp.y - 14, 28, true);
+    spawnSparkles(cp.x, cp.y - 20, 26, "#fde047");
+
+    /* Flying star toward top-right star pill */
+    var pillRect = starPill.getBoundingClientRect();
+    flyingStars.push({
+      x0: cp.x,
+      y0: cp.y - 30,
+      cx: W * 0.5,
+      cy: H * 0.25,
+      x1: pillRect.left + pillRect.width * 0.5,
+      y1: pillRect.top + pillRect.height * 0.5,
+      t: 0
+    });
+
+    starPill.classList.remove("pop");
+    void starPill.offsetWidth;
+    starPill.classList.add("pop");
+    syncHud();
+  }
+
+  function triggerSonar(){
+    state.sonarPings++;
+    sfxSonarPing();
+
+    sonarBtn.classList.remove("pinged");
+    void sonarBtn.offsetWidth;
+    sonarBtn.classList.add("pinged");
+
+    var maxR = Math.hypot(W, H) * 0.95;
+    sonarWaves.push({ x: sub.x, y: sub.y, r: 24, maxR: maxR, alpha: 1 });
+    sonarWaves.push({ x: sub.x, y: sub.y, r: 4, maxR: maxR * 0.82, alpha: 0.72, delayed: 0.14 });
+
+    /* Make all sea creatures wave & sparkle happily */
+    creatures.forEach(function(cr){
+      cr.waveT = 1.6;
+      cr.glowBoost = 1.4;
+      spawnSparkles(cr.x, cr.y, 5, "#67e8f9");
+    });
+
+    /* Make all hidden pearls shimmer brightly (and respawn collected ones!) */
+    hiddenPearls.forEach(function(p){
+      if(p.collected && p.respawnT < 6){
+        p.collected = false;
+        p.respawnT = 0;
+      }
+      p.shimmerT = 4.2;
+      if(!p.collected){
+        var pp = getPearlPos(p);
+        spawnSparkles(pp.x, pp.y, 7, "#f0abfc");
+      }
+    });
+
+    spawnBubbleBurst(sub.x, sub.y, 10, false);
+  }
+
+  function switchZone(nextZone){
+    if(state.zone === nextZone) return;
+    state.prevZone = state.zone;
+    state.zone = nextZone;
+    state.zoneFade = 0;
+    sfxZoneDive(nextZone === "deep");
+
+    /* Swirling transition bubbles */
+    for(var i = 0; i < 26; i++){
+      bubbles.push({
+        x: Math.random() * W,
+        y: H + Math.random() * 60,
+        vx: (Math.random() - 0.5) * 40,
+        vy: -(180 + Math.random() * 220),
+        r: 7 + Math.random() * 14,
+        life: 1,
+        decay: 0.55 + Math.random() * 0.35,
+        hue: nextZone === "deep" ? 195 + Math.random() * 75 : 175 + Math.random() * 30,
+        rainbow: nextZone === "deep"
+      });
+    }
+    /* Refresh undiscovered glow on creatures when diving into new zone */
+    creatures.forEach(function(cr){
+      cr.waveT = 1;
+      if(cr.discovered && state.cycleFound < 5){
+        cr.discovered = false;
+      }
+    });
+    syncHud();
+  }
+
+  /* =========================================================================
+     8. POINTER & BUTTON CONTROLS (Effortless Touch/Drag Anywhere Steering!)
+     ========================================================================= */
+  var dragging = false;
+
+  function clampTarget(x, y){
+    var b = getPlayBounds();
+    return {
+      x: Math.max(b.minX, Math.min(b.maxX, x)),
+      y: Math.max(b.minY, Math.min(H - 68, y))
+    };
+  }
+
+  function handleOceanTap(px, py, isDown){
+    getAC();
+    state.hasSteered = true;
+    var pt = clampTarget(px, py);
+    sub.targetX = pt.x;
+    sub.targetY = pt.y;
+
+    if(isDown){
+      ripples.push({ x: px, y: py, r: 8, life: 1 });
+      sfxBubblePop(0);
+
+      /* Direct tap on treasure chest */
+      var cp = getChestPos();
+      if(Math.hypot(px - cp.x, py - cp.y) < cp.r * 1.35){
+        triggerChest();
+        return;
+      }
+
+      /* Direct tap on a sea creature (generous toddler hit radius!) */
+      for(var i = creatures.length - 1; i >= 0; i--){
+        var cr = creatures[i];
+        var hitR = Math.max(54, Math.min(78, Math.min(W, H) * 0.095)) * cr.size;
+        if(Math.hypot(px - cr.x, py - cr.y) <= hitR){
+          interactCreature(cr);
+          return;
+        }
+      }
+
+      /* Direct tap on a hidden pearl */
+      for(var j = 0; j < hiddenPearls.length; j++){
+        var p = hiddenPearls[j];
+        if(p.collected) continue;
+        var pp = getPearlPos(p);
+        if(Math.hypot(px - pp.x, py - pp.y) <= 48){
+          collectPearl(p);
+          return;
+        }
+      }
+    }
+  }
+
+  canvas.addEventListener("pointerdown", function(e){
+    e.preventDefault();
+    dragging = true;
+    try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+    var rect = canvas.getBoundingClientRect();
+    handleOceanTap(e.clientX - rect.left, e.clientY - rect.top, true);
+  });
+  canvas.addEventListener("pointermove", function(e){
+    if(!dragging) return;
+    var rect = canvas.getBoundingClientRect();
+    handleOceanTap(e.clientX - rect.left, e.clientY - rect.top, false);
+  });
+  function stopDrag(){ dragging = false; }
+  canvas.addEventListener("pointerup", stopDrag);
+  canvas.addEventListener("pointercancel", stopDrag);
+
+  reefZoneBtn.addEventListener("click", function(){ getAC(); switchZone("reef"); });
+  deepZoneBtn.addEventListener("click", function(){ getAC(); switchZone("deep"); });
+  sonarBtn.addEventListener("click", function(){ getAC(); triggerSonar(); });
+
+  hootBtn.addEventListener("click", function(){
+    getAC();
+    sub.bounce = 1;
+    sub.cheerT = 1.2;
+    sfxHarpArpeggio(3);
+    spawnBubbleBurst(sub.x, sub.y - 20, 12, true);
+    if(state.chestReady){
+      playVoiceSeq(["word-treasure", "hoot-amazing"]);
+    } else {
+      playVoiceSeq(["hoot-ready-go"]);
+    }
+  });
+
+  doneBtn.addEventListener("click", function(){
+    getAC();
+    state.won = true;
+    document.getElementById("winStars").textContent = String(state.stars);
+    document.getElementById("winChests").textContent = String(state.chestsOpened);
+    document.getElementById("winFriends").textContent = String(state.discovered);
+    winOverlay.hidden = false;
+    sfxTreasureFanfare();
+    playVoiceSeq(["hoot-win-star"]);
+  });
+
+  againBtn.addEventListener("click", function(){
+    getAC();
+    state.won = false;
+    winOverlay.hidden = true;
+    spawnCreatures(false);
+    playVoiceSeq(["hoot-ready-go"]);
+  });
+
+  /* Optional keyboard steering for desktop */
+  var keys = {};
+  window.addEventListener("keydown", function(e){
+    if(/^(Arrow|Key[WASD]|Space)/.test(e.code)){
+      keys[e.code] = true;
+      state.hasSteered = true;
+      if(e.code === "Space"){ e.preventDefault(); triggerSonar(); }
+    }
+  });
+  window.addEventListener("keyup", function(e){ keys[e.code] = false; });
+
+  /* =========================================================================
+     9. PIXAR-INSPIRED GLOSSY 3D VECTOR DRAWING HELPERS
+     ========================================================================= */
+  function drawCoverImage(img, alpha){
+    if(!img || !img.complete || !img.naturalWidth) return false;
+    var iw = img.naturalWidth, ih = img.naturalHeight;
+    var scale = Math.max(W / iw, H / ih);
+    var dw = iw * scale, dh = ih * scale;
+    var dx = (W - dw) * 0.5;
+    var dy = (H - dh) * 0.5;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.restore();
+    return true;
+  }
+
+  function drawStar5(x, y, r, col){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    for(var i = 0; i < 10; i++){
+      var a = -Math.PI / 2 + i * Math.PI / 5;
+      var rad = i % 2 === 0 ? r : r * 0.46;
+      if(i === 0) ctx.moveTo(Math.cos(a) * rad, Math.sin(a) * rad);
+      else ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
+    }
+    ctx.closePath();
+    ctx.fillStyle = col;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ---------- PIXAR 3D SUNKEN TREASURE CHEST ---------- */
+  function drawTreasureChest(){
+    var cp = getChestPos();
+    var s = cp.r / 56;
+    var wobble = chest.wobbleT > 0 ? Math.sin(chest.wobbleT * 26) * 0.14 * chest.wobbleT : 0;
+    var readyBounce = state.chestReady ? Math.abs(Math.sin(tAcc * 4.5)) * 7 : 0;
+
+    ctx.save();
+    ctx.translate(cp.x, cp.y - readyBounce);
+    ctx.rotate(wobble);
+    ctx.scale(s, s);
+
+    /* In Reef zone, bg_reef.jpg ALREADY features a hero painted Pixar treasure chest right here!
+       So we illuminate the real painted chest seamlessly when closed, and only draw our 3D vector
+       chest in Deep Sea (where bg_deep.jpg has the gold-coin hoard) OR draw radiant open burst in Reef! */
+    if(state.zone === "reef" && state.zoneFade > 0.5){
+      if(state.chestReady || chest.openAmt > 0.04 || chest.wobbleT > 0.05){
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        var glowP = Math.max(state.chestReady ? (0.78 + Math.sin(tAcc * 5) * 0.2) : 0, chest.openAmt, chest.wobbleT * 0.6);
+        var haloR = ctx.createRadialGradient(0, -14, 14, 0, -14, 150);
+        haloR.addColorStop(0, "rgba(255,250,190," + (0.9 * glowP).toFixed(2) + ")");
+        haloR.addColorStop(0.45, "rgba(250,204,21," + (0.48 * glowP).toFixed(2) + ")");
+        haloR.addColorStop(1, "rgba(250,204,21,0)");
+        ctx.fillStyle = haloR;
+        ctx.beginPath(); ctx.arc(0, -14, 150, 0, Math.PI * 2); ctx.fill();
+
+        for(var riR = 0; riR < 7; riR++){
+          var raR = -Math.PI * 0.85 + (riR / 6) * Math.PI * 0.7 + Math.sin(tAcc * 2.2 + riR) * 0.06;
+          var rgR = ctx.createLinearGradient(0, -14, Math.cos(raR) * 175, Math.sin(raR) * 175);
+          rgR.addColorStop(0, "rgba(255,248,185," + (0.62 * glowP).toFixed(2) + ")");
+          rgR.addColorStop(1, "rgba(255,248,185,0)");
+          ctx.fillStyle = rgR;
+          ctx.beginPath();
+          ctx.moveTo(0, -12);
+          ctx.lineTo(Math.cos(raR - 0.1) * 175, Math.sin(raR - 0.1) * 175);
+          ctx.lineTo(Math.cos(raR + 0.1) * 175, Math.sin(raR + 0.1) * 175);
+          ctx.closePath();
+          ctx.fill();
+        }
+        if(state.chestReady){
+          var prR = 82 + Math.sin(tAcc * 6) * 10;
+          ctx.strokeStyle = "rgba(254, 240, 138, 0.92)";
+          ctx.lineWidth = 4.5;
+          ctx.beginPath(); ctx.arc(0, -4, prR, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.restore();
+      }
+      /* Subtle inviting golden glint on the painted reef chest keyhole */
+      var glintA = 0.35 + Math.sin(tAcc * 3.5) * 0.25;
+      ctx.save(); ctx.globalAlpha = glintA;
+      drawStar5(12, -2, 8, "#fef08a");
+      ctx.restore();
+      ctx.restore();
+      return;
+    }
+
+    /* Golden beacon aura when ready (every 5 discoveries!) or opening */
+    if(state.chestReady || chest.openAmt > 0.05){
+      var glowPower = Math.max(state.chestReady ? (0.72 + Math.sin(tAcc * 5) * 0.22) : 0, chest.openAmt);
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var halo = ctx.createRadialGradient(0, -10, 12, 0, -10, 118);
+      halo.addColorStop(0, "rgba(255,244,160," + (0.85 * glowPower).toFixed(2) + ")");
+      halo.addColorStop(0.45, "rgba(250,204,21," + (0.42 * glowPower).toFixed(2) + ")");
+      halo.addColorStop(1, "rgba(250,204,21,0)");
+      ctx.fillStyle = halo;
+      ctx.beginPath(); ctx.arc(0, -10, 118, 0, Math.PI * 2); ctx.fill();
+
+      /* Rotating golden rays */
+      for(var ri = 0; ri < 7; ri++){
+        var ra = -Math.PI * 0.85 + (ri / 6) * Math.PI * 0.7 + Math.sin(tAcc * 2 + ri) * 0.06;
+        var rg = ctx.createLinearGradient(0, -10, Math.cos(ra) * 145, Math.sin(ra) * 145);
+        rg.addColorStop(0, "rgba(255,248,180," + (0.55 * glowPower).toFixed(2) + ")");
+        rg.addColorStop(1, "rgba(255,248,180,0)");
+        ctx.fillStyle = rg;
+        ctx.beginPath();
+        ctx.moveTo(0, -8);
+        ctx.lineTo(Math.cos(ra - 0.09) * 145, Math.sin(ra - 0.09) * 145);
+        ctx.lineTo(Math.cos(ra + 0.09) * 145, Math.sin(ra + 0.09) * 145);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    /* Ground contact shadow */
+    ctx.fillStyle = "rgba(6, 20, 38, 0.42)";
+    ctx.beginPath();
+    ctx.ellipse(0, 34, 58, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* Open glowing interior + heaped gold coins */
+    if(chest.openAmt > 0.02){
+      ctx.save();
+      ctx.fillStyle = "#451a03";
+      ctx.beginPath();
+      ctx.roundRect(-45, -16, 90, 26, 8);
+      ctx.fill();
+      var goldPile = ctx.createRadialGradient(0, -6, 6, 0, 0, 44);
+      goldPile.addColorStop(0, "#fffbeb");
+      goldPile.addColorStop(0.5, "#fde047");
+      goldPile.addColorStop(1, "#d97706");
+      ctx.fillStyle = goldPile;
+      ctx.beginPath();
+      ctx.ellipse(0, -4, 39, 16 * Math.min(1, chest.openAmt * 1.4), 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /* Animated hinged rounded wooden lid */
+    ctx.save();
+    ctx.translate(0, -8);
+    ctx.translate(0, -chest.openAmt * 22);
+    ctx.scale(1, 1 - chest.openAmt * 0.34);
+    var lidGrad = ctx.createLinearGradient(0, -34, 0, 4);
+    lidGrad.addColorStop(0, "#d97706");
+    lidGrad.addColorStop(0.45, "#9a4a16");
+    lidGrad.addColorStop(1, "#5c270a");
+    ctx.fillStyle = lidGrad;
+    ctx.strokeStyle = "#3b1706";
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(-48, 2);
+    ctx.bezierCurveTo(-48, -32, 48, -32, 48, 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    /* Gold straps on lid */
+    var bandGrad = ctx.createLinearGradient(0, -30, 0, 4);
+    bandGrad.addColorStop(0, "#fef08a");
+    bandGrad.addColorStop(0.5, "#f59e0b");
+    bandGrad.addColorStop(1, "#92400e");
+    ctx.fillStyle = bandGrad;
+    [-32, 22].forEach(function(bx){
+      ctx.beginPath();
+      ctx.roundRect(bx, -23, 10, 25, 3);
+      ctx.fill();
+      ctx.stroke();
+    });
+    /* Specular shine on lid */
+    ctx.fillStyle = "rgba(255,255,255,0.28)";
+    ctx.beginPath();
+    ctx.ellipse(-6, -18, 24, 5, -0.05, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    /* Chest lower base box */
+    var boxGrad = ctx.createLinearGradient(-48, -8, 48, 32);
+    boxGrad.addColorStop(0, "#b45309");
+    boxGrad.addColorStop(0.55, "#78350f");
+    boxGrad.addColorStop(1, "#451a03");
+    ctx.fillStyle = boxGrad;
+    ctx.strokeStyle = "#3b1706";
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.roundRect(-48, -6, 96, 38, 9);
+    ctx.fill();
+    ctx.stroke();
+
+    /* Horizontal wood plank lines */
+    ctx.strokeStyle = "rgba(59,23,6,0.45)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-46, 8); ctx.lineTo(46, 8);
+    ctx.moveTo(-46, 20); ctx.lineTo(46, 20);
+    ctx.stroke();
+
+    /* Gold rim & vertical brass straps */
+    var rimGrad = ctx.createLinearGradient(0, -8, 0, 32);
+    rimGrad.addColorStop(0, "#fef08a");
+    rimGrad.addColorStop(0.5, "#f59e0b");
+    rimGrad.addColorStop(1, "#b45309");
+    ctx.fillStyle = rimGrad;
+    ctx.strokeStyle = "#5c270a";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.roundRect(-50, -9, 100, 9, 4); ctx.fill(); ctx.stroke();
+    [-32, 22].forEach(function(bx){
+      ctx.beginPath(); ctx.roundRect(bx, -6, 10, 38, 3); ctx.fill(); ctx.stroke();
+    });
+
+    /* Golden lockplate & keyhole */
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath(); ctx.roundRect(-10, -10, 20, 22, 5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#3b1706";
+    ctx.beginPath(); ctx.arc(0, -1, 3.2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(2, 0); ctx.lineTo(3.2, 7); ctx.lineTo(-3.2, 7); ctx.closePath(); ctx.fill();
+
+    /* Pulsing "ready" ring around chest */
+    if(state.chestReady){
+      var pr = 64 + Math.sin(tAcc * 6) * 8;
+      ctx.strokeStyle = "rgba(254, 240, 138, 0.9)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(0, 6, pr, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  /* ---------- HIDDEN SHIMMERING PEARLS ---------- */
+  function drawHiddenPearls(){
+    hiddenPearls.forEach(function(p){
+      if(p.collected) return;
+      var pp = getPearlPos(p);
+      var px = pp.x;
+      var py = pp.y + Math.sin(tAcc * 2.4 + p.phase) * 4;
+      var shimmer = p.shimmerT > 0 ? Math.min(1, p.shimmerT * 0.6) : 0;
+      var inDeep = state.zone === "deep";
+      var visAlpha = Math.max(inDeep ? 0.55 : 0.68, shimmer);
+
+      ctx.save();
+      ctx.translate(px, py);
+
+      /* Glow aura — flares dramatically on Sonar Ping! */
+      var glowR = 26 + shimmer * 32 + Math.sin(tAcc * 4 + p.phase) * 4;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var pg = ctx.createRadialGradient(0, 0, 3, 0, 0, glowR);
+      pg.addColorStop(0, "rgba(255,255,255," + (0.65 + shimmer * 0.35).toFixed(2) + ")");
+      pg.addColorStop(0.5, "rgba(103,232,249," + (0.35 + shimmer * 0.45).toFixed(2) + ")");
+      pg.addColorStop(1, "rgba(192,132,252,0)");
+      ctx.fillStyle = pg;
+      ctx.beginPath(); ctx.arc(0, 0, glowR, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      /* Cute miniature pastel clam shell cradling the pearl */
+      ctx.globalAlpha = visAlpha;
+      var shG = ctx.createLinearGradient(0, 2, 0, 18);
+      shG.addColorStop(0, "#f9a8d4");
+      shG.addColorStop(1, "#be185d");
+      ctx.fillStyle = shG;
+      ctx.strokeStyle = "#831843";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, 9, 18, 9, 0, 0, Math.PI);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      /* Glossy iridescent pearl */
+      var r = 12 + shimmer * 3;
+      var pearlG = ctx.createRadialGradient(-r * 0.35, -r * 0.35, 1.5, 0, 0, r);
+      pearlG.addColorStop(0, "#ffffff");
+      pearlG.addColorStop(0.38, "#fdf2f8");
+      pearlG.addColorStop(0.72, "#bae6fd");
+      pearlG.addColorStop(1, "#818cf8");
+      ctx.fillStyle = pearlG;
+      ctx.strokeStyle = "rgba(255,255,255,0.85)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      /* Specular highlight dot */
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.ellipse(-r * 0.32, -r * 0.32, r * 0.28, r * 0.18, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      if(shimmer > 0.15){
+        drawStar5(r * 0.7, -r * 0.7, 7 + shimmer * 4, "#fef08a");
+      }
+      ctx.restore();
+    });
+  }
+
+  /* ---------- PIXAR 3D GLOSSY SEA CREATURES (ZERO EMOJI PLACEHOLDERS) ---------- */
+  function drawGlossyEye(x, y, r, lookX, lookY){
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#0b2239"; ctx.lineWidth = Math.max(1.5, r * 0.18); ctx.stroke();
+    ctx.fillStyle = "#0b2239";
+    ctx.beginPath(); ctx.arc(x + lookX * r * 0.25, y + lookY * r * 0.2, r * 0.62, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath(); ctx.arc(x - r * 0.22, y - r * 0.24, r * 0.28, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + r * 0.2, y + r * 0.22, r * 0.12, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function drawTurtle(t, wave){
+    var flipFlap = Math.sin(t * 5.2 + wave * 6) * 0.36;
+    /* Back flipper */
+    ctx.save(); ctx.translate(-22, 16); ctx.rotate(0.4 - flipFlap * 0.6);
+    ctx.fillStyle = "#4ade80"; ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.ellipse(0, 8, 12, 6, 0.3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.restore();
+
+    /* Plump green head */
+    var headG = ctx.createRadialGradient(34, -8, 4, 30, 0, 22);
+    headG.addColorStop(0, "#bbf7d0");
+    headG.addColorStop(0.55, "#4ade80");
+    headG.addColorStop(1, "#15803d");
+    ctx.fillStyle = headG; ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.8;
+    ctx.beginPath(); ctx.ellipse(32, 0, 17, 14, -0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    /* Rosy cheek & smile */
+    ctx.fillStyle = "rgba(251,113,133,0.45)";
+    ctx.beginPath(); ctx.ellipse(36, 6, 4.5, 3, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.4; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(38, 4, 7, 0.25, 1.35); ctx.stroke();
+    drawGlossyEye(38, -4, 5.8, 0.4, -0.1);
+
+    /* Glossy domed shell */
+    var shG = ctx.createRadialGradient(-6, -20, 6, -2, -2, 38);
+    shG.addColorStop(0, "#a3e635");
+    shG.addColorStop(0.45, "#22c55e");
+    shG.addColorStop(0.85, "#15803d");
+    shG.addColorStop(1, "#14532d");
+    ctx.fillStyle = shG; ctx.strokeStyle = "#052e16"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(-4, -2, 31, 22, 0, Math.PI, Math.PI * 2);
+    ctx.lineTo(27, 8);
+    ctx.quadraticCurveTo(-4, 15, -35, 8);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    /* Shell scute accents */
+    ctx.strokeStyle = "rgba(220,252,231,0.45)"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(-4, -9, 13, 8, 0, 0, Math.PI * 2);
+    ctx.moveTo(-17, -9); ctx.lineTo(-27, -2);
+    ctx.moveTo(9, -9); ctx.lineTo(20, -2);
+    ctx.stroke();
+
+    /* Yellow-cream underbelly rim */
+    ctx.fillStyle = "#fef08a";
+    ctx.beginPath(); ctx.ellipse(-4, 10, 26, 6, 0, 0, Math.PI); ctx.fill();
+
+    /* Specular shine on dome */
+    ctx.fillStyle = "rgba(255,255,255,0.34)";
+    ctx.beginPath(); ctx.ellipse(-10, -15, 14, 4.5, -0.22, 0, Math.PI * 2); ctx.fill();
+
+    /* Front swimming flipper */
+    ctx.save(); ctx.translate(10, 12); ctx.rotate(0.25 + flipFlap);
+    var flG = ctx.createLinearGradient(0, 0, 18, 16);
+    flG.addColorStop(0, "#86efac"); flG.addColorStop(1, "#16a34a");
+    ctx.fillStyle = flG; ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.6;
+    ctx.beginPath(); ctx.ellipse(4, 12, 16, 7.5, 0.72, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawWhale(t, wave){
+    var tailWag = Math.sin(t * 4.5 + wave * 6) * 0.25;
+    /* Swishing tail fluke */
+    ctx.save(); ctx.translate(-34, 4); ctx.rotate(tailWag);
+    var tG = ctx.createLinearGradient(-22, -16, 0, 16);
+    tG.addColorStop(0, "#7dd3fc"); tG.addColorStop(1, "#0284c7");
+    ctx.fillStyle = tG; ctx.strokeStyle = "#0c4a6e"; ctx.lineWidth = 2.8;
+    ctx.beginPath();
+    ctx.moveTo(2, -4);
+    ctx.quadraticCurveTo(-18, -24, -28, -14);
+    ctx.quadraticCurveTo(-16, -2, -14, 2);
+    ctx.quadraticCurveTo(-24, 16, -12, 22);
+    ctx.quadraticCurveTo(-4, 12, 4, 4);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+
+    /* Plump Pixar Blue Whale body */
+    var bG = ctx.createRadialGradient(8, -16, 8, 2, 0, 48);
+    bG.addColorStop(0, "#bae6fd");
+    bG.addColorStop(0.38, "#38bdf8");
+    bG.addColorStop(0.8, "#0284c7");
+    bG.addColorStop(1, "#075985");
+    ctx.fillStyle = bG; ctx.strokeStyle = "#0c4a6e"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-36, 4);
+    ctx.bezierCurveTo(-32, -24, 24, -32, 38, -8);
+    ctx.bezierCurveTo(44, 4, 38, 22, 14, 23);
+    ctx.bezierCurveTo(-12, 24, -30, 14, -36, 4);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    /* Soft creamy-blue ribbed belly */
+    ctx.fillStyle = "#e0f2fe";
+    ctx.beginPath();
+    ctx.moveTo(35, 10);
+    ctx.quadraticCurveTo(18, 24, -12, 18);
+    ctx.quadraticCurveTo(8, 10, 35, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    /* Glossy top specular sheen */
+    ctx.fillStyle = "rgba(255,255,255,0.38)";
+    ctx.beginPath(); ctx.ellipse(8, -15, 20, 5.5, -0.1, 0, Math.PI * 2); ctx.fill();
+
+    /* Cheerful smiling whale mouth + rosy cheek + glossy eye */
+    ctx.strokeStyle = "#0c4a6e"; ctx.lineWidth = 2.6; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(38, 6); ctx.quadraticCurveTo(26, 13, 15, 8); ctx.stroke();
+    ctx.fillStyle = "rgba(251,113,133,0.42)";
+    ctx.beginPath(); ctx.ellipse(24, 5, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
+    drawGlossyEye(22, -4, 6.2, 0.35, -0.1);
+
+    /* Cute side pectoral fin */
+    ctx.save(); ctx.translate(2, 13); ctx.rotate(0.2 + Math.sin(t * 4.5) * 0.18);
+    ctx.fillStyle = "#0ea5e9"; ctx.strokeStyle = "#0c4a6e"; ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.ellipse(-2, 7, 13, 6.5, 0.55, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawClownfish(t, wave){
+    var wag = Math.sin(t * 8 + wave * 8) * 0.28;
+    /* Tail fin */
+    ctx.save(); ctx.translate(-26, 0); ctx.rotate(wag);
+    ctx.fillStyle = "#fb923c"; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    ctx.moveTo(2, 0);
+    ctx.bezierCurveTo(-12, -18, -22, -14, -20, 0);
+    ctx.bezierCurveTo(-22, 14, -12, 18, 2, 0);
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+
+    /* Dorsal fin */
+    ctx.fillStyle = "#f97316"; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(-14, -14); ctx.quadraticCurveTo(-2, -30, 12, -15); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    /* Glossy orange clownfish body */
+    var fG = ctx.createRadialGradient(8, -10, 4, 0, 0, 34);
+    fG.addColorStop(0, "#fed7aa");
+    fG.addColorStop(0.35, "#fb923c");
+    fG.addColorStop(0.82, "#ea580c");
+    fG.addColorStop(1, "#9a3412");
+    ctx.fillStyle = fG; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.8;
+    ctx.beginPath(); ctx.ellipse(0, 0, 29, 19, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+    /* Crisp white clownfish stripes clipped to body */
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(0, 0, 27.5, 17.5, 0, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = "#ffffff"; ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 2.2;
+    [-12, 6].forEach(function(sx){
+      ctx.beginPath();
+      ctx.moveTo(sx - 4, -22);
+      ctx.quadraticCurveTo(sx + 2, 0, sx - 4, 22);
+      ctx.lineTo(sx + 5, 22);
+      ctx.quadraticCurveTo(sx + 10, 0, sx + 5, -22);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    });
+    ctx.restore();
+
+    /* Glossy specular highlight */
+    ctx.fillStyle = "rgba(255,255,255,0.42)";
+    ctx.beginPath(); ctx.ellipse(4, -10, 14, 4, -0.1, 0, Math.PI * 2); ctx.fill();
+
+    /* Eye & happy smile */
+    drawGlossyEye(17, -4, 5.8, 0.35, 0);
+    ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.2; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(22, 4, 5, 0.3, 1.5); ctx.stroke();
+
+    /* Side fin */
+    ctx.save(); ctx.translate(2, 6); ctx.rotate(0.25 + Math.sin(t * 9) * 0.25);
+    ctx.fillStyle = "#fdba74"; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.ellipse(-3, 5, 9, 5, 0.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawOctopus(t, wave){
+    /* 6 gracefully curling tentacles */
+    ctx.strokeStyle = "#581c87";
+    ctx.lineCap = "round";
+    for(var i = 0; i < 6; i++){
+      var spread = -26 + i * 10.4;
+      var sway = Math.sin(t * 4.2 + i * 0.9 + wave * 6) * 9;
+      ctx.lineWidth = 10.5;
+      ctx.strokeStyle = "#581c87";
+      ctx.beginPath();
+      ctx.moveTo(spread * 0.65, 10);
+      ctx.quadraticCurveTo(spread + sway * 0.6, 26, spread * 1.15 + sway, 36);
+      ctx.stroke();
+      ctx.lineWidth = 6.5;
+      ctx.strokeStyle = i % 2 === 0 ? "#c084fc" : "#a855f7";
+      ctx.stroke();
+      /* Tiny lilac suction dot */
+      ctx.fillStyle = "#f3e8ff";
+      ctx.beginPath(); ctx.arc(spread * 1.12 + sway, 35, 2.3, 0, Math.PI * 2); ctx.fill();
+    }
+
+    /* Plump Pixar glossy dome head */
+    var oG = ctx.createRadialGradient(-8, -18, 5, 0, -4, 34);
+    oG.addColorStop(0, "#f3e8ff");
+    oG.addColorStop(0.32, "#c084fc");
+    oG.addColorStop(0.78, "#9333ea");
+    oG.addColorStop(1, "#581c87");
+    ctx.fillStyle = oG; ctx.strokeStyle = "#4c1d95"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(0, -6, 27, 25, 0, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    /* Specular shine */
+    ctx.fillStyle = "rgba(255,255,255,0.42)";
+    ctx.beginPath(); ctx.ellipse(-9, -18, 10, 5.5, -0.45, 0, Math.PI * 2); ctx.fill();
+
+    /* Cute eyes, cheeks & happy smile */
+    drawGlossyEye(-9, -1, 6.2, 0.2, 0);
+    drawGlossyEye(10, -1, 6.2, 0.2, 0);
+    ctx.fillStyle = "rgba(244,114,182,0.52)";
+    ctx.beginPath(); ctx.ellipse(-17, 7, 4.5, 2.8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(18, 7, 4.5, 2.8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#4c1d95"; ctx.lineWidth = 2.6; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(0.5, 5, 6.5, 0.2, Math.PI - 0.2); ctx.stroke();
+  }
+
+  function drawStarfish(t, wave){
+    ctx.save();
+    ctx.rotate(Math.sin(t * 2.8 + wave * 7) * 0.22);
+    var sG = ctx.createRadialGradient(-6, -10, 4, 0, 0, 34);
+    sG.addColorStop(0, "#fbcfe8");
+    sG.addColorStop(0.4, "#f472b6");
+    sG.addColorStop(0.85, "#db2777");
+    sG.addColorStop(1, "#9d174d");
+    ctx.fillStyle = sG;
+    ctx.strokeStyle = "#831843";
+    ctx.lineWidth = 3;
+    ctx.lineJoin = "round";
+
+    /* Smooth rounded 5-arm starfish contour */
+    ctx.beginPath();
+    for(var i = 0; i < 5; i++){
+      var a1 = -Math.PI / 2 + i * (Math.PI * 2 / 5);
+      var aMid = a1 + Math.PI / 5;
+      var aNext = a1 + Math.PI * 2 / 5;
+      var tipX = Math.cos(a1) * 32, tipY = Math.sin(a1) * 32;
+      var valX = Math.cos(aMid) * 14, valY = Math.sin(aMid) * 14;
+      var tip2X = Math.cos(aNext) * 32, tip2Y = Math.sin(aNext) * 32;
+      if(i === 0) ctx.moveTo((tipX + valX) * 0.5, (tipY + valY) * 0.5);
+      ctx.quadraticCurveTo(valX, valY, (valX + tip2X) * 0.5, (valY + tip2Y) * 0.5);
+      ctx.quadraticCurveTo(tip2X, tip2Y, (tip2X + Math.cos(aNext + Math.PI / 5) * 14) * 0.5, (tip2Y + Math.sin(aNext + Math.PI / 5) * 14) * 0.5);
+    }
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    /* Pearly raised dots on each arm */
+    ctx.fillStyle = "rgba(255,241,242,0.75)";
+    for(var d = 0; d < 5; d++){
+      var da = -Math.PI / 2 + d * (Math.PI * 2 / 5);
+      ctx.beginPath(); ctx.arc(Math.cos(da) * 19, Math.sin(da) * 19, 2.5, 0, Math.PI * 2); ctx.fill();
+    }
+
+    drawGlossyEye(-7, -2, 5.2, 0.15, 0);
+    drawGlossyEye(7, -2, 5.2, 0.15, 0);
+    ctx.strokeStyle = "#831843"; ctx.lineWidth = 2.4; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(0, 4, 5.5, 0.2, Math.PI - 0.2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCreatures(){
+    var baseScale = Math.max(0.76, Math.min(1.16, Math.min(W, H) / 700));
+    creatures.forEach(function(cr){
+      var s = baseScale * cr.size;
+      var flipRot = cr.flipT > 0 ? (1 - cr.flipT) * Math.PI * 2 * (cr.dir >= 0 ? 1 : -1) : 0;
+      var flipJump = cr.flipT > 0 ? Math.sin(cr.flipT * Math.PI) * 28 : 0;
+      var waveScale = cr.waveT > 0 ? 1 + Math.sin(cr.waveT * 14) * 0.08 : 1;
+
+      ctx.save();
+      ctx.translate(cr.x, cr.y - flipJump);
+
+      /* Gentle glowing discovery ring for undiscovered friends (or sonar boost) */
+      if(!cr.discovered || cr.glowBoost > 0.05){
+        var ringAlpha = !cr.discovered ? (0.52 + Math.sin(tAcc * 3.8 + cr.phase) * 0.24) : cr.glowBoost * 0.6;
+        var ringR = (44 + Math.sin(tAcc * 3.8 + cr.phase) * 5) * s;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        var hg = ctx.createRadialGradient(0, 0, ringR * 0.35, 0, 0, ringR * 1.25);
+        hg.addColorStop(0, "rgba(255,255,255," + (ringAlpha * 0.25).toFixed(2) + ")");
+        hg.addColorStop(0.65, state.zone === "deep" ? "rgba(103,232,249," + (ringAlpha * 0.55).toFixed(2) + ")" : "rgba(254,240,138," + (ringAlpha * 0.45).toFixed(2) + ")");
+        hg.addColorStop(1, "rgba(103,232,249,0)");
+        ctx.fillStyle = hg;
+        ctx.beginPath(); ctx.arc(0, 0, ringR * 1.25, 0, Math.PI * 2); ctx.fill();
+
+        ctx.strokeStyle = state.zone === "deep"
+          ? "rgba(103,232,249," + ringAlpha.toFixed(2) + ")"
+          : "rgba(255,250,190," + ringAlpha.toFixed(2) + ")";
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(0, 0, ringR, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.rotate(flipRot);
+      var sx = (cr.kind === "octopus" || cr.kind === "starfish") ? 1 : (cr.faceVis >= 0 ? Math.max(0.15, cr.faceVis) : Math.min(-0.15, cr.faceVis));
+      ctx.scale(s * sx * waveScale, s * waveScale);
+
+      if(cr.kind === "turtle") drawTurtle(tAcc + cr.phase, cr.waveT);
+      else if(cr.kind === "whale") drawWhale(tAcc + cr.phase, cr.waveT);
+      else if(cr.kind === "clownfish") drawClownfish(tAcc + cr.phase, cr.waveT);
+      else if(cr.kind === "octopus") drawOctopus(tAcc + cr.phase, cr.waveT);
+      else drawStarfish(tAcc + cr.phase, cr.waveT);
+
+      ctx.restore();
+
+      /* Tiny golden sparkle badge above discovered friend */
+      if(cr.discovered){
+        drawStar5(cr.x + 26 * s, cr.y - 30 * s + Math.sin(tAcc * 4 + cr.phase) * 3, 9 * s, "#fde047");
+      }
+    });
+  }
+
+  /* ---------- PIXAR 3D BRIGHT-YELLOW CAPTAIN HOOT SUBMARINE ---------- */
+  function getSubScale(){
+    return Math.max(0.76, Math.min(1.22, Math.min(W, H) / 680));
+  }
+
+  function drawHeadlampCone(s){
+    var isDeep = state.zone === "deep";
+    var coneLen = (isDeep ? 360 : 230) * s;
+    var coneSpread = (isDeep ? 132 : 84) * s;
+    var lampX = 62 * s;
+    var lampY = 14 * s;
+
+    ctx.save();
+    ctx.translate(sub.x, sub.y);
+    ctx.rotate(sub.pitch * sub.facing);
+    ctx.scale(sub.faceVis >= 0 ? 1 : -1, 1);
+
+    ctx.globalCompositeOperation = "lighter";
+    var grad = ctx.createLinearGradient(lampX, lampY, lampX + coneLen, lampY);
+    grad.addColorStop(0, isDeep ? "rgba(255, 245, 165, 0.72)" : "rgba(255, 245, 175, 0.34)");
+    grad.addColorStop(0.45, isDeep ? "rgba(253, 224, 71, 0.34)" : "rgba(253, 224, 71, 0.14)");
+    grad.addColorStop(1, "rgba(253, 224, 71, 0)");
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(lampX, lampY - 9 * s);
+    ctx.lineTo(lampX + coneLen, lampY - coneSpread);
+    ctx.quadraticCurveTo(lampX + coneLen * 1.08, lampY, lampX + coneLen, lampY + coneSpread);
+    ctx.lineTo(lampX, lampY + 9 * s);
+    ctx.closePath();
+    ctx.fill();
+
+    /* Bright core beam */
+    var coreG = ctx.createLinearGradient(lampX, lampY, lampX + coneLen * 0.72, lampY);
+    coreG.addColorStop(0, isDeep ? "rgba(255, 255, 230, 0.65)" : "rgba(255, 255, 230, 0.28)");
+    coreG.addColorStop(1, "rgba(255, 245, 165, 0)");
+    ctx.fillStyle = coreG;
+    ctx.beginPath();
+    ctx.moveTo(lampX, lampY - 5 * s);
+    ctx.lineTo(lampX + coneLen * 0.72, lampY - coneSpread * 0.42);
+    ctx.lineTo(lampX + coneLen * 0.72, lampY + coneSpread * 0.42);
+    ctx.lineTo(lampX, lampY + 5 * s);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawSubmarine(){
+    var s = getSubScale();
+    var bobY = Math.sin(tAcc * 2.5) * 5;
+    var sq = sub.bounce > 0 ? Math.sin(sub.bounce * Math.PI * 2.5) * sub.bounce * 0.12 : 0;
+    var faceS = sub.faceVis >= 0 ? Math.max(0.18, sub.faceVis) : Math.min(-0.18, sub.faceVis);
+
+    /* Draw golden underwater headlamp cone first so hull sits crisply over lamp base */
+    drawHeadlampCone(s);
+
+    ctx.save();
+    ctx.translate(sub.x, sub.y + bobY);
+    ctx.rotate(sub.pitch * sub.facing);
+    ctx.scale(faceS * s * (1 + sq * 0.55), s * (1 - sq * 0.45));
+
+    /* 1. Rotating Brass Tail Propeller */
+    ctx.save();
+    ctx.translate(-76, 4);
+    var pBlade = Math.sin(sub.propAngle);
+    var pBlade2 = Math.cos(sub.propAngle);
+    var propG = ctx.createLinearGradient(-12, -24, 8, 24);
+    propG.addColorStop(0, "#fde68a");
+    propG.addColorStop(0.5, "#d97706");
+    propG.addColorStop(1, "#78350f");
+    ctx.fillStyle = propG;
+    ctx.strokeStyle = "#451a03";
+    ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.ellipse(-5, -13 * Math.abs(pBlade) - 3, 5.5, 13 * Math.abs(pBlade) + 4, -0.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-5, 13 * Math.abs(pBlade) + 3, 5.5, 13 * Math.abs(pBlade) + 4, 0.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-7, 6 * pBlade2, 4.5, 7, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    /* Brass propeller hub */
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath(); ctx.ellipse(0, 0, 8, 7, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.restore();
+
+    /* 2. Tail Dorsal & Ventral Yellow Stabilizer Fins */
+    var finG = ctx.createLinearGradient(-74, -36, -50, 32);
+    finG.addColorStop(0, "#fef08a");
+    finG.addColorStop(0.5, "#facc15");
+    finG.addColorStop(1, "#ca8a04");
+    ctx.fillStyle = finG; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-54, -14);
+    ctx.quadraticCurveTo(-74, -40, -68, -4);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-54, 18);
+    ctx.quadraticCurveTo(-72, 36, -66, 8);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    /* 3. Periscope & Conning Hatch */
+    var periG = ctx.createLinearGradient(-8, -74, 18, -42);
+    periG.addColorStop(0, "#fef08a");
+    periG.addColorStop(0.55, "#f59e0b");
+    periG.addColorStop(1, "#92400e");
+    ctx.fillStyle = periG; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-4, -44);
+    ctx.lineTo(-4, -66);
+    ctx.quadraticCurveTo(-4, -76, 8, -76);
+    ctx.lineTo(16, -76);
+    ctx.lineTo(16, -62);
+    ctx.lineTo(6, -62);
+    ctx.lineTo(6, -44);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    /* Periscope lens glow */
+    ctx.fillStyle = "#fef9c3";
+    ctx.beginPath(); ctx.ellipse(16, -69, 4.5, 6.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    /* Conning tower collar */
+    ctx.fillStyle = finG;
+    ctx.beginPath();
+    ctx.roundRect(-24, -52, 42, 16, 8);
+    ctx.fill(); ctx.stroke();
+
+    /* 4. Glossy Bright-Yellow Volumetric Submarine Hull */
+    var hullG = ctx.createRadialGradient(8, -26, 10, 0, 4, 82);
+    hullG.addColorStop(0, "#fff9c4");
+    hullG.addColorStop(0.28, "#fde047");
+    hullG.addColorStop(0.68, "#f59e0b");
+    hullG.addColorStop(0.93, "#b45309");
+    hullG.addColorStop(1, "#38bdf8"); /* subtle aqua seabed bounce light */
+    ctx.fillStyle = hullG;
+    ctx.strokeStyle = "#713f12";
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 72, 46, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    /* Hull seam stripe & brass rivets */
+    ctx.strokeStyle = "rgba(120, 53, 15, 0.45)";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(-42, -32); ctx.quadraticCurveTo(-50, 4, -42, 38);
+    ctx.moveTo(42, -28); ctx.quadraticCurveTo(50, 4, 42, 36);
+    ctx.stroke();
+
+    /* Rear round porthole */
+    ctx.fillStyle = "#d97706"; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.arc(-44, 4, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    var portG = ctx.createRadialGradient(-47, 0, 2, -44, 4, 10);
+    portG.addColorStop(0, "#bae6fd");
+    portG.addColorStop(0.6, "#0284c7");
+    portG.addColorStop(1, "#0c4a6e");
+    ctx.fillStyle = portG;
+    ctx.beginPath(); ctx.arc(-44, 4, 8.8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.75)";
+    ctx.beginPath(); ctx.ellipse(-47, 0, 3, 1.8, -0.5, 0, Math.PI * 2); ctx.fill();
+
+    /* 5. Crystal Glass Dome Cockpit with Smiling Captain Hoot! */
+    ctx.save();
+    /* Brass dome collar */
+    ctx.fillStyle = "#d97706"; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.ellipse(11, -7, 36, 31, -0.05, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+    /* Deep cabin interior behind Hoot */
+    var cabG = ctx.createRadialGradient(14, -14, 4, 11, -7, 34);
+    cabG.addColorStop(0, "#1e3a5f");
+    cabG.addColorStop(1, "#081c36");
+    ctx.fillStyle = cabG;
+    ctx.beginPath(); ctx.ellipse(11, -7, 31, 26.5, -0.05, 0, Math.PI * 2); ctx.fill();
+
+    /* Clip Captain Hoot inside the glass dome */
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(11, -7, 30.5, 26, -0.05, 0, Math.PI * 2); ctx.clip();
+
+    /* Captain Hoot Body */
+    ctx.fillStyle = "#a06a3b";
+    ctx.beginPath(); ctx.ellipse(11, 14, 18, 17, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fdeed3";
+    ctx.beginPath(); ctx.ellipse(12, 16, 11, 11, 0, 0, Math.PI * 2); ctx.fill();
+
+    /* Hoot waving wing when cheering */
+    var wingWave = sub.cheerT > 0 ? Math.sin(tAcc * 18) * 0.45 : Math.sin(tAcc * 3) * 0.08;
+    ctx.save();
+    ctx.translate(25, 11); ctx.rotate(-0.4 + wingWave);
+    ctx.fillStyle = "#8a5a33";
+    ctx.beginPath(); ctx.ellipse(5, -3, 8, 4.5, -0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    /* Captain Hoot Head & Ear Tufts */
+    ctx.fillStyle = "#8a5a33";
+    ctx.beginPath(); ctx.moveTo(-2, -16); ctx.lineTo(-7, -27); ctx.lineTo(5, -22); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(23, -16); ctx.lineTo(29, -27); ctx.lineTo(17, -22); ctx.closePath(); ctx.fill();
+
+    var owlHeadG = ctx.createRadialGradient(8, -14, 3, 11, -8, 19);
+    owlHeadG.addColorStop(0, "#c08552");
+    owlHeadG.addColorStop(1, "#8a5a33");
+    ctx.fillStyle = owlHeadG;
+    ctx.beginPath(); ctx.arc(11, -8, 17, 0, Math.PI * 2); ctx.fill();
+
+    /* Facial cream discs */
+    ctx.fillStyle = "#fdeed3";
+    ctx.beginPath(); ctx.ellipse(5, -8, 7.8, 8.2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(18, -8, 7.8, 8.2, 0, 0, Math.PI * 2); ctx.fill();
+
+    /* Expressive blinking eyes */
+    var isBlinking = sub.blinkT < 0.13;
+    if(isBlinking){
+      ctx.strokeStyle = "#17324f"; ctx.lineWidth = 2.4; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.arc(5, -8, 4, 0.2, Math.PI - 0.2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(18, -8, 4, 0.2, Math.PI - 0.2); ctx.stroke();
+    } else {
+      ctx.fillStyle = "#17324f";
+      ctx.beginPath(); ctx.arc(6, -8, 4.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(19, -8, 4.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath(); ctx.arc(7.3, -9.4, 1.7, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(20.3, -9.4, 1.7, 0, Math.PI * 2); ctx.fill();
+    }
+
+    /* Rosy cheeks & smiling beak */
+    ctx.fillStyle = "rgba(255,155,130,0.68)";
+    ctx.beginPath(); ctx.arc(-1, -2, 3.2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(24, -2, 3.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ff9f1c"; ctx.strokeStyle = "#b45309"; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(9, -3); ctx.quadraticCurveTo(12, -5, 15, -3);
+    ctx.quadraticCurveTo(13, sub.cheerT > 0 ? 4 : 2, 12, sub.cheerT > 0 ? 5 : 2.5);
+    ctx.quadraticCurveTo(10, 2, 9, -3);
+    ctx.fill(); ctx.stroke();
+
+    /* Captain Hoot's Yellow Captain's Hat! */
+    ctx.fillStyle = "#0f2947";
+    ctx.beginPath(); ctx.ellipse(12, -21, 15, 3.8, -0.05, 0, Math.PI * 2); ctx.fill();
+    var hatG = ctx.createLinearGradient(0, -33, 24, -20);
+    hatG.addColorStop(0, "#fef08a");
+    hatG.addColorStop(0.6, "#facc15");
+    hatG.addColorStop(1, "#d97706");
+    ctx.fillStyle = hatG; ctx.strokeStyle = "#854d0e"; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(-1, -22);
+    ctx.quadraticCurveTo(12, -35, 24, -22);
+    ctx.quadraticCurveTo(12, -19, -1, -22);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    /* Mini gold anchor emblem */
+    ctx.fillStyle = "#fff7cc";
+    ctx.beginPath(); ctx.arc(12, -26, 2.5, 0, Math.PI * 2); ctx.fill();
+
+    /* Mini brass steering wheel at bottom of cockpit */
+    ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 2.6;
+    ctx.beginPath(); ctx.arc(24, 17, 8, 0, Math.PI * 2); ctx.stroke();
+
+    ctx.restore(); /* end dome clip */
+
+    /* Glass dome cyan tint + glossy Pixar reflection arc */
+    var glassG = ctx.createRadialGradient(20, -20, 4, 11, -7, 33);
+    glassG.addColorStop(0, "rgba(255,255,255,0.34)");
+    glassG.addColorStop(0.55, "rgba(186,230,253,0.12)");
+    glassG.addColorStop(1, "rgba(56,189,248,0.28)");
+    ctx.fillStyle = glassG;
+    ctx.beginPath(); ctx.ellipse(11, -7, 30.5, 26, -0.05, 0, Math.PI * 2); ctx.fill();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.78)";
+    ctx.lineWidth = 4; ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.arc(11, -7, 23, -Math.PI * 0.72, -Math.PI * 0.25);
+    ctx.stroke();
+
+    ctx.restore();
+
+    /* 6. Glowing Front Headlamp Lens & Nose Bumper */
+    ctx.fillStyle = "#b45309"; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.ellipse(60, 14, 11, 13, 0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    var bulbG = ctx.createRadialGradient(62, 12, 1.5, 62, 14, 9);
+    bulbG.addColorStop(0, "#ffffff");
+    bulbG.addColorStop(0.55, "#fef08a");
+    bulbG.addColorStop(1, "#f59e0b");
+    ctx.fillStyle = bulbG;
+    ctx.beginPath(); ctx.ellipse(62, 14, 7.5, 9.5, 0.1, 0, Math.PI * 2); ctx.fill();
+
+    /* Side yellow dive wing fin */
+    var wingTilt = Math.max(-0.35, Math.min(0.35, sub.vy * 0.0014));
+    ctx.save();
+    ctx.translate(-6, 26); ctx.rotate(wingTilt);
+    var diveFinG = ctx.createLinearGradient(0, -8, 0, 12);
+    diveFinG.addColorStop(0, "#fef08a");
+    diveFinG.addColorStop(0.6, "#f59e0b");
+    diveFinG.addColorStop(1, "#b45309");
+    ctx.fillStyle = diveFinG; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 2.8;
+    ctx.beginPath(); ctx.ellipse(0, 2, 22, 8.5, 0.08, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.restore();
+
+    /* Glossy top hull highlight + brass rivets */
+    ctx.fillStyle = "rgba(255,255,255,0.34)";
+    ctx.beginPath(); ctx.ellipse(-28, -24, 16, 4.5, -0.32, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#92400e";
+    [[-38, -22], [-42, -10], [-42, 20], [-36, 30], [45, -14], [47, 2], [44, 24]].forEach(function(rv){
+      ctx.beginPath(); ctx.arc(rv[0], rv[1], 2.1, 0, Math.PI * 2); ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
+  /* ---------- DEEP SEA VOLUMETRIC DARKNESS + HEADLAMP ILLUMINATION MASK ---------- */
+  function drawDeepSeaLighting(){
+    var deepWeight = state.zone === "deep" ? state.zoneFade : (1 - state.zoneFade);
+    if(deepWeight <= 0.02) return;
+
+    var lw = lightCanvas.width, lh = lightCanvas.height;
+    var sx = lw / W, sy = lh / H;
+    var s = getSubScale();
+
+    lightCtx.save();
+    lightCtx.clearRect(0, 0, lw, lh);
+    lightCtx.fillStyle = "rgba(3, 10, 32, " + (0.54 * deepWeight).toFixed(3) + ")";
+    lightCtx.fillRect(0, 0, lw, lh);
+
+    /* Punch out luminous headlamp beam & submarine glow using destination-out */
+    lightCtx.globalCompositeOperation = "destination-out";
+
+    /* Soft glow around Captain Hoot's yellow submarine */
+    var subHalo = lightCtx.createRadialGradient(sub.x * sx, sub.y * sy, 10 * sx, sub.x * sx, sub.y * sy, 140 * s * sx);
+    subHalo.addColorStop(0, "rgba(0,0,0,0.95)");
+    subHalo.addColorStop(1, "rgba(0,0,0,0)");
+    lightCtx.fillStyle = subHalo;
+    lightCtx.beginPath();
+    lightCtx.arc(sub.x * sx, sub.y * sy, 140 * s * sx, 0, Math.PI * 2);
+    lightCtx.fill();
+
+    /* Headlamp cone punch-out illuminating the deep sea! */
+    lightCtx.save();
+    lightCtx.translate(sub.x * sx, sub.y * sy);
+    lightCtx.rotate(sub.pitch * sub.facing);
+    lightCtx.scale((sub.faceVis >= 0 ? 1 : -1) * sx, sy);
+    var cLen = 390 * s, cSpr = 148 * s, lx = 58 * s, ly = 14 * s;
+    var cg = lightCtx.createLinearGradient(lx, ly, lx + cLen, ly);
+    cg.addColorStop(0, "rgba(0,0,0,1)");
+    cg.addColorStop(0.65, "rgba(0,0,0,0.82)");
+    cg.addColorStop(1, "rgba(0,0,0,0)");
+    lightCtx.fillStyle = cg;
+    lightCtx.beginPath();
+    lightCtx.moveTo(lx, ly - 14 * s);
+    lightCtx.lineTo(lx + cLen, ly - cSpr);
+    lightCtx.quadraticCurveTo(lx + cLen * 1.1, ly, lx + cLen, ly + cSpr);
+    lightCtx.lineTo(lx, ly + 14 * s);
+    lightCtx.closePath();
+    lightCtx.fill();
+    lightCtx.restore();
+
+    /* Bioluminescent punch-out around glowing chest when ready */
+    if(state.chestReady || chest.openAmt > 0.05){
+      var cp = getChestPos();
+      var chG = lightCtx.createRadialGradient(cp.x * sx, cp.y * sy, 10 * sx, cp.x * sx, cp.y * sy, 165 * sx);
+      chG.addColorStop(0, "rgba(0,0,0,0.95)");
+      chG.addColorStop(1, "rgba(0,0,0,0)");
+      lightCtx.fillStyle = chG;
+      lightCtx.beginPath(); lightCtx.arc(cp.x * sx, cp.y * sy, 165 * sx, 0, Math.PI * 2); lightCtx.fill();
+    }
+
+    /* Sonar wave lights up the deep sea as it sweeps */
+    sonarWaves.forEach(function(sw){
+      if(sw.delayed && sw.delayed > 0) return;
+      lightCtx.strokeStyle = "rgba(0,0,0," + (sw.alpha * 0.9).toFixed(2) + ")";
+      lightCtx.lineWidth = 44 * sx;
+      lightCtx.beginPath();
+      lightCtx.arc(sw.x * sx, sw.y * sy, sw.r * sx, 0, Math.PI * 2);
+      lightCtx.stroke();
+    });
+
+    lightCtx.restore();
+
+    ctx.save();
+    ctx.drawImage(lightCanvas, 0, 0, W, H);
+    ctx.restore();
+  }
+
+  /* =========================================================================
+     10. MAIN 60FPS UPDATE & RENDER LOOP
+     ========================================================================= */
+  var lastTime = performance.now();
+
+  function update(dt){
+    tAcc += dt;
+
+    if(state.zoneFade < 1){
+      state.zoneFade = Math.min(1, state.zoneFade + dt * 2.1);
+    }
+
+    /* Keyboard steering nudges target smoothly */
+    var keySpd = 380 * dt;
+    if(keys.ArrowLeft || keys.KeyA) sub.targetX -= keySpd;
+    if(keys.ArrowRight || keys.KeyD) sub.targetX += keySpd;
+    if(keys.ArrowUp || keys.KeyW) sub.targetY -= keySpd;
+    if(keys.ArrowDown || keys.KeyS) sub.targetY += keySpd;
+    var ct = clampTarget(sub.targetX, sub.targetY);
+    sub.targetX = ct.x; sub.targetY = ct.y;
+
+    /* Spring-damper physics for buttery Pixar submarine gliding */
+    var dx = sub.targetX - sub.x;
+    var dy = sub.targetY - sub.y;
+    var stiffness = 14.0;
+    var damping = 6.2;
+    sub.vx += (dx * stiffness - sub.vx * damping) * dt;
+    sub.vy += (dy * stiffness - sub.vy * damping) * dt;
+    sub.x += sub.vx * dt;
+    sub.y += sub.vy * dt;
+
+    var spd = Math.hypot(sub.vx, sub.vy);
+    if(Math.abs(sub.vx) > 14){
+      sub.facing = sub.vx >= 0 ? 1 : -1;
+    }
+    sub.faceVis += (sub.facing - sub.faceVis) * Math.min(1, dt * 11);
+    var targetPitch = Math.max(-0.26, Math.min(0.26, sub.vy * 0.00085));
+    sub.pitch += (targetPitch - sub.pitch) * Math.min(1, dt * 8);
+
+    /* Rotating brass propeller & rising bubble trail */
+    sub.propAngle += dt * (9 + Math.min(26, spd * 0.055));
+    sub.bubbleAcc += dt * (4 + Math.min(18, spd * 0.04));
+    while(sub.bubbleAcc >= 1){
+      sub.bubbleAcc -= 1;
+      var s = getSubScale();
+      bubbles.push({
+        x: sub.x - sub.facing * 78 * s + (Math.random() - 0.5) * 10,
+        y: sub.y + 4 * s + (Math.random() - 0.5) * 10,
+        vx: -sub.facing * (25 + Math.random() * 35),
+        vy: -(38 + Math.random() * 55),
+        r: 3.5 + Math.random() * 6.5,
+        life: 1,
+        decay: 0.62 + Math.random() * 0.35,
+        hue: 192 + Math.random() * 22,
+        rainbow: false
+      });
+    }
+
+    if(sub.bounce > 0) sub.bounce = Math.max(0, sub.bounce - dt * 1.9);
+    if(sub.cheerT > 0) sub.cheerT = Math.max(0, sub.cheerT - dt);
+    sub.blinkT -= dt;
+    if(sub.blinkT <= 0) sub.blinkT = 2.8 + Math.random() * 2.4;
+
+    /* Update sea creatures & check proximity discovery with submarine! */
+    var b = getPlayBounds();
+    var subHitR = 72 * getSubScale();
+    creatures.forEach(function(cr){
+      cr.x += cr.vx * dt;
+      if(cr.x < b.minX){
+        cr.x = b.minX;
+        cr.vx = Math.abs(cr.vx);
+        cr.dir = 1;
+      } else if(cr.x > b.maxX){
+        cr.x = b.maxX;
+        cr.vx = -Math.abs(cr.vx);
+        cr.dir = -1;
+      }
+      cr.faceVis += (cr.dir - cr.faceVis) * Math.min(1, dt * 9);
+      cr.baseY = Math.min(b.maxY - 40, Math.max(b.minY + 32, cr.baseY));
+      cr.y = cr.baseY + Math.sin(tAcc * 1.9 + cr.phase) * cr.amp;
+
+      if(cr.flipT > 0) cr.flipT = Math.max(0, cr.flipT - dt * 1.25);
+      if(cr.waveT > 0) cr.waveT = Math.max(0, cr.waveT - dt);
+      if(cr.glowBoost > 0) cr.glowBoost = Math.max(0, cr.glowBoost - dt * 0.65);
+      if(cr.cooldown > 0) cr.cooldown = Math.max(0, cr.cooldown - dt);
+
+      /* Pilot submarine right up to any sea friend to discover / flip them! */
+      var dSub = Math.hypot(sub.x - cr.x, sub.y - cr.y);
+      if(state.hasSteered && dSub < subHitR + 22 * cr.size && cr.cooldown <= 0){
+        interactCreature(cr);
+      }
+    });
+
+    /* Hidden pearls proximity & respawn */
+    hiddenPearls.forEach(function(p){
+      if(p.shimmerT > 0) p.shimmerT = Math.max(0, p.shimmerT - dt);
+      if(p.collected){
+        p.respawnT -= dt;
+        if(p.respawnT <= 0) p.collected = false;
+        return;
+      }
+      var pp = getPearlPos(p);
+      if(state.hasSteered && Math.hypot(sub.x - pp.x, sub.y - pp.y) < subHitR * 0.95){
+        collectPearl(p);
+      }
+    });
+
+    /* Treasure chest proximity trigger & celebration reset */
+    var cp = getChestPos();
+    if(state.chestReady && !chest.opening){
+      if(Math.hypot(sub.x - cp.x, sub.y - cp.y) < subHitR + cp.r * 0.72){
+        triggerChest();
+      }
+    }
+    if(chest.wobbleT > 0) chest.wobbleT = Math.max(0, chest.wobbleT - dt * 2.2);
+    if(chest.opening){
+      chest.openAmt = Math.min(1, chest.openAmt + dt * 4.2);
+      chest.celebrateT -= dt;
+      if(chest.celebrateT <= 0){
+        chest.opening = false;
+        state.cycleFound = 0;
+        spawnCreatures(false);
+        hiddenPearls.forEach(function(p){ p.collected = false; p.shimmerT = 1.6; });
+        syncHud();
+      }
+    } else if(chest.openAmt > 0){
+      chest.openAmt = Math.max(0, chest.openAmt - dt * 2.8);
+    }
+
+    /* Update Sonar Waves */
+    for(var si = sonarWaves.length - 1; si >= 0; si--){
+      var sw = sonarWaves[si];
+      if(sw.delayed && sw.delayed > 0){ sw.delayed -= dt; continue; }
+      sw.r += dt * Math.max(540, W * 0.62);
+      sw.alpha = Math.max(0, 1 - sw.r / sw.maxR);
+      if(sw.r >= sw.maxR) sonarWaves.splice(si, 1);
+    }
+
+    /* Update Bubbles, Sparkles, Coins, Ripples, Flying Stars */
+    for(var bi = bubbles.length - 1; bi >= 0; bi--){
+      var bb = bubbles[bi];
+      bb.x += (bb.vx + Math.sin(tAcc * 5 + bi) * 14) * dt;
+      bb.y += bb.vy * dt;
+      bb.vx *= 0.96;
+      bb.life -= bb.decay * dt;
+      if(bb.life <= 0 || bb.y < -30) bubbles.splice(bi, 1);
+    }
+    for(var ki = sparkles.length - 1; ki >= 0; ki--){
+      var sp = sparkles[ki];
+      sp.x += sp.vx * dt;
+      sp.y += sp.vy * dt;
+      sp.vx *= 0.94; sp.vy *= 0.94;
+      sp.rot += dt * 5;
+      sp.life -= sp.decay * dt;
+      if(sp.life <= 0) sparkles.splice(ki, 1);
+    }
+    for(var ci = coins.length - 1; ci >= 0; ci--){
+      var co = coins[ci];
+      co.x += co.vx * dt;
+      co.y += co.vy * dt;
+      co.vy += 320 * dt;
+      co.vx *= 0.985;
+      co.spin += co.spinSpd * dt;
+      co.life -= dt * 0.44;
+      if(co.life <= 0 || co.y > H + 40) coins.splice(ci, 1);
+    }
+    for(var ri = ripples.length - 1; ri >= 0; ri--){
+      var rp = ripples[ri];
+      rp.r += dt * 115;
+      rp.life -= dt * 1.9;
+      if(rp.life <= 0) ripples.splice(ri, 1);
+    }
+    for(var fi = flyingStars.length - 1; fi >= 0; fi--){
+      var fs = flyingStars[fi];
+      fs.t += dt * 1.35;
+      if(fs.t >= 1) flyingStars.splice(fi, 1);
+    }
+  }
+
+  function render(now){
+    var dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
+    lastTime = now;
+    update(dt);
+
+    /* 1. Real Painted Pixar Ocean Backdrop (Crossfaded Reef <-> Deep Sea) */
+    ctx.fillStyle = state.zone === "deep" ? "#05122d" : "#0a5a8c";
+    ctx.fillRect(0, 0, W, H);
+    if(state.zoneFade < 1){
+      drawCoverImage(bgImages[state.prevZone], 1);
+      drawCoverImage(bgImages[state.zone], state.zoneFade);
+    } else {
+      drawCoverImage(bgImages[state.zone], 1);
+    }
+
+    /* 2. Animated Underwater Sunbeams (Reef) & Bioluminescent Plankton (Deep) */
+    if(state.zone === "reef"){
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for(var rb = 0; rb < 4; rb++){
+        var bx = W * (0.22 + rb * 0.19) + Math.sin(tAcc * 0.7 + rb) * 32;
+        var bw = W * 0.085;
+        var rg = ctx.createLinearGradient(bx, 0, bx + 60, H * 0.72);
+        rg.addColorStop(0, "rgba(255, 252, 210, 0.08)");
+        rg.addColorStop(1, "rgba(125, 211, 252, 0)");
+        ctx.fillStyle = rg;
+        ctx.beginPath();
+        ctx.moveTo(bx - bw * 0.4, 0);
+        ctx.lineTo(bx + bw * 0.4, 0);
+        ctx.lineTo(bx + bw * 1.35, H * 0.78);
+        ctx.lineTo(bx - bw * 0.5, H * 0.78);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ambientMotes.forEach(function(m){
+      var mx = ((m.x + Math.sin(tAcc * 0.4 + m.ph) * 0.025 + 1) % 1) * W;
+      var my = ((m.y - tAcc * m.sp + 10) % 1) * H;
+      var a = (0.28 + Math.sin(tAcc * 2.5 + m.ph) * 0.22) * (state.zone === "deep" ? 1.3 : 0.75);
+      ctx.fillStyle = "hsla(" + m.hue + ", 95%, 82%, " + Math.min(0.85, a).toFixed(2) + ")";
+      ctx.beginPath(); ctx.arc(mx, my, m.r, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+
+    /* 3. Touch Water Ripples */
+    ripples.forEach(function(rp){
+      ctx.save();
+      ctx.strokeStyle = "rgba(186, 230, 253, " + (rp.life * 0.75).toFixed(2) + ")";
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    });
+
+    /* 4. Hidden Pearls, Sunken Treasure Chest, Sea Friends & Captain Hoot Submarine */
+    drawHiddenPearls();
+    drawTreasureChest();
+    drawCreatures();
+    drawSubmarine();
+
+    /* 5. Deep Sea Volumetric Headlamp Illumination Overlay */
+    drawDeepSeaLighting();
+
+    /* 6. Expanding Turquoise Sonar Rings (above lighting so always vivid!) */
+    sonarWaves.forEach(function(sw){
+      if(sw.delayed && sw.delayed > 0) return;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(34, 211, 238, " + (sw.alpha * 0.92).toFixed(2) + ")";
+      ctx.lineWidth = 7 * sw.alpha + 2;
+      ctx.beginPath(); ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = "rgba(207, 250, 254, " + (sw.alpha * 0.85).toFixed(2) + ")";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(sw.x, sw.y, Math.max(1, sw.r - 8), 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    });
+
+    /* 7. Rainbow Pearl Bubbles */
+    bubbles.forEach(function(bb){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, bb.life * 0.9));
+      ctx.fillStyle = "hsla(" + bb.hue + ", 92%, 82%, " + (bb.rainbow ? "0.32" : "0.18") + ")";
+      ctx.strokeStyle = "hsla(" + bb.hue + ", 96%, 80%, 0.92)";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath(); ctx.arc(bb.x, bb.y, bb.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      ctx.beginPath(); ctx.arc(bb.x - bb.r * 0.32, bb.y - bb.r * 0.32, bb.r * 0.24, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    });
+
+    /* 8. Spinning Treasure Coins & Pearls */
+    coins.forEach(function(co){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, co.life * 1.4));
+      ctx.translate(co.x, co.y);
+      if(co.pearl){
+        var pg = ctx.createRadialGradient(-3, -3, 1, 0, 0, co.r);
+        pg.addColorStop(0, "#ffffff"); pg.addColorStop(0.6, "#fbcfe8"); pg.addColorStop(1, "#67e8f9");
+        ctx.fillStyle = pg;
+        ctx.beginPath(); ctx.arc(0, 0, co.r * 0.88, 0, Math.PI * 2); ctx.fill();
+      } else {
+        var cw = Math.max(0.22, Math.abs(Math.cos(co.spin)));
+        ctx.scale(cw, 1);
+        var cg = ctx.createRadialGradient(-co.r * 0.3, -co.r * 0.3, 1, 0, 0, co.r);
+        cg.addColorStop(0, "#fffbeb"); cg.addColorStop(0.5, "#fde047"); cg.addColorStop(1, "#d97706");
+        ctx.fillStyle = cg; ctx.strokeStyle = "#92400e"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0, 0, co.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    /* 9. Sparkle Stars & Flying Reward Stars */
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    sparkles.forEach(function(sp){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, sp.life);
+      ctx.translate(sp.x, sp.y);
+      ctx.rotate(sp.rot);
+      drawStar5(0, 0, sp.r * 1.4, sp.col);
+      ctx.restore();
+    });
+    ctx.restore();
+
+    flyingStars.forEach(function(fs){
+      var u = fs.t, mu = 1 - u;
+      var fx = mu * mu * fs.x0 + 2 * mu * u * fs.cx + u * u * fs.x1;
+      var fy = mu * mu * fs.y0 + 2 * mu * u * fs.cy + u * u * fs.y1;
+      ctx.save();
+      ctx.translate(fx, fy);
+      ctx.rotate(u * Math.PI * 2.5);
+      drawStar5(0, 0, 28 * (1 - u * 0.45), "#fde047");
+      ctx.restore();
+    });
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+})();
+</script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e149">
+<script src="js/hoot-game-tail.js?v=llprev3e149"></script>
+</body>
+</html>

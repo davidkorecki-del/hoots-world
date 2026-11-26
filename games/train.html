@@ -1,0 +1,4503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="../">
+<script>window.__HOOT_GAME_KEY__="train";window.__HOOT_SELF_COACH__=true;</script>
+<script src="js/hoot-game-head.js?v=llprev3e149"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>Hoot's Wooden Train Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#2c1d11;
+    --wood-light:#f6d6a2;
+    --wood-mid:#dfa663;
+    --wood-deep:#a96c34;
+    --wood-dark:#6b3e18;
+    --cream:#fffaf0;
+    --red:#e8483c;
+    --red-dark:#b3281e;
+    --green:#42b859;
+    --green-dark:#26843a;
+    --sky:#36a6f0;
+    --sky-dark:#1a72b5;
+    --brass-top:#fff09a;
+    --brass-mid:#f5b727;
+    --brass-deep:#b8760b;
+    --sun:#ffd43b;
+  }
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:"Fredoka","Nunito",system-ui,sans-serif;
+    background:#84cf5c;
+    color:var(--ink);
+    touch-action:manipulation;
+  }
+
+  #stage{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100dvh;
+    overflow:hidden;
+    background:linear-gradient(180deg,#9de070 0%,#7ec954 55%,#6ab745 100%);
+  }
+
+  #worldCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index:1;
+    cursor:pointer;
+    touch-action:none;
+  }
+
+  /* ==================== TOP WOODEN HUD BAR ==================== */
+  #hud{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    z-index:10;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left));
+    pointer-events:none;
+  }
+
+  .hud-group{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    pointer-events:auto;
+    min-width:0;
+  }
+
+  .track-pill{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 16px;
+    border-radius:22px;
+    border:4px solid var(--wood-dark);
+    background:linear-gradient(180deg,#fff7e4 0%,#f0d29c 100%);
+    color:var(--ink);
+    font-family:inherit;
+    font-weight:700;
+    font-size:18px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    box-shadow:0 5px 0 var(--wood-dark), 0 8px 16px rgba(44,29,17,.22), inset 0 2px 0 rgba(255,255,255,.7);
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1), background .18s, box-shadow .14s;
+    flex:0 0 auto;
+  }
+  .track-pill:active{
+    transform:translateY(3px) scale(.95);
+    box-shadow:0 2px 0 var(--wood-dark), 0 4px 8px rgba(44,29,17,.18);
+  }
+  .track-pill.active{
+    background:linear-gradient(180deg,#ffe46b 0%,#f5ad1d 100%);
+    border-color:#5a2e08;
+    box-shadow:0 0 0 3.5px #fff, 0 5px 0 #5a2e08, 0 10px 20px rgba(44,29,17,.28);
+    transform:translateY(-2px);
+  }
+  .track-pill .pill-ico{
+    width:32px;
+    height:32px;
+    display:grid;
+    place-items:center;
+    flex:none;
+  }
+  .track-pill .pill-ico svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .track-pill .pill-txt{
+    white-space:nowrap;
+    line-height:1;
+  }
+
+  #starPill{
+    min-height:64px;
+    height:64px;
+    padding:0 14px;
+    border-radius:22px;
+    border:4px solid var(--wood-dark);
+    background:linear-gradient(180deg,#fffdf5 0%,#fae4b0 100%);
+    box-shadow:0 5px 0 var(--wood-dark), 0 8px 14px rgba(44,29,17,.2);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    font-size:22px;
+    font-weight:700;
+    color:var(--ink);
+    flex:0 0 auto;
+    transition:transform .22s cubic-bezier(.34,1.8,.5,1);
+  }
+  #starPill.pop{
+    transform:scale(1.18);
+  }
+  #starPill svg{
+    width:30px;
+    height:30px;
+    display:block;
+    filter:drop-shadow(0 2px 2px rgba(184,118,11,.35));
+  }
+
+  .hud-icon-btn{
+    width:64px;
+    height:64px;
+    min-width:64px;
+    min-height:64px;
+    padding:0;
+    border-radius:22px;
+    border:4px solid var(--wood-dark);
+    background:linear-gradient(180deg,#fff7e4 0%,#f0d29c 100%);
+    color:var(--ink);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    box-shadow:0 5px 0 var(--wood-dark), 0 8px 16px rgba(44,29,17,.22), inset 0 2px 0 rgba(255,255,255,.7);
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1);
+    flex:0 0 auto;
+  }
+  .hud-icon-btn:active{
+    transform:translateY(3px) scale(.94);
+    box-shadow:0 2px 0 var(--wood-dark);
+  }
+  .hud-icon-btn.muted{
+    background:linear-gradient(180deg,#fde2e2 0%,#f5b2b2 100%);
+  }
+  .hud-icon-btn svg{
+    width:34px;
+    height:34px;
+    display:block;
+  }
+
+  /* ==================== FIRST-PERSON CAB VIEW TOGGLE ==================== */
+  #btnCabView{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 18px;
+    border-radius:22px;
+    border:4px solid #164e63;
+    background:linear-gradient(180deg,#7ee8ff 0%,#22b8f0 56%,#0d8fd6 100%);
+    color:#ffffff;
+    text-shadow:0 2px 0 rgba(14,56,82,.55);
+    font-family:inherit;
+    font-weight:700;
+    font-size:19px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    box-shadow:0 5px 0 #164e63, 0 8px 18px rgba(14,78,99,.32), inset 0 2.5px 0 rgba(255,255,255,.65);
+    transition:transform .14s cubic-bezier(.34,1.6,.5,1), background .18s, box-shadow .14s;
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  #btnCabView:active{
+    transform:translateY(3px) scale(.95);
+    box-shadow:0 2px 0 #164e63, 0 4px 8px rgba(14,78,99,.22);
+  }
+  #btnCabView.active{
+    border-color:#5a2e08;
+    background:linear-gradient(180deg,#ffe878 0%,#f5b222 58%,#de8a0c 100%);
+    color:#2c1d11;
+    text-shadow:0 1px 0 rgba(255,255,255,.5);
+    box-shadow:0 0 0 3.5px #fff, 0 5px 0 #5a2e08, 0 10px 22px rgba(44,29,17,.32);
+    transform:translateY(-2px);
+  }
+  #btnCabView .cab-ico{
+    font-size:24px;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+  }
+  #btnCabView .cab-txt{
+    line-height:1;
+    white-space:nowrap;
+  }
+
+  /* ==================== BOTTOM TACTILE WOODEN CONSOLE ==================== */
+  #consoleWrap{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:10;
+    display:flex;
+    justify-content:center;
+    padding:0 max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+    pointer-events:none;
+  }
+
+  #console{
+    pointer-events:auto;
+    max-width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:nowrap;
+    gap:10px;
+    padding:10px 14px;
+    border-radius:30px;
+    border:4px solid var(--wood-dark);
+    background:
+      repeating-linear-gradient(90deg, rgba(169,108,52,.11) 0 38px, rgba(255,255,255,.04) 38px 76px),
+      linear-gradient(180deg,#f0c583 0%,#d89d56 58%,#c5853d 100%);
+    box-shadow:
+      0 7px 0 var(--wood-dark),
+      0 14px 28px rgba(34,20,8,.34),
+      inset 0 3px 0 rgba(255,244,218,.7);
+  }
+
+  .console-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  .wood-divider{
+    width:4px;
+    height:48px;
+    border-radius:4px;
+    background:rgba(107,62,24,.32);
+    box-shadow:1px 0 0 rgba(255,245,220,.45);
+    flex:none;
+  }
+
+  .ctrl-btn{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 12px;
+    border-radius:20px;
+    border:3.5px solid var(--wood-dark);
+    background:linear-gradient(180deg,#fffaf0 0%,#f3dcb1 100%);
+    color:var(--ink);
+    font-family:inherit;
+    font-weight:700;
+    font-size:20px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    cursor:pointer;
+    position:relative;
+    box-shadow:0 5px 0 var(--wood-dark), inset 0 2px 0 rgba(255,255,255,.75);
+    transition:transform .13s cubic-bezier(.34,1.6,.5,1), box-shadow .13s, background .15s;
+    flex:0 0 auto;
+  }
+  .ctrl-btn:active{
+    transform:translateY(3px) scale(.94);
+    box-shadow:0 2px 0 var(--wood-dark);
+  }
+  .ctrl-btn svg{
+    width:34px;
+    height:34px;
+    display:block;
+    flex:none;
+  }
+
+  /* Go / Stop Button */
+  #goStopBtn{
+    min-width:72px;
+    background:linear-gradient(180deg,#7ae582 0%,#35b84d 100%);
+    border-color:#1c5e2a;
+    box-shadow:0 5px 0 #1c5e2a, inset 0 2px 0 rgba(255,255,255,.55);
+  }
+  #goStopBtn.paused{
+    background:linear-gradient(180deg,#ff8c7a 0%,#e5463a 100%);
+    border-color:#7d1c15;
+    box-shadow:0 5px 0 #7d1c15, inset 0 2px 0 rgba(255,255,255,.45);
+  }
+
+  /* Reverse Button */
+  #reverseBtn{
+    background:linear-gradient(180deg,#8fd3ff 0%,#379be8 100%);
+    border-color:#154c7a;
+    box-shadow:0 5px 0 #154c7a, inset 0 2px 0 rgba(255,255,255,.5);
+  }
+  #reverseBtn.reversed{
+    background:linear-gradient(180deg,#c79eff 0%,#844ee0 100%);
+    border-color:#452182;
+    box-shadow:0 0 0 3px #fff, 0 5px 0 #452182;
+  }
+
+  /* Speed Group */
+  #speedGroup{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:4px;
+    border-radius:24px;
+    background:rgba(107,62,24,.2);
+    box-shadow:inset 0 2px 5px rgba(55,30,10,.25);
+  }
+  .speed-btn{
+    min-width:64px;
+    min-height:64px;
+    height:64px;
+    padding:0 10px;
+    border-radius:18px;
+    border:3.5px solid var(--wood-dark);
+    background:linear-gradient(180deg,#fffaf0 0%,#edd19e 100%);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 4px 0 var(--wood-dark), inset 0 2px 0 rgba(255,255,255,.7);
+    transition:transform .13s cubic-bezier(.34,1.6,.5,1), background .15s;
+    flex:0 0 auto;
+  }
+  .speed-btn:active{
+    transform:translateY(3px) scale(.94);
+    box-shadow:0 1px 0 var(--wood-dark);
+  }
+  .speed-btn svg{
+    width:36px;
+    height:36px;
+    display:block;
+  }
+  .speed-btn.active{
+    background:linear-gradient(180deg,#ffe46b 0%,#f5ad1d 100%);
+    border-color:#5a2e08;
+    box-shadow:0 0 0 3px #fff, 0 4px 0 #5a2e08;
+    transform:translateY(-2px);
+  }
+  .speed-btn[data-speed="turbo"].active{
+    background:linear-gradient(180deg,#ffae52 0%,#f05a24 100%);
+    border-color:#7d2105;
+    box-shadow:0 0 0 3px #fff, 0 4px 0 #7d2105;
+  }
+
+  /* Add Car Button */
+  #addCarBtn{
+    min-width:78px;
+    padding:0 12px;
+    flex-direction:column;
+    gap:3px;
+    background:linear-gradient(180deg,#fff2c2 0%,#f7cb5c 100%);
+    border-color:#6b4108;
+    box-shadow:0 5px 0 #6b4108, inset 0 2px 0 rgba(255,255,255,.7);
+  }
+  .add-car-top{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    line-height:1;
+  }
+  .add-car-top svg{
+    width:30px;
+    height:30px;
+  }
+  .car-dots{
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .car-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    border:2px solid #6b4108;
+    background:rgba(255,255,255,.55);
+    transition:transform .2s cubic-bezier(.34,1.8,.5,1), background .2s;
+  }
+  .car-dot.on{
+    background:#e8483c;
+    transform:scale(1.18);
+  }
+  .car-dot:nth-child(2).on{ background:#36a6f0; }
+  .car-dot:nth-child(3).on{ background:#42b859; }
+  .car-dot:nth-child(4).on{ background:#a855f7; }
+
+  /* Giant Brass Train Whistle Button */
+  #whistleBtn{
+    min-width:96px;
+    min-height:68px;
+    height:68px;
+    padding:0 18px;
+    border-radius:24px;
+    border:4px solid #613904;
+    background:
+      radial-gradient(circle at 30% 24%, #fffbe0 0%, #ffe066 36%, #eb9f13 78%, #c97d06 100%);
+    box-shadow:
+      0 6px 0 #613904,
+      0 10px 22px rgba(97,57,4,.36),
+      inset 0 3px 2px rgba(255,255,255,.8);
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    transition:transform .12s cubic-bezier(.34,1.8,.5,1), box-shadow .12s;
+    flex:0 0 auto;
+  }
+  #whistleBtn:active,
+  #whistleBtn.tooting{
+    transform:translateY(3px) scale(1.06);
+    box-shadow:0 0 0 4px #fff, 0 3px 0 #613904, 0 0 24px rgba(255,220,70,.85);
+  }
+  #whistleBtn svg{
+    width:44px;
+    height:44px;
+    display:block;
+    filter:drop-shadow(0 2px 1px rgba(97,57,4,.35));
+  }
+
+  /* ==================== RESPONSIVE BREAKPOINTS ==================== */
+  /* iPad / Medium Landscape */
+  @media (max-width:1060px){
+    .track-pill{ padding:0 12px; font-size:16px; gap:6px; }
+    #btnCabView{ padding:0 14px; font-size:17px; gap:6px; }
+    #console{ gap:8px; padding:8px 12px; }
+  }
+  @media (max-width:860px){
+    .track-pill{ padding:0 10px; font-size:15px; gap:5px; }
+    #btnCabView{ padding:0 12px; font-size:16px; }
+  }
+
+  /* Compact Phone Portrait (iPhone 390x844 etc.) — ZERO overflow, ALL buttons >=64px */
+  @media (max-width:740px){
+    #hud{
+      flex-wrap:wrap;
+      padding:max(6px,env(safe-area-inset-top)) 8px 4px 8px;
+      gap:6px;
+    }
+    .hud-group{ gap:6px; }
+    #trackPills{ order:1; }
+    #hudRight{ order:2; }
+    #cabViewGroup{
+      order:3;
+      width:100%;
+      justify-content:center;
+    }
+    #btnCabView{
+      min-height:64px;
+      height:64px;
+      padding:0 20px;
+      font-size:18px;
+      border-radius:20px;
+      border-width:3.5px;
+    }
+    .track-pill{
+      width:64px;
+      min-width:64px;
+      padding:0;
+      border-radius:18px;
+      border-width:3.5px;
+    }
+    .track-pill .pill-txt{ display:none; }
+    #starPill{
+      padding:0 10px;
+      font-size:18px;
+      gap:4px;
+      border-radius:18px;
+      border-width:3.5px;
+    }
+    #starPill svg{ width:24px; height:24px; }
+    .hud-icon-btn{
+      border-radius:18px;
+      border-width:3.5px;
+    }
+
+    #consoleWrap{
+      padding:0 6px max(6px,env(safe-area-inset-bottom)) 6px;
+    }
+    #console{
+      width:100%;
+      max-width:378px;
+      flex-direction:column;
+      gap:7px;
+      padding:8px;
+      border-radius:24px;
+      border-width:3.5px;
+    }
+    .wood-divider{ display:none; }
+    .console-row{
+      width:100%;
+      gap:7px;
+      justify-content:space-between;
+    }
+    .ctrl-btn{
+      flex:1 1 64px;
+      min-width:64px;
+      min-height:64px;
+      height:64px;
+      padding:0 6px;
+      border-radius:18px;
+    }
+    #goStopBtn{ min-width:64px; }
+    #addCarBtn{ min-width:72px; }
+    #whistleBtn{
+      flex:1.45 1 92px;
+      min-width:92px;
+      min-height:64px;
+      height:64px;
+      padding:0 10px;
+      border-radius:18px;
+    }
+    #speedGroup{
+      width:100%;
+      justify-content:space-between;
+      padding:4px;
+      gap:6px;
+      border-radius:20px;
+    }
+    .speed-btn{
+      flex:1 1 64px;
+      min-width:64px;
+      min-height:64px;
+      height:64px;
+      border-radius:16px;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="worldCanvas" aria-label="Wooden Train Railway Meadow"></canvas>
+
+  <!-- Top Tactile Wooden HUD -->
+  <div id="hud">
+    <div class="hud-group" id="trackPills" role="group" aria-label="Track Layouts">
+      <button class="track-pill active" type="button" data-layout="meadow" aria-label="Meadow Loop Track" aria-pressed="true">
+        <span class="pill-ico" aria-hidden="true">
+          <svg viewBox="0 0 36 36">
+            <rect x="4" y="8" width="28" height="20" rx="10" fill="none" stroke="#8a501c" stroke-width="6.5"/>
+            <rect x="4" y="8" width="28" height="20" rx="10" fill="none" stroke="#f5cb86" stroke-width="3.2"/>
+            <rect x="4" y="8" width="28" height="20" rx="10" fill="none" stroke="#a96c34" stroke-width="1.2" stroke-dasharray="2 3"/>
+          </svg>
+        </span>
+        <span class="pill-txt">Meadow</span>
+      </button>
+      <button class="track-pill" type="button" data-layout="figure8" aria-label="Figure-8 Bridge Track" aria-pressed="false">
+        <span class="pill-ico" aria-hidden="true">
+          <svg viewBox="0 0 36 36">
+            <path d="M18 18 C11 8, 3 10, 3 18 C3 26, 11 28, 18 18 C25 8, 33 10, 33 18 C33 26, 25 28, 18 18 Z" fill="none" stroke="#8a501c" stroke-width="6.2" stroke-linejoin="round"/>
+            <path d="M18 18 C11 8, 3 10, 3 18 C3 26, 11 28, 18 18 C25 8, 33 10, 33 18 C33 26, 25 28, 18 18 Z" fill="none" stroke="#f5cb86" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="18" cy="18" r="3.4" fill="#d97706" stroke="#6b3e18" stroke-width="1.4"/>
+          </svg>
+        </span>
+        <span class="pill-txt">Figure-8</span>
+      </button>
+      <button class="track-pill" type="button" data-layout="mountain" aria-label="Mountain Tunnel Track" aria-pressed="false">
+        <span class="pill-ico" aria-hidden="true">
+          <svg viewBox="0 0 36 36">
+            <path d="M3 29 L14 8 L21 19 L25 13 L33 29 Z" fill="#4f9d53" stroke="#2c1d11" stroke-width="2.4" stroke-linejoin="round"/>
+            <path d="M11 14 L14 8 L17.5 14 L15.5 13 L14 14.8 L12.5 13 Z" fill="#fffdf8"/>
+            <path d="M12.5 29 C12.5 21, 23.5 21, 23.5 29 Z" fill="#2c1d11" stroke="#b5834a" stroke-width="2.2"/>
+          </svg>
+        </span>
+        <span class="pill-txt">Tunnel</span>
+      </button>
+    </div>
+
+    <div class="hud-group" id="cabViewGroup">
+      <button id="btnCabView" type="button" aria-label="Switch to First-Person Cab View" aria-pressed="false">
+        <span class="cab-ico" aria-hidden="true">👀</span>
+        <span class="cab-txt">Cab View</span>
+      </button>
+    </div>
+
+    <div class="hud-group" id="hudRight">
+      <div id="starPill" aria-label="Stars earned">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2.5 L20.1 10.8 L29.2 12.1 L22.6 18.5 L24.2 27.6 L16 23.3 L7.8 27.6 L9.4 18.5 L2.8 12.1 L11.9 10.8 Z" fill="#ffd43b" stroke="#8a501c" stroke-width="2.4" stroke-linejoin="round"/>
+          <circle cx="13.5" cy="13" r="2" fill="#fff9db"/>
+        </svg>
+        <span id="starCount">0</span>
+      </div>
+      <button class="hud-icon-btn" id="muteBtn" type="button" aria-label="Toggle Sound" aria-pressed="false">
+        <svg id="soundOnIcon" viewBox="0 0 36 36" aria-hidden="true">
+          <path d="M6 14 H12 L20 7 V29 L12 22 H6 Z" fill="#5a3413" stroke="#2c1d11" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M24 12 C27 14.5, 27 21.5, 24 24" fill="none" stroke="#2c1d11" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M28 8.5 C32.5 13, 32.5 23, 28 27.5" fill="none" stroke="#2c1d11" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <svg id="soundOffIcon" viewBox="0 0 36 36" aria-hidden="true" style="display:none">
+          <path d="M6 14 H12 L20 7 V29 L12 22 H6 Z" fill="#9c4242" stroke="#2c1d11" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M24 13 L32 23 M32 13 L24 23" fill="none" stroke="#b3281e" stroke-width="3.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Tactile Wooden Controller Console -->
+  <div id="consoleWrap">
+    <div id="console" role="toolbar" aria-label="Train Controls">
+      <div class="console-row">
+        <!-- Go / Stop Toggle -->
+        <button class="ctrl-btn" id="goStopBtn" type="button" aria-label="Pause Train" aria-pressed="true">
+          <svg id="pauseSvg" viewBox="0 0 36 36" aria-hidden="true">
+            <rect x="8" y="6" width="7.5" height="24" rx="3.5" fill="#fffdf8" stroke="#1c5e2a" stroke-width="2.4"/>
+            <rect x="20.5" y="6" width="7.5" height="24" rx="3.5" fill="#fffdf8" stroke="#1c5e2a" stroke-width="2.4"/>
+          </svg>
+          <svg id="goSvg" viewBox="0 0 36 36" aria-hidden="true" style="display:none">
+            <path d="M11 6.5 L29 18 L11 29.5 Z" fill="#fffdf8" stroke="#7d1c15" stroke-width="2.6" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Reverse Direction -->
+        <button class="ctrl-btn" id="reverseBtn" type="button" aria-label="Reverse Direction" aria-pressed="false">
+          <svg viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M11 13 H26 L21.5 8.5" fill="none" stroke="#fffdf8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M25 23 H10 L14.5 27.5" fill="none" stroke="#fffdf8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Add / Customize Train Car -->
+        <button class="ctrl-btn" id="addCarBtn" type="button" aria-label="Add Train Car">
+          <span class="add-car-top" aria-hidden="true">
+            <svg viewBox="0 0 42 30">
+              <rect x="5" y="9" width="24" height="14" rx="4" fill="#36a6f0" stroke="#2c1d11" stroke-width="2.4"/>
+              <rect x="9" y="12.5" width="7" height="5.5" rx="1.5" fill="#fff7d6" stroke="#2c1d11" stroke-width="1.5"/>
+              <rect x="18" y="12.5" width="7" height="5.5" rx="1.5" fill="#fff7d6" stroke="#2c1d11" stroke-width="1.5"/>
+              <circle cx="11" cy="24.5" r="3.6" fill="#ffd43b" stroke="#2c1d11" stroke-width="2"/>
+              <circle cx="23" cy="24.5" r="3.6" fill="#ffd43b" stroke="#2c1d11" stroke-width="2"/>
+              <circle cx="34" cy="10" r="7.5" fill="#42b859" stroke="#2c1d11" stroke-width="2"/>
+              <path d="M34 6.5 V13.5 M30.5 10 H37.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="car-dots" id="carDots" aria-hidden="true">
+            <span class="car-dot on"></span>
+            <span class="car-dot"></span>
+            <span class="car-dot"></span>
+            <span class="car-dot"></span>
+          </span>
+        </button>
+
+        <!-- Giant Brass Train Whistle -->
+        <button id="whistleBtn" type="button" aria-label="Blow Train Whistle">
+          <svg viewBox="0 0 54 42" aria-hidden="true">
+            <!-- Steam puffs -->
+            <circle cx="43" cy="9" r="4.5" fill="#fff" opacity=".95"/>
+            <circle cx="49" cy="14" r="3.5" fill="#fff" opacity=".9"/>
+            <!-- Brass whistle body -->
+            <path d="M7 24 L26 17 L40 9 C42 15, 42 25, 40 31 L26 26 L7 28 Z" fill="#ffe066" stroke="#4d2c03" stroke-width="2.8" stroke-linejoin="round"/>
+            <ellipse cx="40" cy="20" rx="4.2" ry="11" fill="#f59f00" stroke="#4d2c03" stroke-width="2.6"/>
+            <rect x="4" y="21.5" width="6.5" height="8" rx="3" fill="#d97706" stroke="#4d2c03" stroke-width="2.4"/>
+            <!-- Highlight -->
+            <path d="M13 22 L33 14" stroke="#fffbe0" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="wood-divider" aria-hidden="true"></div>
+
+      <!-- Speed Selector Row -->
+      <div class="console-row">
+        <div id="speedGroup" role="group" aria-label="Train Speed">
+          <button class="speed-btn" id="speedSlowBtn" type="button" data-speed="slow" aria-label="Slow Speed" aria-pressed="false">
+            <svg viewBox="0 0 40 36" aria-hidden="true">
+              <ellipse cx="20" cy="22" rx="12" ry="8.5" fill="#42b859" stroke="#2c1d11" stroke-width="2.4"/>
+              <path d="M12 22 Q20 15 28 22" fill="none" stroke="#267336" stroke-width="2.2"/>
+              <circle cx="33" cy="21" r="4.8" fill="#8ce99a" stroke="#2c1d11" stroke-width="2.2"/>
+              <circle cx="34.5" cy="20" r="1.2" fill="#2c1d11"/>
+              <rect x="11" y="27" width="4.5" height="4.5" rx="2" fill="#8ce99a" stroke="#2c1d11" stroke-width="2"/>
+              <rect x="24" y="27" width="4.5" height="4.5" rx="2" fill="#8ce99a" stroke="#2c1d11" stroke-width="2"/>
+            </svg>
+          </button>
+          <button class="speed-btn active" id="speedCruiseBtn" type="button" data-speed="cruise" aria-label="Cruise Speed" aria-pressed="true">
+            <svg viewBox="0 0 40 36" aria-hidden="true">
+              <rect x="7" y="13" width="13" height="14" rx="3" fill="#e8483c" stroke="#2c1d11" stroke-width="2.3"/>
+              <rect x="18" y="16" width="14" height="11" rx="3" fill="#e8483c" stroke="#2c1d11" stroke-width="2.3"/>
+              <rect x="26" y="8" width="5" height="9" rx="1.5" fill="#495057" stroke="#2c1d11" stroke-width="2"/>
+              <rect x="10" y="16" width="6" height="5" rx="1.2" fill="#fff7d6" stroke="#2c1d11" stroke-width="1.5"/>
+              <circle cx="13" cy="28" r="4" fill="#ffd43b" stroke="#2c1d11" stroke-width="2"/>
+              <circle cx="27" cy="28" r="4" fill="#ffd43b" stroke="#2c1d11" stroke-width="2"/>
+            </svg>
+          </button>
+          <button class="speed-btn" id="speedTurboBtn" type="button" data-speed="turbo" aria-label="Turbo Speed" aria-pressed="false">
+            <svg viewBox="0 0 40 36" aria-hidden="true">
+              <path d="M23 4 L9 20 H19 L16 32 L31 15 H21 Z" fill="#ffd43b" stroke="#2c1d11" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ==================== STATE ==================== */
+  var state = {
+    layout: "meadow",     // "meadow" | "figure8" | "mountain"
+    running: true,        // starts ALREADY running for instant joy!
+    speed: "cruise",      // "slow" | "cruise" | "turbo"
+    dir: 1,               // 1 forward | -1 reverse
+    carCount: 1,          // 0..4 attached wooden cars (starts with Coal Tender)
+    carTheme: 0,          // cycles custom car paint palettes when tapping + at 4 cars
+    stars: 0,
+    whistles: 0,
+    cabView: false,       // false = top-down Track View | true = First-Person Cab View
+    muted: false
+  };
+
+  var SPEED_PX = { slow: 82, cruise: 162, turbo: 285 };
+  var CHUG_HZ  = { slow: 2.3, cruise: 4.3, turbo: 7.4 };
+
+  /* ==================== DOM REFS ==================== */
+  var canvas = document.getElementById("worldCanvas");
+  var ctx = canvas.getContext("2d");
+  var hudEl = document.getElementById("hud");
+  var consoleEl = document.getElementById("console");
+  var starPillEl = document.getElementById("starPill");
+  var starCountEl = document.getElementById("starCount");
+  var muteBtn = document.getElementById("muteBtn");
+  var soundOnIcon = document.getElementById("soundOnIcon");
+  var soundOffIcon = document.getElementById("soundOffIcon");
+  var goStopBtn = document.getElementById("goStopBtn");
+  var pauseSvg = document.getElementById("pauseSvg");
+  var goSvg = document.getElementById("goSvg");
+  var reverseBtn = document.getElementById("reverseBtn");
+  var addCarBtn = document.getElementById("addCarBtn");
+  var carDotsEl = document.getElementById("carDots");
+  var whistleBtn = document.getElementById("whistleBtn");
+  var btnCabView = document.getElementById("btnCabView");
+  var trackPills = document.querySelectorAll(".track-pill");
+  var speedBtns = document.querySelectorAll(".speed-btn");
+
+  /* ==================== VERIFIED AUDIO ENGINE ==================== */
+  // Every single MP3 below was verified in `git ls-tree -r origin/main --name-only assets/voice/`
+  var VERIFIED_VOICE = {
+    moo: "assets/voice/sound-moo.mp3",
+    quack: "assets/voice/sound-quack.mp3",
+    star: "assets/voice/hoot-star.mp3",
+    great: "assets/voice/hoot-great-job.mp3",
+    yay: "assets/voice/hoot-yay-2.mp3",
+    super: "assets/voice/hoot-super.mp3",
+    amazing: "assets/voice/hoot-amazing.mp3"
+  };
+
+  var actx = null;
+  var noiseBuf = null;
+  var voiceEl = null;
+  var audioUnlocked = false;
+
+  function ensureAudio(){
+    if(state.muted) return null;
+    if(!actx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      try{
+        actx = new AC();
+      }catch(e){ return null; }
+    }
+    if(actx.state === "suspended"){
+      try{ actx.resume(); }catch(e){}
+    }
+    if(!noiseBuf && actx){
+      var len = Math.floor(actx.sampleRate * 0.6);
+      noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
+      var data = noiseBuf.getChannelData(0);
+      var last = 0;
+      for(var i = 0; i < len; i++){
+        var w = Math.random() * 2 - 1;
+        last = (last + 0.06 * w) / 1.06;
+        data[i] = last * 3.1;
+      }
+    }
+    audioUnlocked = true;
+    return actx;
+  }
+
+  function playVoice(key){
+    if(state.muted) return;
+    var src = VERIFIED_VOICE[key];
+    if(!src) return;
+    try{
+      if(!voiceEl) voiceEl = new Audio();
+      voiceEl.pause();
+      voiceEl.currentTime = 0;
+      voiceEl.src = src;
+      var p = voiceEl.play();
+      if(p && p.catch) p.catch(function(){});
+    }catch(e){}
+  }
+
+  /* Authentic multi-oscillator wooden steam train whistle ("Toot-toot!") */
+  function playWhistleSfx(){
+    var ac = ensureAudio();
+    if(!ac) return;
+    var now = ac.currentTime;
+    // Classic 4-chime wooden train whistle chord (F#4, A4, C#5, E5)
+    var freqs = [370, 440, 554.37, 659.25];
+    var bursts = [
+      { start: 0.00, dur: 0.34, gain: 0.13 },
+      { start: 0.42, dur: 0.24, gain: 0.12 }
+    ];
+    bursts.forEach(function(b){
+      var t0 = now + b.start;
+      var t1 = t0 + b.dur;
+      var master = ac.createGain();
+      master.gain.setValueAtTime(0.0001, t0);
+      master.gain.exponentialRampToValueAtTime(b.gain, t0 + 0.045);
+      master.gain.setValueAtTime(b.gain * 0.92, t1 - 0.06);
+      master.gain.exponentialRampToValueAtTime(0.0001, t1 + 0.08);
+      master.connect(ac.destination);
+
+      freqs.forEach(function(f, idx){
+        var osc = ac.createOscillator();
+        osc.type = idx % 2 === 0 ? "triangle" : "sine";
+        osc.frequency.setValueAtTime(f * 0.96, t0);
+        osc.frequency.exponentialRampToValueAtTime(f, t0 + 0.055);
+        osc.frequency.setValueAtTime(f * 0.995, t1);
+        var og = ac.createGain();
+        og.gain.value = idx === 0 ? 0.34 : (idx === 1 ? 0.28 : 0.22);
+        osc.connect(og);
+        og.connect(master);
+        osc.start(t0);
+        osc.stop(t1 + 0.1);
+      });
+
+      // Soft airy steam breath layer
+      if(noiseBuf){
+        var ns = ac.createBufferSource();
+        ns.buffer = noiseBuf;
+        var bp = ac.createBiquadFilter();
+        bp.type = "bandpass";
+        bp.frequency.value = 1150;
+        bp.Q.value = 2.4;
+        var ng = ac.createGain();
+        ng.gain.setValueAtTime(0.0001, t0);
+        ng.gain.linearRampToValueAtTime(0.11, t0 + 0.04);
+        ng.gain.exponentialRampToValueAtTime(0.0001, t1 + 0.05);
+        ns.connect(bp);
+        bp.connect(ng);
+        ng.connect(ac.destination);
+        ns.start(t0);
+        ns.stop(t1 + 0.08);
+      }
+    });
+  }
+
+  /* Rhythmic chugga-chugga steam sound scaled to speed + tunnel echo */
+  function playChugStep(accent, muffled){
+    if(state.muted || !audioUnlocked || !actx || actx.state !== "running" || !noiseBuf) return;
+    var now = actx.currentTime;
+    var src = actx.createBufferSource();
+    src.buffer = noiseBuf;
+    var filter = actx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = muffled ? (accent ? 260 : 210) : (accent ? 540 : 410);
+    filter.Q.value = muffled ? 1.8 : 1.3;
+    var gain = actx.createGain();
+    var peak = (accent ? 0.085 : 0.046) * (muffled ? 0.62 : 1);
+    var dur = state.speed === "turbo" ? 0.075 : (state.speed === "slow" ? 0.14 : 0.105);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(peak, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(actx.destination);
+    src.start(now, Math.random() * 0.25, dur + 0.02);
+  }
+
+  /* Magnetic wooden snap clack when coupling a car */
+  function playMagnetClack(){
+    var ac = ensureAudio();
+    if(!ac) return;
+    var now = ac.currentTime;
+    // Wooden knock
+    var o1 = ac.createOscillator();
+    var g1 = ac.createGain();
+    o1.type = "triangle";
+    o1.frequency.setValueAtTime(340, now);
+    o1.frequency.exponentialRampToValueAtTime(140, now + 0.05);
+    g1.gain.setValueAtTime(0.24, now);
+    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+    o1.connect(g1); g1.connect(ac.destination);
+    o1.start(now); o1.stop(now + 0.07);
+
+    // Metallic magnetic click + joyful chime
+    var o2 = ac.createOscillator();
+    var g2 = ac.createGain();
+    o2.type = "sine";
+    o2.frequency.setValueAtTime(1480, now + 0.03);
+    o2.frequency.exponentialRampToValueAtTime(980, now + 0.07);
+    g2.gain.setValueAtTime(0.16, now + 0.03);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+    o2.connect(g2); g2.connect(ac.destination);
+    o2.start(now + 0.03); o2.stop(now + 0.1);
+
+    // Happy marimba pop
+    playMarimbaNote(523.25 + state.carCount * 88, 0.06, 0.14);
+  }
+
+  /* Crossing gate metallic bell (ding-ding!) */
+  function playCrossingBell(count){
+    var ac = ensureAudio();
+    if(!ac) return;
+    var n = count || 2;
+    var now = ac.currentTime;
+    for(var i = 0; i < n; i++){
+      var t0 = now + i * 0.22;
+      [1175, 2940].forEach(function(freq, k){
+        var o = ac.createOscillator();
+        var g = ac.createGain();
+        o.type = "sine";
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(k === 0 ? 0.13 : 0.055, t0);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.36);
+        o.connect(g); g.connect(ac.destination);
+        o.start(t0); o.stop(t0 + 0.38);
+      });
+    }
+  }
+
+  /* Water splash SFX for Duck Pond */
+  function playSplashSfx(){
+    var ac = ensureAudio();
+    if(!ac || !noiseBuf) return;
+    var now = ac.currentTime;
+    var src = ac.createBufferSource();
+    src.buffer = noiseBuf;
+    var bp = ac.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.setValueAtTime(1100, now);
+    bp.frequency.exponentialRampToValueAtTime(380, now + 0.22);
+    bp.Q.value = 1.4;
+    var g = ac.createGain();
+    g.gain.setValueAtTime(0.16, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.24);
+    src.connect(bp); bp.connect(g); g.connect(ac.destination);
+    src.start(now); src.stop(now + 0.26);
+    playMarimbaNote(659.25, 0.02, 0.11);
+  }
+
+  /* Warm wooden marimba plink for planting flowers/trees & UI taps */
+  var PENTA = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5];
+  var pentaIdx = 0;
+  function playMarimbaNote(freq, delay, vol){
+    var ac = ensureAudio();
+    if(!ac) return;
+    var t0 = ac.currentTime + (delay || 0);
+    var o = ac.createOscillator();
+    var g = ac.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(vol || 0.13, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.24);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t0); o.stop(t0 + 0.26);
+  }
+
+  function playStationCheerSfx(){
+    [523.25, 659.25, 783.99, 1046.5].forEach(function(f, idx){
+      playMarimbaNote(f, idx * 0.065, 0.12);
+    });
+  }
+
+  /* ==================== VIEWPORT & PLAYFIELD METRICS ==================== */
+  var W = window.innerWidth;
+  var H = window.innerHeight;
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var play = { x: 0, y: 80, w: W, h: H - 180, cx: W / 2, cy: H / 2, scale: 1, portrait: false };
+
+  function measurePlayfield(){
+    W = window.innerWidth;
+    H = window.innerHeight;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+
+    var hudRect = hudEl.getBoundingClientRect();
+    var conRect = consoleEl.getBoundingClientRect();
+    var topSafe = Math.max(76, hudRect.bottom + 8);
+    var botSafe = Math.max(96, H - conRect.top + 8);
+    var padX = Math.max(18, W * 0.035);
+    var availH = Math.max(220, H - topSafe - botSafe);
+    var availW = Math.max(240, W - padX * 2);
+
+    play.x = padX;
+    play.y = topSafe;
+    play.w = availW;
+    play.h = availH;
+    play.cx = padX + availW * 0.5;
+    play.cy = topSafe + availH * 0.5;
+    play.portrait = availH > availW * 1.08;
+    play.scale = Math.max(0.66, Math.min(1.18, Math.min(availW, availH) / 480));
+  }
+
+  /* ==================== TRACK GEOMETRY & SPLINE SAMPLER ==================== */
+  var track = {
+    pts: [],         // { x, y, tx, ty, angle, s, z, inTunnel }
+    totalLen: 1000,
+    crossingS: 0,
+    crossingPt: { x: 0, y: 0, angle: 0 },
+    stationPt: { x: 0, y: 0, angle: 0, s: 0 },
+    pondPt: { x: 0, y: 0, rx: 56, ry: 38 },
+    barnPt: { x: 0, y: 0 },
+    cowPt: { x: 0, y: 0 },
+    tunnelHill: null, // { cx, cy, rx, ry, enterPt, exitPt }
+    bridgeInfo: null, // { cx, cy, angle }
+    trees: []
+  };
+
+  function superCos(t, p){ var c = Math.cos(t); return (c < 0 ? -1 : 1) * Math.pow(Math.abs(c), p); }
+  function superSin(t, p){ var s = Math.sin(t); return (s < 0 ? -1 : 1) * Math.pow(Math.abs(s), p); }
+
+  function evalRawCurve(layout, t){
+    var rx = play.w * (play.portrait ? 0.37 : 0.39);
+    var ry = play.h * (play.portrait ? 0.36 : 0.35);
+    var cx = play.cx;
+    var cy = play.cy + (layout === "mountain" ? play.h * 0.05 : 0);
+
+    if(layout === "meadow"){
+      // Classic rounded BRIO stadium oval
+      return {
+        x: cx + rx * superCos(t, 0.84),
+        y: cy + ry * superSin(t, 0.84),
+        z: 0,
+        inTunnel: false
+      };
+    }
+
+    if(layout === "figure8"){
+      // Smooth lemniscate Figure-8 with center wooden overpass bridge
+      var s = Math.sin(t);
+      var c = Math.cos(t);
+      var overBridge = Math.abs(s) < 0.36 && c > 0;
+      if(!play.portrait){
+        return {
+          x: cx + (play.w * 0.41) * s,
+          y: cy + (play.h * 0.40) * (s * c * 1.92),
+          z: overBridge ? 1 : 0,
+          inTunnel: false
+        };
+      } else {
+        return {
+          x: cx + (play.w * 0.41) * (s * c * 1.92),
+          y: cy + (play.h * 0.40) * s,
+          z: overBridge ? 1 : 0,
+          inTunnel: false
+        };
+      }
+    }
+
+    // Mountain Tunnel Loop
+    var mrx = play.w * (play.portrait ? 0.37 : 0.39);
+    var mry = play.h * (play.portrait ? 0.33 : 0.33);
+    var x = cx + mrx * superCos(t, 0.88);
+    var y = cy + mry * superSin(t, 0.88) + mry * 0.08 * Math.sin(2 * t);
+    // Top arc (sin(t) < 0 -> t in [1.26*PI .. 1.74*PI]) runs inside Mountain Tunnel!
+    var inTun = (t > Math.PI * 1.26 && t < Math.PI * 1.74);
+    return { x: x, y: y, z: 0, inTunnel: inTun };
+  }
+
+  function buildTrack(){
+    var N = 360;
+    var raw = [];
+    var cumLen = [0];
+    var total = 0;
+
+    for(var i = 0; i < N; i++){
+      var t = (i / N) * Math.PI * 2;
+      raw.push(evalRawCurve(state.layout, t));
+    }
+    for(var i = 1; i <= N; i++){
+      var a = raw[i - 1];
+      var b = raw[i % N];
+      total += Math.hypot(b.x - a.x, b.y - a.y);
+      cumLen.push(total);
+    }
+
+    // Resample at M evenly-spaced arc-length steps
+    var M = 260;
+    var pts = [];
+    var seg = 0;
+    for(var k = 0; k < M; k++){
+      var targetS = (k / M) * total;
+      while(seg < N - 1 && cumLen[seg + 1] < targetS) seg++;
+      var s0 = cumLen[seg];
+      var s1 = cumLen[seg + 1];
+      var frac = s1 > s0 ? (targetS - s0) / (s1 - s0) : 0;
+      var p0 = raw[seg];
+      var p1 = raw[(seg + 1) % N];
+      pts.push({
+        x: p0.x + (p1.x - p0.x) * frac,
+        y: p0.y + (p1.y - p0.y) * frac,
+        s: targetS,
+        z: p0.z,
+        inTunnel: p0.inTunnel
+      });
+    }
+
+    // Compute smooth tangents & angles
+    for(var k = 0; k < M; k++){
+      var prev = pts[(k - 1 + M) % M];
+      var next = pts[(k + 1) % M];
+      var dx = next.x - prev.x;
+      var dy = next.y - prev.y;
+      var len = Math.hypot(dx, dy) || 1;
+      pts[k].tx = dx / len;
+      pts[k].ty = dy / len;
+      pts[k].angle = Math.atan2(dy, dx);
+    }
+
+    track.pts = pts;
+    track.totalLen = total;
+
+    // Place scenery toys cleanly per layout
+    var S = play.scale;
+    var cx = play.cx;
+    var cy = play.cy;
+    var pw = play.w;
+    var ph = play.h;
+
+    if(state.layout === "meadow"){
+      track.pondPt = {
+        x: cx - pw * (play.portrait ? 0.04 : 0.11),
+        y: cy + ph * (play.portrait ? 0.11 : 0.04),
+        rx: 56 * S,
+        ry: 36 * S
+      };
+      track.barnPt = {
+        x: cx + pw * (play.portrait ? 0.06 : 0.13),
+        y: cy - ph * (play.portrait ? 0.12 : 0.06)
+      };
+      track.cowPt = {
+        x: track.barnPt.x - 42 * S,
+        y: track.barnPt.y + 34 * S
+      };
+      // Train station along bottom straightaway
+      var stSample = sampleTrack(total * 0.25);
+      track.stationPt = {
+        x: stSample.x,
+        y: Math.min(play.y + play.h - 28 * S, stSample.y + 38 * S),
+        angle: 0,
+        s: total * 0.25
+      };
+      // Crossing gate on upper-right curve
+      var crS = total * 0.89;
+      var crSample = sampleTrack(crS);
+      track.crossingS = crS;
+      track.crossingPt = { x: crSample.x, y: crSample.y, angle: crSample.angle };
+      track.tunnelHill = null;
+      track.bridgeInfo = null;
+    } else if(state.layout === "figure8"){
+      if(!play.portrait){
+        track.pondPt = { x: cx - pw * 0.22, y: cy + ph * 0.02, rx: 48 * S, ry: 32 * S };
+        track.barnPt = { x: cx + pw * 0.22, y: cy - ph * 0.05 };
+        track.cowPt  = { x: cx + pw * 0.21, y: cy + ph * 0.10 };
+        var stSample8 = sampleTrack(total * 0.14);
+        track.stationPt = { x: cx, y: play.y + 34 * S, angle: 0, s: stSample8.s };
+        var crS8 = total * 0.68;
+        var cr8 = sampleTrack(crS8);
+        track.crossingS = crS8;
+        track.crossingPt = { x: cr8.x, y: cr8.y, angle: cr8.angle };
+      } else {
+        track.pondPt = { x: cx, y: cy + ph * 0.21, rx: 48 * S, ry: 30 * S };
+        track.barnPt = { x: cx - pw * 0.08, y: cy - ph * 0.24 };
+        track.cowPt  = { x: cx + pw * 0.12, y: cy - ph * 0.16 };
+        track.stationPt = { x: cx + pw * 0.28, y: cy + ph * 0.01, angle: 0, s: total * 0.02 };
+        var crS8p = total * 0.65;
+        var cr8p = sampleTrack(crS8p);
+        track.crossingS = crS8p;
+        track.crossingPt = { x: cr8p.x, y: cr8p.y, angle: cr8p.angle };
+      }
+      var brSample = sampleTrack(0);
+      track.bridgeInfo = { cx: brSample.x, cy: brSample.y, angle: brSample.angle };
+      track.tunnelHill = null;
+    } else {
+      // Mountain Tunnel layout
+      var enterS = null, exitS = null;
+      for(var i = 0; i < pts.length; i++){
+        var p = pts[i];
+        var prev = pts[(i - 1 + pts.length) % pts.length];
+        if(p.inTunnel && !prev.inTunnel) enterS = p;
+        if(!p.inTunnel && prev.inTunnel) exitS = prev;
+      }
+      var topMid = sampleTrack(total * 0.75);
+      var ep1 = enterS || topMid;
+      var ep2 = exitS || topMid;
+      var leftP = ep1.x <= ep2.x ? ep1 : ep2;
+      var rightP = ep1.x <= ep2.x ? ep2 : ep1;
+      var portalSpan = Math.max(90 * S, (rightP.x - leftP.x) * 0.5 + 24 * S);
+      var portalBaseY = Math.max(leftP.y, rightP.y) + 14 * S;
+      track.tunnelHill = {
+        cx: (leftP.x + rightP.x) * 0.5,
+        cy: portalBaseY,
+        rx: portalSpan,
+        ry: Math.min(ph * 0.27, Math.max(76 * S, portalSpan * 0.56)),
+        enterPt: leftP,
+        exitPt: rightP
+      };
+      track.pondPt = {
+        x: cx - pw * (play.portrait ? 0.12 : 0.14),
+        y: cy + ph * 0.12,
+        rx: 50 * S,
+        ry: 32 * S
+      };
+      track.barnPt = {
+        x: cx + pw * (play.portrait ? 0.14 : 0.15),
+        y: cy + ph * 0.06
+      };
+      track.cowPt = {
+        x: track.barnPt.x - 36 * S,
+        y: track.barnPt.y + 34 * S
+      };
+      var stSampleM = sampleTrack(total * 0.25);
+      track.stationPt = {
+        x: stSampleM.x,
+        y: Math.min(play.y + play.h - 26 * S, stSampleM.y + 36 * S),
+        angle: 0,
+        s: total * 0.25
+      };
+      var crSM = total * 0.08;
+      var crM = sampleTrack(crSM);
+      track.crossingS = crSM;
+      track.crossingPt = { x: crM.x, y: crM.y, angle: crM.angle };
+      track.bridgeInfo = null;
+    }
+
+    // Perimeter storybook pine trees
+    track.trees = [
+      { x: play.x + 28 * S, y: play.y + 38 * S, sz: 1.05, wiggle: 0 },
+      { x: play.x + 62 * S, y: play.y + 24 * S, sz: 0.78, wiggle: 0 },
+      { x: play.x + pw - 32 * S, y: play.y + 42 * S, sz: 1.0, wiggle: 0 },
+      { x: play.x + 30 * S, y: play.y + ph - 36 * S, sz: 0.96, wiggle: 0 },
+      { x: play.x + pw - 34 * S, y: play.y + ph - 38 * S, sz: 1.08, wiggle: 0 },
+      { x: play.x + pw - 68 * S, y: play.y + ph - 24 * S, sz: 0.74, wiggle: 0 }
+    ];
+  }
+
+  function sampleTrack(s){
+    var pts = track.pts;
+    var M = pts.length;
+    if(!M) return { x: play.cx, y: play.cy, tx: 1, ty: 0, angle: 0, s: 0, z: 0, inTunnel: false };
+    var tot = track.totalLen;
+    var wrapped = ((s % tot) + tot) % tot;
+    var exact = (wrapped / tot) * M;
+    var i0 = Math.floor(exact) % M;
+    var i1 = (i0 + 1) % M;
+    var f = exact - Math.floor(exact);
+    var p0 = pts[i0];
+    var p1 = pts[i1];
+    // Interpolate angle along shortest arc
+    var da = p1.angle - p0.angle;
+    while(da > Math.PI) da -= Math.PI * 2;
+    while(da < -Math.PI) da += Math.PI * 2;
+    return {
+      x: p0.x + (p1.x - p0.x) * f,
+      y: p0.y + (p1.y - p0.y) * f,
+      tx: p0.tx + (p1.tx - p0.tx) * f,
+      ty: p0.ty + (p1.ty - p0.ty) * f,
+      angle: p0.angle + da * f,
+      s: wrapped,
+      z: p0.z,
+      inTunnel: p0.inTunnel
+    };
+  }
+
+  function arcDist(s1, s2){
+    var tot = track.totalLen;
+    var d = Math.abs(((s1 - s2) % tot + tot) % tot);
+    return Math.min(d, tot - d);
+  }
+
+  /* ==================== ANIMATED ACTORS, FX & PLANTED ITEMS ==================== */
+  var trainS = 120;         // current arc-length of engine along track
+  var wheelPhase = 0;
+  var chugAcc = 0;
+  var chugBeat = 0;
+  var hootWaveTimer = 0;
+  var trainBounce = 0;
+
+  var cowBounce = 0;
+  var barnBounce = 0;
+  var duckSplash = 0;
+  var duckAngle = 0;
+  var stationCheer = 0;
+  var stationAutoWave = 0;
+
+  var gateAngle = 0;        // 0 = open/up, 1 = lowered/closed
+  var gateManualTimer = 0;
+  var gateWasClosed = false;
+  var gateFlashPhase = 0;
+
+  var clouds = [
+    { x: 0.14, y: 0.13, s: 1.0, spd: 0.008 },
+    { x: 0.56, y: 0.10, s: 0.82, spd: 0.006 },
+    { x: 0.86, y: 0.18, s: 1.15, spd: 0.005 }
+  ];
+
+  var steamPuffs = [];
+  var particles = [];       // sparkles, confetti, water drops, floating stars, notes
+  var plantedItems = [];    // meadow flowers & baby pines tapped by the child
+  var layoutFade = 0;       // gentle transition bounce when switching track layouts
+
+  var CAR_THEMES = [
+    { tender: "#2f9e44", caboose: "#38a3f1", logs: "#e8a451", gift: "#9c4ef0" },
+    { tender: "#f06595", caboose: "#ffd43b", logs: "#51cf66", gift: "#ff6b6b" },
+    { tender: "#3bc9db", caboose: "#ff922b", logs: "#cc5de8", gift: "#20c997" },
+    { tender: "#845ef7", caboose: "#51cf66", logs: "#ff8787", gift: "#fcc419" }
+  ];
+
+  function spawnSteam(x, y, big){
+    var count = big ? 6 : 1;
+    for(var i = 0; i < count; i++){
+      steamPuffs.push({
+        x: x + (Math.random() - 0.5) * (big ? 16 : 6),
+        y: y + (Math.random() - 0.5) * (big ? 12 : 4),
+        vx: (Math.random() - 0.5) * (big ? 44 : 18),
+        vy: -(big ? 38 + Math.random() * 42 : 18 + Math.random() * 20),
+        r: (big ? 11 + Math.random() * 10 : 6 + Math.random() * 5) * play.scale,
+        life: 0,
+        maxLife: big ? 1.15 + Math.random() * 0.45 : 0.8 + Math.random() * 0.35
+      });
+    }
+  }
+
+  function spawnSparkles(x, y, colors, count, kind){
+    var cols = colors || ["#ffd43b", "#ff6b6b", "#51cf66", "#38a3f1", "#fff"];
+    for(var i = 0; i < (count || 12); i++){
+      var a = (Math.PI * 2 * i) / (count || 12) + (Math.random() - 0.5) * 0.4;
+      var spd = 45 + Math.random() * 105;
+      particles.push({
+        kind: kind || "star",
+        x: x,
+        y: y,
+        vx: Math.cos(a) * spd,
+        vy: Math.sin(a) * spd - 36,
+        color: cols[i % cols.length],
+        size: (6 + Math.random() * 7) * play.scale,
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 7,
+        life: 0,
+        maxLife: 0.75 + Math.random() * 0.45
+      });
+    }
+  }
+
+  function spawnMusicNotes(x, y){
+    for(var i = 0; i < 4; i++){
+      particles.push({
+        kind: "note",
+        x: x + (Math.random() - 0.5) * 26,
+        y: y - 10,
+        vx: (Math.random() - 0.5) * 55,
+        vy: -55 - Math.random() * 45,
+        color: ["#ffd43b", "#ff6b6b", "#38a3f1", "#a855f7"][i % 4],
+        size: 16 * play.scale,
+        rot: (Math.random() - 0.5) * 0.4,
+        vrot: (Math.random() - 0.5) * 1.5,
+        life: 0,
+        maxLife: 1.05 + Math.random() * 0.35
+      });
+    }
+  }
+
+  function spawnWaterSplash(x, y){
+    for(var i = 0; i < 12; i++){
+      var a = -Math.PI + Math.random() * Math.PI;
+      var spd = 55 + Math.random() * 85;
+      particles.push({
+        kind: "drop",
+        x: x + (Math.random() - 0.5) * 28,
+        y: y,
+        vx: Math.cos(a) * spd,
+        vy: Math.sin(a) * spd - 35,
+        color: i % 2 === 0 ? "#e7f5ff" : "#74c0fc",
+        size: (5 + Math.random() * 5) * play.scale,
+        rot: 0,
+        vrot: 0,
+        life: 0,
+        maxLife: 0.65 + Math.random() * 0.3
+      });
+    }
+  }
+
+  /* ==================== DRAWING HELPERS ==================== */
+  function drawMeadowBg(t){
+    // Warm sunlit meadow gradient
+    var bg = ctx.createRadialGradient(play.cx, play.cy * 0.75, 40, play.cx, play.cy, Math.max(W, H) * 0.85);
+    bg.addColorStop(0, "#aee878");
+    bg.addColorStop(0.55, "#83cf56");
+    bg.addColorStop(1, "#66b241");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Soft sunlit storybook meadow hill patches
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 250, 200, 0.14)";
+    ctx.beginPath();
+    ctx.ellipse(W * 0.22, H * 0.30, W * 0.26, H * 0.16, -0.15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(W * 0.78, H * 0.68, W * 0.28, H * 0.18, 0.12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Subtle decorative grass tufts
+    ctx.strokeStyle = "rgba(63, 128, 38, 0.30)";
+    ctx.lineWidth = 2.2 * play.scale;
+    ctx.lineCap = "round";
+    for(var i = 0; i < 16; i++){
+      var gx = ((i * 197 + 63) % 94 + 3) / 100 * W;
+      var gy = ((i * 131 + 41) % 72 + 14) / 100 * H;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx - 4, gy - 7);
+      ctx.moveTo(gx + 4, gy);
+      ctx.lineTo(gx + 5, gy - 8);
+      ctx.moveTo(gx + 8, gy + 1);
+      ctx.lineTo(gx + 12, gy - 5);
+      ctx.stroke();
+    }
+
+    // Gentle drifting storybook clouds near top sky fringe
+    clouds.forEach(function(cl){
+      var cx = ((cl.x + t * cl.spd) % 1.24 - 0.12) * W;
+      var cy = cl.y * H;
+      var s = cl.s * play.scale * 0.85;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.32)";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 24 * s, 0, Math.PI * 2);
+      ctx.arc(cx + 22 * s, cy - 6 * s, 20 * s, 0, Math.PI * 2);
+      ctx.arc(cx + 42 * s, cy + 2 * s, 17 * s, 0, Math.PI * 2);
+      ctx.arc(cx - 20 * s, cy + 4 * s, 16 * s, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  /* Crossing footpath road drawn underneath the track */
+  function drawCrossingRoad(){
+    var cp = track.crossingPt;
+    if(!cp) return;
+    var S = play.scale;
+    ctx.save();
+    ctx.translate(cp.x, cp.y);
+    ctx.rotate(cp.angle + Math.PI / 2);
+    ctx.fillStyle = "#e8cf9b";
+    ctx.strokeStyle = "#caa96e";
+    ctx.lineWidth = 2.5 * S;
+    ctx.beginPath();
+    ctx.roundRect(-52 * S, -17 * S, 104 * S, 34 * S, 12 * S);
+    ctx.fill();
+    ctx.stroke();
+    // Dashed center stripe
+    ctx.strokeStyle = "#fff8e1";
+    ctx.lineWidth = 2.5 * S;
+    ctx.setLineDash([7 * S, 6 * S]);
+    ctx.beginPath();
+    ctx.moveTo(-42 * S, 0);
+    ctx.lineTo(42 * S, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* BRIO-style wooden grooved tracks (layered by zPass: 0 lower, 1 upper bridge) */
+  function drawTrackPass(zPass){
+    var pts = track.pts;
+    var M = pts.length;
+    if(!M) return;
+    var S = play.scale;
+    var bedW = 34 * S;
+    var railOff = 8.2 * S;
+
+    function strokeSegments(filterFn, drawFn){
+      var inRun = false;
+      ctx.beginPath();
+      for(var i = 0; i <= M; i++){
+        var p = pts[i % M];
+        var ok = filterFn(p);
+        if(ok){
+          if(!inRun){
+            ctx.moveTo(p.x, p.y);
+            inRun = true;
+          } else {
+            ctx.lineTo(p.x, p.y);
+          }
+        } else if(inRun){
+          inRun = false;
+        }
+      }
+      drawFn();
+    }
+
+    var matchFn = function(p){
+      if(state.layout === "figure8") return p.z === zPass;
+      return zPass === 0;
+    };
+
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // 1. Soft grass / bridge drop shadow
+    ctx.save();
+    ctx.translate(0, (zPass === 1 ? 11 : 5) * S);
+    strokeSegments(matchFn, function(){
+      ctx.strokeStyle = zPass === 1 ? "rgba(32, 54, 20, 0.34)" : "rgba(38, 76, 26, 0.25)";
+      ctx.lineWidth = bedW + 4 * S;
+      ctx.stroke();
+    });
+    ctx.restore();
+
+    // 2. If upper bridge (zPass === 1), draw wooden arch support pillars
+    if(zPass === 1 && track.bridgeInfo){
+      var bi = track.bridgeInfo;
+      ctx.save();
+      ctx.translate(bi.cx, bi.cy);
+      ctx.rotate(bi.angle);
+      [-44 * S, 44 * S].forEach(function(ox){
+        ctx.fillStyle = "#b07237";
+        ctx.strokeStyle = "#5c3412";
+        ctx.lineWidth = 2.6 * S;
+        ctx.beginPath();
+        ctx.roundRect(ox - 10 * S, -bedW * 0.68, 20 * S, bedW * 1.36, 5 * S);
+        ctx.fill();
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    // 3. Wooden track outer dark edge (bevel)
+    strokeSegments(matchFn, function(){
+      ctx.strokeStyle = "#8a5221";
+      ctx.lineWidth = bedW + 4.5 * S;
+      ctx.stroke();
+    });
+
+    // 4. Warm beechwood track body
+    strokeSegments(matchFn, function(){
+      ctx.strokeStyle = zPass === 1 ? "#f2cb8a" : "#e7be7c";
+      ctx.lineWidth = bedW;
+      ctx.stroke();
+    });
+
+    // 5. Wooden crossties + subtle BRIO plank join grooves
+    for(var i = 0; i < M; i += 4){
+      var p = pts[i];
+      if(!matchFn(p)) continue;
+      var nx = -p.ty;
+      var ny = p.tx;
+      ctx.strokeStyle = (i % 16 === 0) ? "rgba(115, 66, 24, 0.42)" : "rgba(154, 96, 40, 0.25)";
+      ctx.lineWidth = (i % 16 === 0 ? 2.4 : 1.7) * S;
+      ctx.beginPath();
+      ctx.moveTo(p.x - nx * (bedW * 0.44), p.y - ny * (bedW * 0.44));
+      ctx.lineTo(p.x + nx * (bedW * 0.44), p.y + ny * (bedW * 0.44));
+      ctx.stroke();
+    }
+
+    // 6. Twin carved BRIO wheel grooves (offset left & right)
+    [-railOff, railOff].forEach(function(off){
+      // Groove recessed dark channel
+      ctx.beginPath();
+      var run = false;
+      for(var i = 0; i <= M; i++){
+        var p = pts[i % M];
+        if(matchFn(p)){
+          var rx = p.x - p.ty * off;
+          var ry = p.y + p.tx * off;
+          if(!run){ ctx.moveTo(rx, ry); run = true; }
+          else ctx.lineTo(rx, ry);
+        } else {
+          run = false;
+        }
+      }
+      ctx.strokeStyle = "#915a28";
+      ctx.lineWidth = 4.6 * S;
+      ctx.stroke();
+
+      // Sunlit bottom lip inside groove
+      ctx.strokeStyle = "#f5d7a3";
+      ctx.lineWidth = 1.4 * S;
+      ctx.stroke();
+    });
+
+    // 7. Wooden bridge side safety rails on zPass === 1
+    if(zPass === 1){
+      [-bedW * 0.56, bedW * 0.56].forEach(function(off){
+        ctx.beginPath();
+        var run = false;
+        for(var i = 0; i <= M; i++){
+          var p = pts[i % M];
+          if(matchFn(p)){
+            var rx = p.x - p.ty * off;
+            var ry = p.y + p.tx * off;
+            if(!run){ ctx.moveTo(rx, ry); run = true; }
+            else ctx.lineTo(rx, ry);
+          } else {
+            run = false;
+          }
+        }
+        ctx.strokeStyle = "#7a4416";
+        ctx.lineWidth = 6 * S;
+        ctx.stroke();
+        ctx.strokeStyle = "#d9944a";
+        ctx.lineWidth = 3 * S;
+        ctx.stroke();
+      });
+    }
+
+    ctx.restore();
+  }
+
+  /* ==================== SCENERY TOYS ==================== */
+  function drawDuckPond(t){
+    var p = track.pondPt;
+    var S = play.scale;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+
+    // Sandy pebble bank
+    ctx.fillStyle = "#ebd49e";
+    ctx.strokeStyle = "#bfa062";
+    ctx.lineWidth = 2.5 * S;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.rx + 7 * S, p.ry + 6 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Shimmering blue pond water
+    var wg = ctx.createRadialGradient(-p.rx * 0.25, -p.ry * 0.25, 4, 0, 0, p.rx);
+    wg.addColorStop(0, "#74d4ff");
+    wg.addColorStop(0.65, "#36a6f0");
+    wg.addColorStop(1, "#1e82cc");
+    ctx.fillStyle = wg;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.rx, p.ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Gentle animated ripple rings
+    var rPulse = (t * 0.7) % 1;
+    ctx.strokeStyle = "rgba(255,255,255," + (0.45 * (1 - rPulse)) + ")";
+    ctx.lineWidth = 2 * S;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.rx * (0.35 + rPulse * 0.55), p.ry * (0.35 + rPulse * 0.55), 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    if(duckSplash > 0){
+      var sp = 1 - duckSplash;
+      ctx.strokeStyle = "rgba(255,255,255," + (duckSplash * 0.9) + ")";
+      ctx.lineWidth = 3.5 * S;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.rx * (0.2 + sp * 0.8), p.ry * (0.2 + sp * 0.8), 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Lily pads
+    [[-0.45, 0.22], [0.46, -0.25]].forEach(function(lp){
+      ctx.save();
+      ctx.translate(p.rx * lp[0], p.ry * lp[1]);
+      ctx.fillStyle = "#51cf66";
+      ctx.strokeStyle = "#2b8a3e";
+      ctx.lineWidth = 1.6 * S;
+      ctx.beginPath();
+      ctx.arc(0, 0, 8.5 * S, 0.25, Math.PI * 2 - 0.25);
+      ctx.lineTo(0, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Two adorable swimming yellow ducks
+    for(var d = 0; d < 2; d++){
+      var da = duckAngle + d * Math.PI;
+      var dx = Math.cos(da) * p.rx * 0.40;
+      var dy = Math.sin(da) * p.ry * 0.36 - Math.sin(duckSplash * Math.PI) * 16 * S;
+      var facing = -Math.sin(da) >= 0 ? 1 : -1;
+      var ds = (d === 0 ? 1.0 : 0.74) * S;
+      ctx.save();
+      ctx.translate(dx, dy);
+      ctx.scale(facing, 1);
+      // Body
+      ctx.fillStyle = "#ffd43b";
+      ctx.strokeStyle = "#5c3a04";
+      ctx.lineWidth = 2 * ds;
+      ctx.beginPath();
+      ctx.ellipse(0, 2 * ds, 11 * ds, 7.5 * ds, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Head
+      ctx.beginPath();
+      ctx.arc(7.5 * ds, -5.5 * ds, 6.2 * ds, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Orange beak
+      ctx.fillStyle = "#ff7b24";
+      ctx.beginPath();
+      ctx.ellipse(13.5 * ds, -4.5 * ds, 3.8 * ds, 2.2 * ds, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Eye
+      ctx.fillStyle = "#2c1d11";
+      ctx.beginPath();
+      ctx.arc(9 * ds, -7 * ds, 1.4 * ds, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  function drawBarnAndCow(){
+    var b = track.barnPt;
+    var c = track.cowPt;
+    var S = play.scale;
+
+    // 1. Red Wooden Barn
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    var bScale = 1 + Math.sin(barnBounce * Math.PI) * 0.12;
+    ctx.scale(bScale, 2 - bScale);
+    // Ground shadow
+    ctx.fillStyle = "rgba(38, 76, 26, 0.24)";
+    ctx.beginPath();
+    ctx.ellipse(0, 22 * S, 36 * S, 10 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Barn body
+    ctx.fillStyle = "#e03e36";
+    ctx.strokeStyle = "#4d1b15";
+    ctx.lineWidth = 2.6 * S;
+    ctx.beginPath();
+    ctx.moveTo(-28 * S, 20 * S);
+    ctx.lineTo(-28 * S, -4 * S);
+    ctx.lineTo(-17 * S, -22 * S);
+    ctx.lineTo(0, -30 * S);
+    ctx.lineTo(17 * S, -22 * S);
+    ctx.lineTo(28 * S, -4 * S);
+    ctx.lineTo(28 * S, 20 * S);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // White gambrel roof trim
+    ctx.strokeStyle = "#fff9ec";
+    ctx.lineWidth = 3.8 * S;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(-31 * S, -3 * S);
+    ctx.lineTo(-18 * S, -23 * S);
+    ctx.lineTo(0, -31 * S);
+    ctx.lineTo(18 * S, -23 * S);
+    ctx.lineTo(31 * S, -3 * S);
+    ctx.stroke();
+
+    // Double barn door with X beams
+    ctx.fillStyle = "#b82820";
+    ctx.strokeStyle = "#fff9ec";
+    ctx.lineWidth = 2.4 * S;
+    ctx.beginPath();
+    ctx.roundRect(-13 * S, 0, 26 * S, 20 * S, 2 * S);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-13 * S, 0); ctx.lineTo(13 * S, 20 * S);
+    ctx.moveTo(13 * S, 0); ctx.lineTo(-13 * S, 20 * S);
+    ctx.stroke();
+
+    // Hayloft window
+    ctx.fillStyle = "#ffd43b";
+    ctx.beginPath();
+    ctx.roundRect(-6 * S, -17 * S, 12 * S, 10 * S, 2 * S);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // 2. Cute Friendly Spotted Wooden Cow
+    ctx.save();
+    var hop = Math.sin(cowBounce * Math.PI) * 18 * S;
+    ctx.translate(c.x, c.y - hop);
+    var squash = 1 + Math.sin(cowBounce * Math.PI) * 0.14;
+    ctx.scale(squash, 1 / squash + (squash - 1) * 0.35);
+
+    // Shadow
+    ctx.fillStyle = "rgba(38, 76, 26, 0.25)";
+    ctx.beginPath();
+    ctx.ellipse(0, 14 * S + hop, 20 * S, 6.5 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Little legs
+    ctx.fillStyle = "#3d2b1f";
+    [-10, -4, 4, 10].forEach(function(lx){
+      ctx.beginPath();
+      ctx.roundRect(lx * S - 2.4 * S, 4 * S, 4.8 * S, 11 * S, 2 * S);
+      ctx.fill();
+    });
+
+    // Cow body
+    ctx.fillStyle = "#fffdf8";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 2.4 * S;
+    ctx.beginPath();
+    ctx.roundRect(-16 * S, -10 * S, 30 * S, 18 * S, 9 * S);
+    ctx.fill();
+    ctx.stroke();
+
+    // Spots
+    ctx.fillStyle = "#3d2b1f";
+    ctx.beginPath();
+    ctx.ellipse(-6 * S, -3 * S, 5.5 * S, 4.2 * S, 0.3, 0, Math.PI * 2);
+    ctx.ellipse(5 * S, 1 * S, 4.2 * S, 3.6 * S, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cow head
+    ctx.fillStyle = "#fffdf8";
+    ctx.beginPath();
+    ctx.arc(14 * S, -8 * S, 9.5 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Little horns & ears
+    ctx.fillStyle = "#e8c47a";
+    ctx.beginPath();
+    ctx.arc(10 * S, -16 * S, 2.8 * S, 0, Math.PI * 2);
+    ctx.arc(18 * S, -16 * S, 2.8 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Pink snout
+    ctx.fillStyle = "#ffafcc";
+    ctx.beginPath();
+    ctx.ellipse(17 * S, -3.5 * S, 6.5 * S, 4.5 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Happy eyes
+    ctx.fillStyle = "#2c1d11";
+    ctx.beginPath();
+    ctx.arc(12 * S, -10 * S, 1.5 * S, 0, Math.PI * 2);
+    ctx.arc(18 * S, -10 * S, 1.5 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawTrainStation(t){
+    var st = track.stationPt;
+    var S = play.scale;
+    var cheer = Math.max(stationCheer, stationAutoWave * 0.5);
+    ctx.save();
+    ctx.translate(st.x, st.y);
+
+    // Wooden platform base
+    ctx.fillStyle = "rgba(38, 76, 26, 0.25)";
+    ctx.beginPath();
+    ctx.ellipse(0, 22 * S, 54 * S, 12 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#d9a05b";
+    ctx.strokeStyle = "#5c3412";
+    ctx.lineWidth = 2.4 * S;
+    ctx.beginPath();
+    ctx.roundRect(-48 * S, 8 * S, 96 * S, 14 * S, 6 * S);
+    ctx.fill();
+    ctx.stroke();
+
+    // Cozy timber station house
+    ctx.fillStyle = "#fff2d6";
+    ctx.beginPath();
+    ctx.roundRect(-34 * S, -16 * S, 68 * S, 26 * S, 4 * S);
+    ctx.fill();
+    ctx.stroke();
+
+    // Cute cheering passengers peeking on platform
+    var paxCols = ["#ff922b", "#74c0fc", "#f783ac"];
+    for(var p = 0; p < 3; p++){
+      var px = (-22 + p * 22) * S;
+      var py = 6 * S - Math.abs(Math.sin(t * 9 + p * 1.4)) * cheer * 11 * S;
+      ctx.fillStyle = paxCols[p];
+      ctx.beginPath();
+      ctx.arc(px, py - 5 * S, 6.2 * S, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Cute smiling eyes
+      ctx.fillStyle = "#2c1d11";
+      ctx.beginPath();
+      ctx.arc(px - 2 * S, py - 6 * S, 1.1 * S, 0, Math.PI * 2);
+      ctx.arc(px + 2 * S, py - 6 * S, 1.1 * S, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Striped red & cream storybook awning roof
+    ctx.beginPath();
+    ctx.moveTo(-42 * S, -14 * S);
+    ctx.lineTo(-32 * S, -28 * S);
+    ctx.lineTo(32 * S, -28 * S);
+    ctx.lineTo(42 * S, -14 * S);
+    ctx.closePath();
+    ctx.fillStyle = "#e8483c";
+    ctx.fill();
+    ctx.stroke();
+    // Cream stripes
+    ctx.fillStyle = "#fff9ec";
+    [-22, -6, 10, 26].forEach(function(sx){
+      ctx.fillRect(sx * S - 3.5 * S, -27 * S, 7 * S, 12 * S);
+    });
+    ctx.stroke();
+
+    // Round station clock medallion
+    ctx.fillStyle = "#fffdf8";
+    ctx.strokeStyle = "#8a501c";
+    ctx.lineWidth = 2.4 * S;
+    ctx.beginPath();
+    ctx.arc(0, -24 * S, 9.5 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    // Clock hands
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 2 * S;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(0, -24 * S);
+    ctx.lineTo(0, -30 * S);
+    ctx.moveTo(0, -24 * S);
+    ctx.lineTo(4.5 * S, -24 * S);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawCrossingGate(t){
+    var cp = track.crossingPt;
+    if(!cp) return;
+    var S = play.scale;
+    var nx = -Math.sin(cp.angle);
+    var ny = Math.cos(cp.angle);
+    var postX = cp.x + nx * 30 * S;
+    var postY = cp.y + ny * 30 * S;
+
+    ctx.save();
+    ctx.translate(postX, postY);
+
+    // Base shadow
+    ctx.fillStyle = "rgba(38, 76, 26, 0.25)";
+    ctx.beginPath();
+    ctx.ellipse(0, 8 * S, 14 * S, 6 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Striped crossing barrier arm (rotates smoothly up/down)
+    ctx.save();
+    ctx.translate(0, -6 * S);
+    // Point arm across the track when lowered (gateAngle=1), raised up when open (gateAngle=0)
+    var acrossAngle = Math.atan2(cp.y - postY, cp.x - postX);
+    var armRot = acrossAngle - (1 - gateAngle) * 1.18;
+    ctx.rotate(armRot);
+    var armLen = 54 * S;
+    ctx.fillStyle = "#fffdf8";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 2.2 * S;
+    ctx.beginPath();
+    ctx.roundRect(0, -4.5 * S, armLen, 9 * S, 4 * S);
+    ctx.fill();
+    ctx.stroke();
+    // Red warning stripes
+    ctx.fillStyle = "#e8483c";
+    for(var s = 8; s < 46; s += 14){
+      ctx.fillRect(s * S, -3.5 * S, 7 * S, 7 * S);
+    }
+    ctx.restore();
+
+    // Wooden crossing post
+    ctx.fillStyle = "#5c3412";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 2.2 * S;
+    ctx.beginPath();
+    ctx.roundRect(-4.5 * S, -28 * S, 9 * S, 35 * S, 4 * S);
+    ctx.fill();
+    ctx.stroke();
+
+    // Twin flashing red warning lamps
+    var active = gateAngle > 0.2;
+    var leftLit = active && Math.sin(gateFlashPhase) > 0;
+    var rightLit = active && Math.sin(gateFlashPhase) <= 0;
+
+    ctx.fillStyle = "#2c1d11";
+    ctx.beginPath();
+    ctx.roundRect(-14 * S, -30 * S, 28 * S, 11 * S, 5 * S);
+    ctx.fill();
+
+    [[-7.5 * S, leftLit], [7.5 * S, rightLit]].forEach(function(lamp){
+      if(lamp[1]){
+        ctx.fillStyle = "rgba(255, 59, 48, 0.42)";
+        ctx.beginPath();
+        ctx.arc(lamp[0], -24.5 * S, 11 * S, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = lamp[1] ? "#ff3b30" : "#6b2320";
+      ctx.beginPath();
+      ctx.arc(lamp[0], -24.5 * S, 4.2 * S, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
+  function drawMountainTunnelHill(){
+    var mh = track.tunnelHill;
+    if(!mh) return;
+    var S = play.scale;
+    ctx.save();
+
+    var baseY = mh.cy;
+    var peakY = baseY - mh.ry * 1.18;
+
+    // Ground shadow
+    ctx.fillStyle = "rgba(32, 66, 22, 0.24)";
+    ctx.beginPath();
+    ctx.ellipse(mh.cx, baseY + 6 * S, mh.rx * 1.04, 18 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Lush sculpted storybook mountain hill spanning seamlessly over both tunnel portals
+    var mg = ctx.createLinearGradient(mh.cx, peakY, mh.cx, baseY + 8 * S);
+    mg.addColorStop(0, "#66b863");
+    mg.addColorStop(0.52, "#46944d");
+    mg.addColorStop(1, "#2f6e38");
+    ctx.fillStyle = mg;
+    ctx.strokeStyle = "#204c26";
+    ctx.lineWidth = 3 * S;
+    ctx.beginPath();
+    ctx.moveTo(mh.cx - mh.rx, baseY);
+    ctx.bezierCurveTo(
+      mh.cx - mh.rx * 0.85, baseY - mh.ry * 0.92,
+      mh.cx - mh.rx * 0.34, peakY,
+      mh.cx, peakY
+    );
+    ctx.bezierCurveTo(
+      mh.cx + mh.rx * 0.34, peakY,
+      mh.cx + mh.rx * 0.85, baseY - mh.ry * 0.92,
+      mh.cx + mh.rx, baseY
+    );
+    ctx.quadraticCurveTo(mh.cx, baseY + 18 * S, mh.cx - mh.rx, baseY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Cute snowy mountain peak cap clipped cleanly to peak silhouette
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = "#fffdf8";
+    ctx.beginPath();
+    ctx.moveTo(mh.cx - mh.rx * 0.30, peakY + mh.ry * 0.32);
+    ctx.lineTo(mh.cx - mh.rx * 0.14, peakY + mh.ry * 0.24);
+    ctx.lineTo(mh.cx, peakY + mh.ry * 0.35);
+    ctx.lineTo(mh.cx + mh.rx * 0.14, peakY + mh.ry * 0.24);
+    ctx.lineTo(mh.cx + mh.rx * 0.30, peakY + mh.ry * 0.32);
+    ctx.lineTo(mh.cx + mh.rx * 0.34, peakY - 12 * S);
+    ctx.lineTo(mh.cx - mh.rx * 0.34, peakY - 12 * S);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Re-stroke mountain peak outline cleanly over snow cap
+    ctx.strokeStyle = "#204c26";
+    ctx.lineWidth = 3 * S;
+    ctx.beginPath();
+    ctx.moveTo(mh.cx - mh.rx, baseY);
+    ctx.bezierCurveTo(
+      mh.cx - mh.rx * 0.85, baseY - mh.ry * 0.92,
+      mh.cx - mh.rx * 0.34, peakY,
+      mh.cx, peakY
+    );
+    ctx.bezierCurveTo(
+      mh.cx + mh.rx * 0.34, peakY,
+      mh.cx + mh.rx * 0.85, baseY - mh.ry * 0.92,
+      mh.cx + mh.rx, baseY
+    );
+    ctx.stroke();
+
+    // Two rustic stone-arched tunnel portals nestled cleanly into left & right slopes
+    [mh.enterPt, mh.exitPt].forEach(function(pt){
+      ctx.save();
+      ctx.translate(pt.x, pt.y);
+      ctx.fillStyle = "#2b1e16";
+      ctx.strokeStyle = "#b58d5c";
+      ctx.lineWidth = 5 * S;
+      ctx.beginPath();
+      ctx.arc(0, -1 * S, 18 * S, Math.PI, 0);
+      ctx.lineTo(18 * S, 13 * S);
+      ctx.lineTo(-18 * S, 13 * S);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.strokeStyle = "#5c3c1e";
+      ctx.lineWidth = 2 * S;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Mini pine trees perched on the mountain slopes
+    drawPineTree(mh.cx - mh.rx * 0.36, baseY - mh.ry * 0.36, 0.72, 0);
+    drawPineTree(mh.cx + mh.rx * 0.36, baseY - mh.ry * 0.34, 0.76, 0);
+    drawPineTree(mh.cx, baseY - mh.ry * 0.16, 0.64, 0);
+
+    ctx.restore();
+  }
+
+  function drawPineTree(x, y, sz, wiggle){
+    var S = play.scale * (sz || 1);
+    ctx.save();
+    ctx.translate(x, y);
+    if(wiggle > 0){
+      ctx.rotate(Math.sin(wiggle * Math.PI * 4) * 0.18 * wiggle);
+    }
+    // Shadow
+    ctx.fillStyle = "rgba(38, 76, 26, 0.22)";
+    ctx.beginPath();
+    ctx.ellipse(0, 14 * S, 15 * S, 5.5 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Wooden trunk
+    ctx.fillStyle = "#8c5628";
+    ctx.strokeStyle = "#3f220d";
+    ctx.lineWidth = 2 * S;
+    ctx.beginPath();
+    ctx.roundRect(-4.2 * S, 2 * S, 8.4 * S, 12 * S, 2 * S);
+    ctx.fill();
+    ctx.stroke();
+    // Layered wooden cone pine tiers
+    var tiers = [
+      { y: -2, w: 18, h: 16, col: "#2f9e44" },
+      { y: -12, w: 14, h: 15, col: "#40c057" },
+      { y: -21, w: 10, h: 13, col: "#69db7c" }
+    ];
+    tiers.forEach(function(tr){
+      ctx.fillStyle = tr.col;
+      ctx.beginPath();
+      ctx.moveTo(0, (tr.y - tr.h) * S);
+      ctx.lineTo(tr.w * S, (tr.y + 4) * S);
+      ctx.lineTo(-tr.w * S, (tr.y + 4) * S);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawPlantedItems(){
+    var S = play.scale;
+    plantedItems.forEach(function(item){
+      var pop = Math.min(1, item.age / 0.28);
+      // Elastic spring overshoot
+      var scale = pop < 1 ? (1 + Math.sin(pop * Math.PI) * 0.28) * pop : 1;
+      ctx.save();
+      ctx.translate(item.x, item.y);
+      ctx.scale(scale, scale);
+
+      if(item.kind === "pine"){
+        drawPineTree(0, 0, 0.68, 0);
+      } else {
+        // Storybook blooming flower
+        ctx.strokeStyle = "#2b8a3e";
+        ctx.lineWidth = 2.6 * S;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(0, 6 * S);
+        ctx.lineTo(0, -6 * S);
+        ctx.stroke();
+        // Petals
+        ctx.fillStyle = item.color;
+        ctx.strokeStyle = "#4d2c14";
+        ctx.lineWidth = 1.4 * S;
+        for(var p = 0; p < 5; p++){
+          var a = (Math.PI * 2 * p) / 5 + item.rot;
+          ctx.beginPath();
+          ctx.arc(Math.cos(a) * 6.5 * S, -7 * S + Math.sin(a) * 6.5 * S, 4.6 * S, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        // Golden center
+        ctx.fillStyle = "#ffd43b";
+        ctx.beginPath();
+        ctx.arc(0, -7 * S, 4 * S, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+  }
+
+  /* ==================== TRAIN ENGINE & 4 WOODEN CARS ==================== */
+  function getTrainUnits(){
+    var S = play.scale;
+    var spacing = 54 * S;
+    var units = [];
+    // Index 0 = Engine, 1..carCount = attached cars trailing behind based on dir
+    for(var i = 0; i <= state.carCount; i++){
+      var sPos = trainS - state.dir * (i * spacing);
+      var sample = sampleTrack(sPos);
+      var heading = state.dir === 1 ? sample.angle : sample.angle + Math.PI;
+      units.push({
+        index: i,
+        x: sample.x,
+        y: sample.y,
+        angle: heading,
+        z: sample.z,
+        inTunnel: sample.inTunnel
+      });
+    }
+    return units;
+  }
+
+  function drawCoupler(u1, u2){
+    if(u1.inTunnel || u2.inTunnel) return;
+    var S = play.scale;
+    ctx.save();
+    ctx.strokeStyle = "#495057";
+    ctx.lineWidth = 4 * S;
+    ctx.beginPath();
+    ctx.moveTo(u1.x, u1.y);
+    ctx.lineTo(u2.x, u2.y);
+    ctx.stroke();
+    // Silver magnetic coupler ball in midpoint
+    var mx = (u1.x + u2.x) * 0.5;
+    var my = (u1.y + u2.y) * 0.5;
+    ctx.fillStyle = "#dee2e6";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 1.8 * S;
+    ctx.beginPath();
+    ctx.arc(mx, my, 4.4 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawEngine(u, t){
+    var S = play.scale;
+    var bounce = 1 + Math.sin(trainBounce * Math.PI) * 0.14;
+    ctx.save();
+    ctx.translate(u.x, u.y);
+    ctx.rotate(u.angle);
+    ctx.scale(bounce, bounce);
+
+    // Shadow under engine
+    ctx.fillStyle = "rgba(30, 45, 20, 0.30)";
+    ctx.beginPath();
+    ctx.roundRect(-27 * S, -14 * S + 5 * S, 56 * S, 30 * S, 10 * S);
+    ctx.fill();
+
+    // Warm headlight beam ahead
+    var beam = ctx.createRadialGradient(28 * S, 0, 2, 46 * S, 0, 34 * S);
+    beam.addColorStop(0, "rgba(255, 245, 165, 0.72)");
+    beam.addColorStop(1, "rgba(255, 245, 165, 0)");
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(26 * S, -8 * S);
+    ctx.lineTo(64 * S, -22 * S);
+    ctx.lineTo(64 * S, 22 * S);
+    ctx.lineTo(26 * S, 8 * S);
+    ctx.closePath();
+    ctx.fill();
+
+    // Side golden wheels (4 corners)
+    ctx.fillStyle = "#ffd43b";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 2 * S;
+    [[-16, -15], [12, -15], [-16, 15], [12, 15]].forEach(function(w){
+      ctx.beginPath();
+      ctx.roundRect((w[0] - 6) * S, (w[1] - 3) * S, 12 * S, 6 * S, 2.5 * S);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // Brass front cowcatcher bumper
+    ctx.fillStyle = "#f5b727";
+    ctx.beginPath();
+    ctx.moveTo(24 * S, -11 * S);
+    ctx.lineTo(32 * S, 0);
+    ctx.lineTo(24 * S, 11 * S);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Wooden Chassis Base
+    ctx.fillStyle = "#5c3412";
+    ctx.beginPath();
+    ctx.roundRect(-26 * S, -14 * S, 51 * S, 28 * S, 7 * S);
+    ctx.fill();
+    ctx.stroke();
+
+    // Glossy Cherry-Red Boiler (front)
+    ctx.fillStyle = "#e8483c";
+    ctx.beginPath();
+    ctx.roundRect(-2 * S, -11.5 * S, 27 * S, 23 * S, 8 * S);
+    ctx.fill();
+    ctx.stroke();
+    // Boiler highlight stripe
+    ctx.fillStyle = "rgba(255,255,255,.32)";
+    ctx.beginPath();
+    ctx.roundRect(1 * S, -8.5 * S, 21 * S, 4.5 * S, 3 * S);
+    ctx.fill();
+
+    // Brass Steam Dome
+    ctx.fillStyle = "#ffd43b";
+    ctx.beginPath();
+    ctx.arc(6 * S, 0, 5.5 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Black Smokestack Chimney
+    ctx.fillStyle = "#343a40";
+    ctx.beginPath();
+    ctx.arc(17 * S, 0, 5.8 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#1a1d20";
+    ctx.beginPath();
+    ctx.arc(17 * S, 0, 3 * S, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Engineer Cab (back half)
+    ctx.fillStyle = "#c92a2a";
+    ctx.beginPath();
+    ctx.roundRect(-25 * S, -13 * S, 24 * S, 26 * S, 6 * S);
+    ctx.fill();
+    ctx.stroke();
+
+    // Open sunlit cab interior + Engineer Hoot!
+    ctx.fillStyle = "#fff3bf";
+    ctx.beginPath();
+    ctx.roundRect(-21 * S, -9.5 * S, 16 * S, 19 * S, 4 * S);
+    ctx.fill();
+
+    // Engineer Hoot (adorable little owl in striped blue engineer cap!)
+    ctx.save();
+    ctx.translate(-13 * S, 0);
+    if(hootWaveTimer > 0){
+      ctx.rotate(Math.sin(t * 22) * 0.25);
+    }
+    // Hoot round owl body
+    ctx.fillStyle = "#a46a3c";
+    ctx.strokeStyle = "#3d220e";
+    ctx.lineWidth = 1.8 * S;
+    ctx.beginPath();
+    ctx.arc(0, 0, 7.6 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Waving little wing when whistle blows!
+    if(hootWaveTimer > 0){
+      ctx.fillStyle = "#8a5328";
+      ctx.beginPath();
+      ctx.ellipse(-1 * S, -10.5 * S, 5 * S, 3 * S, Math.sin(t * 24) * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Hoot eyes (big cute eyes, or happy curves when waving!)
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(3.2 * S, -3 * S, 2.7 * S, 0, Math.PI * 2);
+    ctx.arc(3.2 * S, 3 * S, 2.7 * S, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#2c1d11";
+    ctx.beginPath();
+    ctx.arc(4 * S, -3 * S, 1.3 * S, 0, Math.PI * 2);
+    ctx.arc(4 * S, 3 * S, 1.3 * S, 0, Math.PI * 2);
+    ctx.fill();
+    // Little golden beak
+    ctx.fillStyle = "#ff922b";
+    ctx.beginPath();
+    ctx.moveTo(6 * S, -1.6 * S);
+    ctx.lineTo(9 * S, 0);
+    ctx.lineTo(6 * S, 1.6 * S);
+    ctx.closePath();
+    ctx.fill();
+
+    // Blue-and-white striped Engineer Cap
+    ctx.fillStyle = "#228be6";
+    ctx.beginPath();
+    ctx.arc(-2.5 * S, 0, 5.5 * S, Math.PI * 0.5, Math.PI * 1.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.restore();
+  }
+
+  function drawTrainCar(u, t){
+    var S = play.scale;
+    var theme = CAR_THEMES[state.carTheme % CAR_THEMES.length];
+    ctx.save();
+    ctx.translate(u.x, u.y);
+    ctx.rotate(u.angle);
+
+    // Shadow
+    ctx.fillStyle = "rgba(30, 45, 20, 0.27)";
+    ctx.beginPath();
+    ctx.roundRect(-21 * S, -13 * S + 5 * S, 42 * S, 26 * S, 8 * S);
+    ctx.fill();
+
+    // Wooden wheels
+    ctx.fillStyle = "#ffd43b";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = 2 * S;
+    [[-11, -13.5], [11, -13.5], [-11, 13.5], [11, 13.5]].forEach(function(w){
+      ctx.beginPath();
+      ctx.roundRect((w[0] - 5) * S, (w[1] - 2.6) * S, 10 * S, 5.2 * S, 2 * S);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    if(u.index === 1){
+      // CAR 1: Coal Tender
+      ctx.fillStyle = theme.tender;
+      ctx.beginPath();
+      ctx.roundRect(-20 * S, -12.5 * S, 40 * S, 25 * S, 6 * S);
+      ctx.fill();
+      ctx.stroke();
+      // Heaped shiny wooden coal nuggets
+      ctx.fillStyle = "#2f3542";
+      [[-9, -4], [0, -5], [9, -3], [-6, 4], [4, 4], [0, 0]].forEach(function(cn){
+        ctx.beginPath();
+        ctx.arc(cn[0] * S, cn[1] * S, 5.2 * S, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+      ctx.fillStyle = "rgba(255,255,255,.28)";
+      ctx.beginPath();
+      ctx.arc(-1 * S, -1 * S, 2 * S, 0, Math.PI * 2);
+      ctx.fill();
+    } else if(u.index === 2){
+      // CAR 2: Animal Caboose with peeking Cow & Duck!
+      ctx.fillStyle = theme.caboose;
+      ctx.beginPath();
+      ctx.roundRect(-21 * S, -13 * S, 42 * S, 26 * S, 7 * S);
+      ctx.fill();
+      ctx.stroke();
+      // Cozy cream open roof bay
+      ctx.fillStyle = "#fff9e6";
+      ctx.beginPath();
+      ctx.roundRect(-15 * S, -9 * S, 30 * S, 18 * S, 5 * S);
+      ctx.fill();
+      ctx.stroke();
+      var bob = Math.sin(t * 7) * 1.4 * S;
+      // Peeking Cow head (back half)
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(-6.5 * S, bob, 6.2 * S, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#ffafcc";
+      ctx.beginPath();
+      ctx.ellipse(-3 * S, bob, 3.2 * S, 4.2 * S, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Peeking Yellow Duck (front half)
+      ctx.fillStyle = "#ffd43b";
+      ctx.beginPath();
+      ctx.arc(7.5 * S, -bob, 5.8 * S, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#ff7b24";
+      ctx.beginPath();
+      ctx.ellipse(13 * S, -bob, 2.8 * S, 2 * S, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else if(u.index === 3){
+      // CAR 3: Rainbow Log Car
+      ctx.fillStyle = theme.logs;
+      ctx.beginPath();
+      ctx.roundRect(-21 * S, -13 * S, 42 * S, 26 * S, 5 * S);
+      ctx.fill();
+      ctx.stroke();
+      var logCols = ["#ff6b6b", "#ffd43b", "#51cf66", "#38a3f1", "#b197fc"];
+      for(var l = 0; l < 5; l++){
+        var ly = (-8.5 + l * 4.2) * S;
+        ctx.fillStyle = logCols[l];
+        ctx.beginPath();
+        ctx.roundRect(-17 * S, ly - 2 * S, 34 * S, 4.2 * S, 2 * S);
+        ctx.fill();
+        ctx.stroke();
+      }
+    } else {
+      // CAR 4: Star Gift Car
+      ctx.fillStyle = theme.gift;
+      ctx.beginPath();
+      ctx.roundRect(-21 * S, -13 * S, 42 * S, 26 * S, 7 * S);
+      ctx.fill();
+      ctx.stroke();
+      // Ribbon bow stripes
+      ctx.fillStyle = "#ffd43b";
+      ctx.fillRect(-3.5 * S, -12 * S, 7 * S, 24 * S);
+      ctx.fillRect(-20 * S, -3.5 * S, 40 * S, 7 * S);
+      // Giant glowing Star emblem on top
+      drawStarShape(0, 0, 8.8 * S, 4.2 * S, 5, "#fff3bf", "#8a501c", 2 * S);
+    }
+
+    ctx.restore();
+  }
+
+  function drawStarShape(cx, cy, outerR, innerR, pts, fill, stroke, lw){
+    ctx.beginPath();
+    for(var i = 0; i < pts * 2; i++){
+      var r = i % 2 === 0 ? outerR : innerR;
+      var a = (i * Math.PI) / pts - Math.PI / 2;
+      var x = cx + Math.cos(a) * r;
+      var y = cy + Math.sin(a) * r;
+      if(i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if(stroke){
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = lw || 2;
+      ctx.stroke();
+    }
+  }
+
+  function drawTrainPass(units, zPass, t){
+    // Draw couplers first
+    for(var i = 0; i < units.length - 1; i++){
+      var a = units[i], b = units[i + 1];
+      if(state.layout === "figure8" && Math.max(a.z, b.z) !== zPass) continue;
+      if(state.layout !== "figure8" && zPass !== 0) continue;
+      drawCoupler(a, b);
+    }
+    // Draw cars from back to front so engine sits cleanly on top
+    for(var i = units.length - 1; i >= 0; i--){
+      var u = units[i];
+      if(u.inTunnel) continue;
+      if(state.layout === "figure8" && u.z !== zPass) continue;
+      if(state.layout !== "figure8" && zPass !== 0) continue;
+      if(u.index === 0) drawEngine(u, t);
+      else drawTrainCar(u, t);
+    }
+  }
+
+  function drawSteamAndParticles(){
+    // Puffy white cartoon steam clouds
+    steamPuffs.forEach(function(p){
+      var f = p.life / p.maxLife;
+      var alpha = Math.max(0, (1 - f) * 0.92);
+      var rad = p.r * (0.75 + f * 1.15);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "rgba(180, 200, 215, 0.65)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+      ctx.arc(p.x + rad * 0.45, p.y - rad * 0.25, rad * 0.65, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Sparkles, stars, water droplets & music notes
+    particles.forEach(function(p){
+      var f = p.life / p.maxLife;
+      var alpha = Math.max(0, 1 - f * f);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      if(p.kind === "drop"){
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * (1 - f * 0.4), 0, Math.PI * 2);
+        ctx.fill();
+      } else if(p.kind === "note"){
+        ctx.fillStyle = p.color;
+        ctx.strokeStyle = "#2c1d11";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.ellipse(-3, 5, 5, 3.8, -0.3, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(1.5, 4);
+        ctx.lineTo(1.5, -10);
+        ctx.lineTo(9, -7);
+        ctx.stroke();
+      } else {
+        drawStarShape(0, 0, p.size, p.size * 0.45, 5, p.color, "#5c3412", 1.5);
+      }
+      ctx.restore();
+    });
+  }
+
+  /* ==================== FIRST-PERSON DRIVER CAB VIEW (PSEUDO-3D) ==================== */
+  var cabBgImg = new Image();
+  var cabBgReady = false;
+  cabBgImg.onload = function(){ cabBgReady = true; };
+  cabBgImg.src = "assets/train3d/cab_bg.jpg";
+
+  var CAB_LOOP = 48;
+  var CAB_SPEED = { slow: 2.9, cruise: 5.9, turbo: 10.6 };
+
+  var cab = {
+    dist: 2.0,
+    bgPan: 0,
+    curve: 0,
+    bobPhase: 0,
+    bellAngle: 0,
+    bellVel: 0,
+    tunnelAmt: 0,
+    steamAcc: 0,
+    steamPuffs: [],
+    cowHop: 0,
+    barnHop: 0,
+    lastGateRing: -1,
+    hitZones: { bell: null, boiler: null, props: [] }
+  };
+
+  // Choreographed scenic world loop around 48 world units (primary tunnel at [36..43], mountain extra at [14..20])
+  var CAB_PROPS = [
+    // Opening sunny meadow & crossing
+    { z: 3.2,  lat: -2.4, kind: "pine", sz: 1.05 },
+    { z: 4.1,  lat:  2.7, kind: "pine", sz: 0.92 },
+    { z: 5.4,  lat: -1.65, kind: "flower", col: "#ff6b6b" },
+    { z: 6.4,  lat: -2.35, kind: "cow", sz: 1.0 },
+    { z: 7.4,  lat:  2.2, kind: "pine", sz: 1.15 },
+    { z: 8.8,  lat: -3.3, kind: "barn", sz: 1.08 },
+    { z: 9.6,  lat:  1.75, kind: "flower", col: "#ffd43b" },
+    { z: 10.8, lat:  2.35, kind: "cow", sz: 0.96 },
+    { z: 11.8, lat: -2.6, kind: "pine", sz: 1.1 },
+    { z: 12.6, lat:  2.9, kind: "pine", sz: 0.88 },
+    // Mid stretch (skips props if mountain extra tunnel [14..20] is active)
+    { z: 15.2, lat: -2.5, kind: "pine", sz: 1.0, skipMtn: true },
+    { z: 16.5, lat:  2.6, kind: "pine", sz: 1.12, skipMtn: true },
+    { z: 17.8, lat: -1.7, kind: "flower", col: "#74c0fc", skipMtn: true },
+    { z: 19.0, lat:  2.3, kind: "cow", sz: 1.0, skipMtn: true },
+    // Railroad crossing zone
+    { z: 22.4, lat:  0,   kind: "crossing", id: 1 },
+    { z: 23.6, lat: -2.8, kind: "pine", sz: 1.18 },
+    { z: 24.4, lat:  1.75, kind: "flower", col: "#f783ac" },
+    { z: 25.8, lat:  2.25, kind: "cow", sz: 1.04 },
+    { z: 27.6, lat:  3.35, kind: "barn", sz: 1.05 },
+    { z: 28.4, lat: -2.5, kind: "pine", sz: 0.96 },
+    { z: 30.2, lat: -2.25, kind: "cow", sz: 0.95 },
+    { z: 31.4, lat:  2.55, kind: "pine", sz: 1.14 },
+    { z: 32.8, lat: -2.9, kind: "pine", sz: 1.08 },
+    { z: 33.8, lat:  1.72, kind: "flower", col: "#ffd43b" },
+    // Exit stretch after main tunnel [36..43]
+    { z: 44.8, lat: -2.5, kind: "pine", sz: 1.06 },
+    { z: 45.4, lat:  2.5, kind: "pine", sz: 0.98 },
+    { z: 46.2, lat:  0,   kind: "crossing", id: 2 },
+    { z: 47.2, lat: -1.7, kind: "flower", col: "#b197fc" }
+  ];
+
+  function getCabTunnels(){
+    if(state.layout === "mountain"){
+      return [{ start: 14, end: 21 }, { start: 35, end: 44 }];
+    }
+    return [{ start: 35, end: 44 }];
+  }
+
+  function wrapLoopDist(target, cur){
+    var d = ((target - cur) % CAB_LOOP + CAB_LOOP) % CAB_LOOP;
+    if(d > CAB_LOOP * 0.5) d -= CAB_LOOP;
+    return d;
+  }
+
+  function getCabTunnelStatus(){
+    var pos = ((cab.dist % CAB_LOOP) + CAB_LOOP) % CAB_LOOP;
+    var tunnels = getCabTunnels();
+    for(var i = 0; i < tunnels.length; i++){
+      var tn = tunnels[i];
+      if(pos >= tn.start && pos <= tn.end){
+        var frac = state.dir === 1
+          ? (pos - tn.start) / (tn.end - tn.start)
+          : (tn.end - pos) / (tn.end - tn.start);
+        return { inside: true, frac: Math.max(0, Math.min(1, frac)), distToExit: Math.max(0.1, (1 - frac) * (tn.end - tn.start)) };
+      }
+    }
+    return { inside: false, frac: 0, distToExit: 0 };
+  }
+
+  function spawnCabSteam(big){
+    var boiler = cab.hitZones.boiler;
+    var sx = boiler ? boiler.stackX : W * 0.5;
+    var sy = boiler ? boiler.stackY : H * 0.62;
+    var count = big ? 9 : 1;
+    for(var i = 0; i < count; i++){
+      var sc = Math.min(W, H) / 760;
+      cab.steamPuffs.push({
+        x: sx + (Math.random() - 0.5) * (big ? 28 : 10),
+        y: sy - (big ? Math.random() * 14 : 4),
+        vx: (Math.random() - 0.5) * (big ? 80 : 28) - cab.curve * 65,
+        vy: -(big ? 95 + Math.random() * 85 : 55 + Math.random() * 35),
+        r: (big ? 20 + Math.random() * 18 : 12 + Math.random() * 9) * Math.max(0.75, sc),
+        life: 0,
+        maxLife: big ? 1.35 + Math.random() * 0.5 : 0.95 + Math.random() * 0.35
+      });
+    }
+  }
+
+  function ringCabBell(impulse){
+    cab.bellVel += (cab.bellAngle >= 0 ? -1 : 1) * (impulse || 7.5);
+  }
+
+  function updateCabPhysics(dt, engineSample){
+    // Compute curvature smoothly from the real underlying wooden track spline + scenic alpine wave
+    var lookAhead = sampleTrack(trainS + state.dir * 86 * play.scale);
+    var da = lookAhead.angle - engineSample.angle;
+    while(da > Math.PI) da -= Math.PI * 2;
+    while(da < -Math.PI) da += Math.PI * 2;
+    var splineCurve = Math.max(-1.15, Math.min(1.15, da * 1.45 * state.dir));
+    var waveCurve = Math.sin(cab.dist * 0.19) * 0.36;
+    var targetCurve = state.layout === "figure8"
+      ? splineCurve * 1.05
+      : splineCurve * 0.72 + waveCurve;
+    cab.curve += (targetCurve - cab.curve) * Math.min(1, dt * 3.4);
+
+    if(state.running){
+      var vCab = CAB_SPEED[state.speed] * state.dir;
+      cab.dist += vCab * dt;
+      cab.bgPan += cab.curve * Math.abs(vCab) * 26 * dt;
+      cab.bobPhase += dt * (state.speed === "turbo" ? 19 : (state.speed === "slow" ? 7.5 : 12.5));
+
+      // Gentle rhythmic bell sway when moving
+      cab.bellVel += Math.sin(cab.bobPhase * 0.5) * 2.2 * dt;
+
+      // Foreground smokestack steam puffs
+      cab.steamAcc += dt * (state.speed === "turbo" ? 7.5 : (state.speed === "slow" ? 2.6 : 4.5));
+      if(cab.steamAcc >= 1){
+        cab.steamAcc -= 1;
+        if(state.cabView) spawnCabSteam(false);
+      }
+    }
+
+    // Spring-damper physics for the golden brass bell
+    cab.bellVel += -26 * cab.bellAngle * dt;
+    cab.bellVel *= Math.pow(0.18, dt);
+    cab.bellAngle += cab.bellVel * dt;
+    cab.bellAngle = Math.max(-0.62, Math.min(0.62, cab.bellAngle));
+
+    // Smooth tunnel immersion amount
+    var tunStat = getCabTunnelStatus();
+    var targetTun = tunStat.inside ? 1 : 0;
+    cab.tunnelAmt += (targetTun - cab.tunnelAmt) * Math.min(1, dt * (targetTun ? 6.5 : 5.2));
+
+    // Auto crossing bell when zooming close to a cab crossing gate
+    if(state.cabView && state.running){
+      for(var ci = 0; ci < CAB_PROPS.length; ci++){
+        var cp = CAB_PROPS[ci];
+        if(cp.kind !== "crossing") continue;
+        var rel = wrapLoopDist(cp.z, cab.dist) * state.dir;
+        if(rel > 0.8 && rel < 4.2){
+          var ringKey = Math.floor(cab.dist / CAB_LOOP) * 10 + cp.id;
+          if(cab.lastGateRing !== ringKey){
+            cab.lastGateRing = ringKey;
+            if(audioUnlocked) playCrossingBell(2);
+          }
+        }
+      }
+    }
+
+    if(cab.cowHop > 0) cab.cowHop = Math.max(0, cab.cowHop - dt * 2.5);
+    if(cab.barnHop > 0) cab.barnHop = Math.max(0, cab.barnHop - dt * 2.5);
+
+    // Update foreground cab steam puffs
+    for(var i = cab.steamPuffs.length - 1; i >= 0; i--){
+      var sp = cab.steamPuffs[i];
+      sp.life += dt;
+      sp.x += (sp.vx - cab.curve * 48) * dt;
+      sp.y += sp.vy * dt;
+      sp.vx *= 0.965;
+      sp.vy *= 0.985;
+      if(sp.life >= sp.maxLife) cab.steamPuffs.splice(i, 1);
+    }
+  }
+
+  function drawCabView(t, engineSample){
+    var portrait = H > W * 1.05;
+    var bobY = state.running ? Math.sin(cab.bobPhase) * (state.speed === "turbo" ? 3.8 : 2.2) : 0;
+    var bobX = state.running ? Math.cos(cab.bobPhase * 0.5) * 2.2 : 0;
+    var horizonY = Math.round(H * (portrait ? 0.415 : 0.435) + bobY * 0.4);
+    var groundH = Math.max(120, H - horizonY);
+    var zNear = 0.55;
+    var zFar = 26.5;
+    var baseTrackHalfW = Math.min(W * 0.34, groundH * 0.52);
+    var curveAmp = W * (portrait ? 0.36 : 0.31);
+
+    function proj(z, lat){
+      var s = zNear / Math.max(0.22, z);
+      var u = Math.max(0, 1 - s);
+      var cx = W * 0.5 + cab.curve * u * u * curveAmp;
+      return {
+        x: cx + (lat || 0) * baseTrackHalfW * s,
+        cx: cx,
+        y: horizonY + groundH * s,
+        s: s,
+        scale: baseTrackHalfW * s
+      };
+    }
+
+    // 1. FULL-BLEED PAINTED PIXAR ALPINE VISTA (seamless mirrored panoramic panning!)
+    if(cabBgReady && cabBgImg.naturalWidth > 0){
+      var imgAspect = cabBgImg.naturalWidth / cabBgImg.naturalHeight;
+      var bgH = Math.ceil((horizonY + 28) / 0.64);
+      var bgW = Math.ceil(bgH * imgAspect);
+      if(bgW < W * 1.12){
+        bgW = Math.ceil(W * 1.12);
+        bgH = Math.ceil(bgW / imgAspect);
+      }
+      var bgY = Math.round((horizonY + 26) - bgH * 0.64);
+      var period = bgW * 2;
+      var pan = ((cab.bgPan % period) + period) % period;
+      var startX = -pan;
+      while(startX > 0) startX -= period;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, W, horizonY + 28);
+      ctx.clip();
+      for(var tx = startX; tx < W + bgW; tx += bgW){
+        var tileIdx = Math.round((tx - startX) / bgW);
+        if(tileIdx % 2 === 0){
+          ctx.drawImage(cabBgImg, tx, bgY, bgW + 1, bgH);
+        } else {
+          ctx.save();
+          ctx.translate(tx + bgW, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(cabBgImg, 0, bgY, bgW + 1, bgH);
+          ctx.restore();
+        }
+      }
+      ctx.restore();
+    } else {
+      var skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY + 12);
+      skyGrad.addColorStop(0, "#2aa2f0");
+      skyGrad.addColorStop(0.65, "#87d8ff");
+      skyGrad.addColorStop(1, "#e7f7c9");
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, W, horizonY + 12);
+    }
+
+    // 2. SUNLIT ROLLING 3D PERSPECTIVE MEADOW GROUND WITH SPEED BANDS
+    var meadowGrad = ctx.createLinearGradient(0, horizonY, 0, H);
+    meadowGrad.addColorStop(0, "#9be066");
+    meadowGrad.addColorStop(0.28, "#7ac94f");
+    meadowGrad.addColorStop(0.75, "#59a837");
+    meadowGrad.addColorStop(1, "#418627");
+    ctx.fillStyle = meadowGrad;
+    ctx.fillRect(0, horizonY, W, groundH);
+
+    // Alternating subtle perspective grass stripes rushing toward viewer
+    var bandStep = 1.6;
+    var bandOff = ((cab.dist % (bandStep * 2)) + bandStep * 2) % (bandStep * 2);
+    for(var bz = zFar; bz >= zNear; bz -= bandStep){
+      var z1 = bz - bandOff * 0.5;
+      var z0 = z1 - bandStep * 0.5;
+      if(z1 < zNear || z0 > zFar) continue;
+      var p1 = proj(Math.max(zNear, z1), 0);
+      var p0 = proj(Math.max(zNear, z0), 0);
+      if(p0.y <= p1.y) continue;
+      ctx.fillStyle = "rgba(255, 250, 190, 0.085)";
+      ctx.fillRect(0, p1.y, W, p0.y - p1.y);
+    }
+
+    // Soft organic rolling green hillside seam + atmospheric golden mist across horizon
+    ctx.save();
+    ctx.fillStyle = "#8fd45e";
+    ctx.beginPath();
+    ctx.moveTo(0, horizonY + 12);
+    for(var hx = 0; hx <= W + 40; hx += 40){
+      var wave = Math.sin((hx + cab.bgPan * 0.35) * 0.008) * 7 + Math.cos((hx - cab.bgPan * 0.2) * 0.015) * 4;
+      ctx.lineTo(hx, horizonY - 2 + wave);
+    }
+    ctx.lineTo(W, horizonY + 18);
+    ctx.closePath();
+    ctx.fill();
+
+    var hazeGrad = ctx.createLinearGradient(0, horizonY - 24, 0, horizonY + 30);
+    hazeGrad.addColorStop(0, "rgba(255, 252, 224, 0)");
+    hazeGrad.addColorStop(0.45, "rgba(210, 240, 155, 0.45)");
+    hazeGrad.addColorStop(1, "rgba(122, 201, 79, 0)");
+    ctx.fillStyle = hazeGrad;
+    ctx.fillRect(0, horizonY - 24, W, 54);
+    ctx.restore();
+
+    // 3. PERSPECTIVE WOODEN RAILWAY BALLAST, CROSSTIES & GLEAMING RAILS
+    var railSamples = 36;
+    var leftBed = [], rightBed = [], leftRail = [], rightRail = [], leftBridge = [], rightBridge = [];
+    for(var i = 0; i <= railSamples; i++){
+      var frac = i / railSamples;
+      // Exponential sampling for crisp curvature near horizon AND near foreground
+      var z = zFar * Math.pow(zNear / zFar, frac);
+      var cP = proj(z, 0);
+      leftBed.push({ x: cP.cx - cP.scale * 1.18, y: cP.y });
+      rightBed.push({ x: cP.cx + cP.scale * 1.18, y: cP.y });
+      leftRail.push({ x: cP.cx - cP.scale * 0.62, y: cP.y, s: cP.s });
+      rightRail.push({ x: cP.cx + cP.scale * 0.62, y: cP.y, s: cP.s });
+      leftBridge.push({ x: cP.cx - cP.scale * 1.24, y: cP.y, s: cP.s });
+      rightBridge.push({ x: cP.cx + cP.scale * 1.24, y: cP.y, s: cP.s });
+    }
+
+    // Warm sandy-wooden track bed polygon
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(leftBed[0].x, leftBed[0].y);
+    for(var i = 1; i < leftBed.length; i++) ctx.lineTo(leftBed[i].x, leftBed[i].y);
+    for(var i = rightBed.length - 1; i >= 0; i--) ctx.lineTo(rightBed[i].x, rightBed[i].y);
+    ctx.closePath();
+    var bedGrad = ctx.createLinearGradient(0, horizonY, 0, H);
+    bedGrad.addColorStop(0, "#d4b47c");
+    bedGrad.addColorStop(0.5, "#c59858");
+    bedGrad.addColorStop(1, "#9b6d37");
+    ctx.fillStyle = bedGrad;
+    ctx.fill();
+
+    // Inner warm beechwood track channel highlight
+    ctx.beginPath();
+    ctx.moveTo(leftRail[0].x, leftRail[0].y);
+    for(var i = 1; i < leftRail.length; i++) ctx.lineTo(leftRail[i].x, leftRail[i].y);
+    for(var i = rightRail.length - 1; i >= 0; i--) ctx.lineTo(rightRail[i].x, rightRail[i].y);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(246, 214, 162, 0.45)";
+    ctx.fill();
+    ctx.restore();
+
+    // Wooden Railway Ties (Sleepers) rushing smoothly toward the viewer!
+    var tieSpacing = 0.62;
+    var firstTieIdx = Math.ceil((cab.dist + zNear * 0.7) / tieSpacing);
+    var maxTies = Math.ceil(zFar / tieSpacing);
+    for(var ti = maxTies; ti >= 0; ti--){
+      var worldZ = (firstTieIdx + ti) * tieSpacing;
+      var relZ = worldZ - cab.dist;
+      if(relZ < zNear * 0.85 || relZ > zFar) continue;
+      var tp = proj(relZ, 0);
+      var tieW = tp.scale * 1.96;
+      var tieH = Math.max(1.5, tp.scale * 0.145);
+      // Soft shadow beneath tie
+      ctx.fillStyle = "rgba(52, 28, 10, 0.34)";
+      ctx.fillRect(tp.cx - tieW * 0.5, tp.y + tieH * 0.35, tieW, tieH * 0.6);
+      // Beechwood tie plank
+      ctx.fillStyle = ti % 2 === 0 ? "#8d5627" : "#7e4b20";
+      ctx.fillRect(tp.cx - tieW * 0.5, tp.y - tieH * 0.5, tieW, tieH);
+      // Warm sunlit top edge bevel
+      if(tieH > 3){
+        ctx.fillStyle = "#c98c4a";
+        ctx.fillRect(tp.cx - tieW * 0.5, tp.y - tieH * 0.5, tieW, Math.max(1.2, tieH * 0.28));
+      }
+    }
+
+    // Twin Perspective Rails (silky-smooth continuous tapered polygons: iron base + gleaming steel top!)
+    [leftRail, rightRail].forEach(function(pts){
+      // 1. Dark wooden/iron rail outer base
+      ctx.beginPath();
+      for(var i = 0; i < pts.length; i++){
+        var hw = Math.max(1.1, pts[i].s * 9.5);
+        if(i === 0) ctx.moveTo(pts[i].x - hw, pts[i].y);
+        else ctx.lineTo(pts[i].x - hw, pts[i].y);
+      }
+      for(var i = pts.length - 1; i >= 0; i--){
+        var hw = Math.max(1.1, pts[i].s * 9.5);
+        ctx.lineTo(pts[i].x + hw, pts[i].y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "#4d311a";
+      ctx.fill();
+
+      // 2. Gleaming silver-steel rail crown
+      ctx.beginPath();
+      for(var i = 0; i < pts.length; i++){
+        var hw = Math.max(0.7, pts[i].s * 5.6);
+        if(i === 0) ctx.moveTo(pts[i].x - hw, pts[i].y);
+        else ctx.lineTo(pts[i].x - hw, pts[i].y);
+      }
+      for(var i = pts.length - 1; i >= 0; i--){
+        var hw = Math.max(0.7, pts[i].s * 5.6);
+        ctx.lineTo(pts[i].x + hw, pts[i].y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "#dce6f0";
+      ctx.fill();
+
+      // 3. Crisp continuous sunlit highlight streak
+      ctx.beginPath();
+      for(var i = 0; i < pts.length; i++){
+        var off = pts[i].s * 1.4;
+        if(i === 0) ctx.moveTo(pts[i].x - off, pts[i].y);
+        else ctx.lineTo(pts[i].x - off, pts[i].y);
+      }
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    });
+
+    // Optional Figure-8 wooden bridge side safety rails when on upper overpass!
+    if(state.layout === "figure8" && engineSample.z === 1){
+      [leftBridge, rightBridge].forEach(function(pts){
+        ctx.save();
+        ctx.strokeStyle = "#8a501c";
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        for(var i = 0; i < pts.length; i++){
+          var ry = pts[i].y - pts[i].s * 54;
+          if(i === 0) ctx.moveTo(pts[i].x, ry);
+          else ctx.lineTo(pts[i].x, ry);
+        }
+        ctx.stroke();
+        ctx.strokeStyle = "#e6aa60";
+        ctx.lineWidth = 3.2;
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // 4. ROADSIDE SCENERY + APPROACHING TUNNEL PORTALS (DEPTH-SORTED FAR TO NEAR)
+    var drawList = [];
+    var tunnels = getCabTunnels();
+    var mtnMode = state.layout === "mountain";
+
+    CAB_PROPS.forEach(function(pr){
+      if(mtnMode && pr.skipMtn) return;
+      var dz = wrapLoopDist(pr.z, cab.dist) * state.dir;
+      // Show props ahead (positive dz when dir=1, or behind/ahead smoothly in reverse)
+      if(dz > 0.45 && dz < zFar){
+        drawList.push({ z: dz, prop: pr });
+      }
+    });
+
+    // Approaching 3D Mountain Tunnel Portals!
+    tunnels.forEach(function(tn){
+      var entryWorld = state.dir === 1 ? tn.start : tn.end;
+      var dz = wrapLoopDist(entryWorld, cab.dist) * state.dir;
+      if(dz > 0.35 && dz < zFar){
+        drawList.push({ z: dz, prop: { kind: "tunnelPortal", lat: 0 } });
+      }
+    });
+
+    // Sort far -> near for flawless painter's algorithm overlap
+    drawList.sort(function(a, b){ return b.z - a.z; });
+    cab.hitZones.props = [];
+
+    drawList.forEach(function(item){
+      var pr = item.prop;
+      var z = item.z;
+      var p = proj(z, pr.lat);
+      var sc = p.scale;
+      if(sc < 2) return;
+
+      if(pr.kind === "pine"){
+        drawCabPine(p.x, p.y, sc * (pr.sz || 1));
+      } else if(pr.kind === "cow"){
+        var hop = Math.sin(cab.cowHop * Math.PI) * sc * 0.38;
+        drawCabCow(p.x, p.y - hop, sc * (pr.sz || 1), pr.lat < 0 ? 1 : -1);
+        if(z < 12){
+          cab.hitZones.props.push({ kind: "cow", x: p.x, y: p.y - sc * 0.45, r: Math.max(28, sc * 0.72) });
+        }
+      } else if(pr.kind === "barn"){
+        var bHop = 1 + Math.sin(cab.barnHop * Math.PI) * 0.08;
+        drawCabBarn(p.x, p.y, sc * (pr.sz || 1) * bHop, pr.lat < 0 ? 1 : -1);
+        if(z < 16){
+          cab.hitZones.props.push({ kind: "barn", x: p.x, y: p.y - sc * 0.9, r: Math.max(36, sc * 1.15) });
+        }
+      } else if(pr.kind === "crossing"){
+        drawCabCrossingGate(p.cx, p.y, sc, z, t);
+        if(z < 13){
+          cab.hitZones.props.push({ kind: "crossing", x: p.cx, y: p.y - sc * 0.7, r: Math.max(40, sc * 1.3) });
+        }
+      } else if(pr.kind === "flower"){
+        drawCabFlowerPatch(p.x, p.y, sc, pr.col);
+      } else if(pr.kind === "tunnelPortal"){
+        drawCabTunnelPortal(p.cx, p.y, sc);
+      }
+    });
+
+    // 5. COZY DARK-WOOD MOUNTAIN TUNNEL PASS-THROUGH + GLOWING HEADLIGHT BEAM
+    if(cab.tunnelAmt > 0.015){
+      drawCabTunnelInterior(horizonY, groundH, proj, t);
+    }
+
+    // 6. FOREGROUND CARTOON STEAM CLOUDS (behind cab pillars, rising above boiler!)
+    drawCabSteamPuffs();
+
+    // 7. FOREGROUND RED STEAM ENGINE BOILER NOSE + GOLDEN BRASS BELL + SMOKESTACK + WOODEN CAB PILLARS
+    drawCabForegroundEngineAndFrame(t, bobX, bobY, horizonY);
+
+    // 8. SHARED SPARKLES & MUSIC NOTES (work identically in Cab View!)
+    drawSteamAndParticles();
+  }
+
+  function drawCabPine(x, y, sc){
+    ctx.save();
+    ctx.translate(x, y);
+    // Ground shadow
+    ctx.fillStyle = "rgba(32, 68, 22, 0.28)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, sc * 0.62, sc * 0.14, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Wooden trunk
+    ctx.fillStyle = "#7a471f";
+    ctx.strokeStyle = "#3a1e09";
+    ctx.lineWidth = Math.max(1, sc * 0.055);
+    ctx.fillRect(-sc * 0.14, -sc * 0.48, sc * 0.28, sc * 0.5);
+    // 3 sculpted Pixar pine tiers
+    var tiers = [
+      { base: -0.34, top: -1.35, halfW: 0.72, col: "#257a37", hi: "#38a34d" },
+      { base: -0.92, top: -1.96, halfW: 0.56, col: "#2f9644", hi: "#51c466" },
+      { base: -1.50, top: -2.52, halfW: 0.39, col: "#40b856", hi: "#78e088" }
+    ];
+    tiers.forEach(function(tr){
+      ctx.fillStyle = tr.col;
+      ctx.beginPath();
+      ctx.moveTo(0, sc * tr.top);
+      ctx.lineTo(sc * tr.halfW, sc * tr.base);
+      ctx.lineTo(-sc * tr.halfW, sc * tr.base);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      // Sunlit right edge highlight matching golden sun!
+      ctx.fillStyle = tr.hi;
+      ctx.beginPath();
+      ctx.moveTo(0, sc * tr.top);
+      ctx.lineTo(sc * tr.halfW * 0.92, sc * tr.base);
+      ctx.lineTo(sc * tr.halfW * 0.12, sc * tr.base);
+      ctx.closePath();
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawCabCow(x, y, sc, faceDir){
+    ctx.save();
+    ctx.translate(x, y);
+    // Cute wooden pasture fence posts behind cow
+    ctx.fillStyle = "#fff8eb";
+    ctx.strokeStyle = "#7c532d";
+    ctx.lineWidth = Math.max(1, sc * 0.04);
+    ctx.fillRect(-sc * 0.85, -sc * 0.52, sc * 1.7, sc * 0.10);
+    ctx.fillRect(-sc * 0.85, -sc * 0.28, sc * 1.7, sc * 0.10);
+    [-0.75, 0, 0.75].forEach(function(fx){
+      ctx.fillRect(sc * (fx - 0.06), -sc * 0.65, sc * 0.12, sc * 0.66);
+    });
+
+    ctx.scale(faceDir, 1);
+    // Shadow
+    ctx.fillStyle = "rgba(32, 68, 22, 0.28)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, sc * 0.54, sc * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Legs
+    ctx.fillStyle = "#3d2b1f";
+    [-0.32, -0.14, 0.14, 0.32].forEach(function(lx){
+      ctx.fillRect(sc * (lx - 0.055), -sc * 0.36, sc * 0.11, sc * 0.36);
+    });
+    // Body
+    ctx.fillStyle = "#fffdf8";
+    ctx.strokeStyle = "#2c1d11";
+    ctx.lineWidth = Math.max(1, sc * 0.055);
+    ctx.beginPath();
+    ctx.roundRect(-sc * 0.46, -sc * 0.78, sc * 0.92, sc * 0.52, sc * 0.22);
+    ctx.fill();
+    ctx.stroke();
+    // Spots
+    ctx.fillStyle = "#3d2b1f";
+    ctx.beginPath();
+    ctx.ellipse(-sc * 0.14, -sc * 0.54, sc * 0.16, sc * 0.12, 0.25, 0, Math.PI * 2);
+    ctx.ellipse(sc * 0.18, -sc * 0.46, sc * 0.13, sc * 0.10, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    // Head
+    ctx.fillStyle = "#fffdf8";
+    ctx.beginPath();
+    ctx.arc(sc * 0.44, -sc * 0.68, sc * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    // Pink snout
+    ctx.fillStyle = "#ffafcc";
+    ctx.beginPath();
+    ctx.ellipse(sc * 0.54, -sc * 0.56, sc * 0.18, sc * 0.13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    // Cute eyes
+    ctx.fillStyle = "#2c1d11";
+    ctx.beginPath();
+    ctx.arc(sc * 0.39, -sc * 0.74, sc * 0.04, 0, Math.PI * 2);
+    ctx.arc(sc * 0.53, -sc * 0.74, sc * 0.04, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawCabBarn(x, y, sc, side){
+    ctx.save();
+    ctx.translate(x, y);
+    // Ground shadow
+    ctx.fillStyle = "rgba(32, 68, 22, 0.28)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, sc * 1.45, sc * 0.26, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Silo on outer side
+    var siloX = side < 0 ? -sc * 1.12 : sc * 1.12;
+    ctx.fillStyle = "#e8d5b7";
+    ctx.strokeStyle = "#4d1b15";
+    ctx.lineWidth = Math.max(1.2, sc * 0.055);
+    ctx.beginPath();
+    ctx.roundRect(siloX - sc * 0.34, -sc * 2.1, sc * 0.68, sc * 2.1, sc * 0.12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#c92a2a";
+    ctx.beginPath();
+    ctx.arc(siloX, -sc * 2.1, sc * 0.35, Math.PI, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Classic Red Gambrel Barn Body
+    ctx.fillStyle = "#df3c34";
+    ctx.beginPath();
+    ctx.moveTo(-sc * 1.05, 0);
+    ctx.lineTo(-sc * 1.05, -sc * 1.1);
+    ctx.lineTo(-sc * 0.68, -sc * 1.82);
+    ctx.lineTo(0, -sc * 2.18);
+    ctx.lineTo(sc * 0.68, -sc * 1.82);
+    ctx.lineTo(sc * 1.05, -sc * 1.1);
+    ctx.lineTo(sc * 1.05, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Crisp White Roof Trim
+    ctx.strokeStyle = "#fff9ec";
+    ctx.lineWidth = Math.max(1.6, sc * 0.10);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(-sc * 1.14, -sc * 1.08);
+    ctx.lineTo(-sc * 0.70, -sc * 1.84);
+    ctx.lineTo(0, -sc * 2.22);
+    ctx.lineTo(sc * 0.70, -sc * 1.84);
+    ctx.lineTo(sc * 1.14, -sc * 1.08);
+    ctx.stroke();
+
+    // Double X Barn Doors
+    ctx.fillStyle = "#b5251e";
+    ctx.strokeStyle = "#fff9ec";
+    ctx.lineWidth = Math.max(1.2, sc * 0.065);
+    ctx.beginPath();
+    ctx.roundRect(-sc * 0.48, -sc * 0.88, sc * 0.96, sc * 0.88, sc * 0.06);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-sc * 0.48, -sc * 0.88); ctx.lineTo(sc * 0.48, 0);
+    ctx.moveTo(sc * 0.48, -sc * 0.88); ctx.lineTo(-sc * 0.48, 0);
+    ctx.stroke();
+
+    // Warm Golden Hayloft Window
+    ctx.fillStyle = "#ffd43b";
+    ctx.beginPath();
+    ctx.roundRect(-sc * 0.24, -sc * 1.62, sc * 0.48, sc * 0.40, sc * 0.06);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCabCrossingGate(cx, y, sc, z, t){
+    ctx.save();
+    ctx.translate(cx, y);
+
+    // Dirt footpath crossing underneath track
+    ctx.fillStyle = "rgba(232, 207, 155, 0.82)";
+    ctx.fillRect(-sc * 3.8, -sc * 0.16, sc * 7.6, sc * 0.34);
+
+    // Lower barrier arms smoothly when approaching!
+    var lowerAmt = Math.max(0, Math.min(1, (14 - z) / 8));
+    var flashOn = Math.sin(t * 12) > 0;
+
+    [-1, 1].forEach(function(side){
+      var px = side * sc * 1.48;
+      // Wooden post
+      ctx.fillStyle = "#5c3412";
+      ctx.strokeStyle = "#2c1d11";
+      ctx.lineWidth = Math.max(1, sc * 0.05);
+      ctx.beginPath();
+      ctx.roundRect(px - sc * 0.11, -sc * 1.95, sc * 0.22, sc * 1.98, sc * 0.06);
+      ctx.fill();
+      ctx.stroke();
+
+      // White X Crossbuck sign near top
+      ctx.save();
+      ctx.translate(px, -sc * 1.65);
+      ctx.strokeStyle = "#fffdf8";
+      ctx.lineWidth = Math.max(1.8, sc * 0.13);
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(-sc * 0.32, -sc * 0.22); ctx.lineTo(sc * 0.32, sc * 0.22);
+      ctx.moveTo(sc * 0.32, -sc * 0.22); ctx.lineTo(-sc * 0.32, sc * 0.22);
+      ctx.stroke();
+      ctx.restore();
+
+      // Twin flashing red warning lamps
+      ctx.fillStyle = "#2c1d11";
+      ctx.beginPath();
+      ctx.roundRect(px - sc * 0.36, -sc * 1.32, sc * 0.72, sc * 0.26, sc * 0.11);
+      ctx.fill();
+      [[-0.19, flashOn], [0.19, !flashOn]].forEach(function(lp){
+        if(lp[1] && lowerAmt > 0.1){
+          ctx.fillStyle = "rgba(255, 59, 48, 0.45)";
+          ctx.beginPath();
+          ctx.arc(px + sc * lp[0], -sc * 1.19, sc * 0.24, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = (lp[1] && lowerAmt > 0.1) ? "#ff3b30" : "#6b2320";
+        ctx.beginPath();
+        ctx.arc(px + sc * lp[0], -sc * 1.19, sc * 0.10, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Red-and-white striped barrier arm pivoting down toward track edge (never blocking train!)
+      ctx.save();
+      ctx.translate(px, -sc * 0.72);
+      var rot = side === -1 ? -(1 - lowerAmt) * 1.15 : Math.PI + (1 - lowerAmt) * 1.15;
+      ctx.rotate(rot);
+      var armLen = sc * 1.15;
+      ctx.fillStyle = "#fffdf8";
+      ctx.strokeStyle = "#2c1d11";
+      ctx.lineWidth = Math.max(1, sc * 0.045);
+      ctx.beginPath();
+      ctx.roundRect(0, -sc * 0.09, armLen, sc * 0.18, sc * 0.06);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#e8483c";
+      for(var sx = 0.18; sx < 1.0; sx += 0.32){
+        ctx.fillRect(sc * sx, -sc * 0.075, sc * 0.15, sc * 0.15);
+      }
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+
+  function drawCabFlowerPatch(x, y, sc, col){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = "#2b8a3e";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, sc * 0.34, sc * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    [[-0.18, -0.06], [0.02, -0.11], [0.19, -0.04]].forEach(function(fp){
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(sc * fp[0], sc * fp[1], Math.max(1.6, sc * 0.095), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ffd43b";
+      ctx.beginPath();
+      ctx.arc(sc * fp[0], sc * fp[1], Math.max(0.8, sc * 0.04), 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawCabTunnelPortal(cx, y, sc){
+    ctx.save();
+    ctx.translate(cx, y);
+
+    // Big lush storybook green mountain hill arching over the rails
+    var hillW = sc * 4.9;
+    var hillH = sc * 3.8;
+    var mg = ctx.createLinearGradient(0, -hillH, 0, sc * 0.2);
+    mg.addColorStop(0, "#68bd64");
+    mg.addColorStop(0.55, "#428f49");
+    mg.addColorStop(1, "#2a6333");
+    ctx.fillStyle = mg;
+    ctx.strokeStyle = "#1d4724";
+    ctx.lineWidth = Math.max(1.5, sc * 0.07);
+    ctx.beginPath();
+    ctx.moveTo(-hillW, sc * 0.1);
+    ctx.bezierCurveTo(-hillW * 0.72, -hillH * 0.72, -hillW * 0.28, -hillH, 0, -hillH);
+    ctx.bezierCurveTo(hillW * 0.28, -hillH, hillW * 0.72, -hillH * 0.72, hillW, sc * 0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Snowy peak cap
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = "#fffdf8";
+    ctx.beginPath();
+    ctx.moveTo(-hillW * 0.28, -hillH * 0.72);
+    ctx.lineTo(-hillW * 0.12, -hillH * 0.80);
+    ctx.lineTo(0, -hillH * 0.68);
+    ctx.lineTo(hillW * 0.12, -hillH * 0.80);
+    ctx.lineTo(hillW * 0.28, -hillH * 0.72);
+    ctx.lineTo(hillW * 0.34, -hillH * 1.1);
+    ctx.lineTo(-hillW * 0.34, -hillH * 1.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Timber-and-Stone Arched Tunnel Mouth right over the tracks
+    var archW = sc * 1.48;
+    var archH = sc * 1.85;
+    // Outer stone/wood arch collar
+    ctx.fillStyle = "#8a5a2e";
+    ctx.strokeStyle = "#3d220d";
+    ctx.lineWidth = Math.max(1.5, sc * 0.07);
+    ctx.beginPath();
+    ctx.moveTo(-archW * 1.24, sc * 0.06);
+    ctx.lineTo(-archW * 1.24, -archH * 0.56);
+    ctx.arc(0, -archH * 0.56, archW * 1.24, Math.PI, 0);
+    ctx.lineTo(archW * 1.24, sc * 0.06);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Cozy dark tunnel cavity
+    ctx.fillStyle = "#1d120b";
+    ctx.beginPath();
+    ctx.moveTo(-archW, sc * 0.06);
+    ctx.lineTo(-archW, -archH * 0.56);
+    ctx.arc(0, -archH * 0.56, archW, Math.PI, 0);
+    ctx.lineTo(archW, sc * 0.06);
+    ctx.closePath();
+    ctx.fill();
+
+    // Warm golden inner lantern glow inside portal mouth
+    var gl = ctx.createRadialGradient(0, -archH * 0.3, sc * 0.1, 0, -archH * 0.3, archW * 0.9);
+    gl.addColorStop(0, "rgba(255, 224, 120, 0.22)");
+    gl.addColorStop(1, "rgba(255, 224, 120, 0)");
+    ctx.fillStyle = gl;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawCabTunnelInterior(horizonY, groundH, proj, t){
+    var alpha = cab.tunnelAmt;
+    var tunStat = getCabTunnelStatus();
+    var vp = proj(18, 0);
+
+    ctx.save();
+    // 1. Cozy deep dark-wood mountain tunnel envelope
+    ctx.globalAlpha = Math.min(0.95, alpha * 0.96);
+    var bgG = ctx.createRadialGradient(vp.cx, horizonY - 12, Math.min(W, H) * 0.08, vp.cx, horizonY, Math.max(W, H) * 0.85);
+    bgG.addColorStop(0, "#3b2414");
+    bgG.addColorStop(0.45, "#23140b");
+    bgG.addColorStop(1, "#120905");
+    ctx.fillStyle = bgG;
+    ctx.fillRect(0, 0, W, H);
+
+    // 2. Re-draw glowing illuminated wooden tracks inside the tunnel so tracks stay vivid!
+    var zNear = 0.55, zFar = 22;
+    var tieSpacing = 0.62;
+    var firstTieIdx = Math.ceil((cab.dist + zNear * 0.7) / tieSpacing);
+    for(var ti = 28; ti >= 0; ti--){
+      var relZ = (firstTieIdx + ti) * tieSpacing - cab.dist;
+      if(relZ < zNear || relZ > zFar) continue;
+      var tp = proj(relZ, 0);
+      var glow = Math.max(0.18, 1 - relZ / 15);
+      ctx.fillStyle = "rgba(195, 134, 68, " + (glow * 0.85) + ")";
+      ctx.fillRect(tp.cx - tp.scale * 0.95, tp.y - tp.scale * 0.07, tp.scale * 1.9, Math.max(1.5, tp.scale * 0.14));
+    }
+    // Gleaming rails inside tunnel
+    [-0.62, 0.62].forEach(function(lat){
+      ctx.beginPath();
+      for(var i = 0; i <= 22; i++){
+        var z = zFar * Math.pow(zNear / zFar, i / 22);
+        var rp = proj(z, lat);
+        if(i === 0) ctx.moveTo(rp.x, rp.y);
+        else ctx.lineTo(rp.x, rp.y);
+      }
+      ctx.strokeStyle = "rgba(255, 240, 175, 0.75)";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    });
+
+    // 3. Receding Cozy Dark-Wood Timber Arch Ribs rushing past!
+    var ribSpacing = 1.65;
+    var firstRib = Math.ceil((cab.dist + 0.5) / ribSpacing);
+    for(var ri = 14; ri >= 0; ri--){
+      var rz = (firstRib + ri) * ribSpacing - cab.dist;
+      if(rz < 0.45 || rz > 20) continue;
+      var rp = proj(rz, 0);
+      var archR = rp.scale * 1.95;
+      var baseH = rp.scale * 1.35;
+      var lum = Math.max(0.25, 1 - rz / 18);
+      ctx.strokeStyle = "rgba(" + Math.round(145 * lum) + "," + Math.round(86 * lum) + "," + Math.round(38 * lum) + "," + (0.94 * alpha) + ")";
+      ctx.lineWidth = Math.max(3, rp.scale * 0.24);
+      ctx.beginPath();
+      ctx.moveTo(rp.cx - archR, rp.y + rp.scale * 0.2);
+      ctx.lineTo(rp.cx - archR, rp.y - baseH);
+      ctx.arc(rp.cx, rp.y - baseH, archR, Math.PI, 0);
+      ctx.lineTo(rp.cx + archR, rp.y + rp.scale * 0.2);
+      ctx.stroke();
+
+      // Subtle warm golden headlight rim highlight on inner edge of timber rib
+      ctx.strokeStyle = "rgba(255, 218, 128, " + (lum * 0.42 * alpha) + ")";
+      ctx.lineWidth = Math.max(1.2, rp.scale * 0.06);
+      ctx.stroke();
+    }
+
+    // 4. Cheerful Sunny Exit Arch glowing ahead (grows bigger as you approach exit!)
+    var exitGrow = 0.28 + tunStat.frac * 0.92;
+    var exitR = Math.min(W, H) * 0.13 * exitGrow;
+    var exitY = horizonY - exitR * 0.22;
+    var exitG = ctx.createRadialGradient(vp.cx, exitY, exitR * 0.15, vp.cx, exitY, exitR * 1.65);
+    exitG.addColorStop(0, "#ffffff");
+    exitG.addColorStop(0.45, "#a6e6ff");
+    exitG.addColorStop(0.78, "rgba(135, 224, 120, 0.55)");
+    exitG.addColorStop(1, "rgba(135, 224, 120, 0)");
+    ctx.fillStyle = exitG;
+    ctx.beginPath();
+    ctx.arc(vp.cx, exitY, exitR * 1.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 5. Soft Volumetric Glowing Golden Train Headlight Cone (feathered smoothly, zero hard edges!)
+    ctx.globalCompositeOperation = "screen";
+    var beamOriginY = H * 0.64;
+    var beamRadius = Math.max(W, H) * 0.56;
+    var beamG = ctx.createRadialGradient(W * 0.5, beamOriginY - 12, 10, vp.cx, horizonY + groundH * 0.14, beamRadius);
+    beamG.addColorStop(0, "rgba(255, 248, 180, " + (0.72 * alpha) + ")");
+    beamG.addColorStop(0.32, "rgba(255, 228, 125, " + (0.36 * alpha) + ")");
+    beamG.addColorStop(0.72, "rgba(255, 205, 85, " + (0.10 * alpha) + ")");
+    beamG.addColorStop(1, "rgba(255, 195, 70, 0)");
+    ctx.fillStyle = beamG;
+    ctx.beginPath();
+    ctx.moveTo(W * 0.5 - 24, beamOriginY);
+    ctx.quadraticCurveTo(vp.cx - W * 0.34, horizonY + groundH * 0.08, vp.cx - W * 0.24, horizonY - H * 0.18);
+    ctx.quadraticCurveTo(vp.cx, horizonY - H * 0.28, vp.cx + W * 0.24, horizonY - H * 0.18);
+    ctx.quadraticCurveTo(vp.cx + W * 0.34, horizonY + groundH * 0.08, W * 0.5 + 24, beamOriginY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Twinkling golden dust motes dancing inside headlight beam
+    ctx.fillStyle = "rgba(255, 250, 200, " + (0.65 * alpha) + ")";
+    for(var m = 0; m < 10; m++){
+      var mx = W * 0.5 + Math.sin(t * 1.7 + m * 2.1) * W * 0.18;
+      var my = horizonY + ((t * 55 + m * 41) % (groundH * 0.45));
+      ctx.beginPath();
+      ctx.arc(mx, my, 2.2 + (m % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawCabSteamPuffs(){
+    cab.steamPuffs.forEach(function(p){
+      var f = p.life / p.maxLife;
+      var alpha = Math.max(0, (1 - f * f) * 0.88);
+      var rad = p.r * (0.68 + f * 1.55);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      // Soft sky-tinted cloud shadow underneath
+      ctx.fillStyle = "rgba(205, 224, 240, 0.72)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y + rad * 0.18, rad * 0.96, 0, Math.PI * 2);
+      ctx.arc(p.x - rad * 0.56, p.y + rad * 0.26, rad * 0.66, 0, Math.PI * 2);
+      ctx.arc(p.x + rad * 0.58, p.y + rad * 0.24, rad * 0.70, 0, Math.PI * 2);
+      ctx.fill();
+      // Fluffy cartoon pure-white Pixar steam puff (no harsh overlapping inner rings!)
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+      ctx.arc(p.x - rad * 0.56, p.y + rad * 0.14, rad * 0.68, 0, Math.PI * 2);
+      ctx.arc(p.x + rad * 0.58, p.y + rad * 0.11, rad * 0.72, 0, Math.PI * 2);
+      ctx.arc(p.x + rad * 0.12, p.y - rad * 0.32, rad * 0.62, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  function drawCabForegroundEngineAndFrame(t, bobX, bobY, horizonY){
+    var conRect = consoleEl.getBoundingClientRect();
+    var sillY = Math.min(H - 76, Math.max(H * 0.68, conRect.top + 8));
+    var portrait = H > W * 1.05;
+    var u = Math.min(W, H) / 760;
+    var bounceY = -Math.sin(trainBounce * Math.PI) * 14 * u;
+    var cx = W * 0.5 + bobX;
+    var engBaseY = sillY + 12 + bobY + bounceY;
+
+    // 1. GLOSSY RED STEAM ENGINE BOILER NOSE (sleek perspective barrel leaving generous track vista ahead!)
+    var backW = Math.min(W * (portrait ? 0.33 : 0.185), 215);
+    var frontW = backW * 0.48;
+    var noseY = Math.max(horizonY + (sillY - horizonY) * (portrait ? 0.36 : 0.42), sillY - (portrait ? 142 : 132) * Math.max(0.72, u));
+    var frontCenterY = noseY + frontW * 0.44;
+
+    ctx.save();
+    // Soft shadow cast onto rails below boiler
+    ctx.fillStyle = "rgba(25, 38, 18, 0.34)";
+    ctx.beginPath();
+    ctx.ellipse(cx, engBaseY + 4, backW * 1.15, 24 * u, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Red Boiler Cylinder Body
+    var boilGrad = ctx.createLinearGradient(cx - backW, 0, cx + backW, 0);
+    boilGrad.addColorStop(0, "#8f1812");
+    boilGrad.addColorStop(0.24, "#e8483c");
+    boilGrad.addColorStop(0.46, "#ff7163");
+    boilGrad.addColorStop(0.76, "#d63026");
+    boilGrad.addColorStop(1, "#7c140e");
+    ctx.fillStyle = boilGrad;
+    ctx.strokeStyle = "#4d120c";
+    ctx.lineWidth = Math.max(2.6, 3.6 * u);
+    ctx.beginPath();
+    ctx.moveTo(cx - backW, engBaseY + 18);
+    ctx.lineTo(cx - frontW, frontCenterY);
+    ctx.arc(cx, frontCenterY, frontW, Math.PI, 0, false);
+    ctx.lineTo(cx + backW, engBaseY + 18);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Glossy Pixar Specular Highlight along top-left curve of boiler
+    ctx.fillStyle = "rgba(255, 255, 255, 0.24)";
+    ctx.beginPath();
+    ctx.moveTo(cx - backW * 0.44, engBaseY);
+    ctx.lineTo(cx - frontW * 0.44, frontCenterY - frontW * 0.48);
+    ctx.lineTo(cx - frontW * 0.08, frontCenterY - frontW * 0.54);
+    ctx.lineTo(cx - backW * 0.05, engBaseY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Gleaming Golden Brass Boiler Bands wrapping across the red cylinder
+    [0.26, 0.62].forEach(function(bf){
+      var by = frontCenterY + (engBaseY - frontCenterY) * bf;
+      var bw = frontW + (backW - frontW) * bf;
+      ctx.strokeStyle = "#f5b727";
+      ctx.lineWidth = Math.max(4, 7 * u);
+      ctx.beginPath();
+      ctx.ellipse(cx, by, bw, bw * 0.22, 0, Math.PI * 1.06, Math.PI * 1.94);
+      ctx.stroke();
+      ctx.strokeStyle = "#fff3a6";
+      ctx.lineWidth = Math.max(1.5, 2.4 * u);
+      ctx.beginPath();
+      ctx.ellipse(cx, by - 1.5, bw * 0.98, bw * 0.20, 0, Math.PI * 1.15, Math.PI * 1.85);
+      ctx.stroke();
+    });
+
+    // Front Cast-Iron Smokebox Rim + Glowing Golden Headlamp Housing
+    ctx.fillStyle = "#343a40";
+    ctx.strokeStyle = "#1c1f23";
+    ctx.lineWidth = Math.max(2, 2.8 * u);
+    ctx.beginPath();
+    ctx.ellipse(cx, frontCenterY - frontW * 0.34, frontW * 0.78, frontW * 0.34, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.stroke();
+
+    // Brass Headlamp Dome on nose tip
+    var lampY = frontCenterY - frontW * 0.68;
+    var lampR = Math.max(9, frontW * 0.22);
+    if(cab.tunnelAmt > 0.05){
+      var halo = ctx.createRadialGradient(cx, lampY, lampR * 0.2, cx, lampY, lampR * 3.4);
+      halo.addColorStop(0, "rgba(255, 248, 175, " + (0.85 * cab.tunnelAmt) + ")");
+      halo.addColorStop(1, "rgba(255, 230, 120, 0)");
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(cx, lampY, lampR * 3.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#f5b727";
+    ctx.strokeStyle = "#5c3605";
+    ctx.lineWidth = Math.max(2, 2.6 * u);
+    ctx.beginPath();
+    ctx.arc(cx, lampY, lampR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = cab.tunnelAmt > 0.2 ? "#fffbe0" : "#ffe680";
+    ctx.beginPath();
+    ctx.arc(cx, lampY, lampR * 0.56, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. TALL CAST-IRON SMOKESTACK (puffing white cartoon steam!)
+    var stackBaseY = frontCenterY - frontW * 0.42;
+    var stackH = Math.max(46, frontW * 1.05);
+    var stackTopY = stackBaseY - stackH;
+    var stackW = Math.max(15, frontW * 0.28);
+
+    var stGrad = ctx.createLinearGradient(cx - stackW, 0, cx + stackW, 0);
+    stGrad.addColorStop(0, "#1f2428");
+    stGrad.addColorStop(0.38, "#4b535c");
+    stGrad.addColorStop(0.75, "#2b3036");
+    stGrad.addColorStop(1, "#14171a");
+    ctx.fillStyle = stGrad;
+    ctx.strokeStyle = "#111315";
+    ctx.lineWidth = Math.max(2, 2.8 * u);
+    ctx.beginPath();
+    ctx.moveTo(cx - stackW * 0.85, stackBaseY);
+    ctx.lineTo(cx - stackW * 0.65, stackTopY + stackH * 0.24);
+    ctx.lineTo(cx - stackW * 1.22, stackTopY);
+    ctx.lineTo(cx + stackW * 1.22, stackTopY);
+    ctx.lineTo(cx + stackW * 0.65, stackTopY + stackH * 0.24);
+    ctx.lineTo(cx + stackW * 0.85, stackBaseY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Brass chimney crown rim
+    ctx.fillStyle = "#f5b727";
+    ctx.strokeStyle = "#5c3605";
+    ctx.beginPath();
+    ctx.ellipse(cx, stackTopY, stackW * 1.22, stackW * 0.34, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#1a1d20";
+    ctx.beginPath();
+    ctx.ellipse(cx, stackTopY, stackW * 0.78, stackW * 0.19, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Record smokestack & boiler hit zone for steam spawn + tap-to-whistle!
+    cab.hitZones.boiler = {
+      x: cx,
+      y: (engBaseY + frontCenterY) * 0.5,
+      rx: backW * 0.85,
+      ry: (engBaseY - stackTopY) * 0.55,
+      stackX: cx,
+      stackY: stackTopY - 4
+    };
+
+    // 3. POLISHED GOLDEN BRASS BELL (swings & rings!)
+    var bellBaseY = frontCenterY + (engBaseY - frontCenterY) * 0.34;
+    var bellR = Math.max(16, frontW * 0.34);
+    // Curved brass yoke posts
+    ctx.strokeStyle = "#8a5308";
+    ctx.lineWidth = Math.max(3, 5 * u);
+    ctx.beginPath();
+    ctx.moveTo(cx - bellR * 1.15, bellBaseY + 4);
+    ctx.quadraticCurveTo(cx - bellR * 1.15, bellBaseY - bellR * 1.35, cx, bellBaseY - bellR * 1.35);
+    ctx.quadraticCurveTo(cx + bellR * 1.15, bellBaseY - bellR * 1.35, cx + bellR * 1.15, bellBaseY + 4);
+    ctx.stroke();
+    ctx.strokeStyle = "#ffe066";
+    ctx.lineWidth = Math.max(1.5, 2.4 * u);
+    ctx.stroke();
+
+    // Swinging bell body
+    ctx.save();
+    ctx.translate(cx, bellBaseY - bellR * 1.25);
+    ctx.rotate(cab.bellAngle);
+    var bellGrad = ctx.createLinearGradient(-bellR, 0, bellR, 0);
+    bellGrad.addColorStop(0, "#b8760b");
+    bellGrad.addColorStop(0.35, "#fff4a3");
+    bellGrad.addColorStop(0.68, "#f5b727");
+    bellGrad.addColorStop(1, "#9a5d05");
+    ctx.fillStyle = bellGrad;
+    ctx.strokeStyle = "#5c3404";
+    ctx.lineWidth = Math.max(2, 2.6 * u);
+    ctx.beginPath();
+    ctx.moveTo(-bellR * 0.34, 0);
+    ctx.bezierCurveTo(-bellR * 0.45, bellR * 0.7, -bellR * 0.92, bellR * 0.95, -bellR * 0.98, bellR * 1.15);
+    ctx.quadraticCurveTo(0, bellR * 1.36, bellR * 0.98, bellR * 1.15);
+    ctx.bezierCurveTo(bellR * 0.92, bellR * 0.95, bellR * 0.45, bellR * 0.7, bellR * 0.34, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // Little clapper peeking underneath
+    ctx.fillStyle = "#5c3404";
+    ctx.beginPath();
+    ctx.arc(0, bellR * 1.24, bellR * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    cab.hitZones.bell = { x: cx, y: bellBaseY - bellR * 0.55, r: Math.max(34, bellR * 1.55) };
+    ctx.restore();
+
+    // 4. WARM WOODEN CAB WINDOW PILLARS, OVERHEAD ARCH BEAM & LOWER DASHBOARD SILL
+    var pillarW = Math.round(Math.max(16, Math.min(48, W * (portrait ? 0.048 : 0.038))));
+    var topBeamH = Math.round(Math.max(24, Math.min(42, H * 0.042)));
+    var woodDark = "#5e3312";
+
+    ctx.save();
+    // Left & Right warm beechwood window pillars
+    [0, W - pillarW].forEach(function(px, idx){
+      var pg = ctx.createLinearGradient(px, 0, px + pillarW, 0);
+      if(idx === 0){
+        pg.addColorStop(0, "#7c4519");
+        pg.addColorStop(0.65, "#c68440");
+        pg.addColorStop(1, "#e8b572");
+      } else {
+        pg.addColorStop(0, "#e8b572");
+        pg.addColorStop(0.35, "#c68440");
+        pg.addColorStop(1, "#7c4519");
+      }
+      ctx.fillStyle = pg;
+      ctx.fillRect(px, 0, pillarW, H);
+      ctx.strokeStyle = woodDark;
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      var edgeX = idx === 0 ? pillarW : W - pillarW;
+      ctx.moveTo(edgeX, 0);
+      ctx.lineTo(edgeX, H);
+      ctx.stroke();
+
+      // Decorative brass rivets along pillars
+      ctx.fillStyle = "#ffd43b";
+      ctx.strokeStyle = "#613904";
+      ctx.lineWidth = 1.6;
+      for(var ry = H * 0.24; ry < sillY - 30; ry += H * 0.22){
+        ctx.beginPath();
+        ctx.arc(px + pillarW * 0.5, ry, Math.max(3, pillarW * 0.14), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+    });
+
+    // Subtle arched wooden overhead cab roof valence (frames top corners cleanly behind HUD)
+    var archG = ctx.createLinearGradient(0, 0, 0, topBeamH + 22);
+    archG.addColorStop(0, "#6e3c14");
+    archG.addColorStop(0.7, "#b67534");
+    archG.addColorStop(1, "#d99d56");
+    ctx.fillStyle = archG;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(W, 0);
+    ctx.lineTo(W, topBeamH + 26);
+    ctx.quadraticCurveTo(W * 0.5, topBeamH - 18, 0, topBeamH + 26);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = woodDark;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(0, topBeamH + 26);
+    ctx.quadraticCurveTo(W * 0.5, topBeamH - 18, W, topBeamH + 26);
+    ctx.stroke();
+
+    // Warm Wooden Lower Cab Sill spanning cleanly behind the bottom driving console
+    var sillG = ctx.createLinearGradient(0, sillY, 0, H);
+    sillG.addColorStop(0, "#e7b16a");
+    sillG.addColorStop(0.22, "#c27f3b");
+    sillG.addColorStop(1, "#7b451a");
+    ctx.fillStyle = sillG;
+    ctx.beginPath();
+    ctx.moveTo(0, sillY + 6);
+    ctx.quadraticCurveTo(W * 0.5, sillY - 12, W, sillY + 6);
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = woodDark;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, sillY + 6);
+    ctx.quadraticCurveTo(W * 0.5, sillY - 12, W, sillY + 6);
+    ctx.stroke();
+
+    // Cute Brass Pressure / Speed Dial tucked on the left wooden sill (visible on desktop/iPad!)
+    if(!portrait && W >= 780){
+      var gx = pillarW + 56;
+      var gy = sillY - 12;
+      var gr = 24;
+      ctx.fillStyle = "#fffaf0";
+      ctx.strokeStyle = "#8a501c";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(gx, gy, gr, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.strokeStyle = "#ffd43b";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // Animated speed needle
+      var needleAng = !state.running ? -Math.PI * 0.78
+        : (state.speed === "slow" ? -Math.PI * 0.45 : (state.speed === "cruise" ? -Math.PI * 0.1 : Math.PI * 0.25));
+      needleAng += Math.sin(t * 9) * (state.running ? 0.04 : 0);
+      ctx.strokeStyle = "#e8483c";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx + Math.cos(needleAng) * (gr - 6), gy + Math.sin(needleAng) * (gr - 6));
+      ctx.stroke();
+      ctx.fillStyle = "#2c1d11";
+      ctx.beginPath();
+      ctx.arc(gx, gy, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  /* ==================== INTERACTIONS & CONTROLS ==================== */
+  function syncHudUi(){
+    // Track layout pills
+    trackPills.forEach(function(btn){
+      var on = btn.getAttribute("data-layout") === state.layout;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    // Cab View / Track View toggle button
+    btnCabView.classList.toggle("active", state.cabView);
+    btnCabView.setAttribute("aria-pressed", state.cabView ? "true" : "false");
+    btnCabView.setAttribute("aria-label", state.cabView ? "Switch to Top-Down Track View" : "Switch to First-Person Cab View");
+    btnCabView.innerHTML = state.cabView
+      ? '<span class="cab-ico" aria-hidden="true">🗺️</span><span class="cab-txt">Track View</span>'
+      : '<span class="cab-ico" aria-hidden="true">👀</span><span class="cab-txt">Cab View</span>';
+
+    // Go / Stop button
+    goStopBtn.classList.toggle("paused", !state.running);
+    goStopBtn.setAttribute("aria-pressed", state.running ? "true" : "false");
+    goStopBtn.setAttribute("aria-label", state.running ? "Pause Train" : "Go Train");
+    pauseSvg.style.display = state.running ? "block" : "none";
+    goSvg.style.display = state.running ? "none" : "block";
+
+    // Reverse button
+    reverseBtn.classList.toggle("reversed", state.dir === -1);
+    reverseBtn.setAttribute("aria-pressed", state.dir === -1 ? "true" : "false");
+
+    // Speed buttons
+    speedBtns.forEach(function(btn){
+      var on = btn.getAttribute("data-speed") === state.speed;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    // Car count indicator dots
+    var dots = carDotsEl.querySelectorAll(".car-dot");
+    for(var i = 0; i < dots.length; i++){
+      dots[i].classList.toggle("on", i < state.carCount);
+    }
+
+    // Mute button
+    muteBtn.classList.toggle("muted", state.muted);
+    muteBtn.setAttribute("aria-pressed", state.muted ? "true" : "false");
+    soundOnIcon.style.display = state.muted ? "none" : "block";
+    soundOffIcon.style.display = state.muted ? "block" : "none";
+
+    // Star counter
+    starCountEl.textContent = String(state.stars);
+  }
+
+  function earnStar(x, y){
+    state.stars++;
+    starCountEl.textContent = String(state.stars);
+    starPillEl.classList.remove("pop");
+    void starPillEl.offsetWidth;
+    starPillEl.classList.add("pop");
+    setTimeout(function(){ starPillEl.classList.remove("pop"); }, 260);
+    spawnSparkles(x, y, ["#ffd43b", "#fff3bf", "#ff922b", "#ff6b6b"], 14, "star");
+  }
+
+  function triggerWhistle(){
+    state.whistles++;
+    hootWaveTimer = 1.65;
+    trainBounce = 1.0;
+    whistleBtn.classList.add("tooting");
+    setTimeout(function(){ whistleBtn.classList.remove("tooting"); }, 480);
+
+    playWhistleSfx();
+
+    if(state.cabView){
+      ringCabBell(9.5);
+      spawnCabSteam(true);
+      var b = cab.hitZones.boiler;
+      spawnMusicNotes(b ? b.stackX : W * 0.5, b ? b.stackY - 12 : H * 0.5);
+    } else {
+      var units = getTrainUnits();
+      var eng = units[0];
+      if(eng){
+        var sx = eng.x + Math.cos(eng.angle) * 17 * play.scale;
+        var sy = eng.y + Math.sin(eng.angle) * 17 * play.scale;
+        spawnSteam(sx, sy, true);
+        spawnMusicNotes(eng.x, eng.y - 16 * play.scale);
+      }
+    }
+  }
+
+  function switchLayout(nextLayout){
+    if(state.layout === nextLayout){
+      playMarimbaNote(659.25, 0, 0.11);
+      return;
+    }
+    state.layout = nextLayout;
+    plantedItems.length = 0;
+    layoutFade = 1.0;
+    buildTrack();
+    trainS = track.totalLen * 0.15;
+    if(state.cabView && nextLayout === "mountain"){
+      cab.dist = 30.0;
+    }
+    syncHudUi();
+    playMarimbaNote(523.25, 0, 0.13);
+    playMarimbaNote(659.25, 0.06, 0.13);
+    playMarimbaNote(783.99, 0.12, 0.13);
+    spawnSparkles(play.cx, play.cy, ["#ffd43b", "#69db7c", "#74c0fc", "#ff8787"], 16, "star");
+    if(nextLayout === "figure8" || nextLayout === "mountain"){
+      playVoice("amazing");
+    }
+  }
+
+  function toggleCabView(){
+    state.cabView = !state.cabView;
+    syncHudUi();
+    if(state.cabView){
+      ringCabBell(6.0);
+      spawnCabSteam(true);
+      playMarimbaNote(523.25, 0, 0.13);
+      playMarimbaNote(659.25, 0.055, 0.13);
+      playMarimbaNote(783.99, 0.11, 0.14);
+      spawnSparkles(W * 0.5, H * 0.45, ["#ffd43b", "#7ee8ff", "#ffffff", "#69db7c"], 16, "star");
+    } else {
+      playMarimbaNote(783.99, 0, 0.12);
+      playMarimbaNote(587.33, 0.06, 0.12);
+      spawnSparkles(play.cx, play.cy, ["#ffd43b", "#69db7c", "#74c0fc"], 12, "star");
+    }
+  }
+
+  /* Bind HUD & Console Events */
+  trackPills.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      ensureAudio();
+      switchLayout(btn.getAttribute("data-layout"));
+    });
+  });
+
+  btnCabView.addEventListener("click", function(){
+    ensureAudio();
+    toggleCabView();
+  });
+
+  goStopBtn.addEventListener("click", function(){
+    ensureAudio();
+    state.running = !state.running;
+    trainBounce = 0.7;
+    syncHudUi();
+    playMarimbaNote(state.running ? 659.25 : 392.0, 0, 0.14);
+  });
+
+  reverseBtn.addEventListener("click", function(){
+    ensureAudio();
+    state.dir = state.dir === 1 ? -1 : 1;
+    trainBounce = 0.8;
+    syncHudUi();
+    playMarimbaNote(587.33, 0, 0.12);
+    playMarimbaNote(440.0, 0.07, 0.12);
+  });
+
+  speedBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      ensureAudio();
+      var sp = btn.getAttribute("data-speed");
+      state.speed = sp;
+      if(!state.running) state.running = true;
+      trainBounce = 0.8;
+      syncHudUi();
+      var freq = sp === "slow" ? 440 : (sp === "cruise" ? 587.33 : 880);
+      playMarimbaNote(freq, 0, 0.14);
+      if(sp === "turbo"){
+        if(state.cabView){
+          spawnCabSteam(true);
+          ringCabBell(5.5);
+        } else {
+          var u0 = getTrainUnits()[0];
+          if(u0) spawnSteam(u0.x, u0.y, true);
+        }
+      }
+    });
+  });
+
+  addCarBtn.addEventListener("click", function(){
+    ensureAudio();
+    if(state.carCount < 4){
+      state.carCount++;
+    } else {
+      state.carTheme = (state.carTheme + 1) % CAR_THEMES.length;
+    }
+    syncHudUi();
+    playMagnetClack();
+    if(state.cabView){
+      trainBounce = 0.7;
+      ringCabBell(4.5);
+      spawnSparkles(W * 0.5, H * 0.66, ["#ffd43b", "#ff6b6b", "#38a3f1", "#51cf66"], 14, "star");
+    } else {
+      var units = getTrainUnits();
+      var last = units[units.length - 1];
+      if(last){
+        spawnSparkles(last.x, last.y, ["#ffd43b", "#ff6b6b", "#38a3f1", "#51cf66"], 14, "star");
+      }
+    }
+    if(state.carCount === 4){
+      playVoice("super");
+    } else if(state.carCount === 2){
+      playVoice("great");
+    }
+  });
+
+  whistleBtn.addEventListener("click", function(){
+    ensureAudio();
+    triggerWhistle();
+  });
+
+  muteBtn.addEventListener("click", function(){
+    state.muted = !state.muted;
+    if(state.muted && voiceEl){
+      try{ voiceEl.pause(); }catch(e){}
+    } else {
+      ensureAudio();
+      playMarimbaNote(659.25, 0, 0.11);
+    }
+    syncHudUi();
+  });
+
+  /* ==================== DIRECT CANVAS TAP-TO-INTERACT ==================== */
+  canvas.addEventListener("pointerdown", function(e){
+    ensureAudio();
+    var rect = canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var S = play.scale;
+
+    // First-Person Cab View direct canvas interactions!
+    if(state.cabView){
+      // 1. Tap Golden Brass Bell -> ring & swing!
+      var bell = cab.hitZones.bell;
+      if(bell && Math.hypot(x - bell.x, y - bell.y) <= bell.r){
+        ringCabBell(11);
+        playCrossingBell(2);
+        spawnSparkles(bell.x, bell.y, ["#ffd43b", "#fff3bf", "#ffffff"], 12, "star");
+        return;
+      }
+      // 2. Tap Red Steam Boiler or Smokestack -> blow train whistle!
+      var bl = cab.hitZones.boiler;
+      if(bl){
+        var bdx = (x - bl.x) / Math.max(40, bl.rx);
+        var bdy = (y - bl.y) / Math.max(40, bl.ry);
+        if(bdx * bdx + bdy * bdy <= 1.0){
+          triggerWhistle();
+          return;
+        }
+      }
+      // 3. Tap passing roadside Cow, Red Barn, or Crossing Gate!
+      for(var pi = cab.hitZones.props.length - 1; pi >= 0; pi--){
+        var hp = cab.hitZones.props[pi];
+        if(Math.hypot(x - hp.x, y - hp.y) <= hp.r){
+          if(hp.kind === "cow"){
+            cab.cowHop = 1.0;
+            spawnSparkles(hp.x, hp.y, ["#fff", "#ffafcc", "#ffd43b"], 12, "star");
+            spawnMusicNotes(hp.x, hp.y - 12);
+            playVoice("moo");
+          } else if(hp.kind === "barn"){
+            cab.barnHop = 1.0;
+            cab.cowHop = 0.85;
+            spawnSparkles(hp.x, hp.y, ["#ffd43b", "#ff6b6b", "#fff"], 12, "star");
+            playVoice("moo");
+          } else if(hp.kind === "crossing"){
+            playCrossingBell(2);
+            spawnSparkles(hp.x, hp.y, ["#ff6b6b", "#ffd43b", "#fff"], 12, "star");
+          }
+          return;
+        }
+      }
+      // 4. Tap anywhere in alpine sky or meadow -> joyful star sparkle & marimba note!
+      if(y < H * 0.44){
+        earnStar(x, y);
+        playStationCheerSfx();
+      } else {
+        spawnSparkles(x, y, ["#ffd43b", "#7ee8ff", "#69db7c", "#fff"], 10, "star");
+        playMarimbaNote(PENTA[(pentaIdx++) % PENTA.length], 0, 0.13);
+      }
+      return;
+    }
+
+    // 1. Check Train Engine & Cars tap
+    var units = getTrainUnits();
+    for(var i = 0; i < units.length; i++){
+      var u = units[i];
+      if(u.inTunnel) continue;
+      if(Math.hypot(x - u.x, y - u.y) < 34 * S){
+        if(u.index === 0){
+          // Tap Engineer Hoot!
+          hootWaveTimer = 1.5;
+          trainBounce = 1.0;
+          spawnSteam(u.x, u.y, true);
+          spawnSparkles(u.x, u.y, ["#ffd43b", "#fff"], 10, "star");
+          if(typeof window.__hootTickleBelly === "function" && !state.muted){
+            if(!window.__hootTickleBelly()) playWhistleSfx();
+          } else {
+            playWhistleSfx();
+          }
+        } else if(u.index === 2){
+          // Animal Caboose!
+          trainBounce = 0.8;
+          spawnSparkles(u.x, u.y, ["#ffd43b", "#74c0fc", "#fff"], 10, "star");
+          playVoice(Math.random() < 0.5 ? "moo" : "quack");
+        } else {
+          trainBounce = 0.7;
+          spawnSparkles(u.x, u.y, ["#ffd43b", "#ff6b6b", "#51cf66"], 10, "star");
+          playMagnetClack();
+        }
+        return;
+      }
+    }
+
+    // 2. Tap Cow!
+    if(Math.hypot(x - track.cowPt.x, y - track.cowPt.y) < 42 * S){
+      cowBounce = 1.0;
+      spawnSparkles(track.cowPt.x, track.cowPt.y - 12 * S, ["#fff", "#ffafcc", "#ffd43b"], 10, "star");
+      spawnMusicNotes(track.cowPt.x, track.cowPt.y - 14 * S);
+      playVoice("moo");
+      return;
+    }
+
+    // 3. Tap Barn (also bounces Cow + moo!)
+    if(Math.hypot(x - track.barnPt.x, y - track.barnPt.y) < 44 * S){
+      barnBounce = 1.0;
+      cowBounce = 0.9;
+      spawnSparkles(track.barnPt.x, track.barnPt.y - 10 * S, ["#ffd43b", "#ff6b6b", "#fff"], 10, "star");
+      playVoice("moo");
+      return;
+    }
+
+    // 4. Tap Duck Pond!
+    var pdx = (x - track.pondPt.x) / (track.pondPt.rx + 18 * S);
+    var pdy = (y - track.pondPt.y) / (track.pondPt.ry + 18 * S);
+    if(pdx * pdx + pdy * pdy <= 1.0){
+      duckSplash = 1.0;
+      spawnWaterSplash(x, y);
+      playSplashSfx();
+      playVoice("quack");
+      return;
+    }
+
+    // 5. Tap Train Station -> cheering passengers + earns a star!
+    if(Math.hypot(x - track.stationPt.x, y - track.stationPt.y) < 56 * S){
+      stationCheer = 1.0;
+      earnStar(track.stationPt.x, track.stationPt.y - 18 * S);
+      playStationCheerSfx();
+      playVoice(state.stars % 2 === 1 ? "star" : "yay");
+      return;
+    }
+
+    // 6. Tap Crossing Gate -> ding-ding bell!
+    if(Math.hypot(x - track.crossingPt.x, y - track.crossingPt.y) < 52 * S){
+      gateManualTimer = 2.6;
+      playCrossingBell(2);
+      spawnSparkles(track.crossingPt.x, track.crossingPt.y - 18 * S, ["#ff6b6b", "#ffd43b", "#fff"], 10, "star");
+      return;
+    }
+
+    // 7. Tap Pine Trees -> playful wiggle!
+    for(var ti = 0; ti < track.trees.length; ti++){
+      var tr = track.trees[ti];
+      if(Math.hypot(x - tr.x, y - tr.y) < 34 * S){
+        tr.wiggle = 1.0;
+        spawnSparkles(tr.x, tr.y - 12 * S, ["#69db7c", "#ffd43b", "#b2f2bb"], 8, "star");
+        playMarimbaNote(PENTA[(pentaIdx++) % PENTA.length], 0, 0.13);
+        return;
+      }
+    }
+
+    // 8. Tap anywhere on the meadow -> plant blooming flower or baby pine tree!
+    var flowerCols = ["#ff6b6b", "#ffd43b", "#f783ac", "#74c0fc", "#b197fc", "#ffffff"];
+    var isPine = Math.random() < 0.28;
+    plantedItems.push({
+      x: x,
+      y: y,
+      kind: isPine ? "pine" : "flower",
+      color: flowerCols[Math.floor(Math.random() * flowerCols.length)],
+      rot: Math.random() * Math.PI * 2,
+      age: 0
+    });
+    if(plantedItems.length > 38) plantedItems.shift();
+    spawnSparkles(x, y, isPine ? ["#69db7c", "#b2f2bb"] : ["#ffd43b", "#fff", "#ffafcc"], 6, "star");
+    playMarimbaNote(PENTA[(pentaIdx++) % PENTA.length], 0, 0.12);
+  });
+
+  /* ==================== MAIN 60FPS PHYSICS & RENDER LOOP ==================== */
+  var lastTime = performance.now();
+  var steamAcc = 0;
+
+  function step(now){
+    var dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
+    lastTime = now;
+    var t = now / 1000;
+
+    // 1. Move Train along uniform arc-length spline
+    var engineSample = sampleTrack(trainS);
+    if(state.running){
+      var v = SPEED_PX[state.speed] * play.scale;
+      trainS = ((trainS + state.dir * v * dt) % track.totalLen + track.totalLen) % track.totalLen;
+      wheelPhase += dt * v * 0.12;
+
+      // Rhythmic chugga-chugga Web Audio
+      chugAcc += dt * CHUG_HZ[state.speed];
+      if(chugAcc >= 1){
+        chugAcc -= 1;
+        chugBeat = (chugBeat + 1) % 4;
+        var inMuffledTunnel = state.cabView ? (cab.tunnelAmt > 0.35) : engineSample.inTunnel;
+        playChugStep(chugBeat === 0, inMuffledTunnel);
+      }
+
+      // Gentle rhythmic smokestack steam puffs (top-down view)
+      steamAcc += dt * (state.speed === "turbo" ? 6.5 : (state.speed === "slow" ? 2.2 : 3.8));
+      if(steamAcc >= 1 && !engineSample.inTunnel && !state.cabView){
+        steamAcc -= 1;
+        var ang = state.dir === 1 ? engineSample.angle : engineSample.angle + Math.PI;
+        spawnSteam(
+          engineSample.x + Math.cos(ang) * 17 * play.scale,
+          engineSample.y + Math.sin(ang) * 17 * play.scale,
+          false
+        );
+      }
+    }
+
+    // Update First-Person Cab View world physics continuously so toggle is instant & seamless!
+    updateCabPhysics(dt, engineSample);
+
+    // 2. Automatic Crossing Gate proximity detection
+    var nearCrossing = false;
+    var units = getTrainUnits();
+    var proxDist = 118 * play.scale;
+    for(var i = 0; i < units.length; i++){
+      var uS = trainS - state.dir * (i * 54 * play.scale);
+      if(arcDist(uS, track.crossingS) < proxDist){
+        nearCrossing = true;
+        break;
+      }
+    }
+    if(gateManualTimer > 0) gateManualTimer = Math.max(0, gateManualTimer - dt);
+    var wantGateClosed = nearCrossing || gateManualTimer > 0;
+    if(wantGateClosed && !gateWasClosed && audioUnlocked){
+      playCrossingBell(1);
+    }
+    gateWasClosed = wantGateClosed;
+    var targetGate = wantGateClosed ? 1 : 0;
+    gateAngle += (targetGate - gateAngle) * Math.min(1, dt * 7.5);
+    if(gateAngle > 0.15) gateFlashPhase += dt * 11;
+
+    // 3. Auto-wave station passengers when train glides past
+    if(arcDist(trainS, track.stationPt.s) < 95 * play.scale && state.running){
+      stationAutoWave = Math.min(1, stationAutoWave + dt * 4);
+    } else {
+      stationAutoWave = Math.max(0, stationAutoWave - dt * 2.5);
+    }
+
+    // 4. Decay toy animations
+    duckAngle += dt * (duckSplash > 0 ? 2.8 : 0.72);
+    if(hootWaveTimer > 0) hootWaveTimer = Math.max(0, hootWaveTimer - dt);
+    if(trainBounce > 0) trainBounce = Math.max(0, trainBounce - dt * 3.2);
+    if(cowBounce > 0) cowBounce = Math.max(0, cowBounce - dt * 2.6);
+    if(barnBounce > 0) barnBounce = Math.max(0, barnBounce - dt * 2.8);
+    if(duckSplash > 0) duckSplash = Math.max(0, duckSplash - dt * 1.9);
+    if(stationCheer > 0) stationCheer = Math.max(0, stationCheer - dt * 1.1);
+    if(layoutFade > 0) layoutFade = Math.max(0, layoutFade - dt * 3.2);
+
+    track.trees.forEach(function(tr){
+      if(tr.wiggle > 0) tr.wiggle = Math.max(0, tr.wiggle - dt * 1.8);
+    });
+    plantedItems.forEach(function(it){
+      if(it.age < 1) it.age += dt;
+    });
+
+    // Update steam puffs
+    for(var i = steamPuffs.length - 1; i >= 0; i--){
+      var sp = steamPuffs[i];
+      sp.life += dt;
+      sp.x += sp.vx * dt;
+      sp.y += sp.vy * dt;
+      sp.vx *= 0.96;
+      if(sp.life >= sp.maxLife) steamPuffs.splice(i, 1);
+    }
+    // Update particles
+    for(var i = particles.length - 1; i >= 0; i--){
+      var pt = particles[i];
+      pt.life += dt;
+      pt.x += pt.vx * dt;
+      pt.y += pt.vy * dt;
+      if(pt.kind === "drop") pt.vy += 260 * dt;
+      else if(pt.kind === "star") pt.vy += 90 * dt;
+      pt.rot += pt.vrot * dt;
+      if(pt.life >= pt.maxLife) particles.splice(i, 1);
+    }
+
+    // ==================== RENDER FRAME ====================
+    ctx.save();
+    ctx.scale(DPR, DPR);
+
+    if(state.cabView){
+      drawCabView(t, engineSample);
+    } else {
+      drawMeadowBg(t);
+      drawPlantedItems();
+      drawDuckPond(t);
+      drawCrossingRoad();
+
+      // Lower track pass (all of meadow/mountain, lower underpass of figure-8)
+      drawTrackPass(0);
+
+      // Lower-layer train units
+      drawTrainPass(units, 0, t);
+
+      // Upper bridge track + upper train units (Figure-8 overpass!)
+      if(state.layout === "figure8"){
+        drawTrackPass(1);
+        drawTrainPass(units, 1, t);
+      }
+
+      // Mountain Tunnel Hill drawn OVER the tunnel section of track
+      if(state.layout === "mountain"){
+        drawMountainTunnelHill();
+      }
+
+      // Foreground Scenery Toys
+      drawBarnAndCow();
+      drawTrainStation(t);
+      drawCrossingGate(t);
+      track.trees.forEach(function(tr){
+        drawPineTree(tr.x, tr.y, tr.sz, tr.wiggle);
+      });
+
+      drawSteamAndParticles();
+    }
+    ctx.restore();
+
+    requestAnimationFrame(step);
+  }
+
+  /* ==================== INIT & PUBLIC SNAPSHOT API ==================== */
+  function handleResize(){
+    measurePlayfield();
+    buildTrack();
+  }
+
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("orientationchange", function(){ setTimeout(handleResize, 80); });
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden && voiceEl){ try{ voiceEl.pause(); }catch(e){} }
+  });
+
+  // Expose exact QA snapshot API
+  window.__trainGame = {
+    snapshot: function(){
+      return {
+        layout: state.layout,
+        running: state.running,
+        speed: state.speed,
+        dir: state.dir,
+        carCount: state.carCount,
+        stars: state.stars,
+        whistles: state.whistles,
+        cabView: state.cabView
+      };
+    }
+  };
+
+  syncHudUi();
+  handleResize();
+  requestAnimationFrame(function(){
+    handleResize();
+    requestAnimationFrame(step);
+  });
+})();
+</script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e149">
+<script src="js/hoot-game-tail.js?v=llprev3e149"></script>
+</body>
+</html>
