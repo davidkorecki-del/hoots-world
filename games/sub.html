@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="sub";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e151"></script>
+<script src="js/hoot-game-head.js?v=llprev3e152"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Captain Hoot's Submarine Letter Voyage</title>
@@ -1166,19 +1166,16 @@
         ob.missBoost = 0;
       });
 
-      /* Hold next target bubble for 1.35s so Hoot ALWAYS announces the new letter BEFORE it glides onto screen! */
-      targetDelayT = 1.35;
+      /* Hold next target bubble for 2.1s so Hoot praises ("Great job!") AND calls the NEXT letter BEFORE it enters! */
+      targetDelayT = 2.1;
 
       targetPill.classList.remove("pop");
       void targetPill.offsetWidth;
       targetPill.classList.add("pop");
 
-      /* Snappy harp chord -> Hoot immediately calls the NEXT letter (no long 4s delay!) */
+      /* Immediate praise on EVERY right letter -> right into calling the next letter (priority so nothing cancels it!) */
       var nextClip = "call-letter-" + state.targetLetter.toLowerCase();
-      var seq = (state.lettersCollected % 3 === 0) ? [nextPraise(), nextClip] : [nextClip];
-      setTimeout(function(){
-        playVoiceSeq(seq, null, true);
-      }, 320);
+      playVoiceSeq([nextPraise(), nextClip], null, true);
 
       syncHud();
     } else {
@@ -2947,7 +2944,7 @@
   requestAnimationFrame(render);
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e151">
-<script src="js/hoot-game-tail.js?v=llprev3e151"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e152">
+<script src="js/hoot-game-tail.js?v=llprev3e152"></script>
 </body>
 </html>
