@@ -6,7 +6,7 @@
 window.__HOOT_GAME_KEY__="dino";
 window.__HOOT_SELF_COACH__=true;
 </script>
-<script src="js/hoot-game-head.js?v=llprev3e149"></script>
+<script src="js/hoot-game-head.js?v=llprev3e155"></script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -75,16 +75,37 @@ window.__HOOT_SELF_COACH__=true;
     background:linear-gradient(180deg, #fff8e4 0%, #ffefc7 48%, #f2ddb1 76%, #dfc08c 100%);
   }
 
-  /* ================= BACKDROPS (DESERT CANYON vs SUNNY MUSEUM) ================= */
+  /* ================= PIXAR-ILLUSTRATED BACKDROPS (DESERT CANYON vs SUNNY MUSEUM) ================= */
   .backdrop{
     position:absolute;
     inset:0;
     pointer-events:none;
     z-index:1;
-    transition:opacity .55s ease, transform .55s ease;
+    transition:opacity .65s ease, transform .65s ease;
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
   }
-  #desertBg{ opacity:1; }
-  #museumBg{ opacity:0; }
+  .backdrop::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+  #desertBg{
+    opacity:1;
+    background-image:url("assets/dino3d/bg_desert.jpg"), linear-gradient(180deg, #43b5ff 0%, #8cdbff 38%, #ffe3ad 68%, #f1b672 100%);
+  }
+  #desertBg::after{
+    background:radial-gradient(ellipse at 50% 48%, rgba(255,244,214,.05) 35%, rgba(84,42,10,.22) 100%);
+  }
+  #museumBg{
+    opacity:0;
+    background-image:url("assets/dino3d/bg_museum.jpg"), linear-gradient(180deg, #fff8e4 0%, #ffefc7 48%, #f2ddb1 76%, #dfc08c 100%);
+  }
+  #museumBg::after{
+    background:radial-gradient(ellipse at 50% 42%, rgba(255,250,224,.08) 32%, rgba(68,42,14,.20) 100%);
+  }
   #stage[data-phase="assemble"] #desertBg,
   #stage[data-phase="revived"] #desertBg{
     opacity:0;
@@ -456,14 +477,36 @@ window.__HOOT_SELF_COACH__=true;
     pointer-events:none;
   }
 
+  /* Follow-finger paleontologist fossil brush */
+  #digBrush{
+    position:absolute;
+    z-index:6;
+    width:68px;
+    height:68px;
+    margin:-54px 0 0 -16px;
+    pointer-events:none;
+    opacity:0;
+    transform:scale(.85) rotate(-18deg);
+    transition:opacity .15s ease;
+    filter:drop-shadow(0 6px 8px rgba(61,36,16,.38));
+  }
+  #digBrush.active{
+    opacity:1;
+    animation:brushWiggle .28s ease-in-out infinite alternate;
+  }
+  @keyframes brushWiggle{
+    from{ transform:scale(1) rotate(-22deg); }
+    to{ transform:scale(1.06) rotate(-6deg); }
+  }
+
   /* Gentle idle rubbing cue over buried bone */
   #digHint{
     position:absolute;
     z-index:5;
     pointer-events:none;
-    font-size:44px;
+    font-size:46px;
     line-height:1;
-    filter:drop-shadow(0 5px 8px rgba(61,36,16,.45));
+    filter:drop-shadow(0 5px 8px rgba(61,36,16,.48));
     opacity:0;
     transition:opacity .3s ease;
     transform:translate(-50%, -50%);
@@ -748,6 +791,28 @@ window.__HOOT_SELF_COACH__=true;
     background:linear-gradient(180deg, #ffd84d 0%, #f59e0b 100%);
     color:#542800;
     box-shadow:0 6px 0 #b45309, 0 10px 20px rgba(61,36,16,.28);
+  }
+  #feedFab{
+    background:linear-gradient(180deg, #ff7eb6 0%, #ec4899 100%);
+    color:#fff;
+    box-shadow:0 6px 0 #9d174d, 0 10px 20px rgba(61,36,16,.28);
+  }
+  #livingDinoBtn.munching{
+    animation:dinoMunch .58s cubic-bezier(.34,1.7,.5,1) 2;
+  }
+  @keyframes dinoMunch{
+    0%,100%{ transform:scale(1) translateY(0); }
+    40%{ transform:scale(1.10, .93) translateY(4px) rotate(-3deg); }
+    75%{ transform:scale(.96, 1.09) translateY(-12px) rotate(3deg); }
+  }
+  .fly-snack{
+    position:fixed;
+    font-size:44px;
+    line-height:1;
+    margin:-22px 0 0 -22px;
+    pointer-events:none;
+    z-index:44;
+    filter:drop-shadow(0 6px 10px rgba(61,36,16,.32));
   }
   #nextDinoBtn{
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
@@ -1138,176 +1203,11 @@ window.__HOOT_SELF_COACH__=true;
 </head>
 <body>
 <div id="stage" data-phase="dig">
-  <!-- ============ DESERT CANYON BACKDROP (PHASE 1) ============ -->
-  <div id="desertBg" class="backdrop" aria-hidden="true">
-    <svg viewBox="0 0 1280 820" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="desSky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#3eb2ff"/>
-          <stop offset="48%" stop-color="#9fe2ff"/>
-          <stop offset="82%" stop-color="#ffe7b5"/>
-          <stop offset="100%" stop-color="#f7c883"/>
-        </linearGradient>
-        <linearGradient id="mesaFarG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#ebad74"/>
-          <stop offset="100%" stop-color="#d48048"/>
-        </linearGradient>
-        <linearGradient id="mesaNearG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#d87a43"/>
-          <stop offset="100%" stop-color="#a84e22"/>
-        </linearGradient>
-        <linearGradient id="desGround" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f2c47d"/>
-          <stop offset="45%" stop-color="#e3a656"/>
-          <stop offset="100%" stop-color="#c47f35"/>
-        </linearGradient>
-      </defs>
-      <rect width="1280" height="820" fill="url(#desSky)"/>
+  <!-- ============ PIXAR DESERT CANYON BACKDROP (PHASE 1) ============ -->
+  <div id="desertBg" class="backdrop" aria-hidden="true"></div>
 
-      <!-- Glowing Desert Sun -->
-      <g class="sun-spin">
-        <g stroke="#fff2a6" stroke-width="8" stroke-linecap="round" opacity=".82">
-          <line x1="1090" y1="22" x2="1090" y2="40"/>
-          <line x1="1090" y1="144" x2="1090" y2="162"/>
-          <line x1="1020" y1="92" x2="1038" y2="92"/>
-          <line x1="1142" y1="92" x2="1160" y2="92"/>
-          <line x1="1040" y1="42" x2="1053" y2="55"/>
-          <line x1="1127" y1="129" x2="1140" y2="142"/>
-          <line x1="1140" y1="42" x2="1127" y2="55"/>
-          <line x1="1053" y1="129" x2="1040" y2="142"/>
-        </g>
-      </g>
-      <circle cx="1090" cy="92" r="44" fill="#ffe066" stroke="#fff7c2" stroke-width="6"/>
-
-      <!-- Puffy Desert Clouds -->
-      <g class="cloud-drift" fill="#ffffff" opacity=".88">
-        <ellipse cx="220" cy="118" rx="68" ry="26"/>
-        <circle cx="192" cy="104" r="30"/>
-        <circle cx="236" cy="98" r="36"/>
-        <circle cx="272" cy="110" r="24"/>
-      </g>
-      <g class="cloud-drift-slow" fill="#ffffff" opacity=".78">
-        <ellipse cx="740" cy="96" rx="58" ry="22"/>
-        <circle cx="718" cy="86" r="26"/>
-        <circle cx="758" cy="82" r="30"/>
-      </g>
-
-      <!-- Far Canyon Mesas -->
-      <path d="M0,455 L95,335 L260,335 L330,420 L480,420 L545,355 L725,355 L785,435 L955,435 L1035,320 L1215,320 L1280,415 L1280,580 L0,580 Z" fill="url(#mesaFarG)"/>
-      <!-- Stratified sandstone stripes -->
-      <path d="M90,375 H285 M535,388 H745 M1020,360 H1245" stroke="#f7cf9c" stroke-width="6" stroke-linecap="round" opacity=".45"/>
-
-      <!-- Near Terracotta Canyon Buttes -->
-      <path d="M0,490 L55,405 L185,405 L245,515 L440,515 L970,510 L1065,415 L1215,415 L1280,495 L1280,620 L0,620 Z" fill="url(#mesaNearG)"/>
-
-      <!-- Warm Desert Floor -->
-      <path d="M0,535 Q320,495 640,525 T1280,515 L1280,820 L0,820 Z" fill="url(#desGround)"/>
-      <path d="M0,620 Q390,585 780,618 T1280,600 L1280,820 L0,820 Z" fill="#d99748" opacity=".48"/>
-
-      <!-- Friendly Storybook Cacti -->
-      <g transform="translate(88,430)" stroke="#1e5c2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="18" y="0" width="26" height="106" rx="13" fill="#3da352"/>
-        <path d="M18,52 H6 Q0,52 0,44 V26 Q0,18 8,18 Q16,18 16,26 V40" fill="#3da352"/>
-        <path d="M44,62 H56 Q62,62 62,54 V34 Q62,26 54,26 Q46,26 46,34 V48" fill="#3da352"/>
-        <circle cx="31" cy="3" r="6" fill="#ff7eb6" stroke="#b82568" stroke-width="2.5"/>
-      </g>
-      <g transform="translate(1152,445) scale(.86)" stroke="#1e5c2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="18" y="0" width="26" height="98" rx="13" fill="#3da352"/>
-        <path d="M18,46 H6 Q0,46 0,38 V22 Q0,14 8,14 Q16,14 16,22 V34" fill="#3da352"/>
-        <path d="M44,58 H56 Q62,58 62,50 V32 Q62,24 54,24 Q46,24 46,32 V44" fill="#3da352"/>
-      </g>
-    </svg>
-  </div>
-
-  <!-- ============ SUNNY FOSSIL MUSEUM HALL BACKDROP (PHASE 2 & 3) ============ -->
-  <div id="museumBg" class="backdrop" aria-hidden="true">
-    <svg viewBox="0 0 1280 820" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="musWall" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#fffaf0"/>
-          <stop offset="65%" stop-color="#f6e7c8"/>
-          <stop offset="100%" stop-color="#e5c898"/>
-        </linearGradient>
-        <linearGradient id="musFloor" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#d9ae74"/>
-          <stop offset="100%" stop-color="#b48046"/>
-        </linearGradient>
-        <linearGradient id="sunBeam" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#fff8c4" stop-opacity=".72"/>
-          <stop offset="100%" stop-color="#fff8c4" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <rect width="1280" height="820" fill="url(#musWall)"/>
-
-      <!-- Arched Skylight Windows -->
-      <g>
-        <path d="M170,380 V180 A110,110 0 0 1 390,180 V380 Z" fill="#bde9ff" stroke="#e2c28d" stroke-width="14"/>
-        <path d="M530,380 V155 A110,110 0 0 1 750,155 V380 Z" fill="#c7eeff" stroke="#e2c28d" stroke-width="14"/>
-        <path d="M890,380 V180 A110,110 0 0 1 1110,180 V380 Z" fill="#bde9ff" stroke="#e2c28d" stroke-width="14"/>
-        <!-- Window mullions -->
-        <g stroke="#e2c28d" stroke-width="8">
-          <line x1="280" y1="70" x2="280" y2="380"/><line x1="170" y1="245" x2="390" y2="245"/>
-          <line x1="640" y1="45" x2="640" y2="380"/><line x1="530" y1="230" x2="750" y2="230"/>
-          <line x1="1000" y1="70" x2="1000" y2="380"/><line x1="890" y1="245" x2="1110" y2="245"/>
-        </g>
-      </g>
-
-      <!-- Warm Skylight Sunbeams -->
-      <polygon points="520,0 760,0 910,640 370,640" fill="url(#sunBeam)"/>
-
-      <!-- Classical Cream Museum Columns -->
-      <g fill="#fdf5e4" stroke="#d5b37c" stroke-width="4">
-        <rect x="44" y="95" width="76" height="470" rx="8"/>
-        <rect x="30" y="74" width="104" height="28" rx="8" fill="#f3dfb6"/>
-        <rect x="1160" y="95" width="76" height="470" rx="8"/>
-        <rect x="1146" y="74" width="104" height="28" rx="8" fill="#f3dfb6"/>
-      </g>
-
-      <!-- Decorative Prehistoric Wall Banners -->
-      <path d="M442,90 H492 V265 L467,242 L442,265 Z" fill="#e86f38" stroke="#ffd84d" stroke-width="4"/>
-      <path d="M788,90 H838 V265 L813,242 L788,265 Z" fill="#2ea86f" stroke="#ffd84d" stroke-width="4"/>
-
-      <!-- Polished Museum Floor -->
-      <rect x="0" y="555" width="1280" height="265" fill="url(#musFloor)"/>
-      <line x1="0" y1="555" x2="1280" y2="555" stroke="#fff4d6" stroke-width="6"/>
-      <!-- Warm tile perspective hints -->
-      <g stroke="#f5d9a8" stroke-width="3" opacity=".32">
-        <line x1="180" y1="555" x2="60" y2="820"/>
-        <line x1="420" y1="555" x2="360" y2="820"/>
-        <line x1="640" y1="555" x2="640" y2="820"/>
-        <line x1="860" y1="555" x2="920" y2="820"/>
-        <line x1="1100" y1="555" x2="1220" y2="820"/>
-      </g>
-
-      <!-- Potted Lush Prehistoric Ferns -->
-      <g transform="translate(86,460)">
-        <path d="M45,55 Q12,18 5,5 Q36,20 52,48 Z" fill="#2f9e44"/>
-        <path d="M54,50 Q42,6 54,-8 Q68,12 62,48 Z" fill="#37b24d"/>
-        <path d="M62,55 Q95,18 106,8 Q82,30 68,54 Z" fill="#2b8a3e"/>
-        <path d="M24,52 H88 L78,108 H34 Z" fill="#c76832" stroke="#7d3b15" stroke-width="4"/>
-        <rect x="18" y="44" width="76" height="14" rx="6" fill="#de7f44" stroke="#7d3b15" stroke-width="4"/>
-      </g>
-      <g transform="translate(1082,460)">
-        <path d="M45,55 Q12,18 5,5 Q36,20 52,48 Z" fill="#2f9e44"/>
-        <path d="M54,50 Q42,6 54,-8 Q68,12 62,48 Z" fill="#37b24d"/>
-        <path d="M62,55 Q95,18 106,8 Q82,30 68,54 Z" fill="#2b8a3e"/>
-        <path d="M24,52 H88 L78,108 H34 Z" fill="#c76832" stroke="#7d3b15" stroke-width="4"/>
-        <rect x="18" y="44" width="76" height="14" rx="6" fill="#de7f44" stroke="#7d3b15" stroke-width="4"/>
-      </g>
-
-      <!-- Red Velvet Museum Stanchion Ropes -->
-      <g>
-        <path d="M250,535 Q335,580 420,535" fill="none" stroke="#c92a49" stroke-width="10" stroke-linecap="round"/>
-        <path d="M860,535 Q945,580 1030,535" fill="none" stroke="#c92a49" stroke-width="10" stroke-linecap="round"/>
-        <g fill="#f5c436" stroke="#9c6800" stroke-width="3">
-          <rect x="244" y="530" width="12" height="72" rx="4"/><circle cx="250" cy="526" r="10"/>
-          <rect x="414" y="530" width="12" height="72" rx="4"/><circle cx="420" cy="526" r="10"/>
-          <rect x="854" y="530" width="12" height="72" rx="4"/><circle cx="860" cy="526" r="10"/>
-          <rect x="1024" y="530" width="12" height="72" rx="4"/><circle cx="1030" cy="526" r="10"/>
-        </g>
-      </g>
-    </svg>
-  </div>
+  <!-- ============ PIXAR SUNNY FOSSIL MUSEUM HALL BACKDROP (PHASE 2 & 3) ============ -->
+  <div id="museumBg" class="backdrop" aria-hidden="true"></div>
 
   <!-- ============ TOP HUD: 4 BIG VISUAL DINO PILLS + STARS + SOUND ============ -->
   <header id="hud">
@@ -1455,6 +1355,19 @@ window.__HOOT_SELF_COACH__=true;
             <canvas id="sandCanvas" width="600" height="420"></canvas>
             <!-- Flying Sand Dust & Golden Sparkle Hints Canvas -->
             <canvas id="dustCanvas" width="600" height="420"></canvas>
+            <!-- Follow-finger paleontologist brush -->
+            <div id="digBrush" aria-hidden="true">
+              <svg viewBox="0 0 80 80" width="68" height="68">
+                <g transform="translate(40,42) rotate(32)">
+                  <rect x="-8" y="-32" width="16" height="44" rx="8" fill="#b46a34" stroke="#5b3414" stroke-width="3.5"/>
+                  <rect x="-12" y="8" width="24" height="12" rx="4" fill="#d4d4d8" stroke="#52525b" stroke-width="3"/>
+                  <path d="M-14,19 L-19,38 Q0,44 19,38 L14,19 Z" fill="#f7d374" stroke="#855814" stroke-width="3.2" stroke-linejoin="round"/>
+                  <line x1="-6" y1="20" x2="-7" y2="37" stroke="#c9932c" stroke-width="2.4"/>
+                  <line x1="0" y1="20" x2="0" y2="39" stroke="#c9932c" stroke-width="2.4"/>
+                  <line x1="6" y1="20" x2="7" y2="37" stroke="#c9932c" stroke-width="2.4"/>
+                </g>
+              </svg>
+            </div>
             <!-- Idle rubbing finger hint -->
             <div id="digHint" aria-hidden="true">👆</div>
           </div>
@@ -1486,9 +1399,10 @@ window.__HOOT_SELF_COACH__=true;
             </div>
           </div>
 
-          <!-- Phase 3 Action Buttons: Roar Again + Next Dinosaur -->
+          <!-- Phase 3 Action Buttons: Roar Again + Feed Dino Snack + Next Dinosaur -->
           <div id="reviveActions" hidden>
             <button id="roarFab" class="action-fab" type="button" aria-label="Roar">🔊</button>
+            <button id="feedFab" class="action-fab" type="button" aria-label="Feed dinosaur a snack">🍎</button>
             <button id="nextDinoBtn" class="action-fab" type="button" aria-label="Next Dinosaur">
               <span id="nextDinoIcon" aria-hidden="true">🦕</span>
               <span aria-hidden="true">▶</span>
@@ -1904,6 +1818,7 @@ window.__HOOT_SELF_COACH__=true;
   var dustCanvas = $("dustCanvas");
   var sandCtx = sandCanvas.getContext("2d", { willReadFrequently: true });
   var dustCtx = dustCanvas.getContext("2d");
+  var digBrush = $("digBrush");
   var digHint = $("digHint");
 
   var museumScene = $("museumScene");
@@ -1915,6 +1830,7 @@ window.__HOOT_SELF_COACH__=true;
   var plaqueEmoji = $("plaqueEmoji");
   var reviveActions = $("reviveActions");
   var roarFab = $("roarFab");
+  var feedFab = $("feedFab");
   var nextDinoBtn = $("nextDinoBtn");
   var nextDinoIcon = $("nextDinoIcon");
 
@@ -1928,6 +1844,13 @@ window.__HOOT_SELF_COACH__=true;
   var trophyCups = Array.prototype.slice.call(document.querySelectorAll(".trophy-cup"));
   var plaqueDots = Array.prototype.slice.call(document.querySelectorAll(".plaque-dot"));
 
+  /* Age-adaptive defaults: Riley (kidb, age 2) gets an extra-wide forgiving brush! */
+  var IS_RILEY = false;
+  try{
+    var sp = new URLSearchParams(window.location.search || "");
+    IS_RILEY = sp.get("kid") === "kidb";
+  }catch(e){}
+
   var dinoId = "trex";
   var phase = "dig"; /* "dig" | "assemble" | "revived" */
   var foundMap = {};
@@ -1939,14 +1862,18 @@ window.__HOOT_SELF_COACH__=true;
   var stars = 0;
   var soundOn = true;
   var dead = false;
+  var hasDugThisDino = false;
+  var idleVoiceReminded = false;
+  var museumCelebrated = false;
 
   var timers = [];
   var idleTimer = null;
+  var idleVoiceTimer = null;
   var winClipIdx = 0;
 
-  /* Scrubbing & dust particle state */
-  var BRUSH_RADIUS = 56;
-  var UNCOVER_THRESHOLD = 0.55;
+  /* Scrubbing & dust particle state (age-adaptive for 2-3yo toddlers) */
+  var BRUSH_RADIUS = IS_RILEY ? 72 : 62;
+  var UNCOVER_THRESHOLD = IS_RILEY ? 0.36 : 0.44;
   var isScrubbing = false;
   var lastPt = null;
   var lastCheckAt = 0;
@@ -1967,11 +1894,71 @@ window.__HOOT_SELF_COACH__=true;
     "hoot-great-job.mp3",
     "hoot-yay-2.mp3"
   ];
+  var BONE_VOICE = {
+    skull:   { custom: "hoot-dino-skull", fallback: "name-number-1" },
+    ribcage: { custom: "hoot-dino-ribs",  fallback: "name-number-2" },
+    legs:    { custom: "hoot-dino-legs",  fallback: "name-number-3" },
+    tail:    { custom: "hoot-dino-tail",  fallback: "name-number-4" }
+  };
+  var DINO_REVIVE_VOICE = {
+    trex:    { custom: "hoot-dino-trex",    fallback: "hoot-amazing" },
+    brachio: { custom: "hoot-dino-brachio", fallback: "hoot-super" },
+    tricera: { custom: "hoot-dino-tricera", fallback: "hoot-great-job" },
+    stego:   { custom: "hoot-dino-stego",   fallback: "hoot-star" }
+  };
+  var DINO_SNACK = {
+    trex: "🍎",
+    brachio: "🌿",
+    tricera: "🍉",
+    stego: "🍓"
+  };
+
   var audioCtx = null;
   var voiceEl = new Audio();
   voiceEl.preload = "auto";
   var voiceQueue = [];
   var voicePlaying = false;
+  var audioUnlocked = false;
+  var pendingBootClip = null;
+
+  function hasHootClip(id){
+    try{
+      if(window.parent && window.parent.HOOT_HAVE && window.parent.HOOT_HAVE[id]) return true;
+    }catch(e){}
+    return false;
+  }
+
+  function resolveDinoClip(customId, fallbackId){
+    var chosen = (customId && hasHootClip(customId)) ? customId : fallbackId;
+    return chosen ? (chosen.indexOf(".mp3") >= 0 ? chosen : chosen + ".mp3") : null;
+  }
+
+  function unlockAudioOnce(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    getAudioCtx();
+    try{
+      if(!voicePlaying){
+        voiceEl.muted = true;
+        var p = voiceEl.play();
+        if(p && p.then){
+          p.then(function(){
+            voiceEl.pause();
+            voiceEl.currentTime = 0;
+            voiceEl.muted = false;
+            if(pendingBootClip){
+              var c = pendingBootClip;
+              pendingBootClip = null;
+              enqueueVoice(c, true);
+            }
+          }).catch(function(){ voiceEl.muted = false; });
+        } else {
+          voiceEl.muted = false;
+        }
+      }
+    }catch(e){ voiceEl.muted = false; }
+  }
+  stage.addEventListener("pointerdown", unlockAudioOnce, { passive: true, capture: true });
 
   function getAudioCtx(){
     if(!soundOn) return null;
@@ -1997,11 +1984,13 @@ window.__HOOT_SELF_COACH__=true;
     if(dead || !soundOn || voicePlaying || !voiceQueue.length) return;
     var clip = voiceQueue.shift();
     voicePlaying = true;
+    voiceEl.muted = false;
     voiceEl.src = "assets/voice/" + clip;
     var p = voiceEl.play();
     if(p && p.catch){
       p.catch(function(){
         voicePlaying = false;
+        if(!audioUnlocked && !pendingBootClip) pendingBootClip = clip;
         pumpVoice();
       });
     }
@@ -2017,9 +2006,61 @@ window.__HOOT_SELF_COACH__=true;
 
   function enqueueVoice(clip, interrupt){
     if(dead || !soundOn || !clip) return;
+    if(clip.indexOf(".mp3") < 0) clip = clip + ".mp3";
     if(interrupt) clearVoice(true);
     voiceQueue.push(clip);
     pumpVoice();
+  }
+
+  function playDinoGuide(customId, fallbackId, isBoot){
+    var clip = resolveDinoClip(customId, fallbackId);
+    if(!clip || dead || !soundOn) return;
+    if(isBoot){
+      try{
+        if(window.parent && typeof window.parent.__hwPlayAfterIntro === "function"){
+          window.parent.__hwPlayAfterIntro(function(){
+            if(!dead && phase === "dig" && !hasDugThisDino){
+              enqueueVoice(clip, true);
+            }
+          });
+          return;
+        }
+      }catch(e){}
+    }
+    enqueueVoice(clip, true);
+  }
+
+  function speakCurrentPhaseGuide(isBoot){
+    if(phase === "dig"){
+      playDinoGuide("hoot-dino-dig", "hoot-welcome", isBoot);
+    } else if(phase === "assemble"){
+      playDinoGuide("hoot-dino-build", "hoot-tap-big-btn", false);
+    } else if(phase === "revived"){
+      var rv = DINO_REVIVE_VOICE[dinoId] || DINO_REVIVE_VOICE.trex;
+      playDinoGuide(rv.custom, rv.fallback, false);
+    }
+  }
+
+  /* Playful crunchy snack chomp SFX when feeding a revived dinosaur */
+  function chompSfx(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var t = ctx.currentTime;
+    [0, 0.17].forEach(function(off, idx){
+      try{
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(idx === 0 ? 290 : 340, t + off);
+        osc.frequency.exponentialRampToValueAtTime(110, t + off + 0.11);
+        g.gain.setValueAtTime(0.24, t + off);
+        g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.13);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t + off);
+        osc.stop(t + off + 0.14);
+      }catch(e){}
+    });
   }
 
   /* Soft tactile sand brushing sound (gentle bandpass noise burst) */
@@ -2308,41 +2349,52 @@ window.__HOOT_SELF_COACH__=true;
   }
 
   /* ============================================================================
-     IDLE HELPER (5s BOUNCING 👆 CUE FOR TODDLERS)
+     IDLE HELPER (IMMEDIATE FIRST-TOUCH VISUAL CUE + GENTLE SPOKEN REMINDER)
      ============================================================================ */
   function hideIdleHints(){
     digHint.classList.remove("show");
     boneTiles.forEach(function(t){ t.classList.remove("show-hand", "hint-next"); });
   }
 
-  function armIdle(){
+  function showPhaseVisualCue(){
+    if(dead) return;
+    if(phase === "dig"){
+      var target = null;
+      for(var i = 0; i < PARTS.length; i++){
+        if(!foundMap[PARTS[i]]){ target = PARTS[i]; break; }
+      }
+      if(target){
+        var slot = DIG_SLOTS[target];
+        digHint.style.left = ((slot.x / 600) * 100).toFixed(1) + "%";
+        digHint.style.top = ((slot.y / 420) * 100).toFixed(1) + "%";
+        digHint.classList.add("show");
+      }
+    } else if(phase === "assemble"){
+      var nextTile = null;
+      for(var j = 0; j < boneTiles.length; j++){
+        var p = boneTiles[j].dataset.part;
+        if(foundMap[p] && !placedMap[p]){ nextTile = boneTiles[j]; break; }
+      }
+      if(nextTile){
+        nextTile.classList.add("show-hand", "hint-next");
+      }
+    }
+  }
+
+  function armIdle(fastVisual){
     hideIdleHints();
     if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
     if(dead || phase === "revived") return;
-    idleTimer = setTimeout(function(){
-      if(dead) return;
-      if(phase === "dig"){
-        var target = null;
-        for(var i = 0; i < PARTS.length; i++){
-          if(!foundMap[PARTS[i]]){ target = PARTS[i]; break; }
-        }
-        if(target){
-          var slot = DIG_SLOTS[target];
-          digHint.style.left = ((slot.x / 600) * 100).toFixed(1) + "%";
-          digHint.style.top = ((slot.y / 420) * 100).toFixed(1) + "%";
-          digHint.classList.add("show");
-        }
-      } else if(phase === "assemble"){
-        var nextTile = null;
-        for(var j = 0; j < boneTiles.length; j++){
-          var p = boneTiles[j].dataset.part;
-          if(foundMap[p] && !placedMap[p]){ nextTile = boneTiles[j]; break; }
-        }
-        if(nextTile){
-          nextTile.classList.add("show-hand", "hint-next");
-        }
-      }
-    }, 5000);
+    var visualDelay = fastVisual ? 1500 : (phase === "assemble" ? 1800 : 4200);
+    idleTimer = setTimeout(showPhaseVisualCue, visualDelay);
+    if(!idleVoiceReminded){
+      idleVoiceTimer = setTimeout(function(){
+        if(dead || phase === "revived") return;
+        idleVoiceReminded = true;
+        speakCurrentPhaseGuide(false);
+      }, 9500);
+    }
   }
 
   /* ============================================================================
@@ -2442,7 +2494,15 @@ window.__HOOT_SELF_COACH__=true;
     };
   }
 
-  function eraseSandAt(x1, y1, x2, y2){
+  function positionDigBrush(pt){
+    if(!digBrush) return;
+    digBrush.style.left = ((pt.x / 600) * 100).toFixed(2) + "%";
+    digBrush.style.top = ((pt.y / 420) * 100).toFixed(2) + "%";
+    digBrush.classList.add("active");
+  }
+
+  function eraseSandAt(x1, y1, x2, y2, radiusScale){
+    var rad = BRUSH_RADIUS * (radiusScale || 1);
     sandCtx.save();
     sandCtx.globalCompositeOperation = "destination-out";
 
@@ -2455,27 +2515,28 @@ window.__HOOT_SELF_COACH__=true;
       var t = i / steps;
       var cx = x1 + dx * t;
       var cy = y1 + dy * t;
-      var rg = sandCtx.createRadialGradient(cx, cy, BRUSH_RADIUS * 0.55, cx, cy, BRUSH_RADIUS);
+      var rg = sandCtx.createRadialGradient(cx, cy, rad * 0.56, cx, cy, rad);
       rg.addColorStop(0, "rgba(0,0,0,1)");
       rg.addColorStop(1, "rgba(0,0,0,0)");
       sandCtx.fillStyle = rg;
       sandCtx.beginPath();
-      sandCtx.arc(cx, cy, BRUSH_RADIUS, 0, Math.PI * 2);
+      sandCtx.arc(cx, cy, rad, 0, Math.PI * 2);
       sandCtx.fill();
     }
     sandCtx.restore();
 
     /* Kick up flying golden sand dust particles */
-    for(var k = 0; k < 5; k++){
-      if(particles.length > 90) particles.shift();
+    var pCount = radiusScale && radiusScale > 1.1 ? 9 : 5;
+    for(var k = 0; k < pCount; k++){
+      if(particles.length > 96) particles.shift();
       var ang = Math.random() * Math.PI * 2;
-      var spd = 1.6 + Math.random() * 4.2;
+      var spd = 1.6 + Math.random() * 4.4;
       particles.push({
-        x: x2 + (Math.random() - 0.5) * 28,
-        y: y2 + (Math.random() - 0.5) * 28,
+        x: x2 + (Math.random() - 0.5) * 30,
+        y: y2 + (Math.random() - 0.5) * 30,
         vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 1.4,
-        r: 3.5 + Math.random() * 5.5,
+        vy: Math.sin(ang) * spd - 1.5,
+        r: 3.5 + Math.random() * 5.8,
         life: 1,
         col: k % 2 === 0 ? "#ffe5a3" : "#d99b4a"
       });
@@ -2552,8 +2613,10 @@ window.__HOOT_SELF_COACH__=true;
     } else {
       bonePopSfx(bonesFound);
       hootCheer();
-      spawnSparkles(startX, startY, 12);
-      enqueueVoice("name-number-" + bonesFound + ".mp3", true);
+      spawnSparkles(startX, startY, 14);
+      var bv = BONE_VOICE[part];
+      var boneClip = resolveDinoClip(bv ? bv.custom : null, "name-number-" + bonesFound);
+      enqueueVoice(boneClip, true);
 
       if(tile){
         var tr = tile.getBoundingClientRect();
@@ -2564,26 +2627,24 @@ window.__HOOT_SELF_COACH__=true;
       }
     }
 
-    armIdle();
+    idleVoiceReminded = false;
+    armIdle(false);
 
-    /* When all 4 bones are found -> transition smoothly to Phase 2 Sunny Fossil Museum! */
+    /* When all 4 bones are found -> transition smoothly to Phase 2 Pixar Fossil Museum! */
     if(bonesFound >= 4){
       if(instant){
         enterAssemblePhase();
       } else {
         later(function(){
-          enqueueVoice("hoot-great-job.mp3", false);
-        }, 420);
-        later(function(){
           if(phase === "dig" && bonesFound >= 4){
             enterAssemblePhase();
           }
-        }, 950);
+        }, 1250);
       }
     }
   }
 
-  /* Continuous Lightweight Dust + Buried Shimmer Loop */
+  /* Continuous Lightweight Dust + Buried Shimmer & Glowing Treasure Ring Loop */
   function tickDust(ts){
     if(dead) return;
     dustRaf = requestAnimationFrame(tickDust);
@@ -2597,18 +2658,29 @@ window.__HOOT_SELF_COACH__=true;
 
     dustCtx.clearRect(0, 0, 600, 420);
 
-    /* Subtle shimmering star glints over still-buried bones */
+    /* Soft pulsing golden treasure rings + star glints over still-buried bones so 2yo kids spot them immediately */
     var t = (ts || 0) * 0.003;
     PARTS.forEach(function(part, idx){
       if(foundMap[part]) return;
       var s = DIG_SLOTS[part];
       var pulse = 0.5 + 0.5 * Math.sin(t + idx * 1.6);
+
+      dustCtx.save();
+      dustCtx.strokeStyle = "rgba(255, 246, 178, " + (0.28 + pulse * 0.42).toFixed(2) + ")";
+      dustCtx.lineWidth = 4;
+      dustCtx.setLineDash([10, 9]);
+      dustCtx.lineDashOffset = -t * 14;
+      dustCtx.beginPath();
+      dustCtx.arc(s.x, s.y, 44 + pulse * 7, 0, Math.PI * 2);
+      dustCtx.stroke();
+      dustCtx.restore();
+
       var gx = s.x + Math.cos(t * 0.7 + idx) * 18;
       var gy = s.y + Math.sin(t * 0.9 + idx) * 12;
-      var sz = 5 + pulse * 6;
+      var sz = 6 + pulse * 6.5;
       dustCtx.save();
       dustCtx.translate(gx, gy);
-      dustCtx.fillStyle = "rgba(255, 250, 196, " + (0.35 + pulse * 0.6).toFixed(2) + ")";
+      dustCtx.fillStyle = "rgba(255, 250, 196, " + (0.42 + pulse * 0.56).toFixed(2) + ")";
       dustCtx.beginPath();
       dustCtx.moveTo(0, -sz);
       dustCtx.quadraticCurveTo(2, -2, sz, 0);
@@ -2639,27 +2711,33 @@ window.__HOOT_SELF_COACH__=true;
     dustCtx.globalAlpha = 1;
   }
 
-  /* Sand Canvas Pointer Handlers (Mouse & Touch) */
+  /* Sand Canvas Pointer Handlers (Mouse & Touch — forgiving tap-puff + silky rub!) */
   sandCanvas.addEventListener("pointerdown", function(e){
     if(dead || phase !== "dig") return;
     e.preventDefault();
+    unlockAudioOnce();
     getAudioCtx();
+    hasDugThisDino = true;
+    idleVoiceReminded = false;
     hideIdleHints();
     isScrubbing = true;
     try{ sandCanvas.setPointerCapture(e.pointerId); }catch(err){}
     var pt = canvasPointFromEvent(e);
     lastPt = pt;
-    eraseSandAt(pt.x, pt.y, pt.x + 0.5, pt.y + 0.5);
+    positionDigBrush(pt);
+    /* Tap-to-shovel burst: 1.32x radius so 2-year-olds who poke instead of drag still uncover bones! */
+    eraseSandAt(pt.x, pt.y, pt.x + 0.5, pt.y + 0.5, 1.32);
     checkBoneDiscovery(true);
-    armIdle();
+    armIdle(false);
   });
 
   sandCanvas.addEventListener("pointermove", function(e){
     if(dead || !isScrubbing || phase !== "dig") return;
     e.preventDefault();
     var pt = canvasPointFromEvent(e);
+    positionDigBrush(pt);
     if(lastPt){
-      eraseSandAt(lastPt.x, lastPt.y, pt.x, pt.y);
+      eraseSandAt(lastPt.x, lastPt.y, pt.x, pt.y, 1);
     }
     lastPt = pt;
     checkBoneDiscovery(false);
@@ -2669,9 +2747,10 @@ window.__HOOT_SELF_COACH__=true;
     if(!isScrubbing) return;
     isScrubbing = false;
     lastPt = null;
+    if(digBrush) digBrush.classList.remove("active");
     try{ if(e && e.pointerId != null) sandCanvas.releasePointerCapture(e.pointerId); }catch(err){}
     checkBoneDiscovery(true);
-    armIdle();
+    armIdle(false);
   }
   sandCanvas.addEventListener("pointerup", stopScrub);
   sandCanvas.addEventListener("pointercancel", stopScrub);
@@ -2727,6 +2806,7 @@ window.__HOOT_SELF_COACH__=true;
 
   function enterAssemblePhase(){
     phase = "assemble";
+    idleVoiceReminded = false;
     stage.setAttribute("data-phase", "assemble");
     digScene.hidden = true;
     museumScene.hidden = false;
@@ -2745,13 +2825,17 @@ window.__HOOT_SELF_COACH__=true;
     });
 
     renderSkeletonBoard();
-    armIdle();
+    playDinoGuide("hoot-dino-build", "hoot-tap-big-btn", false);
+    /* Immediately highlight the first bone tile for toddlers so zero waiting! */
+    later(function(){ if(phase === "assemble") showPhaseVisualCue(); }, 420);
+    armIdle(false);
   }
 
   function snapBonePart(part, originX, originY){
     if(dead || phase !== "assemble" || !foundMap[part] || placedMap[part]) return;
     placedMap[part] = true;
     bonesPlaced++;
+    idleVoiceReminded = false;
     hideIdleHints();
 
     var tile = boneTray.querySelector('[data-part="' + part + '"]');
@@ -2775,7 +2859,7 @@ window.__HOOT_SELF_COACH__=true;
 
     if(bonesPlaced < 4){
       enqueueVoice("name-number-" + bonesPlaced + ".mp3", true);
-      armIdle();
+      armIdle(false);
     } else {
       /* 4th bone snapped in -> RAINBOW MAGIC REVIVAL! */
       reviveDinosaur();
@@ -2783,7 +2867,7 @@ window.__HOOT_SELF_COACH__=true;
   }
 
   /* ============================================================================
-     PHASE 3: RAINBOW MAGIC REVIVAL & ROAR TO LIFE!
+     PHASE 3: RAINBOW MAGIC REVIVAL, ROAR TO LIFE & INTERACTIVE SNACK FEED!
      ============================================================================ */
   function reviveDinosaur(){
     phase = "revived";
@@ -2794,11 +2878,12 @@ window.__HOOT_SELF_COACH__=true;
     stage.setAttribute("data-phase", "revived");
     updateHudProgress(true);
 
-    /* Next dinosaur icon on the glowing Next button */
+    /* Next dinosaur icon & matching yummy dino snack icon */
     var nextIdx = (DINO_ORDER.indexOf(dinoId) + 1) % DINO_ORDER.length;
     var nextId = DINO_ORDER[nextIdx];
     nextDinoIcon.textContent = DINOS[nextId].emoji;
     nextDinoBtn.dataset.nextDino = nextId;
+    if(feedFab) feedFab.textContent = DINO_SNACK[dinoId] || "🍎";
 
     /* Rainbow Aura + Transform Skeleton into Smiling Animated Cartoon Dino */
     rainbowAura.classList.remove("active");
@@ -2808,7 +2893,7 @@ window.__HOOT_SELF_COACH__=true;
     skeletonWrap.hidden = true;
     livingDinoBtn.innerHTML = livingDinoSvg(dinoId);
     livingDinoBtn.hidden = false;
-    livingDinoBtn.classList.remove("revive-pop", "stomping");
+    livingDinoBtn.classList.remove("revive-pop", "stomping", "munching");
     void livingDinoBtn.offsetWidth;
     livingDinoBtn.classList.add("revive-pop");
 
@@ -2828,11 +2913,13 @@ window.__HOOT_SELF_COACH__=true;
       }
     });
 
-    /* Confetti, Sparkles, Fanfare, Dino Roar & Hoot Celebration! */
+    var allFourDone = DINO_ORDER.every(function(k){ return !!revivedMap[k]; });
+
+    /* Confetti, Sparkles, Fanfare, Dino Roar & Named Hoot Celebration! */
     revivalFanfareSfx();
-    showerConfetti(48);
+    showerConfetti(allFourDone ? 72 : 48);
     var br = livingDinoBtn.getBoundingClientRect();
-    spawnSparkles(br.left + br.width * 0.5, br.top + br.height * 0.45, 16);
+    spawnSparkles(br.left + br.width * 0.5, br.top + br.height * 0.45, 18);
     hootCheer();
 
     later(function(){
@@ -2840,20 +2927,25 @@ window.__HOOT_SELF_COACH__=true;
     }, 360);
 
     later(function(){
-      var clip = VOICE_PRAISE[winClipIdx % VOICE_PRAISE.length];
-      winClipIdx++;
-      enqueueVoice(clip, true);
-    }, 980);
+      if(allFourDone && !museumCelebrated){
+        museumCelebrated = true;
+        playDinoGuide("hoot-dino-museum", "hoot-win-yay", false);
+      } else {
+        var rv = DINO_REVIVE_VOICE[dinoId] || DINO_REVIVE_VOICE.trex;
+        playDinoGuide(rv.custom, rv.fallback, false);
+      }
+    }, 1020);
   }
 
   function triggerDinoRoar(fromRevival){
     if(dead || phase !== "revived") return;
     getAudioCtx();
     dinoRoarSfx(dinoId);
-    livingDinoBtn.classList.remove("revive-pop", "stomping");
+    livingDinoBtn.classList.remove("revive-pop", "stomping", "munching");
     void livingDinoBtn.offsetWidth;
     livingDinoBtn.classList.add("stomping");
 
+    roarBurst.textContent = "💥🎶";
     roarBurst.classList.remove("show");
     void roarBurst.offsetWidth;
     roarBurst.classList.add("show");
@@ -2862,7 +2954,55 @@ window.__HOOT_SELF_COACH__=true;
     var br = livingDinoBtn.getBoundingClientRect();
     if(br.width) spawnSparkles(br.left + br.width * 0.55, br.top + br.height * 0.35, 10);
     if(!fromRevival){
-      enqueueVoice("hoot-star.mp3", true);
+      var rv = DINO_REVIVE_VOICE[dinoId] || DINO_REVIVE_VOICE.trex;
+      enqueueVoice(resolveDinoClip(rv.custom, "hoot-star"), true);
+    }
+  }
+
+  function feedDinosaur(){
+    if(dead || phase !== "revived") return;
+    unlockAudioOnce();
+    getAudioCtx();
+    var snackGlyph = DINO_SNACK[dinoId] || "🍎";
+    var fr = feedFab ? feedFab.getBoundingClientRect() : null;
+    var dr = livingDinoBtn.getBoundingClientRect();
+    var sx = fr ? fr.left + fr.width * 0.5 : window.innerWidth * 0.75;
+    var sy = fr ? fr.top + fr.height * 0.5 : window.innerHeight * 0.65;
+    var tx = dr.width ? dr.left + dr.width * 0.65 : window.innerWidth * 0.5;
+    var ty = dr.height ? dr.top + dr.height * 0.38 : window.innerHeight * 0.42;
+
+    var fly = document.createElement("div");
+    fly.className = "fly-snack";
+    fly.textContent = snackGlyph;
+    fly.style.left = sx + "px";
+    fly.style.top = sy + "px";
+    fxLayer.appendChild(fly);
+
+    var finishFeed = function(){
+      fly.remove();
+      if(dead || phase !== "revived") return;
+      chompSfx();
+      livingDinoBtn.classList.remove("revive-pop", "stomping", "munching");
+      void livingDinoBtn.offsetWidth;
+      livingDinoBtn.classList.add("munching");
+      roarBurst.textContent = "💚💛";
+      roarBurst.classList.remove("show");
+      void roarBurst.offsetWidth;
+      roarBurst.classList.add("show");
+      hootCheer();
+      spawnSparkles(tx, ty, 12);
+      playDinoGuide("hoot-dino-feed", "hoot-yay-2", false);
+    };
+
+    if(fly.animate){
+      var anim = fly.animate([
+        { transform: "translate(0,0) scale(.9) rotate(0deg)", opacity: 1 },
+        { transform: "translate(" + ((tx - sx) * 0.5).toFixed(0) + "px," + ((ty - sy) * 0.5 - 70).toFixed(0) + "px) scale(1.32) rotate(-18deg)", opacity: 1 },
+        { transform: "translate(" + (tx - sx).toFixed(0) + "px," + (ty - sy).toFixed(0) + "px) scale(.55) rotate(12deg)", opacity: .9 }
+      ], { duration: 420, easing: "cubic-bezier(.25,.9,.35,1)", fill: "forwards" });
+      anim.onfinish = finishFeed;
+    } else {
+      finishFeed();
     }
   }
 
@@ -2990,7 +3130,7 @@ window.__HOOT_SELF_COACH__=true;
     });
   }
 
-  function startDino(id){
+  function startDino(id, isBoot){
     if(!DINOS[id]) id = "trex";
     clearTimers();
     clearVoice(true);
@@ -3000,6 +3140,8 @@ window.__HOOT_SELF_COACH__=true;
     placedMap = {};
     bonesFound = 0;
     bonesPlaced = 0;
+    hasDugThisDino = false;
+    idleVoiceReminded = false;
     particles.length = 0;
 
     stage.setAttribute("data-phase", "dig");
@@ -3008,6 +3150,7 @@ window.__HOOT_SELF_COACH__=true;
     boneTray.hidden = false;
     trophyShelf.hidden = true;
     rainbowAura.classList.remove("active");
+    if(digBrush) digBrush.classList.remove("active");
 
     /* Populate bone tray icons tailored to this dinosaur */
     boneTiles.forEach(function(tile){
@@ -3019,7 +3162,8 @@ window.__HOOT_SELF_COACH__=true;
     renderBuriedBones();
     paintSandLayer();
     updateHudProgress(false);
-    armIdle();
+    speakCurrentPhaseGuide(!!isBoot);
+    armIdle(true);
   }
 
   /* Populate static pill & trophy mini-dino artwork */
@@ -3027,9 +3171,10 @@ window.__HOOT_SELF_COACH__=true;
     var id = btn.dataset.dino;
     btn.querySelector(".pill-art").innerHTML = livingDinoSvg(id);
     btn.addEventListener("click", function(){
+      unlockAudioOnce();
       getAudioCtx();
       clickPopSfx(740);
-      startDino(id);
+      startDino(id, false);
     });
   });
 
@@ -3037,6 +3182,7 @@ window.__HOOT_SELF_COACH__=true;
     var id = cup.dataset.dino;
     cup.querySelector(".trophy-art").innerHTML = livingDinoSvg(id);
     cup.addEventListener("click", function(){
+      unlockAudioOnce();
       getAudioCtx();
       if(revivedMap[id]){
         dinoRoarSfx(id);
@@ -3047,19 +3193,21 @@ window.__HOOT_SELF_COACH__=true;
         spawnSparkles(r.left + r.width * 0.5, r.top + r.height * 0.4, 8);
       } else {
         clickPopSfx(680);
-        startDino(id);
+        startDino(id, false);
       }
     });
   });
 
   livingDinoBtn.addEventListener("click", function(){ triggerDinoRoar(false); });
   roarFab.addEventListener("click", function(){ triggerDinoRoar(false); });
+  if(feedFab) feedFab.addEventListener("click", function(){ feedDinosaur(); });
 
   nextDinoBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     getAudioCtx();
     clickPopSfx(820);
     var targetId = nextDinoBtn.dataset.nextDino || "brachio";
-    startDino(targetId);
+    startDino(targetId, false);
   });
 
   soundBtn.addEventListener("click", function(){
@@ -3069,19 +3217,22 @@ window.__HOOT_SELF_COACH__=true;
     if(!soundOn){
       clearVoice(true);
     } else {
+      unlockAudioOnce();
       getAudioCtx();
       clickPopSfx(880);
+      speakCurrentPhaseGuide(false);
     }
   });
 
-  /* Direct tap on Paleontologist Hoot -> happy bounce + transient __bellyArmed giggle! */
+  /* Direct tap on Paleontologist Hoot -> happy bounce + repeats current spoken Hoot guide! */
   hootBtn.addEventListener("click", function(){
+    unlockAudioOnce();
     getAudioCtx();
     hootCheer();
     clickPopSfx(980);
     window.__bellyArmed = true;
     setTimeout(function(){ window.__bellyArmed = false; }, 500);
-    enqueueVoice("hoot-giggle.mp3", true);
+    speakCurrentPhaseGuide(false);
   });
 
   /* Smooth eye-tracking on Paleontologist Hoot */
@@ -3100,6 +3251,7 @@ window.__HOOT_SELF_COACH__=true;
     dead = true;
     clearTimers();
     if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+    if(idleVoiceTimer){ clearTimeout(idleVoiceTimer); idleVoiceTimer = null; }
     if(dustRaf) cancelAnimationFrame(dustRaf);
     clearVoice(true);
   }
@@ -3111,7 +3263,7 @@ window.__HOOT_SELF_COACH__=true;
   /* ============================================================================
      BOOT & PUBLIC TEST HOOK (window.__dinoGame)
      ============================================================================ */
-  startDino("trex");
+  startDino("trex", true);
   dustRaf = requestAnimationFrame(tickDust);
 
   function snapshot(){
@@ -3140,7 +3292,7 @@ window.__HOOT_SELF_COACH__=true;
 })();
 </script>
 
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e149">
-<script src="js/hoot-game-tail.js?v=llprev3e149"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e155">
+<script src="js/hoot-game-tail.js?v=llprev3e155"></script>
 </body>
 </html>
