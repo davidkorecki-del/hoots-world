@@ -3,10 +3,10 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="sub";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e149"></script>
+<script src="js/hoot-game-head.js?v=llprev3e150"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>3D Submarine Ocean Explorer</title>
+<title>Captain Hoot's Submarine Letter Voyage</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
@@ -34,7 +34,7 @@
     display:block; z-index:1; touch-action:none; cursor:pointer;
   }
 
-  /* Top HUD — Pre-reader zero text walls, all buttons >= 64px */
+  /* Top HUD — Pre-reader visual clarity, all interactive targets >= 64px */
   #hud{
     position:absolute; top:0; left:0; right:0; z-index:10;
     display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -45,7 +45,7 @@
     display:flex; align-items:center; gap:10px; pointer-events:auto;
   }
   .hud-left{ flex:0 0 auto; }
-  .hud-center{ flex:0 1 auto; justify-content:center; }
+  .hud-center{ flex:0 1 auto; justify-content:center; flex-wrap:nowrap; }
   .hud-right{ flex:0 0 auto; }
 
   #hootBtn{
@@ -60,24 +60,60 @@
   #hootBtn:active{ transform:scale(.92); }
   @keyframes hootBob{ from{ transform:translateY(0); } to{ transform:translateY(-4px); } }
 
+  /* BIG Crystal-Clear Target Letter Bubble Pill [ A ] [ 🔊 ] */
+  #targetPill{
+    min-height:68px; min-width:136px;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:5px 14px 5px 8px;
+    border-radius:999px;
+    border:4px solid #fff;
+    background:linear-gradient(180deg, #fffbeb 0%, #fef08a 52%, #f59e0b 100%);
+    box-shadow:0 6px 0 var(--outline), 0 0 28px rgba(253,224,71,.85), inset 0 3px 6px rgba(255,255,255,.78);
+    cursor:pointer;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1), box-shadow .2s;
+  }
+  #targetPill:active{ transform:scale(.93); }
+  #targetPill.pop{ animation:targetPop .52s cubic-bezier(.34,1.85,.5,1); }
+  @keyframes targetPop{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.18); }
+    100%{ transform:scale(1); }
+  }
+  .target-orb{
+    width:52px; height:52px; border-radius:50%;
+    display:grid; place-items:center;
+    background:radial-gradient(circle at 30% 25%, #ffffff 0%, #fef9c3 55%, #bae6fd 100%);
+    border:3.5px solid var(--outline);
+    box-shadow:inset 0 -3px 6px rgba(14,116,144,.22), 0 2px 6px rgba(0,0,0,.18);
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:34px; line-height:1;
+    color:#0b2239;
+  }
+  .target-spk{
+    width:40px; height:40px; border-radius:50%;
+    display:grid; place-items:center;
+    background:rgba(12,35,64,.14);
+    border:2.5px solid rgba(12,35,64,.28);
+    font-size:22px; line-height:1;
+  }
+
   /* Zone Switcher Pill (Sunny Reef / Glowing Deep Sea) */
   #zonePill{
-    display:inline-flex; align-items:center; gap:6px;
+    display:inline-flex; align-items:center; gap:5px;
     background:rgba(8,31,56,.82);
     backdrop-filter:blur(10px);
     border:4px solid rgba(255,255,255,.88);
     border-radius:999px;
-    padding:4px;
+    padding:3px;
     box-shadow:0 6px 0 var(--outline), 0 10px 24px rgba(0,0,0,.36);
   }
   .zone-btn{
-    min-width:64px; min-height:64px;
+    min-width:64px; min-height:60px;
     border:3px solid transparent; border-radius:999px;
-    padding:0 18px;
+    padding:0 16px;
     font-family:"Fredoka",sans-serif; font-weight:800;
-    font-size:18px; line-height:1; white-space:nowrap;
+    font-size:17px; line-height:1; white-space:nowrap;
     cursor:pointer;
-    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
     color:rgba(255,255,255,.82);
     background:transparent;
     transition:transform .16s cubic-bezier(.34,1.7,.5,1), background .22s, color .22s, box-shadow .22s;
@@ -98,11 +134,11 @@
   }
 
   #starPill{
-    min-height:64px; min-width:86px;
+    min-height:64px; min-width:82px;
     display:inline-flex; align-items:center; justify-content:center; gap:6px;
     background:linear-gradient(180deg, #fffef8 0%, #fef3c7 100%);
     border:4px solid var(--outline); border-radius:999px;
-    padding:0 16px;
+    padding:0 15px;
     font-family:"Fredoka",sans-serif; font-weight:800; font-size:22px; color:var(--ink);
     box-shadow:0 6px 0 var(--outline), 0 8px 18px rgba(0,0,0,.3);
   }
@@ -121,48 +157,70 @@
   }
   #doneBtn:active{ transform:translateY(3px); box-shadow:0 3px 0 var(--outline); }
 
-  /* Bottom HUD — Pearl Discovery Bar (left) + Giant Sonar Ping Button (right) */
+  /* Bottom HUD — Optional Up/Down Swim Pad (left), 3-Pearl Treasure Bar (center), Giant Sonar Ping (right) */
   #bottomHud{
     position:absolute; left:0; right:0;
     bottom:max(12px, env(safe-area-inset-bottom));
     z-index:10;
-    display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
     padding:0 16px;
     pointer-events:none;
   }
 
-  #pearlBar{
+  #swimPad{
     pointer-events:auto;
     display:inline-flex; align-items:center; gap:8px;
+  }
+  .swim-btn{
+    width:66px; height:66px; min-width:64px; min-height:64px;
+    border-radius:50%;
+    border:4px solid rgba(255,255,255,.92);
+    background:radial-gradient(circle at 34% 26%, rgba(186,230,253,.92), rgba(14,116,144,.86) 72%, rgba(8,47,73,.92));
+    color:#fff;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:28px; line-height:1;
+    display:grid; place-items:center;
+    box-shadow:0 6px 0 var(--outline), 0 8px 20px rgba(0,0,0,.35), inset 0 4px 6px rgba(255,255,255,.42);
+    cursor:pointer;
+    touch-action:none;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .swim-btn.pressed, .swim-btn:active{
+    transform:translateY(3px) scale(.93);
+    box-shadow:0 3px 0 var(--outline), 0 0 24px rgba(103,232,249,.9);
+  }
+
+  #pearlBar{
+    pointer-events:auto;
+    display:inline-flex; align-items:center; gap:9px;
     background:rgba(7,30,54,.84);
     backdrop-filter:blur(10px);
     border:4px solid rgba(103,232,249,.88);
     border-radius:999px;
-    padding:9px 14px;
+    padding:9px 15px;
     box-shadow:0 7px 0 var(--outline), 0 12px 28px rgba(0,0,0,.42);
     transition:border-color .3s, box-shadow .3s;
   }
   #pearlBar.chest-ready{
     border-color:#fde047;
-    box-shadow:0 7px 0 var(--outline), 0 0 32px rgba(253,224,71,.88);
+    box-shadow:0 7px 0 var(--outline), 0 0 32px rgba(253,224,71,.92);
     animation:readyBarPulse .7s ease-in-out infinite alternate;
   }
   @keyframes readyBarPulse{
     from{ transform:scale(1); }
-    to{ transform:scale(1.045); }
+    to{ transform:scale(1.05); }
   }
   .pearl-slot{
     width:32px; height:32px; border-radius:50%;
-    border:3px solid rgba(186,230,253,.45);
+    border:3px solid rgba(186,230,253,.48);
     background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.18), rgba(15,23,42,.55));
     position:relative;
     transition:transform .35s cubic-bezier(.34,1.85,.5,1), background .3s, border-color .3s, box-shadow .3s;
   }
   .pearl-slot.filled{
     border-color:#fff;
-    background:radial-gradient(circle at 30% 26%, #ffffff 0%, #fbcfe8 32%, #67e8f9 68%, #818cf8 100%);
-    box-shadow:0 0 14px rgba(103,232,249,.95), inset 0 -3px 6px rgba(59,130,246,.5);
-    transform:scale(1.1);
+    background:radial-gradient(circle at 30% 26%, #ffffff 0%, #fef08a 34%, #67e8f9 72%, #818cf8 100%);
+    box-shadow:0 0 14px rgba(253,224,71,.95), inset 0 -3px 6px rgba(59,130,246,.45);
+    transform:scale(1.12);
   }
   .pearl-slot.filled::after{
     content:""; position:absolute; top:4px; left:6px; width:8px; height:5px;
@@ -187,14 +245,14 @@
   #sonarBtn{
     pointer-events:auto;
     position:relative;
-    width:82px; height:82px; min-width:74px; min-height:74px;
+    width:80px; height:80px; min-width:72px; min-height:72px;
     border-radius:50%;
     border:5px solid #fff;
     background:radial-gradient(circle at 34% 26%, #a5f3fc 0%, #06b6d4 54%, #0e7490 100%);
     box-shadow:0 8px 0 var(--outline), 0 0 30px rgba(34,211,238,.82), inset 0 5px 8px rgba(255,255,255,.55);
     cursor:pointer;
     display:grid; place-items:center;
-    font-size:36px; line-height:1;
+    font-size:35px; line-height:1;
     transition:transform .14s cubic-bezier(.34,1.8,.5,1), box-shadow .14s;
   }
   #sonarBtn::before{
@@ -242,7 +300,7 @@
     font-size:32px; color:#0b2239;
   }
   .win-stats{
-    display:flex; align-items:center; justify-content:center; gap:14px;
+    display:flex; align-items:center; justify-content:center; gap:12px;
     margin:0 0 20px; flex-wrap:wrap;
   }
   .win-stat{
@@ -253,7 +311,7 @@
   .win-btns{
     display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;
   }
-  .big-play, .win-btn{
+  .big-play{
     min-height:64px;
     border:4px solid var(--outline); border-radius:999px;
     background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
@@ -262,30 +320,46 @@
   }
 
   /* Responsive Phone Portrait (iPhone 390x844) — zero overflow, all buttons >= 64px */
-  @media (max-width: 720px){
+  @media (max-width: 780px){
     #hud{
-      flex-wrap:wrap; align-items:center; gap:8px;
-      padding:max(8px, env(safe-area-inset-top)) 10px 0 10px;
+      flex-wrap:wrap; align-items:center; gap:6px;
+      padding:max(8px, env(safe-area-inset-top)) 8px 0 8px;
     }
-    .hud-left{ order:1; }
-    .hud-right{ order:2; margin-left:auto; gap:8px; }
-    .hud-center{ order:3; flex:1 0 100%; justify-content:center; }
+    .hud-left{ order:1; gap:6px; }
+    .hud-center{ order:2; display:contents; }
+    #targetPill{
+      order:2; pointer-events:auto;
+      min-height:64px; min-width:116px;
+      padding:4px 10px 4px 6px; gap:7px;
+      margin:0 auto;
+    }
+    .target-orb{ width:46px; height:46px; font-size:30px; }
+    .target-spk{ width:34px; height:34px; font-size:18px; }
+    .hud-right{ order:3; gap:6px; }
+    #zonePill{
+      order:4; pointer-events:auto;
+      margin:2px auto 0 auto;
+    }
     #hootBtn{ width:64px; height:64px; flex:0 0 64px; }
-    #starPill{ min-height:64px; min-width:74px; padding:0 12px; font-size:20px; }
-    #doneBtn{ min-width:64px; min-height:64px; padding:0 14px; font-size:17px; }
+    #starPill{ min-height:64px; min-width:66px; padding:0 10px; font-size:19px; gap:4px; }
+    #doneBtn{ min-width:64px; min-height:64px; padding:0 12px; font-size:19px; }
     #doneBtn .done-lbl{ display:none; }
-    .zone-btn{ min-height:64px; padding:0 16px; font-size:16.5px; }
-    #bottomHud{ padding:0 10px; bottom:max(10px, env(safe-area-inset-bottom)); }
-    #pearlBar{ gap:5px; padding:8px 10px; }
-    .pearl-slot{ width:26px; height:26px; border-width:2.5px; }
-    #chestBadge{ width:32px; height:32px; }
-    #sonarBtn{ width:76px; height:76px; font-size:33px; }
+    .zone-btn{ min-height:60px; padding:0 15px; font-size:16px; }
+
+    #bottomHud{ padding:0 10px; gap:6px; bottom:max(10px, env(safe-area-inset-bottom)); }
+    #swimPad{ gap:6px; }
+    .swim-btn{ width:64px; height:64px; font-size:25px; }
+    #pearlBar{ gap:5px; padding:7px 9px; }
+    .pearl-slot{ width:24px; height:24px; border-width:2.5px; }
+    #chestBadge{ width:30px; height:30px; }
+    #chestBadge svg{ width:19px; height:19px; }
+    #sonarBtn{ width:72px; height:72px; min-width:72px; min-height:72px; font-size:31px; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
-  <canvas id="gameCanvas" aria-label="3D Submarine Ocean Explorer"></canvas>
+  <canvas id="gameCanvas" aria-label="Captain Hoot's Submarine Letter Voyage"></canvas>
 
   <!-- Top HUD -->
   <div id="hud">
@@ -300,7 +374,6 @@
           <path d="M52 44 Q40 14 62 22 Q74 27 70 48 Z" fill="#8a5a33"/>
           <path d="M148 44 Q160 14 138 22 Q126 27 130 48 Z" fill="#8a5a33"/>
           <circle cx="100" cy="72" r="52" fill="#a06a3b"/>
-          <!-- Yellow Captain's Hat -->
           <ellipse cx="100" cy="28" rx="44" ry="11" fill="#17324f"/>
           <path d="M62 24 Q100 -4 138 24 L132 32 Q100 20 68 32 Z" fill="#ffd23f" stroke="#c27803" stroke-width="3"/>
           <circle cx="100" cy="18" r="5" fill="#fff7cc" stroke="#b45309" stroke-width="2"/>
@@ -318,6 +391,11 @@
     </div>
 
     <div class="hud-center">
+      <button id="targetPill" type="button" aria-label="Hear target letter">
+        <span class="target-orb" id="targetLetterText">A</span>
+        <span class="target-spk" aria-hidden="true">🔊</span>
+      </button>
+
       <div id="zonePill" role="group" aria-label="Ocean Zone">
         <button id="reefZoneBtn" type="button" class="zone-btn active" data-zone="reef">☀️ Reef</button>
         <button id="deepZoneBtn" type="button" class="zone-btn" data-zone="deep">✨ Deep Sea</button>
@@ -332,12 +410,15 @@
 
   <!-- Bottom HUD -->
   <div id="bottomHud">
-    <div id="pearlBar" aria-label="Ocean discoveries toward treasure chest">
+    <div id="swimPad" role="group" aria-label="Swim Up or Down">
+      <button id="swimUpBtn" class="swim-btn" type="button" aria-label="Swim Up">▲</button>
+      <button id="swimDownBtn" class="swim-btn" type="button" aria-label="Swim Down">▼</button>
+    </div>
+
+    <div id="pearlBar" aria-label="Letters toward sunken treasure chest">
       <span class="pearl-slot" data-slot="0"></span>
       <span class="pearl-slot" data-slot="1"></span>
       <span class="pearl-slot" data-slot="2"></span>
-      <span class="pearl-slot" data-slot="3"></span>
-      <span class="pearl-slot" data-slot="4"></span>
       <span id="chestBadge" aria-hidden="true">
         <svg viewBox="0 0 36 36">
           <rect x="4" y="15" width="28" height="15" rx="3" fill="#92400e" stroke="#451a03" stroke-width="2.5"/>
@@ -355,11 +436,11 @@
   <div id="winOverlay" hidden>
     <div class="win-card">
       <div class="win-stars" aria-hidden="true">⭐🏆⭐</div>
-      <h2 id="winHeading">Ocean Explorer!</h2>
+      <h2 id="winHeading">Ocean Voyager!</h2>
       <div class="win-stats">
         <span class="win-stat">⭐ <span id="winStars">0</span></span>
+        <span class="win-stat">🔤 <span id="winLetters">0</span></span>
         <span class="win-stat">💎 <span id="winChests">0</span></span>
-        <span class="win-stat">🫧 <span id="winFriends">0</span></span>
       </div>
       <div class="win-btns">
         <button id="againBtn" class="big-play" type="button">↻ Keep Exploring</button>
@@ -373,14 +454,16 @@
   "use strict";
 
   /* =========================================================================
-     1. VERIFIED HOOT VOICE ENGINE (100% Real Studio Hoot MP3s)
+     1. VERIFIED HOOT VOICE ENGINE (100% Real Studio Hoot MP3s, Zero TTS)
      ========================================================================= */
+  var VBASE = "assets/voice/";
   var voiceAudio = new Audio();
   var voiceGen = 0;
-  var PRAISE_CLIPS = ["hoot-amazing", "hoot-great-job", "hoot-super", "hoot-star"];
+  var PRAISE_CLIPS = ["hoot-great-job", "hoot-amazing", "hoot-super", "hoot-star"];
   var praiseIdx = 0;
+  var pendingBootLetter = null;
 
-  function playVoiceSeq(ids){
+  function playVoiceSeq(ids, onBlocked){
     if(!ids || !ids.length) return;
     var gen = ++voiceGen, idx = 0;
     voiceAudio.onended = null;
@@ -390,22 +473,54 @@
       if(gen !== voiceGen || idx >= ids.length) return;
       var id = ids[idx++];
       if(!id){ next(); return; }
-      voiceAudio.src = "assets/voice/" + id + ".mp3";
+      /* Direct path to verified base voice clips in assets/voice/ */
+      voiceAudio.src = VBASE + id + ".mp3";
       voiceAudio.onended = next;
       voiceAudio.onerror = next;
       var p = voiceAudio.play();
-      if(p && p.catch) p.catch(function(){});
+      if(p && p.catch){
+        p.catch(function(){
+          if(onBlocked) onBlocked();
+        });
+      }
     }
     next();
   }
+
   function nextPraise(){
     var c = PRAISE_CLIPS[praiseIdx % PRAISE_CLIPS.length];
     praiseIdx++;
     return c;
   }
 
+  function speakTargetCallout(letter, isBoot){
+    if(!letter) return;
+    var clipId = "call-letter-" + letter.toLowerCase();
+    var src = VBASE + clipId + ".mp3";
+    targetPill.classList.remove("pop");
+    void targetPill.offsetWidth;
+    targetPill.classList.add("pop");
+
+    if(isBoot){
+      try{
+        if(window.parent && window.parent !== window && typeof window.parent.__hwPlayAfterIntro === "function"){
+          if(window.parent.__hwPlayAfterIntro(src)){
+            pendingBootLetter = null;
+            return;
+          }
+        }
+      }catch(e){}
+      playVoiceSeq([clipId], function(){
+        pendingBootLetter = letter;
+      });
+      return;
+    }
+    pendingBootLetter = null;
+    playVoiceSeq([clipId]);
+  }
+
   /* =========================================================================
-     2. UNDERWATER WEBAUDIO SYNTHESIZER (Harp Arpeggio, Sonar Ping, Treasure)
+     2. UNDERWATER WEBAUDIO SYNTHESIZER (Harp Chord, Sonar Ping, Treasure, Pop)
      ========================================================================= */
   var actx = null;
   function getAC(){
@@ -433,20 +548,20 @@
         var o = c.createOscillator();
         var o2 = c.createOscillator();
         var g = c.createGain();
+        var g2 = c.createGain();
         o.type = "triangle";
         o2.type = "sine";
-        o.frequency.setValueAtTime(freq, t + i * 0.055);
-        o2.frequency.setValueAtTime(freq * 2, t + i * 0.055);
-        g.gain.setValueAtTime(0.001, t + i * 0.055);
-        g.gain.linearRampToValueAtTime(0.13, t + i * 0.055 + 0.015);
-        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.055 + 0.52);
-        var g2 = c.createGain();
+        o.frequency.setValueAtTime(freq, t + i * 0.052);
+        o2.frequency.setValueAtTime(freq * 2, t + i * 0.052);
+        g.gain.setValueAtTime(0.001, t + i * 0.052);
+        g.gain.linearRampToValueAtTime(0.13, t + i * 0.052 + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.052 + 0.52);
         g2.gain.value = 0.25;
         o.connect(g);
         o2.connect(g2); g2.connect(g);
         g.connect(c.destination);
-        o.start(t + i * 0.055); o.stop(t + i * 0.055 + 0.56);
-        o2.start(t + i * 0.055); o2.stop(t + i * 0.055 + 0.56);
+        o.start(t + i * 0.052); o.stop(t + i * 0.052 + 0.56);
+        o2.start(t + i * 0.052); o2.stop(t + i * 0.052 + 0.56);
       });
     }catch(e){}
   }
@@ -480,11 +595,28 @@
       o.type = "sine";
       var f0 = 320 + (pitchBoost || 0) * 65;
       o.frequency.setValueAtTime(f0, t);
-      o.frequency.exponentialRampToValueAtTime(f0 * 2.5, t + 0.11);
+      o.frequency.exponentialRampToValueAtTime(f0 * 2.4, t + 0.11);
       g.gain.setValueAtTime(0.11, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
       o.connect(g); g.connect(c.destination);
       o.start(t); o.stop(t + 0.16);
+    }catch(e){}
+  }
+
+  function sfxSoftChime(){
+    try{
+      var c = getAC(); if(!c) return;
+      var t = c.currentTime;
+      [523.25, 659.25].forEach(function(freq, i){
+        var o = c.createOscillator();
+        var g = c.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(freq, t + i * 0.06);
+        g.gain.setValueAtTime(0.08, t + i * 0.06);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.24);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + i * 0.06); o.stop(t + i * 0.06 + 0.28);
+      });
     }catch(e){}
   }
 
@@ -523,17 +655,17 @@
   }
 
   /* =========================================================================
-     3. BACKDROP ART ASSETS (Real Painted Pixar-Style Reef & Deep Sea)
+     3. BACKDROP ART ASSETS (Painted Pixar Reef & Deep Sea — Seamless Mirrored)
      ========================================================================= */
   var bgImages = {
     reef: new Image(),
     deep: new Image()
   };
-  bgImages.reef.src = "assets/sub3d/bg_reef.jpg?v=llprev3e149";
-  bgImages.deep.src = "assets/sub3d/bg_deep.jpg?v=llprev3e149";
+  bgImages.reef.src = "assets/sub3d/bg_reef.jpg?v=llprev3e150";
+  bgImages.deep.src = "assets/sub3d/bg_deep.jpg?v=llprev3e150";
 
   /* =========================================================================
-     4. CANVAS & LIGHTING LAYER SETUP
+     4. CANVAS & VOLUMETRIC DEEP SEA LIGHTING SETUP
      ========================================================================= */
   var canvas = document.getElementById("gameCanvas");
   var ctx = canvas.getContext("2d");
@@ -550,7 +682,6 @@
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    /* Half-res offscreen darkness/headlamp mask for silky 60fps Deep Sea glow */
     lightCanvas.width = Math.max(240, Math.round(W * 0.5));
     lightCanvas.height = Math.max(240, Math.round(H * 0.5));
   }
@@ -558,37 +689,80 @@
   resize();
 
   /* =========================================================================
-     5. GAME STATE & SNAPSHOT API
+     5. KID PROFILE & LETTER DECK (Riley kidb: A-J first; Zane kida: A-Z)
+     ========================================================================= */
+  var isKidB = /(^|[?&])kid=kidb(&|$)/.test(location.search);
+  var EARLY_LETTERS = "ABCDEFGHIJ".split("");
+  var ALL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  function shuffleArr(arr){
+    var out = arr.slice();
+    for(var i = out.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+    }
+    return out;
+  }
+
+  var letterDeck = [];
+  var deckPhase = 0;
+
+  function refillDeck(){
+    if(isKidB && deckPhase === 0){
+      letterDeck = shuffleArr(EARLY_LETTERS);
+      deckPhase = 1;
+    } else if(isKidB){
+      /* Riley loops friendly A-J with gentle occasional K-Z variety on later decks */
+      letterDeck = shuffleArr(deckPhase % 2 === 1 ? EARLY_LETTERS : ALL_LETTERS);
+      deckPhase++;
+    } else {
+      letterDeck = shuffleArr(ALL_LETTERS);
+      deckPhase++;
+    }
+  }
+
+  function popNextTargetLetter(avoid){
+    if(!letterDeck.length) refillDeck();
+    var pick = letterDeck.shift();
+    if(pick === avoid && letterDeck.length){
+      letterDeck.push(pick);
+      pick = letterDeck.shift();
+    }
+    return pick;
+  }
+
+  function randomDistractorLetter(target){
+    var pool = (isKidB && deckPhase <= 1) ? EARLY_LETTERS : ALL_LETTERS;
+    var tries = 0, ch = "B";
+    while(tries < 12){
+      ch = pool[Math.floor(Math.random() * pool.length)];
+      if(ch !== target) return ch;
+      tries++;
+    }
+    return target === "A" ? "B" : "A";
+  }
+
+  /* =========================================================================
+     6. GAME STATE & REQUIRED SNAPSHOT / TEST API
      ========================================================================= */
   var state = {
     zone: "reef",          /* "reef" | "deep" */
     prevZone: "reef",
-    zoneFade: 1,           /* 0..1 crossfade */
-    discovered: 0,         /* total friends + pearls discovered */
-    cycleFound: 0,         /* 0..5 toward next treasure chest */
-    chestReady: false,
+    zoneFade: 1,
+    scrollX: 0,            /* Continuous world distance traveled (px) */
+    targetLetter: "A",
+    lettersCollected: 0,
+    pearlCycle: 0,         /* 0..3 letters toward Sunken Treasure Chest */
     chestsOpened: 0,
     stars: 0,
     sonarPings: 0,
-    won: false,
-    hasSteered: false
-  };
-
-  /* Expose required test/inspection snapshot API */
-  window.__subGame = {
-    snapshot: function(){
-      return {
-        zone: state.zone,
-        discovered: state.discovered,
-        chestReady: state.chestReady,
-        chestsOpened: state.chestsOpened,
-        stars: state.stars,
-        sonarPings: state.sonarPings
-      };
-    }
+    missesForTarget: 0,    /* Boosts size & golden glow if child misses a target */
+    won: false
   };
 
   /* DOM refs */
+  var targetPill = document.getElementById("targetPill");
+  var targetLetterText = document.getElementById("targetLetterText");
   var reefZoneBtn = document.getElementById("reefZoneBtn");
   var deepZoneBtn = document.getElementById("deepZoneBtn");
   var starCountEl = document.getElementById("starCount");
@@ -598,106 +772,219 @@
   var sonarBtn = document.getElementById("sonarBtn");
   var hootBtn = document.getElementById("hootBtn");
   var doneBtn = document.getElementById("doneBtn");
+  var swimUpBtn = document.getElementById("swimUpBtn");
+  var swimDownBtn = document.getElementById("swimDownBtn");
   var winOverlay = document.getElementById("winOverlay");
   var againBtn = document.getElementById("againBtn");
 
   function syncHud(){
+    targetLetterText.textContent = state.targetLetter;
     reefZoneBtn.classList.toggle("active", state.zone === "reef");
     deepZoneBtn.classList.toggle("active", state.zone === "deep");
     starCountEl.textContent = String(state.stars);
+    var filledCount = chest.active ? 3 : state.pearlCycle;
     pearlSlots.forEach(function(el, idx){
-      el.classList.toggle("filled", idx < state.cycleFound);
+      el.classList.toggle("filled", idx < filledCount);
     });
-    pearlBar.classList.toggle("chest-ready", state.chestReady);
+    pearlBar.classList.toggle("chest-ready", chest.active && !chest.opened);
   }
 
   /* =========================================================================
-     6. SUBMARINE, CREATURES, PEARLS, TREASURE CHEST & PARTICLES
+     7. WORLD ENTITIES: SUBMARINE, LETTER PEARLS, TREASURE CHEST, SEA FRIENDS
      ========================================================================= */
+  function getPlayBounds(){
+    var topPad = W < 780 ? 156 : 104;
+    var botPad = 104;
+    var minX = Math.max(66, W * 0.14);
+    var maxX = Math.max(minX + 80, W * 0.78);
+    return {
+      minX: minX,
+      maxX: maxX,
+      minY: topPad,
+      maxY: Math.max(topPad + 160, H - botPad)
+    };
+  }
+
+  function getSubScale(){
+    return Math.max(0.72, Math.min(1.16, Math.min(W, H) / 680));
+  }
+
+  var initBounds = getPlayBounds();
   var sub = {
-    x: W * 0.34,
-    y: H * 0.44,
+    x: Math.max(initBounds.minX, W * 0.24),
+    y: (initBounds.minY + initBounds.maxY) * 0.5,
     vx: 0,
     vy: 0,
-    targetX: W * 0.34,
-    targetY: H * 0.44,
-    facing: 1,       /* 1 right, -1 left */
-    faceVis: 1,      /* smoothly interpolated scaleX */
+    targetX: Math.max(initBounds.minX, W * 0.24),
+    targetY: (initBounds.minY + initBounds.maxY) * 0.5,
     pitch: 0,
     propAngle: 0,
     bounce: 0,
     cheerT: 0,
-    blinkT: 2.6,
-    bubbleAcc: 0
+    blinkT: 2.5,
+    bubbleAcc: 0,
+    speedBoost: 1,
+    dashT: 0,
+    dashBubbleId: null,
+    dashChest: false
   };
 
+  /* Scrolling Sunken Treasure Chest (glides in every 3 collected target letters!) */
   var chest = {
-    xPct: 0.5,
-    yPct: 0.80,
-    openAmt: 0,      /* 0 closed .. 1 open */
-    opening: false,
+    active: false,
+    opened: false,
+    x: 0,
+    y: 0,
+    openAmt: 0,
     celebrateT: 0,
-    wobbleT: 0,
-    pulseT: 0
+    departing: false,
+    wobbleT: 0
   };
 
-  var CREATURE_KINDS = [
-    { kind: "turtle",    clip: "word-turtle", col: "#22c55e", glow: "#86efac", size: 1.05 },
-    { kind: "whale",     clip: null,          col: "#38bdf8", glow: "#7dd3fc", size: 1.32 },
-    { kind: "clownfish", clip: "word-fish",   col: "#fb923c", glow: "#fed7aa", size: 0.88 },
-    { kind: "octopus",   clip: null,          col: "#a855f7", glow: "#e9d5ff", size: 1.02 },
-    { kind: "starfish",  clip: null,          col: "#f472b6", glow: "#fbcfe8", size: 0.86 }
-  ];
+  /* Giant Iridescent Letter Pearl Bubbles */
+  var letterBubbles = [];
+  var nextBubbleId = 1;
+  var bubblesSinceTarget = 0;
 
+  /* Sea Friends gliding past along the ocean voyage */
+  var CREATURE_KINDS = [
+    { kind: "turtle",    clip: "word-turtle", col: "#22c55e", glow: "#86efac", size: 0.98 },
+    { kind: "whale",     clip: null,          col: "#38bdf8", glow: "#7dd3fc", size: 1.24 },
+    { kind: "clownfish", clip: "word-fish",   col: "#fb923c", glow: "#fed7aa", size: 0.84 },
+    { kind: "octopus",   clip: null,          col: "#a855f7", glow: "#e9d5ff", size: 0.94 },
+    { kind: "starfish",  clip: null,          col: "#f472b6", glow: "#fbcfe8", size: 0.82 }
+  ];
   var creatures = [];
-  var hiddenPearls = [];
+
+  /* Particles & FX */
   var sonarWaves = [];
   var bubbles = [];
   var sparkles = [];
   var coins = [];
   var ripples = [];
   var flyingStars = [];
+  var popLetters = [];   /* Floating celebratory big letter pops */
   var ambientMotes = [];
+  var fgKelp = [];       /* Foreground parallax kelp silhouettes */
   var tAcc = 0;
 
-  for(var mi = 0; mi < 48; mi++){
+  for(var mi = 0; mi < 46; mi++){
     ambientMotes.push({
-      x: Math.random(),
+      x: Math.random() * 1.2,
       y: Math.random() * 0.92,
-      r: 1.4 + Math.random() * 2.8,
+      r: 1.5 + Math.random() * 2.8,
       ph: Math.random() * 6.28,
-      sp: 0.012 + Math.random() * 0.025,
+      sp: 0.015 + Math.random() * 0.025,
+      drift: 0.35 + Math.random() * 0.55,
       hue: 175 + Math.random() * 55
     });
   }
 
-  function getPlayBounds(){
-    var topPad = W < 720 ? 198 : 112;
-    var botPad = 126;
-    var sidePad = Math.max(54, W * 0.07);
-    return {
-      minX: sidePad,
-      maxX: W - sidePad,
-      minY: topPad,
-      maxY: Math.max(topPad + 140, H - botPad)
-    };
+  for(var ki = 0; ki < 11; ki++){
+    fgKelp.push({
+      worldX: ki * 230 + Math.random() * 90,
+      h: 72 + Math.random() * 78,
+      blades: 3 + Math.floor(Math.random() * 3),
+      ph: Math.random() * 6.28,
+      coral: ki % 3 === 1
+    });
   }
 
-  function spawnCreatures(resetAll){
+  function getBubbleRadius(){
+    /* Guaranteed >= 76px diameter (r >= 38px) on every screen size! */
+    return Math.max(40, Math.min(48, Math.round(Math.min(W, H) * 0.068)));
+  }
+
+  function pickBubbleLaneY(avoidY){
     var b = getPlayBounds();
-    var lanes = W < 720 ? [0.28, 0.38, 0.48, 0.56, 0.64] : [0.22, 0.34, 0.46, 0.56, 0.65];
-    if(resetAll) creatures = [];
+    var r = getBubbleRadius();
+    var top = b.minY + r + 14;
+    var bot = Math.max(top + 60, b.maxY - r - 24);
+    var lanes = 4;
+    var bestY = top + (bot - top) * 0.5;
+    var bestDist = -1;
+    for(var tries = 0; tries < 6; tries++){
+      var laneIdx = Math.floor(Math.random() * lanes);
+      var cand = top + ((laneIdx + 0.5) / lanes) * (bot - top) + (Math.random() - 0.5) * 26;
+      cand = Math.max(top, Math.min(bot, cand));
+      var minD = 9999;
+      for(var i = 0; i < letterBubbles.length; i++){
+        var ob = letterBubbles[i];
+        if(ob.x > W * 0.55){
+          minD = Math.min(minD, Math.abs(cand - ob.baseY));
+        }
+      }
+      if(avoidY != null) minD = Math.min(minD, Math.abs(cand - avoidY));
+      if(minD > bestDist){
+        bestDist = minD;
+        bestY = cand;
+      }
+    }
+    return bestY;
+  }
+
+  function hasActiveTargetBubble(){
+    for(var i = 0; i < letterBubbles.length; i++){
+      if(letterBubbles[i].isTarget && letterBubbles[i].x > 40) return true;
+    }
+    return false;
+  }
+
+  function spawnLetterBubble(forceTarget, xOverride){
+    var wantTarget = !!forceTarget;
+    if(!wantTarget){
+      if(!hasActiveTargetBubble() && bubblesSinceTarget >= 1){
+        wantTarget = true;
+      } else if(!hasActiveTargetBubble() && Math.random() < 0.65){
+        wantTarget = true;
+      } else if(bubblesSinceTarget >= 2){
+        wantTarget = true;
+      }
+    }
+    var ch = wantTarget ? state.targetLetter : randomDistractorLetter(state.targetLetter);
+    var isTgt = (ch === state.targetLetter);
+    if(isTgt) bubblesSinceTarget = 0;
+    else bubblesSinceTarget++;
+
+    var r = getBubbleRadius();
+    var x = (xOverride != null) ? xOverride : (W + r + 32 + Math.random() * 44);
+    var y = pickBubbleLaneY();
+    var missBoost = isTgt ? Math.min(0.20, state.missesForTarget * 0.08) : 0;
+
+    letterBubbles.push({
+      id: nextBubbleId++,
+      letter: ch,
+      isTarget: isTgt,
+      x: x,
+      y: y,
+      baseY: y,
+      r: r,
+      phase: Math.random() * 6.28,
+      amp: 12 + Math.random() * 10,
+      speedMul: isTgt ? Math.max(0.72, 0.86 - state.missesForTarget * 0.05) : (0.88 + Math.random() * 0.14),
+      sonarGlow: 0,
+      wiggleT: 0,
+      cooldown: 0,
+      missBoost: missBoost
+    });
+  }
+
+  function seedInitialBubbles(){
+    letterBubbles = [];
+    bubblesSinceTarget = 0;
+    var r = getBubbleRadius();
+    /* Place an inviting target letter entering smoothly on-screen right away + 2 friendly letters */
+    spawnLetterBubble(true, Math.max(W * 0.76, sub.x + 210));
+    spawnLetterBubble(false, W + r + 90);
+    spawnLetterBubble(false, W + r + Math.max(260, W * 0.34));
+  }
+
+  function seedCreatures(){
+    creatures = [];
+    var b = getPlayBounds();
     for(var i = 0; i < CREATURE_KINDS.length; i++){
       var def = CREATURE_KINDS[i];
-      var existing = creatures[i];
-      if(existing && !resetAll){
-        existing.discovered = false;
-        existing.glowBoost = 1;
-        continue;
-      }
-      var dir = i % 2 === 0 ? 1 : -1;
-      var x = b.minX + ((i + 0.5) / CREATURE_KINDS.length) * (b.maxX - b.minX);
-      var y = Math.min(b.maxY - 45, Math.max(b.minY + 34, H * lanes[i]));
+      var y = b.minY + 34 + ((i + 0.5) / CREATURE_KINDS.length) * Math.max(120, b.maxY - b.minY - 72);
       creatures.push({
         id: i,
         kind: def.kind,
@@ -705,15 +992,12 @@
         col: def.col,
         glow: def.glow,
         size: def.size,
-        x: x,
+        x: W * (0.42 + i * 0.28) + Math.random() * 80,
         y: y,
         baseY: y,
-        vx: dir * (28 + (i % 3) * 11),
-        dir: dir,
-        faceVis: dir,
+        speedMul: 0.42 + (i % 3) * 0.14,
         phase: Math.random() * 6.28,
-        amp: 12 + (i % 3) * 6,
-        discovered: false,
+        amp: 11 + (i % 3) * 5,
         flipT: 0,
         waveT: 0,
         glowBoost: 0,
@@ -722,52 +1006,13 @@
     }
   }
 
-  function getPearlPos(p){
-    if(W < 720){
-      var map = [
-        { x: 0.14, y: 0.60 },
-        { x: 0.86, y: 0.58 },
-        { x: 0.14, y: 0.75 },
-        { x: 0.86, y: 0.74 }
-      ];
-      var m = map[p.idx % map.length];
-      return { x: m.x * W, y: m.y * H };
-    }
-    return { x: p.xPct * W, y: p.yPct * H };
-  }
-
-  function spawnHiddenPearls(){
-    hiddenPearls = [];
-    var spots = [
-      { xPct: 0.16, yPct: 0.70 },
-      { xPct: 0.84, yPct: 0.68 },
-      { xPct: 0.28, yPct: 0.82 },
-      { xPct: 0.72, yPct: 0.81 }
-    ];
-    spots.forEach(function(sp, idx){
-      hiddenPearls.push({
-        idx: idx,
-        xPct: sp.xPct,
-        yPct: sp.yPct,
-        phase: idx * 1.4,
-        collected: false,
-        shimmerT: 0,
-        respawnT: 0
-      });
-    });
-  }
-
-  spawnCreatures(true);
-  spawnHiddenPearls();
-  syncHud();
-
   /* =========================================================================
-     7. CORE GAMEPLAY INTERACTIONS (Discovery, Treasure Chest, Sonar, Zones)
+     8. PARTICLE FX & CORE GAMEPLAY (Collect Letters, Treasure Chest, Sonar)
      ========================================================================= */
   function spawnBubbleBurst(x, y, count, rainbow){
     for(var i = 0; i < count; i++){
       var ang = Math.random() * Math.PI * 2;
-      var spd = 45 + Math.random() * 145;
+      var spd = 48 + Math.random() * 150;
       bubbles.push({
         x: x + (Math.random() - 0.5) * 24,
         y: y + (Math.random() - 0.5) * 24,
@@ -785,118 +1030,69 @@
   function spawnSparkles(x, y, count, col){
     for(var i = 0; i < count; i++){
       var ang = Math.random() * Math.PI * 2;
-      var spd = 50 + Math.random() * 170;
+      var spd = 55 + Math.random() * 185;
       sparkles.push({
         x: x,
         y: y,
         vx: Math.cos(ang) * spd,
         vy: Math.sin(ang) * spd - 20,
-        r: 4 + Math.random() * 6,
+        r: 4 + Math.random() * 6.5,
         col: col || (i % 2 === 0 ? "#fde047" : "#67e8f9"),
         life: 1,
-        decay: 0.85 + Math.random() * 0.6,
+        decay: 0.82 + Math.random() * 0.55,
         rot: Math.random() * 6.28
       });
     }
   }
 
-  function registerDiscovery(x, y, creatureClip){
-    state.discovered++;
-    sub.bounce = 1;
-    sub.cheerT = 1.1;
+  function launchFlyingStar(fromX, fromY){
+    var pillRect = starPill.getBoundingClientRect();
+    flyingStars.push({
+      x0: fromX,
+      y0: fromY,
+      cx: (fromX + pillRect.left) * 0.5,
+      cy: Math.min(fromY, H * 0.28) - 40,
+      x1: pillRect.left + pillRect.width * 0.5,
+      y1: pillRect.top + pillRect.height * 0.5,
+      t: 0
+    });
+    starPill.classList.remove("pop");
+    void starPill.offsetWidth;
+    starPill.classList.add("pop");
+  }
 
-    if(state.cycleFound < 5){
-      state.cycleFound++;
-      sfxHarpArpeggio(state.cycleFound);
-      if(state.cycleFound >= 5){
-        state.chestReady = true;
-        chest.pulseT = 1;
-        playVoiceSeq(["name-number-5", nextPraise()]);
-      } else {
-        playVoiceSeq(["name-number-" + state.cycleFound]);
-      }
-    } else {
-      /* Chest already ready! Still celebrate joyfully */
-      sfxHarpArpeggio(5);
-      if(creatureClip && state.discovered % 2 === 0){
-        playVoiceSeq([creatureClip, nextPraise()]);
-      } else {
-        playVoiceSeq([nextPraise()]);
-      }
-    }
-
-    spawnBubbleBurst(x, y, 16, true);
-    spawnSparkles(x, y, 14, "#fde047");
+  function spawnTreasureChest(){
+    var b = getPlayBounds();
+    chest.active = true;
+    chest.opened = false;
+    chest.departing = false;
+    chest.openAmt = 0;
+    chest.celebrateT = 0;
+    chest.wobbleT = 0;
+    chest.x = W + 115;
+    chest.y = Math.min(H - 172, b.maxY - 46);
     syncHud();
   }
 
-  function interactCreature(cr){
-    if(cr.cooldown > 0) return;
-    cr.cooldown = 1.05;
-    cr.flipT = 1;
-    cr.waveT = 1.2;
-    if(!cr.discovered){
-      cr.discovered = true;
-      registerDiscovery(cr.x, cr.y, cr.clip);
-    } else {
-      /* Already discovered friend still flips joyfully with zero dead taps! */
-      sfxHarpArpeggio(((cr.id + 1) % 5) + 1);
-      spawnBubbleBurst(cr.x, cr.y, 12, true);
-      spawnSparkles(cr.x, cr.y, 10, cr.glow);
-      sub.cheerT = 0.8;
-      if(cr.clip){
-        playVoiceSeq([cr.clip]);
-      } else {
-        playVoiceSeq([nextPraise()]);
-      }
-    }
-  }
-
-  function collectPearl(p){
-    if(p.collected) return;
-    p.collected = true;
-    p.respawnT = 9.5;
-    var pp = getPearlPos(p);
-    registerDiscovery(pp.x, pp.y, null);
-  }
-
-  function getChestPos(){
-    return {
-      x: W * chest.xPct,
-      y: H * (W < 720 ? 0.77 : 0.80),
-      r: Math.max(46, Math.min(68, Math.min(W, H) * 0.088))
-    };
-  }
-
-  function triggerChest(){
-    var cp = getChestPos();
-    if(!state.chestReady){
-      /* Playful wobble hint if tapped before 5/5 */
-      chest.wobbleT = 1;
-      sfxBubblePop(2);
-      spawnBubbleBurst(cp.x, cp.y - 16, 7, false);
-      return;
-    }
-    if(chest.opening) return;
-
-    chest.opening = true;
-    chest.celebrateT = 2.6;
-    state.chestReady = false;
+  function openTreasureChest(){
+    if(!chest.active || chest.opened) return;
+    chest.opened = true;
+    chest.celebrateT = 2.45;
     state.chestsOpened++;
     state.stars++;
     sub.bounce = 1;
     sub.cheerT = 1.8;
+    sub.dashChest = false;
 
     sfxTreasureFanfare();
     playVoiceSeq(["hoot-win-yay"]);
 
-    /* Shower of spinning golden coins, pearls & rainbow bubbles! */
-    for(var i = 0; i < 34; i++){
-      var ang = -Math.PI * 0.5 + (Math.random() - 0.5) * 1.45;
-      var spd = 240 + Math.random() * 340;
+    for(var i = 0; i < 36; i++){
+      var ang = -Math.PI * 0.5 + (Math.random() - 0.5) * 1.5;
+      var spd = 240 + Math.random() * 350;
       coins.push({
-        x: cp.x + (Math.random() - 0.5) * 44,
-        y: cp.y - 12,
+        x: chest.x + (Math.random() - 0.5) * 44,
+        y: chest.y - 12,
         vx: Math.cos(ang) * spd,
         vy: Math.sin(ang) * spd,
         r: 9 + Math.random() * 7,
@@ -906,25 +1102,94 @@
         life: 1
       });
     }
-    spawnBubbleBurst(cp.x, cp.y - 14, 28, true);
-    spawnSparkles(cp.x, cp.y - 20, 26, "#fde047");
-
-    /* Flying star toward top-right star pill */
-    var pillRect = starPill.getBoundingClientRect();
-    flyingStars.push({
-      x0: cp.x,
-      y0: cp.y - 30,
-      cx: W * 0.5,
-      cy: H * 0.25,
-      x1: pillRect.left + pillRect.width * 0.5,
-      y1: pillRect.top + pillRect.height * 0.5,
-      t: 0
-    });
-
-    starPill.classList.remove("pop");
-    void starPill.offsetWidth;
-    starPill.classList.add("pop");
+    spawnBubbleBurst(chest.x, chest.y - 16, 28, true);
+    spawnSparkles(chest.x, chest.y - 22, 28, "#fde047");
+    launchFlyingStar(chest.x, chest.y - 26);
     syncHud();
+  }
+
+  function collectLetterBubble(lb, index){
+    var bx = lb.x, by = lb.y;
+    var ch = lb.letter;
+
+    if(lb.isTarget){
+      /* CORRECT TARGET LETTER! */
+      if(index >= 0) letterBubbles.splice(index, 1);
+      state.lettersCollected++;
+      state.stars++;
+      state.missesForTarget = 0;
+      sub.bounce = 1;
+      sub.cheerT = 1.4;
+      sub.dashT = 0;
+      sub.dashBubbleId = null;
+
+      sfxHarpArpeggio(state.lettersCollected);
+      spawnBubbleBurst(bx, by, 24, true);
+      spawnSparkles(bx, by, 22, "#fde047");
+      launchFlyingStar(bx, by);
+      popLetters.push({ letter: ch, x: bx, y: by, life: 1 });
+
+      /* Every 3 collected target letters -> Sunken Treasure Chest glides in! */
+      if(!chest.active){
+        state.pearlCycle++;
+        if(state.pearlCycle >= 3){
+          state.pearlCycle = 3;
+          spawnTreasureChest();
+        }
+      }
+
+      /* Advance to next letter & update existing bubbles' target flags */
+      var prevLetter = ch;
+      state.targetLetter = popNextTargetLetter(prevLetter);
+      letterBubbles.forEach(function(ob){
+        ob.isTarget = (ob.letter === state.targetLetter);
+        ob.missBoost = 0;
+      });
+
+      /* Guarantee an incoming target letter bubble soon */
+      if(!hasActiveTargetBubble()){
+        spawnLetterBubble(true, Math.max(W + 40, W * 0.96));
+      }
+
+      targetPill.classList.remove("pop");
+      void targetPill.offsetWidth;
+      targetPill.classList.add("pop");
+
+      /* Hoot plays call-letter-<collected> + praise + calls next target letter! */
+      playVoiceSeq([
+        "call-letter-" + prevLetter.toLowerCase(),
+        nextPraise(),
+        "call-letter-" + state.targetLetter.toLowerCase()
+      ]);
+
+      syncHud();
+    } else {
+      /* OTHER LETTER: Friendly gentle bubble pop + soft wiggle + speaks letter name (zero fail state!) */
+      if(lb.cooldown > 0) return;
+      lb.cooldown = 0.95;
+      lb.wiggleT = 1;
+      sfxBubblePop(3);
+      sfxSoftChime();
+      spawnBubbleBurst(bx, by, 10, false);
+      spawnSparkles(bx, by, 7, "#bae6fd");
+      playVoiceSeq(["name-letter-" + ch.toLowerCase()]);
+      /* Softly pop & float away non-target bubble */
+      if(index >= 0) letterBubbles.splice(index, 1);
+    }
+  }
+
+  function interactCreature(cr){
+    if(cr.cooldown > 0) return;
+    cr.cooldown = 1.25;
+    cr.flipT = 1;
+    cr.waveT = 1.3;
+    sub.cheerT = 0.7;
+    sfxBubblePop(2);
+    spawnBubbleBurst(cr.x, cr.y, 12, true);
+    spawnSparkles(cr.x, cr.y, 10, cr.glow);
+    if(cr.clip){
+      playVoiceSeq([cr.clip]);
+    }
   }
 
   function triggerSonar(){
@@ -939,25 +1204,33 @@
     sonarWaves.push({ x: sub.x, y: sub.y, r: 24, maxR: maxR, alpha: 1 });
     sonarWaves.push({ x: sub.x, y: sub.y, r: 4, maxR: maxR * 0.82, alpha: 0.72, delayed: 0.14 });
 
-    /* Make all sea creatures wave & sparkle happily */
+    /* Highlight incoming target letter bubble(s) with bright golden halo & sparkles! */
+    var foundTarget = false;
+    letterBubbles.forEach(function(lb){
+      if(lb.isTarget){
+        foundTarget = true;
+        lb.sonarGlow = 4.6;
+        spawnSparkles(lb.x, lb.y, 14, "#fde047");
+      }
+    });
+    if(!foundTarget){
+      spawnLetterBubble(true, W + 24);
+      var newest = letterBubbles[letterBubbles.length - 1];
+      newest.sonarGlow = 4.6;
+      spawnSparkles(newest.x, newest.y, 14, "#fde047");
+    }
+
+    /* Sea friends wave happily */
     creatures.forEach(function(cr){
-      cr.waveT = 1.6;
-      cr.glowBoost = 1.4;
-      spawnSparkles(cr.x, cr.y, 5, "#67e8f9");
+      cr.waveT = 1.5;
+      cr.glowBoost = 1.2;
+      spawnSparkles(cr.x, cr.y, 4, "#67e8f9");
     });
 
-    /* Make all hidden pearls shimmer brightly (and respawn collected ones!) */
-    hiddenPearls.forEach(function(p){
-      if(p.collected && p.respawnT < 6){
-        p.collected = false;
-        p.respawnT = 0;
-      }
-      p.shimmerT = 4.2;
-      if(!p.collected){
-        var pp = getPearlPos(p);
-        spawnSparkles(pp.x, pp.y, 7, "#f0abfc");
-      }
-    });
+    /* Also chime target letter callout on Sonar if voice isn't actively playing */
+    if(voiceAudio.paused){
+      speakTargetCallout(state.targetLetter, false);
+    }
 
     spawnBubbleBurst(sub.x, sub.y, 10, false);
   }
@@ -969,12 +1242,11 @@
     state.zoneFade = 0;
     sfxZoneDive(nextZone === "deep");
 
-    /* Swirling transition bubbles */
-    for(var i = 0; i < 26; i++){
+    for(var i = 0; i < 28; i++){
       bubbles.push({
         x: Math.random() * W,
         y: H + Math.random() * 60,
-        vx: (Math.random() - 0.5) * 40,
+        vx: -30 + (Math.random() - 0.5) * 40,
         vy: -(180 + Math.random() * 220),
         r: 7 + Math.random() * 14,
         life: 1,
@@ -983,64 +1255,108 @@
         rainbow: nextZone === "deep"
       });
     }
-    /* Refresh undiscovered glow on creatures when diving into new zone */
-    creatures.forEach(function(cr){
-      cr.waveT = 1;
-      if(cr.discovered && state.cycleFound < 5){
-        cr.discovered = false;
-      }
-    });
     syncHud();
   }
 
+  /* Expose required test & QA API */
+  window.__subGame = {
+    snapshot: function(){
+      return {
+        zone: state.zone,
+        scrollX: Math.round(state.scrollX * 10) / 10,
+        targetLetter: state.targetLetter,
+        lettersCollected: state.lettersCollected,
+        chestsOpened: state.chestsOpened,
+        stars: state.stars,
+        sonarPings: state.sonarPings
+      };
+    },
+    collectTargetForTest: function(){
+      var idx = -1;
+      for(var i = 0; i < letterBubbles.length; i++){
+        if(letterBubbles[i].isTarget){ idx = i; break; }
+      }
+      if(idx < 0){
+        spawnLetterBubble(true, W * 0.55);
+        idx = letterBubbles.length - 1;
+      }
+      collectLetterBubble(letterBubbles[idx], idx);
+      return window.__subGame.snapshot();
+    }
+  };
+
   /* =========================================================================
-     8. POINTER & BUTTON CONTROLS (Effortless Touch/Drag Anywhere Steering!)
+     9. POINTER, SWIM BUTTONS & KEYBOARD STEERING
      ========================================================================= */
   var dragging = false;
+  var swimHold = { up: false, down: false };
+  var keys = {};
+
+  function unlockPendingAudio(){
+    getAC();
+    if(pendingBootLetter){
+      var l = pendingBootLetter;
+      pendingBootLetter = null;
+      speakTargetCallout(l, false);
+    }
+  }
 
   function clampTarget(x, y){
     var b = getPlayBounds();
     return {
       x: Math.max(b.minX, Math.min(b.maxX, x)),
-      y: Math.max(b.minY, Math.min(H - 68, y))
+      y: Math.max(b.minY, Math.min(b.maxY, y))
     };
   }
 
-  function handleOceanTap(px, py, isDown){
-    getAC();
-    state.hasSteered = true;
+  function handleOceanInput(px, py, isDown){
+    unlockPendingAudio();
     var pt = clampTarget(px, py);
     sub.targetX = pt.x;
     sub.targetY = pt.y;
+    sub.dashT = 0;
+    sub.dashBubbleId = null;
+    sub.dashChest = false;
 
     if(isDown){
       ripples.push({ x: px, y: py, r: 8, life: 1 });
       sfxBubblePop(0);
 
-      /* Direct tap on treasure chest */
-      var cp = getChestPos();
-      if(Math.hypot(px - cp.x, py - cp.y) < cp.r * 1.35){
-        triggerChest();
-        return;
-      }
-
-      /* Direct tap on a sea creature (generous toddler hit radius!) */
-      for(var i = creatures.length - 1; i >= 0; i--){
-        var cr = creatures[i];
-        var hitR = Math.max(54, Math.min(78, Math.min(W, H) * 0.095)) * cr.size;
-        if(Math.hypot(px - cr.x, py - cr.y) <= hitR){
-          interactCreature(cr);
+      /* 1. Direct tap on a Letter Pearl Bubble -> steer Captain Hoot STRAIGHT through it! */
+      for(var i = letterBubbles.length - 1; i >= 0; i--){
+        var lb = letterBubbles[i];
+        var hitR = lb.r * 1.48;
+        if(Math.hypot(px - lb.x, py - lb.y) <= hitR){
+          sub.targetX = Math.max(getPlayBounds().minX, Math.min(W - 40, lb.x));
+          sub.targetY = lb.y;
+          sub.dashT = 0.65;
+          sub.dashBubbleId = lb.id;
+          /* If submarine is already right nearby, collect immediately for snappy feel! */
+          if(Math.hypot(sub.x - lb.x, sub.y - lb.y) < lb.r + 92 * getSubScale()){
+            collectLetterBubble(lb, i);
+          }
           return;
         }
       }
 
-      /* Direct tap on a hidden pearl */
-      for(var j = 0; j < hiddenPearls.length; j++){
-        var p = hiddenPearls[j];
-        if(p.collected) continue;
-        var pp = getPearlPos(p);
-        if(Math.hypot(px - pp.x, py - pp.y) <= 48){
-          collectPearl(p);
+      /* 2. Direct tap on Sunken Treasure Chest -> steer into it or open immediately! */
+      if(chest.active && !chest.opened){
+        if(Math.hypot(px - chest.x, py - chest.y) <= 86){
+          sub.targetX = Math.max(getPlayBounds().minX, Math.min(W - 50, chest.x));
+          sub.targetY = chest.y - 12;
+          sub.dashT = 0.65;
+          sub.dashChest = true;
+          openTreasureChest();
+          return;
+        }
+      }
+
+      /* 3. Direct tap on a passing sea friend -> joyful flip! */
+      for(var c = creatures.length - 1; c >= 0; c--){
+        var cr = creatures[c];
+        var crR = Math.max(48, 62 * cr.size);
+        if(Math.hypot(px - cr.x, py - cr.y) <= crR){
+          interactCreature(cr);
           return;
         }
       }
@@ -1052,77 +1368,118 @@
     dragging = true;
     try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
     var rect = canvas.getBoundingClientRect();
-    handleOceanTap(e.clientX - rect.left, e.clientY - rect.top, true);
+    handleOceanInput(e.clientX - rect.left, e.clientY - rect.top, true);
   });
   canvas.addEventListener("pointermove", function(e){
     if(!dragging) return;
     var rect = canvas.getBoundingClientRect();
-    handleOceanTap(e.clientX - rect.left, e.clientY - rect.top, false);
+    handleOceanInput(e.clientX - rect.left, e.clientY - rect.top, false);
   });
   function stopDrag(){ dragging = false; }
   canvas.addEventListener("pointerup", stopDrag);
   canvas.addEventListener("pointercancel", stopDrag);
 
-  reefZoneBtn.addEventListener("click", function(){ getAC(); switchZone("reef"); });
-  deepZoneBtn.addEventListener("click", function(){ getAC(); switchZone("deep"); });
-  sonarBtn.addEventListener("click", function(){ getAC(); triggerSonar(); });
+  /* Optional Big Up/Down Swim Buttons (tap or press-and-hold!) */
+  function bindSwimBtn(btn, dir){
+    function down(e){
+      e.preventDefault();
+      unlockPendingAudio();
+      swimHold[dir] = true;
+      btn.classList.add("pressed");
+      sub.dashT = 0; sub.dashBubbleId = null; sub.dashChest = false;
+      /* Immediate gentle nudge on single tap */
+      var nudge = dir === "up" ? -72 : 72;
+      var ct = clampTarget(sub.targetX, sub.targetY + nudge);
+      sub.targetY = ct.y;
+      sfxBubblePop(dir === "up" ? 2 : 0);
+    }
+    function up(){
+      swimHold[dir] = false;
+      btn.classList.remove("pressed");
+    }
+    btn.addEventListener("pointerdown", down);
+    btn.addEventListener("pointerup", up);
+    btn.addEventListener("pointercancel", up);
+    btn.addEventListener("pointerleave", up);
+  }
+  bindSwimBtn(swimUpBtn, "up");
+  bindSwimBtn(swimDownBtn, "down");
+
+  targetPill.addEventListener("click", function(){
+    unlockPendingAudio();
+    sfxSoftChime();
+    speakTargetCallout(state.targetLetter, false);
+  });
+
+  reefZoneBtn.addEventListener("click", function(){ unlockPendingAudio(); switchZone("reef"); });
+  deepZoneBtn.addEventListener("click", function(){ unlockPendingAudio(); switchZone("deep"); });
+  sonarBtn.addEventListener("click", function(){ unlockPendingAudio(); triggerSonar(); });
 
   hootBtn.addEventListener("click", function(){
-    getAC();
+    unlockPendingAudio();
     sub.bounce = 1;
     sub.cheerT = 1.2;
-    sfxHarpArpeggio(3);
-    spawnBubbleBurst(sub.x, sub.y - 20, 12, true);
-    if(state.chestReady){
-      playVoiceSeq(["word-treasure", "hoot-amazing"]);
-    } else {
-      playVoiceSeq(["hoot-ready-go"]);
-    }
+    sfxHarpArpeggio(2);
+    spawnBubbleBurst(sub.x, sub.y - 20, 14, true);
+    speakTargetCallout(state.targetLetter, false);
   });
 
   doneBtn.addEventListener("click", function(){
-    getAC();
+    unlockPendingAudio();
     state.won = true;
     document.getElementById("winStars").textContent = String(state.stars);
+    document.getElementById("winLetters").textContent = String(state.lettersCollected);
     document.getElementById("winChests").textContent = String(state.chestsOpened);
-    document.getElementById("winFriends").textContent = String(state.discovered);
     winOverlay.hidden = false;
     sfxTreasureFanfare();
     playVoiceSeq(["hoot-win-star"]);
   });
 
   againBtn.addEventListener("click", function(){
-    getAC();
+    unlockPendingAudio();
     state.won = false;
     winOverlay.hidden = true;
-    spawnCreatures(false);
-    playVoiceSeq(["hoot-ready-go"]);
+    speakTargetCallout(state.targetLetter, false);
   });
 
-  /* Optional keyboard steering for desktop */
-  var keys = {};
   window.addEventListener("keydown", function(e){
     if(/^(Arrow|Key[WASD]|Space)/.test(e.code)){
       keys[e.code] = true;
-      state.hasSteered = true;
-      if(e.code === "Space"){ e.preventDefault(); triggerSonar(); }
+      sub.dashT = 0; sub.dashBubbleId = null; sub.dashChest = false;
+      if(e.code === "Space"){ e.preventDefault(); unlockPendingAudio(); triggerSonar(); }
     }
   });
   window.addEventListener("keyup", function(e){ keys[e.code] = false; });
 
   /* =========================================================================
-     9. PIXAR-INSPIRED GLOSSY 3D VECTOR DRAWING HELPERS
+     10. PIXAR-STYLE RENDERING (Mirrored Scrolling Backdrop, Parallax, Pearls)
      ========================================================================= */
-  function drawCoverImage(img, alpha){
+  function drawMirroredScrollingBg(img, alpha, bgScrollX){
     if(!img || !img.complete || !img.naturalWidth) return false;
     var iw = img.naturalWidth, ih = img.naturalHeight;
-    var scale = Math.max(W / iw, H / ih);
-    var dw = iw * scale, dh = ih * scale;
-    var dx = (W - dw) * 0.5;
+    var scale = Math.max(H / ih, W / (iw * 1.35));
+    var tileW = Math.ceil(iw * scale);
+    var dh = Math.ceil(ih * scale);
     var dy = (H - dh) * 0.5;
+    var startTile = Math.floor(bgScrollX / tileW);
+
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.drawImage(img, dx, dy, dw, dh);
+    for(var k = 0; ; k++){
+      var tileIdx = startTile + k;
+      var drawX = Math.floor(tileIdx * tileW - bgScrollX);
+      if(drawX > W + 4) break;
+      var isMirrored = (((tileIdx % 2) + 2) % 2) === 1;
+      if(isMirrored){
+        ctx.save();
+        ctx.translate(drawX + tileW + 1, dy);
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, 0, 0, tileW + 2, dh);
+        ctx.restore();
+      } else {
+        ctx.drawImage(img, drawX, dy, tileW + 2, dh);
+      }
+    }
     ctx.restore();
     return true;
   }
@@ -1143,91 +1500,235 @@
     ctx.restore();
   }
 
-  /* ---------- PIXAR 3D SUNKEN TREASURE CHEST ---------- */
-  function drawTreasureChest(){
-    var cp = getChestPos();
-    var s = cp.r / 56;
-    var wobble = chest.wobbleT > 0 ? Math.sin(chest.wobbleT * 26) * 0.14 * chest.wobbleT : 0;
-    var readyBounce = state.chestReady ? Math.abs(Math.sin(tAcc * 4.5)) * 7 : 0;
+  /* Scrolling Midground Coral Reef Ridges (0.70x parallax) */
+  function drawScrollingSeabed(){
+    var isDeep = state.zone === "deep";
+    var px = state.scrollX * 0.70;
+    var segW = 260;
+    var start = Math.floor(px / segW) - 1;
+    var count = Math.ceil(W / segW) + 3;
 
     ctx.save();
-    ctx.translate(cp.x, cp.y - readyBounce);
-    ctx.rotate(wobble);
-    ctx.scale(s, s);
+    ctx.fillStyle = isDeep ? "rgba(8, 20, 56, 0.58)" : "rgba(7, 72, 108, 0.34)";
+    ctx.beginPath();
+    ctx.moveTo(-40, H + 20);
+    for(var i = 0; i <= count; i++){
+      var idx = start + i;
+      var x = idx * segW - px;
+      var hWave = 46 + Math.sin(idx * 1.7) * 20 + Math.cos(idx * 0.9) * 14;
+      var y = H - hWave;
+      if(i === 0) ctx.lineTo(x, y);
+      else {
+        var prevX = (idx - 1) * segW - px;
+        var prevY = H - (46 + Math.sin((idx - 1) * 1.7) * 20 + Math.cos((idx - 1) * 0.9) * 14);
+        ctx.quadraticCurveTo((prevX + x) * 0.5, prevY - 12, x, y);
+      }
+    }
+    ctx.lineTo(W + 60, H + 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
 
-    /* In Reef zone, bg_reef.jpg ALREADY features a hero painted Pixar treasure chest right here!
-       So we illuminate the real painted chest seamlessly when closed, and only draw our 3D vector
-       chest in Deep Sea (where bg_deep.jpg has the gold-coin hoard) OR draw radiant open burst in Reef! */
-    if(state.zone === "reef" && state.zoneFade > 0.5){
-      if(state.chestReady || chest.openAmt > 0.04 || chest.wobbleT > 0.05){
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        var glowP = Math.max(state.chestReady ? (0.78 + Math.sin(tAcc * 5) * 0.2) : 0, chest.openAmt, chest.wobbleT * 0.6);
-        var haloR = ctx.createRadialGradient(0, -14, 14, 0, -14, 150);
-        haloR.addColorStop(0, "rgba(255,250,190," + (0.9 * glowP).toFixed(2) + ")");
-        haloR.addColorStop(0.45, "rgba(250,204,21," + (0.48 * glowP).toFixed(2) + ")");
-        haloR.addColorStop(1, "rgba(250,204,21,0)");
-        ctx.fillStyle = haloR;
-        ctx.beginPath(); ctx.arc(0, -14, 150, 0, Math.PI * 2); ctx.fill();
+  /* Foreground Parallax Kelp & Coral Silhouettes (1.38x scroll) */
+  function drawForegroundParallax(){
+    var isDeep = state.zone === "deep";
+    var wrapSpan = Math.max(W + 520, 2400);
+    var scrollFg = state.scrollX * 1.38;
 
-        for(var riR = 0; riR < 7; riR++){
-          var raR = -Math.PI * 0.85 + (riR / 6) * Math.PI * 0.7 + Math.sin(tAcc * 2.2 + riR) * 0.06;
-          var rgR = ctx.createLinearGradient(0, -14, Math.cos(raR) * 175, Math.sin(raR) * 175);
-          rgR.addColorStop(0, "rgba(255,248,185," + (0.62 * glowP).toFixed(2) + ")");
-          rgR.addColorStop(1, "rgba(255,248,185,0)");
-          ctx.fillStyle = rgR;
+    ctx.save();
+    fgKelp.forEach(function(kl){
+      var sx = wrapSpan - (((scrollFg + kl.worldX) % wrapSpan) + wrapSpan) % wrapSpan - 180;
+      if(sx < -120 || sx > W + 120) return;
+      ctx.save();
+      ctx.translate(sx, H + 12);
+
+      if(kl.coral){
+        /* Soft coral branch silhouette */
+        ctx.strokeStyle = isDeep ? "rgba(56, 189, 248, 0.24)" : "rgba(15, 76, 117, 0.38)";
+        ctx.lineCap = "round";
+        ctx.lineWidth = 14;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(-8, -kl.h * 0.45, -24, -kl.h * 0.78);
+        ctx.moveTo(-4, -kl.h * 0.32);
+        ctx.quadraticCurveTo(10, -kl.h * 0.62, 26, -kl.h * 0.86);
+        ctx.moveTo(-2, -kl.h * 0.18);
+        ctx.quadraticCurveTo(2, -kl.h * 0.58, 4, -kl.h * 0.94);
+        ctx.stroke();
+      } else {
+        /* Swaying translucent kelp fronds */
+        for(var b = 0; b < kl.blades; b++){
+          var sway = Math.sin(tAcc * 2.1 + kl.ph + b * 0.9) * 18;
+          var bx = (b - 1) * 15;
+          var bh = kl.h * (0.78 + (b % 2) * 0.28);
+          ctx.fillStyle = isDeep ? "rgba(14, 116, 144, 0.28)" : "rgba(6, 78, 92, 0.34)";
           ctx.beginPath();
-          ctx.moveTo(0, -12);
-          ctx.lineTo(Math.cos(raR - 0.1) * 175, Math.sin(raR - 0.1) * 175);
-          ctx.lineTo(Math.cos(raR + 0.1) * 175, Math.sin(raR + 0.1) * 175);
+          ctx.moveTo(bx - 7, 0);
+          ctx.quadraticCurveTo(bx - 12 + sway * 0.5, -bh * 0.5, bx + sway, -bh);
+          ctx.quadraticCurveTo(bx + 12 + sway * 0.5, -bh * 0.5, bx + 7, 0);
           ctx.closePath();
           ctx.fill();
         }
-        if(state.chestReady){
-          var prR = 82 + Math.sin(tAcc * 6) * 10;
-          ctx.strokeStyle = "rgba(254, 240, 138, 0.92)";
-          ctx.lineWidth = 4.5;
-          ctx.beginPath(); ctx.arc(0, -4, prR, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+
+  /* ---------- GIANT GLOSSY IRIDESCENT LETTER PEARL BUBBLES ---------- */
+  function drawLetterBubbles(){
+    letterBubbles.forEach(function(lb){
+      var isTgt = lb.isTarget;
+      var sonarBoost = lb.sonarGlow > 0 ? Math.min(1, lb.sonarGlow * 0.45) : 0;
+      var pulse = isTgt
+        ? (1.05 + lb.missBoost + Math.sin(tAcc * 4.4 + lb.phase) * 0.055 + sonarBoost * 0.09)
+        : (0.96 + Math.sin(tAcc * 2.8 + lb.phase) * 0.025);
+      var r = lb.r * pulse;
+      var wig = lb.wiggleT > 0 ? Math.sin(lb.wiggleT * 28) * 0.16 * lb.wiggleT : 0;
+
+      ctx.save();
+      ctx.translate(lb.x, lb.y);
+      ctx.rotate(wig);
+
+      /* 1. Outer Aura — Target Letter glows extra GOLDEN & sparkles! */
+      if(isTgt || sonarBoost > 0.05){
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        var haloR = r * (1.72 + sonarBoost * 0.55 + Math.sin(tAcc * 5 + lb.phase) * 0.1);
+        var hg = ctx.createRadialGradient(0, 0, r * 0.65, 0, 0, haloR);
+        hg.addColorStop(0, "rgba(255, 250, 195, " + (0.72 + sonarBoost * 0.25).toFixed(2) + ")");
+        hg.addColorStop(0.52, "rgba(250, 204, 21, " + (0.42 + sonarBoost * 0.32).toFixed(2) + ")");
+        hg.addColorStop(1, "rgba(250, 204, 21, 0)");
+        ctx.fillStyle = hg;
+        ctx.beginPath(); ctx.arc(0, 0, haloR, 0, Math.PI * 2); ctx.fill();
+
+        /* Golden beacon ring (extra bright on Sonar Ping!) */
+        ctx.strokeStyle = sonarBoost > 0.1
+          ? "rgba(254, 240, 138, 0.96)"
+          : "rgba(253, 224, 71, 0.78)";
+        ctx.lineWidth = sonarBoost > 0.1 ? 5.5 : 3.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, r + 8 + Math.sin(tAcc * 6) * 4, 0, Math.PI * 2);
+        ctx.stroke();
+
+        /* Orbiting golden sparkle stars around target pearl */
+        for(var s = 0; s < 3; s++){
+          var sa = tAcc * 1.9 + s * (Math.PI * 2 / 3) + lb.phase;
+          var sx = Math.cos(sa) * (r + 12);
+          var sy = Math.sin(sa) * (r + 12);
+          drawStar5(sx, sy, 7 + sonarBoost * 5, "#fef08a");
         }
         ctx.restore();
+      } else {
+        /* Gentle iridescent underwater sheen for companion bubbles */
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        var cg = ctx.createRadialGradient(0, 0, r * 0.7, 0, 0, r * 1.32);
+        cg.addColorStop(0, "rgba(186, 230, 253, 0.24)");
+        cg.addColorStop(1, "rgba(103, 232, 249, 0)");
+        ctx.fillStyle = cg;
+        ctx.beginPath(); ctx.arc(0, 0, r * 1.32, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
       }
-      /* Subtle inviting golden glint on the painted reef chest keyhole */
-      var glintA = 0.35 + Math.sin(tAcc * 3.5) * 0.25;
-      ctx.save(); ctx.globalAlpha = glintA;
-      drawStar5(12, -2, 8, "#fef08a");
-      ctx.restore();
-      ctx.restore();
-      return;
-    }
 
-    /* Golden beacon aura when ready (every 5 discoveries!) or opening */
-    if(state.chestReady || chest.openAmt > 0.05){
-      var glowPower = Math.max(state.chestReady ? (0.72 + Math.sin(tAcc * 5) * 0.22) : 0, chest.openAmt);
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      var halo = ctx.createRadialGradient(0, -10, 12, 0, -10, 118);
-      halo.addColorStop(0, "rgba(255,244,160," + (0.85 * glowPower).toFixed(2) + ")");
-      halo.addColorStop(0.45, "rgba(250,204,21," + (0.42 * glowPower).toFixed(2) + ")");
-      halo.addColorStop(1, "rgba(250,204,21,0)");
-      ctx.fillStyle = halo;
-      ctx.beginPath(); ctx.arc(0, -10, 118, 0, Math.PI * 2); ctx.fill();
-
-      /* Rotating golden rays */
-      for(var ri = 0; ri < 7; ri++){
-        var ra = -Math.PI * 0.85 + (ri / 6) * Math.PI * 0.7 + Math.sin(tAcc * 2 + ri) * 0.06;
-        var rg = ctx.createLinearGradient(0, -10, Math.cos(ra) * 145, Math.sin(ra) * 145);
-        rg.addColorStop(0, "rgba(255,248,180," + (0.55 * glowPower).toFixed(2) + ")");
-        rg.addColorStop(1, "rgba(255,248,180,0)");
-        ctx.fillStyle = rg;
-        ctx.beginPath();
-        ctx.moveTo(0, -8);
-        ctx.lineTo(Math.cos(ra - 0.09) * 145, Math.sin(ra - 0.09) * 145);
-        ctx.lineTo(Math.cos(ra + 0.09) * 145, Math.sin(ra + 0.09) * 145);
-        ctx.closePath();
-        ctx.fill();
+      /* 2. Glossy Iridescent Pearl Sphere */
+      var pg = ctx.createRadialGradient(-r * 0.3, -r * 0.32, r * 0.12, 0, 0, r);
+      if(isTgt){
+        pg.addColorStop(0, "#ffffff");
+        pg.addColorStop(0.45, "#fffbeb");
+        pg.addColorStop(0.78, "#fef08a");
+        pg.addColorStop(1, "#f59e0b");
+      } else {
+        pg.addColorStop(0, "#ffffff");
+        pg.addColorStop(0.45, "#f0f9ff");
+        pg.addColorStop(0.76, "#bae6fd");
+        pg.addColorStop(1, "#818cf8");
       }
+      ctx.fillStyle = pg;
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* Crisp luminous pearl outer ring */
+      ctx.lineWidth = isTgt ? 5 : 4;
+      ctx.strokeStyle = isTgt ? "#fffef0" : "rgba(255,255,255,0.92)";
+      ctx.stroke();
+
+      /* Subtle dark outer ink rim for crisp contrast in Sunny Reef */
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = isTgt ? "rgba(180, 83, 9, 0.55)" : "rgba(12, 74, 110, 0.35)";
+      ctx.beginPath();
+      ctx.arc(0, 0, r + (isTgt ? 2.5 : 2), 0, Math.PI * 2);
+      ctx.stroke();
+
+      /* Iridescent pastel rim arc (pink-cyan) */
+      ctx.strokeStyle = isTgt ? "rgba(255,255,255,0.8)" : "rgba(244, 114, 182, 0.42)";
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.84, Math.PI * 0.12, Math.PI * 0.56);
+      ctx.stroke();
+
+      /* Top-left glossy specular highlight */
+      ctx.fillStyle = "rgba(255,255,255,0.88)";
+      ctx.beginPath();
+      ctx.ellipse(-r * 0.34, -r * 0.36, r * 0.24, r * 0.13, -0.55, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* 3. Crisp Bold Dark Letter centered inside the Pearl */
+      var fontSize = Math.round(r * 1.12);
+      ctx.font = "800 " + fontSize + "px 'Fredoka', 'Nunito', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.lineWidth = 5;
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "rgba(255,255,255,0.88)";
+      ctx.strokeText(lb.letter, 0, 2);
+      ctx.fillStyle = "#0b2239";
+      ctx.fillText(lb.letter, 0, 2);
+
       ctx.restore();
+    });
+  }
+
+  /* ---------- PIXAR 3D SCROLLING SUNKEN TREASURE CHEST ---------- */
+  function drawTreasureChest(){
+    if(!chest.active) return;
+    var s = Math.max(0.84, Math.min(1.22, Math.min(W, H) / 640));
+    var wobble = chest.wobbleT > 0 ? Math.sin(chest.wobbleT * 26) * 0.14 * chest.wobbleT : 0;
+    var readyBounce = !chest.opened ? Math.abs(Math.sin(tAcc * 4.5)) * 7 : 0;
+
+    ctx.save();
+    ctx.translate(chest.x, chest.y - readyBounce);
+    ctx.rotate(wobble);
+    ctx.scale(s, s);
+
+    /* Golden beacon rays */
+    var glowPower = !chest.opened ? (0.82 + Math.sin(tAcc * 5) * 0.18) : Math.max(0.25, chest.openAmt);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    var halo = ctx.createRadialGradient(0, -10, 12, 0, -10, 130);
+    halo.addColorStop(0, "rgba(255,248,175," + (0.88 * glowPower).toFixed(2) + ")");
+    halo.addColorStop(0.45, "rgba(250,204,21," + (0.46 * glowPower).toFixed(2) + ")");
+    halo.addColorStop(1, "rgba(250,204,21,0)");
+    ctx.fillStyle = halo;
+    ctx.beginPath(); ctx.arc(0, -10, 130, 0, Math.PI * 2); ctx.fill();
+
+    for(var ri = 0; ri < 7; ri++){
+      var ra = -Math.PI * 0.85 + (ri / 6) * Math.PI * 0.7 + Math.sin(tAcc * 2.2 + ri) * 0.06;
+      var rg = ctx.createLinearGradient(0, -10, Math.cos(ra) * 155, Math.sin(ra) * 155);
+      rg.addColorStop(0, "rgba(255,248,180," + (0.58 * glowPower).toFixed(2) + ")");
+      rg.addColorStop(1, "rgba(255,248,180,0)");
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.moveTo(0, -8);
+      ctx.lineTo(Math.cos(ra - 0.09) * 155, Math.sin(ra - 0.09) * 155);
+      ctx.lineTo(Math.cos(ra + 0.09) * 155, Math.sin(ra + 0.09) * 155);
+      ctx.closePath();
+      ctx.fill();
     }
+    ctx.restore();
 
     /* Ground contact shadow */
     ctx.fillStyle = "rgba(6, 20, 38, 0.42)";
@@ -1235,7 +1736,7 @@
     ctx.ellipse(0, 34, 58, 13, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    /* Open glowing interior + heaped gold coins */
+    /* Open glowing gold interior */
     if(chest.openAmt > 0.02){
       ctx.save();
       ctx.fillStyle = "#451a03";
@@ -1255,8 +1756,7 @@
 
     /* Animated hinged rounded wooden lid */
     ctx.save();
-    ctx.translate(0, -8);
-    ctx.translate(0, -chest.openAmt * 22);
+    ctx.translate(0, -8 - chest.openAmt * 22);
     ctx.scale(1, 1 - chest.openAmt * 0.34);
     var lidGrad = ctx.createLinearGradient(0, -34, 0, 4);
     lidGrad.addColorStop(0, "#d97706");
@@ -1272,7 +1772,6 @@
     ctx.fill();
     ctx.stroke();
 
-    /* Gold straps on lid */
     var bandGrad = ctx.createLinearGradient(0, -30, 0, 4);
     bandGrad.addColorStop(0, "#fef08a");
     bandGrad.addColorStop(0.5, "#f59e0b");
@@ -1284,7 +1783,6 @@
       ctx.fill();
       ctx.stroke();
     });
-    /* Specular shine on lid */
     ctx.fillStyle = "rgba(255,255,255,0.28)";
     ctx.beginPath();
     ctx.ellipse(-6, -18, 24, 5, -0.05, 0, Math.PI * 2);
@@ -1304,7 +1802,6 @@
     ctx.fill();
     ctx.stroke();
 
-    /* Horizontal wood plank lines */
     ctx.strokeStyle = "rgba(59,23,6,0.45)";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -1312,7 +1809,6 @@
     ctx.moveTo(-46, 20); ctx.lineTo(46, 20);
     ctx.stroke();
 
-    /* Gold rim & vertical brass straps */
     var rimGrad = ctx.createLinearGradient(0, -8, 0, 32);
     rimGrad.addColorStop(0, "#fef08a");
     rimGrad.addColorStop(0.5, "#f59e0b");
@@ -1332,88 +1828,20 @@
     ctx.beginPath(); ctx.arc(0, -1, 3.2, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(2, 0); ctx.lineTo(3.2, 7); ctx.lineTo(-3.2, 7); ctx.closePath(); ctx.fill();
 
-    /* Pulsing "ready" ring around chest */
-    if(state.chestReady){
+    /* Pulsing invite ring */
+    if(!chest.opened){
       var pr = 64 + Math.sin(tAcc * 6) * 8;
-      ctx.strokeStyle = "rgba(254, 240, 138, 0.9)";
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(254, 240, 138, 0.94)";
+      ctx.lineWidth = 4.5;
       ctx.beginPath();
-      ctx.arc(0, 6, pr, 0, Math.PI * 2);
+      ctx.arc(0, 4, pr, 0, Math.PI * 2);
       ctx.stroke();
     }
 
     ctx.restore();
   }
 
-  /* ---------- HIDDEN SHIMMERING PEARLS ---------- */
-  function drawHiddenPearls(){
-    hiddenPearls.forEach(function(p){
-      if(p.collected) return;
-      var pp = getPearlPos(p);
-      var px = pp.x;
-      var py = pp.y + Math.sin(tAcc * 2.4 + p.phase) * 4;
-      var shimmer = p.shimmerT > 0 ? Math.min(1, p.shimmerT * 0.6) : 0;
-      var inDeep = state.zone === "deep";
-      var visAlpha = Math.max(inDeep ? 0.55 : 0.68, shimmer);
-
-      ctx.save();
-      ctx.translate(px, py);
-
-      /* Glow aura — flares dramatically on Sonar Ping! */
-      var glowR = 26 + shimmer * 32 + Math.sin(tAcc * 4 + p.phase) * 4;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      var pg = ctx.createRadialGradient(0, 0, 3, 0, 0, glowR);
-      pg.addColorStop(0, "rgba(255,255,255," + (0.65 + shimmer * 0.35).toFixed(2) + ")");
-      pg.addColorStop(0.5, "rgba(103,232,249," + (0.35 + shimmer * 0.45).toFixed(2) + ")");
-      pg.addColorStop(1, "rgba(192,132,252,0)");
-      ctx.fillStyle = pg;
-      ctx.beginPath(); ctx.arc(0, 0, glowR, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-
-      /* Cute miniature pastel clam shell cradling the pearl */
-      ctx.globalAlpha = visAlpha;
-      var shG = ctx.createLinearGradient(0, 2, 0, 18);
-      shG.addColorStop(0, "#f9a8d4");
-      shG.addColorStop(1, "#be185d");
-      ctx.fillStyle = shG;
-      ctx.strokeStyle = "#831843";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(0, 9, 18, 9, 0, 0, Math.PI);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      /* Glossy iridescent pearl */
-      var r = 12 + shimmer * 3;
-      var pearlG = ctx.createRadialGradient(-r * 0.35, -r * 0.35, 1.5, 0, 0, r);
-      pearlG.addColorStop(0, "#ffffff");
-      pearlG.addColorStop(0.38, "#fdf2f8");
-      pearlG.addColorStop(0.72, "#bae6fd");
-      pearlG.addColorStop(1, "#818cf8");
-      ctx.fillStyle = pearlG;
-      ctx.strokeStyle = "rgba(255,255,255,0.85)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      /* Specular highlight dot */
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.ellipse(-r * 0.32, -r * 0.32, r * 0.28, r * 0.18, -0.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      if(shimmer > 0.15){
-        drawStar5(r * 0.7, -r * 0.7, 7 + shimmer * 4, "#fef08a");
-      }
-      ctx.restore();
-    });
-  }
-
-  /* ---------- PIXAR 3D GLOSSY SEA CREATURES (ZERO EMOJI PLACEHOLDERS) ---------- */
+  /* ---------- PIXAR 3D GLOSSY SEA FRIENDS (Turtle, Whale, Clownfish, Octopus, Starfish) ---------- */
   function drawGlossyEye(x, y, r, lookX, lookY){
     ctx.fillStyle = "#ffffff";
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
@@ -1427,27 +1855,23 @@
 
   function drawTurtle(t, wave){
     var flipFlap = Math.sin(t * 5.2 + wave * 6) * 0.36;
-    /* Back flipper */
     ctx.save(); ctx.translate(-22, 16); ctx.rotate(0.4 - flipFlap * 0.6);
     ctx.fillStyle = "#4ade80"; ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.ellipse(0, 8, 12, 6, 0.3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.restore();
 
-    /* Plump green head */
     var headG = ctx.createRadialGradient(34, -8, 4, 30, 0, 22);
     headG.addColorStop(0, "#bbf7d0");
     headG.addColorStop(0.55, "#4ade80");
     headG.addColorStop(1, "#15803d");
     ctx.fillStyle = headG; ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.8;
     ctx.beginPath(); ctx.ellipse(32, 0, 17, 14, -0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    /* Rosy cheek & smile */
     ctx.fillStyle = "rgba(251,113,133,0.45)";
     ctx.beginPath(); ctx.ellipse(36, 6, 4.5, 3, 0, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = "#14532d"; ctx.lineWidth = 2.4; ctx.lineCap = "round";
     ctx.beginPath(); ctx.arc(38, 4, 7, 0.25, 1.35); ctx.stroke();
     drawGlossyEye(38, -4, 5.8, 0.4, -0.1);
 
-    /* Glossy domed shell */
     var shG = ctx.createRadialGradient(-6, -20, 6, -2, -2, 38);
     shG.addColorStop(0, "#a3e635");
     shG.addColorStop(0.45, "#22c55e");
@@ -1461,7 +1885,6 @@
     ctx.closePath();
     ctx.fill(); ctx.stroke();
 
-    /* Shell scute accents */
     ctx.strokeStyle = "rgba(220,252,231,0.45)"; ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.ellipse(-4, -9, 13, 8, 0, 0, Math.PI * 2);
@@ -1469,15 +1892,12 @@
     ctx.moveTo(9, -9); ctx.lineTo(20, -2);
     ctx.stroke();
 
-    /* Yellow-cream underbelly rim */
     ctx.fillStyle = "#fef08a";
     ctx.beginPath(); ctx.ellipse(-4, 10, 26, 6, 0, 0, Math.PI); ctx.fill();
 
-    /* Specular shine on dome */
     ctx.fillStyle = "rgba(255,255,255,0.34)";
     ctx.beginPath(); ctx.ellipse(-10, -15, 14, 4.5, -0.22, 0, Math.PI * 2); ctx.fill();
 
-    /* Front swimming flipper */
     ctx.save(); ctx.translate(10, 12); ctx.rotate(0.25 + flipFlap);
     var flG = ctx.createLinearGradient(0, 0, 18, 16);
     flG.addColorStop(0, "#86efac"); flG.addColorStop(1, "#16a34a");
@@ -1488,7 +1908,6 @@
 
   function drawWhale(t, wave){
     var tailWag = Math.sin(t * 4.5 + wave * 6) * 0.25;
-    /* Swishing tail fluke */
     ctx.save(); ctx.translate(-34, 4); ctx.rotate(tailWag);
     var tG = ctx.createLinearGradient(-22, -16, 0, 16);
     tG.addColorStop(0, "#7dd3fc"); tG.addColorStop(1, "#0284c7");
@@ -1503,7 +1922,6 @@
     ctx.fill(); ctx.stroke();
     ctx.restore();
 
-    /* Plump Pixar Blue Whale body */
     var bG = ctx.createRadialGradient(8, -16, 8, 2, 0, 48);
     bG.addColorStop(0, "#bae6fd");
     bG.addColorStop(0.38, "#38bdf8");
@@ -1518,7 +1936,6 @@
     ctx.closePath();
     ctx.fill(); ctx.stroke();
 
-    /* Soft creamy-blue ribbed belly */
     ctx.fillStyle = "#e0f2fe";
     ctx.beginPath();
     ctx.moveTo(35, 10);
@@ -1527,18 +1944,15 @@
     ctx.closePath();
     ctx.fill();
 
-    /* Glossy top specular sheen */
     ctx.fillStyle = "rgba(255,255,255,0.38)";
     ctx.beginPath(); ctx.ellipse(8, -15, 20, 5.5, -0.1, 0, Math.PI * 2); ctx.fill();
 
-    /* Cheerful smiling whale mouth + rosy cheek + glossy eye */
     ctx.strokeStyle = "#0c4a6e"; ctx.lineWidth = 2.6; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(38, 6); ctx.quadraticCurveTo(26, 13, 15, 8); ctx.stroke();
     ctx.fillStyle = "rgba(251,113,133,0.42)";
     ctx.beginPath(); ctx.ellipse(24, 5, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
     drawGlossyEye(22, -4, 6.2, 0.35, -0.1);
 
-    /* Cute side pectoral fin */
     ctx.save(); ctx.translate(2, 13); ctx.rotate(0.2 + Math.sin(t * 4.5) * 0.18);
     ctx.fillStyle = "#0ea5e9"; ctx.strokeStyle = "#0c4a6e"; ctx.lineWidth = 2.4;
     ctx.beginPath(); ctx.ellipse(-2, 7, 13, 6.5, 0.55, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
@@ -1547,7 +1961,6 @@
 
   function drawClownfish(t, wave){
     var wag = Math.sin(t * 8 + wave * 8) * 0.28;
-    /* Tail fin */
     ctx.save(); ctx.translate(-26, 0); ctx.rotate(wag);
     ctx.fillStyle = "#fb923c"; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.6;
     ctx.beginPath();
@@ -1557,13 +1970,11 @@
     ctx.fill(); ctx.stroke();
     ctx.restore();
 
-    /* Dorsal fin */
     ctx.fillStyle = "#f97316"; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.4;
     ctx.beginPath();
     ctx.moveTo(-14, -14); ctx.quadraticCurveTo(-2, -30, 12, -15); ctx.closePath();
     ctx.fill(); ctx.stroke();
 
-    /* Glossy orange clownfish body */
     var fG = ctx.createRadialGradient(8, -10, 4, 0, 0, 34);
     fG.addColorStop(0, "#fed7aa");
     fG.addColorStop(0.35, "#fb923c");
@@ -1572,7 +1983,6 @@
     ctx.fillStyle = fG; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.8;
     ctx.beginPath(); ctx.ellipse(0, 0, 29, 19, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
-    /* Crisp white clownfish stripes clipped to body */
     ctx.save();
     ctx.beginPath(); ctx.ellipse(0, 0, 27.5, 17.5, 0, 0, Math.PI * 2); ctx.clip();
     ctx.fillStyle = "#ffffff"; ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 2.2;
@@ -1587,16 +1997,13 @@
     });
     ctx.restore();
 
-    /* Glossy specular highlight */
     ctx.fillStyle = "rgba(255,255,255,0.42)";
     ctx.beginPath(); ctx.ellipse(4, -10, 14, 4, -0.1, 0, Math.PI * 2); ctx.fill();
 
-    /* Eye & happy smile */
     drawGlossyEye(17, -4, 5.8, 0.35, 0);
     ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.2; ctx.lineCap = "round";
     ctx.beginPath(); ctx.arc(22, 4, 5, 0.3, 1.5); ctx.stroke();
 
-    /* Side fin */
     ctx.save(); ctx.translate(2, 6); ctx.rotate(0.25 + Math.sin(t * 9) * 0.25);
     ctx.fillStyle = "#fdba74"; ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 2.2;
     ctx.beginPath(); ctx.ellipse(-3, 5, 9, 5, 0.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
@@ -1604,8 +2011,6 @@
   }
 
   function drawOctopus(t, wave){
-    /* 6 gracefully curling tentacles */
-    ctx.strokeStyle = "#581c87";
     ctx.lineCap = "round";
     for(var i = 0; i < 6; i++){
       var spread = -26 + i * 10.4;
@@ -1619,12 +2024,10 @@
       ctx.lineWidth = 6.5;
       ctx.strokeStyle = i % 2 === 0 ? "#c084fc" : "#a855f7";
       ctx.stroke();
-      /* Tiny lilac suction dot */
       ctx.fillStyle = "#f3e8ff";
       ctx.beginPath(); ctx.arc(spread * 1.12 + sway, 35, 2.3, 0, Math.PI * 2); ctx.fill();
     }
 
-    /* Plump Pixar glossy dome head */
     var oG = ctx.createRadialGradient(-8, -18, 5, 0, -4, 34);
     oG.addColorStop(0, "#f3e8ff");
     oG.addColorStop(0.32, "#c084fc");
@@ -1635,11 +2038,9 @@
     ctx.ellipse(0, -6, 27, 25, 0, 0, Math.PI * 2);
     ctx.fill(); ctx.stroke();
 
-    /* Specular shine */
     ctx.fillStyle = "rgba(255,255,255,0.42)";
     ctx.beginPath(); ctx.ellipse(-9, -18, 10, 5.5, -0.45, 0, Math.PI * 2); ctx.fill();
 
-    /* Cute eyes, cheeks & happy smile */
     drawGlossyEye(-9, -1, 6.2, 0.2, 0);
     drawGlossyEye(10, -1, 6.2, 0.2, 0);
     ctx.fillStyle = "rgba(244,114,182,0.52)";
@@ -1662,7 +2063,6 @@
     ctx.lineWidth = 3;
     ctx.lineJoin = "round";
 
-    /* Smooth rounded 5-arm starfish contour */
     ctx.beginPath();
     for(var i = 0; i < 5; i++){
       var a1 = -Math.PI / 2 + i * (Math.PI * 2 / 5);
@@ -1678,7 +2078,6 @@
     ctx.closePath();
     ctx.fill(); ctx.stroke();
 
-    /* Pearly raised dots on each arm */
     ctx.fillStyle = "rgba(255,241,242,0.75)";
     for(var d = 0; d < 5; d++){
       var da = -Math.PI / 2 + d * (Math.PI * 2 / 5);
@@ -1693,39 +2092,20 @@
   }
 
   function drawCreatures(){
-    var baseScale = Math.max(0.76, Math.min(1.16, Math.min(W, H) / 700));
+    var baseScale = Math.max(0.68, Math.min(1.02, Math.min(W, H) / 740));
     creatures.forEach(function(cr){
+      if(cr.x < -120 || cr.x > W + 120) return;
       var s = baseScale * cr.size;
-      var flipRot = cr.flipT > 0 ? (1 - cr.flipT) * Math.PI * 2 * (cr.dir >= 0 ? 1 : -1) : 0;
-      var flipJump = cr.flipT > 0 ? Math.sin(cr.flipT * Math.PI) * 28 : 0;
+      var flipRot = cr.flipT > 0 ? (1 - cr.flipT) * Math.PI * 2 : 0;
+      var flipJump = cr.flipT > 0 ? Math.sin(cr.flipT * Math.PI) * 24 : 0;
       var waveScale = cr.waveT > 0 ? 1 + Math.sin(cr.waveT * 14) * 0.08 : 1;
 
       ctx.save();
+      ctx.globalAlpha = 0.92;
       ctx.translate(cr.x, cr.y - flipJump);
-
-      /* Gentle glowing discovery ring for undiscovered friends (or sonar boost) */
-      if(!cr.discovered || cr.glowBoost > 0.05){
-        var ringAlpha = !cr.discovered ? (0.52 + Math.sin(tAcc * 3.8 + cr.phase) * 0.24) : cr.glowBoost * 0.6;
-        var ringR = (44 + Math.sin(tAcc * 3.8 + cr.phase) * 5) * s;
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        var hg = ctx.createRadialGradient(0, 0, ringR * 0.35, 0, 0, ringR * 1.25);
-        hg.addColorStop(0, "rgba(255,255,255," + (ringAlpha * 0.25).toFixed(2) + ")");
-        hg.addColorStop(0.65, state.zone === "deep" ? "rgba(103,232,249," + (ringAlpha * 0.55).toFixed(2) + ")" : "rgba(254,240,138," + (ringAlpha * 0.45).toFixed(2) + ")");
-        hg.addColorStop(1, "rgba(103,232,249,0)");
-        ctx.fillStyle = hg;
-        ctx.beginPath(); ctx.arc(0, 0, ringR * 1.25, 0, Math.PI * 2); ctx.fill();
-
-        ctx.strokeStyle = state.zone === "deep"
-          ? "rgba(103,232,249," + ringAlpha.toFixed(2) + ")"
-          : "rgba(255,250,190," + ringAlpha.toFixed(2) + ")";
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.arc(0, 0, ringR, 0, Math.PI * 2); ctx.stroke();
-        ctx.restore();
-      }
-
       ctx.rotate(flipRot);
-      var sx = (cr.kind === "octopus" || cr.kind === "starfish") ? 1 : (cr.faceVis >= 0 ? Math.max(0.15, cr.faceVis) : Math.min(-0.15, cr.faceVis));
+      /* Sea friends swim smoothly left across the scrolling voyage */
+      var sx = (cr.kind === "octopus" || cr.kind === "starfish") ? 1 : -1;
       ctx.scale(s * sx * waveScale, s * waveScale);
 
       if(cr.kind === "turtle") drawTurtle(tAcc + cr.phase, cr.waveT);
@@ -1735,30 +2115,20 @@
       else drawStarfish(tAcc + cr.phase, cr.waveT);
 
       ctx.restore();
-
-      /* Tiny golden sparkle badge above discovered friend */
-      if(cr.discovered){
-        drawStar5(cr.x + 26 * s, cr.y - 30 * s + Math.sin(tAcc * 4 + cr.phase) * 3, 9 * s, "#fde047");
-      }
     });
   }
 
   /* ---------- PIXAR 3D BRIGHT-YELLOW CAPTAIN HOOT SUBMARINE ---------- */
-  function getSubScale(){
-    return Math.max(0.76, Math.min(1.22, Math.min(W, H) / 680));
-  }
-
   function drawHeadlampCone(s){
     var isDeep = state.zone === "deep";
-    var coneLen = (isDeep ? 360 : 230) * s;
-    var coneSpread = (isDeep ? 132 : 84) * s;
+    var coneLen = (isDeep ? 390 : 250) * s;
+    var coneSpread = (isDeep ? 140 : 88) * s;
     var lampX = 62 * s;
     var lampY = 14 * s;
 
     ctx.save();
     ctx.translate(sub.x, sub.y);
-    ctx.rotate(sub.pitch * sub.facing);
-    ctx.scale(sub.faceVis >= 0 ? 1 : -1, 1);
+    ctx.rotate(sub.pitch);
 
     ctx.globalCompositeOperation = "lighter";
     var grad = ctx.createLinearGradient(lampX, lampY, lampX + coneLen, lampY);
@@ -1775,7 +2145,6 @@
     ctx.closePath();
     ctx.fill();
 
-    /* Bright core beam */
     var coreG = ctx.createLinearGradient(lampX, lampY, lampX + coneLen * 0.72, lampY);
     coreG.addColorStop(0, isDeep ? "rgba(255, 255, 230, 0.65)" : "rgba(255, 255, 230, 0.28)");
     coreG.addColorStop(1, "rgba(255, 245, 165, 0)");
@@ -1793,17 +2162,15 @@
 
   function drawSubmarine(){
     var s = getSubScale();
-    var bobY = Math.sin(tAcc * 2.5) * 5;
+    var bobY = Math.sin(tAcc * 2.8) * 4.5;
     var sq = sub.bounce > 0 ? Math.sin(sub.bounce * Math.PI * 2.5) * sub.bounce * 0.12 : 0;
-    var faceS = sub.faceVis >= 0 ? Math.max(0.18, sub.faceVis) : Math.min(-0.18, sub.faceVis);
 
-    /* Draw golden underwater headlamp cone first so hull sits crisply over lamp base */
     drawHeadlampCone(s);
 
     ctx.save();
     ctx.translate(sub.x, sub.y + bobY);
-    ctx.rotate(sub.pitch * sub.facing);
-    ctx.scale(faceS * s * (1 + sq * 0.55), s * (1 - sq * 0.45));
+    ctx.rotate(sub.pitch);
+    ctx.scale(s * (1 + sq * 0.55), s * (1 - sq * 0.45));
 
     /* 1. Rotating Brass Tail Propeller */
     ctx.save();
@@ -1820,7 +2187,6 @@
     ctx.beginPath(); ctx.ellipse(-5, -13 * Math.abs(pBlade) - 3, 5.5, 13 * Math.abs(pBlade) + 4, -0.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(-5, 13 * Math.abs(pBlade) + 3, 5.5, 13 * Math.abs(pBlade) + 4, 0.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(-7, 6 * pBlade2, 4.5, 7, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    /* Brass propeller hub */
     ctx.fillStyle = "#f59e0b";
     ctx.beginPath(); ctx.ellipse(0, 0, 8, 7, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.restore();
@@ -1858,10 +2224,8 @@
     ctx.lineTo(6, -44);
     ctx.closePath();
     ctx.fill(); ctx.stroke();
-    /* Periscope lens glow */
     ctx.fillStyle = "#fef9c3";
     ctx.beginPath(); ctx.ellipse(16, -69, 4.5, 6.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    /* Conning tower collar */
     ctx.fillStyle = finG;
     ctx.beginPath();
     ctx.roundRect(-24, -52, 42, 16, 8);
@@ -1873,7 +2237,7 @@
     hullG.addColorStop(0.28, "#fde047");
     hullG.addColorStop(0.68, "#f59e0b");
     hullG.addColorStop(0.93, "#b45309");
-    hullG.addColorStop(1, "#38bdf8"); /* subtle aqua seabed bounce light */
+    hullG.addColorStop(1, "#38bdf8");
     ctx.fillStyle = hullG;
     ctx.strokeStyle = "#713f12";
     ctx.lineWidth = 3.5;
@@ -1882,7 +2246,6 @@
     ctx.fill();
     ctx.stroke();
 
-    /* Hull seam stripe & brass rivets */
     ctx.strokeStyle = "rgba(120, 53, 15, 0.45)";
     ctx.lineWidth = 2.2;
     ctx.beginPath();
@@ -1904,28 +2267,23 @@
 
     /* 5. Crystal Glass Dome Cockpit with Smiling Captain Hoot! */
     ctx.save();
-    /* Brass dome collar */
     ctx.fillStyle = "#d97706"; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.ellipse(11, -7, 36, 31, -0.05, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
-    /* Deep cabin interior behind Hoot */
     var cabG = ctx.createRadialGradient(14, -14, 4, 11, -7, 34);
     cabG.addColorStop(0, "#1e3a5f");
     cabG.addColorStop(1, "#081c36");
     ctx.fillStyle = cabG;
     ctx.beginPath(); ctx.ellipse(11, -7, 31, 26.5, -0.05, 0, Math.PI * 2); ctx.fill();
 
-    /* Clip Captain Hoot inside the glass dome */
     ctx.save();
     ctx.beginPath(); ctx.ellipse(11, -7, 30.5, 26, -0.05, 0, Math.PI * 2); ctx.clip();
 
-    /* Captain Hoot Body */
     ctx.fillStyle = "#a06a3b";
     ctx.beginPath(); ctx.ellipse(11, 14, 18, 17, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#fdeed3";
     ctx.beginPath(); ctx.ellipse(12, 16, 11, 11, 0, 0, Math.PI * 2); ctx.fill();
 
-    /* Hoot waving wing when cheering */
     var wingWave = sub.cheerT > 0 ? Math.sin(tAcc * 18) * 0.45 : Math.sin(tAcc * 3) * 0.08;
     ctx.save();
     ctx.translate(25, 11); ctx.rotate(-0.4 + wingWave);
@@ -1933,7 +2291,6 @@
     ctx.beginPath(); ctx.ellipse(5, -3, 8, 4.5, -0.4, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
 
-    /* Captain Hoot Head & Ear Tufts */
     ctx.fillStyle = "#8a5a33";
     ctx.beginPath(); ctx.moveTo(-2, -16); ctx.lineTo(-7, -27); ctx.lineTo(5, -22); ctx.closePath(); ctx.fill();
     ctx.beginPath(); ctx.moveTo(23, -16); ctx.lineTo(29, -27); ctx.lineTo(17, -22); ctx.closePath(); ctx.fill();
@@ -1944,12 +2301,10 @@
     ctx.fillStyle = owlHeadG;
     ctx.beginPath(); ctx.arc(11, -8, 17, 0, Math.PI * 2); ctx.fill();
 
-    /* Facial cream discs */
     ctx.fillStyle = "#fdeed3";
     ctx.beginPath(); ctx.ellipse(5, -8, 7.8, 8.2, 0, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(18, -8, 7.8, 8.2, 0, 0, Math.PI * 2); ctx.fill();
 
-    /* Expressive blinking eyes */
     var isBlinking = sub.blinkT < 0.13;
     if(isBlinking){
       ctx.strokeStyle = "#17324f"; ctx.lineWidth = 2.4; ctx.lineCap = "round";
@@ -1964,7 +2319,6 @@
       ctx.beginPath(); ctx.arc(20.3, -9.4, 1.7, 0, Math.PI * 2); ctx.fill();
     }
 
-    /* Rosy cheeks & smiling beak */
     ctx.fillStyle = "rgba(255,155,130,0.68)";
     ctx.beginPath(); ctx.arc(-1, -2, 3.2, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(24, -2, 3.2, 0, Math.PI * 2); ctx.fill();
@@ -1975,7 +2329,6 @@
     ctx.quadraticCurveTo(10, 2, 9, -3);
     ctx.fill(); ctx.stroke();
 
-    /* Captain Hoot's Yellow Captain's Hat! */
     ctx.fillStyle = "#0f2947";
     ctx.beginPath(); ctx.ellipse(12, -21, 15, 3.8, -0.05, 0, Math.PI * 2); ctx.fill();
     var hatG = ctx.createLinearGradient(0, -33, 24, -20);
@@ -1989,17 +2342,14 @@
     ctx.quadraticCurveTo(12, -19, -1, -22);
     ctx.closePath();
     ctx.fill(); ctx.stroke();
-    /* Mini gold anchor emblem */
     ctx.fillStyle = "#fff7cc";
     ctx.beginPath(); ctx.arc(12, -26, 2.5, 0, Math.PI * 2); ctx.fill();
 
-    /* Mini brass steering wheel at bottom of cockpit */
     ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 2.6;
     ctx.beginPath(); ctx.arc(24, 17, 8, 0, Math.PI * 2); ctx.stroke();
 
-    ctx.restore(); /* end dome clip */
+    ctx.restore();
 
-    /* Glass dome cyan tint + glossy Pixar reflection arc */
     var glassG = ctx.createRadialGradient(20, -20, 4, 11, -7, 33);
     glassG.addColorStop(0, "rgba(255,255,255,0.34)");
     glassG.addColorStop(0.55, "rgba(186,230,253,0.12)");
@@ -2015,7 +2365,7 @@
 
     ctx.restore();
 
-    /* 6. Glowing Front Headlamp Lens & Nose Bumper */
+    /* 6. Glowing Front Headlamp Lens & Side Dive Wing Fin */
     ctx.fillStyle = "#b45309"; ctx.strokeStyle = "#713f12"; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.ellipse(60, 14, 11, 13, 0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     var bulbG = ctx.createRadialGradient(62, 12, 1.5, 62, 14, 9);
@@ -2025,7 +2375,6 @@
     ctx.fillStyle = bulbG;
     ctx.beginPath(); ctx.ellipse(62, 14, 7.5, 9.5, 0.1, 0, Math.PI * 2); ctx.fill();
 
-    /* Side yellow dive wing fin */
     var wingTilt = Math.max(-0.35, Math.min(0.35, sub.vy * 0.0014));
     ctx.save();
     ctx.translate(-6, 26); ctx.rotate(wingTilt);
@@ -2037,7 +2386,6 @@
     ctx.beginPath(); ctx.ellipse(0, 2, 22, 8.5, 0.08, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.restore();
 
-    /* Glossy top hull highlight + brass rivets */
     ctx.fillStyle = "rgba(255,255,255,0.34)";
     ctx.beginPath(); ctx.ellipse(-28, -24, 16, 4.5, -0.32, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#92400e";
@@ -2048,7 +2396,7 @@
     ctx.restore();
   }
 
-  /* ---------- DEEP SEA VOLUMETRIC DARKNESS + HEADLAMP ILLUMINATION MASK ---------- */
+  /* ---------- DEEP SEA VOLUMETRIC DARKNESS + HEADLAMP + BIOLUMINESCENT PEARLS ---------- */
   function drawDeepSeaLighting(){
     var deepWeight = state.zone === "deep" ? state.zoneFade : (1 - state.zoneFade);
     if(deepWeight <= 0.02) return;
@@ -2059,30 +2407,29 @@
 
     lightCtx.save();
     lightCtx.clearRect(0, 0, lw, lh);
-    lightCtx.fillStyle = "rgba(3, 10, 32, " + (0.54 * deepWeight).toFixed(3) + ")";
+    lightCtx.fillStyle = "rgba(3, 10, 32, " + (0.52 * deepWeight).toFixed(3) + ")";
     lightCtx.fillRect(0, 0, lw, lh);
 
-    /* Punch out luminous headlamp beam & submarine glow using destination-out */
     lightCtx.globalCompositeOperation = "destination-out";
 
-    /* Soft glow around Captain Hoot's yellow submarine */
-    var subHalo = lightCtx.createRadialGradient(sub.x * sx, sub.y * sy, 10 * sx, sub.x * sx, sub.y * sy, 140 * s * sx);
-    subHalo.addColorStop(0, "rgba(0,0,0,0.95)");
+    /* Glow around Captain Hoot's yellow submarine */
+    var subHalo = lightCtx.createRadialGradient(sub.x * sx, sub.y * sy, 10 * sx, sub.x * sx, sub.y * sy, 148 * s * sx);
+    subHalo.addColorStop(0, "rgba(0,0,0,0.96)");
     subHalo.addColorStop(1, "rgba(0,0,0,0)");
     lightCtx.fillStyle = subHalo;
     lightCtx.beginPath();
-    lightCtx.arc(sub.x * sx, sub.y * sy, 140 * s * sx, 0, Math.PI * 2);
+    lightCtx.arc(sub.x * sx, sub.y * sy, 148 * s * sx, 0, Math.PI * 2);
     lightCtx.fill();
 
-    /* Headlamp cone punch-out illuminating the deep sea! */
+    /* Volumetric headlamp cone */
     lightCtx.save();
     lightCtx.translate(sub.x * sx, sub.y * sy);
-    lightCtx.rotate(sub.pitch * sub.facing);
-    lightCtx.scale((sub.faceVis >= 0 ? 1 : -1) * sx, sy);
-    var cLen = 390 * s, cSpr = 148 * s, lx = 58 * s, ly = 14 * s;
+    lightCtx.rotate(sub.pitch);
+    lightCtx.scale(sx, sy);
+    var cLen = 410 * s, cSpr = 152 * s, lx = 58 * s, ly = 14 * s;
     var cg = lightCtx.createLinearGradient(lx, ly, lx + cLen, ly);
     cg.addColorStop(0, "rgba(0,0,0,1)");
-    cg.addColorStop(0.65, "rgba(0,0,0,0.82)");
+    cg.addColorStop(0.65, "rgba(0,0,0,0.84)");
     cg.addColorStop(1, "rgba(0,0,0,0)");
     lightCtx.fillStyle = cg;
     lightCtx.beginPath();
@@ -2094,20 +2441,29 @@
     lightCtx.fill();
     lightCtx.restore();
 
-    /* Bioluminescent punch-out around glowing chest when ready */
-    if(state.chestReady || chest.openAmt > 0.05){
-      var cp = getChestPos();
-      var chG = lightCtx.createRadialGradient(cp.x * sx, cp.y * sy, 10 * sx, cp.x * sx, cp.y * sy, 165 * sx);
-      chG.addColorStop(0, "rgba(0,0,0,0.95)");
+    /* Bioluminescent punch-out around Letter Pearl Bubbles so letters always pop crystal-clear! */
+    letterBubbles.forEach(function(lb){
+      var rad = lb.r * (lb.isTarget ? 2.5 : 1.75) * sx;
+      var lg = lightCtx.createRadialGradient(lb.x * sx, lb.y * sy, rad * 0.25, lb.x * sx, lb.y * sy, rad);
+      lg.addColorStop(0, "rgba(0,0,0," + (lb.isTarget ? "0.98" : "0.78") + ")");
+      lg.addColorStop(1, "rgba(0,0,0,0)");
+      lightCtx.fillStyle = lg;
+      lightCtx.beginPath(); lightCtx.arc(lb.x * sx, lb.y * sy, rad, 0, Math.PI * 2); lightCtx.fill();
+    });
+
+    /* Bioluminescent punch-out around Sunken Treasure Chest */
+    if(chest.active){
+      var chG = lightCtx.createRadialGradient(chest.x * sx, chest.y * sy, 14 * sx, chest.x * sx, chest.y * sy, 175 * sx);
+      chG.addColorStop(0, "rgba(0,0,0,0.96)");
       chG.addColorStop(1, "rgba(0,0,0,0)");
       lightCtx.fillStyle = chG;
-      lightCtx.beginPath(); lightCtx.arc(cp.x * sx, cp.y * sy, 165 * sx, 0, Math.PI * 2); lightCtx.fill();
+      lightCtx.beginPath(); lightCtx.arc(chest.x * sx, chest.y * sy, 175 * sx, 0, Math.PI * 2); lightCtx.fill();
     }
 
-    /* Sonar wave lights up the deep sea as it sweeps */
+    /* Sonar rings illuminate the abyss */
     sonarWaves.forEach(function(sw){
       if(sw.delayed && sw.delayed > 0) return;
-      lightCtx.strokeStyle = "rgba(0,0,0," + (sw.alpha * 0.9).toFixed(2) + ")";
+      lightCtx.strokeStyle = "rgba(0,0,0," + (sw.alpha * 0.92).toFixed(2) + ")";
       lightCtx.lineWidth = 44 * sx;
       lightCtx.beginPath();
       lightCtx.arc(sw.x * sx, sw.y * sy, sw.r * sx, 0, Math.PI * 2);
@@ -2122,7 +2478,7 @@
   }
 
   /* =========================================================================
-     10. MAIN 60FPS UPDATE & RENDER LOOP
+     11. MAIN 60FPS OCEAN VOYAGE UPDATE & RENDER LOOP
      ========================================================================= */
   var lastTime = performance.now();
 
@@ -2133,48 +2489,77 @@
       state.zoneFade = Math.min(1, state.zoneFade + dt * 2.1);
     }
 
-    /* Keyboard steering nudges target smoothly */
-    var keySpd = 380 * dt;
-    if(keys.ArrowLeft || keys.KeyA) sub.targetX -= keySpd;
-    if(keys.ArrowRight || keys.KeyD) sub.targetX += keySpd;
-    if(keys.ArrowUp || keys.KeyW) sub.targetY -= keySpd;
-    if(keys.ArrowDown || keys.KeyS) sub.targetY += keySpd;
+    var b = getPlayBounds();
+
+    /* Continuous Up/Down button & keyboard steering */
+    var steerSpd = 380 * dt;
+    if(swimHold.up || keys.ArrowUp || keys.KeyW) sub.targetY -= steerSpd;
+    if(swimHold.down || keys.ArrowDown || keys.KeyS) sub.targetY += steerSpd;
+    if(keys.ArrowLeft || keys.KeyA) sub.targetX -= steerSpd;
+    if(keys.ArrowRight || keys.KeyD) sub.targetX += steerSpd;
+
+    /* If dashing to a tapped bubble, keep tracking its drifting position! */
+    if(sub.dashT > 0){
+      sub.dashT = Math.max(0, sub.dashT - dt);
+      if(sub.dashBubbleId != null){
+        var foundDash = false;
+        for(var di = 0; di < letterBubbles.length; di++){
+          if(letterBubbles[di].id === sub.dashBubbleId){
+            sub.targetX = Math.max(b.minX, Math.min(W - 36, letterBubbles[di].x));
+            sub.targetY = letterBubbles[di].y;
+            foundDash = true;
+            break;
+          }
+        }
+        if(!foundDash){ sub.dashBubbleId = null; sub.dashT = 0; }
+      } else if(sub.dashChest && chest.active && !chest.opened){
+        sub.targetX = Math.max(b.minX, Math.min(W - 44, chest.x));
+        sub.targetY = chest.y - 12;
+      }
+    }
+
     var ct = clampTarget(sub.targetX, sub.targetY);
     sub.targetX = ct.x; sub.targetY = ct.y;
 
-    /* Spring-damper physics for buttery Pixar submarine gliding */
+    /* Forward ocean voyage scroll speed — smoothly boosts when dragged forward! */
+    var cruiseAnchorX = Math.max(b.minX, W * 0.25);
+    var forwardRatio = (sub.x - cruiseAnchorX) / Math.max(120, W * 0.42);
+    var targetBoost = Math.max(0.82, Math.min(1.58, 1.0 + forwardRatio * 0.48));
+    sub.speedBoost += (targetBoost - sub.speedBoost) * Math.min(1, dt * 4.5);
+
+    var baseVoyageSpeed = Math.max(88, Math.min(132, W * 0.11));
+    var voyageSpeed = baseVoyageSpeed * sub.speedBoost;
+    state.scrollX += voyageSpeed * dt;
+
+    /* Spring-damper physics for buttery Pixar submarine banking & gliding */
     var dx = sub.targetX - sub.x;
     var dy = sub.targetY - sub.y;
-    var stiffness = 14.0;
-    var damping = 6.2;
+    var stiffness = sub.dashT > 0 ? 28.0 : 14.5;
+    var damping = sub.dashT > 0 ? 7.8 : 6.2;
     sub.vx += (dx * stiffness - sub.vx * damping) * dt;
     sub.vy += (dy * stiffness - sub.vy * damping) * dt;
     sub.x += sub.vx * dt;
     sub.y += sub.vy * dt;
 
-    var spd = Math.hypot(sub.vx, sub.vy);
-    if(Math.abs(sub.vx) > 14){
-      sub.facing = sub.vx >= 0 ? 1 : -1;
-    }
-    sub.faceVis += (sub.facing - sub.faceVis) * Math.min(1, dt * 11);
-    var targetPitch = Math.max(-0.26, Math.min(0.26, sub.vy * 0.00085));
-    sub.pitch += (targetPitch - sub.pitch) * Math.min(1, dt * 8);
+    var targetPitch = Math.max(-0.28, Math.min(0.28, sub.vy * 0.00095));
+    sub.pitch += (targetPitch - sub.pitch) * Math.min(1, dt * 8.5);
 
-    /* Rotating brass propeller & rising bubble trail */
-    sub.propAngle += dt * (9 + Math.min(26, spd * 0.055));
-    sub.bubbleAcc += dt * (4 + Math.min(18, spd * 0.04));
+    /* Rotating brass propeller & rich bubble wake */
+    var spd = Math.hypot(sub.vx, sub.vy);
+    sub.propAngle += dt * (12 * sub.speedBoost + Math.min(24, spd * 0.05));
+    sub.bubbleAcc += dt * (6.5 * sub.speedBoost + Math.min(16, spd * 0.035));
     while(sub.bubbleAcc >= 1){
       sub.bubbleAcc -= 1;
-      var s = getSubScale();
+      var ss = getSubScale();
       bubbles.push({
-        x: sub.x - sub.facing * 78 * s + (Math.random() - 0.5) * 10,
-        y: sub.y + 4 * s + (Math.random() - 0.5) * 10,
-        vx: -sub.facing * (25 + Math.random() * 35),
-        vy: -(38 + Math.random() * 55),
+        x: sub.x - 76 * ss + (Math.random() - 0.5) * 10,
+        y: sub.y + 4 * ss + (Math.random() - 0.5) * 10,
+        vx: -(voyageSpeed * 0.62 + 24 + Math.random() * 34),
+        vy: -(24 + Math.random() * 44),
         r: 3.5 + Math.random() * 6.5,
         life: 1,
-        decay: 0.62 + Math.random() * 0.35,
-        hue: 192 + Math.random() * 22,
+        decay: 0.65 + Math.random() * 0.35,
+        hue: 192 + Math.random() * 24,
         rainbow: false
       });
     }
@@ -2184,71 +2569,102 @@
     sub.blinkT -= dt;
     if(sub.blinkT <= 0) sub.blinkT = 2.8 + Math.random() * 2.4;
 
-    /* Update sea creatures & check proximity discovery with submarine! */
-    var b = getPlayBounds();
-    var subHitR = 72 * getSubScale();
-    creatures.forEach(function(cr){
-      cr.x += cr.vx * dt;
-      if(cr.x < b.minX){
-        cr.x = b.minX;
-        cr.vx = Math.abs(cr.vx);
-        cr.dir = 1;
-      } else if(cr.x > b.maxX){
-        cr.x = b.maxX;
-        cr.vx = -Math.abs(cr.vx);
-        cr.dir = -1;
-      }
-      cr.faceVis += (cr.dir - cr.faceVis) * Math.min(1, dt * 9);
-      cr.baseY = Math.min(b.maxY - 40, Math.max(b.minY + 32, cr.baseY));
-      cr.y = cr.baseY + Math.sin(tAcc * 1.9 + cr.phase) * cr.amp;
+    /* Update Giant Letter Pearl Bubbles (drifting right-to-left + submarine collision!) */
+    var subHitR = 66 * getSubScale();
+    var rightmostX = -999;
+    for(var i = letterBubbles.length - 1; i >= 0; i--){
+      var lb = letterBubbles[i];
+      lb.x -= voyageSpeed * lb.speedMul * dt;
+      lb.baseY = Math.max(b.minY + lb.r + 10, Math.min(b.maxY - lb.r - 18, lb.baseY));
+      lb.y = lb.baseY + Math.sin(tAcc * 2.2 + lb.phase) * lb.amp;
+      if(lb.sonarGlow > 0) lb.sonarGlow = Math.max(0, lb.sonarGlow - dt);
+      if(lb.wiggleT > 0) lb.wiggleT = Math.max(0, lb.wiggleT - dt * 2.2);
+      if(lb.cooldown > 0) lb.cooldown = Math.max(0, lb.cooldown - dt);
 
+      /* Submarine nose / hull touches letter bubble -> collect! */
+      var noseX = sub.x + 22 * getSubScale();
+      var dSub = Math.min(
+        Math.hypot(sub.x - lb.x, sub.y - lb.y),
+        Math.hypot(noseX - lb.x, sub.y - lb.y)
+      );
+      if(dSub < subHitR + lb.r * 0.72){
+        collectLetterBubble(lb, i);
+        continue;
+      }
+
+      /* Off-left cleanup */
+      if(lb.x < -lb.r - 40){
+        if(lb.isTarget){
+          state.missesForTarget = Math.min(3, state.missesForTarget + 1);
+        }
+        letterBubbles.splice(i, 1);
+        continue;
+      }
+
+      if(lb.x > rightmostX) rightmostX = lb.x;
+    }
+
+    /* Maintain well-spaced stream of Letter Pearl Bubbles */
+    var minGap = Math.max(210, Math.min(340, W * 0.31));
+    if(letterBubbles.length < 4 && rightmostX < W - minGap + 80){
+      spawnLetterBubble(false);
+    }
+
+    /* Update Scrolling Sunken Treasure Chest */
+    if(chest.active){
+      chest.y = Math.min(H - 172, b.maxY - 46);
+      if(!chest.opened){
+        var sweetX = W * 0.68;
+        if(chest.x > sweetX){
+          chest.x -= voyageSpeed * 1.05 * dt;
+        } else {
+          /* Gently cruise slowly in the sweet spot so toddlers can always catch it! */
+          chest.x -= voyageSpeed * 0.14 * dt;
+          if(chest.x < W * 0.34){
+            chest.x = W + 90;
+          }
+        }
+        /* Swim submarine right into the treasure chest -> burst! */
+        if(Math.hypot(sub.x - chest.x, sub.y - chest.y) < subHitR + 58){
+          openTreasureChest();
+        }
+      } else {
+        chest.openAmt = Math.min(1, chest.openAmt + dt * 4.5);
+        chest.celebrateT -= dt;
+        chest.x -= voyageSpeed * 0.25 * dt;
+        if(chest.celebrateT <= 0){
+          chest.departing = true;
+          chest.x -= voyageSpeed * 1.15 * dt;
+          if(chest.x < -140){
+            chest.active = false;
+            chest.opened = false;
+            chest.departing = false;
+            state.pearlCycle = 0;
+            syncHud();
+          }
+        }
+      }
+      if(chest.wobbleT > 0) chest.wobbleT = Math.max(0, chest.wobbleT - dt * 2.2);
+    }
+
+    /* Update Swimming Sea Friends gliding right-to-left */
+    creatures.forEach(function(cr){
+      cr.x -= voyageSpeed * cr.speedMul * dt;
+      if(cr.x < -120){
+        cr.x = W + 110 + Math.random() * Math.max(220, W * 0.45);
+        cr.baseY = b.minY + 34 + Math.random() * Math.max(100, b.maxY - b.minY - 76);
+      }
+      cr.baseY = Math.max(b.minY + 28, Math.min(b.maxY - 38, cr.baseY));
+      cr.y = cr.baseY + Math.sin(tAcc * 1.8 + cr.phase) * cr.amp;
       if(cr.flipT > 0) cr.flipT = Math.max(0, cr.flipT - dt * 1.25);
       if(cr.waveT > 0) cr.waveT = Math.max(0, cr.waveT - dt);
       if(cr.glowBoost > 0) cr.glowBoost = Math.max(0, cr.glowBoost - dt * 0.65);
       if(cr.cooldown > 0) cr.cooldown = Math.max(0, cr.cooldown - dt);
 
-      /* Pilot submarine right up to any sea friend to discover / flip them! */
-      var dSub = Math.hypot(sub.x - cr.x, sub.y - cr.y);
-      if(state.hasSteered && dSub < subHitR + 22 * cr.size && cr.cooldown <= 0){
+      if(Math.hypot(sub.x - cr.x, sub.y - cr.y) < subHitR + 18 * cr.size && cr.cooldown <= 0){
         interactCreature(cr);
       }
     });
-
-    /* Hidden pearls proximity & respawn */
-    hiddenPearls.forEach(function(p){
-      if(p.shimmerT > 0) p.shimmerT = Math.max(0, p.shimmerT - dt);
-      if(p.collected){
-        p.respawnT -= dt;
-        if(p.respawnT <= 0) p.collected = false;
-        return;
-      }
-      var pp = getPearlPos(p);
-      if(state.hasSteered && Math.hypot(sub.x - pp.x, sub.y - pp.y) < subHitR * 0.95){
-        collectPearl(p);
-      }
-    });
-
-    /* Treasure chest proximity trigger & celebration reset */
-    var cp = getChestPos();
-    if(state.chestReady && !chest.opening){
-      if(Math.hypot(sub.x - cp.x, sub.y - cp.y) < subHitR + cp.r * 0.72){
-        triggerChest();
-      }
-    }
-    if(chest.wobbleT > 0) chest.wobbleT = Math.max(0, chest.wobbleT - dt * 2.2);
-    if(chest.opening){
-      chest.openAmt = Math.min(1, chest.openAmt + dt * 4.2);
-      chest.celebrateT -= dt;
-      if(chest.celebrateT <= 0){
-        chest.opening = false;
-        state.cycleFound = 0;
-        spawnCreatures(false);
-        hiddenPearls.forEach(function(p){ p.collected = false; p.shimmerT = 1.6; });
-        syncHud();
-      }
-    } else if(chest.openAmt > 0){
-      chest.openAmt = Math.max(0, chest.openAmt - dt * 2.8);
-    }
 
     /* Update Sonar Waves */
     for(var si = sonarWaves.length - 1; si >= 0; si--){
@@ -2259,10 +2675,10 @@
       if(sw.r >= sw.maxR) sonarWaves.splice(si, 1);
     }
 
-    /* Update Bubbles, Sparkles, Coins, Ripples, Flying Stars */
+    /* Update Particles */
     for(var bi = bubbles.length - 1; bi >= 0; bi--){
       var bb = bubbles[bi];
-      bb.x += (bb.vx + Math.sin(tAcc * 5 + bi) * 14) * dt;
+      bb.x += (bb.vx - voyageSpeed * 0.25 + Math.sin(tAcc * 5 + bi) * 14) * dt;
       bb.y += bb.vy * dt;
       bb.vx *= 0.96;
       bb.life -= bb.decay * dt;
@@ -2298,6 +2714,12 @@
       fs.t += dt * 1.35;
       if(fs.t >= 1) flyingStars.splice(fi, 1);
     }
+    for(var pi = popLetters.length - 1; pi >= 0; pi--){
+      var pl = popLetters[pi];
+      pl.y -= 64 * dt;
+      pl.life -= dt * 1.15;
+      if(pl.life <= 0) popLetters.splice(pi, 1);
+    }
   }
 
   function render(now){
@@ -2305,68 +2727,81 @@
     lastTime = now;
     update(dt);
 
-    /* 1. Real Painted Pixar Ocean Backdrop (Crossfaded Reef <-> Deep Sea) */
+    /* 1. Real Continuous Mirrored-Tiling Painted Pixar Ocean Backdrop */
+    var bgScrollX = state.scrollX * 0.42;
     ctx.fillStyle = state.zone === "deep" ? "#05122d" : "#0a5a8c";
     ctx.fillRect(0, 0, W, H);
     if(state.zoneFade < 1){
-      drawCoverImage(bgImages[state.prevZone], 1);
-      drawCoverImage(bgImages[state.zone], state.zoneFade);
+      drawMirroredScrollingBg(bgImages[state.prevZone], 1, bgScrollX);
+      drawMirroredScrollingBg(bgImages[state.zone], state.zoneFade, bgScrollX);
     } else {
-      drawCoverImage(bgImages[state.zone], 1);
+      drawMirroredScrollingBg(bgImages[state.zone], 1, bgScrollX);
     }
 
-    /* 2. Animated Underwater Sunbeams (Reef) & Bioluminescent Plankton (Deep) */
-    if(state.zone === "reef"){
+    /* 2. Feathered Diagonal Scrolling Underwater Light Rays (0.55x parallax) */
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    var raySpan = Math.max(W + 380, 1400);
+    var rayOffset = (state.scrollX * 0.55) % raySpan;
+    for(var rb = 0; rb < 4; rb++){
+      var bx = raySpan - ((rayOffset + rb * (raySpan / 4)) % raySpan) - 140;
+      var rayW = Math.max(95, W * 0.11);
       ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      for(var rb = 0; rb < 4; rb++){
-        var bx = W * (0.22 + rb * 0.19) + Math.sin(tAcc * 0.7 + rb) * 32;
-        var bw = W * 0.085;
-        var rg = ctx.createLinearGradient(bx, 0, bx + 60, H * 0.72);
-        rg.addColorStop(0, "rgba(255, 252, 210, 0.08)");
-        rg.addColorStop(1, "rgba(125, 211, 252, 0)");
-        ctx.fillStyle = rg;
-        ctx.beginPath();
-        ctx.moveTo(bx - bw * 0.4, 0);
-        ctx.lineTo(bx + bw * 0.4, 0);
-        ctx.lineTo(bx + bw * 1.35, H * 0.78);
-        ctx.lineTo(bx - bw * 0.5, H * 0.78);
-        ctx.closePath();
-        ctx.fill();
+      ctx.translate(bx, -20);
+      ctx.rotate(0.24 + (rb % 2) * 0.05);
+      var rg = ctx.createLinearGradient(-rayW, 0, rayW, 0);
+      if(state.zone === "reef"){
+        rg.addColorStop(0, "rgba(255, 252, 210, 0)");
+        rg.addColorStop(0.5, "rgba(255, 252, 215, 0.085)");
+        rg.addColorStop(1, "rgba(255, 252, 210, 0)");
+      } else {
+        rg.addColorStop(0, "rgba(103, 232, 249, 0)");
+        rg.addColorStop(0.5, "rgba(103, 232, 249, 0.07)");
+        rg.addColorStop(1, "rgba(103, 232, 249, 0)");
       }
+      ctx.fillStyle = rg;
+      ctx.fillRect(-rayW, 0, rayW * 2, H * 0.85);
       ctx.restore();
     }
+    ctx.restore();
 
+    /* 3. Scrolling Ambient Plankton & Rising Current Motes */
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     ambientMotes.forEach(function(m){
-      var mx = ((m.x + Math.sin(tAcc * 0.4 + m.ph) * 0.025 + 1) % 1) * W;
+      var mx = W - (((state.scrollX * m.drift * 0.001 + m.x) % 1.15) + 1.15) % 1.15 * W;
       var my = ((m.y - tAcc * m.sp + 10) % 1) * H;
-      var a = (0.28 + Math.sin(tAcc * 2.5 + m.ph) * 0.22) * (state.zone === "deep" ? 1.3 : 0.75);
-      ctx.fillStyle = "hsla(" + m.hue + ", 95%, 82%, " + Math.min(0.85, a).toFixed(2) + ")";
+      var a = (0.3 + Math.sin(tAcc * 2.5 + m.ph) * 0.22) * (state.zone === "deep" ? 1.35 : 0.78);
+      ctx.fillStyle = "hsla(" + m.hue + ", 95%, 84%, " + Math.min(0.88, a).toFixed(2) + ")";
       ctx.beginPath(); ctx.arc(mx, my, m.r, 0, Math.PI * 2); ctx.fill();
     });
     ctx.restore();
 
-    /* 3. Touch Water Ripples */
+    /* 4. Midground Scrolling Seabed Reef Ridge */
+    drawScrollingSeabed();
+
+    /* 5. Touch Water Ripples */
     ripples.forEach(function(rp){
       ctx.save();
-      ctx.strokeStyle = "rgba(186, 230, 253, " + (rp.life * 0.75).toFixed(2) + ")";
+      ctx.strokeStyle = "rgba(186, 230, 253, " + (rp.life * 0.78).toFixed(2) + ")";
       ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2); ctx.stroke();
       ctx.restore();
     });
 
-    /* 4. Hidden Pearls, Sunken Treasure Chest, Sea Friends & Captain Hoot Submarine */
-    drawHiddenPearls();
-    drawTreasureChest();
+    /* 6. Sea Friends, Sunken Treasure Chest, Giant Letter Pearl Bubbles, Captain Hoot Sub */
     drawCreatures();
+    drawTreasureChest();
+    drawLetterBubbles();
     drawSubmarine();
 
-    /* 5. Deep Sea Volumetric Headlamp Illumination Overlay */
+    /* 7. Deep Sea Volumetric Headlamp & Bioluminescent Pearl Mask */
     drawDeepSeaLighting();
 
-    /* 6. Expanding Turquoise Sonar Rings (above lighting so always vivid!) */
+    /* 8. Foreground Parallax Kelp & Coral Silhouettes (1.38x depth!) */
+    drawForegroundParallax();
+
+    /* 9. Expanding Turquoise Sonar Rings */
     sonarWaves.forEach(function(sw){
       if(sw.delayed && sw.delayed > 0) return;
       ctx.save();
@@ -2380,11 +2815,11 @@
       ctx.restore();
     });
 
-    /* 7. Rainbow Pearl Bubbles */
+    /* 10. Rainbow & Wake Bubbles */
     bubbles.forEach(function(bb){
       ctx.save();
       ctx.globalAlpha = Math.max(0, Math.min(1, bb.life * 0.9));
-      ctx.fillStyle = "hsla(" + bb.hue + ", 92%, 82%, " + (bb.rainbow ? "0.32" : "0.18") + ")";
+      ctx.fillStyle = "hsla(" + bb.hue + ", 92%, 82%, " + (bb.rainbow ? "0.34" : "0.18") + ")";
       ctx.strokeStyle = "hsla(" + bb.hue + ", 96%, 80%, 0.92)";
       ctx.lineWidth = 2.2;
       ctx.beginPath(); ctx.arc(bb.x, bb.y, bb.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
@@ -2393,7 +2828,7 @@
       ctx.restore();
     });
 
-    /* 8. Spinning Treasure Coins & Pearls */
+    /* 11. Spinning Treasure Coins & Pearls */
     coins.forEach(function(co){
       ctx.save();
       ctx.globalAlpha = Math.max(0, Math.min(1, co.life * 1.4));
@@ -2414,7 +2849,25 @@
       ctx.restore();
     });
 
-    /* 9. Sparkle Stars & Flying Reward Stars */
+    /* 12. Celebratory Popped Letter Floats */
+    popLetters.forEach(function(pl){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, pl.life));
+      var sc = 1 + (1 - pl.life) * 0.7;
+      ctx.translate(pl.x, pl.y);
+      ctx.scale(sc, sc);
+      ctx.font = "800 54px 'Fredoka', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.lineWidth = 7;
+      ctx.strokeStyle = "#0b2239";
+      ctx.strokeText(pl.letter, 0, 0);
+      ctx.fillStyle = "#fde047";
+      ctx.fillText(pl.letter, 0, 0);
+      ctx.restore();
+    });
+
+    /* 13. Sparkles & Flying Reward Stars */
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     sparkles.forEach(function(sp){
@@ -2441,10 +2894,19 @@
     requestAnimationFrame(render);
   }
 
+  /* =========================================================================
+     12. BOOT VOYAGE!
+     ========================================================================= */
+  refillDeck();
+  state.targetLetter = popNextTargetLetter(null);
+  seedCreatures();
+  seedInitialBubbles();
+  syncHud();
+  speakTargetCallout(state.targetLetter, true);
   requestAnimationFrame(render);
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e149">
-<script src="js/hoot-game-tail.js?v=llprev3e149"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e150">
+<script src="js/hoot-game-tail.js?v=llprev3e150"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <base href="../">
 <script>window.__HOOT_GAME_KEY__="icecream";window.__HOOT_SELF_COACH__=true;</script>
-<script src="js/hoot-game-head.js?v=llprev3e149"></script>
+<script src="js/hoot-game-head.js?v=llprev3e150"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🍦</text></svg>" />
@@ -70,6 +70,21 @@
   @keyframes glowMint{
     0%, 100%{ box-shadow:0 6px 0 var(--outline), 0 0 12px 2px rgba(52,211,153,.55), inset 0 3px 0 rgba(255,255,255,.7); }
     50%{ box-shadow:0 6px 0 var(--outline), 0 0 28px 9px rgba(74,222,128,.96), inset 0 3px 0 rgba(255,255,255,.9); }
+  }
+  /* Soft 5-second pause golden shimmer hint for matching flavor/topping buttons (glow-only, never transform!) */
+  @keyframes goldShimmerHint{
+    0%, 100%{
+      box-shadow:0 6px 0 var(--outline), 0 0 0 4px #FACC15, 0 0 20px 6px rgba(255,212,59,.78), inset 0 3px 0 rgba(255,255,255,.88);
+      filter:brightness(1.03);
+    }
+    50%{
+      box-shadow:0 6px 0 var(--outline), 0 0 0 7px #FEF08A, 0 0 36px 14px rgba(255,212,59,1), inset 0 4px 12px rgba(255,253,220,.95);
+      filter:brightness(1.13) saturate(1.12);
+    }
+  }
+  .hint-shimmer{
+    animation:goldShimmerHint 1.05s ease-in-out infinite !important;
+    border-color:#B45309 !important;
   }
 
   /* Tactile spring button press */
@@ -172,10 +187,10 @@
 
   /* Serving Window Customer Peeking Over Wooden Counter Sill */
   #customerArea{
-    position:absolute; left:63%; bottom:33.5%;
+    position:absolute; left:54%; bottom:34%;
     transform:translateX(-50%);
-    width:clamp(220px, 27vw, 305px);
-    height:clamp(200px, 32vh, 280px);
+    width:clamp(215px, 23vw, 272px);
+    height:clamp(198px, 29vh, 250px);
     display:flex; align-items:flex-end; justify-content:center;
     pointer-events:none; z-index:4;
     overflow:visible;
@@ -223,37 +238,225 @@
     100%{ transform:translate(-4px, -2px) rotate(-2deg); }
   }
 
-  /* Customer Visual Reaction Bubble (Pure emoji/icon — zero text walls!) */
-  #custBubble{
-    position:absolute; right:-14px; top:8%;
-    min-width:64px; height:64px; padding:7px 11px;
-    background:rgba(255,253,245,.97);
-    border:4px solid var(--outline); border-radius:26px;
-    box-shadow:0 6px 0 var(--outline), 0 10px 18px rgba(59,29,14,.24);
-    display:flex; align-items:center; justify-content:center; gap:4px;
-    font-size:32px;
-    transform-origin:left bottom;
-    animation:bubbleFloat 2.2s ease-in-out infinite;
+  /* =========================================================================
+     GIANT VISUAL CUSTOMER ORDER CLOUD (Crystal-Clear Across the Room!)
+     ========================================================================= */
+  #orderCard{
+    position:absolute;
+    left:min(66%, calc(100vw - 262px));
+    top:96px;
+    width:246px;
+    min-width:190px;
+    min-height:218px;
+    padding:10px 12px 12px;
+    z-index:10;
+    pointer-events:none;
+    background:linear-gradient(180deg, #FFFDF7 0%, #FEF3C7 100%);
+    border:5px solid var(--outline);
+    border-radius:30px;
+    box-shadow:
+      0 8px 0 var(--outline),
+      0 14px 28px rgba(59,29,14,.32),
+      inset 0 0 0 4px #FFD43B,
+      inset 0 6px 0 4px rgba(255,255,255,.82);
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:6px;
+    transition:transform 360ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 260ms ease, box-shadow 260ms ease, background 260ms ease;
+    animation:orderCloudFloat 2.8s ease-in-out infinite;
   }
-  #custBubble::after{
-    content:""; position:absolute; left:-10px; bottom:12px;
-    width:16px; height:16px; background:var(--cream);
-    border-left:4px solid var(--outline); border-bottom:4px solid var(--outline);
-    transform:rotate(32deg); border-radius:3px;
+  #orderCard.entering{
+    opacity:0;
+    transform:scale(0.68) translateY(20px);
   }
-  @keyframes bubbleFloat{
-    0%, 100%{ transform:translateY(0px) scale(1); }
-    50%{ transform:translateY(-5px) scale(1.04); }
+  #orderCard.order-complete{
+    background:linear-gradient(180deg, #F0FDF4 0%, #FEF08A 100%);
+    box-shadow:
+      0 8px 0 var(--outline),
+      0 0 28px 6px rgba(74,222,128,.75),
+      inset 0 0 0 4px #22C55E,
+      inset 0 6px 0 4px rgba(255,255,255,.86);
+  }
+  /* Storybook Thought-Cloud Tail Dots pointing left toward the Customer */
+  #orderCard::before,
+  #orderCard::after{
+    content:"";
+    position:absolute;
+    background:linear-gradient(180deg, #FFFDF7 0%, #FEF3C7 100%);
+    border:4px solid var(--outline);
+    border-radius:50%;
+    box-shadow:0 4px 0 var(--outline), inset 0 0 0 2.5px #FFD43B;
+    pointer-events:none;
+  }
+  #orderCard::before{
+    width:24px; height:24px;
+    left:-18px; bottom:24px;
+  }
+  #orderCard::after{
+    width:15px; height:15px;
+    left:-34px; bottom:10px;
+  }
+  @keyframes orderCloudFloat{
+    0%, 100%{ transform:translateY(0px); }
+    50%{ transform:translateY(-5px); }
+  }
+
+  /* Compact Visual Star-Progress Header inside Order Cloud (Zero Text Walls!) */
+  .order-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    padding:2px 6px 0;
+  }
+  .order-who{
+    display:inline-flex; align-items:center; gap:4px;
+    background:linear-gradient(180deg, #FFE8A3 0%, #FFD43B 100%);
+    border:3px solid var(--outline);
+    border-radius:999px;
+    padding:2px 9px;
+    font-size:13px; font-weight:800; color:var(--ink);
+    box-shadow:0 2px 0 var(--outline);
+    line-height:1.1;
+  }
+  .order-stars{
+    display:flex; align-items:center; gap:3px;
+  }
+  .order-star-dot{
+    width:20px; height:20px;
+    border-radius:50%;
+    border:2.5px solid var(--outline);
+    background:#FDE6B8;
+    display:grid; place-items:center;
+    font-size:11px; line-height:1;
+    color:rgba(74,37,17,.35);
+    transition:transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), background 220ms ease;
+  }
+  .order-star-dot.filled{
+    background:linear-gradient(180deg, #4ADE80 0%, #16A34A 100%);
+    color:#FFF;
+    transform:scale(1.16);
+    box-shadow:0 0 10px rgba(74,222,128,.85);
+  }
+
+  /* Two-column Main Body: GIANT SVG Ice Cream Preview + Big Individual Ingredient Badges */
+  .order-body{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    flex:1 1 auto;
+  }
+  .order-preview-wrap{
+    flex:1 1 auto;
+    min-width:118px;
+    height:170px;
+    background:radial-gradient(circle at 50% 48%, #FFFFFF 0%, #FFF8DB 68%, #FDE68A 100%);
+    border:3.5px solid var(--outline);
+    border-radius:22px;
+    box-shadow:inset 0 4px 10px rgba(245,158,11,.18), 0 4px 0 rgba(74,37,17,.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  #orderPreviewSvg{
+    width:100%; height:100%;
+    overflow:visible;
+    filter:drop-shadow(0 4px 5px rgba(59,29,14,.24));
+  }
+
+  /* Right Column: Big Individual Ingredient Icon Badges (>= 44px each!) */
+  #orderBadges{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    flex:0 0 auto;
+  }
+  .order-badge{
+    position:relative;
+    width:54px; height:54px;
+    min-width:46px; min-height:46px;
+    border-radius:17px;
+    border:3.5px solid var(--outline);
+    background:#FFFFFF;
+    box-shadow:0 4px 0 var(--outline), inset 0 2px 0 rgba(255,255,255,.85);
+    display:grid; place-items:center;
+    transition:background 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  }
+  .order-badge.bg-strawberry{ background:linear-gradient(180deg, #FFF0F6 0%, #FBCFE8 100%); }
+  .order-badge.bg-vanilla{    background:linear-gradient(180deg, #FFFDF5 0%, #FEF08A 100%); }
+  .order-badge.bg-chocolate{  background:linear-gradient(180deg, #F3DFC8 0%, #D6A276 100%); }
+  .order-badge.bg-rainbow{    background:linear-gradient(135deg, #FFC2DC 0%, #BAE6FD 50%, #FDE68A 100%); }
+  .order-badge.bg-sprinkles{  background:linear-gradient(180deg, #FFF8E7 0%, #FBCFE8 100%); }
+  .order-badge.bg-drizzle{    background:linear-gradient(180deg, #FEF3C7 0%, #D6A276 100%); }
+  .order-badge.bg-whip{       background:linear-gradient(180deg, #FFFFFF 0%, #DBEAFE 100%); }
+  .order-badge.bg-cherry{     background:linear-gradient(180deg, #FFE4E6 0%, #FCA5A5 100%); }
+  .order-badge svg{
+    width:42px; height:42px; overflow:visible;
+  }
+  .order-badge.matched{
+    background:linear-gradient(180deg, #ECFDF5 0%, #BBF7D0 100%) !important;
+    border-color:#15803D;
+    box-shadow:0 4px 0 #15803D, 0 0 14px rgba(34,197,94,.65);
+  }
+  .order-badge .badge-check{
+    position:absolute; top:-8px; right:-8px;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:linear-gradient(180deg, #4ADE80 0%, #16A34A 100%);
+    color:#FFFFFF;
+    border:3px solid var(--outline);
+    box-shadow:0 3px 0 var(--outline);
+    display:grid; place-items:center;
+    font-size:15px; font-weight:900; line-height:1;
+    opacity:0;
+    transform:scale(0.15) rotate(-35deg);
+    transition:transform 340ms cubic-bezier(0.34, 1.65, 0.64, 1), opacity 180ms ease;
+  }
+  .order-badge.matched .badge-check{
+    opacity:1;
+    transform:scale(1) rotate(0deg);
+  }
+
+  /* Joyful Reaction / Perfect Order Overlay Banner inside Order Cloud when Serving */
+  #orderReaction{
+    position:absolute; inset:0; z-index:4;
+    border-radius:20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    background:rgba(255,253,245,.90);
+    backdrop-filter:blur(2px);
+    animation:reactionPop 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  #orderReaction .react-emoji{ font-size:54px; line-height:1; }
+  #orderReaction .react-tag{
+    background:linear-gradient(180deg, #FDE047 0%, #F59E0B 100%);
+    color:var(--ink); border:3px solid var(--outline); border-radius:999px;
+    padding:3px 8px; font-size:12px; font-weight:900; line-height:1.1;
+    white-space:nowrap; max-width:94%; text-align:center;
+    box-shadow:0 3px 0 var(--outline);
+  }
+  #orderReaction.perfect .react-tag{
+    background:linear-gradient(180deg, #4ADE80 0%, #16A34A 100%);
+    color:#FFF;
+  }
+  @keyframes reactionPop{
+    0%{ opacity:0; transform:scale(0.45); }
+    100%{ opacity:1; transform:scale(1); }
   }
 
   /* =========================================================================
      HERO ICE CREAM CREATION STAGE (Standing Proudly on the Wooden Counter!)
      ========================================================================= */
   #coneStage{
-    position:absolute; left:42%; bottom:128px;
+    position:absolute; left:34%; bottom:126px;
     transform:translateX(-50%);
-    width:clamp(210px, 26vw, 272px);
-    height:clamp(275px, 44vh, 366px);
+    width:clamp(206px, 24vw, 266px);
+    height:clamp(270px, 43vh, 356px);
     display:flex; align-items:flex-end; justify-content:center;
     z-index:8; pointer-events:none;
   }
@@ -262,10 +465,10 @@
     transform-box:fill-box; transform-origin:center bottom;
   }
   #coneStage.serving-up #iceCreamGroup{
-    transform:translate(112px, -62px) rotate(11deg) scale(0.86);
+    transform:translate(132px, -62px) rotate(11deg) scale(0.86);
   }
   #coneStage.bitten #iceCreamGroup{
-    transform:translate(106px, -54px) rotate(5deg) scale(0.83);
+    transform:translate(124px, -54px) rotate(5deg) scale(0.83);
   }
   #coneSvg{
     width:100%; height:100%; overflow:visible;
@@ -466,11 +669,12 @@
 
   /* Floating Scoop Count Pop Badge on Counter */
   #scoopCounterBadge{
-    position:absolute; left:42%; bottom:44%;
+    position:absolute; left:34%; bottom:44%;
     transform:translate(-50%, 0); z-index:16; pointer-events:none;
-    font-family:"Fredoka",sans-serif; font-weight:800; font-size:52px;
+    font-family:"Fredoka",sans-serif; font-weight:800; font-size:48px;
     color:#FFFDF5; -webkit-text-stroke:3px var(--outline);
     text-shadow:0 6px 0 var(--outline), 0 10px 18px rgba(0,0,0,.3);
+    white-space:nowrap;
     opacity:0;
   }
   #scoopCounterBadge.pop{
@@ -518,10 +722,19 @@
      RESPONSIVE LAYOUT: iPad Landscape (1024x768) & iPhone Portrait (390x844)
      ========================================================================= */
   @media (max-width: 1080px) and (max-height: 800px){
-    #customerArea{ left:64%; bottom:33.5%; width:240px; height:220px; }
-    #coneStage{ left:42%; bottom:122px; width:230px; height:316px; }
-    #coneStage.serving-up #iceCreamGroup{ transform:translate(96px, -54px) rotate(11deg) scale(0.86); }
-    #coneStage.bitten #iceCreamGroup{ transform:translate(90px, -48px) rotate(5deg) scale(0.83); }
+    #customerArea{ left:53%; bottom:34%; width:220px; height:204px; }
+    #orderCard{
+      left:min(66%, calc(100vw - 246px));
+      top:90px;
+      width:232px; min-height:202px; padding:9px 11px 11px;
+    }
+    .order-preview-wrap{ height:158px; min-width:112px; }
+    .order-badge{ width:50px; height:50px; }
+    .order-badge svg{ width:38px; height:38px; }
+    #coneStage{ left:32%; bottom:118px; width:222px; height:306px; }
+    #scoopCounterBadge{ left:32%; }
+    #coneStage.serving-up #iceCreamGroup{ transform:translate(114px, -54px) rotate(11deg) scale(0.86); }
+    #coneStage.bitten #iceCreamGroup{ transform:translate(106px, -48px) rotate(5deg) scale(0.83); }
     #serveBellBtn{ bottom:134px; width:90px; height:90px; }
     #goToppingsBtn, #backScoopBtn{ bottom:138px; }
   }
@@ -540,25 +753,40 @@
     #doneBtn{ min-width:64px; min-height:64px; padding:6px 12px; font-size:16px; border-width:3.5px; }
 
     #customerArea{
-      left:60%; bottom:34%; width:200px; height:182px;
+      left:23%; bottom:34.2%; width:156px; height:146px;
     }
-    #custBubble{
-      right:-14px; top:4px; min-width:54px; height:54px; font-size:26px;
-      border-width:3.5px; padding:4px 8px;
+    #orderCard{
+      left:auto; right:10px; top:134px;
+      width:204px; min-width:192px; min-height:186px;
+      padding:8px 9px 10px; border-width:4px; border-radius:24px; gap:5px;
     }
+    #orderCard::before{ width:18px; height:18px; left:-13px; bottom:18px; border-width:3.5px; }
+    #orderCard::after{ width:11px; height:11px; left:-24px; bottom:7px; border-width:3px; }
+    .order-who{ font-size:12px; padding:2px 7px; border-width:2.5px; }
+    .order-star-dot{ width:18px; height:18px; font-size:10px; border-width:2px; }
+    .order-body{ gap:6px; }
+    .order-preview-wrap{ min-width:104px; height:144px; border-radius:17px; border-width:3px; }
+    #orderBadges{ gap:6px; }
+    .order-badge{ width:46px; height:46px; min-width:44px; min-height:44px; border-radius:14px; border-width:3px; }
+    .order-badge svg{ width:34px; height:34px; }
+    .order-badge .badge-check{ width:22px; height:22px; font-size:13px; top:-6px; right:-6px; border-width:2.5px; }
+    #orderReaction .react-emoji{ font-size:44px; }
+    #orderReaction .react-tag{ font-size:11px; padding:2px 6px; }
+
     #coneStage{
-      left:40%; bottom:118px; width:196px; height:276px;
+      left:53%; bottom:116px; width:178px; height:246px;
     }
-    #coneStage.serving-up #iceCreamGroup{ transform:translate(58px, -74px) rotate(10deg) scale(0.84); }
-    #coneStage.bitten #iceCreamGroup{ transform:translate(52px, -68px) rotate(4deg) scale(0.8); }
+    #scoopCounterBadge{ left:53%; bottom:41%; font-size:40px; }
+    #coneStage.serving-up #iceCreamGroup{ transform:translate(-76px, -74px) rotate(-10deg) scale(0.82); }
+    #coneStage.bitten #iceCreamGroup{ transform:translate(-68px, -68px) rotate(-4deg) scale(0.79); }
 
     #serveBellBtn{
-      right:10px; bottom:138px; width:82px; height:82px; min-width:76px; min-height:76px;
+      right:8px; bottom:136px; width:80px; height:80px; min-width:74px; min-height:74px;
       border-width:4px;
     }
     #goToppingsBtn, #backScoopBtn{
-      left:10px; bottom:142px; min-width:74px; min-height:74px; padding:6px 8px; font-size:13px;
-      border-width:3.5px; border-radius:22px;
+      left:8px; bottom:140px; min-width:72px; min-height:72px; padding:6px 7px; font-size:12px;
+      border-width:3.5px; border-radius:20px;
     }
 
     #counterDock{
@@ -575,13 +803,20 @@
     .flavor-btn svg, .top-btn svg{ width:44px; height:44px; }
     #nextCustomerBtn{ min-height:68px; min-width:210px; font-size:21px; padding:8px 22px; }
   }
+
+  @media (max-width: 680px) and (max-height: 700px){
+    #customerArea{ bottom:41%; width:140px; height:132px; }
+    #orderCard{ top:126px; width:196px; min-height:166px; }
+    .order-preview-wrap{ height:128px; }
+    #coneStage{ bottom:106px; width:166px; height:216px; }
+  }
 </style>
 </head>
 <body>
 <div id="stage">
   <!-- Full-Bleed Illustrated Ice Cream Truck Background -->
   <div id="bgLayer">
-    <img id="bgImg" src="assets/icecream_cartoon/counter_bg.jpg?v=llprev3e149" alt="" />
+    <img id="bgImg" src="assets/icecream_cartoon/counter_bg.jpg?v=llprev3e150" alt="" />
   </div>
   <div id="sunGlow"></div>
 
@@ -640,7 +875,24 @@
     <div id="customerArea">
       <div id="customerWrap" class="idle-bob">
         <svg id="customerSvg" viewBox="0 0 240 220" aria-hidden="true"></svg>
-        <div id="custBubble" aria-hidden="true">🍓</div>
+      </div>
+    </div>
+
+    <!-- GIANT Visual Customer Order Cloud (Custom SVG Mini-Preview + Big Checked Badges!) -->
+    <div id="orderCard" role="region" aria-label="Customer ice cream order">
+      <div class="order-head">
+        <span class="order-who" id="orderWho">🐰</span>
+        <div class="order-stars" id="orderStars" aria-hidden="true"></div>
+      </div>
+      <div class="order-body">
+        <div class="order-preview-wrap">
+          <svg id="orderPreviewSvg" viewBox="0 0 150 205" aria-hidden="true"></svg>
+          <div id="orderReaction" hidden>
+            <div class="react-emoji" id="orderReactEmoji">😍</div>
+            <div class="react-tag" id="orderReactTag">⭐ +2</div>
+          </div>
+        </div>
+        <div id="orderBadges" aria-label="Order ingredients"></div>
       </div>
     </div>
 
@@ -920,7 +1172,7 @@
   <!-- Win / Done Overlay -->
   <div id="winOverlay" hidden>
     <div class="win-card" id="winCard">
-      <img src="assets/icecream_cartoon/thumb_icecream.jpg?v=llprev3e149" alt="Hoot serving a giant colorful ice cream cone" />
+      <img src="assets/icecream_cartoon/thumb_icecream.jpg?v=llprev3e150" alt="Hoot serving a giant colorful ice cream cone" />
       <h2>Ice Cream Star!</h2>
       <div class="win-stars" id="winSummary">⭐ 0 • 🍦 0</div>
       <div class="win-btns">
@@ -1141,6 +1393,37 @@
     }catch(e){}
   }
 
+  function sfxCheckDing(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [880.0, 1174.66, 1567.98].forEach(function(f, k){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.11, t + k * 0.045);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.28 + k * 0.045);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + k * 0.045); o.stop(t + 0.30 + k * 0.045);
+      });
+    }catch(e){}
+  }
+
+  function sfxPerfectFanfare(){
+    try{
+      var c = ac(); if(!c) return;
+      var t = c.currentTime;
+      [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98, 2093.0].forEach(function(f, k){
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = (k % 2 === 0 ? "triangle" : "sine");
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.14, t + k * 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.56 + k * 0.05);
+        o.connect(g); g.connect(c.destination);
+        o.start(t + k * 0.05); o.stop(t + 0.60 + k * 0.05);
+      });
+    }catch(e){}
+  }
+
   /* =========================================================================
      3. 60FPS PARTICLE FX CANVAS (Sprinkles, Cream Puffs, Hearts, Frost, Confetti)
      ========================================================================= */
@@ -1259,6 +1542,42 @@
     }
   }
 
+  function spawnConfetti(x, y, count){
+    var cols = ["#FFD43B", "#FF4D79", "#4ADE80", "#38BDF8", "#C084FC", "#FB923C", "#F472B6"];
+    for(var i = 0; i < (count || 44); i++){
+      var a = -Math.PI * 0.5 + (Math.random() - 0.5) * Math.PI * 1.45;
+      var spd = 140 + Math.random() * 270;
+      particles.push({
+        kind: (i % 4 === 0 ? "star" : "confetti"),
+        x: x + (Math.random() - 0.5) * 90,
+        y: y + (Math.random() - 0.5) * 40,
+        vx: Math.cos(a) * spd,
+        vy: Math.sin(a) * spd - 80,
+        r: 7 + Math.random() * 6,
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 11,
+        col: cols[i % cols.length],
+        life: 1,
+        decay: 0.42 + Math.random() * 0.22
+      });
+    }
+  }
+
+  function drawStar(x, y, r, col, rot){
+    fctx.save();
+    fctx.translate(x, y); fctx.rotate(rot || 0);
+    fctx.fillStyle = col; fctx.strokeStyle = "#4A2511"; fctx.lineWidth = 2;
+    fctx.beginPath();
+    for(var i = 0; i < 10; i++){
+      var rad = (i % 2 === 0 ? r : r * 0.46);
+      var ang = (i * Math.PI) / 5 - Math.PI / 2;
+      var px = Math.cos(ang) * rad, py = Math.sin(ang) * rad;
+      if(i === 0) fctx.moveTo(px, py); else fctx.lineTo(px, py);
+    }
+    fctx.closePath(); fctx.fill(); fctx.stroke();
+    fctx.restore();
+  }
+
   function drawHeart(x, y, r, col, rot){
     fctx.save();
     fctx.translate(x, y); fctx.rotate(rot || 0);
@@ -1282,6 +1601,7 @@
         p.life -= dt * p.decay;
         if(p.life <= 0){ particles.splice(i, 1); continue; }
         if(p.kind === "sparkle" || p.kind === "sprinkle" || p.kind === "drop") p.vy += 260 * dt;
+        if(p.kind === "confetti" || p.kind === "star"){ p.vy += 290 * dt; p.vx *= (1 - 0.6 * dt); }
         if(p.vr) p.rot += p.vr * dt;
         p.x += p.vx * dt; p.y += p.vy * dt;
 
@@ -1297,6 +1617,14 @@
           fctx.beginPath();
           fctx.roundRect(-6, -2.5, 12, 5, 2.5);
           fctx.fill(); fctx.stroke();
+        } else if(p.kind === "confetti"){
+          fctx.translate(p.x, p.y); fctx.rotate(p.rot);
+          fctx.fillStyle = p.col; fctx.strokeStyle = "#4A2511"; fctx.lineWidth = 1.6;
+          fctx.beginPath();
+          fctx.roundRect(-p.r * 0.75, -p.r * 0.36, p.r * 1.5, p.r * 0.72, 2);
+          fctx.fill(); fctx.stroke();
+        } else if(p.kind === "star"){
+          drawStar(p.x, p.y, p.r, p.col, p.rot);
         } else if(p.kind === "drop"){
           fctx.fillStyle = p.col; fctx.strokeStyle = "#4A2511"; fctx.lineWidth = 1.6;
           fctx.beginPath(); fctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -1324,15 +1652,80 @@
   requestAnimationFrame(fxTick);
 
   /* =========================================================================
-     4. ILLUSTRATED STORYBOOK ANIMAL CUSTOMERS (Crisp Thick-Outlined SVG!)
+     4. ILLUSTRATED STORYBOOK ANIMAL CUSTOMERS & SCALED VISUAL ORDERS
         0: Bunny  |  1: Puppy  |  2: Bear  |  3: Baby Dino
+        kid=kida (Zane): 2 distinct flavors + 1 topping
+        kid=kidb (Riley): 1-2 flavors + 1 topping
      ========================================================================= */
+  function detectKidMode(){
+    try{
+      var p = new URLSearchParams(window.location.search);
+      var k = (p.get("kid") || "").toLowerCase();
+      if(k === "kidb" || k === "riley") return "kidb";
+      if(k === "kida" || k === "zane") return "kida";
+      if(window.parent && window.parent !== window){
+        var pk = (new URLSearchParams(window.parent.location.search).get("kid") || "").toLowerCase();
+        if(pk === "kidb" || pk === "riley") return "kidb";
+      }
+    }catch(e){}
+    return "kida";
+  }
+  var KID_MODE = detectKidMode();
+
   var CUSTOMERS = [
-    { key: "bunny", name: "Bunny", crave: "🍓" },
-    { key: "puppy", name: "Puppy", crave: "🍫" },
-    { key: "bear",  name: "Bear",  crave: "🍨" },
-    { key: "dino",  name: "Baby Dino", crave: "🌈" }
+    {
+      key: "bunny", name: "Bunny", emoji: "🐰",
+      ordersA: [
+        { flavors: ["strawberry", "vanilla"], topping: "cherry" },
+        { flavors: ["strawberry", "rainbow"], topping: "sprinkles" }
+      ],
+      ordersB: [
+        { flavors: ["strawberry"], topping: "cherry" },
+        { flavors: ["strawberry", "vanilla"], topping: "sprinkles" }
+      ]
+    },
+    {
+      key: "puppy", name: "Puppy", emoji: "🐶",
+      ordersA: [
+        { flavors: ["chocolate", "vanilla"], topping: "sprinkles" },
+        { flavors: ["chocolate", "strawberry"], topping: "drizzle" }
+      ],
+      ordersB: [
+        { flavors: ["chocolate"], topping: "sprinkles" },
+        { flavors: ["chocolate", "vanilla"], topping: "drizzle" }
+      ]
+    },
+    {
+      key: "bear", name: "Bear", emoji: "🐻",
+      ordersA: [
+        { flavors: ["strawberry", "chocolate"], topping: "whip" },
+        { flavors: ["vanilla", "rainbow"], topping: "cherry" }
+      ],
+      ordersB: [
+        { flavors: ["vanilla", "strawberry"], topping: "whip" },
+        { flavors: ["vanilla"], topping: "cherry" }
+      ]
+    },
+    {
+      key: "dino", name: "Baby Dino", emoji: "🦕",
+      ordersA: [
+        { flavors: ["rainbow", "strawberry"], topping: "drizzle" },
+        { flavors: ["rainbow", "chocolate"], topping: "whip" }
+      ],
+      ordersB: [
+        { flavors: ["rainbow"], topping: "drizzle" },
+        { flavors: ["rainbow", "strawberry"], topping: "whip" }
+      ]
+    }
   ];
+
+  function pickOrderForCustomer(customerIdx, roundNum){
+    var cust = CUSTOMERS[customerIdx % CUSTOMERS.length];
+    var list = (KID_MODE === "kidb") ? cust.ordersB : cust.ordersA;
+    var cycle = Math.floor((roundNum || 0) / CUSTOMERS.length);
+    var src = list[cycle % list.length];
+    return { flavors: src.flavors.slice(), topping: src.topping };
+  }
 
   function buildCustomerSVG(key, mood){
     /* mood: "happy" | "open" | "heart" | "freeze" */
@@ -1674,6 +2067,214 @@
   }
 
   /* =========================================================================
+     5B. GIANT VISUAL ORDER CLOUD RENDERER (Custom Mini-Preview SVG + Big Badges)
+     ========================================================================= */
+  function buildOrderPreviewSVG(order){
+    var flavors = (order && order.flavors) ? order.flavors : ["strawberry"];
+    var topping = (order && order.topping) ? order.topping : "cherry";
+    var single = (flavors.length === 1);
+
+    var defs = '<defs>' +
+      '<linearGradient id="ogWaffle" x1="0%" y1="0%" x2="100%" y2="0%">' +
+        '<stop offset="0%" stop-color="#F6B859"/><stop offset="40%" stop-color="#FFD480"/><stop offset="85%" stop-color="#DC8B32"/><stop offset="100%" stop-color="#B5651D"/>' +
+      '</linearGradient>' +
+      '<radialGradient id="ogStraw" cx="34%" cy="28%" r="72%">' +
+        '<stop offset="0%" stop-color="#FFD1E3"/><stop offset="40%" stop-color="#FF7AA8"/><stop offset="88%" stop-color="#E11D74"/>' +
+      '</radialGradient>' +
+      '<radialGradient id="ogVanilla" cx="34%" cy="26%" r="72%">' +
+        '<stop offset="0%" stop-color="#FFFFFF"/><stop offset="48%" stop-color="#FFF6D6"/><stop offset="90%" stop-color="#F5D08A"/>' +
+      '</radialGradient>' +
+      '<radialGradient id="ogChoco" cx="34%" cy="26%" r="72%">' +
+        '<stop offset="0%" stop-color="#B87344"/><stop offset="40%" stop-color="#7B3F1D"/><stop offset="88%" stop-color="#4A220D"/>' +
+      '</radialGradient>' +
+      '<linearGradient id="ogRainbow" x1="0%" y1="0%" x2="100%" y2="100%">' +
+        '<stop offset="0%" stop-color="#FF85B3"/><stop offset="33%" stop-color="#FDE047"/><stop offset="66%" stop-color="#7DD3FC"/><stop offset="100%" stop-color="#C084FC"/>' +
+      '</linearGradient>' +
+      '<radialGradient id="ogWhip" cx="36%" cy="28%" r="72%">' +
+        '<stop offset="0%" stop-color="#FFFFFF"/><stop offset="65%" stop-color="#FFFDF5"/><stop offset="100%" stop-color="#CBD5E1"/>' +
+      '</radialGradient>' +
+      '<radialGradient id="ogCherry" cx="32%" cy="26%" r="72%">' +
+        '<stop offset="0%" stop-color="#FF8A9B"/><stop offset="38%" stop-color="#EF4444"/><stop offset="88%" stop-color="#B91C1C"/>' +
+      '</radialGradient>' +
+      '<linearGradient id="ogSyrup" x1="0%" y1="0%" x2="100%" y2="100%">' +
+        '<stop offset="0%" stop-color="#78350F"/><stop offset="50%" stop-color="#451A03"/><stop offset="100%" stop-color="#290F02"/>' +
+      '</linearGradient>' +
+    '</defs>';
+
+    var fillMap = {
+      strawberry: "url(#ogStraw)",
+      vanilla:    "url(#ogVanilla)",
+      chocolate:  "url(#ogChoco)",
+      rainbow:    "url(#ogRainbow)"
+    };
+
+    /* Soft sunny halo + golden waffle cone */
+    var coneTopY = single ? 126 : 132;
+    var out = defs +
+      '<circle cx="75" cy="104" r="62" fill="#FFFDF4" opacity="0.68"/>' +
+      '<g>' +
+        '<path d="M47 '+coneTopY+' L103 '+coneTopY+' L75 196 Z" fill="url(#ogWaffle)" stroke="#4A2511" stroke-width="4" stroke-linejoin="round"/>' +
+        '<path d="M54 '+(coneTopY+14)+' L96 '+(coneTopY+14)+' M59 '+(coneTopY+28)+' L91 '+(coneTopY+28)+' M64 '+(coneTopY+42)+' L86 '+(coneTopY+42)+' M60 '+coneTopY+' L81 '+(coneTopY+44)+' M75 '+coneTopY+' L66 '+(coneTopY+38)+' M90 '+coneTopY+' L72 '+(coneTopY+50)+'" stroke="#9A4E16" stroke-width="2" opacity="0.55"/>' +
+        '<ellipse cx="75" cy="'+coneTopY+'" rx="30" ry="7.5" fill="#FFE2A3" stroke="#4A2511" stroke-width="3.6"/>' +
+      '</g>';
+
+    /* Stacked scoops (drawn bottom-to-top) */
+    var scoopCoords = [];
+    for(var i = 0; i < flavors.length; i++){
+      var f = flavors[i];
+      var r  = single ? 38 : (i === 0 ? 33 : 30.5);
+      var cx = 75 + (i === 1 ? -2 : 0);
+      var cy = single ? 95 : (i === 0 ? 110 : 71);
+      scoopCoords.push({ cx: cx, cy: cy, r: r });
+
+      var extra = "";
+      if(f === "strawberry"){
+        extra = '<circle cx="'+(cx-12)+'" cy="'+(cy+5)+'" r="2" fill="#BE185D" opacity="0.7"/>' +
+                '<circle cx="'+(cx+11)+'" cy="'+(cy-3)+'" r="2" fill="#BE185D" opacity="0.7"/>' +
+                '<circle cx="'+(cx+3)+'" cy="'+(cy+10)+'" r="2" fill="#BE185D" opacity="0.7"/>';
+      } else if(f === "rainbow"){
+        extra = '<path d="M'+(cx-r*0.7)+' '+(cy+3)+' Q'+cx+' '+(cy-14)+' '+(cx+r*0.7)+' '+(cy-2)+'" fill="none" stroke="#FFF" stroke-width="4.5" stroke-linecap="round" opacity="0.62"/>' +
+                '<path d="M'+(cx-r*0.5)+' '+(cy+12)+' Q'+(cx+3)+' '+(cy+2)+' '+(cx+r*0.58)+' '+(cy+11)+'" fill="none" stroke="#FF85B3" stroke-width="4" stroke-linecap="round" opacity="0.58"/>';
+      } else if(f === "vanilla"){
+        extra = '<circle cx="'+(cx-9)+'" cy="'+(cy+6)+'" r="1.5" fill="#92400E" opacity="0.55"/>' +
+                '<circle cx="'+(cx+11)+'" cy="'+(cy+2)+'" r="1.5" fill="#92400E" opacity="0.55"/>';
+      } else if(f === "chocolate"){
+        extra = '<path d="M'+(cx-13)+' '+(cy+9)+' Q'+cx+' '+(cy+17)+' '+(cx+15)+' '+(cy+7)+'" fill="none" stroke="#4A220D" stroke-width="3.2" stroke-linecap="round" opacity="0.48"/>';
+      }
+
+      out += '<g>' +
+        '<path d="M'+(cx-r)+' '+(cy+9)+' ' +
+          'C'+(cx-r)+' '+(cy-r*0.92)+' '+(cx-r*0.42)+' '+(cy-r*1.04)+' '+cx+' '+(cy-r*1.04)+' ' +
+          'C'+(cx+r*0.42)+' '+(cy-r*1.04)+' '+(cx+r)+' '+(cy-r*0.92)+' '+(cx+r)+' '+(cy+9)+' ' +
+          'C'+(cx+r+5)+' '+(cy+18)+' '+(cx+r*0.66)+' '+(cy+26)+' '+(cx+r*0.42)+' '+(cy+21)+' ' +
+          'C'+(cx+r*0.24)+' '+(cy+28)+' '+(cx+r*0.04)+' '+(cy+24)+' '+cx+' '+(cy+21)+' ' +
+          'C'+(cx-r*0.08)+' '+(cy+27)+' '+(cx-r*0.28)+' '+(cy+27)+' '+(cx-r*0.42)+' '+(cy+21)+' ' +
+          'C'+(cx-r*0.68)+' '+(cy+26)+' '+(cx-r-5)+' '+(cy+18)+' '+(cx-r)+' '+(cy+9)+' Z" ' +
+          'fill="'+(fillMap[f] || fillMap.strawberry)+'" stroke="#4A2511" stroke-width="3.8" stroke-linejoin="round"/>' +
+        '<ellipse cx="'+(cx-r*0.33)+'" cy="'+(cy-r*0.40)+'" rx="'+(r*0.27)+'" ry="'+(r*0.15)+'" fill="#FFF" opacity="0.68" transform="rotate(-24 '+(cx-r*0.33)+' '+(cy-r*0.40)+')"/>' +
+        extra +
+      '</g>';
+    }
+
+    /* Prominent Unmistakable Topping on Top Scoop */
+    var top = scoopCoords[scoopCoords.length - 1];
+    var peakY = top.cy - top.r;
+
+    if(topping === "drizzle"){
+      var rx = top.r, cy = top.cy, cx = top.cx, yt = peakY - 1;
+      out += '<g>' +
+        '<path d="M'+(cx-rx*0.80)+' '+(cy-2)+' ' +
+          'C'+(cx-rx*0.64)+' '+(yt+2)+' '+(cx-rx*0.26)+' '+(yt-2)+' '+cx+' '+yt+' ' +
+          'C'+(cx+rx*0.28)+' '+(yt-2)+' '+(cx+rx*0.68)+' '+(yt+4)+' '+(cx+rx*0.82)+' '+(cy-1)+' ' +
+          'C'+(cx+rx*0.84)+' '+(cy+12)+' '+(cx+rx*0.62)+' '+(cy+20)+' '+(cx+rx*0.50)+' '+(cy+9)+' ' +
+          'C'+(cx+rx*0.40)+' '+(cy+1)+' '+(cx+rx*0.30)+' '+(cy+23)+' '+(cx+rx*0.16)+' '+(cy+18)+' ' +
+          'C'+(cx+rx*0.02)+' '+(cy+14)+' '+(cx+rx*0.01)+' '+(cy+1)+' '+(cx-rx*0.14)+' '+(cy+13)+' ' +
+          'C'+(cx-rx*0.28)+' '+(cy+25)+' '+(cx-rx*0.46)+' '+(cy+17)+' '+(cx-rx*0.46)+' '+(cy+6)+' ' +
+          'C'+(cx-rx*0.56)+' '+(cy+17)+' '+(cx-rx*0.78)+' '+(cy+11)+' '+(cx-rx*0.80)+' '+(cy-2)+' Z" ' +
+          'fill="url(#ogSyrup)" stroke="#4A2511" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M'+(cx-rx*0.35)+' '+(yt+8)+' Q'+(cx-rx*0.08)+' '+(yt+4)+' '+(cx+rx*0.22)+' '+(yt+7)+'" fill="none" stroke="#C88A55" stroke-width="3" stroke-linecap="round" opacity="0.72"/>' +
+      '</g>';
+    } else if(topping === "sprinkles"){
+      var scols = ["#EF4444", "#FACC15", "#38BDF8", "#4ADE80", "#F472B6", "#C084FC", "#FB923C"];
+      var spts = [
+        [-19, -11, -28], [-7, -20, 18], [9, -19, -16], [19, -9, 30],
+        [-21, 5, 22], [-6, 1, -34], [10, 3, 24], [20, 7, -18],
+        [-12, 13, 12], [5, 13, -22]
+      ];
+      out += '<g>';
+      for(var si = 0; si < scoopCoords.length; si++){
+        var sc = scoopCoords[si];
+        var scl = sc.r / 33;
+        for(var pi = 0; pi < spts.length; pi++){
+          if(si < scoopCoords.length - 1 && pi < 4) continue;
+          var spx = sc.cx + spts[pi][0] * scl;
+          var spy = sc.cy + spts[pi][1] * scl;
+          var srot = spts[pi][2] + si * 15;
+          out += '<rect x="'+(spx-5)+'" y="'+(spy-2.2)+'" width="10" height="4.4" rx="2.2" fill="'+scols[(pi + si * 3) % scols.length]+'" stroke="#4A2511" stroke-width="1.5" transform="rotate('+srot+' '+spx+' '+spy+')"/>';
+        }
+      }
+      out += '</g>';
+    } else if(topping === "whip"){
+      var wcx = top.cx, wpy = peakY + 6;
+      out += '<g>' +
+        '<path d="M'+(wcx-24)+' '+(wpy+3)+' C'+(wcx-29)+' '+(wpy+1)+' '+(wcx-28)+' '+(wpy-10)+' '+(wcx-18)+' '+(wpy-10)+' ' +
+          'C'+(wcx-21)+' '+(wpy-19)+' '+(wcx-10)+' '+(wpy-23)+' '+(wcx-3)+' '+(wpy-21)+' ' +
+          'C'+(wcx-3)+' '+(wpy-31)+' '+(wcx+5)+' '+(wpy-36)+' '+(wcx+9)+' '+(wpy-33)+' ' +
+          'C'+(wcx+7)+' '+(wpy-26)+' '+(wcx+12)+' '+(wpy-22)+' '+(wcx+17)+' '+(wpy-18)+' ' +
+          'C'+(wcx+26)+' '+(wpy-15)+' '+(wcx+26)+' '+(wpy-6)+' '+(wcx+21)+' '+(wpy-4)+' ' +
+          'C'+(wcx+28)+' '+(wpy-1)+' '+(wcx+27)+' '+(wpy+7)+' '+(wcx+20)+' '+(wpy+7)+' Z" ' +
+          'fill="url(#ogWhip)" stroke="#4A2511" stroke-width="3.4" stroke-linejoin="round"/>' +
+        '<path d="M'+(wcx-16)+' '+(wpy-2)+' Q'+wcx+' '+(wpy-7)+' '+(wcx+16)+' '+(wpy-2)+' M'+(wcx-11)+' '+(wpy-12)+' Q'+wcx+' '+(wpy-15)+' '+(wcx+11)+' '+(wpy-12)+'" fill="none" stroke="#CBD5E1" stroke-width="2.6" stroke-linecap="round"/>' +
+      '</g>';
+    } else if(topping === "cherry"){
+      var ccx = top.cx, cpy = peakY - 4;
+      out += '<g>' +
+        '<path d="M'+ccx+' '+(cpy-9)+' C'+(ccx+3)+' '+(cpy-23)+' '+(ccx+15)+' '+(cpy-30)+' '+(ccx+23)+' '+(cpy-26)+'" fill="none" stroke="#4A2511" stroke-width="3.8" stroke-linecap="round"/>' +
+        '<path d="M'+(ccx+8)+' '+(cpy-20)+' Q'+(ccx+17)+' '+(cpy-29)+' '+(ccx+22)+' '+(cpy-20)+' Q'+(ccx+14)+' '+(cpy-15)+' '+(ccx+8)+' '+(cpy-20)+' Z" fill="#4ADE80" stroke="#4A2511" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<circle cx="'+ccx+'" cy="'+cpy+'" r="15.5" fill="url(#ogCherry)" stroke="#4A2511" stroke-width="3.5"/>' +
+        '<ellipse cx="'+(ccx-5)+'" cy="'+(cpy-5)+'" rx="4.8" ry="3" fill="#FFF" opacity="0.85" transform="rotate(-30 '+(ccx-5)+' '+(cpy-5)+')"/>' +
+      '</g>';
+    }
+
+    return out;
+  }
+
+  function buildOrderBadgeSVG(kind, key){
+    if(kind === "flavor"){
+      var fill = "#FF7AA8", extra = "";
+      if(key === "strawberry"){
+        fill = "#FF7AA8";
+        extra = '<circle cx="34" cy="27" r="2" fill="#BE185D"/><circle cx="22" cy="34" r="2" fill="#BE185D"/><circle cx="32" cy="37" r="2" fill="#BE185D"/>';
+      } else if(key === "vanilla"){
+        fill = "#FFF6D6";
+        extra = '<circle cx="34" cy="29" r="1.7" fill="#92400E" opacity="0.6"/><circle cx="24" cy="36" r="1.7" fill="#92400E" opacity="0.6"/>';
+      } else if(key === "chocolate"){
+        fill = "#7B3F1D";
+        extra = '<path d="M20 35 Q28 41 37 33" fill="none" stroke="#4A220D" stroke-width="3" stroke-linecap="round" opacity="0.6"/>';
+      } else if(key === "rainbow"){
+        fill = "url(#gRainbow)";
+        extra = '<path d="M13 30 Q28 20 43 27" fill="none" stroke="#FFF" stroke-width="3.5" stroke-linecap="round" opacity="0.72"/>';
+      }
+      return '<svg viewBox="0 0 56 56" aria-hidden="true">' +
+        '<path d="M8 35 C8 18 17 10 28 10 C39 10 48 18 48 35 C50 40 46 46 40 45 C36 48 32 45 28 47 C24 45 20 48 16 45 C10 46 6 40 8 35 Z" fill="'+fill+'" stroke="#4A2511" stroke-width="3.6" stroke-linejoin="round"/>' +
+        '<ellipse cx="21" cy="21" rx="6.5" ry="3.8" fill="#FFF" opacity="0.72" transform="rotate(-24 21 21)"/>' +
+        extra +
+      '</svg>';
+    }
+    if(key === "sprinkles"){
+      return '<svg viewBox="0 0 56 56" aria-hidden="true">' +
+        '<rect x="7" y="13" width="14" height="6.5" rx="3.2" fill="#EF4444" stroke="#4A2511" stroke-width="2.4" transform="rotate(-28 14 16)"/>' +
+        '<rect x="30" y="10" width="14" height="6.5" rx="3.2" fill="#38BDF8" stroke="#4A2511" stroke-width="2.4" transform="rotate(22 37 13)"/>' +
+        '<rect x="20" y="25" width="15" height="6.5" rx="3.2" fill="#FACC15" stroke="#4A2511" stroke-width="2.4" transform="rotate(-12 27 28)"/>' +
+        '<rect x="34" y="33" width="14" height="6.5" rx="3.2" fill="#4ADE80" stroke="#4A2511" stroke-width="2.4" transform="rotate(-38 41 36)"/>' +
+        '<rect x="8" y="36" width="14" height="6.5" rx="3.2" fill="#C084FC" stroke="#4A2511" stroke-width="2.4" transform="rotate(30 15 39)"/>' +
+        '<rect x="21" y="42" width="14" height="6.5" rx="3.2" fill="#FF7AA8" stroke="#4A2511" stroke-width="2.4" transform="rotate(8 28 45)"/>' +
+      '</svg>';
+    }
+    if(key === "drizzle"){
+      return '<svg viewBox="0 0 56 56" aria-hidden="true">' +
+        '<path d="M19 11 L37 11 L41 21 L41 44 Q41 50 35 50 L21 50 Q15 50 15 44 L15 21 Z" fill="#5C2A12" stroke="#4A2511" stroke-width="3.4" stroke-linejoin="round"/>' +
+        '<path d="M24 11 L28 3 L32 11 Z" fill="#FACC15" stroke="#4A2511" stroke-width="2.6" stroke-linejoin="round"/>' +
+        '<rect x="21" y="25" width="14" height="15" rx="4" fill="#FDE68A" stroke="#4A2511" stroke-width="2.2"/>' +
+        '<path d="M24 32 Q28 37 32 32" fill="none" stroke="#5C2A12" stroke-width="2.8" stroke-linecap="round"/>' +
+      '</svg>';
+    }
+    if(key === "whip"){
+      return '<svg viewBox="0 0 56 56" aria-hidden="true">' +
+        '<path d="M9 44 C5 44 5 34 13 33 C11 25 19 21 23 21 C24 12 32 8 36 9 C34 15 38 19 42 22 C49 25 49 33 44 35 C50 37 49 45 43 45 Z" fill="#FFFFFF" stroke="#4A2511" stroke-width="3.4" stroke-linejoin="round"/>' +
+        '<path d="M15 37 Q28 33 41 37 M19 27 Q28 24 37 27" fill="none" stroke="#CBD5E1" stroke-width="2.8" stroke-linecap="round"/>' +
+      '</svg>';
+    }
+    /* cherry */
+    return '<svg viewBox="0 0 56 56" aria-hidden="true">' +
+      '<path d="M27 22 C29 12 37 7 44 9" fill="none" stroke="#4A2511" stroke-width="4" stroke-linecap="round"/>' +
+      '<path d="M33 13 Q40 6 44 13 Q38 17 33 13 Z" fill="#4ADE80" stroke="#4A2511" stroke-width="2.4" stroke-linejoin="round"/>' +
+      '<circle cx="27" cy="36" r="15" fill="#EF4444" stroke="#4A2511" stroke-width="3.5"/>' +
+      '<ellipse cx="21" cy="30" rx="4.8" ry="3" fill="#FFF" opacity="0.82" transform="rotate(-30 21 30)"/>' +
+    '</svg>';
+  }
+
+  /* =========================================================================
      6. GAME STATE MACHINE & UI CONTROLLER
      ========================================================================= */
   var state = {
@@ -1685,7 +2286,9 @@
     customerIdx: 0,
     servedCount: 0,
     stars: 0,
-    servingBusy: false
+    servingBusy: false,
+    order: { flavors: ["strawberry", "vanilla"], topping: "cherry" },
+    matchedFlags: []       /* tracks prior live-check state to burst sparkles on new matches */
   };
 
   /* DOM References */
@@ -1697,7 +2300,14 @@
   var starCountEl = document.getElementById("starCountEl");
   var customerWrap = document.getElementById("customerWrap");
   var customerSvg = document.getElementById("customerSvg");
-  var custBubble = document.getElementById("custBubble");
+  var orderCard = document.getElementById("orderCard");
+  var orderWho = document.getElementById("orderWho");
+  var orderStars = document.getElementById("orderStars");
+  var orderPreviewSvg = document.getElementById("orderPreviewSvg");
+  var orderBadges = document.getElementById("orderBadges");
+  var orderReaction = document.getElementById("orderReaction");
+  var orderReactEmoji = document.getElementById("orderReactEmoji");
+  var orderReactTag = document.getElementById("orderReactTag");
   var coneStage = document.getElementById("coneStage");
   var emptyHint = document.getElementById("emptyHint");
   var vesselLayer = document.getElementById("vesselLayer");
@@ -1719,10 +2329,176 @@
 
   var autoNextTimer = null;
   var serveTimers = [];
+  var hintTimer = null;
 
   function clearServeTimers(){
     if(autoNextTimer){ clearTimeout(autoNextTimer); autoNextTimer = null; }
     while(serveTimers.length){ clearTimeout(serveTimers.pop()); }
+  }
+
+  /* 5-Second Pause Soft Golden Shimmer Hint on Matching Button */
+  function clearHintShimmer(){
+    if(hintTimer){ clearTimeout(hintTimer); hintTimer = null; }
+    document.querySelectorAll(".hint-shimmer").forEach(function(el){
+      el.classList.remove("hint-shimmer");
+    });
+  }
+
+  function nextNeededTarget(){
+    if(state.step === "cone"){
+      return dockCone.querySelector(".vessel-btn");
+    }
+    if(state.step === "scoop"){
+      var prog = evaluateOrderMatch();
+      for(var i = 0; i < state.order.flavors.length; i++){
+        if(!prog.flavorMatched[i]){
+          var btn = dockScoop.querySelector('.flavor-btn[data-flavor="' + state.order.flavors[i] + '"]');
+          if(btn) return btn;
+        }
+      }
+      if(state.scoops.length >= 1 && !goToppingsBtn.hidden) return goToppingsBtn;
+      return dockScoop.querySelector(".flavor-btn");
+    }
+    if(state.step === "toppings"){
+      if(!state.toppings[state.order.topping]){
+        var tbtn = dockToppings.querySelector('.top-btn[data-topping="' + state.order.topping + '"]');
+        if(tbtn) return tbtn;
+      }
+      return serveBellBtn;
+    }
+    if(state.step === "serve" && !nextCustomerBtn.hidden){
+      return nextCustomerBtn;
+    }
+    return null;
+  }
+
+  function armHintShimmer(){
+    clearHintShimmer();
+    if(!winOverlay.hidden || state.step === "serve") return;
+    hintTimer = setTimeout(function(){
+      if(!winOverlay.hidden || state.step === "serve") return;
+      var target = nextNeededTarget();
+      if(target && !target.hidden){
+        target.classList.add("hint-shimmer");
+      }
+    }, 5000);
+  }
+  window.addEventListener("pointerdown", function(){
+    if(!winOverlay.hidden) return;
+    clearHintShimmer();
+    armHintShimmer();
+  }, true);
+  window.addEventListener("pagehide", function(){
+    clearHintShimmer();
+  });
+
+  function evaluateOrderMatch(){
+    var pool = state.scoops.slice();
+    var flavorMatched = [];
+    for(var i = 0; i < state.order.flavors.length; i++){
+      var idx = pool.indexOf(state.order.flavors[i]);
+      if(idx >= 0){
+        pool.splice(idx, 1);
+        flavorMatched.push(true);
+      } else {
+        flavorMatched.push(false);
+      }
+    }
+    var toppingMatched = !!state.toppings[state.order.topping];
+    var flags = flavorMatched.concat([toppingMatched]);
+    var allFlavors = flavorMatched.every(Boolean);
+    var allMatched = allFlavors && toppingMatched;
+    return {
+      flavorMatched: flavorMatched,
+      toppingMatched: toppingMatched,
+      flags: flags,
+      allFlavors: allFlavors,
+      allMatched: allMatched
+    };
+  }
+
+  function isPerfectOrder(){
+    return evaluateOrderMatch().allMatched;
+  }
+
+  function renderOrderCard(){
+    var cust = CUSTOMERS[state.customerIdx % CUSTOMERS.length];
+    var order = state.order;
+    orderWho.textContent = cust.emoji + " " + cust.name;
+    orderPreviewSvg.innerHTML = buildOrderPreviewSVG(order);
+    orderReaction.hidden = true;
+    orderReaction.classList.remove("perfect");
+    orderCard.classList.remove("order-complete");
+
+    /* Build visual progress star dots */
+    var totalItems = order.flavors.length + 1;
+    var starsHtml = "";
+    for(var s = 0; s < totalItems; s++){
+      starsHtml += '<span class="order-star-dot" data-dot-idx="'+s+'">★</span>';
+    }
+    orderStars.innerHTML = starsHtml;
+
+    /* Build big individual ingredient icon badges (>= 44px each!) */
+    var badgesHtml = "";
+    for(var i = 0; i < order.flavors.length; i++){
+      var fk = order.flavors[i];
+      badgesHtml += '<div class="order-badge bg-'+fk+'" data-order-slot="'+i+'" title="'+fk+'">' +
+        buildOrderBadgeSVG("flavor", fk) +
+        '<span class="badge-check" aria-hidden="true">✓</span>' +
+      '</div>';
+    }
+    badgesHtml += '<div class="order-badge bg-'+order.topping+'" data-order-slot="'+order.flavors.length+'" title="'+order.topping+'">' +
+      buildOrderBadgeSVG("topping", order.topping) +
+      '<span class="badge-check" aria-hidden="true">✓</span>' +
+    '</div>';
+    orderBadges.innerHTML = badgesHtml;
+
+    state.matchedFlags = new Array(totalItems).fill(false);
+    syncOrderProgress(false);
+  }
+
+  function syncOrderProgress(animateNew){
+    var prog = evaluateOrderMatch();
+    var newlyMatched = false;
+    var badges = orderBadges.querySelectorAll(".order-badge");
+    var dots = orderStars.querySelectorAll(".order-star-dot");
+
+    for(var i = 0; i < prog.flags.length; i++){
+      var isNow = !!prog.flags[i];
+      var was = !!state.matchedFlags[i];
+      if(badges[i]){
+        badges[i].classList.toggle("matched", isNow);
+      }
+      if(dots[i]){
+        dots[i].classList.toggle("filled", isNow);
+        dots[i].textContent = isNow ? "✓" : "★";
+      }
+      if(isNow && !was && animateNew){
+        newlyMatched = true;
+        if(badges[i]){
+          var bc = centerOf(badges[i]);
+          spawnSparkles(bc.x, bc.y, 16);
+        }
+      }
+      state.matchedFlags[i] = isNow;
+    }
+
+    var wasComplete = orderCard.classList.contains("order-complete");
+    orderCard.classList.toggle("order-complete", prog.allMatched);
+    if(newlyMatched){
+      sfxCheckDing();
+    }
+    if(prog.allMatched && !wasComplete && animateNew){
+      var oc = centerOf(orderCard);
+      spawnSparkles(oc.x, oc.y, 26);
+    }
+  }
+
+  function showOrderReaction(emoji, tagText, isPerfect){
+    orderReactEmoji.textContent = emoji;
+    orderReactTag.textContent = tagText;
+    orderReaction.classList.toggle("perfect", !!isPerfect);
+    orderReaction.hidden = false;
   }
 
   function showCountPop(txt){
@@ -1735,15 +2511,6 @@
   function renderCustomer(mood){
     var cust = CUSTOMERS[state.customerIdx % CUSTOMERS.length];
     customerSvg.innerHTML = buildCustomerSVG(cust.key, mood || "happy");
-    if(mood === "heart"){
-      custBubble.textContent = "😍";
-    } else if(mood === "freeze"){
-      custBubble.textContent = "🥶";
-    } else if(mood === "open"){
-      custBubble.textContent = "😋";
-    } else {
-      custBubble.textContent = cust.crave;
-    }
   }
 
   function renderToppingsLayer(){
@@ -1761,23 +2528,7 @@
       guideHand.style.opacity = "0";
       return;
     }
-    if(state.step === "cone"){
-      target = dockCone.querySelector(".vessel-btn");
-    } else if(state.step === "scoop"){
-      if(state.scoops.length === 0){
-        target = dockScoop.querySelector(".flavor-btn");
-      } else {
-        target = dockScoop.querySelectorAll(".flavor-btn")[state.scoops.length % 4];
-      }
-    } else if(state.step === "toppings"){
-      if(state.toppingsCount === 0){
-        target = dockToppings.querySelector(".top-btn");
-      } else {
-        target = serveBellBtn;
-      }
-    } else if(state.step === "serve" && !nextCustomerBtn.hidden){
-      target = nextCustomerBtn;
-    }
+    target = nextNeededTarget();
 
     if(!target || target.hidden){
       guideHand.style.opacity = "0";
@@ -1844,12 +2595,14 @@
      ========================================================================= */
   function startNewCone(opts){
     clearServeTimers();
+    clearHintShimmer();
     state.step = "cone";
     state.vessel = null;
     state.scoops = [];
     state.toppings = { sprinkles: false, drizzle: false, whip: false, cherry: false };
     state.toppingsCount = 0;
     state.servingBusy = false;
+    state.order = pickOrderForCustomer(state.customerIdx, state.servedCount);
 
     vesselLayer.innerHTML = "";
     scoopsLayer.innerHTML = "";
@@ -1860,10 +2613,13 @@
     nextCustomerBtn.hidden = false;
 
     customerWrap.className = "entering";
+    orderCard.classList.add("entering");
     renderCustomer("happy");
+    renderOrderCard();
     void customerWrap.offsetWidth;
     setTimeout(function(){
       customerWrap.className = "idle-bob";
+      orderCard.classList.remove("entering");
     }, 40);
 
     lastIdleClip = "hoot-idle-tap";
@@ -1871,6 +2627,7 @@
       playVoice(opts.voice);
     }
     armIdle();
+    armHintShimmer();
     syncUI();
   }
 
@@ -1884,6 +2641,7 @@
     var c = centerOf(coneStage);
     spawnSparkles(c.x, c.y + 60, 12);
     lastIdleClip = "hoot-tap-big-btn";
+    armHintShimmer();
     syncUI();
   }
 
@@ -1913,10 +2671,14 @@
       if(state.step !== "serve") customerWrap.className = "idle-bob";
     }, 520);
 
+    /* Live-update giant Order Cloud green checkmarks + sparkle burst! */
+    syncOrderProgress(true);
+
     /* Automatically open Toppings Bar when 3 scoops are stacked! */
     if(n >= 3){
       state.step = "toppings";
     }
+    armHintShimmer();
     syncUI();
   }
 
@@ -1951,6 +2713,9 @@
       if(state.step !== "serve") customerWrap.className = "idle-bob";
     }, 420);
 
+    /* Live-update giant Order Cloud green checkmarks + sparkle burst! */
+    syncOrderProgress(true);
+    armHintShimmer();
     syncUI();
   }
 
@@ -1959,7 +2724,9 @@
     if(state.servingBusy || state.scoops.length === 0) return;
     if(state.step !== "scoop" && state.step !== "toppings") return;
     clearServeTimers();
+    clearHintShimmer();
 
+    var perfect = isPerfectOrder();
     state.servingBusy = true;
     state.step = "serve";
     nextCustomerBtn.hidden = true;
@@ -1971,6 +2738,7 @@
     coneStage.classList.add("serving-up");
     customerWrap.className = "excited";
     renderCustomer("open");
+    showOrderReaction("😋", "YUM!", false);
 
     /* Phase B (520ms): HUGE ANIMATED BITE! */
     serveTimers.push(setTimeout(function(){
@@ -1989,19 +2757,33 @@
       spawnCreamPuffs(cc.x, cc.y + 18, "#FFFDF5");
     }, 520));
 
-    /* Phase C (1120ms): Heart-Eyes OR Silly Brain-Freeze Shiver + Star + Cheer! */
+    /* Phase C (1120ms): MASSIVE Perfect Order Heart-Eyes + Confetti Star Bonus (+2 ⭐) OR Joyful Creative Cone (+1 ⭐)! */
     serveTimers.push(setTimeout(function(){
-      var isBrainFreeze = (state.servedCount % 2 === 1);
+      var isBrainFreeze = (!perfect) && (state.servedCount % 2 === 1);
       state.servedCount++;
-      var earned = (state.scoops.length >= 3 && state.toppingsCount >= 1) ? 2 : 1;
+      var earned = perfect ? 2 : 1;
       state.stars += earned;
       servedCountEl.textContent = String(state.servedCount);
       starCountEl.textContent   = String(state.stars);
 
       var cc = centerOf(customerWrap);
-      if(isBrainFreeze){
+      var oc = centerOf(orderCard);
+
+      if(perfect){
+        customerWrap.className = "excited";
+        renderCustomer("heart");
+        showOrderReaction("😍", "⭐ +2 PERFECT!", true);
+        sfxPerfectFanfare();
+        spawnConfetti(cc.x, cc.y - 20, 48);
+        spawnConfetti(oc.x, oc.y, 26);
+        spawnHearts(cc.x, cc.y - 12, 24);
+        spawnSparkles(cc.x, cc.y - 16, 30);
+        showCountPop("⭐ +2 PERFECT!");
+        playVoice(PRAISE_CLIPS[(praiseIdx++) % PRAISE_CLIPS.length]);
+      } else if(isBrainFreeze){
         customerWrap.className = "shiver";
         renderCustomer("freeze");
+        showOrderReaction("🥶", "BRRR!", false);
         sfxShiver();
         spawnFrost(cc.x, cc.y - 10, 20);
         showCountPop("BRRR! 🥶");
@@ -2010,6 +2792,7 @@
         serveTimers.push(setTimeout(function(){
           customerWrap.className = "excited";
           renderCustomer("heart");
+          showOrderReaction("😍", "⭐ +1", false);
           sfxCheer();
           spawnHearts(cc.x, cc.y - 12, 14);
           spawnSparkles(cc.x, cc.y - 16, 20);
@@ -2018,10 +2801,11 @@
       } else {
         customerWrap.className = "excited";
         renderCustomer("heart");
+        showOrderReaction("😍", "⭐ +1", false);
         sfxCheer();
         spawnHearts(cc.x, cc.y - 12, 16);
         spawnSparkles(cc.x, cc.y - 16, 22);
-        showCountPop("⭐ +" + earned);
+        showCountPop("⭐ +1");
         playVoice(PRAISE_CLIPS[(praiseIdx++) % PRAISE_CLIPS.length]);
       }
 
@@ -2037,8 +2821,10 @@
 
   function advanceToNextCustomer(){
     clearServeTimers();
+    clearHintShimmer();
     state.customerIdx = (state.customerIdx + 1) % CUSTOMERS.length;
     customerWrap.className = "leaving";
+    orderCard.classList.add("entering");
     setTimeout(function(){
       startNewCone({ voice: "hoot-next-one" });
     }, 300);
@@ -2069,6 +2855,7 @@
     if(state.step === "scoop" && state.scoops.length >= 1){
       state.step = "toppings";
       sfxConePop();
+      armHintShimmer();
       syncUI();
     }
   });
@@ -2077,6 +2864,7 @@
     if(state.step === "toppings" && state.scoops.length < 3){
       state.step = "scoop";
       sfxConePop();
+      armHintShimmer();
       syncUI();
     }
   });
@@ -2091,6 +2879,7 @@
 
   document.getElementById("doneBtn").addEventListener("click", function(){
     clearServeTimers();
+    clearHintShimmer();
     sfxCheer();
     winSummary.textContent = "⭐ " + state.stars + "   •   🍦 " + state.servedCount;
     winOverlay.hidden = false;
@@ -2121,6 +2910,7 @@
      ========================================================================= */
   window.__icecreamGame = {
     snapshot: function(){
+      var ob = orderCard ? orderCard.getBoundingClientRect() : { width: 0, height: 0 };
       return {
         step: state.step,
         vessel: state.vessel,
@@ -2128,7 +2918,11 @@
         toppingsCount: state.toppingsCount,
         customerIdx: state.customerIdx,
         servedCount: state.servedCount,
-        stars: state.stars
+        stars: state.stars,
+        orderFlavors: state.order ? state.order.flavors.slice() : [],
+        orderTopping: state.order ? state.order.topping : null,
+        orderBoxW: Math.round(ob.width),
+        orderBoxH: Math.round(ob.height)
       };
     }
   };
@@ -2137,7 +2931,7 @@
   startNewCone({ voice: "hoot-welcome" });
 })();
 </script>
-<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e149">
-<script src="js/hoot-game-tail.js?v=llprev3e149"></script>
+<link rel="stylesheet" href="js/hoot-game-tail.css?v=llprev3e150">
+<script src="js/hoot-game-tail.js?v=llprev3e150"></script>
 </body>
 </html>
