@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  var ROOT = "/Users/dawidkorecki/.gemini/antigravity/scratch/hoots-world";
+  var ROOT = (typeof scriptArgs !== "undefined" && scriptArgs[0]) || "."; // repo root; run from repo root or pass it: jsc tests/family-sync-proof.js -- <repo-root>
   var html = read(ROOT + "/index.html");
   var shellJs = read(ROOT + "/js/hw-ll-shell.js");
   var safePreviewJs = read(ROOT + "/js/safe-preview.js");
